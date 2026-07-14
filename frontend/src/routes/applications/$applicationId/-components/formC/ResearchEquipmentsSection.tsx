@@ -8,14 +8,15 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { AnyReactFormApi } from '@/lib/form';
+import { withForm } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
-import { useFormC } from '@/contexts/applications/FormCContext';
-import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
+import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
 import { ResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
 
 const researchEquipmentsColumns = (
-  form: AnyReactFormApi<FormCValues>,
+  form: FormCFormApi,
   field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
@@ -135,44 +136,48 @@ const researchEquipmentsColumns = (
   },
 ];
 
-export function ResearchEquipmentsSection() {
-  const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
+export const ResearchEquipmentsSection = withForm({
+  defaultValues: formCDefaultValues,
+  props: {} as { context: FormCViewModel },
+  render: function ResearchEquipmentsSection({ form, context }) {
+    const { hasFormBeenSubmitted, isReadonly } = context;
 
-  return (
-    <AppAccordion
-      title="14. Lista sprzętu i aparatury badawczej użytej podczas rejsu"
-      expandedByDefault
-      data-testid="form-c-research-equipments-section"
-    >
-      <form.Field
-        name="researchEquipments"
-        mode="array"
-        children={(field) => (
-          <AppTable
-            data={field.state.value}
-            columns={researchEquipmentsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
-            buttons={() => [
-              <AppButton
-                key="new"
-                onClick={() => {
-                  field.pushValue({
-                    name: '',
-                    insuranceStartDate: null,
-                    insuranceEndDate: null,
-                    permission: 'false',
-                  });
-                  field.handleChange((prev) => prev);
-                  field.handleBlur();
-                }}
-              >
-                Dodaj sprzęt / aparaturę
-              </AppButton>,
-            ]}
-            variant="form"
-            disabled={isReadonly}
-          />
-        )}
-      />
-    </AppAccordion>
-  );
-}
+    return (
+      <AppAccordion
+        title="14. Lista sprzętu i aparatury badawczej użytej podczas rejsu"
+        expandedByDefault
+        data-testid="form-c-research-equipments-section"
+      >
+        <form.Field
+          name="researchEquipments"
+          mode="array"
+          children={(field) => (
+            <AppTable
+              data={field.state.value}
+              columns={researchEquipmentsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              buttons={() => [
+                <AppButton
+                  key="new"
+                  onClick={() => {
+                    field.pushValue({
+                      name: '',
+                      insuranceStartDate: null,
+                      insuranceEndDate: null,
+                      permission: 'false',
+                    });
+                    field.handleChange((prev) => prev);
+                    field.handleBlur();
+                  }}
+                >
+                  Dodaj sprzęt / aparaturę
+                </AppButton>,
+              ]}
+              variant="form"
+              disabled={isReadonly}
+            />
+          )}
+        />
+      </AppAccordion>
+    );
+  },
+});

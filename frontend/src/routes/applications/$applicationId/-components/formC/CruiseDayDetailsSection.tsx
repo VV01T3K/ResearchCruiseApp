@@ -7,14 +7,14 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { AnyReactFormApi } from '@/lib/form';
+import { withForm } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
-import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
 
 const cruiseDayDetailsColumns = (
-  form: AnyReactFormApi<FormCValues>,
+  form: FormCFormApi,
   field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
@@ -177,48 +177,52 @@ const cruiseDayDetailsColumns = (
   },
 ];
 
-export function CruiseDayDetailsSection() {
-  const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
+export const CruiseDayDetailsSection = withForm({
+  defaultValues: formCDefaultValues,
+  props: {} as { context: FormCViewModel },
+  render: function CruiseDayDetailsSection({ form, context }) {
+    const { hasFormBeenSubmitted, isReadonly } = context;
 
-  return (
-    <AppAccordion
-      title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu"
-      expandedByDefault
-      data-testid="form-c-cruise-day-details-section"
-    >
-      <form.Field
-        name="cruiseDaysDetails"
-        mode="array"
-        children={(field) => (
-          <AppTable
-            data={field.state.value}
-            columns={cruiseDayDetailsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
-            buttons={() => [
-              <AppButton
-                key="new"
-                onClick={() => {
-                  field.pushValue({
-                    number: 0,
-                    hours: 0,
-                    taskName: '',
-                    region: '',
-                    position: '',
-                    comment: '',
-                  });
-                  field.handleChange((prev: CruiseDayValues[]) => prev);
-                  field.handleBlur();
-                }}
-                variant="primary"
-                disabled={isReadonly}
-              >
-                Dodaj
-              </AppButton>,
-            ]}
-            variant="form"
-            disabled={isReadonly}
-          />
-        )}
-      />
-    </AppAccordion>
-  );
-}
+    return (
+      <AppAccordion
+        title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu"
+        expandedByDefault
+        data-testid="form-c-cruise-day-details-section"
+      >
+        <form.Field
+          name="cruiseDaysDetails"
+          mode="array"
+          children={(field) => (
+            <AppTable
+              data={field.state.value}
+              columns={cruiseDayDetailsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              buttons={() => [
+                <AppButton
+                  key="new"
+                  onClick={() => {
+                    field.pushValue({
+                      number: 0,
+                      hours: 0,
+                      taskName: '',
+                      region: '',
+                      position: '',
+                      comment: '',
+                    });
+                    field.handleChange((prev: CruiseDayValues[]) => prev);
+                    field.handleBlur();
+                  }}
+                  variant="primary"
+                  disabled={isReadonly}
+                >
+                  Dodaj
+                </AppButton>,
+              ]}
+              variant="form"
+              disabled={isReadonly}
+            />
+          )}
+        />
+      </AppAccordion>
+    );
+  },
+});

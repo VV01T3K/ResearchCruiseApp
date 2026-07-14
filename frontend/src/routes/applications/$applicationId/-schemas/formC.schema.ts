@@ -42,6 +42,28 @@ export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
   additionalDescription: 18,
 };
 
+export const formCDefaultValues: FormCValues = {
+  shipUsage: '',
+  differentUsage: '',
+  permissions: [],
+  researchAreaDescriptions: [],
+  ugTeams: [],
+  guestTeams: [],
+  researchTasksEffects: [],
+  contracts: [],
+  spubTasks: [],
+  shortResearchEquipments: [],
+  longResearchEquipments: [],
+  ports: [],
+  cruiseDaysDetails: [],
+  researchEquipments: [],
+  shipEquipmentsIds: [],
+  collectedSamples: [],
+  spubReportData: '',
+  additionalDescription: '',
+  photos: [],
+} satisfies FormCValues;
+
 const ShipUsageValidationSchema = z
   .object({
     shipUsage: z.enum(['0', '1', '2', '3', '4'], {

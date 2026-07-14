@@ -4,14 +4,14 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { AnyReactFormApi } from '@/lib/form';
+import { withForm } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
-import { useFormC } from '@/contexts/applications/FormCContext';
-import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
+import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { ShipEquipmentOption } from '@/routes/applications/$applicationId/-schemas/types/ShipEquipmentOption';
 
 const shipEquipmentColumns = (
-  form: AnyReactFormApi<FormCValues>,
+  form: FormCFormApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
 ): ColumnDef<ShipEquipmentOption>[] => [
@@ -46,27 +46,31 @@ const shipEquipmentColumns = (
   },
 ];
 
-export function ShipEquipmentsSection() {
-  const { form, formBInitValues, hasFormBeenSubmitted, isReadonly } = useFormC();
+export const ShipEquipmentsSection = withForm({
+  defaultValues: formCDefaultValues,
+  props: {} as { context: FormCViewModel },
+  render: function ShipEquipmentsSection({ form, context }) {
+    const { formBInitValues, hasFormBeenSubmitted, isReadonly } = context;
 
-  return (
-    <AppAccordion
-      title="15. Elementy techniczne statku wykorzystywane podczas rejsu"
-      expandedByDefault
-      data-testid="form-c-ship-equipments-section"
-    >
-      <form.Field
-        name="shipEquipmentsIds"
-        children={() => (
-          <AppTable
-            data={formBInitValues.shipEquipments}
-            columns={shipEquipmentColumns(form, hasFormBeenSubmitted, isReadonly)}
-            buttons={() => []}
-            variant="form"
-            disabled={isReadonly}
-          />
-        )}
-      />
-    </AppAccordion>
-  );
-}
+    return (
+      <AppAccordion
+        title="15. Elementy techniczne statku wykorzystywane podczas rejsu"
+        expandedByDefault
+        data-testid="form-c-ship-equipments-section"
+      >
+        <form.Field
+          name="shipEquipmentsIds"
+          children={() => (
+            <AppTable
+              data={formBInitValues.shipEquipments}
+              columns={shipEquipmentColumns(form, hasFormBeenSubmitted, isReadonly)}
+              buttons={() => []}
+              variant="form"
+              disabled={isReadonly}
+            />
+          )}
+        />
+      </AppAccordion>
+    );
+  },
+});

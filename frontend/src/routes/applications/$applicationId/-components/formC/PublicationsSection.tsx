@@ -2,14 +2,14 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import {
   getPublicationCategoryLabel,
   PublicationValues,
 } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
-export function PublicationsSection() {
-  const { formA } = useFormC();
+export function PublicationsSection({ context }: { context: FormCViewModel }) {
+  const { formA } = context;
 
   const columns: ColumnDef<PublicationValues>[] = [
     {

@@ -21,57 +21,64 @@ import { ShipEquipmentsSection } from './ShipEquipmentsSection';
 import { ShipUsageSection } from './ShipUsageSection';
 import { SPUBReportDataSection } from './SPUBReportDataSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
-import { FormCContextType, FormCProvider } from '@/contexts/applications/FormCContext';
+import { withForm } from '@/lib/form';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 
 type Props = {
-  context: FormCContextType & {
+  context: FormCViewModel & {
     onSubmit: () => void;
     onSaveDraft: () => void;
     actionsDisabled?: boolean;
   };
 };
-export function FormView({ context }: Props) {
-  function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
-    evt.preventDefault();
-    context.onSubmit();
-  }
+export const FormView = withForm({
+  defaultValues: formCDefaultValues,
+  props: {} as Props,
+  render: function FormView({ form, context }) {
+    function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
+      evt.preventDefault();
+      context.onSubmit();
+    }
 
-  const componentRef = useRef(null);
+    const componentRef = useRef(null);
 
-  const reactToPrintContent = () => {
-    return componentRef.current;
-  };
+    const reactToPrintContent = () => {
+      return componentRef.current;
+    };
 
-  const handlePrint = useReactToPrint({});
+    const handlePrint = useReactToPrint({});
 
-  return (
-    <FormCProvider value={context}>
-      <form className="space-y-8" onSubmit={onSubmit}>
-        <CruiseInfoSection />
-        <CruiseManagerInfoSection />
-        <ShipUsageSection />
-        <AdditionalPermissionsSection />
-        <ResearchAreaSection />
-        <CruiseGoalSection />
-        <ResearchTasksEffectsSection />
-        <ContractsSection />
-        <MembersSection />
-        <PublicationsSection />
-        <SPUBTasksSection />
-        <CruiseDetailsSection />
-        <CruiseDayDetailsSection />
-        <ResearchEquipmentsSection />
-        <ShipEquipmentsSection />
-        <CollectedSamplesSection />
-        <SPUBReportDataSection />
-        <AdditionalDescriptionSection />
-        <ActionsSection
-          onSaveDraft={context.onSaveDraft}
-          onPrint={() => handlePrint(reactToPrintContent)}
-          disabled={context.actionsDisabled}
-        />
-      </form>
-      <PrintTemplate ref={componentRef} />
-    </FormCProvider>
-  );
-}
+    return (
+      <form.AppForm>
+        <form className="space-y-8" onSubmit={onSubmit}>
+          <CruiseInfoSection context={context} />
+          <CruiseManagerInfoSection context={context} />
+          <ShipUsageSection form={form} context={context} />
+          <AdditionalPermissionsSection form={form} context={context} />
+          <ResearchAreaSection form={form} context={context} />
+          <CruiseGoalSection context={context} />
+          <ResearchTasksEffectsSection form={form} context={context} />
+          <ContractsSection form={form} context={context} />
+          <MembersSection form={form} context={context} />
+          <PublicationsSection context={context} />
+          <SPUBTasksSection form={form} context={context} />
+          <CruiseDetailsSection form={form} context={context} />
+          <CruiseDayDetailsSection form={form} context={context} />
+          <ResearchEquipmentsSection form={form} context={context} />
+          <ShipEquipmentsSection form={form} context={context} />
+          <CollectedSamplesSection form={form} context={context} />
+          <SPUBReportDataSection form={form} context={context} />
+          <AdditionalDescriptionSection form={form} context={context} />
+          <ActionsSection
+            onSaveDraft={context.onSaveDraft}
+            onPrint={() => handlePrint(reactToPrintContent)}
+            disabled={context.actionsDisabled}
+            context={context}
+          />
+        </form>
+        <PrintTemplate form={form} ref={componentRef} context={context} />
+      </form.AppForm>
+    );
+  },
+});

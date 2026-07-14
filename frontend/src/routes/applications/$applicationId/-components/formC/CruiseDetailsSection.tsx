@@ -8,17 +8,17 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { AnyReactFormApi } from '@/lib/form';
+import { withForm } from '@/lib/form';
 import { getErrors } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
-import { useFormC } from '@/contexts/applications/FormCContext';
-import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
+import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { LongResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
 import { PortCallValues } from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
 import { ShortResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
 
 const shortResearchEquipmentColumns = (
-  form: AnyReactFormApi<FormCValues>,
+  form: FormCFormApi,
   field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
@@ -125,7 +125,7 @@ const shortResearchEquipmentColumns = (
 ];
 
 const longResearchEquipmentColumns = (
-  form: AnyReactFormApi<FormCValues>,
+  form: FormCFormApi,
   field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
@@ -225,7 +225,7 @@ const longResearchEquipmentColumns = (
 ];
 
 const portColumns = (
-  form: AnyReactFormApi<FormCValues>,
+  form: FormCFormApi,
   field: AnyFieldApi,
   hasFormBeenSubmitted: boolean,
   isReadonly: boolean
@@ -333,116 +333,120 @@ const portColumns = (
   },
 ];
 
-export function CruiseDetailsSection() {
-  const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
+export const CruiseDetailsSection = withForm({
+  defaultValues: formCDefaultValues,
+  props: {} as { context: FormCViewModel },
+  render: function CruiseDetailsSection({ form, context }) {
+    const { hasFormBeenSubmitted, isReadonly } = context;
 
-  return (
-    <AppAccordion title="12. Szczegóły rejsu" expandedByDefault data-testid="form-c-cruise-details-section">
-      <p className="text-center text-xl font-semibold">Czy w ramach rejsu wystąpiło:</p>
+    return (
+      <AppAccordion title="12. Szczegóły rejsu" expandedByDefault data-testid="form-c-cruise-details-section">
+        <p className="text-center text-xl font-semibold">Czy w ramach rejsu wystąpiło:</p>
 
-      <div className="mt-8">
-        <p className="text-lg font-semibold">Wystawienie sprzętu</p>
-        <form.Field
-          name="shortResearchEquipments"
-          mode="array"
-          children={(field) => (
-            <AppTable
-              columns={shortResearchEquipmentColumns(form, field, hasFormBeenSubmitted, isReadonly)}
-              data={field.state.value}
-              buttons={() => [
-                <AppButton
-                  key="new"
-                  onClick={() => {
-                    field.pushValue({
-                      startDate: '',
-                      endDate: '',
-                      name: '',
-                    });
-                    field.handleChange((prev: ShortResearchEquipmentValues[]) => prev);
-                    field.handleBlur();
-                  }}
-                >
-                  Dodaj sprzęt
-                </AppButton>,
-              ]}
-              variant="form"
-              disabled={isReadonly}
-            />
-          )}
-        />
-      </div>
-
-      <div className="mt-8">
-        <p className="text-lg font-semibold">Pozostawienie lub zabranie sprzętu</p>
-        <form.Field
-          name="longResearchEquipments"
-          mode="array"
-          children={(field) => (
-            <AppTable
-              columns={longResearchEquipmentColumns(form, field, hasFormBeenSubmitted, isReadonly)}
-              data={field.state.value}
-              buttons={() => [
-                <DropdownElementSelectorButton
-                  key="new"
-                  options={[
-                    { value: 'Put', label: 'Pozostawienie' },
-                    { value: 'Collect', label: 'Zabranie' },
-                  ].map((option) => ({
-                    value: option.label,
-                    onClick: () => {
+        <div className="mt-8">
+          <p className="text-lg font-semibold">Wystawienie sprzętu</p>
+          <form.Field
+            name="shortResearchEquipments"
+            mode="array"
+            children={(field) => (
+              <AppTable
+                columns={shortResearchEquipmentColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+                data={field.state.value}
+                buttons={() => [
+                  <AppButton
+                    key="new"
+                    onClick={() => {
                       field.pushValue({
-                        action: option.value as LongResearchEquipmentValues['action'],
-                        duration: '',
+                        startDate: '',
+                        endDate: '',
                         name: '',
                       });
-                      field.handleChange((prev: LongResearchEquipmentValues[]) => prev);
+                      field.handleChange((prev: ShortResearchEquipmentValues[]) => prev);
                       field.handleBlur();
-                    },
-                  }))}
-                  variant="primary"
-                  disabled={isReadonly}
-                >
-                  Dodaj nowe
-                </DropdownElementSelectorButton>,
-              ]}
-              variant="form"
-              disabled={isReadonly}
-            />
-          )}
-        />
-      </div>
+                    }}
+                  >
+                    Dodaj sprzęt
+                  </AppButton>,
+                ]}
+                variant="form"
+                disabled={isReadonly}
+              />
+            )}
+          />
+        </div>
 
-      <div className="mt-8">
-        <p className="text-lg font-semibold">Wchodzenie lub wychodzenie z portu</p>
-        <form.Field
-          name="ports"
-          mode="array"
-          children={(field) => (
-            <AppTable
-              columns={portColumns(form, field, hasFormBeenSubmitted, isReadonly)}
-              data={field.state.value}
-              buttons={() => [
-                <AppButton
-                  key="new"
-                  onClick={() => {
-                    field.pushValue({
-                      startTime: '',
-                      endTime: '',
-                      name: '',
-                    });
-                    field.handleChange((prev: PortCallValues[]) => prev);
-                    field.handleBlur();
-                  }}
-                >
-                  Dodaj port
-                </AppButton>,
-              ]}
-              variant="form"
-              disabled={isReadonly}
-            />
-          )}
-        />
-      </div>
-    </AppAccordion>
-  );
-}
+        <div className="mt-8">
+          <p className="text-lg font-semibold">Pozostawienie lub zabranie sprzętu</p>
+          <form.Field
+            name="longResearchEquipments"
+            mode="array"
+            children={(field) => (
+              <AppTable
+                columns={longResearchEquipmentColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+                data={field.state.value}
+                buttons={() => [
+                  <DropdownElementSelectorButton
+                    key="new"
+                    options={[
+                      { value: 'Put', label: 'Pozostawienie' },
+                      { value: 'Collect', label: 'Zabranie' },
+                    ].map((option) => ({
+                      value: option.label,
+                      onClick: () => {
+                        field.pushValue({
+                          action: option.value as LongResearchEquipmentValues['action'],
+                          duration: '',
+                          name: '',
+                        });
+                        field.handleChange((prev: LongResearchEquipmentValues[]) => prev);
+                        field.handleBlur();
+                      },
+                    }))}
+                    variant="primary"
+                    disabled={isReadonly}
+                  >
+                    Dodaj nowe
+                  </DropdownElementSelectorButton>,
+                ]}
+                variant="form"
+                disabled={isReadonly}
+              />
+            )}
+          />
+        </div>
+
+        <div className="mt-8">
+          <p className="text-lg font-semibold">Wchodzenie lub wychodzenie z portu</p>
+          <form.Field
+            name="ports"
+            mode="array"
+            children={(field) => (
+              <AppTable
+                columns={portColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+                data={field.state.value}
+                buttons={() => [
+                  <AppButton
+                    key="new"
+                    onClick={() => {
+                      field.pushValue({
+                        startTime: '',
+                        endTime: '',
+                        name: '',
+                      });
+                      field.handleChange((prev: PortCallValues[]) => prev);
+                      field.handleBlur();
+                    }}
+                  >
+                    Dodaj port
+                  </AppButton>,
+                ]}
+                variant="form"
+                disabled={isReadonly}
+              />
+            )}
+          />
+        </div>
+      </AppAccordion>
+    );
+  },
+});

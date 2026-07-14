@@ -183,7 +183,7 @@ function FormCPage() {
   return (
     <>
       <AppLayout title="Formularz C">
-        <FormView context={context} />
+        <FormView form={form} context={context} />
       </AppLayout>
     </>
   );
