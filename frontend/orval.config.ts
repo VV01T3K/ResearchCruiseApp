@@ -87,7 +87,7 @@ export default defineConfig({
           shouldExportHttpClient: true,
           shouldExportQueryKey: true,
           shouldFilterQueryKey: false,
-          shouldSplitQueryKey: false,
+          shouldSplitQueryKey: true,
           useOperationIdAsQueryKey: false,
           signal: true,
           version: 5,

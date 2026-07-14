@@ -90,7 +90,7 @@ export const getApplications = async ( options?: RequestInit): Promise<Applicati
 
 export const getGetApplicationsQueryKey = () => {
     return [
-    `/v2/applications`
+    'v2','applications'
     ] as const;
     }
 
@@ -248,7 +248,7 @@ export const getApplication = async (applicationId: string, options?: RequestIni
 
 export const getGetApplicationQueryKey = (applicationId: string,) => {
     return [
-    `/v2/applications/${applicationId}`
+    'v2','applications',applicationId
     ] as const;
     }
 
@@ -336,7 +336,7 @@ export const getApplicationCruise = async (applicationId: string, options?: Requ
 
 export const getGetApplicationCruiseQueryKey = (applicationId: string,) => {
     return [
-    `/v2/applications/${applicationId}/cruise`
+    'v2','applications',applicationId,'cruise'
     ] as const;
     }
 
@@ -424,7 +424,7 @@ export const getApplicationEvaluation = async (applicationId: string, options?: 
 
 export const getGetApplicationEvaluationQueryKey = (applicationId: string,) => {
     return [
-    `/v2/applications/${applicationId}/evaluation`
+    'v2','applications',applicationId,'evaluation'
     ] as const;
     }
 
@@ -583,7 +583,7 @@ export const getApplicationsForCruisePlanning = async ( options?: RequestInit): 
 
 export const getGetApplicationsForCruisePlanningQueryKey = () => {
     return [
-    `/v2/applications/for-cruise-planning`
+    'v2','applications','for-cruise-planning'
     ] as const;
     }
 
@@ -671,7 +671,7 @@ export const getApplicationFormAContext = async ( options?: RequestInit): Promis
 
 export const getGetApplicationFormAContextQueryKey = () => {
     return [
-    `/v2/applications/form-a/context`
+    'v2','applications','form-a','context'
     ] as const;
     }
 
@@ -759,7 +759,7 @@ export const getApplicationFormBContext = async ( options?: RequestInit): Promis
 
 export const getGetApplicationFormBContextQueryKey = () => {
     return [
-    `/v2/applications/form-b/context`
+    'v2','applications','form-b','context'
     ] as const;
     }
 
@@ -847,7 +847,7 @@ export const getApplicationFormA = async (applicationId: string, options?: Reque
 
 export const getGetApplicationFormAQueryKey = (applicationId: string,) => {
     return [
-    `/v2/applications/${applicationId}/form-a`
+    'v2','applications',applicationId,'form-a'
     ] as const;
     }
 
@@ -1006,7 +1006,7 @@ export const getApplicationFormB = async (applicationId: string, options?: Reque
 
 export const getGetApplicationFormBQueryKey = (applicationId: string,) => {
     return [
-    `/v2/applications/${applicationId}/form-b`
+    'v2','applications',applicationId,'form-b'
     ] as const;
     }
 
@@ -1235,7 +1235,7 @@ export const getApplicationFormC = async (applicationId: string, options?: Reque
 
 export const getGetApplicationFormCQueryKey = (applicationId: string,) => {
     return [
-    `/v2/applications/${applicationId}/form-c`
+    'v2','applications',applicationId,'form-c'
     ] as const;
     }
 
@@ -1428,7 +1428,7 @@ export const getApplicationSupervisorReview = async (applicationId: string,
 export const getGetApplicationSupervisorReviewQueryKey = (applicationId: string,
     params?: GetApplicationSupervisorReviewParams,) => {
     return [
-    `/v2/applications/${applicationId}/supervisor-review`, ...(params ? [params] : [])
+    'v2','applications',applicationId,'supervisor-review', ...(params ? [params] : [])
     ] as const;
     }
 

@@ -83,7 +83,7 @@ export const getCurrentUser = async ( options?: RequestInit): Promise<CurrentUse
 
 export const getGetCurrentUserQueryKey = () => {
     return [
-    `/v2/users/me`
+    'v2','users','me'
     ] as const;
     }
 
@@ -241,7 +241,7 @@ export const getCurrentUserCruiseEffects = async ( options?: RequestInit): Promi
 
 export const getGetCurrentUserCruiseEffectsQueryKey = () => {
     return [
-    `/v2/users/me/cruise-effects`
+    'v2','users','me','cruise-effects'
     ] as const;
     }
 
@@ -329,7 +329,7 @@ export const getCurrentUserPublications = async ( options?: RequestInit): Promis
 
 export const getGetCurrentUserPublicationsQueryKey = () => {
     return [
-    `/v2/users/me/publications`
+    'v2','users','me','publications'
     ] as const;
     }
 
@@ -627,7 +627,7 @@ export const getUsers = async ( options?: RequestInit): Promise<UserResponse[]> 
 
 export const getGetUsersQueryKey = () => {
     return [
-    `/v2/users`
+    'v2','users'
     ] as const;
     }
 
@@ -785,7 +785,7 @@ export const getAvailableCruiseManagers = async ( options?: RequestInit): Promis
 
 export const getGetAvailableCruiseManagersQueryKey = () => {
     return [
-    `/v2/users/available-cruise-managers`
+    'v2','users','available-cruise-managers'
     ] as const;
     }
 

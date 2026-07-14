@@ -87,7 +87,7 @@ export const getCruises = async ( options?: RequestInit): Promise<CruiseResponse
 
 export const getGetCruisesQueryKey = () => {
     return [
-    `/v2/cruises`
+    'v2','cruises'
     ] as const;
     }
 
@@ -245,7 +245,7 @@ export const getCruise = async (cruiseId: string, options?: RequestInit): Promis
 
 export const getGetCruiseQueryKey = (cruiseId: string,) => {
     return [
-    `/v2/cruises/${cruiseId}`
+    'v2','cruises',cruiseId
     ] as const;
     }
 
@@ -761,7 +761,7 @@ export const getCruiseBlockades = async (params: GetCruiseBlockadesParams, optio
 
 export const getGetCruiseBlockadesQueryKey = (params?: GetCruiseBlockadesParams,) => {
     return [
-    `/v2/cruises/blockades`, ...(params ? [params] : [])
+    'v2','cruises','blockades', ...(params ? [params] : [])
     ] as const;
     }
 
