@@ -9,8 +9,8 @@ import { FatalErrorBoundary } from '@/components/shared/FatalErrorBoundary';
 import config from '@/config';
 import { initializeSentry } from '@/integrations/sentry/client';
 import { TanStackQueryProvider } from '@/integrations/tanstack/query/root-provider';
-import { AppRouter, router } from '@/integrations/tanstack/router/router';
 import { UserContextProvider } from '@/providers/UserContextProvider';
+import { AppRouter, router } from '@/router';
 
 z.config(z.locales.pl());
 initializeSentry(router);
