@@ -136,7 +136,9 @@ internal class EmailSender(
 
         if (smtpSettings.GetValue<bool>("UseFakeSmtp"))
         {
-            var directory = Path.Combine(Path.GetTempPath(), "ResearchCruiseApp-emails");
+            var directory = Path.GetFullPath(
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "fake-emails")
+            );
             Directory.CreateDirectory(directory);
 
             var path = Path.Combine(
