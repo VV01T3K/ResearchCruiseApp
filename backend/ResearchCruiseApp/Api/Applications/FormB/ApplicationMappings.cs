@@ -14,7 +14,6 @@ internal static partial class ApplicationMappings
         return new FormBFields
         {
             IsCruiseManagerPresent = form.IsCruiseManagerPresent,
-            Permissions = [],
             UgTeams = form.FormBUgUnits.Select(ToUgTeamFields).ToList(),
             GuestTeams = form.FormBGuestUnits.Select(ToGuestTeamFields).ToList(),
             CrewMembers = form.CrewMembers.Select(ToCrewMemberFields).ToList(),

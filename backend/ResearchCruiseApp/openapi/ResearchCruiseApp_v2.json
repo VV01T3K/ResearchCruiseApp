@@ -3180,12 +3180,6 @@
         }
       },
       "CollectedSampleFields": {
-        "required": [
-          "type",
-          "amount",
-          "analysis",
-          "publishing"
-        ],
         "type": "object",
         "properties": {
           "type": {
@@ -3211,14 +3205,6 @@
         }
       },
       "ContractFields": {
-        "required": [
-          "category",
-          "institutionName",
-          "institutionUnit",
-          "institutionLocalization",
-          "description",
-          "scans"
-        ],
         "type": "object",
         "properties": {
           "category": {
@@ -3327,16 +3313,6 @@
         }
       },
       "CrewMemberFields": {
-        "required": [
-          "title",
-          "firstName",
-          "lastName",
-          "birthPlace",
-          "birthDate",
-          "documentNumber",
-          "documentExpiryDate",
-          "institution"
-        ],
         "type": "object",
         "properties": {
           "title": {
@@ -3579,14 +3555,6 @@
         }
       },
       "CruiseDayFields": {
-        "required": [
-          "number",
-          "hours",
-          "taskName",
-          "region",
-          "position",
-          "comment"
-        ],
         "type": "object",
         "properties": {
           "number": {
@@ -3904,10 +3872,6 @@
         }
       },
       "FileContent": {
-        "required": [
-          "name",
-          "content"
-        ],
         "type": "object",
         "properties": {
           "name": {
@@ -3921,33 +3885,6 @@
         }
       },
       "FormAFields": {
-        "required": [
-          "id",
-          "cruiseManagerId",
-          "deputyManagerId",
-          "year",
-          "acceptablePeriod",
-          "optimalPeriod",
-          "periodSelectionType",
-          "precisePeriodStart",
-          "precisePeriodEnd",
-          "cruiseHours",
-          "periodNotes",
-          "shipUsage",
-          "differentUsage",
-          "permissions",
-          "researchAreaDescriptions",
-          "cruiseGoal",
-          "cruiseGoalDescription",
-          "researchTasks",
-          "contracts",
-          "ugTeams",
-          "guestTeams",
-          "publications",
-          "spubTasks",
-          "supervisorEmail",
-          "note"
-        ],
         "type": "object",
         "properties": {
           "id": {
@@ -4209,19 +4146,6 @@
         }
       },
       "FormBFields": {
-        "required": [
-          "isCruiseManagerPresent",
-          "permissions",
-          "ugTeams",
-          "guestTeams",
-          "crewMembers",
-          "shortResearchEquipments",
-          "longResearchEquipments",
-          "ports",
-          "cruiseDaysDetails",
-          "researchEquipments",
-          "shipEquipmentsIds"
-        ],
         "type": "object",
         "properties": {
           "isCruiseManagerPresent": {
@@ -4319,27 +4243,6 @@
         }
       },
       "FormCFields": {
-        "required": [
-          "shipUsage",
-          "differentUsage",
-          "permissions",
-          "researchAreaDescriptions",
-          "ugTeams",
-          "guestTeams",
-          "researchTasksEffects",
-          "contracts",
-          "spubTasks",
-          "shortResearchEquipments",
-          "longResearchEquipments",
-          "ports",
-          "cruiseDaysDetails",
-          "researchEquipments",
-          "shipEquipmentsIds",
-          "collectedSamples",
-          "spubReportData",
-          "additionalDescription",
-          "photos"
-        ],
         "type": "object",
         "properties": {
           "shipUsage": {
@@ -4477,10 +4380,6 @@
         }
       },
       "GuestTeamFields": {
-        "required": [
-          "name",
-          "noOfPersons"
-        ],
         "type": "object",
         "properties": {
           "name": {
@@ -4607,11 +4506,6 @@
         }
       },
       "LongTermResearchEquipmentFields": {
-        "required": [
-          "name",
-          "action",
-          "duration"
-        ],
         "type": "object",
         "properties": {
           "name": {
@@ -4652,11 +4546,6 @@
         }
       },
       "PermissionFields": {
-        "required": [
-          "description",
-          "executive",
-          "scan"
-        ],
         "type": "object",
         "properties": {
           "description": {
@@ -4708,11 +4597,6 @@
         }
       },
       "PortCallFields": {
-        "required": [
-          "name",
-          "startTime",
-          "endTime"
-        ],
         "type": "object",
         "properties": {
           "name": {
@@ -4771,16 +4655,6 @@
         }
       },
       "PublicationFields": {
-        "required": [
-          "id",
-          "category",
-          "doi",
-          "authors",
-          "title",
-          "magazine",
-          "year",
-          "ministerialPoints"
-        ],
         "type": "object",
         "properties": {
           "id": {
@@ -4946,11 +4820,6 @@
         }
       },
       "ResearchAreaSelection": {
-        "required": [
-          "areaId",
-          "differentName",
-          "info"
-        ],
         "type": "object",
         "properties": {
           "areaId": {
@@ -4976,12 +4845,6 @@
         }
       },
       "ResearchEquipmentFields": {
-        "required": [
-          "name",
-          "insuranceStartDate",
-          "insuranceEndDate",
-          "permission"
-        ],
         "type": "object",
         "properties": {
           "name": {
@@ -5013,25 +4876,6 @@
         }
       },
       "ResearchTaskEffectFields": {
-        "required": [
-          "type",
-          "title",
-          "magazine",
-          "author",
-          "institution",
-          "date",
-          "startDate",
-          "endDate",
-          "financingAmount",
-          "financingApproved",
-          "description",
-          "securedAmount",
-          "ministerialPoints",
-          "done",
-          "publicationMinisterialPoints",
-          "managerConditionMet",
-          "deputyConditionMet"
-        ],
         "type": "object",
         "properties": {
           "type": {
@@ -5127,21 +4971,6 @@
         }
       },
       "ResearchTaskFields": {
-        "required": [
-          "type",
-          "title",
-          "magazine",
-          "author",
-          "institution",
-          "date",
-          "startDate",
-          "endDate",
-          "financingAmount",
-          "financingApproved",
-          "description",
-          "securedAmount",
-          "ministerialPoints"
-        ],
         "type": "object",
         "properties": {
           "type": {
@@ -5328,11 +5157,6 @@
         }
       },
       "ShortTermResearchEquipmentFields": {
-        "required": [
-          "name",
-          "startDate",
-          "endDate"
-        ],
         "type": "object",
         "properties": {
           "name": {
@@ -5353,11 +5177,6 @@
         }
       },
       "SpubTaskFields": {
-        "required": [
-          "name",
-          "yearFrom",
-          "yearTo"
-        ],
         "type": "object",
         "properties": {
           "name": {
@@ -5436,11 +5255,6 @@
         }
       },
       "UgTeamFields": {
-        "required": [
-          "ugUnitId",
-          "noOfEmployees",
-          "noOfStudents"
-        ],
         "type": "object",
         "properties": {
           "ugUnitId": {

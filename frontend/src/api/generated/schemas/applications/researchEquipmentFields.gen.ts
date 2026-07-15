@@ -15,10 +15,10 @@ export const researchEquipmentFieldsPermissionMax = 1024;
 
 
 export const ResearchEquipmentFields = zod.object({
-  "name": zod.string().min(researchEquipmentFieldsNameMin).max(researchEquipmentFieldsNameMax),
-  "insuranceStartDate": zod.string().min(researchEquipmentFieldsInsuranceStartDateMin).max(researchEquipmentFieldsInsuranceStartDateMax).nullable(),
-  "insuranceEndDate": zod.string().min(researchEquipmentFieldsInsuranceEndDateMin).max(researchEquipmentFieldsInsuranceEndDateMax).nullable(),
-  "permission": zod.string().min(researchEquipmentFieldsPermissionMin).max(researchEquipmentFieldsPermissionMax)
+  "name": zod.string().min(researchEquipmentFieldsNameMin).max(researchEquipmentFieldsNameMax).optional(),
+  "insuranceStartDate": zod.string().min(researchEquipmentFieldsInsuranceStartDateMin).max(researchEquipmentFieldsInsuranceStartDateMax).nullish(),
+  "insuranceEndDate": zod.string().min(researchEquipmentFieldsInsuranceEndDateMin).max(researchEquipmentFieldsInsuranceEndDateMax).nullish(),
+  "permission": zod.string().min(researchEquipmentFieldsPermissionMin).max(researchEquipmentFieldsPermissionMax).optional()
 });
 
 export type ResearchEquipmentFields = zod.input<typeof ResearchEquipmentFields>;

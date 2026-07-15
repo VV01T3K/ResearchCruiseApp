@@ -15,10 +15,10 @@ export const collectedSampleFieldsPublishingMax = 10240;
 
 
 export const CollectedSampleFields = zod.object({
-  "type": zod.string().min(collectedSampleFieldsTypeMin).max(collectedSampleFieldsTypeMax),
-  "amount": zod.string().min(collectedSampleFieldsAmountMin).max(collectedSampleFieldsAmountMax),
-  "analysis": zod.string().min(collectedSampleFieldsAnalysisMin).max(collectedSampleFieldsAnalysisMax),
-  "publishing": zod.string().min(collectedSampleFieldsPublishingMin).max(collectedSampleFieldsPublishingMax)
+  "type": zod.string().min(collectedSampleFieldsTypeMin).max(collectedSampleFieldsTypeMax).optional(),
+  "amount": zod.string().min(collectedSampleFieldsAmountMin).max(collectedSampleFieldsAmountMax).optional(),
+  "analysis": zod.string().min(collectedSampleFieldsAnalysisMin).max(collectedSampleFieldsAnalysisMax).optional(),
+  "publishing": zod.string().min(collectedSampleFieldsPublishingMin).max(collectedSampleFieldsPublishingMax).optional()
 });
 
 export type CollectedSampleFields = zod.input<typeof CollectedSampleFields>;

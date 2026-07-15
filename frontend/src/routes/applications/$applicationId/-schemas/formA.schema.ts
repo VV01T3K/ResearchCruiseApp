@@ -642,7 +642,10 @@ function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?:
       note: form.note || null,
     },
     draft,
-  } satisfies z.input<typeof FormAWriteRequest>;
+  } satisfies {
+    form: Required<z.input<typeof FormAWriteRequest>['form']>;
+    draft: boolean;
+  };
 }
 
 function toApiDateTime(value: string): string | null {
@@ -657,9 +660,9 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
 
   return {
     id: form.id ?? undefined,
-    cruiseManagerId: form.cruiseManagerId,
+    cruiseManagerId: form.cruiseManagerId ?? '',
     deputyManagerId: form.deputyManagerId ?? '',
-    year: form.year,
+    year: form.year ?? '',
     acceptablePeriod,
     optimalPeriod,
     periodSelectionType:
@@ -672,39 +675,47 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
     precisePeriodEnd: form.precisePeriodEnd ?? '',
     cruiseDays: Math.floor(toNumber(form.cruiseHours) / 24),
     cruiseHours: toNumber(form.cruiseHours) % 24,
-    periodNotes: form.periodNotes,
+    periodNotes: form.periodNotes ?? '',
     shipUsage: form.shipUsage ?? '',
-    differentUsage: form.differentUsage,
-    permissions: form.permissions.map((permission) => ({
+    differentUsage: form.differentUsage ?? '',
+    permissions: (form.permissions ?? []).map((permission) => ({
       description: permission.description ?? '',
       executive: permission.executive ?? '',
-      scan: permission.scan ?? undefined,
+      scan: permission.scan ? { name: permission.scan.name ?? '', content: permission.scan.content ?? '' } : undefined,
     })),
-    researchAreaDescriptions: form.researchAreaDescriptions,
+    researchAreaDescriptions: (form.researchAreaDescriptions ?? []).map((area) => ({
+      areaId: area.areaId ?? null,
+      differentName: area.differentName ?? null,
+      info: area.info ?? '',
+    })),
     cruiseGoal:
       form.cruiseGoal === CruiseGoal.Research ||
       form.cruiseGoal === CruiseGoal.Commercial ||
       form.cruiseGoal === CruiseGoal.Educational
         ? form.cruiseGoal
         : '',
-    cruiseGoalDescription: form.cruiseGoalDescription,
-    researchTasks: form.researchTasks.map(mapResearchTaskToValues),
-    contracts: form.contracts.map((contract) => ({
+    cruiseGoalDescription: form.cruiseGoalDescription ?? '',
+    researchTasks: (form.researchTasks ?? []).map(mapResearchTaskToValues),
+    contracts: (form.contracts ?? []).map((contract) => ({
       category: contract.category === 'international' ? 'international' : 'domestic',
       institutionName: contract.institutionName ?? '',
       institutionUnit: contract.institutionUnit ?? '',
       institutionLocalization: contract.institutionLocalization ?? '',
       description: contract.description ?? '',
-      scans: contract.scans,
+      scans: (contract.scans ?? []).map((scan) => ({ name: scan.name ?? '', content: scan.content ?? '' })),
     })),
-    ugTeams: form.ugTeams.map((team) => ({
+    ugTeams: (form.ugTeams ?? []).map((team) => ({
       ...team,
+      ugUnitId: team.ugUnitId ?? '',
       noOfEmployees: toNumber(team.noOfEmployees),
       noOfStudents: toNumber(team.noOfStudents),
     })),
-    guestTeams: form.guestTeams.map((team) => ({ name: team.name ?? '', noOfPersons: toNumber(team.noOfPersons) })),
-    publications: form.publications.map((publication) => ({
-      id: publication.id,
+    guestTeams: (form.guestTeams ?? []).map((team) => ({
+      name: team.name ?? '',
+      noOfPersons: toNumber(team.noOfPersons),
+    })),
+    publications: (form.publications ?? []).map((publication) => ({
+      id: publication.id ?? '',
       category:
         publication.category === PublicationCategory.Postscript
           ? PublicationCategory.Postscript
@@ -716,12 +727,12 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
       year: toNullableNumber(publication.year),
       ministerialPoints: toNumber(publication.ministerialPoints),
     })),
-    spubTasks: form.spubTasks.map((task) => ({
+    spubTasks: (form.spubTasks ?? []).map((task) => ({
       name: task.name ?? '',
       yearFrom: task.yearFrom ?? '',
       yearTo: task.yearTo ?? '',
     })),
-    supervisorEmail: form.supervisorEmail,
+    supervisorEmail: form.supervisorEmail ?? '',
     note: form.note ?? '',
   };
 }
@@ -793,7 +804,7 @@ export function mapFormAOptions(options: GeneratedFormAOptions): FormAOptions {
       institutionUnit: contract.institutionUnit ?? '',
       institutionLocalization: contract.institutionLocalization ?? '',
       description: contract.description ?? '',
-      scans: contract.scans,
+      scans: (contract.scans ?? []).map((scan) => ({ name: scan.name ?? '', content: scan.content ?? '' })),
     })),
     ugUnits: (options.ugUnits ?? []).map((unit) => ({ id: unit.id ?? '', name: unit.name ?? '' })),
     historicalGuestInstitutions: options.historicalGuestInstitutions ?? [],
@@ -803,7 +814,7 @@ export function mapFormAOptions(options: GeneratedFormAOptions): FormAOptions {
       yearTo: task.yearTo ?? '',
     })),
     historicalPublications: (options.historicalPublications ?? []).map((publication) => ({
-      id: publication.id,
+      id: publication.id ?? '',
       category:
         publication.category === PublicationCategory.Postscript
           ? PublicationCategory.Postscript

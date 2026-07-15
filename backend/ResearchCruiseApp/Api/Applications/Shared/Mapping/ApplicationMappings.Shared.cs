@@ -9,12 +9,7 @@ internal static partial class ApplicationMappings
         new() { Description = dto.Description, Executive = dto.Executive };
 
     public static PermissionFields ToPermissionFields(Permission permission) =>
-        new()
-        {
-            Description = permission.Description,
-            Executive = permission.Executive,
-            Scan = null,
-        };
+        new() { Description = permission.Description, Executive = permission.Executive };
 
     public static Contract ToContract(ContractFields dto) =>
         new()
@@ -34,7 +29,6 @@ internal static partial class ApplicationMappings
             InstitutionUnit = contract.InstitutionUnit,
             InstitutionLocalization = contract.InstitutionLocalization,
             Description = contract.Description,
-            Scans = [],
         };
 
     public static ResearchAreaDescription ToResearchAreaDescription(ResearchAreaSelection dto) =>

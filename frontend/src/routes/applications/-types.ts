@@ -115,7 +115,10 @@ export function mapEvaluationResponse(evaluation: CruiseApplicationEvaluation): 
         institutionUnit: item.contract?.institutionUnit ?? '',
         institutionLocalization: item.contract?.institutionLocalization ?? '',
         description: item.contract?.description ?? '',
-        scans: item.contract?.scans ?? [],
+        scans: (item.contract?.scans ?? []).map((scan) => ({
+          name: scan.name ?? '',
+          content: scan.content ?? '',
+        })),
       },
     })),
     ugTeams: (evaluation.ugTeams ?? []).map((team) => ({

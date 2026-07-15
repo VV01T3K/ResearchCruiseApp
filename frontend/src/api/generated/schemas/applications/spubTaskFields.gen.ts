@@ -1,9 +1,9 @@
 import { z as zod } from 'zod';
 
 export const SpubTaskFields = zod.object({
-  "name": zod.string().nullable(),
-  "yearFrom": zod.string().nullable(),
-  "yearTo": zod.string().nullable()
+  "name": zod.string().nullish(),
+  "yearFrom": zod.string().nullish(),
+  "yearTo": zod.string().nullish()
 });
 
 export type SpubTaskFields = zod.input<typeof SpubTaskFields>;

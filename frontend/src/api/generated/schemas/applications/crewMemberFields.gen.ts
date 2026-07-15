@@ -27,14 +27,14 @@ export const crewMemberFieldsInstitutionMax = 1024;
 
 
 export const CrewMemberFields = zod.object({
-  "title": zod.string().min(crewMemberFieldsTitleMin).max(crewMemberFieldsTitleMax),
-  "firstName": zod.string().min(crewMemberFieldsFirstNameMin).max(crewMemberFieldsFirstNameMax),
-  "lastName": zod.string().min(crewMemberFieldsLastNameMin).max(crewMemberFieldsLastNameMax),
-  "birthPlace": zod.string().min(crewMemberFieldsBirthPlaceMin).max(crewMemberFieldsBirthPlaceMax),
-  "birthDate": zod.string().min(crewMemberFieldsBirthDateMin).max(crewMemberFieldsBirthDateMax),
-  "documentNumber": zod.string().min(crewMemberFieldsDocumentNumberMin).max(crewMemberFieldsDocumentNumberMax),
-  "documentExpiryDate": zod.string().min(crewMemberFieldsDocumentExpiryDateMin).max(crewMemberFieldsDocumentExpiryDateMax),
-  "institution": zod.string().min(crewMemberFieldsInstitutionMin).max(crewMemberFieldsInstitutionMax)
+  "title": zod.string().min(crewMemberFieldsTitleMin).max(crewMemberFieldsTitleMax).optional(),
+  "firstName": zod.string().min(crewMemberFieldsFirstNameMin).max(crewMemberFieldsFirstNameMax).optional(),
+  "lastName": zod.string().min(crewMemberFieldsLastNameMin).max(crewMemberFieldsLastNameMax).optional(),
+  "birthPlace": zod.string().min(crewMemberFieldsBirthPlaceMin).max(crewMemberFieldsBirthPlaceMax).optional(),
+  "birthDate": zod.string().min(crewMemberFieldsBirthDateMin).max(crewMemberFieldsBirthDateMax).optional(),
+  "documentNumber": zod.string().min(crewMemberFieldsDocumentNumberMin).max(crewMemberFieldsDocumentNumberMax).optional(),
+  "documentExpiryDate": zod.string().min(crewMemberFieldsDocumentExpiryDateMin).max(crewMemberFieldsDocumentExpiryDateMax).optional(),
+  "institution": zod.string().min(crewMemberFieldsInstitutionMin).max(crewMemberFieldsInstitutionMax).optional()
 });
 
 export type CrewMemberFields = zod.input<typeof CrewMemberFields>;

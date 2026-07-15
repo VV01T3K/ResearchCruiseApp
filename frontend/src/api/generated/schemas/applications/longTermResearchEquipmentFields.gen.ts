@@ -12,9 +12,9 @@ export const longTermResearchEquipmentFieldsDurationMax = 1024;
 
 
 export const LongTermResearchEquipmentFields = zod.object({
-  "name": zod.string().min(longTermResearchEquipmentFieldsNameMin).max(longTermResearchEquipmentFieldsNameMax),
-  "action": zod.string().min(longTermResearchEquipmentFieldsActionMin).max(longTermResearchEquipmentFieldsActionMax),
-  "duration": zod.string().min(longTermResearchEquipmentFieldsDurationMin).max(longTermResearchEquipmentFieldsDurationMax)
+  "name": zod.string().min(longTermResearchEquipmentFieldsNameMin).max(longTermResearchEquipmentFieldsNameMax).optional(),
+  "action": zod.string().min(longTermResearchEquipmentFieldsActionMin).max(longTermResearchEquipmentFieldsActionMax).optional(),
+  "duration": zod.string().min(longTermResearchEquipmentFieldsDurationMin).max(longTermResearchEquipmentFieldsDurationMax).optional()
 });
 
 export type LongTermResearchEquipmentFields = zod.input<typeof LongTermResearchEquipmentFields>;

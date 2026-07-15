@@ -22,7 +22,6 @@ internal static partial class ApplicationMappings
         {
             ShipUsage = form.ShipUsage,
             DifferentUsage = form.DifferentUsage,
-            Permissions = [],
             ResearchAreaDescriptions = form
                 .ResearchAreaDescriptions.Select(ToResearchAreaSelection)
                 .ToList(),
@@ -31,7 +30,6 @@ internal static partial class ApplicationMappings
             ResearchTasksEffects = form
                 .ResearchTaskEffects.Select(ToResearchTaskEffectFields)
                 .ToList(),
-            Contracts = [],
             SpubTasks = form.SpubTasks.Select(ToSpubTaskFields).ToList(),
             ShortResearchEquipments = form
                 .FormCShortResearchEquipments.Select(ToShortTermResearchEquipmentFields)
@@ -48,7 +46,6 @@ internal static partial class ApplicationMappings
             CollectedSamples = form.CollectedSamples.Select(ToCollectedSampleFields).ToList(),
             SpubReportData = form.SpubReportData,
             AdditionalDescription = form.AdditionalDescription,
-            Photos = [],
         };
     }
 }

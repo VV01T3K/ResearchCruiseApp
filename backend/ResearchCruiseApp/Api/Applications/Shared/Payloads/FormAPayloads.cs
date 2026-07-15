@@ -8,62 +8,62 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 public class FormAFields
 {
-    public required Guid? Id { get; init; }
+    public Guid? Id { get; init; }
 
-    public required Guid CruiseManagerId { get; init; }
+    public Guid CruiseManagerId { get; init; }
 
-    public required Guid? DeputyManagerId { get; init; }
+    public Guid? DeputyManagerId { get; init; }
 
     [StringLength(4)]
-    public required string Year { get; init; }
+    public string Year { get; init; } = null!;
 
-    public required List<string>? AcceptablePeriod { get; init; }
-    public required List<string>? OptimalPeriod { get; init; }
+    public List<string>? AcceptablePeriod { get; init; }
+    public List<string>? OptimalPeriod { get; init; }
 
     [StringLength(16)]
-    public required string? PeriodSelectionType { get; init; }
+    public string? PeriodSelectionType { get; init; }
 
-    public required DateTime? PrecisePeriodStart { get; init; }
-    public required DateTime? PrecisePeriodEnd { get; init; }
+    public DateTime? PrecisePeriodStart { get; init; }
+    public DateTime? PrecisePeriodEnd { get; init; }
 
     [StringLength(8)]
-    public required string CruiseHours { get; init; }
+    public string CruiseHours { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string PeriodNotes { get; init; }
+    public string PeriodNotes { get; init; } = null!;
 
     [StringLength(1)]
-    public required string? ShipUsage { get; init; }
+    public string? ShipUsage { get; init; }
 
     [StringLength(1024)]
-    public required string DifferentUsage { get; init; }
+    public string DifferentUsage { get; init; } = null!;
 
-    public required List<PermissionFields> Permissions { get; init; }
+    public List<PermissionFields> Permissions { get; init; } = [];
 
-    public required List<ResearchAreaSelection> ResearchAreaDescriptions { get; init; }
+    public List<ResearchAreaSelection> ResearchAreaDescriptions { get; init; } = [];
 
-    public required string? CruiseGoal { get; init; }
+    public string? CruiseGoal { get; init; }
 
     [StringLength(10240)]
-    public required string CruiseGoalDescription { get; init; }
+    public string CruiseGoalDescription { get; init; } = null!;
 
-    public required List<ResearchTaskFields> ResearchTasks { get; init; }
+    public List<ResearchTaskFields> ResearchTasks { get; init; } = [];
 
-    public required List<ContractFields> Contracts { get; init; }
+    public List<ContractFields> Contracts { get; init; } = [];
 
-    public required List<UgTeamFields> UgTeams { get; init; }
+    public List<UgTeamFields> UgTeams { get; init; } = [];
 
-    public required List<GuestTeamFields> GuestTeams { get; init; }
+    public List<GuestTeamFields> GuestTeams { get; init; } = [];
 
-    public required List<PublicationFields> Publications { get; init; }
+    public List<PublicationFields> Publications { get; init; } = [];
 
-    public required List<SpubTaskFields> SpubTasks { get; init; }
-
-    [StringLength(1024)]
-    public required string SupervisorEmail { get; init; }
+    public List<SpubTaskFields> SpubTasks { get; init; } = [];
 
     [StringLength(1024)]
-    public required string? Note { get; set; }
+    public string SupervisorEmail { get; init; } = null!;
+
+    [StringLength(1024)]
+    public string? Note { get; set; }
 }
 
 public class ScoredContract
@@ -217,27 +217,27 @@ public class CruiseApplicationEvaluation
 public class PermissionFields
 {
     [StringLength(1024)]
-    public required string? Description { get; init; }
+    public string? Description { get; init; }
 
     [StringLength(1024)]
-    public required string? Executive { get; init; }
+    public string? Executive { get; init; }
 
-    public required FileContent? Scan { get; set; }
+    public FileContent? Scan { get; set; }
 }
 
 public class ContractFields
 {
-    public required string Category { get; init; }
+    public string Category { get; init; } = null!;
 
-    public required string? InstitutionName { get; init; }
+    public string? InstitutionName { get; init; }
 
-    public required string? InstitutionUnit { get; init; }
+    public string? InstitutionUnit { get; init; }
 
-    public required string? InstitutionLocalization { get; init; }
+    public string? InstitutionLocalization { get; init; }
 
-    public required string? Description { get; init; }
+    public string? Description { get; init; }
 
-    public required List<FileContent> Scans { get; set; }
+    public List<FileContent> Scans { get; set; } = [];
 }
 
 public interface IResearchTaskFields
@@ -271,87 +271,87 @@ public interface IResearchTaskFields
 
 public class ResearchTaskFields : IResearchTaskFields
 {
-    public required string Type { get; init; }
+    public string Type { get; init; } = null!;
 
-    public required string? Title { get; init; }
+    public string? Title { get; init; }
 
-    public required string? Magazine { get; init; }
+    public string? Magazine { get; init; }
 
-    public required string? Author { get; init; }
+    public string? Author { get; init; }
 
-    public required string? Institution { get; init; }
+    public string? Institution { get; init; }
 
-    public required string? Date { get; init; }
+    public string? Date { get; init; }
 
-    public required string? StartDate { get; init; }
+    public string? StartDate { get; init; }
 
-    public required string? EndDate { get; init; }
+    public string? EndDate { get; init; }
 
-    public required string? FinancingAmount { get; init; }
+    public string? FinancingAmount { get; init; }
 
-    public required string? FinancingApproved { get; init; }
+    public string? FinancingApproved { get; init; }
 
-    public required string? Description { get; init; }
+    public string? Description { get; init; }
 
-    public required string? SecuredAmount { get; init; }
+    public string? SecuredAmount { get; init; }
 
-    public required string? MinisterialPoints { get; init; }
+    public string? MinisterialPoints { get; init; }
 }
 
 public class ResearchTaskEffectFields : IResearchTaskFields
 {
-    public required string Type { get; init; }
+    public string Type { get; init; } = null!;
 
-    public required string? Title { get; init; }
+    public string? Title { get; init; }
 
-    public required string? Magazine { get; init; }
+    public string? Magazine { get; init; }
 
-    public required string? Author { get; init; }
+    public string? Author { get; init; }
 
-    public required string? Institution { get; init; }
+    public string? Institution { get; init; }
 
-    public required string? Date { get; init; }
+    public string? Date { get; init; }
 
-    public required string? StartDate { get; init; }
+    public string? StartDate { get; init; }
 
-    public required string? EndDate { get; init; }
+    public string? EndDate { get; init; }
 
-    public required string? FinancingAmount { get; init; }
+    public string? FinancingAmount { get; init; }
 
-    public required string? FinancingApproved { get; init; }
+    public string? FinancingApproved { get; init; }
 
-    public required string? Description { get; init; }
+    public string? Description { get; init; }
 
-    public required string? SecuredAmount { get; init; }
+    public string? SecuredAmount { get; init; }
 
-    public required string? MinisterialPoints { get; init; }
+    public string? MinisterialPoints { get; init; }
 
-    public required string Done { get; init; }
+    public string Done { get; init; } = null!;
 
-    public required string? PublicationMinisterialPoints { get; init; }
+    public string? PublicationMinisterialPoints { get; init; }
 
-    public required string ManagerConditionMet { get; init; }
+    public string ManagerConditionMet { get; init; } = null!;
 
-    public required string DeputyConditionMet { get; init; }
+    public string DeputyConditionMet { get; init; } = null!;
 }
 
 public class PublicationFields
 {
-    public required Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-    public required string Category { get; init; }
+    public string Category { get; init; } = null!;
 
-    public required string? Doi { get; init; }
+    public string? Doi { get; init; }
 
-    public required string? Authors { get; init; }
+    public string? Authors { get; init; }
 
-    public required string? Title { get; init; }
+    public string? Title { get; init; }
 
-    public required string? Magazine { get; init; }
+    public string? Magazine { get; init; }
 
-    public required string? Year { get; init; }
+    public string? Year { get; init; }
 
-    public required string MinisterialPoints { get; init; }
+    public string MinisterialPoints { get; init; } = null!;
 }
 
 public class UserPublicationDto
@@ -365,11 +365,11 @@ public class UserPublicationDto
 
 public class SpubTaskFields
 {
-    public required string? Name { get; init; }
+    public string? Name { get; init; }
 
-    public required string? YearFrom { get; init; }
+    public string? YearFrom { get; init; }
 
-    public required string? YearTo { get; init; }
+    public string? YearTo { get; init; }
 }
 
 [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
@@ -382,24 +382,24 @@ public class ResearchAreaOption(Guid id, string name)
 
 public record ResearchAreaSelection
 {
-    public required Guid? AreaId { get; init; }
+    public Guid? AreaId { get; init; }
 
     [StringLength(1024)]
-    public required string? DifferentName { get; init; }
+    public string? DifferentName { get; init; }
 
     [StringLength(10240)]
-    public required string Info { get; init; }
+    public string Info { get; init; } = "";
 }
 
 public class UgTeamFields
 {
-    public required Guid UgUnitId { get; init; }
+    public Guid UgUnitId { get; init; }
 
     [StringLength(1024)]
-    public required string NoOfEmployees { get; init; }
+    public string NoOfEmployees { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string NoOfStudents { get; init; }
+    public string NoOfStudents { get; init; } = null!;
 }
 
 public class NamedUgTeam
@@ -423,36 +423,36 @@ public class UgUnitOption
 
 public class GuestTeamFields
 {
-    public required string? Name { get; init; }
+    public string? Name { get; init; }
 
-    public required string NoOfPersons { get; init; }
+    public string NoOfPersons { get; init; } = null!;
 }
 
 public class CrewMemberFields
 {
     [StringLength(1024)]
-    public required string Title { get; init; }
+    public string Title { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string FirstName { get; init; }
+    public string FirstName { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string LastName { get; init; }
+    public string LastName { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string BirthPlace { get; init; }
+    public string BirthPlace { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string BirthDate { get; init; }
+    public string BirthDate { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string DocumentNumber { get; init; }
+    public string DocumentNumber { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string DocumentExpiryDate { get; init; }
+    public string DocumentExpiryDate { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string Institution { get; init; }
+    public string Institution { get; init; } = null!;
 }
 
 public class ShipEquipmentOption
@@ -465,37 +465,37 @@ public class ShipEquipmentOption
 public class CollectedSampleFields
 {
     [StringLength(10240)]
-    public required string Type { get; init; }
+    public string Type { get; init; } = null!;
 
     [StringLength(10240)]
-    public required string Amount { get; init; }
+    public string Amount { get; init; } = null!;
 
     [StringLength(10240)]
-    public required string Analysis { get; init; }
+    public string Analysis { get; init; } = null!;
 
     [StringLength(10240)]
-    public required string Publishing { get; init; }
+    public string Publishing { get; init; } = null!;
 }
 
 public class CruiseDayFields
 {
     [StringLength(1024)]
-    public required string Number { get; init; }
+    public string Number { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string Hours { get; init; }
+    public string Hours { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string TaskName { get; init; }
+    public string TaskName { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string Region { get; init; }
+    public string Region { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string Position { get; init; }
+    public string Position { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string Comment { get; init; }
+    public string Comment { get; init; } = null!;
 }
 
 public class UserEffectDto
@@ -519,60 +519,60 @@ public interface IResearchEquipmentFields
 public class ResearchEquipmentFields : IResearchEquipmentFields
 {
     [StringLength(1024)]
-    public required string Name { get; init; }
+    public string Name { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string? InsuranceStartDate { get; init; }
+    public string? InsuranceStartDate { get; init; }
 
     [StringLength(1024)]
-    public required string? InsuranceEndDate { get; init; }
+    public string? InsuranceEndDate { get; init; }
 
     [StringLength(1024)]
-    public required string Permission { get; init; }
+    public string Permission { get; init; } = null!;
 }
 
 public class ShortTermResearchEquipmentFields : IResearchEquipmentFields
 {
     [StringLength(1024)]
-    public required string Name { get; init; }
+    public string Name { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string StartDate { get; init; }
+    public string StartDate { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string EndDate { get; init; }
+    public string EndDate { get; init; } = null!;
 }
 
 public class LongTermResearchEquipmentFields : IResearchEquipmentFields
 {
     [StringLength(1024)]
-    public required string Name { get; init; }
+    public string Name { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string Action { get; init; }
+    public string Action { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string Duration { get; init; }
+    public string Duration { get; init; } = null!;
 }
 
 public class PortCallFields
 {
     [StringLength(1024)]
-    public required string Name { get; init; }
+    public string Name { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string StartTime { get; init; }
+    public string StartTime { get; init; } = null!;
 
     [StringLength(1024)]
-    public required string EndTime { get; init; }
+    public string EndTime { get; init; } = null!;
 }
 
 public class FileContent
 {
     [StringLength(1024)]
-    public required string Name { get; init; }
+    public string Name { get; init; } = null!;
 
-    public required string Content { get; init; }
+    public string Content { get; init; } = null!;
 }
 
 [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]

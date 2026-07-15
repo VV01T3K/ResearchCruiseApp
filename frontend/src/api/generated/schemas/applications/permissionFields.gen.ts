@@ -10,9 +10,9 @@ export const permissionFieldsExecutiveMax = 1024;
 
 
 export const PermissionFields = zod.object({
-  "description": zod.string().min(permissionFieldsDescriptionMin).max(permissionFieldsDescriptionMax).nullable(),
-  "executive": zod.string().min(permissionFieldsExecutiveMin).max(permissionFieldsExecutiveMax).nullable(),
-  "scan": zod.union([zod.null(),FileContent])
+  "description": zod.string().min(permissionFieldsDescriptionMin).max(permissionFieldsDescriptionMax).nullish(),
+  "executive": zod.string().min(permissionFieldsExecutiveMin).max(permissionFieldsExecutiveMax).nullish(),
+  "scan": zod.union([zod.null(),FileContent]).optional()
 });
 
 export type PermissionFields = zod.input<typeof PermissionFields>;

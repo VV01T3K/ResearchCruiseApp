@@ -189,116 +189,149 @@ export function getFormCDraftWriteSchema() {
 function buildFormCWriteSchema(inputSchema: z.ZodType<FormCValues, FormCValues>, draft: boolean) {
   return inputSchema
     .transform(
-      (form): z.input<typeof FormCWriteRequest> => ({
-        form: {
-          ...form,
-          permissions: form.permissions.map((permission) => ({
-            description: permission.description || null,
-            executive: permission.executive || null,
-            scan: permission.scan ?? null,
-          })),
-          ugTeams: form.ugTeams.map((team) => ({
-            ...team,
-            noOfEmployees: String(team.noOfEmployees),
-            noOfStudents: String(team.noOfStudents),
-          })),
-          guestTeams: form.guestTeams.map((team) => ({ ...team, noOfPersons: String(team.noOfPersons) })),
-          cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
-            ...day,
-            number: String(day.number),
-            hours: String(day.hours),
-          })),
-          collectedSamples: form.collectedSamples.map((sample) => ({ ...sample, amount: String(sample.amount) })),
-          researchEquipments: form.researchEquipments.map((equipment) => ({
-            ...equipment,
-            permission: String(equipment.permission),
-          })),
-          researchTasksEffects: form.researchTasksEffects.map((task) => ({
-            type: task.type,
-            title: 'title' in task ? task.title : null,
-            magazine: 'magazine' in task ? task.magazine : null,
-            author: 'author' in task ? task.author : null,
-            institution: null,
-            date: 'date' in task ? task.date : null,
-            startDate: 'startDate' in task ? task.startDate : null,
-            endDate: 'endDate' in task ? task.endDate : null,
-            financingAmount:
-              'financingAmount' in task && task.financingAmount !== null ? String(task.financingAmount) : null,
-            financingApproved: 'financingApproved' in task ? String(task.financingApproved) : null,
-            description: 'description' in task ? task.description : null,
-            securedAmount: 'securedAmount' in task && task.securedAmount !== null ? String(task.securedAmount) : null,
-            ministerialPoints:
-              'ministerialPoints' in task && task.ministerialPoints !== null ? String(task.ministerialPoints) : null,
-            publicationMinisterialPoints: null,
-            done: String(task.done),
-            managerConditionMet: String(task.managerConditionMet),
-            deputyConditionMet: String(task.deputyConditionMet),
-          })),
-          spubReportData: form.spubReportData || null,
-          additionalDescription: form.additionalDescription || null,
-        },
-        draft,
-      })
+      (form): z.input<typeof FormCWriteRequest> =>
+        ({
+          form: {
+            ...form,
+            permissions: form.permissions.map((permission) => ({
+              description: permission.description || null,
+              executive: permission.executive || null,
+              scan: permission.scan ?? null,
+            })),
+            ugTeams: form.ugTeams.map((team) => ({
+              ...team,
+              noOfEmployees: String(team.noOfEmployees),
+              noOfStudents: String(team.noOfStudents),
+            })),
+            guestTeams: form.guestTeams.map((team) => ({ ...team, noOfPersons: String(team.noOfPersons) })),
+            cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
+              ...day,
+              number: String(day.number),
+              hours: String(day.hours),
+            })),
+            collectedSamples: form.collectedSamples.map((sample) => ({ ...sample, amount: String(sample.amount) })),
+            researchEquipments: form.researchEquipments.map((equipment) => ({
+              ...equipment,
+              permission: String(equipment.permission),
+            })),
+            researchTasksEffects: form.researchTasksEffects.map((task) => ({
+              type: task.type,
+              title: 'title' in task ? task.title : null,
+              magazine: 'magazine' in task ? task.magazine : null,
+              author: 'author' in task ? task.author : null,
+              institution: null,
+              date: 'date' in task ? task.date : null,
+              startDate: 'startDate' in task ? task.startDate : null,
+              endDate: 'endDate' in task ? task.endDate : null,
+              financingAmount:
+                'financingAmount' in task && task.financingAmount !== null ? String(task.financingAmount) : null,
+              financingApproved: 'financingApproved' in task ? String(task.financingApproved) : null,
+              description: 'description' in task ? task.description : null,
+              securedAmount: 'securedAmount' in task && task.securedAmount !== null ? String(task.securedAmount) : null,
+              ministerialPoints:
+                'ministerialPoints' in task && task.ministerialPoints !== null ? String(task.ministerialPoints) : null,
+              publicationMinisterialPoints: null,
+              done: String(task.done),
+              managerConditionMet: String(task.managerConditionMet),
+              deputyConditionMet: String(task.deputyConditionMet),
+            })),
+            spubReportData: form.spubReportData || null,
+            additionalDescription: form.additionalDescription || null,
+          },
+          draft,
+        }) satisfies {
+          form: Required<z.input<typeof FormCWriteRequest>['form']>;
+          draft: boolean;
+        }
     )
     .pipe(FormCWriteRequest);
 }
 
 export function mapFormCToValues(form: FormCFields): FormCValues {
   return {
-    ...form,
-    permissions: form.permissions.map((permission) => ({
+    shipUsage: form.shipUsage ?? '',
+    differentUsage: form.differentUsage ?? '',
+    permissions: (form.permissions ?? []).map((permission) => ({
       description: permission.description ?? '',
       executive: permission.executive ?? '',
-      scan: permission.scan ?? undefined,
+      scan: permission.scan ? { name: permission.scan.name ?? '', content: permission.scan.content ?? '' } : undefined,
     })),
-    ugTeams: form.ugTeams.map((team) => ({
-      ...team,
+    researchAreaDescriptions: (form.researchAreaDescriptions ?? []).map((area) => ({
+      areaId: area.areaId ?? null,
+      differentName: area.differentName ?? null,
+      info: area.info ?? '',
+    })),
+    ugTeams: (form.ugTeams ?? []).map((team) => ({
+      ugUnitId: team.ugUnitId ?? '',
       noOfEmployees: toNumber(team.noOfEmployees),
       noOfStudents: toNumber(team.noOfStudents),
     })),
-    guestTeams: form.guestTeams.map((team) => ({
+    guestTeams: (form.guestTeams ?? []).map((team) => ({
       name: team.name ?? '',
       noOfPersons: toNumber(team.noOfPersons),
     })),
-    contracts: form.contracts.map((contract) => ({
-      ...contract,
+    contracts: (form.contracts ?? []).map((contract) => ({
       category: contract.category === 'international' ? 'international' : 'domestic',
       institutionName: contract.institutionName ?? '',
       institutionUnit: contract.institutionUnit ?? '',
       institutionLocalization: contract.institutionLocalization ?? '',
       description: contract.description ?? '',
+      scans: (contract.scans ?? []).map((scan) => ({ name: scan.name ?? '', content: scan.content ?? '' })),
     })),
-    spubTasks: form.spubTasks.map((task) => ({
+    spubTasks: (form.spubTasks ?? []).map((task) => ({
       name: task.name ?? '',
       yearFrom: task.yearFrom ?? '',
       yearTo: task.yearTo ?? '',
     })),
-    longResearchEquipments: form.longResearchEquipments.map((equipment) => ({
-      ...equipment,
-      action: equipment.action === 'Collect' ? 'Collect' : 'Put',
+    shortResearchEquipments: (form.shortResearchEquipments ?? []).map((equipment) => ({
+      name: equipment.name ?? '',
+      startDate: equipment.startDate ?? '',
+      endDate: equipment.endDate ?? '',
     })),
-    researchTasksEffects: form.researchTasksEffects.map((task) => ({
+    longResearchEquipments: (form.longResearchEquipments ?? []).map((equipment) => ({
+      name: equipment.name ?? '',
+      action: equipment.action === 'Collect' ? 'Collect' : 'Put',
+      duration: equipment.duration ?? '',
+    })),
+    researchTasksEffects: (form.researchTasksEffects ?? []).map((task) => ({
       ...mapResearchTaskToValues(task),
       done: task.done === 'true',
       managerConditionMet: task.managerConditionMet === 'true',
       deputyConditionMet: task.deputyConditionMet === 'true',
     })),
-    cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
-      ...day,
+    ports: (form.ports ?? []).map((port) => ({
+      name: port.name ?? '',
+      startTime: port.startTime ?? '',
+      endTime: port.endTime ?? '',
+    })),
+    cruiseDaysDetails: (form.cruiseDaysDetails ?? []).map((day) => ({
       number: toNumber(day.number),
       hours: toNumber(day.hours),
+      taskName: day.taskName ?? '',
+      region: day.region ?? '',
+      position: day.position ?? '',
+      comment: day.comment ?? '',
     })),
-    collectedSamples: form.collectedSamples.map((sample) => ({ ...sample, amount: toNumber(sample.amount) })),
-    researchEquipments: form.researchEquipments.map((equipment) => ({
-      ...equipment,
+    researchEquipments: (form.researchEquipments ?? []).map((equipment) => ({
+      name: equipment.name ?? '',
+      insuranceStartDate: equipment.insuranceStartDate ?? null,
+      insuranceEndDate: equipment.insuranceEndDate ?? null,
       permission: equipment.permission === 'true',
+    })),
+    shipEquipmentsIds: form.shipEquipmentsIds ?? [],
+    collectedSamples: (form.collectedSamples ?? []).map((sample) => ({
+      type: sample.type ?? '',
+      amount: toNumber(sample.amount),
+      analysis: sample.analysis ?? '',
+      publishing: sample.publishing ?? '',
     })),
     spubReportData: form.spubReportData ?? '',
     additionalDescription: form.additionalDescription ?? '',
+    photos: (form.photos ?? []).map((photo) => ({ name: photo.name ?? '', content: photo.content ?? '' })),
   };
 }
 
-function toNumber(value: string): number {
+function toNumber(value: string | null | undefined): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
 }

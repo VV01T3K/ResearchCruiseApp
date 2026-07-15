@@ -11,20 +11,12 @@ public sealed class ApplicationWriteContractTests
 {
     private static readonly FileInspector FileInspector = new();
 
-    public static TheoryData<Type> WriteContractTypes =>
-        new()
-        {
-            typeof(FormAWriteRequest),
-            typeof(FormBWriteRequest),
-            typeof(FormCWriteRequest),
-            typeof(FormAFields),
-            typeof(FormBFields),
-            typeof(FormCFields),
-        };
+    public static TheoryData<Type> WriteRequestTypes =>
+        new() { typeof(FormAWriteRequest), typeof(FormBWriteRequest), typeof(FormCWriteRequest) };
 
     [Theory]
-    [MemberData(nameof(WriteContractTypes))]
-    public void MissingWriteContractKeysAreRejected(Type contractType)
+    [MemberData(nameof(WriteRequestTypes))]
+    public void MissingWriteRequestKeysAreRejected(Type contractType)
     {
         Assert.Throws<JsonException>(() => JsonSerializer.Deserialize("{}", contractType));
     }
@@ -81,59 +73,6 @@ public sealed class ApplicationWriteContractTests
                     .Errors;
 
         Assert.Contains(errors, error => error.PropertyName == "Form.Permissions[0]");
-    }
-
-    [Fact]
-    public void OpenApiWriteSchemasRequireEveryObjectProperty()
-    {
-        var openApiPath = Path.GetFullPath(
-            "../../../../ResearchCruiseApp/openapi/ResearchCruiseApp_v2.json",
-            AppContext.BaseDirectory
-        );
-        using var document = JsonDocument.Parse(File.ReadAllText(openApiPath));
-        var schemas = document.RootElement.GetProperty("components").GetProperty("schemas");
-        string[] writeSchemas =
-        [
-            "FormAWriteRequest",
-            "FormBWriteRequest",
-            "FormCWriteRequest",
-            "FormAFields",
-            "FormBFields",
-            "FormCFields",
-            "PermissionFields",
-            "ContractFields",
-            "ResearchTaskFields",
-            "ResearchTaskEffectFields",
-            "PublicationFields",
-            "SpubTaskFields",
-            "ResearchAreaSelection",
-            "UgTeamFields",
-            "GuestTeamFields",
-            "CrewMemberFields",
-            "ShortTermResearchEquipmentFields",
-            "LongTermResearchEquipmentFields",
-            "PortCallFields",
-            "CruiseDayFields",
-            "ResearchEquipmentFields",
-            "CollectedSampleFields",
-            "FileContent",
-        ];
-
-        foreach (var schemaName in writeSchemas)
-        {
-            var schema = schemas.GetProperty(schemaName);
-            var properties = schema
-                .GetProperty("properties")
-                .EnumerateObject()
-                .Select(x => x.Name)
-                .ToHashSet();
-            var required = schema
-                .GetProperty("required")
-                .EnumerateArray()
-                .Select(x => x.GetString()!)
-                .ToHashSet();
-            Assert.True(properties.SetEquals(required), $"{schemaName} has optional OpenAPI keys");
-        }
     }
 
     private static FormAFields CreateEmptyFormA() =>

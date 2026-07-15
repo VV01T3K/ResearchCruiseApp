@@ -123,72 +123,102 @@ export function getFormBDraftWriteSchema() {
 function buildFormBWriteSchema(inputSchema: z.ZodType<FormBValues, FormBValues>, draft: boolean) {
   return inputSchema
     .transform(
-      (form): z.input<typeof FormBWriteRequest> => ({
-        form: {
-          ...form,
-          isCruiseManagerPresent: String(form.isCruiseManagerPresent),
-          permissions: form.permissions.map((permission) => ({
-            description: permission.description || null,
-            executive: permission.executive || null,
-            scan: permission.scan ?? null,
-          })),
-          ugTeams: form.ugTeams.map((team) => ({
-            ...team,
-            noOfEmployees: String(team.noOfEmployees),
-            noOfStudents: String(team.noOfStudents),
-          })),
-          guestTeams: form.guestTeams.map((team) => ({ ...team, noOfPersons: String(team.noOfPersons) })),
-          cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
-            ...day,
-            number: String(day.number),
-            hours: String(day.hours),
-          })),
-          researchEquipments: form.researchEquipments.map((equipment) => ({
-            ...equipment,
-            permission: String(equipment.permission),
-          })),
-        },
-        draft,
-      })
+      (form): z.input<typeof FormBWriteRequest> =>
+        ({
+          form: {
+            ...form,
+            isCruiseManagerPresent: String(form.isCruiseManagerPresent),
+            permissions: form.permissions.map((permission) => ({
+              description: permission.description || null,
+              executive: permission.executive || null,
+              scan: permission.scan ?? null,
+            })),
+            ugTeams: form.ugTeams.map((team) => ({
+              ...team,
+              noOfEmployees: String(team.noOfEmployees),
+              noOfStudents: String(team.noOfStudents),
+            })),
+            guestTeams: form.guestTeams.map((team) => ({ ...team, noOfPersons: String(team.noOfPersons) })),
+            cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
+              ...day,
+              number: String(day.number),
+              hours: String(day.hours),
+            })),
+            researchEquipments: form.researchEquipments.map((equipment) => ({
+              ...equipment,
+              permission: String(equipment.permission),
+            })),
+          },
+          draft,
+        }) satisfies {
+          form: Required<z.input<typeof FormBWriteRequest>['form']>;
+          draft: boolean;
+        }
     )
     .pipe(FormBWriteRequest);
 }
 
 export function mapFormBToValues(form: FormBFields): FormBValues {
   return {
-    ...form,
     isCruiseManagerPresent: form.isCruiseManagerPresent === 'true',
-    permissions: form.permissions.map((permission) => ({
+    permissions: (form.permissions ?? []).map((permission) => ({
       description: permission.description ?? '',
       executive: permission.executive ?? '',
-      scan: permission.scan ?? undefined,
+      scan: permission.scan ? { name: permission.scan.name ?? '', content: permission.scan.content ?? '' } : undefined,
     })),
-    ugTeams: form.ugTeams.map((team) => ({
-      ...team,
+    ugTeams: (form.ugTeams ?? []).map((team) => ({
+      ugUnitId: team.ugUnitId ?? '',
       noOfEmployees: toNumber(team.noOfEmployees),
       noOfStudents: toNumber(team.noOfStudents),
     })),
-    guestTeams: form.guestTeams.map((team) => ({
+    guestTeams: (form.guestTeams ?? []).map((team) => ({
       name: team.name ?? '',
       noOfPersons: toNumber(team.noOfPersons),
     })),
-    longResearchEquipments: form.longResearchEquipments.map((equipment) => ({
-      ...equipment,
-      action: equipment.action === 'Collect' ? 'Collect' : 'Put',
+    crewMembers: (form.crewMembers ?? []).map((member) => ({
+      title: member.title ?? '',
+      firstName: member.firstName ?? '',
+      lastName: member.lastName ?? '',
+      birthPlace: member.birthPlace ?? '',
+      birthDate: member.birthDate ?? '',
+      documentNumber: member.documentNumber ?? '',
+      documentExpiryDate: member.documentExpiryDate ?? '',
+      institution: member.institution ?? '',
     })),
-    cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
-      ...day,
+    shortResearchEquipments: (form.shortResearchEquipments ?? []).map((equipment) => ({
+      name: equipment.name ?? '',
+      startDate: equipment.startDate ?? '',
+      endDate: equipment.endDate ?? '',
+    })),
+    longResearchEquipments: (form.longResearchEquipments ?? []).map((equipment) => ({
+      name: equipment.name ?? '',
+      action: equipment.action === 'Collect' ? 'Collect' : 'Put',
+      duration: equipment.duration ?? '',
+    })),
+    ports: (form.ports ?? []).map((port) => ({
+      name: port.name ?? '',
+      startTime: port.startTime ?? '',
+      endTime: port.endTime ?? '',
+    })),
+    cruiseDaysDetails: (form.cruiseDaysDetails ?? []).map((day) => ({
       number: toNumber(day.number),
       hours: toNumber(day.hours),
+      taskName: day.taskName ?? '',
+      region: day.region ?? '',
+      position: day.position ?? '',
+      comment: day.comment ?? '',
     })),
-    researchEquipments: form.researchEquipments.map((equipment) => ({
-      ...equipment,
+    researchEquipments: (form.researchEquipments ?? []).map((equipment) => ({
+      name: equipment.name ?? '',
+      insuranceStartDate: equipment.insuranceStartDate ?? null,
+      insuranceEndDate: equipment.insuranceEndDate ?? null,
       permission: equipment.permission === 'true',
     })),
+    shipEquipmentsIds: form.shipEquipmentsIds ?? [],
   };
 }
 
-function toNumber(value: string): number {
+function toNumber(value: string | null | undefined): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
 }

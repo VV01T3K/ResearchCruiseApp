@@ -30,25 +30,25 @@ export const formCFieldsAdditionalDescriptionMax = 10240;
 
 
 export const FormCFields = zod.object({
-  "shipUsage": zod.string().min(formCFieldsShipUsageMin).max(formCFieldsShipUsageMax),
-  "differentUsage": zod.string().min(formCFieldsDifferentUsageMin).max(formCFieldsDifferentUsageMax),
-  "permissions": zod.array(PermissionFields),
-  "researchAreaDescriptions": zod.array(ResearchAreaSelection),
-  "ugTeams": zod.array(UgTeamFields),
-  "guestTeams": zod.array(GuestTeamFields),
-  "researchTasksEffects": zod.array(ResearchTaskEffectFields),
-  "contracts": zod.array(ContractFields),
-  "spubTasks": zod.array(SpubTaskFields),
-  "shortResearchEquipments": zod.array(ShortTermResearchEquipmentFields),
-  "longResearchEquipments": zod.array(LongTermResearchEquipmentFields),
-  "ports": zod.array(PortCallFields),
-  "cruiseDaysDetails": zod.array(CruiseDayFields),
-  "researchEquipments": zod.array(ResearchEquipmentFields),
-  "shipEquipmentsIds": zod.array(zod.string().regex(formCFieldsShipEquipmentsIdsItemRegExp)),
-  "collectedSamples": zod.array(CollectedSampleFields),
-  "spubReportData": zod.string().min(formCFieldsSpubReportDataMin).max(formCFieldsSpubReportDataMax).nullable(),
-  "additionalDescription": zod.string().min(formCFieldsAdditionalDescriptionMin).max(formCFieldsAdditionalDescriptionMax).nullable(),
-  "photos": zod.array(FileContent)
+  "shipUsage": zod.string().min(formCFieldsShipUsageMin).max(formCFieldsShipUsageMax).optional(),
+  "differentUsage": zod.string().min(formCFieldsDifferentUsageMin).max(formCFieldsDifferentUsageMax).optional(),
+  "permissions": zod.array(PermissionFields).optional(),
+  "researchAreaDescriptions": zod.array(ResearchAreaSelection).optional(),
+  "ugTeams": zod.array(UgTeamFields).optional(),
+  "guestTeams": zod.array(GuestTeamFields).optional(),
+  "researchTasksEffects": zod.array(ResearchTaskEffectFields).optional(),
+  "contracts": zod.array(ContractFields).optional(),
+  "spubTasks": zod.array(SpubTaskFields).optional(),
+  "shortResearchEquipments": zod.array(ShortTermResearchEquipmentFields).optional(),
+  "longResearchEquipments": zod.array(LongTermResearchEquipmentFields).optional(),
+  "ports": zod.array(PortCallFields).optional(),
+  "cruiseDaysDetails": zod.array(CruiseDayFields).optional(),
+  "researchEquipments": zod.array(ResearchEquipmentFields).optional(),
+  "shipEquipmentsIds": zod.array(zod.string().regex(formCFieldsShipEquipmentsIdsItemRegExp)).optional(),
+  "collectedSamples": zod.array(CollectedSampleFields).optional(),
+  "spubReportData": zod.string().min(formCFieldsSpubReportDataMin).max(formCFieldsSpubReportDataMax).nullish(),
+  "additionalDescription": zod.string().min(formCFieldsAdditionalDescriptionMin).max(formCFieldsAdditionalDescriptionMax).nullish(),
+  "photos": zod.array(FileContent).optional()
 });
 
 export type FormCFields = zod.input<typeof FormCFields>;
