@@ -3,7 +3,6 @@ import type {
   CruiseApplicationStatus as GeneratedCruiseApplicationStatus,
   CruiseApplicationEvaluation,
 } from '@/api/generated/schemas';
-import type { DeepPresent } from '@/types/utils';
 import type { ContractValues } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 import type { GuestTeamValues } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
 import type { PublicationValues } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
@@ -53,7 +52,7 @@ export function getApplicationStatusLabel(status: ApplicationStatus): string {
 }
 
 export type ApplicationResponse = GeneratedApplicationResponse;
-type GeneratedEvaluation = DeepPresent<CruiseApplicationEvaluation>;
+type GeneratedEvaluation = Required<CruiseApplicationEvaluation>;
 type GeneratedResearchTask = GeneratedEvaluation['formAResearchTasks'][number];
 type GeneratedContract = GeneratedEvaluation['formAContracts'][number];
 type GeneratedPublication = GeneratedEvaluation['formAPublications'][number];
@@ -65,7 +64,11 @@ export type EvaluationFormAResearchTask = Omit<GeneratedResearchTask, 'researchT
 export type EvaluationFormAContract = Omit<GeneratedContract, 'contract'> & {
   contract: ContractValues;
 };
-export type EvaluationUgTeamResponse = GeneratedEvaluation['ugTeams'][number];
+export type EvaluationUgTeamResponse = {
+  ugUnitName: string;
+  noOfEmployees: string;
+  noOfStudents: string;
+};
 export type EvaluationFormAPublication = Omit<GeneratedPublication, 'publication'> & {
   publication: PublicationValues;
 };
@@ -74,10 +77,11 @@ export type EvaluationFormASpubTask = Omit<GeneratedSpubTask, 'spubTask'> & {
 };
 export type EvaluationResponse = Omit<
   GeneratedEvaluation,
-  'formAResearchTasks' | 'formAContracts' | 'guestTeams' | 'formAPublications' | 'formASpubTasks'
+  'formAResearchTasks' | 'formAContracts' | 'ugTeams' | 'guestTeams' | 'formAPublications' | 'formASpubTasks'
 > & {
   formAResearchTasks: EvaluationFormAResearchTask[];
   formAContracts: EvaluationFormAContract[];
+  ugTeams: EvaluationUgTeamResponse[];
   guestTeams: GuestTeamValues[];
   formAPublications: EvaluationFormAPublication[];
   formASpubTasks: EvaluationFormASpubTask[];

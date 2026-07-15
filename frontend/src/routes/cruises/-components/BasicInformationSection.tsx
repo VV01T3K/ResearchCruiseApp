@@ -1,6 +1,6 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
-import { useTypedAppFormContext } from '@/lib/form';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { StatusBadge } from './StatusBadge';
 import type { CruiseResponse } from '@/api/generated/schemas';

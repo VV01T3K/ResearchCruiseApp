@@ -1,5 +1,15 @@
 import type { FormBOptions as GeneratedFormBOptions } from '@/api/generated/schemas';
+import type { ShipEquipmentOption } from './ShipEquipmentOption';
 
-import type { DeepPresent } from '@/types/utils';
+export type FormBOptions = Omit<Required<GeneratedFormBOptions>, 'shipEquipments'> & {
+  shipEquipments: ShipEquipmentOption[];
+};
 
-export type FormBOptions = DeepPresent<GeneratedFormBOptions>;
+export function mapFormBOptions(options: GeneratedFormBOptions): FormBOptions {
+  return {
+    shipEquipments: (options.shipEquipments ?? []).map((equipment) => ({
+      id: equipment.id ?? '',
+      name: equipment.name ?? '',
+    })),
+  };
+}

@@ -1,5 +1,5 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { useTypedAppFormContext } from '@/lib/form';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { mapPersonToLabel } from '@/lib/applications/PersonMappers';

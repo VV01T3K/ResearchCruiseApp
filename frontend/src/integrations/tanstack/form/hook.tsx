@@ -8,8 +8,8 @@ import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
-import { extractErrorMessage } from '@/lib/form-errors';
-import type { FormFileValues } from '@/types/form-file-values';
+import type { FileValue } from '@/components/shared/inputs/AppFileInput';
+import { extractErrorMessage } from '@/integrations/tanstack/form/errors';
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } = createFormHookContexts();
 
@@ -185,7 +185,7 @@ type FileProps = Omit<
 >;
 
 function FileField(props: FileProps) {
-  const field = useFieldContext<FormFileValues | undefined>();
+  const field = useFieldContext<FileValue | undefined>();
   return (
     <AppFileInput
       {...props}
@@ -204,7 +204,7 @@ type FilesProps = Omit<
 >;
 
 function FilesField(props: FilesProps) {
-  const field = useFieldContext<FormFileValues[]>();
+  const field = useFieldContext<FileValue[]>();
   return (
     <AppFileInput
       {...props}

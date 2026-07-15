@@ -1,5 +1,5 @@
 import { AppLayout } from '@/components/shared/AppLayout';
-import { useTypedAppFormContext } from '@/lib/form';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { ContractsSection } from '@/routes/applications/$applicationId/-components/formA/ContractsSection';
 import { CruiseGoalSection } from '@/routes/applications/$applicationId/-components/formA/CruiseGoalSection';
 import { CruiseLengthSection } from '@/routes/applications/$applicationId/-components/formA/CruiseLengthSection';

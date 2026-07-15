@@ -8,8 +8,8 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
-import { trackFormSubmit } from '@/lib/sentry';
-import { getFormErrorMessage, navigateToFirstError } from '@/lib/form-errors';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
@@ -25,8 +25,8 @@ import {
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
-import { useAppForm } from '@/lib/form';
-import { setSchemaErrors, setServerFormErrors } from '@/lib/form-errors';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { setSchemaErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 
 export const Route = createFileRoute('/applications/new')({
   component: NewCruiseApplicationPage,

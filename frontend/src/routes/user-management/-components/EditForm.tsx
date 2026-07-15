@@ -17,8 +17,8 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
-import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors } from '@/lib/form-errors';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { getErrors } from '@/integrations/tanstack/form/errors';
 import { getRoleLabel, Role } from '@/types/user';
 import { User } from '@/types/user';
 import {

@@ -13,8 +13,8 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
-import { getFormErrorMessage, navigateToFirstError } from '@/lib/form-errors';
-import { useAppForm } from '@/lib/form';
+import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
 import { ApplicationResponse, ApplicationStatus } from '@/routes/applications/-types';
 import { FormView } from '../-components/FormView';
@@ -367,6 +367,16 @@ function mapApplicationToLegacyCruiseApplication(application: ApplicationRespons
     deputyManagerEmail: application.deputyManager.email,
     deputyManagerFirstName: application.deputyManager.firstName,
     deputyManagerLastName: application.deputyManager.lastName,
+    note: application.note ?? '',
     cruiseHours: application.cruiseHours ?? '',
+    cruiseDays: application.cruiseDays ?? 0,
+    acceptablePeriodBeg: application.acceptablePeriodBeg ?? '',
+    acceptablePeriodEnd: application.acceptablePeriodEnd ?? '',
+    optimalPeriodBeg: application.optimalPeriodBeg ?? '',
+    optimalPeriodEnd: application.optimalPeriodEnd ?? '',
+    precisePeriodStart: application.precisePeriodStart ?? '',
+    precisePeriodEnd: application.precisePeriodEnd ?? '',
+    startDate: application.startDate ?? '',
+    endDate: application.endDate ?? '',
   };
 }

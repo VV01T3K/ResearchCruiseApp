@@ -5,7 +5,7 @@ import { ApplicationsSection } from './ApplicationsSection';
 import { BasicInformationSection } from './BasicInformationSection';
 import { DateSelectionSection } from './DateSelectionSection';
 import { ManagerSelectionSection } from './ManagerSelectionSection';
-import { useTypedAppFormContext } from '@/lib/form';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import type { CruiseResponse } from '@/api/generated/schemas';

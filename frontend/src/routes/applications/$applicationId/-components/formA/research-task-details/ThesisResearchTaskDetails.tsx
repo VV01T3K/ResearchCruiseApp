@@ -1,6 +1,6 @@
 import { Row } from '@tanstack/react-table';
 
-import { useTypedAppFormContext } from '@/lib/form';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { ThesisResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 

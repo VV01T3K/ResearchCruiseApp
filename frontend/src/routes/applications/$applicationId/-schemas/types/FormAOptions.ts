@@ -1,7 +1,6 @@
 import type { FormAOptions as GeneratedFormAOptions } from '@/api/generated/schemas';
 
 import type { ContractValues } from './ContractValues';
-import type { DeepPresent } from '@/types/utils';
 import type { UserOption } from './UserOption';
 import type { PublicationValues } from './PublicationValues';
 import type { ResearchAreaOption } from './ResearchAreaOption';
@@ -9,10 +8,8 @@ import type { ResearchTaskValues } from './ResearchTaskValues';
 import type { SpubTaskValues } from './SpubTaskValues';
 import type { UgUnitOption } from './UgUnitOption';
 
-type GeneratedInitValues = DeepPresent<GeneratedFormAOptions>;
-
 export type FormAOptions = Omit<
-  GeneratedInitValues,
+  Required<GeneratedFormAOptions>,
   | 'cruiseManagers'
   | 'deputyManagers'
   | 'researchAreas'

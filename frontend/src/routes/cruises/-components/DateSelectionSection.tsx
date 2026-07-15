@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
-import { useTypedAppFormContext } from '@/lib/form';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 
 export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {

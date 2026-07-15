@@ -9,9 +9,8 @@ import EmojiNeutralIcon from 'bootstrap-icons/icons/emoji-neutral.svg?react';
 import EmojiSmileUpsideDownIcon from 'bootstrap-icons/icons/emoji-smile-upside-down.svg?react';
 
 import { UserContextType } from '@/providers/UserContext';
-import config from '@/config';
 import { motion } from 'motion/react';
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
@@ -19,6 +18,8 @@ import AppBackground from '@/components/shared/layout/AppBackground';
 import { AppNavbar } from '@/components/shared/layout/AppNavbar';
 import { AppNetworkDisconnectAlert } from '@/components/shared/layout/AppNetworkDisconnectAlert';
 import { AppToaster } from '@/components/shared/layout/AppToaster';
+import { TanStackQueryDevtools } from '@/integrations/tanstack/query/devtools';
+import { TanStackRouterDevtools } from '@/integrations/tanstack/router/devtools';
 
 type RouterContext = {
   userContext?: UserContextType;
@@ -29,13 +30,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   notFoundComponent: AppPageNotFoundHandler,
   errorComponent: AppErrorHandler,
 });
-
-const TanStackRouterDevtools = config.dev
-  ? lazy(() => import('@tanstack/react-router-devtools').then((m) => ({ default: m.TanStackRouterDevtools })))
-  : () => null;
-const ReactQueryDevtools = config.dev
-  ? lazy(() => import('@tanstack/react-query-devtools').then((m) => ({ default: m.ReactQueryDevtools })))
-  : () => null;
 
 function RootLayout() {
   const routerState = useRouterState();
@@ -66,7 +60,7 @@ function RootLayout() {
       <div id="fab-root">
         <Suspense>
           <TanStackRouterDevtools />
-          <ReactQueryDevtools />
+          <TanStackQueryDevtools />
         </Suspense>
       </div>
     </>

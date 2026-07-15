@@ -4,8 +4,8 @@ import { allowOnly } from '@/lib/guards';
 import { revalidateLogic } from '@tanstack/react-form';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
-import { trackFormSubmit } from '@/lib/sentry';
-import { getFormErrorMessage, navigateToFirstError } from '@/lib/form-errors';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { FormView } from './-components/formB/FormView';
 import {
   FORM_B_FIELD_TO_SECTION,
@@ -23,10 +23,10 @@ import {
   useUpdateApplicationFormB,
 } from '@/api/generated/endpoints/applications.gen';
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
+import { mapFormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
 import { ApiError } from '@/lib/custom-fetch';
-import { useAppForm } from '@/lib/form';
-import { setSchemaErrors, setServerFormErrors } from '@/lib/form-errors';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { setSchemaErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formB')({
   component: FormBPage,
@@ -48,7 +48,7 @@ function FormBPage() {
     query: { select: mapFormAOptions },
   });
   const formBInitValues = useGetApplicationFormBContextSuspense({
-    query: { select: (context) => context as FormBOptions },
+    query: { select: mapFormBOptions },
   });
   const cruise = useGetApplicationCruiseSuspense(applicationId);
   const updateMutation = useUpdateApplicationFormB();

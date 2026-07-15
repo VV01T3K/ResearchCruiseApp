@@ -32,20 +32,3 @@ export function getRoleLabel(role: Role): string {
       return 'Załoga statku';
   }
 }
-
-export function getRoleFromLabel(label: string): Role | undefined {
-  switch (label) {
-    case 'Administrator':
-      return Role.Administrator;
-    case 'Armator':
-      return Role.ShipOwner;
-    case 'Kierownik':
-      return Role.CruiseManager;
-    case 'Gość':
-      return Role.Guest;
-    case 'Załoga statku':
-      return Role.ShipCrew;
-    default:
-      return undefined;
-  }
-}

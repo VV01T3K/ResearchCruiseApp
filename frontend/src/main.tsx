@@ -1,6 +1,5 @@
 import './styles/index.css';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { reactErrorHandler } from '@sentry/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -8,8 +7,9 @@ import { z } from 'zod';
 
 import { FatalErrorBoundary } from '@/components/shared/FatalErrorBoundary';
 import config from '@/config';
-import { initializeSentry } from '@/lib/sentry';
-import { AppRouter, router } from '@/router';
+import { initializeSentry } from '@/integrations/sentry/client';
+import { TanStackQueryProvider } from '@/integrations/tanstack/query/root-provider';
+import { AppRouter, router } from '@/integrations/tanstack/router/router';
 import { UserContextProvider } from '@/providers/UserContextProvider';
 
 z.config(z.locales.pl());
@@ -26,11 +26,11 @@ const sentryErrorHandlers = config.sentryDsn
 createRoot(document.getElementById('root')!, sentryErrorHandlers).render(
   <StrictMode>
     <FatalErrorBoundary>
-      <QueryClientProvider client={new QueryClient()}>
+      <TanStackQueryProvider>
         <UserContextProvider>
           <AppRouter />
         </UserContextProvider>
-      </QueryClientProvider>
+      </TanStackQueryProvider>
     </FatalErrorBoundary>
   </StrictMode>
 );

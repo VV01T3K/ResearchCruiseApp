@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { useTypedAppFormContext } from '@/lib/form';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 

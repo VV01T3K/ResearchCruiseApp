@@ -2,7 +2,7 @@ import type { CruiseResponse } from '@/api/generated/schemas';
 import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
 import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
-import { useTypedAppFormContext } from '@/lib/form';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 
 export function useFormBContext() {

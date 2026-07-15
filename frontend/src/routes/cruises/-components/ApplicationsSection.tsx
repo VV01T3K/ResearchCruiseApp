@@ -7,7 +7,7 @@ import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useTypedAppFormContext } from '@/lib/form';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 

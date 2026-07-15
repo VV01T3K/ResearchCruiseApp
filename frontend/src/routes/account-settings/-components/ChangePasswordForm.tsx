@@ -5,8 +5,8 @@ import { z } from 'zod';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors } from '@/lib/form-errors';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useChangeCurrentUserPassword } from '@/api/generated/endpoints/users.gen';
 
 const validationSchema = z

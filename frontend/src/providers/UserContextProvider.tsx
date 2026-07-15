@@ -6,7 +6,7 @@ import { useLogin } from '@/api/generated/endpoints/auth.gen';
 import { getCurrentUser, getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
 import { ApiError } from '@/lib/custom-fetch';
 import { refreshSession, setSession, subscribeAuthDetails, toAuthDetails } from '@/lib/auth-session';
-import { setSentryUser } from '@/lib/sentry';
+import { setSentryUser } from '@/integrations/sentry/client';
 import { Role } from '@/types/user';
 import { UserContext, UserContextType } from '@/providers/UserContext';
 import { AuthDetails } from '@/types/user';

@@ -1,5 +1,5 @@
 import type { CruiseApplicationSummary } from '@/api/generated/schemas';
 
-import type { DeepRequired } from '@/types/utils';
-
-export type CruiseApplicationCandidate = DeepRequired<CruiseApplicationSummary>;
+export type CruiseApplicationCandidate = {
+  [Key in keyof CruiseApplicationSummary]-?: Exclude<CruiseApplicationSummary[Key], null | undefined>;
+};
