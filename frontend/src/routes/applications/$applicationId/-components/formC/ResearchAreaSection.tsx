@@ -96,7 +96,6 @@ export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
             <AppTable
               columns={getColumns((index) => {
                 field.removeValue(index);
-                field.handleChange((prev) => prev);
                 field.handleBlur();
               })}
               data={field.state.value}
@@ -111,7 +110,6 @@ export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
                         differentName: area.id != '' ? null : '',
                         info: '',
                       });
-                      field.handleChange((prev) => prev);
                       field.handleBlur();
                     },
                   }))}

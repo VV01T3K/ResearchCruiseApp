@@ -97,7 +97,6 @@ export function CollectedSamplesSection({ context }: { context: FormCViewModel }
                     analysis: '',
                     publishing: '',
                   } satisfies CollectedSampleValues);
-                  field.handleChange((prev: CollectedSampleValues[]) => prev);
                   field.handleBlur();
                 }}
               >

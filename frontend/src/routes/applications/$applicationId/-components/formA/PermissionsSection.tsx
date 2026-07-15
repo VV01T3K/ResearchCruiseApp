@@ -80,7 +80,6 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
               <AppTable
                 columns={getColumns((index) => {
                   field.removeValue(index);
-                  field.handleChange((prev) => prev);
                   field.handleBlur();
                 })}
                 data={field.state.value}
@@ -93,7 +92,6 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
                         executive: '',
                         scan: undefined,
                       } as PermissionValues);
-                      field.handleChange((prev: PermissionValues[]) => prev);
                       field.handleBlur();
                     }}
                     disabled={isReadonly}

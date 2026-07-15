@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { useForm } from '@tanstack/react-form';
+import { revalidateLogic, useForm } from '@tanstack/react-form';
 import React from 'react';
 import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
@@ -51,7 +51,6 @@ const errorMessages: Record<Result | 'username-taken', string> = {
 function RegisterPage() {
   const navigate = useNavigate();
   const [result, setResult] = React.useState<(Result | 'username-taken') | undefined>(undefined);
-  const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = React.useState(false);
   const { mutateAsync } = useRegisterAccount({
     mutation: {
       onSuccess: () => setResult('success'),
@@ -66,21 +65,12 @@ function RegisterPage() {
       password: '',
       confirmPassword: '',
     },
+    validationLogic: revalidateLogic({ mode: 'change', modeAfterSubmission: 'change' }),
     validators: {
-      onChange: validationSchema,
+      onDynamic: validationSchema,
     },
     onSubmit: async ({ value }) => {
-      setHasFormBeenSubmitted(true);
-      await form.validate('change');
-      if (!form.state.isValid) {
-        return;
-      }
-
       trackFormSubmit('register', 'valid', form.state);
-
-      if (!value.email || !value.firstName || !value.lastName || !value.password) {
-        throw new Error('Not all fields are filled despite validation');
-      }
 
       await mutateAsync(
         { data: value },
@@ -115,7 +105,7 @@ function RegisterPage() {
                 type="email"
                 onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 label="E-mail"
               />
             )}
@@ -130,7 +120,7 @@ function RegisterPage() {
                 type="text"
                 onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 label="Imię"
               />
             )}
@@ -145,7 +135,7 @@ function RegisterPage() {
                 type="text"
                 onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 label="Nazwisko"
               />
             )}
@@ -160,7 +150,7 @@ function RegisterPage() {
                 type="password"
                 onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 label="Hasło"
               />
             )}
@@ -175,7 +165,7 @@ function RegisterPage() {
                 type="password"
                 onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 label="Potwierdź hasło"
               />
             )}

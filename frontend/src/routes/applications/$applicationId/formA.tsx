@@ -95,7 +95,7 @@ function FormAPage() {
     return dto.cruiseManagerId === userId || dto.deputyManagerId === userId;
   }
 
-  function saveForm(draft: boolean, loadingMessage: string, successMessage: string) {
+  async function saveForm(draft: boolean, loadingMessage: string, successMessage: string) {
     if (!isCurrentUserManagerOrDeputy(form.state.values)) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
@@ -112,38 +112,32 @@ function FormAPage() {
     }
 
     const loading = toast.loading(loadingMessage);
-    saveMutation.mutate(
-      {
+    try {
+      await saveMutation.mutateAsync({
         applicationId,
         data: schema.parse(form.state.values),
-      },
-      {
-        onSuccess: () => {
-          navigate({ to: '/' });
-          toast.success(successMessage);
-        },
-        onError: (err) => {
-          console.error(err);
-          if (setServerFormErrors(form, err)) {
-            toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-            navigateToFirstError();
-            return;
-          }
-          toast.error('Nie udało się zapisać formularza. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError();
-        },
-        onSettled: () => {
-          setIsSaveDraftModalOpen(false);
-          toast.dismiss(loading);
-        },
+      });
+      navigate({ to: '/' });
+      toast.success(successMessage);
+    } catch (err) {
+      console.error(err);
+      if (setServerFormErrors(form, err)) {
+        toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
+        navigateToFirstError();
+        return;
       }
-    );
+      toast.error('Nie udało się zapisać formularza. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+      navigateToFirstError();
+    } finally {
+      setIsSaveDraftModalOpen(false);
+      toast.dismiss(loading);
+    }
   }
 
   async function handleValidSubmit() {
     trackFormSubmit('form-a', 'valid', form.state);
 
-    saveForm(
+    await saveForm(
       false,
       'Zapisywanie formularza...',
       'Formularz został zapisany i wysłany do potwierdzenia przez przełożonego'
@@ -151,7 +145,7 @@ function FormAPage() {
   }
 
   function handleSaveDraft() {
-    saveForm(true, 'Zapisywanie wersji roboczej formularza...', 'Formularz został zapisany jako wersja robocza');
+    void saveForm(true, 'Zapisywanie wersji roboczej formularza...', 'Formularz został zapisany jako wersja robocza');
   }
 
   return (

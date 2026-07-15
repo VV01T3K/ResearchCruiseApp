@@ -20,10 +20,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
   const { formB, isReadonly, formAInitValues } = context;
 
-  function getUgTeamsColumns(
-    notifyRowsChanged: () => void,
-    removeRow: (index: number) => void
-  ): ColumnDef<UgTeamValues>[] {
+  function getUgTeamsColumns(removeRow: (index: number) => void): ColumnDef<UgTeamValues>[] {
     return [
       {
         header: 'Lp.',
@@ -52,7 +49,6 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
-                  notifyRowsChanged();
                 }}
                 className="mx-4"
                 disabled={isReadonly}
@@ -75,7 +71,6 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
-                  notifyRowsChanged();
                 }}
                 className="mx-4"
                 disabled={isReadonly}
@@ -102,10 +97,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
     ];
   }
 
-  function getGuestTeams(
-    notifyRowsChanged: () => void,
-    removeRow: (index: number) => void
-  ): ColumnDef<GuestTeamValues>[] {
+  function getGuestTeams(removeRow: (index: number) => void): ColumnDef<GuestTeamValues>[] {
     return [
       {
         header: 'Lp.',
@@ -140,7 +132,6 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
-                  notifyRowsChanged();
                 }}
                 className="mx-4"
                 disabled={isReadonly}
@@ -249,14 +240,10 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
           children={(field) => (
             <div>
               <AppTable
-                columns={getUgTeamsColumns(
-                  () => field.handleChange((prev) => prev),
-                  (index) => {
-                    field.removeValue(index);
-                    field.handleChange((prev) => prev);
-                    field.handleBlur();
-                  }
-                )}
+                columns={getUgTeamsColumns((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 buttons={() => [
                   <DropdownElementSelectorButton
@@ -270,7 +257,6 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                           noOfEmployees: 0,
                           noOfStudents: 0,
                         });
-                        field.handleChange((prev) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -295,14 +281,10 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
           children={(field) => (
             <div>
               <AppTable
-                columns={getGuestTeams(
-                  () => field.handleChange((prev) => prev),
-                  (index) => {
-                    field.removeValue(index);
-                    field.handleChange((prev) => prev);
-                    field.handleBlur();
-                  }
-                )}
+                columns={getGuestTeams((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 buttons={() => [
                   <AppButton
@@ -310,7 +292,6 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                     variant="primary"
                     onClick={() => {
                       field.pushValue({ name: '', noOfPersons: 0 });
-                      field.handleChange((prev) => prev);
                       field.handleBlur();
                     }}
                     className="flex items-center gap-4"
@@ -324,7 +305,6 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                       value: institution,
                       onClick: () => {
                         field.pushValue({ name: institution, noOfPersons: 0 });
-                        field.handleChange((prev) => prev);
                         field.handleBlur();
                       },
                     }))}

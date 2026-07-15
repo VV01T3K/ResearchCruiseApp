@@ -79,7 +79,6 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
               <AppTable
                 columns={getColumns((index) => {
                   field.removeValue(index);
-                  field.handleChange((prev) => prev);
                   field.handleBlur();
                 })}
                 data={field.state.value}
@@ -91,7 +90,6 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                       value: getTaskName(type),
                       onClick: () => {
                         field.pushValue(getEmptyTask(type));
-                        field.handleChange((prev: ResearchTaskValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -119,7 +117,6 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                         content: <ResearchTaskThumbnail task={task} />,
                         onClick: () => {
                           field.pushValue(task);
-                          field.handleChange((prev: ResearchTaskValues[]) => prev);
                           field.handleBlur();
                         },
                       })),

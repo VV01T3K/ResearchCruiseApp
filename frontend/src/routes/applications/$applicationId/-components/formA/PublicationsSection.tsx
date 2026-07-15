@@ -212,7 +212,6 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
               <AppTable
                 columns={getColumns((index) => {
                   field.removeValue(index);
-                  field.handleChange((prev) => prev);
                   field.handleBlur();
                 })}
                 data={field.state.value}
@@ -232,7 +231,6 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                           year: null,
                           ministerialPoints: 0,
                         });
-                        field.handleChange((prev: PublicationValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -289,7 +287,6 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                         ),
                         onClick: () => {
                           field.pushValue(publication);
-                          field.handleChange((prev: PublicationValues[]) => prev);
                           field.handleBlur();
                         },
                       })),

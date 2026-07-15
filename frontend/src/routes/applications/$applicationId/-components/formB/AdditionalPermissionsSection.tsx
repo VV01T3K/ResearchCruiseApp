@@ -117,7 +117,6 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
             <AppTable
               columns={getColumns((index) => {
                 field.removeValue(index);
-                field.handleChange((prev) => prev);
                 field.handleBlur();
               })}
               data={field.state.value}
@@ -127,7 +126,6 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
                   data-testid="form-b-add-permission-btn"
                   onClick={() => {
                     field.pushValue({ description: '', executive: '' });
-                    field.handleChange((prev: PermissionValues[]) => prev);
                     field.handleBlur();
                   }}
                   disabled={isReadonly}

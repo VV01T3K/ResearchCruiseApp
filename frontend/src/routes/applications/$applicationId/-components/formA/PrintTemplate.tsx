@@ -1,5 +1,6 @@
 /* eslint-disable @eslint-react/no-array-index-key */
 import { Fragment, RefObject } from 'react';
+import { useSelector } from '@tanstack/react-form';
 
 import { cn } from '@/lib/utils';
 import {
@@ -25,7 +26,7 @@ type Props = {
 export function PrintTemplate({ ref, context }: Props) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   const { initValues } = context;
-  const values = form.state.values;
+  const values = useSelector(form.store, (state) => state.values);
 
   return (
     <PrintingPage ref={ref} title="Formularz A">

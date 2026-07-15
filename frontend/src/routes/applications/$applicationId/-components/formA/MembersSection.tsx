@@ -17,10 +17,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   const { isReadonly, initValues } = context;
 
-  function getUgTeamsColumns(
-    notifyRowsChanged: () => void,
-    removeRow: (index: number) => void
-  ): ColumnDef<UgTeamValues>[] {
+  function getUgTeamsColumns(removeRow: (index: number) => void): ColumnDef<UgTeamValues>[] {
     return [
       {
         header: 'Lp.',
@@ -46,7 +43,6 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
-                  notifyRowsChanged();
                 }}
                 className="mx-4"
                 showRequiredAsterisk
@@ -70,7 +66,6 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
-                  notifyRowsChanged();
                 }}
                 className="mx-4"
                 showRequiredAsterisk
@@ -100,10 +95,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
     ];
   }
 
-  function getGuestTeams(
-    notifyRowsChanged: () => void,
-    removeRow: (index: number) => void
-  ): ColumnDef<GuestTeamValues>[] {
+  function getGuestTeams(removeRow: (index: number) => void): ColumnDef<GuestTeamValues>[] {
     return [
       {
         header: 'Lp.',
@@ -136,7 +128,6 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
-                  notifyRowsChanged();
                 }}
                 className="mx-4"
                 showRequiredAsterisk
@@ -179,14 +170,10 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
           children={(field) => (
             <div className="mt-auto">
               <AppTable
-                columns={getUgTeamsColumns(
-                  () => field.handleChange((prev) => prev),
-                  (index) => {
-                    field.removeValue(index);
-                    field.handleChange((prev) => prev);
-                    field.handleBlur();
-                  }
-                )}
+                columns={getUgTeamsColumns((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 showRequiredAsterisk
                 buttons={() => [
@@ -201,7 +188,6 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                           noOfEmployees: 0,
                           noOfStudents: 0,
                         });
-                        field.handleChange((prev: UgTeamValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -231,14 +217,10 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
           children={(field) => (
             <div>
               <AppTable
-                columns={getGuestTeams(
-                  () => field.handleChange((prev) => prev),
-                  (index) => {
-                    field.removeValue(index);
-                    field.handleChange((prev) => prev);
-                    field.handleBlur();
-                  }
-                )}
+                columns={getGuestTeams((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 buttons={() => [
                   <AppButton
@@ -246,7 +228,6 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                     variant="primary"
                     onClick={() => {
                       field.pushValue({ name: '', noOfPersons: 0 });
-                      field.handleChange((prev: GuestTeamValues[]) => prev);
                       field.handleBlur();
                     }}
                     className="flex items-center gap-4"
@@ -261,7 +242,6 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                       value: institution,
                       onClick: () => {
                         field.pushValue({ name: institution, noOfPersons: 0 });
-                        field.handleChange((prev: GuestTeamValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}

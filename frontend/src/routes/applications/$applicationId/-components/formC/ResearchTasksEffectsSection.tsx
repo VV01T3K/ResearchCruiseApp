@@ -1,4 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
+import { useSelector } from '@tanstack/react-form';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
@@ -12,6 +13,7 @@ import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-
 export function ResearchTasksEffectsSection({ context }: { context: FormCViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
   const { isReadonly } = context;
+  const researchTasksEffects = useSelector(form.store, (state) => state.values.researchTasksEffects);
 
   const columns: ColumnDef<ResearchTaskEffectValues>[] = [
     {
@@ -39,41 +41,38 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
               <div className="flex items-center justify-center gap-4">
                 <form.AppField
                   name={`researchTasksEffects[${row.index}].done`}
+                  listeners={{
+                    onChange: ({ value }) => {
+                      if (value) return;
+                      form.setFieldValue(`researchTasksEffects[${row.index}].managerConditionMet`, false);
+                      form.setFieldValue(`researchTasksEffects[${row.index}].deputyConditionMet`, false);
+                    },
+                  }}
                   children={(field) => (
                     <field.CheckboxField size="md" label="Zrealizowane" labelPosition="top" disabled={isReadonly} />
                   )}
                 />
                 <form.AppField
                   name={`researchTasksEffects[${row.index}].managerConditionMet`}
-                  children={(field) => {
-                    if (field.state.value && !taskDone) {
-                      field.handleChange(false);
-                    }
-                    return (
-                      <field.CheckboxField
-                        size="md"
-                        label="Czy naliczyć punkty kierownikowi?"
-                        labelPosition="top"
-                        disabled={isReadonly || !taskDone}
-                      />
-                    );
-                  }}
+                  children={(field) => (
+                    <field.CheckboxField
+                      size="md"
+                      label="Czy naliczyć punkty kierownikowi?"
+                      labelPosition="top"
+                      disabled={isReadonly || !taskDone}
+                    />
+                  )}
                 />
                 <form.AppField
                   name={`researchTasksEffects[${row.index}].deputyConditionMet`}
-                  children={(field) => {
-                    if (field.state.value && !taskDone) {
-                      field.handleChange(false);
-                    }
-                    return (
-                      <field.CheckboxField
-                        size="md"
-                        label="Czy naliczyć punkty zastępcy?"
-                        labelPosition="top"
-                        disabled={isReadonly || !taskDone}
-                      />
-                    );
-                  }}
+                  children={(field) => (
+                    <field.CheckboxField
+                      size="md"
+                      label="Czy naliczyć punkty zastępcy?"
+                      labelPosition="top"
+                      disabled={isReadonly || !taskDone}
+                    />
+                  )}
                 />
               </div>
             )}
@@ -91,7 +90,7 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
       data-testid="form-c-research-tasks-effects-section"
     >
       <AppTable
-        data={form.state.values.researchTasksEffects}
+        data={researchTasksEffects}
         columns={columns}
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego zadania."

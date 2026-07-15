@@ -129,7 +129,6 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
               <AppTable
                 columns={getColumns((index) => {
                   field.removeValue(index);
-                  field.handleChange((prev) => prev);
                   field.handleBlur();
                 })}
                 data={field.state.value}
@@ -138,7 +137,6 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
                     key="new"
                     onClick={() => {
                       field.pushValue({ name: '', yearFrom: '', yearTo: '' });
-                      field.handleChange((prev) => prev);
                       field.handleBlur();
                     }}
                     disabled={isReadonly}
@@ -152,7 +150,6 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
                       content: `${task.name} (${task.yearFrom} - ${task.yearTo})`,
                       onClick: () => {
                         field.pushValue(task);
-                        field.handleChange((prev) => prev);
                         field.handleBlur();
                       },
                     }))}

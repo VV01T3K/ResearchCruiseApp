@@ -121,7 +121,6 @@ export function ResearchEquipmentsSection({ context }: { context: FormCViewModel
               form,
               (index) => {
                 field.removeValue(index);
-                field.handleChange((prev) => prev);
                 field.handleBlur();
               },
               isReadonly
@@ -136,7 +135,6 @@ export function ResearchEquipmentsSection({ context }: { context: FormCViewModel
                     insuranceEndDate: null,
                     permission: false,
                   });
-                  field.handleChange((prev) => prev);
                   field.handleBlur();
                 }}
               >

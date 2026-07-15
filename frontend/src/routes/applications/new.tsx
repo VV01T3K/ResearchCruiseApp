@@ -94,34 +94,28 @@ function NewCruiseApplicationPage() {
 
     const loading = toast.loading('Zapisywanie formularza...');
 
-    saveMutation.mutate(
-      {
+    try {
+      await saveMutation.mutateAsync({
         data: getFormAWriteSchema(initialStateQuery.data, blockadesQuery.data).parse(form.state.values),
-      },
-      {
-        onSuccess: () => {
-          toast.success('Formularz został zapisany i wysłany do potwierdzenia przez przełożonego.');
-          navigate({ to: '/' });
-        },
-        onError: (err) => {
-          console.error(err);
-          if (setServerFormErrors(form, err)) {
-            toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-            navigateToFirstError();
-            return;
-          }
-          toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError();
-        },
-        onSettled: () => {
-          toast.dismiss(loading);
-          setIsSaveDraftModalOpen(false);
-        },
+      });
+      toast.success('Formularz został zapisany i wysłany do potwierdzenia przez przełożonego.');
+      navigate({ to: '/' });
+    } catch (err) {
+      console.error(err);
+      if (setServerFormErrors(form, err)) {
+        toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
+        navigateToFirstError();
+        return;
       }
-    );
+      toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
+      navigateToFirstError();
+    } finally {
+      toast.dismiss(loading);
+      setIsSaveDraftModalOpen(false);
+    }
   }
 
-  function handleSavingDraft() {
+  async function handleSavingDraft() {
     if (
       form.state.values.cruiseManagerId !== userContext.currentUser!.id &&
       form.state.values.deputyManagerId !== userContext.currentUser!.id
@@ -140,29 +134,23 @@ function NewCruiseApplicationPage() {
     }
 
     const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
-    saveMutation.mutate(
-      { data: schema.parse(form.state.values) },
-      {
-        onSuccess: () => {
-          toast.success('Formularz został zapisany jako wersja robocza');
-          navigate({ to: '/' });
-        },
-        onError: (err) => {
-          console.error(err);
-          if (setServerFormErrors(form, err)) {
-            toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-            navigateToFirstError();
-            return;
-          }
-          toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError();
-        },
-        onSettled: () => {
-          setIsSaveDraftModalOpen(false);
-          toast.dismiss(loading);
-        },
+    try {
+      await saveMutation.mutateAsync({ data: schema.parse(form.state.values) });
+      toast.success('Formularz został zapisany jako wersja robocza');
+      navigate({ to: '/' });
+    } catch (err) {
+      console.error(err);
+      if (setServerFormErrors(form, err)) {
+        toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
+        navigateToFirstError();
+        return;
       }
-    );
+      toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
+      navigateToFirstError();
+    } finally {
+      setIsSaveDraftModalOpen(false);
+      toast.dismiss(loading);
+    }
   }
 
   return (

@@ -1,7 +1,7 @@
 import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { useForm } from '@tanstack/react-form';
+import { revalidateLogic, useForm } from '@tanstack/react-form';
 import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import React from 'react';
@@ -47,7 +47,6 @@ const validationSchema = z
 function ResetPasswordPage() {
   const { emailBase64, resetCode } = Route.useSearch();
   const [result, setResult] = React.useState<Result | undefined>(undefined);
-  const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = React.useState(false);
   const { mutateAsync } = useResetPassword({
     mutation: {
       onSuccess: () => setResult('success'),
@@ -59,17 +58,11 @@ function ResetPasswordPage() {
       password: '',
       passwordConfirm: '',
     },
+    validationLogic: revalidateLogic({ mode: 'change', modeAfterSubmission: 'change' }),
     validators: {
-      onChange: validationSchema,
+      onDynamic: validationSchema,
     },
     onSubmit: async ({ value }) => {
-      setHasFormBeenSubmitted(true);
-
-      await form.validate('change');
-      if (!form.state.isValid) {
-        return;
-      }
-
       trackFormSubmit('reset-password', 'valid', form.state);
 
       if (!emailBase64 || !resetCode) {
@@ -83,7 +76,7 @@ function ResetPasswordPage() {
           password: value.password,
           passwordConfirm: value.passwordConfirm,
         },
-      });
+      }).catch(() => {});
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('reset-password', 'invalid', formApi.state);
@@ -138,7 +131,7 @@ function ResetPasswordPage() {
               type="password"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               label="Hasło"
             />
           )}
@@ -153,7 +146,7 @@ function ResetPasswordPage() {
               type="password"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               label="Potwierdź hasło"
             />
           )}

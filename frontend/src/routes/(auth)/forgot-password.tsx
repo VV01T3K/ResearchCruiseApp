@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { useForm } from '@tanstack/react-form';
+import { revalidateLogic, useForm } from '@tanstack/react-form';
 import React from 'react';
 import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
@@ -18,7 +18,7 @@ export const Route = createFileRoute('/(auth)/forgot-password')({
 });
 
 const validationSchema = z.object({
-  email: z.email('Niepoprawny adres e-mail').or(z.literal('')),
+  email: z.email('Niepoprawny adres e-mail'),
 });
 
 function ForgotPasswordPage() {
@@ -34,15 +34,12 @@ function ForgotPasswordPage() {
     defaultValues: {
       email: '',
     },
+    validationLogic: revalidateLogic({ mode: 'change', modeAfterSubmission: 'change' }),
     validators: {
-      onChange: validationSchema,
+      onDynamic: validationSchema,
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('forgot-password', 'valid', formApi.state);
-
-      if (!value.email) {
-        throw new Error('Not all fields are filled despite validation');
-      }
 
       setResult(undefined);
       await mutateAsync(
@@ -91,7 +88,7 @@ function ForgotPasswordPage() {
                 type="email"
                 onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 label="E-mail"
               />
             )}

@@ -132,7 +132,6 @@ export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }
               form,
               (index) => {
                 field.removeValue(index);
-                field.handleChange((prev) => prev);
                 field.handleBlur();
               },
               isReadonly
@@ -149,7 +148,6 @@ export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }
                     position: '',
                     comment: '',
                   });
-                  field.handleChange((prev: CruiseDayValues[]) => prev);
                   field.handleBlur();
                 }}
                 variant="primary"

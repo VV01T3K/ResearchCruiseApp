@@ -231,10 +231,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     name="precisePeriodEnd"
                     children={(field) => (
                       <field.DateField
-                        onChange={(newValue) => {
-                          field.handleChange(newValue ?? '');
-                          form.validateField('precisePeriodStart', 'change');
-                        }}
+                        onChange={(newValue) => field.handleChange(newValue ?? '')}
                         label="Dokładny termin zakończenia rejsu"
                         type="date"
                         showRequiredAsterisk

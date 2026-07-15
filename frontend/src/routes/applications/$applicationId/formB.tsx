@@ -89,41 +89,35 @@ function FormBPage() {
     trackFormSubmit('form-b', 'valid', form.state);
 
     const loading = toast.loading('Zapisywanie formularza...');
-    await updateMutation.mutateAsync(
-      {
+    try {
+      await updateMutation.mutateAsync({
         applicationId,
         data: getFormBWriteSchema().parse(values),
-      },
-      {
-        onSuccess: () => {
-          navigate({ to: '/applications' });
-          toast.success('Formularz został wysłany pomyślnie.');
-        },
-        onError: (err) => {
-          if (err instanceof ApiError && err.status === 403) {
-            toast.error(
-              'Aplikacja nie znajduje się w odpowiednim stanie, aby przesłać formularz. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
-            );
-            navigate({ to: '/applications' });
-            return;
-          }
-
-          console.error(err);
-          if (setServerFormErrors(form, err)) {
-            toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
-            navigateToFirstError();
-            return;
-          }
-          toast.error(
-            'Nie udało się wysłać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie i spróbuj ponownie.'
-          );
-          navigateToFirstError();
-        },
-        onSettled: () => {
-          toast.dismiss(loading);
-        },
+      });
+      navigate({ to: '/applications' });
+      toast.success('Formularz został wysłany pomyślnie.');
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 403) {
+        toast.error(
+          'Aplikacja nie znajduje się w odpowiednim stanie, aby przesłać formularz. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
+        );
+        navigate({ to: '/applications' });
+        return;
       }
-    );
+
+      console.error(err);
+      if (setServerFormErrors(form, err)) {
+        toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
+        navigateToFirstError();
+        return;
+      }
+      toast.error(
+        'Nie udało się wysłać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie i spróbuj ponownie.'
+      );
+      navigateToFirstError();
+    } finally {
+      toast.dismiss(loading);
+    }
   }
 
   async function handleDraftSave() {
@@ -135,54 +129,43 @@ function FormBPage() {
     }
 
     const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
-    await updateMutation.mutateAsync(
-      {
+    try {
+      await updateMutation.mutateAsync({
         applicationId,
         data: schema.parse(form.state.values),
-      },
-      {
-        onSuccess: () => {
-          navigate({ to: '/applications' });
-          toast.success('Wersja robocza formularza została zapisana.');
-        },
-        onError: (err) => {
-          if (err instanceof ApiError && err.status === 403) {
-            toast.error(
-              'Aplikacja nie znajduje się w odpowiednim stanie, aby zapisać wersję roboczą formularza. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
-            );
-            navigate({ to: '/applications' });
-            return;
-          }
-
-          console.error(err);
-          if (setServerFormErrors(form, err)) {
-            toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
-            navigateToFirstError();
-            return;
-          }
-          toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
-          navigateToFirstError();
-        },
-        onSettled: () => {
-          toast.dismiss(loading);
-        },
+      });
+      navigate({ to: '/applications' });
+      toast.success('Wersja robocza formularza została zapisana.');
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 403) {
+        toast.error(
+          'Aplikacja nie znajduje się w odpowiednim stanie, aby zapisać wersję roboczą formularza. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
+        );
+        navigate({ to: '/applications' });
+        return;
       }
-    );
+
+      console.error(err);
+      if (setServerFormErrors(form, err)) {
+        toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
+        navigateToFirstError();
+        return;
+      }
+      toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
+      navigateToFirstError();
+    } finally {
+      toast.dismiss(loading);
+    }
   }
 
   async function handleRevertToEdit() {
     const loading = toast.loading('Cofanie formularza do edycji...');
-    await revertToEditMutation.mutateAsync(
-      { applicationId },
-      {
-        onSuccess: async () => {
-          await navigate({ to: `/applications/${applicationId}/formB?mode=edit` });
-        },
-        onSettled: () => {
-          toast.dismiss(loading);
-        },
-      }
-    );
+    try {
+      await revertToEditMutation.mutateAsync({ applicationId });
+      await navigate({ to: `/applications/${applicationId}/formB?mode=edit` });
+    } finally {
+      toast.dismiss(loading);
+    }
   }
 
   return (

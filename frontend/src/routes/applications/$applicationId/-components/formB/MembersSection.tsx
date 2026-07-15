@@ -19,10 +19,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formBDefaultValues });
   const { isReadonly, formAInitValues } = context;
 
-  function getUgTeamsColumns(
-    removeRow: (index: number) => void,
-    notifyRowsChanged: () => void
-  ): ColumnDef<UgTeamValues>[] {
+  function getUgTeamsColumns(removeRow: (index: number) => void): ColumnDef<UgTeamValues>[] {
     return [
       {
         header: 'Lp.',
@@ -52,7 +49,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
-                  notifyRowsChanged();
                 }}
                 className="mx-4"
                 disabled={isReadonly}
@@ -76,7 +72,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
-                  notifyRowsChanged();
                 }}
                 className="mx-4"
                 disabled={isReadonly}
@@ -93,7 +88,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
             <AppTableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
-                notifyRowsChanged();
               }}
               disabled={isReadonly}
             />
@@ -104,10 +98,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
     ];
   }
 
-  function getGuestTeams(
-    removeRow: (index: number) => void,
-    notifyRowsChanged: () => void
-  ): ColumnDef<GuestTeamValues>[] {
+  function getGuestTeams(removeRow: (index: number) => void): ColumnDef<GuestTeamValues>[] {
     return [
       {
         header: 'Lp.',
@@ -151,7 +142,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
-                  notifyRowsChanged();
                 }}
                 className="mx-4"
                 disabled={isReadonly}
@@ -168,7 +158,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
             <AppTableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
-                notifyRowsChanged();
               }}
               disabled={isReadonly}
             />
@@ -341,13 +330,10 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
           children={(field) => (
             <div>
               <AppTable
-                columns={getUgTeamsColumns(
-                  (index) => {
-                    field.removeValue(index);
-                    field.handleBlur();
-                  },
-                  () => field.handleChange((prev) => prev)
-                )}
+                columns={getUgTeamsColumns((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 buttons={() => [
                   <DropdownElementSelectorButton
@@ -362,7 +348,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                           noOfEmployees: 0,
                           noOfStudents: 0,
                         });
-                        field.handleChange((prev: UgTeamValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -390,13 +375,10 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
           children={(field) => (
             <div>
               <AppTable
-                columns={getGuestTeams(
-                  (index) => {
-                    field.removeValue(index);
-                    field.handleBlur();
-                  },
-                  () => field.handleChange((prev) => prev)
-                )}
+                columns={getGuestTeams((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 buttons={() => [
                   <AppButton
@@ -405,7 +387,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                     data-testid="form-b-add-guest-team-btn"
                     onClick={() => {
                       field.pushValue({ name: '', noOfPersons: 0 });
-                      field.handleChange((prev: GuestTeamValues[]) => prev);
                       field.handleBlur();
                     }}
                     className="flex items-center gap-4"
@@ -420,7 +401,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                       value: institution,
                       onClick: () => {
                         field.pushValue({ name: institution, noOfPersons: 0 });
-                        field.handleChange((prev: GuestTeamValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -451,7 +431,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
             <AppTable
               columns={getCrewMembersColumns((index) => {
                 field.removeValue(index);
-                field.handleChange((prev) => prev);
                 field.handleBlur();
               })}
               data={field.state.value}
@@ -470,7 +449,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                       documentExpiryDate: '',
                       institution: '',
                     });
-                    field.handleChange((prev: CrewMemberValues[]) => prev);
                     field.handleBlur();
                   }}
                   disabled={isReadonly}

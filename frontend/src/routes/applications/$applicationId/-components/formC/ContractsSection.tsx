@@ -133,7 +133,6 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
               <AppTable
                 columns={getColumns((index) => {
                   field.removeValue(index);
-                  field.handleChange((prev) => prev);
                   field.handleBlur();
                 })}
                 data={field.state.value}
@@ -154,7 +153,6 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
                           description: '',
                           scans: [],
                         });
-                        field.handleChange((prev: ContractValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -169,7 +167,6 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
                       value: `${contract.institutionName}, ${contract.institutionUnit}, ${contract.institutionLocalization} - ${contract.description}`,
                       onClick: () => {
                         field.pushValue(contract);
-                        field.handleChange((prev: ContractValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}

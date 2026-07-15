@@ -133,7 +133,6 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
               <AppTable
                 columns={getColumns((index) => {
                   field.removeValue(index);
-                  field.handleChange((prev) => prev);
                   field.handleBlur();
                 })}
                 data={field.state.value}
@@ -154,7 +153,6 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
                           description: '',
                           scans: [],
                         });
-                        field.handleChange((prev: ContractValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -170,7 +168,6 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
                       value: `${contract.institutionName}, ${contract.institutionUnit}, ${contract.institutionLocalization} - ${contract.description}`,
                       onClick: () => {
                         field.pushValue(contract);
-                        field.handleChange((prev: ContractValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}

@@ -60,20 +60,15 @@ function NewCruisePage() {
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('new-cruise', 'valid', formApi.state);
-      await createCruiseMutation.mutateAsync(
-        { data: CreateCruiseFormSchema.parse(value) },
-        {
-          onSuccess: () => {
-            navigate({ to: '/cruises' });
-            toast.success('Rejs został utworzony pomyślnie.');
-          },
-          onError: (error) => {
-            console.error(error);
-            toast.error('Nie udało się utworzyć rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-            navigateToFirstError();
-          },
-        }
-      );
+      try {
+        await createCruiseMutation.mutateAsync({ data: CreateCruiseFormSchema.parse(value) });
+        navigate({ to: '/cruises' });
+        toast.success('Rejs został utworzony pomyślnie.');
+      } catch (error) {
+        console.error(error);
+        toast.error('Nie udało się utworzyć rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        navigateToFirstError();
+      }
     },
   });
 

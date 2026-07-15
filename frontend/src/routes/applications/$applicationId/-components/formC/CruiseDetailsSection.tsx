@@ -274,7 +274,6 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
                 form,
                 (index) => {
                   field.removeValue(index);
-                  field.handleChange((prev) => prev);
                   field.handleBlur();
                 },
                 isReadonly
@@ -289,7 +288,6 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
                       endDate: '',
                       name: '',
                     });
-                    field.handleChange((prev: ShortResearchEquipmentValues[]) => prev);
                     field.handleBlur();
                   }}
                 >
@@ -314,7 +312,6 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
                 form,
                 (index) => {
                   field.removeValue(index);
-                  field.handleChange((prev) => prev);
                   field.handleBlur();
                 },
                 isReadonly
@@ -334,7 +331,6 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
                         duration: '',
                         name: '',
                       });
-                      field.handleChange((prev: LongResearchEquipmentValues[]) => prev);
                       field.handleBlur();
                     },
                   }))}
@@ -362,7 +358,6 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
                 form,
                 (index) => {
                   field.removeValue(index);
-                  field.handleChange((prev) => prev);
                   field.handleBlur();
                 },
                 isReadonly
@@ -377,7 +372,6 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
                       endTime: '',
                       name: '',
                     });
-                    field.handleChange((prev: PortCallValues[]) => prev);
                     field.handleBlur();
                   }}
                 >

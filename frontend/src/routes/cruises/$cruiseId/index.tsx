@@ -83,21 +83,16 @@ function CruiseDetailsPage() {
       toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
       navigateToFirstError();
     },
-    onSubmit: ({ value }) => {
-      updateCruiseMutation.mutate(
-        { cruiseId, data: UpdateCruiseFormSchema.parse(value) },
-        {
-          onSuccess: () => {
-            setEditMode(false);
-            toast.success('Rejs został zaktualizowany pomyślnie.');
-          },
-          onError: (error) => {
-            console.error(error);
-            toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-            navigateToFirstError();
-          },
-        }
-      );
+    onSubmit: async ({ value }) => {
+      try {
+        await updateCruiseMutation.mutateAsync({ cruiseId, data: UpdateCruiseFormSchema.parse(value) });
+        setEditMode(false);
+        toast.success('Rejs został zaktualizowany pomyślnie.');
+      } catch (error) {
+        console.error(error);
+        toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        navigateToFirstError();
+      }
     },
   });
 
