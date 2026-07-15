@@ -75,6 +75,29 @@ test('valid form A', async ({ formAPage }) => {
   await formAPage.submitForm({ expectedResult: 'valid' });
 });
 
+test('centers the first invalid field after submit', async ({ formAPage }) => {
+  await formAPage.page.evaluate(() => {
+    const scrollIntoView = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollIntoView')!.value;
+    HTMLElement.prototype.scrollIntoView = function (options) {
+      document.documentElement.dataset.lastScrollBlock = typeof options === 'object' ? options.block : '';
+      scrollIntoView.call(this, options);
+    };
+  });
+  await formAPage.submitButton.click();
+
+  const firstInvalidField = formAPage.page.locator('[aria-invalid="true"], [data-error="true"]').first();
+  await expect(firstInvalidField).toBeFocused();
+  await expect(formAPage.page.locator('html')).toHaveAttribute('data-last-scroll-block', 'center');
+  await expect
+    .poll(async () => {
+      const box = await firstInvalidField.boundingBox();
+      const viewportHeight = formAPage.page.viewportSize()!.height;
+      const fieldCenter = box ? box.y + box.height / 2 : 0;
+      return fieldCenter > viewportHeight * 0.25 && fieldCenter < viewportHeight * 0.75;
+    })
+    .toBe(true);
+});
+
 test('shows server validation errors on their fields', async ({ formAPage }) => {
   await formAPage.fillForm();
   await formAPage.page.route(`${API_URL}/v2/applications`, (route) =>

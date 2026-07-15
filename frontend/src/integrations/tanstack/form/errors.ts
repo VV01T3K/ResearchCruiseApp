@@ -54,7 +54,8 @@ export function navigateToFirstError(): void {
 
     requestAnimationFrame(() => {
       if (target.matches('[data-error="true"]')) target.tabIndex = -1;
-      target.focus();
+      target.focus({ preventScroll: true });
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
   });
 }
