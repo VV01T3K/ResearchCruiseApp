@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 
 // Zod validation schema
 const validationSchema = z.object({

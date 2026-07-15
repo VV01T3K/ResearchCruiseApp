@@ -14,6 +14,7 @@ import { FormView } from '@/routes/applications/$applicationId/-components/formA
 import {
   FORM_A_FIELD_TO_SECTION,
   type FormAValues,
+  formADefaultValues,
   getFormADraftWriteSchema,
   getFormAWriteSchema,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -26,7 +27,7 @@ import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/f
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
 import { useAppForm } from '@/lib/form';
-import { installServerFormErrors } from '@/lib/form-errors';
+import { setSchemaErrors, setServerFormErrors } from '@/lib/form-errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({
   component: FormAPage,
@@ -52,32 +53,11 @@ function FormAPage() {
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
 
   const defaultValues = (formA.data ?? {
-    id: undefined,
+    ...formADefaultValues,
     cruiseManagerId: userContext.currentUser!.id,
-    deputyManagerId: '',
     year: initialStateQuery.data.years[0],
     acceptablePeriod: ['0', '24'],
     optimalPeriod: ['0', '24'],
-    precisePeriodStart: '',
-    precisePeriodEnd: '',
-    periodSelectionType: 'period',
-    cruiseDays: 0,
-    cruiseHours: 0,
-    periodNotes: '',
-    shipUsage: '',
-    differentUsage: '',
-    permissions: [],
-    researchAreaDescriptions: [],
-    cruiseGoal: '',
-    cruiseGoalDescription: '',
-    researchTasks: [],
-    contracts: [],
-    ugTeams: [],
-    guestTeams: [],
-    publications: [],
-    spubTasks: [],
-    supervisorEmail: '',
-    note: '',
   }) satisfies FormAValues;
   const [selectedYear, setSelectedYear] = useState(defaultValues.year);
   const blockadesQuery = useGetCruiseBlockades({ year: +selectedYear });
@@ -97,7 +77,7 @@ function FormAPage() {
       trackFormSubmit('form-a', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
       toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+      navigateToFirstError();
     },
   });
 
@@ -105,7 +85,6 @@ function FormAPage() {
     form,
     initValues: initialStateQuery.data,
     isReadonly: !editMode,
-    onSubmit: () => form.handleSubmit(),
     blockades: blockadesQuery.data,
     onSaveDraft: () => setIsSaveDraftModalOpen(true),
     actionsDisabled: saveMutation.isPending,
@@ -123,13 +102,20 @@ function FormAPage() {
       return;
     }
 
+    const schema = draft
+      ? getFormADraftWriteSchema(applicationId)
+      : getFormAWriteSchema(initialStateQuery.data, blockadesQuery.data, applicationId);
+    if (setSchemaErrors(form, schema)) {
+      toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
+      navigateToFirstError();
+      return;
+    }
+
     const loading = toast.loading(loadingMessage);
     saveMutation.mutate(
       {
         applicationId,
-        data: draft
-          ? getFormADraftWriteSchema(applicationId).parse(form.state.values)
-          : getFormAWriteSchema(initialStateQuery.data, blockadesQuery.data, applicationId).parse(form.state.values),
+        data: schema.parse(form.state.values),
       },
       {
         onSuccess: () => {
@@ -138,13 +124,13 @@ function FormAPage() {
         },
         onError: (err) => {
           console.error(err);
-          if (installServerFormErrors(form, err)) {
+          if (setServerFormErrors(form, err)) {
             toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-            navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+            navigateToFirstError();
             return;
           }
           toast.error('Nie udało się zapisać formularza. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+          navigateToFirstError();
         },
         onSettled: () => {
           setIsSaveDraftModalOpen(false);

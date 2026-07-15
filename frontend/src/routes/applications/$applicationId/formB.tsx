@@ -10,6 +10,7 @@ import { FormView } from './-components/formB/FormView';
 import {
   FORM_B_FIELD_TO_SECTION,
   type FormBValues,
+  formBDefaultValues,
   getFormBDraftWriteSchema,
   getFormBWriteSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -24,9 +25,8 @@ import {
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
 import { ApiError } from '@/lib/custom-fetch';
-import { CruiseDayValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
 import { useAppForm } from '@/lib/form';
-import { installServerFormErrors } from '@/lib/form-errors';
+import { setSchemaErrors, setServerFormErrors } from '@/lib/form-errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formB')({
   component: FormBPage,
@@ -55,17 +55,10 @@ function FormBPage() {
   const revertToEditMutation = useRefillApplicationFormB();
 
   const defaultValues = (formB.data ?? {
-    isCruiseManagerPresent: true,
+    ...formBDefaultValues,
     permissions: formA.data.permissions,
     ugTeams: formA.data.ugTeams,
     guestTeams: formA.data.guestTeams,
-    crewMembers: [],
-    shortResearchEquipments: [],
-    longResearchEquipments: [],
-    ports: [],
-    cruiseDaysDetails: [],
-    researchEquipments: [],
-    shipEquipmentsIds: [],
   }) satisfies FormBValues;
   const form = useAppForm({
     defaultValues,
@@ -77,7 +70,7 @@ function FormBPage() {
     onSubmitInvalid: () => {
       trackFormSubmit('form-b', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
-      navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
+      navigateToFirstError();
     },
   });
   const context = {
@@ -87,7 +80,6 @@ function FormBPage() {
     formBInitValues: formBInitValues.data,
     cruise: cruise.data,
     isReadonly: mode !== 'edit',
-    onSubmit: () => form.handleSubmit(),
     onSaveDraft: handleDraftSave,
     onRevertToEdit: mode === 'preview' ? handleRevertToEdit : undefined,
     actionsDisabled: updateMutation.isPending || revertToEditMutation.isPending,
@@ -117,15 +109,15 @@ function FormBPage() {
           }
 
           console.error(err);
-          if (installServerFormErrors(form, err)) {
+          if (setServerFormErrors(form, err)) {
             toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
-            navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
+            navigateToFirstError();
             return;
           }
           toast.error(
             'Nie udało się wysłać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie i spróbuj ponownie.'
           );
-          navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
+          navigateToFirstError();
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -135,14 +127,10 @@ function FormBPage() {
   }
 
   async function handleDraftSave() {
-    const cruiseDaysDetails = form.state.values.cruiseDaysDetails;
-    const commentError = cruiseDaysDetails
-      ?.map((day) => CruiseDayValuesSchema.shape.comment.safeParse(day.comment))
-      .find((result) => !result.success);
-
-    if (commentError && !commentError.success) {
-      toast.error(`Formularz błędny w sekcji nr 13:\n${commentError.error.issues[0].message}`);
-      navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
+    const schema = getFormBDraftWriteSchema();
+    if (setSchemaErrors(form, schema)) {
+      toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
+      navigateToFirstError();
       return;
     }
 
@@ -150,7 +138,7 @@ function FormBPage() {
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: getFormBDraftWriteSchema().parse(form.state.values),
+        data: schema.parse(form.state.values),
       },
       {
         onSuccess: () => {
@@ -167,8 +155,13 @@ function FormBPage() {
           }
 
           console.error(err);
+          if (setServerFormErrors(form, err)) {
+            toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
+            navigateToFirstError();
+            return;
+          }
           toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
-          navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
+          navigateToFirstError();
         },
         onSettled: () => {
           toast.dismiss(loading);

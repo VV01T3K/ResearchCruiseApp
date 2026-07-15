@@ -15,31 +15,30 @@ import { ResearchTasksSection } from '@/routes/applications/$applicationId/-comp
 import { SPUBTasksSection } from '@/routes/applications/$applicationId/-components/formA/SPUBTasksSection';
 import { SupervisorInfoSection } from '@/routes/applications/$applicationId/-components/formA/SupervisorInfoSection';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
+import { useTypedAppFormContext } from '@/lib/form';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 type Props = {
   context: FormAViewModel & {
-    onSubmit: () => void;
     onSaveDraft: () => void;
     actionsDisabled?: boolean;
   };
 };
 export function FormView({ context }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   const componentRef = useRef(null);
 
-  const reactToPrintContent = () => {
-    return componentRef.current;
-  };
-
-  const handlePrint = useReactToPrint({});
-
-  function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
-    evt.preventDefault();
-    context.onSubmit();
-  }
+  const handlePrint = useReactToPrint({ contentRef: componentRef });
 
   return (
     <>
-      <form className="space-y-8" onSubmit={onSubmit}>
+      <form
+        className="space-y-8"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void form.handleSubmit();
+        }}
+      >
         <CruiseManagerInfoSection context={context} />
         <CruiseLengthSection context={context} />
         <PermissionsSection context={context} />
@@ -53,7 +52,7 @@ export function FormView({ context }: Props) {
         <SupervisorInfoSection context={context} />
         <ActionsSection
           onSaveDraft={context.onSaveDraft}
-          onPrint={() => handlePrint(reactToPrintContent)}
+          onPrint={handlePrint}
           disabled={context.actionsDisabled}
           context={context}
         />

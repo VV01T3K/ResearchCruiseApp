@@ -26,7 +26,10 @@ import {
   LongResearchEquipmentValuesInputSchema,
   LongResearchEquipmentValuesSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
-import { PermissionWithFileValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
+import {
+  PermissionValuesInputSchema,
+  PermissionWithFileValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
 import {
   PortCallValuesInputSchema,
   PortCallValuesSchema,
@@ -52,7 +55,10 @@ import {
   UgTeamValuesSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
 import { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
-import { getResearchAreaValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
+import {
+  getResearchAreaValuesSchema,
+  ResearchAreaValuesInputSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
 import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
@@ -80,12 +86,8 @@ export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
 const FormCInputSchema = z.object({
   shipUsage: z.string(),
   differentUsage: z.string(),
-  permissions: z
-    .object({ description: z.string(), executive: z.string(), scan: FormFileValuesInputSchema.optional() })
-    .array(),
-  researchAreaDescriptions: z
-    .object({ areaId: z.string().nullable(), differentName: z.string().nullable(), info: z.string() })
-    .array(),
+  permissions: PermissionValuesInputSchema.array(),
+  researchAreaDescriptions: ResearchAreaValuesInputSchema.array(),
   ugTeams: UgTeamValuesInputSchema.array(),
   guestTeams: GuestTeamValuesInputSchema.array(),
   researchTasksEffects: ResearchTaskEffectValuesInputSchema.array(),
@@ -127,8 +129,8 @@ export const formCDefaultValues: FormCValues = {
   photos: [],
 } satisfies FormCValues;
 
-const OtherValidationSchema = (formAInitValues: FormAOptions) =>
-  z.object({
+export function getFormCValidationSchema(formAInitValues: FormAOptions) {
+  return FormCInputSchema.extend({
     permissions: PermissionWithFileValuesSchema.array(),
     researchAreaDescriptions: getResearchAreaValuesSchema(formAInitValues)
       .array()
@@ -162,11 +164,6 @@ const OtherValidationSchema = (formAInitValues: FormAOptions) =>
     spubReportData: z.string().max(10240, 'Maksymalna długość to 10240 znaków'),
     additionalDescription: z.string().max(10240, 'Maksymalna długość to 10240 znaków'),
     photos: FormFileValuesSchema.array(),
-  });
-
-export function getFormCValidationSchema(formAInitValues: FormAOptions) {
-  return FormCInputSchema.extend({
-    ...OtherValidationSchema(formAInitValues).shape,
     shipUsage: z.enum(['0', '1', '2', '3', '4'], {
       error: 'Wymagane jest wskazanie sposobu korzystania z statku',
     }),

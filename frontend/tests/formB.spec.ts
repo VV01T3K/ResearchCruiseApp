@@ -17,6 +17,12 @@ test('draft form B requires the complete input shape while allowing empty values
 
   const { shipEquipmentsIds: _omitted, ...missingKey } = draft;
   expect(getFormBDraftWriteSchema().safeParse(missingKey).success).toBe(false);
+  expect(
+    getFormBDraftWriteSchema().safeParse({
+      ...draft,
+      cruiseDaysDetails: [{ number: 0, hours: 0, taskName: '', region: '', position: '', comment: 'x'.repeat(1025) }],
+    }).success
+  ).toBe(false);
 });
 
 test('valid form B', async ({ formBPage }) => {

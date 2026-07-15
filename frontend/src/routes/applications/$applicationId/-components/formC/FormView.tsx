@@ -21,32 +21,29 @@ import { ShipEquipmentsSection } from './ShipEquipmentsSection';
 import { ShipUsageSection } from './ShipUsageSection';
 import { SPUBReportDataSection } from './SPUBReportDataSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
-import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { useFormCContext, type FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 
 type Props = {
   context: FormCViewModel & {
-    onSubmit: () => void;
     onSaveDraft: () => void;
     actionsDisabled?: boolean;
   };
 };
 export function FormView({ context }: Props) {
-  function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
-    evt.preventDefault();
-    context.onSubmit();
-  }
-
+  const form = useFormCContext();
   const componentRef = useRef(null);
 
-  const reactToPrintContent = () => {
-    return componentRef.current;
-  };
-
-  const handlePrint = useReactToPrint({});
+  const handlePrint = useReactToPrint({ contentRef: componentRef });
 
   return (
     <>
-      <form className="space-y-8" onSubmit={onSubmit}>
+      <form
+        className="space-y-8"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void form.handleSubmit();
+        }}
+      >
         <CruiseInfoSection context={context} />
         <CruiseManagerInfoSection context={context} />
         <ShipUsageSection context={context} />
@@ -67,7 +64,7 @@ export function FormView({ context }: Props) {
         <AdditionalDescriptionSection context={context} />
         <ActionsSection
           onSaveDraft={context.onSaveDraft}
-          onPrint={() => handlePrint(reactToPrintContent)}
+          onPrint={handlePrint}
           disabled={context.actionsDisabled}
           context={context}
         />

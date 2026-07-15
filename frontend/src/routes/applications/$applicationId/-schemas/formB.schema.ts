@@ -2,16 +2,42 @@ import { z } from 'zod';
 
 import { FormBFields, FormBWriteRequest } from '@/api/generated/schemas';
 import { groupBy } from '@/lib/utils';
-import { CrewMemberValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CrewMemberValues';
-import { CruiseDayValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
-import { FormFileValuesInputSchema } from '@/routes/applications/$applicationId/-schemas/types/FormFileValues';
-import { GuestTeamValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
-import { LongResearchEquipmentValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
-import { PermissionValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
-import { PortCallValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
-import { ResearchEquipmentValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
-import { ShortResearchEquipmentValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
-import { UgTeamValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
+import {
+  CrewMemberValuesInputSchema,
+  CrewMemberValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/CrewMemberValues';
+import {
+  CruiseDayValuesInputSchema,
+  CruiseDayValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
+import {
+  GuestTeamValuesInputSchema,
+  GuestTeamValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+import {
+  LongResearchEquipmentValuesInputSchema,
+  LongResearchEquipmentValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
+import {
+  PermissionValuesInputSchema,
+  PermissionValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
+import {
+  PortCallValuesInputSchema,
+  PortCallValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
+import {
+  ResearchEquipmentValuesInputSchema,
+  ResearchEquipmentValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
+import {
+  ShortResearchEquipmentValuesInputSchema,
+  ShortResearchEquipmentValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
+import {
+  UgTeamValuesInputSchema,
+  UgTeamValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
 
 export const FORM_B_FIELD_TO_SECTION: Record<string, number> = {
   isCruiseManagerPresent: 2,
@@ -29,46 +55,15 @@ export const FORM_B_FIELD_TO_SECTION: Record<string, number> = {
 
 const FormBInputSchema = z.object({
   isCruiseManagerPresent: z.boolean(),
-  permissions: z
-    .object({ description: z.string(), executive: z.string(), scan: FormFileValuesInputSchema.optional() })
-    .array(),
-  ugTeams: z.object({ ugUnitId: z.string(), noOfEmployees: z.number(), noOfStudents: z.number() }).array(),
-  guestTeams: z.object({ name: z.string(), noOfPersons: z.number() }).array(),
-  crewMembers: z
-    .object({
-      title: z.string(),
-      firstName: z.string(),
-      lastName: z.string(),
-      birthPlace: z.string(),
-      birthDate: z.string(),
-      documentNumber: z.string(),
-      documentExpiryDate: z.string(),
-      institution: z.string(),
-    })
-    .array(),
-  shortResearchEquipments: z.object({ name: z.string(), startDate: z.string(), endDate: z.string() }).array(),
-  longResearchEquipments: z
-    .object({ name: z.string(), action: z.enum(['Put', 'Collect']), duration: z.string() })
-    .array(),
-  ports: z.object({ name: z.string(), startTime: z.string(), endTime: z.string() }).array(),
-  cruiseDaysDetails: z
-    .object({
-      number: z.number(),
-      hours: z.number(),
-      taskName: z.string(),
-      region: z.string(),
-      position: z.string(),
-      comment: z.string(),
-    })
-    .array(),
-  researchEquipments: z
-    .object({
-      name: z.string(),
-      insuranceStartDate: z.string().nullable(),
-      insuranceEndDate: z.string().nullable(),
-      permission: z.boolean(),
-    })
-    .array(),
+  permissions: PermissionValuesInputSchema.array(),
+  ugTeams: UgTeamValuesInputSchema.array(),
+  guestTeams: GuestTeamValuesInputSchema.array(),
+  crewMembers: CrewMemberValuesInputSchema.array(),
+  shortResearchEquipments: ShortResearchEquipmentValuesInputSchema.array(),
+  longResearchEquipments: LongResearchEquipmentValuesInputSchema.array(),
+  ports: PortCallValuesInputSchema.array(),
+  cruiseDaysDetails: CruiseDayValuesInputSchema.array(),
+  researchEquipments: ResearchEquipmentValuesInputSchema.array(),
   shipEquipmentsIds: z.array(z.string()),
 });
 
@@ -89,8 +84,7 @@ export const formBDefaultValues: FormBValues = {
 } satisfies FormBValues;
 
 export function getFormBValidationSchema() {
-  return z.object({
-    isCruiseManagerPresent: z.boolean(),
+  return FormBInputSchema.extend({
     permissions: PermissionValuesSchema.array().superRefine((permissions, ctx) => {
       permissions.forEach((permission, index) => {
         if (!permission.scan || !permission.scan.name.endsWith('.pdf')) {
@@ -115,7 +109,6 @@ export function getFormBValidationSchema() {
     ports: PortCallValuesSchema.array(),
     cruiseDaysDetails: CruiseDayValuesSchema.array(),
     researchEquipments: ResearchEquipmentValuesSchema.array(),
-    shipEquipmentsIds: z.array(z.string()),
   });
 }
 

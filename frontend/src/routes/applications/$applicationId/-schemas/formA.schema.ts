@@ -15,8 +15,10 @@ import {
   GuestTeamValuesInputSchema,
   GuestTeamValuesSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
-import { FormFileValuesInputSchema } from '@/routes/applications/$applicationId/-schemas/types/FormFileValues';
-import { PermissionValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
+import {
+  PermissionValuesInputSchema,
+  PermissionValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
 import {
   PublicationValuesInputSchema,
   PublicationValuesSchema,
@@ -40,7 +42,10 @@ import {
   type FormAOptions as GeneratedFormAOptions,
   type ResearchTaskFields,
 } from '@/api/generated/schemas';
-import { getResearchAreaValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
+import {
+  getResearchAreaValuesSchema,
+  ResearchAreaValuesInputSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
 import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 import { PublicationCategory } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
@@ -86,12 +91,8 @@ const FormAInputSchema = z.object({
   periodNotes: z.string(),
   shipUsage: z.string(),
   differentUsage: z.string(),
-  permissions: z
-    .object({ description: z.string(), executive: z.string(), scan: FormFileValuesInputSchema.optional() })
-    .array(),
-  researchAreaDescriptions: z
-    .object({ areaId: z.string().nullable(), differentName: z.string().nullable(), info: z.string() })
-    .array(),
+  permissions: PermissionValuesInputSchema.array(),
+  researchAreaDescriptions: ResearchAreaValuesInputSchema.array(),
   cruiseGoal: z.union([z.enum([CruiseGoal.Research, CruiseGoal.Commercial, CruiseGoal.Educational]), z.literal('')]),
   cruiseGoalDescription: z.string(),
   researchTasks: ResearchTaskValuesInputSchema.array(),

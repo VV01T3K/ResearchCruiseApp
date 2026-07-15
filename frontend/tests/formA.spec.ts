@@ -7,7 +7,7 @@ import {
   mapFormAToValues,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
-import { MOCK_PDF_FILEPATH } from './fixtures/consts';
+import { API_URL, MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { formTest as test } from './fixtures/fixtures';
 import { getFormAPayload, getInitValuesAPayload } from './fixtures/mockPayloads';
 import { touchInput } from './utils/form-filling-utils';
@@ -57,6 +57,24 @@ test('valid form A', async ({ formAPage }) => {
   await formAPage.submitForm({ expectedResult: 'valid' });
 });
 
+test('shows server validation errors on their fields', async ({ formAPage }) => {
+  await formAPage.fillForm();
+  await formAPage.page.route(`${API_URL}/v2/applications`, (route) =>
+    route.fulfill({
+      status: 400,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({ errors: { 'Form.SupervisorEmail': ['Adres przełożonego został odrzucony'] } }),
+    })
+  );
+
+  await formAPage.submitButton.click();
+
+  await expect(formAPage.sections.supervisorInfoSection.invalidEmailMessage).toContainText(
+    'Adres przełożonego został odrzucony'
+  );
+  await expect(formAPage.sections.supervisorInfoSection.supervisorEmailInput).toBeFocused();
+});
+
 test.describe('cruise manager info section tests', () => {
   test.beforeEach(async ({ formAPage }) => {
     await formAPage.fillForm({ except: ['cruiseManagerInfoSection'] });
@@ -100,8 +118,8 @@ test.describe('cruise length section tests', () => {
         if (isValid) {
           await formAPage.submitForm({ expectedResult: 'valid' });
         } else if (val < LOWER_DAY_LIMIT) {
-          await expect(formAPage.sections.cruiseLengthSection.invalidCruiseDurationMessage).toBeVisible();
           await formAPage.submitForm({ expectedResult: 'invalid' });
+          await expect(formAPage.sections.cruiseLengthSection.invalidCruiseDurationMessage).toBeVisible();
         } else if (val > UPPER_DAY_LIMIT) {
           await expect(formAPage.sections.cruiseLengthSection.cruiseDaysInput).toHaveValue(`${UPPER_DAY_LIMIT}`); // input should cap the value
         }

@@ -1,6 +1,6 @@
 import type { AnyFieldMeta, AnyFormApi } from '@tanstack/react-form';
 
-export interface FormError {
+interface FormError {
   fieldName: string;
   errorMessage: string;
   sectionNumber?: number;
@@ -22,13 +22,11 @@ export function getErrors(meta: AnyFieldMeta, submissionAttempts: number | boole
 }
 
 function getSectionNumber(fieldName: string, sections: Record<string, number>): number | undefined {
-  return sections[fieldName] ?? sections[fieldName.split('[')[0]];
+  return sections[fieldName] ?? sections[fieldName.split(/[.[]/)[0]];
 }
 
-export function getFirstFormError(form: AnyFormApi, sections: Record<string, number>): FormError | null {
-  const errors = (form.state as { fieldMeta: Record<string, { errors: unknown[] }> }).fieldMeta;
-  const allErrors = Object.entries(errors)
-    .filter(([, meta]) => meta.errors.length > 0)
+function getFirstFormError(form: AnyFormApi, sections: Record<string, number>): FormError | null {
+  const allErrors = Object.entries(form.getAllErrors().fields)
     .map(([fieldName, meta]) => ({
       fieldName,
       errorMessage: extractErrorMessage(meta.errors[0]),
@@ -47,37 +45,22 @@ export function getFormErrorMessage(form: AnyFormApi, sections: Record<string, n
     : `Formularz zawiera błędy:\n ${firstError.errorMessage}`;
 }
 
-export function navigateToFirstError(form: AnyFormApi, sections: Record<string, number>): void {
-  const firstError = getFirstFormError(form, sections);
-  if (!firstError) return;
-
-  const field = document.getElementsByName(firstError.fieldName).item(0) as HTMLElement | null;
-  const section = firstError.sectionNumber
-    ? document.querySelector<HTMLElement>(`[data-form-section="${firstError.sectionNumber}"]`)
-    : null;
-  const target = field ?? section;
-  if (!target) return;
-
-  const accordion = field?.closest<HTMLElement>('[data-form-section]') ?? section;
-  accordion?.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')?.click();
-
+export function navigateToFirstError(): void {
   requestAnimationFrame(() => {
-    if (field) {
-      field.focus();
-      return;
-    }
-    const error = accordion?.querySelector<HTMLElement>('[data-error="true"]');
-    if (error) {
-      error.tabIndex = -1;
-      error.focus();
-      return;
-    }
-    const trigger = accordion?.querySelector<HTMLElement>('button');
-    trigger?.focus();
+    const target = document.querySelector<HTMLElement>('[aria-invalid="true"], [data-error="true"]');
+    if (!target) return;
+
+    const closedPanel = target.closest<HTMLElement>('[data-closed]');
+    closedPanel?.parentElement?.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')?.click();
+
+    requestAnimationFrame(() => {
+      if (target.matches('[data-error="true"]')) target.tabIndex = -1;
+      target.focus();
+    });
   });
 }
 
-export function normalizeBackendFormPath(path: string): string {
+function normalizeBackendFormPath(path: string): string {
   return path
     .replace(/^Form\.?/i, '')
     .split('.')
@@ -86,7 +69,7 @@ export function normalizeBackendFormPath(path: string): string {
     .join('.');
 }
 
-export function getServerFormErrors(error: unknown): Record<string, string[]> | null {
+function getServerFormErrors(error: unknown): Record<string, string[]> | null {
   if (typeof error !== 'object' || error === null || !('problem' in error)) return null;
   const problem = error.problem;
   if (typeof problem !== 'object' || problem === null || !('errors' in problem)) return null;
@@ -101,16 +84,16 @@ export function getServerFormErrors(error: unknown): Record<string, string[]> | 
   );
 }
 
-export function installServerFormErrors(form: AnyFormApi, error: unknown): boolean {
+export function setServerFormErrors(form: AnyFormApi, error: unknown): boolean {
   const fields = getServerFormErrors(error);
   if (!fields || Object.keys(fields).length === 0) return false;
-  const fieldMeta = (form.state as { fieldMeta: Record<string, unknown> }).fieldMeta;
-  const mappedFields = Object.fromEntries(
-    Object.entries(fields).filter(
-      ([path]) => path in fieldMeta || (typeof document !== 'undefined' && document.getElementsByName(path).length > 0)
-    )
-  );
-  if (Object.keys(mappedFields).length === 0) return false;
-  form.setErrorMap({ onServer: { fields: mappedFields } });
-  return Object.keys(mappedFields).length === Object.keys(fields).length;
+  form.setErrorMap({ onServer: { fields } });
+  return true;
+}
+
+export function setSchemaErrors(form: AnyFormApi, schema: Parameters<AnyFormApi['parseValuesWithSchema']>[0]): boolean {
+  const errors = form.parseValuesWithSchema(schema);
+  if (!errors) return false;
+  form.setErrorMap({ onSubmit: errors });
+  return true;
 }

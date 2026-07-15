@@ -18,7 +18,7 @@ import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { getRoleLabel, Role } from '@/types/user';
 import { User } from '@/types/user';
 import {

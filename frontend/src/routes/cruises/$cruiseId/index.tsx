@@ -81,7 +81,7 @@ function CruiseDetailsPage() {
     validators: { onDynamic: UpdateCruiseFormSchema },
     onSubmitInvalid: ({ formApi }) => {
       toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
-      navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
+      navigateToFirstError();
     },
     onSubmit: ({ value }) => {
       updateCruiseMutation.mutate(
@@ -94,7 +94,7 @@ function CruiseDetailsPage() {
           onError: (error) => {
             console.error(error);
             toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-            navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
+            navigateToFirstError();
           },
         }
       );

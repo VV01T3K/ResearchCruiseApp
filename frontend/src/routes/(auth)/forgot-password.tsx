@@ -8,7 +8,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/lib/form-errors';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
 import { Result } from '@/types/user';
 

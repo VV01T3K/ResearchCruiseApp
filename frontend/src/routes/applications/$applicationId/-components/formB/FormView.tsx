@@ -18,33 +18,30 @@ import { ResearchTasksSection } from './ResearchTasksSection';
 import { ShipEquipmentsSection } from './ShipEquipmentsSection';
 import { ShipUsageSection } from './ShipUsageSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
+import { useFormBContext, type FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 
 type Props = {
   context: FormBViewModel & {
-    onSubmit: () => void;
     onSaveDraft: () => void;
     onRevertToEdit?: () => void;
     actionsDisabled?: boolean;
   };
 };
 export function FormView({ context }: Props) {
+  const form = useFormBContext();
   const componentRef = useRef(null);
 
-  const reactToPrintContent = () => {
-    return componentRef.current;
-  };
-
-  const handlePrint = useReactToPrint({});
-
-  function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
-    evt.preventDefault();
-    context.onSubmit();
-  }
+  const handlePrint = useReactToPrint({ contentRef: componentRef });
 
   return (
     <>
-      <form className="space-y-8" onSubmit={onSubmit}>
+      <form
+        className="space-y-8"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void form.handleSubmit();
+        }}
+      >
         <CruiseInfoSection context={context} />
         <CruiseManagerInfoSection context={context} />
         <ShipUsageSection context={context} />
@@ -63,7 +60,7 @@ export function FormView({ context }: Props) {
         <ActionsSection
           onSaveDraft={context.onSaveDraft}
           onRevertToEdit={context.onRevertToEdit}
-          onPrint={() => handlePrint(reactToPrintContent)}
+          onPrint={handlePrint}
           disabled={context.actionsDisabled}
           context={context}
         />

@@ -10,6 +10,7 @@ import { FormView } from './-components/formC/FormView';
 import {
   FORM_C_FIELD_TO_SECTION,
   type FormCValues,
+  formCDefaultValues,
   getFormCDraftWriteSchema,
   getFormCWriteSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -29,7 +30,7 @@ import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas
 import { ApiError } from '@/lib/custom-fetch';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 import { useAppForm } from '@/lib/form';
-import { installServerFormErrors } from '@/lib/form-errors';
+import { setSchemaErrors, setServerFormErrors } from '@/lib/form-errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formC')({
   component: FormCPage,
@@ -60,6 +61,7 @@ function FormCPage() {
   if (!formB.data) throw notFound();
 
   const defaultValues = (formC.data ?? {
+    ...formCDefaultValues,
     shipUsage: formA.data.shipUsage ?? '', // Max length 1
     differentUsage: formA.data.differentUsage,
     permissions: formB.data.permissions,
@@ -83,10 +85,6 @@ function FormCPage() {
     cruiseDaysDetails: formB.data.cruiseDaysDetails,
     researchEquipments: formB.data.researchEquipments,
     shipEquipmentsIds: formB.data.shipEquipmentsIds,
-    collectedSamples: [],
-    spubReportData: '',
-    additionalDescription: '',
-    photos: [],
   }) satisfies FormCValues;
   const form = useAppForm({
     defaultValues,
@@ -98,7 +96,7 @@ function FormCPage() {
     onSubmitInvalid: () => {
       trackFormSubmit('form-c', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
-      navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
+      navigateToFirstError();
     },
   });
   const context = {
@@ -109,7 +107,6 @@ function FormCPage() {
     formBInitValues: formBInitValues.data,
     cruise: cruise.data,
     isReadonly: mode !== 'edit',
-    onSubmit: () => form.handleSubmit(),
     onSaveDraft: handleDraftSave,
     actionsDisabled: updateMutation.isPending,
   };
@@ -138,13 +135,13 @@ function FormCPage() {
           }
 
           console.error(err);
-          if (installServerFormErrors(form, err)) {
+          if (setServerFormErrors(form, err)) {
             toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
-            navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
+            navigateToFirstError();
             return;
           }
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
+          navigateToFirstError();
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -154,11 +151,18 @@ function FormCPage() {
   }
 
   async function handleDraftSave() {
+    const schema = getFormCDraftWriteSchema();
+    if (setSchemaErrors(form, schema)) {
+      toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
+      navigateToFirstError();
+      return;
+    }
+
     const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: getFormCDraftWriteSchema().parse(form.state.values),
+        data: schema.parse(form.state.values),
       },
       {
         onSuccess: () => {
@@ -175,8 +179,13 @@ function FormCPage() {
           }
 
           console.error(err);
+          if (setServerFormErrors(form, err)) {
+            toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
+            navigateToFirstError();
+            return;
+          }
           toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
-          navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
+          navigateToFirstError();
         },
         onSettled: () => {
           toast.dismiss(loading);
