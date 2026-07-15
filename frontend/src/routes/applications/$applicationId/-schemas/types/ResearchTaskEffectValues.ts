@@ -1,18 +1,8 @@
 import { z } from 'zod';
 
 import {
-  DidacticsResearchTaskInputSchema,
-  DidacticsResearchTaskValuesSchema,
-  OtherResearchTaskInputSchema,
-  OtherResearchTaskValuesSchema,
-  OwnResearchTaskInputSchema,
-  OwnResearchTaskValuesSchema,
-  ProjectPreparationResearchTaskInputSchema,
-  ProjectPreparationResearchTaskValuesSchema,
-  ProjectResearchTaskInputSchema,
-  ProjectResearchTaskValuesSchema,
-  ThesisResearchTaskInputSchema,
-  ThesisResearchTaskValuesSchema,
+  ResearchTaskValuesInputSchema,
+  ResearchTaskValuesSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 const effectFields = {
@@ -21,22 +11,10 @@ const effectFields = {
   deputyConditionMet: z.boolean(),
 };
 
-export const ResearchTaskEffectValuesInputSchema = z.union([
-  ThesisResearchTaskInputSchema.extend(effectFields),
-  ProjectPreparationResearchTaskInputSchema.extend(effectFields),
-  ProjectResearchTaskInputSchema.extend(effectFields),
-  DidacticsResearchTaskInputSchema.extend(effectFields),
-  OwnResearchTaskInputSchema.extend(effectFields),
-  OtherResearchTaskInputSchema.extend(effectFields),
-]);
+const withEffectFields = (schemas: typeof ResearchTaskValuesInputSchema.options) =>
+  z.union(schemas.map((schema) => schema.extend(effectFields)));
 
-export const ResearchTaskEffectValuesSchema = z.union([
-  ThesisResearchTaskValuesSchema.extend(effectFields),
-  ProjectPreparationResearchTaskValuesSchema.extend(effectFields),
-  ProjectResearchTaskValuesSchema.extend(effectFields),
-  DidacticsResearchTaskValuesSchema.extend(effectFields),
-  OwnResearchTaskValuesSchema.extend(effectFields),
-  OtherResearchTaskValuesSchema.extend(effectFields),
-]);
+export const ResearchTaskEffectValuesInputSchema = withEffectFields(ResearchTaskValuesInputSchema.options);
+export const ResearchTaskEffectValuesSchema = withEffectFields(ResearchTaskValuesSchema.options);
 
 export type ResearchTaskEffectValues = z.input<typeof ResearchTaskEffectValuesInputSchema>;
