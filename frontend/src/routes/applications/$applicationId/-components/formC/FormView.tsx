@@ -41,6 +41,7 @@ export function FormView({ context }: Props) {
         className="space-y-8"
         onSubmit={(event) => {
           event.preventDefault();
+          event.stopPropagation();
           void form.handleSubmit();
         }}
       >
