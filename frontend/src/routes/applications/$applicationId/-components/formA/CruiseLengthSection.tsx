@@ -328,36 +328,56 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
             </div>
           )}
 
-          <form.AppField
-            name="cruiseDays"
-            children={(field) => (
-              <field.NumberField
-                minimum={0}
-                maximum={60}
-                step={1}
-                type="integer"
-                label="Liczba planowanych dób rejsowych"
-                showRequiredAsterisk
-                disabled={isReadonly}
-                data-testid="form-a-cruise-days"
-                data-testid-input="form-a-cruise-days-input"
+          <form.Subscribe
+            selector={(state) => state.values.cruiseDays * 24 + state.values.cruiseHours}
+            children={(totalCruiseHours) => (
+              <form.AppField
+                name="cruiseDays"
+                children={(field) => (
+                  <field.NumberField
+                    value={totalCruiseHours / 24}
+                    onChange={(days) => {
+                      field.handleChange(Math.floor(days));
+                      form.setFieldValue('cruiseHours', Math.round((days % 1) * 24));
+                    }}
+                    minimum={0}
+                    maximum={60}
+                    step={1}
+                    type="float"
+                    label="Liczba planowanych dób rejsowych"
+                    showRequiredAsterisk
+                    disabled={isReadonly}
+                    data-testid="form-a-cruise-days"
+                    data-testid-input="form-a-cruise-days-input"
+                  />
+                )}
               />
             )}
           />
 
-          <form.AppField
-            name="cruiseHours"
-            children={(field) => (
-              <field.NumberField
-                minimum={0}
-                maximum={23}
-                type="integer"
-                label="Liczba planowanych godzin rejsowych"
-                showRequiredAsterisk
-                disabled={isReadonly}
-                data-testid="form-a-cruise-hours"
-                data-testid-input="form-a-cruise-hours-input"
-                data-testid-errors="form-a-cruise-hours-errors"
+          <form.Subscribe
+            selector={(state) => state.values.cruiseDays * 24 + state.values.cruiseHours}
+            children={(totalCruiseHours) => (
+              <form.AppField
+                name="cruiseHours"
+                children={(field) => (
+                  <field.NumberField
+                    value={totalCruiseHours}
+                    onChange={(hours) => {
+                      form.setFieldValue('cruiseDays', Math.floor(hours / 24));
+                      field.handleChange(hours % 24);
+                    }}
+                    minimum={0}
+                    maximum={1440}
+                    type="integer"
+                    label="Liczba planowanych godzin rejsowych"
+                    showRequiredAsterisk
+                    disabled={isReadonly}
+                    data-testid="form-a-cruise-hours"
+                    data-testid-input="form-a-cruise-hours-input"
+                    data-testid-errors="form-a-cruise-hours-errors"
+                  />
+                )}
               />
             )}
           />

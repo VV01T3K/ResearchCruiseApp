@@ -60,16 +60,17 @@ function TextareaField(props: TextProps) {
 }
 
 type NumberProps = WithoutFieldProps<React.ComponentProps<typeof AppNumberInput>> & {
+  value?: number;
   onChange?: (value: number) => void;
 };
 
-function NumberField({ onChange, ...props }: NumberProps) {
+function NumberField({ value, onChange, ...props }: NumberProps) {
   const field = useFieldContext<number>();
   return (
     <AppNumberInput
       {...props}
       name={field.name}
-      value={field.state.value}
+      value={value ?? field.state.value}
       onBlur={field.handleBlur}
       onChange={onChange ?? field.handleChange}
       errors={useErrors()}
