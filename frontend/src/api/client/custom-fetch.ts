@@ -19,6 +19,11 @@ export function getProblemDetail(error: unknown, fallback: string) {
   return error instanceof ApiError ? (error.problem?.detail ?? fallback) : fallback;
 }
 
+export function getErrorMessage(error: unknown, context: string) {
+  const detail = error instanceof Error && error.message ? error.message : 'Nieznany błąd';
+  return `${context}: ${detail}`;
+}
+
 async function parseResponse(response: Response) {
   if (response.status === 204 || response.status === 205) return null;
   const text = await response.text();

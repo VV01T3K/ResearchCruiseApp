@@ -116,6 +116,21 @@ test('shows server validation errors on their fields', async ({ formAPage }) => 
   await expect(formAPage.sections.supervisorInfoSection.supervisorEmailInput).toBeFocused();
 });
 
+test('shows a support code when saving fails', async ({ formAPage }) => {
+  await formAPage.fillForm();
+  await formAPage.page.route(`${API_URL}/v2/applications`, (route) =>
+    route.fulfill({
+      status: 503,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({ detail: 'Wystąpił nieoczekiwany błąd. Kod błędu: 0HNC7ABC123' }),
+    })
+  );
+
+  await formAPage.submitButton.click();
+
+  await expect(formAPage.validationErrorMessage).toContainText('Kod błędu: 0HNC7ABC123');
+});
+
 test.describe('cruise manager info section tests', () => {
   test.beforeEach(async ({ formAPage }) => {
     await formAPage.fillForm({ except: ['cruiseManagerInfoSection'] });

@@ -28,6 +28,7 @@ import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setSchemaErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
+import { getErrorMessage } from '@/api/client/custom-fetch';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({
   component: FormAPage,
@@ -126,7 +127,7 @@ function FormAPage() {
         navigateToFirstError();
         return;
       }
-      toast.error('Nie udało się zapisać formularza. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+      toast.error(getErrorMessage(err, 'Nie udało się zapisać formularza'));
       navigateToFirstError();
     } finally {
       setIsSaveDraftModalOpen(false);

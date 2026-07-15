@@ -24,7 +24,7 @@ import {
 } from '@/api/generated/endpoints/applications.gen';
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { mapFormBOptions } from '@/api/client/applications/types/FormBOptions';
-import { ApiError } from '@/api/client/custom-fetch';
+import { ApiError, getErrorMessage } from '@/api/client/custom-fetch';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setSchemaErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 
@@ -111,9 +111,7 @@ function FormBPage() {
         navigateToFirstError();
         return;
       }
-      toast.error(
-        'Nie udało się wysłać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie i spróbuj ponownie.'
-      );
+      toast.error(getErrorMessage(err, 'Nie udało się wysłać formularza'));
       navigateToFirstError();
     } finally {
       toast.dismiss(loading);
@@ -151,7 +149,7 @@ function FormBPage() {
         navigateToFirstError();
         return;
       }
-      toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
+      toast.error(getErrorMessage(err, 'Nie udało się zapisać wersji roboczej formularza'));
       navigateToFirstError();
     } finally {
       toast.dismiss(loading);
