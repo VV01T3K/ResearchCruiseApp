@@ -252,8 +252,10 @@ test.describe('research tasks section tests', () => {
   });
 
   test('no research tasks', async ({ formAPage }) => {
-    await formAPage.submitForm({ expectedResult: 'invalid' });
+    await formAPage.submitButton.click();
     await expect(formAPage.sections.researchTasksSection.noResearchTasksMessage).toBeVisible();
+    await expect(formAPage.sections.researchTasksSection.noResearchTasksMessage).toBeFocused();
+    await formAPage.page.getByLabel('Close').first().click();
 
     await formAPage.sections.researchTasksSection.addNewTaskDropdown.selectOption('Praca magisterska');
     await expect(formAPage.sections.researchTasksSection.noResearchTasksMessage).toBeHidden();

@@ -18,8 +18,10 @@ export function AppAccordion({
   'data-testid-toggle': toggleTestId,
   'data-testid-content': contentTestId,
 }: Props) {
+  const sectionNumber = /^\d+/.exec(title)?.[0];
+
   return (
-    <Collapsible.Root defaultOpen={!!expandedByDefault} data-testid={testId}>
+    <Collapsible.Root defaultOpen={!!expandedByDefault} data-form-section={sectionNumber} data-testid={testId}>
       <h2 className="w-full">
         <Collapsible.Trigger
           className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-black/2 px-4 py-4 outline-none"

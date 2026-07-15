@@ -46,7 +46,7 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
                 value={field.state.value ? parseInt(field.state.value) : undefined}
                 onChange={(e) => field.handleChange(e?.toString() ?? '')}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 disabled={isReadonly}
               />
             )}
@@ -68,7 +68,7 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
                 value={field.state.value ? parseInt(field.state.value) : undefined}
                 onChange={(e) => field.handleChange(e?.toString() ?? '')}
                 onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 disabled={isReadonly}
               />
             )}
@@ -170,10 +170,13 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
                 emptyTableMessage="Brak zadań SPUB"
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-spub-tasks-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-spub-tasks-errors" />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+                data-testid="form-a-spub-tasks-errors"
+              />
             </>
           )}
         />

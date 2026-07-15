@@ -28,12 +28,13 @@ export const Route = createFileRoute('/cruises/new')({
 });
 
 const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
-  startDate: 1,
-  endDate: 1,
-  'managersTeam.mainCruiseManagerId': 2,
-  'managersTeam.mainDeputyManagerId': 2,
-  cruiseApplicationsIds: 3,
-  title: 4,
+  title: 1,
+  shipUnavailable: 1,
+  startDate: 2,
+  endDate: 2,
+  'managersTeam.mainCruiseManagerId': 3,
+  'managersTeam.mainDeputyManagerId': 3,
+  cruiseApplicationsIds: 4,
 };
 
 function NewCruisePage() {

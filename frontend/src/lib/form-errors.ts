@@ -52,16 +52,29 @@ export function navigateToFirstError(form: AnyFormApi, sections: Record<string, 
   if (!firstError) return;
 
   const field = document.getElementsByName(firstError.fieldName).item(0) as HTMLElement | null;
-  if (!field) return;
+  const section = firstError.sectionNumber
+    ? document.querySelector<HTMLElement>(`[data-form-section="${firstError.sectionNumber}"]`)
+    : null;
+  const target = field ?? section;
+  if (!target) return;
 
-  const closedPanel = field.closest<HTMLElement>('[data-closed]');
-  if (closedPanel) {
-    closedPanel.parentElement?.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')?.click();
-    requestAnimationFrame(() => field.focus());
-    return;
-  }
+  const accordion = field?.closest<HTMLElement>('[data-form-section]') ?? section;
+  accordion?.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')?.click();
 
-  field.focus();
+  requestAnimationFrame(() => {
+    if (field) {
+      field.focus();
+      return;
+    }
+    const error = accordion?.querySelector<HTMLElement>('[data-error="true"]');
+    if (error) {
+      error.tabIndex = -1;
+      error.focus();
+      return;
+    }
+    const trigger = accordion?.querySelector<HTMLElement>('button');
+    trigger?.focus();
+  });
 }
 
 export function normalizeBackendFormPath(path: string): string {

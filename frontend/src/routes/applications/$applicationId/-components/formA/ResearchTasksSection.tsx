@@ -134,10 +134,13 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                 emptyTableMessage="Nie dodano żadnego zadania."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-research-tasks-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-research-tasks-errors" />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+                data-testid="form-a-research-tasks-errors"
+              />
             </>
           )}
         />

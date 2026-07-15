@@ -5,8 +5,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { useTypedAppFormContext } from '@/lib/form';
+import { getErrors } from '@/lib/form-errors';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applications/periodUtils';
@@ -161,8 +161,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
       savedPreciseValuesRef.current = { start: precisePeriodStart, end: precisePeriodEnd };
     }
 
-    form.setFieldValue('periodSelectionType', value);
-
     if (value === 'period') {
       const restored = savedPeriodValuesRef.current;
       form.setFieldValue('acceptablePeriod', restored?.acceptable ?? (['0', '24'] as CruisePeriodType));
@@ -189,18 +187,24 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {!isReadonly && (
             <div className="lg:col-span-2">
-              <AppDropdownInput
+              <form.AppField
                 name="periodSelectionType"
-                value={periodSelectionType}
-                onChange={(value) => handlePeriodSelectionChange(value as 'precise' | 'period')}
-                label="Wybierz sposób określenia terminu rejsu"
-                allOptions={[
-                  { value: 'precise', inlineLabel: 'Dokładny termin' },
-                  { value: 'period', inlineLabel: 'Okres dopuszczalny/optymalny' },
-                ]}
-                showRequiredAsterisk
-                data-testid="form-a-period-selection-type"
-                data-testid-button="form-a-period-selection-type-button"
+                children={(field) => (
+                  <field.SelectField
+                    onChange={(value) => {
+                      field.handleChange(value as 'precise' | 'period');
+                      handlePeriodSelectionChange(value as 'precise' | 'period');
+                    }}
+                    label="Wybierz sposób określenia terminu rejsu"
+                    allOptions={[
+                      { value: 'precise', inlineLabel: 'Dokładny termin' },
+                      { value: 'period', inlineLabel: 'Okres dopuszczalny/optymalny' },
+                    ]}
+                    showRequiredAsterisk
+                    data-testid="form-a-period-selection-type"
+                    data-testid-button="form-a-period-selection-type-button"
+                  />
+                )}
               />
             </div>
           )}
@@ -259,6 +263,9 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                   <CruiseApplicationPeriodInput
                     name={field.name}
                     value={field.state.value}
+                    onChange={field.handleChange}
+                    onBlur={field.handleBlur}
+                    errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                     label="Dopuszczalny okres, w którym miałby się odbywać rejs"
                     showRequiredAsterisk
                     disabled={isReadonly}
@@ -276,6 +283,9 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                       <CruiseApplicationPeriodInput
                         name={field.name}
                         value={field.state.value}
+                        onChange={field.handleChange}
+                        onBlur={field.handleBlur}
+                        errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                         maxValues={acceptablePeriod}
                         label="Optymalny okres, w którym miałby się odbywać rejs"
                         showRequiredAsterisk

@@ -303,10 +303,13 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                 ]}
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-publications-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-publications-errors" />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+                data-testid="form-a-publications-errors"
+              />
             </>
           )}
         />

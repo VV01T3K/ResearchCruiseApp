@@ -105,10 +105,13 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
                 emptyTableMessage="Nie dodano żadnego pozwolenia."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-permissions-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-permissions-errors" />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+                data-testid="form-a-permissions-errors"
+              />
             </>
           )}
         />

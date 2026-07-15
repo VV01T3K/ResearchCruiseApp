@@ -283,9 +283,9 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         />
@@ -337,9 +337,9 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         />

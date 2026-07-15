@@ -375,9 +375,12 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-b-ug-teams-errors" />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+                data-testid="form-b-ug-teams-errors"
+              />
             </div>
           )}
         />
@@ -430,9 +433,12 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-b-guest-teams-errors" />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+                data-testid="form-b-guest-teams-errors"
+              />
             </div>
           )}
         />
@@ -475,9 +481,12 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
               emptyTableMessage="Nie dodano żadnego członka załogi."
               variant="form"
               disabled={isReadonly}
-              errors={getErrors(field.state.meta)}
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
-            <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-b-crew-members-errors" />
+            <AppInputErrorsList
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+              data-testid="form-b-crew-members-errors"
+            />
           </>
         )}
       />

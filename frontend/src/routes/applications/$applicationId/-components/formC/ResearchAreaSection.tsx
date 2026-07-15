@@ -124,9 +124,9 @@ export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
               emptyTableMessage="Nie dodano żadnego rejonu."
               variant="form"
               disabled={isReadonly}
-              errors={getErrors(field.state.meta)}
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
-            <AppInputErrorsList errors={getErrors(field.state.meta)} />
+            <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
           </>
         )}
       />

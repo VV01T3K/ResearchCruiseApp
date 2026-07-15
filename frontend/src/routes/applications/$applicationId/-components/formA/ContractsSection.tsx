@@ -184,10 +184,13 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
                 emptyTableMessage="Nie dodano żadnej umowy."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-contracts-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-contracts-errors" />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+                data-testid="form-a-contracts-errors"
+              />
             </>
           )}
         />

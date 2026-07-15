@@ -215,10 +215,13 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-ug-teams-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-ug-teams-errors" />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+                data-testid="form-a-ug-teams-errors"
+              />
             </div>
           )}
         />
@@ -272,10 +275,13 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-guest-teams-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-guest-teams-errors" />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+                data-testid="form-a-guest-teams-errors"
+              />
             </div>
           )}
         />
