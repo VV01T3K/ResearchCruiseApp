@@ -1,9 +1,9 @@
 import type { CruiseResponse } from '@/api/generated/schemas';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import type { FormAOptions } from '@/api/applications/types/FormAOptions';
+import type { FormAOptions } from '@/api/client/applications/types/FormAOptions';
 import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import type { FormBOptions } from '@/api/applications/types/FormBOptions';
+import type { FormBOptions } from '@/api/client/applications/types/FormBOptions';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 
 export function useFormCContext() {

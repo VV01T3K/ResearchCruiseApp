@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { AppCalendar } from '@/components/shared/calendar/AppCalendar';
-import { mapRescheduledCruiseToForm } from '@/api/cruises';
+import { mapRescheduledCruiseToForm } from '@/api/client/cruises';
 import { getGetCruisesQueryKey, useUpdateCruise } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
 import { UpdateCruiseFormSchema } from '@/routes/cruises/-schemas/form.schema';

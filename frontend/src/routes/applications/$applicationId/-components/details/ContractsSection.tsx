@@ -6,7 +6,7 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
 import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
-import { EvaluationFormAContract } from '@/api/applications/models';
+import { EvaluationFormAContract } from '@/api/client/applications/models';
 
 export function ContractsSection() {
   const { evaluation } = useApplicationDetails();

@@ -8,7 +8,7 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/generated/endpoints/users.gen';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
-import { CruiseEffectView } from '@/api/applications/types/CruiseEffectView';
+import { CruiseEffectView } from '@/api/client/applications/types/CruiseEffectView';
 import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 export const Route = createFileRoute('/cruise-effects')({

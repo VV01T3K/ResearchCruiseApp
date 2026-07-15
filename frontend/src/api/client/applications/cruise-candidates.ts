@@ -1,5 +1,5 @@
-import type { ApplicationResponse } from '@/api/applications/models';
-import type { CruiseApplicationCandidate } from '@/api/applications/types/CruiseApplicationCandidate';
+import type { ApplicationResponse } from '@/api/client/applications/models';
+import type { CruiseApplicationCandidate } from '@/api/client/applications/types/CruiseApplicationCandidate';
 import type { CruiseApplicationSummary } from '@/api/generated/schemas';
 
 export function mapCruiseApplicationCandidate(application: CruiseApplicationSummary): CruiseApplicationCandidate {

@@ -16,8 +16,8 @@ import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
-import { mapApplicationToCruiseCandidate } from '@/api/applications/cruise-candidates';
-import { ApplicationResponse, ApplicationStatus } from '@/api/applications/models';
+import { mapApplicationToCruiseCandidate } from '@/api/client/applications/cruise-candidates';
+import { ApplicationResponse, ApplicationStatus } from '@/api/client/applications/models';
 import { FormView } from '../-components/FormView';
 import { UpdateCruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 import {

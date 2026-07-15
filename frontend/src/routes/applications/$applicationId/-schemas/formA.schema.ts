@@ -10,7 +10,7 @@ import {
   CruiseGoal,
   CruisePeriodValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
-import { FormAOptions } from '@/api/applications/types/FormAOptions';
+import { FormAOptions } from '@/api/client/applications/types/FormAOptions';
 import {
   GuestTeamValuesInputSchema,
   GuestTeamValuesSchema,

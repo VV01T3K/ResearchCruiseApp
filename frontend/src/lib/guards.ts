@@ -1,10 +1,10 @@
 import { ParsedLocation, redirect } from '@tanstack/react-router';
 
 import { getCurrentUser } from '@/api/generated/endpoints/users.gen';
-import { Role } from '@/api/user';
-import { User } from '@/api/user';
+import { Role } from '@/api/client/user';
+import { User } from '@/api/client/user';
 import { UserContextType } from '@/providers/UserContext';
-import { getStoredAuthDetails } from '@/api/auth-storage';
+import { getStoredAuthDetails } from '@/api/client/auth-storage';
 
 type GuardContextType = {
   context: {

@@ -5,7 +5,7 @@ import SendFillIcon from 'bootstrap-icons/icons/send-fill.svg?react';
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';
-import { Role } from '@/api/user';
+import { Role } from '@/api/client/user';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 
 type Props = {

@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { Role } from '@/api/user';
+import { Role } from '@/api/client/user';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
@@ -17,7 +17,7 @@ import {
   useGetCurrentUserPublicationsSuspense,
   useImportCurrentUserPublications,
 } from '@/api/generated/endpoints/users.gen';
-import { mapPublication, type Publication } from '@/api/publications';
+import { mapPublication, type Publication } from '@/api/client/publications';
 
 export const Route = createFileRoute('/my-publications/')({
   component: MyPublicationsPage,

@@ -54,7 +54,7 @@ import {
   UgTeamValuesInputSchema,
   UgTeamValuesSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
-import { FormAOptions } from '@/api/applications/types/FormAOptions';
+import { FormAOptions } from '@/api/client/applications/types/FormAOptions';
 import {
   getResearchAreaValuesSchema,
   ResearchAreaValuesInputSchema,

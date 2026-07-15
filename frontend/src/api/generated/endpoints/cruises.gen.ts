@@ -33,8 +33,8 @@ import type {
   UpdateRequest
 } from '../schemas';
 
-import { customFetch } from '../../custom-fetch.ts';
-import type { ErrorType } from '../../custom-fetch.ts';
+import { customFetch } from '../../client/custom-fetch.ts';
+import type { ErrorType } from '../../client/custom-fetch.ts';
 
 
 type AwaitedInput<T> = PromiseLike<T> | T;

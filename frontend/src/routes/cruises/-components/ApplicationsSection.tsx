@@ -8,7 +8,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import { CruiseApplicationCandidate } from '@/api/applications/types/CruiseApplicationCandidate';
+import { CruiseApplicationCandidate } from '@/api/client/applications/types/CruiseApplicationCandidate';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 
 export function ApplicationsSection({

@@ -14,7 +14,7 @@ import { FormView } from './-components/FormView';
 import { CreateCruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
-import { mapCruiseApplicationCandidate } from '@/api/applications/cruise-candidates';
+import { mapCruiseApplicationCandidate } from '@/api/client/applications/cruise-candidates';
 
 const searchSchema = z.object({
   blockade: z.boolean().optional(),

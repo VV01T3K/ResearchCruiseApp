@@ -5,7 +5,7 @@ import {
   useGetApplicationEvaluationSuspense,
   useGetApplicationSuspense,
 } from '@/api/generated/endpoints/applications.gen';
-import { mapEvaluationResponse } from '@/api/applications/models';
+import { mapEvaluationResponse } from '@/api/client/applications/models';
 import { DetailsView } from './-components/details/DetailsView';
 
 export const Route = createFileRoute('/applications/$applicationId/details')({

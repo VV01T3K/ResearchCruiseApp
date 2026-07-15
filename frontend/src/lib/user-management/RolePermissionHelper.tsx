@@ -1,4 +1,4 @@
-import { Role } from '@/api/user';
+import { Role } from '@/api/client/user';
 
 export function getModifiableRoles(userRole?: Role) {
   if (!userRole) {

@@ -26,8 +26,8 @@ import {
   useUpdateApplicationFormC,
 } from '@/api/generated/endpoints/applications.gen';
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { mapFormBOptions } from '@/api/applications/types/FormBOptions';
-import { ApiError } from '@/api/custom-fetch';
+import { mapFormBOptions } from '@/api/client/applications/types/FormBOptions';
+import { ApiError } from '@/api/client/custom-fetch';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setSchemaErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';

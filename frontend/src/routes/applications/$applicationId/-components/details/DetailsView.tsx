@@ -1,7 +1,7 @@
 import { toast } from '@/components/shared/layout/toast';
 import { ApplicationDetailsProvider } from '@/contexts/applications/ApplicationDetailsContext';
 import { useUpdateApplicationDecision } from '@/api/generated/endpoints/applications.gen';
-import { ApplicationResponse, EvaluationResponse } from '@/api/applications/models';
+import { ApplicationResponse, EvaluationResponse } from '@/api/client/applications/models';
 
 import { ActionsSection } from './ActionsSection';
 import { ContractsSection } from './ContractsSection';

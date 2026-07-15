@@ -1,6 +1,6 @@
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
-import { UserOption } from '@/api/applications/types/UserOption';
+import { UserOption } from '@/api/client/applications/types/UserOption';
 
 export function mapPersonToLabel(person: UserOption): AppDropdownInputOption {
   return {

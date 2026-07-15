@@ -12,7 +12,7 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
 import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
-import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/api/applications/models';
+import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/api/client/applications/models';
 
 export const Route = createFileRoute('/applications/')({
   component: ApplicationsPage,

@@ -1,5 +1,5 @@
 import type { BlockadeResponse } from '@/api/generated/schemas';
-import type { FormAOptions } from '@/api/applications/types/FormAOptions';
+import type { FormAOptions } from '@/api/client/applications/types/FormAOptions';
 
 export type FormAViewModel = {
   initValues: FormAOptions;

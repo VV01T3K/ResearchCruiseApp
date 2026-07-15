@@ -1,12 +1,12 @@
 import type { FormAOptions as GeneratedFormAOptions } from '@/api/generated/schemas';
 
 import type { ContractValues } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
-import type { UserOption } from '@/api/applications/types/UserOption';
+import type { UserOption } from '@/api/client/applications/types/UserOption';
 import type { PublicationValues } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
-import type { ResearchAreaOption } from '@/api/applications/types/ResearchAreaOption';
+import type { ResearchAreaOption } from '@/api/client/applications/types/ResearchAreaOption';
 import type { ResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 import type { SpubTaskValues } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
-import type { UgUnitOption } from '@/api/applications/types/UgUnitOption';
+import type { UgUnitOption } from '@/api/client/applications/types/UgUnitOption';
 
 export type FormAOptions = Omit<
   Required<GeneratedFormAOptions>,

@@ -1,5 +1,5 @@
 import type { FormBOptions as GeneratedFormBOptions } from '@/api/generated/schemas';
-import type { ShipEquipmentOption } from '@/api/applications/types/ShipEquipmentOption';
+import type { ShipEquipmentOption } from '@/api/client/applications/types/ShipEquipmentOption';
 
 export type FormBOptions = Omit<Required<GeneratedFormBOptions>, 'shipEquipments'> & {
   shipEquipments: ShipEquipmentOption[];
