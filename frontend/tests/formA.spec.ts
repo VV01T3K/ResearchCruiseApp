@@ -27,6 +27,24 @@ test('draft form A requires the complete input shape while allowing empty values
   expect(schema.safeParse(missingKey).success).toBe(false);
 });
 
+test('rejects empty project numbers before mapping them to API strings', () => {
+  const draft = {
+    ...formADefaultValues,
+    researchTasks: [
+      {
+        type: '4' as const,
+        title: '',
+        financingAmount: null,
+        startDate: '',
+        endDate: '',
+        securedAmount: null,
+      },
+    ],
+  };
+
+  expect(getFormADraftWriteSchema().safeParse(draft).success).toBe(false);
+});
+
 test('normalizes backend precise-period datetimes at the API boundary', () => {
   const initValues = getInitValuesAPayload();
   const form = {
