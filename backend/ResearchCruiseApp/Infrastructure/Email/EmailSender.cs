@@ -14,7 +14,8 @@ namespace ResearchCruiseApp.Infrastructure.Email;
 internal class EmailSender(
     IConfiguration configuration,
     TemplateFileReader templateFileReader,
-    GlobalizationService globalizationService
+    GlobalizationService globalizationService,
+    ILogger<EmailSender> logger
 )
 {
     public async Task SendEmailConfirmationEmail(
@@ -132,6 +133,25 @@ internal class EmailSender(
     private async Task SendEmail(string email, string subject, string body)
     {
         var smtpSettings = configuration.GetSection("SmtpSettings");
+
+        if (smtpSettings.GetValue<bool>("UseFakeSmtp"))
+        {
+            var directory = Path.GetFullPath(
+                smtpSettings.GetValue<string>("FakeSmtpDirectory") ?? "fake-emails"
+            );
+            Directory.CreateDirectory(directory);
+
+            var path = Path.Combine(
+                directory,
+                $"{DateTime.UtcNow:yyyyMMdd-HHmmss}-{Guid.NewGuid():N}.html"
+            );
+            await File.WriteAllTextAsync(path, $"<!-- To: {email}\nSubject: {subject} -->\n{body}");
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation("Fake SMTP: email to {Email} saved to {Path}", email, path);
+            }
+            return;
+        }
 
         using var client = new SmtpClient();
         await client.ConnectAsync(
