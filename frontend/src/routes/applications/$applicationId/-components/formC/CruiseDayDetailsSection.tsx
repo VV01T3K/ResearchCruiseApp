@@ -4,7 +4,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { withForm } from '@/lib/form';
+import { useTypedAppFormContext } from '@/lib/form';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
@@ -112,60 +112,57 @@ const cruiseDayDetailsColumns = (
   },
 ];
 
-export const CruiseDayDetailsSection = withForm({
-  defaultValues: formCDefaultValues,
-  props: {} as { context: FormCViewModel },
-  render: function CruiseDayDetailsSection({ form, context }) {
-    const { isReadonly } = context;
+export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { isReadonly } = context;
 
-    return (
-      <AppAccordion
-        title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu"
-        expandedByDefault
-        data-testid="form-c-cruise-day-details-section"
-      >
-        <form.AppField
-          name="cruiseDaysDetails"
-          mode="array"
-          children={(field) => (
-            <AppTable
-              data={field.state.value}
-              columns={cruiseDayDetailsColumns(
-                form,
-                (index) => {
-                  field.removeValue(index);
-                  field.handleChange((prev) => prev);
+  return (
+    <AppAccordion
+      title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu"
+      expandedByDefault
+      data-testid="form-c-cruise-day-details-section"
+    >
+      <form.AppField
+        name="cruiseDaysDetails"
+        mode="array"
+        children={(field) => (
+          <AppTable
+            data={field.state.value}
+            columns={cruiseDayDetailsColumns(
+              form,
+              (index) => {
+                field.removeValue(index);
+                field.handleChange((prev) => prev);
+                field.handleBlur();
+              },
+              isReadonly
+            )}
+            buttons={() => [
+              <AppButton
+                key="new"
+                onClick={() => {
+                  field.pushValue({
+                    number: 0,
+                    hours: 0,
+                    taskName: '',
+                    region: '',
+                    position: '',
+                    comment: '',
+                  });
+                  field.handleChange((prev: CruiseDayValues[]) => prev);
                   field.handleBlur();
-                },
-                isReadonly
-              )}
-              buttons={() => [
-                <AppButton
-                  key="new"
-                  onClick={() => {
-                    field.pushValue({
-                      number: 0,
-                      hours: 0,
-                      taskName: '',
-                      region: '',
-                      position: '',
-                      comment: '',
-                    });
-                    field.handleChange((prev: CruiseDayValues[]) => prev);
-                    field.handleBlur();
-                  }}
-                  variant="primary"
-                  disabled={isReadonly}
-                >
-                  Dodaj
-                </AppButton>,
-              ]}
-              variant="form"
-              disabled={isReadonly}
-            />
-          )}
-        />
-      </AppAccordion>
-    );
-  },
-});
+                }}
+                variant="primary"
+                disabled={isReadonly}
+              >
+                Dodaj
+              </AppButton>,
+            ]}
+            variant="form"
+            disabled={isReadonly}
+          />
+        )}
+      />
+    </AppAccordion>
+  );
+}

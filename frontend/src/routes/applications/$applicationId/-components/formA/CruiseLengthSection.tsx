@@ -6,7 +6,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { withForm } from '@/lib/form';
+import { useTypedAppFormContext } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applications/periodUtils';
@@ -85,343 +85,340 @@ function getOverlappingBlockadesForPeriod(
   );
 }
 
-export const CruiseLengthSection = withForm({
-  defaultValues: formADefaultValues,
-  props: {} as { context: FormAViewModel },
-  render: function CruiseLengthSection({ form, context }) {
-    const { isReadonly, initValues, blockades } = context;
+export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
+  const { isReadonly, initValues, blockades } = context;
 
-    const year = useSelector(form.store, (state) => state.values.year);
-    const periodSelectionType = useSelector(form.store, (state) => state.values.periodSelectionType ?? 'period');
-    const acceptablePeriod = useSelector(form.store, (state) => state.values.acceptablePeriod);
-    const optimalPeriod = useSelector(form.store, (state) => state.values.optimalPeriod);
-    const precisePeriodStart = useSelector(form.store, (state) => state.values.precisePeriodStart);
-    const precisePeriodEnd = useSelector(form.store, (state) => state.values.precisePeriodEnd);
+  const year = useSelector(form.store, (state) => state.values.year);
+  const periodSelectionType = useSelector(form.store, (state) => state.values.periodSelectionType ?? 'period');
+  const acceptablePeriod = useSelector(form.store, (state) => state.values.acceptablePeriod);
+  const optimalPeriod = useSelector(form.store, (state) => state.values.optimalPeriod);
+  const precisePeriodStart = useSelector(form.store, (state) => state.values.precisePeriodStart);
+  const precisePeriodEnd = useSelector(form.store, (state) => state.values.precisePeriodEnd);
 
-    // Initialize checkbox state based on whether saved start date is in the past
-    const [allowPastDates, setAllowPastDates] = useState(() => {
-      const currentFortnight = getCurrentFortnight(year);
+  // Initialize checkbox state based on whether saved start date is in the past
+  const [allowPastDates, setAllowPastDates] = useState(() => {
+    const currentFortnight = getCurrentFortnight(year);
 
-      // Check if precisePeriodStart is in the past
-      if (precisePeriodStart) {
-        const startDate = new Date(precisePeriodStart);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        if (startDate < today) {
-          return true;
-        }
-      }
-
-      // Check if acceptablePeriod start is in the past (fortnight-based)
-      if (isValidPeriod(acceptablePeriod)) {
-        const acceptableStart = parseInt(acceptablePeriod[0], 10);
-        if (acceptableStart < currentFortnight) {
-          return true;
-        }
-      }
-
-      return false;
-    });
-
-    const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
-
-    const overlappingPreciseBlockades = useMemo(
-      () => getOverlappingBlockadesForRange(blockades, precisePeriodStart, precisePeriodEnd),
-      [blockades, precisePeriodStart, precisePeriodEnd]
-    );
-    const overlappingAcceptablePeriodBlockades = useMemo(
-      () => getOverlappingBlockadesForPeriod(blockades, year, acceptablePeriod),
-      [blockades, year, acceptablePeriod]
-    );
-
-    const overlappingBlockadesForCurrentSelection = useMemo(
-      () => (periodSelectionType === 'period' ? overlappingAcceptablePeriodBlockades : overlappingPreciseBlockades),
-      [periodSelectionType, overlappingAcceptablePeriodBlockades, overlappingPreciseBlockades]
-    );
-
-    const savedPeriodValuesRef = useRef<{
-      acceptable: CruisePeriodType;
-      optimal: CruisePeriodType;
-    } | null>(null);
-    const savedPreciseValuesRef = useRef<{ start: string; end: string } | null>(null);
-
-    useEffect(() => {
-      if (periodSelectionType !== 'period' || isReadonly) return;
-
-      if (!isValidPeriod(acceptablePeriod)) {
-        form.setFieldValue('acceptablePeriod', ['0', '24'] as CruisePeriodType);
-      }
-      if (!isValidPeriod(optimalPeriod)) {
-        form.setFieldValue('optimalPeriod', ['0', '24'] as CruisePeriodType);
-      }
-    }, [periodSelectionType, isReadonly, acceptablePeriod, optimalPeriod, form]);
-
-    function handlePeriodSelectionChange(value: 'precise' | 'period') {
-      if (periodSelectionType === 'period' && isValidPeriod(acceptablePeriod) && isValidPeriod(optimalPeriod)) {
-        savedPeriodValuesRef.current = { acceptable: acceptablePeriod, optimal: optimalPeriod };
-      } else if (periodSelectionType === 'precise' && (precisePeriodStart || precisePeriodEnd)) {
-        savedPreciseValuesRef.current = { start: precisePeriodStart, end: precisePeriodEnd };
-      }
-
-      form.setFieldValue('periodSelectionType', value);
-
-      if (value === 'period') {
-        const restored = savedPeriodValuesRef.current;
-        form.setFieldValue('acceptablePeriod', restored?.acceptable ?? (['0', '24'] as CruisePeriodType));
-        form.setFieldValue('optimalPeriod', restored?.optimal ?? (['0', '24'] as CruisePeriodType));
-        form.setFieldValue('precisePeriodStart', '');
-        form.setFieldValue('precisePeriodEnd', '');
-      } else {
-        const restored = savedPreciseValuesRef.current;
-        form.setFieldValue('acceptablePeriod', '');
-        form.setFieldValue('optimalPeriod', '');
-        form.setFieldValue('precisePeriodStart', restored?.start ?? '');
-        form.setFieldValue('precisePeriodEnd', restored?.end ?? '');
+    // Check if precisePeriodStart is in the past
+    if (precisePeriodStart) {
+      const startDate = new Date(precisePeriodStart);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (startDate < today) {
+        return true;
       }
     }
 
-    return (
-      <AppAccordion
-        title="2. Czas trwania zgłaszanego rejsu"
-        expandedByDefault
-        data-testid="form-a-cruise-length-section"
-      >
-        <div className="space-y-4">
-          <BlockadeWarning year={+year} blockades={blockades} />
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {!isReadonly && (
-              <div className="lg:col-span-2">
-                <AppDropdownInput
-                  name="periodSelectionType"
-                  value={periodSelectionType}
-                  onChange={(value) => handlePeriodSelectionChange(value as 'precise' | 'period')}
-                  label="Wybierz sposób określenia terminu rejsu"
-                  allOptions={[
-                    { value: 'precise', inlineLabel: 'Dokładny termin' },
-                    { value: 'period', inlineLabel: 'Okres dopuszczalny/optymalny' },
-                  ]}
-                  showRequiredAsterisk
-                  data-testid="form-a-period-selection-type"
-                  data-testid-button="form-a-period-selection-type-button"
-                />
-              </div>
-            )}
-            {periodSelectionType === 'precise' && (
-              <>
-                <form.AppField
-                  name="precisePeriodStart"
-                  children={(field) => (
-                    <field.DateField
-                      onChange={(newValue) => field.handleChange(newValue ?? '')}
-                      label="Dokładny termin rozpoczęcia rejsu"
-                      type="date"
-                      showRequiredAsterisk
-                      disabled={isReadonly}
-                      minimalDate={allowPastDates ? undefined : new Date()}
-                    />
-                  )}
-                />
+    // Check if acceptablePeriod start is in the past (fortnight-based)
+    if (isValidPeriod(acceptablePeriod)) {
+      const acceptableStart = parseInt(acceptablePeriod[0], 10);
+      if (acceptableStart < currentFortnight) {
+        return true;
+      }
+    }
 
-                <form.Subscribe
-                  selector={(state) => state.values.precisePeriodStart}
-                  children={(precisePeriodStart) => (
-                    <form.AppField
-                      name="precisePeriodEnd"
-                      children={(field) => (
-                        <field.DateField
-                          onChange={(newValue) => {
-                            field.handleChange(newValue ?? '');
-                            form.validateField('precisePeriodStart', 'change');
-                          }}
-                          label="Dokładny termin zakończenia rejsu"
-                          type="date"
-                          showRequiredAsterisk
-                          disabled={isReadonly}
-                          selectionStartDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
-                          minimalDate={
-                            precisePeriodStart && !allowPastDates
-                              ? new Date(precisePeriodStart)
-                              : allowPastDates
-                                ? undefined
-                                : new Date()
-                          }
-                        />
-                      )}
-                    />
-                  )}
-                />
-              </>
-            )}
+    return false;
+  });
 
-            {periodSelectionType === 'period' && (
-              <>
-                <form.AppField
-                  name="acceptablePeriod"
-                  children={(field) => (
-                    <CruiseApplicationPeriodInput
-                      name={field.name}
-                      value={field.state.value}
-                      label="Dopuszczalny okres, w którym miałby się odbywać rejs"
-                      showRequiredAsterisk
-                      disabled={isReadonly}
-                      minPeriodValue={minPeriodValue}
-                    />
-                  )}
-                />
+  const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
 
-                <form.Subscribe
-                  selector={(state) => state.values.acceptablePeriod}
-                  children={(acceptablePeriod) => (
-                    <form.AppField
-                      name="optimalPeriod"
-                      children={(field) => (
-                        <CruiseApplicationPeriodInput
-                          name={field.name}
-                          value={field.state.value}
-                          maxValues={acceptablePeriod}
-                          label="Optymalny okres, w którym miałby się odbywać rejs"
-                          showRequiredAsterisk
-                          disabled={isReadonly}
-                          minPeriodValue={minPeriodValue}
-                        />
-                      )}
-                    />
-                  )}
-                />
-              </>
-            )}
+  const overlappingPreciseBlockades = useMemo(
+    () => getOverlappingBlockadesForRange(blockades, precisePeriodStart, precisePeriodEnd),
+    [blockades, precisePeriodStart, precisePeriodEnd]
+  );
+  const overlappingAcceptablePeriodBlockades = useMemo(
+    () => getOverlappingBlockadesForPeriod(blockades, year, acceptablePeriod),
+    [blockades, year, acceptablePeriod]
+  );
 
-            {overlappingBlockadesForCurrentSelection.length > 0 && (
-              <div className="lg:col-span-2" data-testid="form-a-blockade-period-warning">
-                <AppAlert variant="warning">
-                  <div>
-                    <span className="font-bold">Utrudniające blokady w wybranym zakresie:</span>
-                    <div className="mt-2 space-y-1" data-testid="form-a-blockade-collision-errors">
-                      {overlappingBlockadesForCurrentSelection.map((blockade) => (
-                        <div
-                          key={`${blockade.title}-${blockade.start.toISOString()}-${blockade.end.toISOString()}`}
-                          className="text-sm"
-                        >
-                          <span className="font-bold">{blockade.title}</span>:{' '}
-                          {blockade.start.toLocaleDateString('pl-PL')} - {blockade.end.toLocaleDateString('pl-PL')}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </AppAlert>
-              </div>
-            )}
+  const overlappingBlockadesForCurrentSelection = useMemo(
+    () => (periodSelectionType === 'period' ? overlappingAcceptablePeriodBlockades : overlappingPreciseBlockades),
+    [periodSelectionType, overlappingAcceptablePeriodBlockades, overlappingPreciseBlockades]
+  );
 
-            {!isReadonly && (
-              <div className="lg:col-span-2">
-                <AppCheckbox
-                  name="allowPastDates"
-                  checked={allowPastDates}
-                  onChange={setAllowPastDates}
-                  label="Zezwól na wybór dat z przeszłości"
-                />
-              </div>
-            )}
+  const savedPeriodValuesRef = useRef<{
+    acceptable: CruisePeriodType;
+    optimal: CruisePeriodType;
+  } | null>(null);
+  const savedPreciseValuesRef = useRef<{ start: string; end: string } | null>(null);
 
-            <form.AppField
-              name="cruiseDays"
-              children={(field) => (
-                <field.NumberField
-                  minimum={0}
-                  maximum={60}
-                  step={1}
-                  type="integer"
-                  label="Liczba planowanych dób rejsowych"
-                  showRequiredAsterisk
-                  disabled={isReadonly}
-                  data-testid="form-a-cruise-days"
-                  data-testid-input="form-a-cruise-days-input"
-                />
-              )}
-            />
+  useEffect(() => {
+    if (periodSelectionType !== 'period' || isReadonly) return;
 
-            <form.AppField
-              name="cruiseHours"
-              children={(field) => (
-                <field.NumberField
-                  minimum={0}
-                  maximum={23}
-                  type="integer"
-                  label="Liczba planowanych godzin rejsowych"
-                  showRequiredAsterisk
-                  disabled={isReadonly}
-                  data-testid="form-a-cruise-hours"
-                  data-testid-input="form-a-cruise-hours-input"
-                  data-testid-errors="form-a-cruise-hours-errors"
-                />
-              )}
-            />
+    if (!isValidPeriod(acceptablePeriod)) {
+      form.setFieldValue('acceptablePeriod', ['0', '24'] as CruisePeriodType);
+    }
+    if (!isValidPeriod(optimalPeriod)) {
+      form.setFieldValue('optimalPeriod', ['0', '24'] as CruisePeriodType);
+    }
+  }, [periodSelectionType, isReadonly, acceptablePeriod, optimalPeriod, form]);
 
-            <form.AppField
-              name="periodNotes"
-              children={(field) => (
-                <div className="lg:col-span-2">
-                  <field.TextField
-                    label="Uwagi dotyczące terminu"
-                    placeholder='np. "Rejs w okresie wakacyjnym"'
-                    disabled={isReadonly}
-                    data-testid="form-a-period-notes-input"
-                  />
-                </div>
-              )}
-            />
+  function handlePeriodSelectionChange(value: 'precise' | 'period') {
+    if (periodSelectionType === 'period' && isValidPeriod(acceptablePeriod) && isValidPeriod(optimalPeriod)) {
+      savedPeriodValuesRef.current = { acceptable: acceptablePeriod, optimal: optimalPeriod };
+    } else if (periodSelectionType === 'precise' && (precisePeriodStart || precisePeriodEnd)) {
+      savedPreciseValuesRef.current = { start: precisePeriodStart, end: precisePeriodEnd };
+    }
 
-            <form.AppField
-              name="shipUsage"
-              children={(field) => (
-                <div className="lg:col-span-2">
-                  <field.SelectField
-                    label="Statek na potrzeby badań będzie wykorzystywany"
+    form.setFieldValue('periodSelectionType', value);
+
+    if (value === 'period') {
+      const restored = savedPeriodValuesRef.current;
+      form.setFieldValue('acceptablePeriod', restored?.acceptable ?? (['0', '24'] as CruisePeriodType));
+      form.setFieldValue('optimalPeriod', restored?.optimal ?? (['0', '24'] as CruisePeriodType));
+      form.setFieldValue('precisePeriodStart', '');
+      form.setFieldValue('precisePeriodEnd', '');
+    } else {
+      const restored = savedPreciseValuesRef.current;
+      form.setFieldValue('acceptablePeriod', '');
+      form.setFieldValue('optimalPeriod', '');
+      form.setFieldValue('precisePeriodStart', restored?.start ?? '');
+      form.setFieldValue('precisePeriodEnd', restored?.end ?? '');
+    }
+  }
+
+  return (
+    <AppAccordion
+      title="2. Czas trwania zgłaszanego rejsu"
+      expandedByDefault
+      data-testid="form-a-cruise-length-section"
+    >
+      <div className="space-y-4">
+        <BlockadeWarning year={+year} blockades={blockades} />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {!isReadonly && (
+            <div className="lg:col-span-2">
+              <AppDropdownInput
+                name="periodSelectionType"
+                value={periodSelectionType}
+                onChange={(value) => handlePeriodSelectionChange(value as 'precise' | 'period')}
+                label="Wybierz sposób określenia terminu rejsu"
+                allOptions={[
+                  { value: 'precise', inlineLabel: 'Dokładny termin' },
+                  { value: 'period', inlineLabel: 'Okres dopuszczalny/optymalny' },
+                ]}
+                showRequiredAsterisk
+                data-testid="form-a-period-selection-type"
+                data-testid-button="form-a-period-selection-type-button"
+              />
+            </div>
+          )}
+          {periodSelectionType === 'precise' && (
+            <>
+              <form.AppField
+                name="precisePeriodStart"
+                children={(field) => (
+                  <field.DateField
+                    onChange={(newValue) => field.handleChange(newValue ?? '')}
+                    label="Dokładny termin rozpoczęcia rejsu"
+                    type="date"
                     showRequiredAsterisk
-                    allOptions={initValues?.shipUsages.map((shipUsage, i) => ({
-                      value: i.toString(),
-                      inlineLabel: shipUsage,
-                    }))}
                     disabled={isReadonly}
-                    data-testid-button="form-a-ship-usage-button"
+                    minimalDate={allowPastDates ? undefined : new Date()}
                   />
-                </div>
-              )}
-            />
+                )}
+              />
 
-            <form.Subscribe
-              selector={(state) => state.values.shipUsage}
-              children={(shipUsage) => (
-                <div className="lg:col-span-2">
-                  <AnimatePresence>
-                    {shipUsage === '4' && (
-                      <motion.div
-                        initial={{ opacity: 0, translateY: '-10%' }}
-                        animate={{ opacity: 1, translateY: '0' }}
-                        exit={{ opacity: 0, translateY: '-10%' }}
-                        transition={{ ease: 'easeOut', duration: 0.2 }}
-                      >
-                        <form.AppField
-                          name="differentUsage"
-                          children={(field) => (
-                            <field.TextField
-                              label="Inny sposób użycia"
-                              placeholder="np. statek badawczy"
-                              showRequiredAsterisk
-                              disabled={isReadonly}
-                              data-testid="form-a-alternative-ship-usage-input"
-                            />
-                          )}
-                        />
-                      </motion.div>
+              <form.Subscribe
+                selector={(state) => state.values.precisePeriodStart}
+                children={(precisePeriodStart) => (
+                  <form.AppField
+                    name="precisePeriodEnd"
+                    children={(field) => (
+                      <field.DateField
+                        onChange={(newValue) => {
+                          field.handleChange(newValue ?? '');
+                          form.validateField('precisePeriodStart', 'change');
+                        }}
+                        label="Dokładny termin zakończenia rejsu"
+                        type="date"
+                        showRequiredAsterisk
+                        disabled={isReadonly}
+                        selectionStartDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
+                        minimalDate={
+                          precisePeriodStart && !allowPastDates
+                            ? new Date(precisePeriodStart)
+                            : allowPastDates
+                              ? undefined
+                              : new Date()
+                        }
+                      />
                     )}
-                  </AnimatePresence>
+                  />
+                )}
+              />
+            </>
+          )}
+
+          {periodSelectionType === 'period' && (
+            <>
+              <form.AppField
+                name="acceptablePeriod"
+                children={(field) => (
+                  <CruiseApplicationPeriodInput
+                    name={field.name}
+                    value={field.state.value}
+                    label="Dopuszczalny okres, w którym miałby się odbywać rejs"
+                    showRequiredAsterisk
+                    disabled={isReadonly}
+                    minPeriodValue={minPeriodValue}
+                  />
+                )}
+              />
+
+              <form.Subscribe
+                selector={(state) => state.values.acceptablePeriod}
+                children={(acceptablePeriod) => (
+                  <form.AppField
+                    name="optimalPeriod"
+                    children={(field) => (
+                      <CruiseApplicationPeriodInput
+                        name={field.name}
+                        value={field.state.value}
+                        maxValues={acceptablePeriod}
+                        label="Optymalny okres, w którym miałby się odbywać rejs"
+                        showRequiredAsterisk
+                        disabled={isReadonly}
+                        minPeriodValue={minPeriodValue}
+                      />
+                    )}
+                  />
+                )}
+              />
+            </>
+          )}
+
+          {overlappingBlockadesForCurrentSelection.length > 0 && (
+            <div className="lg:col-span-2" data-testid="form-a-blockade-period-warning">
+              <AppAlert variant="warning">
+                <div>
+                  <span className="font-bold">Utrudniające blokady w wybranym zakresie:</span>
+                  <div className="mt-2 space-y-1" data-testid="form-a-blockade-collision-errors">
+                    {overlappingBlockadesForCurrentSelection.map((blockade) => (
+                      <div
+                        key={`${blockade.title}-${blockade.start.toISOString()}-${blockade.end.toISOString()}`}
+                        className="text-sm"
+                      >
+                        <span className="font-bold">{blockade.title}</span>:{' '}
+                        {blockade.start.toLocaleDateString('pl-PL')} - {blockade.end.toLocaleDateString('pl-PL')}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              )}
-            />
-          </div>
+              </AppAlert>
+            </div>
+          )}
+
+          {!isReadonly && (
+            <div className="lg:col-span-2">
+              <AppCheckbox
+                name="allowPastDates"
+                checked={allowPastDates}
+                onChange={setAllowPastDates}
+                label="Zezwól na wybór dat z przeszłości"
+              />
+            </div>
+          )}
+
+          <form.AppField
+            name="cruiseDays"
+            children={(field) => (
+              <field.NumberField
+                minimum={0}
+                maximum={60}
+                step={1}
+                type="integer"
+                label="Liczba planowanych dób rejsowych"
+                showRequiredAsterisk
+                disabled={isReadonly}
+                data-testid="form-a-cruise-days"
+                data-testid-input="form-a-cruise-days-input"
+              />
+            )}
+          />
+
+          <form.AppField
+            name="cruiseHours"
+            children={(field) => (
+              <field.NumberField
+                minimum={0}
+                maximum={23}
+                type="integer"
+                label="Liczba planowanych godzin rejsowych"
+                showRequiredAsterisk
+                disabled={isReadonly}
+                data-testid="form-a-cruise-hours"
+                data-testid-input="form-a-cruise-hours-input"
+                data-testid-errors="form-a-cruise-hours-errors"
+              />
+            )}
+          />
+
+          <form.AppField
+            name="periodNotes"
+            children={(field) => (
+              <div className="lg:col-span-2">
+                <field.TextField
+                  label="Uwagi dotyczące terminu"
+                  placeholder='np. "Rejs w okresie wakacyjnym"'
+                  disabled={isReadonly}
+                  data-testid="form-a-period-notes-input"
+                />
+              </div>
+            )}
+          />
+
+          <form.AppField
+            name="shipUsage"
+            children={(field) => (
+              <div className="lg:col-span-2">
+                <field.SelectField
+                  label="Statek na potrzeby badań będzie wykorzystywany"
+                  showRequiredAsterisk
+                  allOptions={initValues?.shipUsages.map((shipUsage, i) => ({
+                    value: i.toString(),
+                    inlineLabel: shipUsage,
+                  }))}
+                  disabled={isReadonly}
+                  data-testid-button="form-a-ship-usage-button"
+                />
+              </div>
+            )}
+          />
+
+          <form.Subscribe
+            selector={(state) => state.values.shipUsage}
+            children={(shipUsage) => (
+              <div className="lg:col-span-2">
+                <AnimatePresence>
+                  {shipUsage === '4' && (
+                    <motion.div
+                      initial={{ opacity: 0, translateY: '-10%' }}
+                      animate={{ opacity: 1, translateY: '0' }}
+                      exit={{ opacity: 0, translateY: '-10%' }}
+                      transition={{ ease: 'easeOut', duration: 0.2 }}
+                    >
+                      <form.AppField
+                        name="differentUsage"
+                        children={(field) => (
+                          <field.TextField
+                            label="Inny sposób użycia"
+                            placeholder="np. statek badawczy"
+                            showRequiredAsterisk
+                            disabled={isReadonly}
+                            data-testid="form-a-alternative-ship-usage-input"
+                          />
+                        )}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+          />
         </div>
-      </AppAccordion>
-    );
-  },
-});
+      </div>
+    </AppAccordion>
+  );
+}

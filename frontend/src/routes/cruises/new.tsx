@@ -55,7 +55,7 @@ function NewCruisePage() {
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('new-cruise', 'invalid', formApi.state);
       toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
-      navigateToFirstError();
+      navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('new-cruise', 'valid', formApi.state);
@@ -69,7 +69,7 @@ function NewCruisePage() {
           onError: (error) => {
             console.error(error);
             toast.error('Nie udało się utworzyć rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-            navigateToFirstError();
+            navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
           },
         }
       );
@@ -92,7 +92,9 @@ function NewCruisePage() {
   return (
     <>
       <AppLayout title={search.blockade ? 'Nowa blokada' : 'Nowy rejs'}>
-        <FormView form={form} cruiseApplications={cruiseApplicationsQuery.data} isReadonly={false} buttons={buttons} />
+        <form.AppForm>
+          <FormView cruiseApplications={cruiseApplicationsQuery.data} isReadonly={false} buttons={buttons} />
+        </form.AppForm>
       </AppLayout>
     </>
   );

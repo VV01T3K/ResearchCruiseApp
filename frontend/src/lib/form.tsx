@@ -1,11 +1,4 @@
-import {
-  createFormHook,
-  createFormHookContexts,
-  useSelector,
-  type AppFieldExtendedReactFormApi,
-  type FormAsyncValidateOrFn,
-  type FormValidateOrFn,
-} from '@tanstack/react-form';
+import { createFormHook, createFormHookContexts, useSelector } from '@tanstack/react-form';
 
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
@@ -244,24 +237,7 @@ const fieldComponents = {
   FieldErrors,
 };
 
-export type AppFormApi<T> = AppFieldExtendedReactFormApi<
-  T,
-  FormValidateOrFn<T> | undefined,
-  FormValidateOrFn<T> | undefined,
-  FormAsyncValidateOrFn<T> | undefined,
-  FormValidateOrFn<T> | undefined,
-  FormAsyncValidateOrFn<T> | undefined,
-  FormValidateOrFn<T> | undefined,
-  FormAsyncValidateOrFn<T> | undefined,
-  FormValidateOrFn<T> | undefined,
-  FormAsyncValidateOrFn<T> | undefined,
-  FormAsyncValidateOrFn<T> | undefined,
-  unknown,
-  typeof fieldComponents,
-  Record<never, never>
->;
-
-export const { useAppForm, useTypedAppFormContext, withForm } = createFormHook({
+export const { useAppForm, useTypedAppFormContext } = createFormHook({
   fieldContext,
   formContext,
   fieldComponents,

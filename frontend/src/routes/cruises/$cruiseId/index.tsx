@@ -80,7 +80,7 @@ function CruiseDetailsPage() {
     validators: { onDynamic: UpdateCruiseFormSchema },
     onSubmitInvalid: ({ formApi }) => {
       toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
-      navigateToFirstError();
+      navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
     },
     onSubmit: ({ value }) => {
       updateCruiseMutation.mutate(
@@ -93,7 +93,7 @@ function CruiseDetailsPage() {
           onError: (error) => {
             console.error(error);
             toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-            navigateToFirstError();
+            navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
           },
         }
       );
@@ -223,13 +223,14 @@ function CruiseDetailsPage() {
   return (
     <>
       <AppLayout title={`Szczegóły rejsu nr. ${cruiseQuery.data?.number}`}>
-        <FormView
-          form={form}
-          cruise={cruiseQuery.data}
-          cruiseApplications={filterValidCruiseApplications(cruiseQuery.data, applicationQuery.data)}
-          isReadonly={!editMode}
-          buttons={getButtons()}
-        />
+        <form.AppForm>
+          <FormView
+            cruise={cruiseQuery.data}
+            cruiseApplications={filterValidCruiseApplications(cruiseQuery.data, applicationQuery.data)}
+            isReadonly={!editMode}
+            buttons={getButtons()}
+          />
+        </form.AppForm>
       </AppLayout>
 
       <AppModal

@@ -4,7 +4,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { withForm } from '@/lib/form';
+import { useTypedAppFormContext } from '@/lib/form';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -101,56 +101,53 @@ const researchEquipmentsColumns = (
   },
 ];
 
-export const ResearchEquipmentsSection = withForm({
-  defaultValues: formCDefaultValues,
-  props: {} as { context: FormCViewModel },
-  render: function ResearchEquipmentsSection({ form, context }) {
-    const { isReadonly } = context;
+export function ResearchEquipmentsSection({ context }: { context: FormCViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { isReadonly } = context;
 
-    return (
-      <AppAccordion
-        title="14. Lista sprzętu i aparatury badawczej użytej podczas rejsu"
-        expandedByDefault
-        data-testid="form-c-research-equipments-section"
-      >
-        <form.AppField
-          name="researchEquipments"
-          mode="array"
-          children={(field) => (
-            <AppTable
-              data={field.state.value}
-              columns={researchEquipmentsColumns(
-                form,
-                (index) => {
-                  field.removeValue(index);
+  return (
+    <AppAccordion
+      title="14. Lista sprzętu i aparatury badawczej użytej podczas rejsu"
+      expandedByDefault
+      data-testid="form-c-research-equipments-section"
+    >
+      <form.AppField
+        name="researchEquipments"
+        mode="array"
+        children={(field) => (
+          <AppTable
+            data={field.state.value}
+            columns={researchEquipmentsColumns(
+              form,
+              (index) => {
+                field.removeValue(index);
+                field.handleChange((prev) => prev);
+                field.handleBlur();
+              },
+              isReadonly
+            )}
+            buttons={() => [
+              <AppButton
+                key="new"
+                onClick={() => {
+                  field.pushValue({
+                    name: '',
+                    insuranceStartDate: null,
+                    insuranceEndDate: null,
+                    permission: false,
+                  });
                   field.handleChange((prev) => prev);
                   field.handleBlur();
-                },
-                isReadonly
-              )}
-              buttons={() => [
-                <AppButton
-                  key="new"
-                  onClick={() => {
-                    field.pushValue({
-                      name: '',
-                      insuranceStartDate: null,
-                      insuranceEndDate: null,
-                      permission: false,
-                    });
-                    field.handleChange((prev) => prev);
-                    field.handleBlur();
-                  }}
-                >
-                  Dodaj sprzęt / aparaturę
-                </AppButton>,
-              ]}
-              variant="form"
-              disabled={isReadonly}
-            />
-          )}
-        />
-      </AppAccordion>
-    );
-  },
-});
+                }}
+              >
+                Dodaj sprzęt / aparaturę
+              </AppButton>,
+            ]}
+            variant="form"
+            disabled={isReadonly}
+          />
+        )}
+      />
+    </AppAccordion>
+  );
+}

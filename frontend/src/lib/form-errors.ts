@@ -47,19 +47,21 @@ export function getFormErrorMessage(form: AnyFormApi, sections: Record<string, n
     : `Formularz zawiera błędy:\n ${firstError.errorMessage}`;
 }
 
-export function navigateToFirstError(): void {
-  const root = document.activeElement?.closest('form') ?? document;
-  const invalidField = root.querySelector<HTMLElement>('[aria-invalid="true"]');
-  if (!invalidField) return;
+export function navigateToFirstError(form: AnyFormApi, sections: Record<string, number>): void {
+  const firstError = getFirstFormError(form, sections);
+  if (!firstError) return;
 
-  const hiddenPanel = invalidField.closest<HTMLElement>('[hidden]');
-  if (hiddenPanel) {
-    hiddenPanel.parentElement?.querySelector<HTMLElement>('button')?.click();
-    requestAnimationFrame(() => invalidField.focus());
+  const field = document.getElementsByName(firstError.fieldName).item(0) as HTMLElement | null;
+  if (!field) return;
+
+  const closedPanel = field.closest<HTMLElement>('[data-closed]');
+  if (closedPanel) {
+    closedPanel.parentElement?.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')?.click();
+    requestAnimationFrame(() => field.focus());
     return;
   }
 
-  invalidField.focus();
+  field.focus();
 }
 
 export function normalizeBackendFormPath(path: string): string {

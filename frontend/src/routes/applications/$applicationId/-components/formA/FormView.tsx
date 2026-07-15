@@ -14,8 +14,6 @@ import { ResearchAreaSection } from '@/routes/applications/$applicationId/-compo
 import { ResearchTasksSection } from '@/routes/applications/$applicationId/-components/formA/ResearchTasksSection';
 import { SPUBTasksSection } from '@/routes/applications/$applicationId/-components/formA/SPUBTasksSection';
 import { SupervisorInfoSection } from '@/routes/applications/$applicationId/-components/formA/SupervisorInfoSection';
-import { withForm } from '@/lib/form';
-import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 
 type Props = {
@@ -25,46 +23,42 @@ type Props = {
     actionsDisabled?: boolean;
   };
 };
-export const FormView = withForm({
-  defaultValues: formADefaultValues,
-  props: {} as Props,
-  render: function FormView({ form, context }) {
-    const componentRef = useRef(null);
+export function FormView({ context }: Props) {
+  const componentRef = useRef(null);
 
-    const reactToPrintContent = () => {
-      return componentRef.current;
-    };
+  const reactToPrintContent = () => {
+    return componentRef.current;
+  };
 
-    const handlePrint = useReactToPrint({});
+  const handlePrint = useReactToPrint({});
 
-    function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
-      evt.preventDefault();
-      context.onSubmit();
-    }
+  function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
+    evt.preventDefault();
+    context.onSubmit();
+  }
 
-    return (
-      <form.AppForm>
-        <form className="space-y-8" onSubmit={onSubmit}>
-          <CruiseManagerInfoSection form={form} context={context} />
-          <CruiseLengthSection form={form} context={context} />
-          <PermissionsSection form={form} context={context} />
-          <ResearchAreaSection form={form} context={context} />
-          <CruiseGoalSection form={form} context={context} />
-          <ResearchTasksSection form={form} context={context} />
-          <ContractsSection form={form} context={context} />
-          <MembersSection form={form} context={context} />
-          <PublicationsSection form={form} context={context} />
-          <SPUBTasksSection form={form} context={context} />
-          <SupervisorInfoSection form={form} context={context} />
-          <ActionsSection
-            onSaveDraft={context.onSaveDraft}
-            onPrint={() => handlePrint(reactToPrintContent)}
-            disabled={context.actionsDisabled}
-            context={context}
-          />
-        </form>
-        <PrintTemplate form={form} ref={componentRef} context={context} />
-      </form.AppForm>
-    );
-  },
-});
+  return (
+    <>
+      <form className="space-y-8" onSubmit={onSubmit}>
+        <CruiseManagerInfoSection context={context} />
+        <CruiseLengthSection context={context} />
+        <PermissionsSection context={context} />
+        <ResearchAreaSection context={context} />
+        <CruiseGoalSection context={context} />
+        <ResearchTasksSection context={context} />
+        <ContractsSection context={context} />
+        <MembersSection context={context} />
+        <PublicationsSection context={context} />
+        <SPUBTasksSection context={context} />
+        <SupervisorInfoSection context={context} />
+        <ActionsSection
+          onSaveDraft={context.onSaveDraft}
+          onPrint={() => handlePrint(reactToPrintContent)}
+          disabled={context.actionsDisabled}
+          context={context}
+        />
+      </form>
+      <PrintTemplate ref={componentRef} context={context} />
+    </>
+  );
+}

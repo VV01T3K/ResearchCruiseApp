@@ -98,7 +98,7 @@ function FormCPage() {
     onSubmitInvalid: () => {
       trackFormSubmit('form-c', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
-      navigateToFirstError();
+      navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
     },
   });
   const context = {
@@ -140,11 +140,11 @@ function FormCPage() {
           console.error(err);
           if (installServerFormErrors(form, err)) {
             toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
-            navigateToFirstError();
+            navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
             return;
           }
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError();
+          navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -176,7 +176,7 @@ function FormCPage() {
 
           console.error(err);
           toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
-          navigateToFirstError();
+          navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -188,7 +188,9 @@ function FormCPage() {
   return (
     <>
       <AppLayout title="Formularz C">
-        <FormView form={form} context={context} />
+        <form.AppForm>
+          <FormView context={context} />
+        </form.AppForm>
       </AppLayout>
     </>
   );

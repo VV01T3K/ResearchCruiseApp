@@ -8,7 +8,7 @@ import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDelet
 import { getErrors } from '@/lib/form-errors';
 import { groupBy } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
-import { withForm } from '@/lib/form';
+import { useTypedAppFormContext } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import {
@@ -17,303 +17,300 @@ import {
   PublicationValues,
 } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
-export const PublicationsSection = withForm({
-  defaultValues: formADefaultValues,
-  props: {} as { context: FormAViewModel },
-  render: function PublicationsSection({ form, context }) {
-    const { isReadonly, initValues } = context;
+export function PublicationsSection({ context }: { context: FormAViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
+  const { isReadonly, initValues } = context;
 
-    function getColumns(removeRow: (index: number) => void): ColumnDef<PublicationValues>[] {
-      return [
-        {
-          header: 'Lp.',
-          cell: ({ row }) => `${row.index + 1}. `,
-          size: 5,
-        },
-        {
-          header: 'Kategoria',
-          accessorFn: (row) => row.category,
-          enableColumnFilter: false,
-          enableSorting: false,
-          cell: ({ row }) => (
-            <form.AppField
-              name={`publications[${row.index}].category`}
-              children={(field) => (
-                <field.SelectField
-                  onChange={field.handleChange as (value: string) => void}
-                  allOptions={Object.values(PublicationCategory).map((role) => ({
-                    value: role,
-                    inlineLabel: getPublicationCategoryLabel(role),
-                  }))}
-                  disabled={isReadonly}
-                />
-              )}
-            />
-          ),
-          size: 10,
-        },
-        {
-          header: 'Informacje',
-          accessorFn: (row) => `${row.doi}, ${row.authors}, ${row.title}, ${row.magazine}`,
-          enableColumnFilter: false,
-          enableSorting: false,
-          cell: ({ row }) => (
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              <form.AppField
-                name={`publications[${row.index}].doi`}
-                children={(field) => (
-                  <field.TextField
-                    label="DOI"
-                    placeholder='np. "10.1016/j.jmarsys.2019.03.007"'
-                    disabled={isReadonly}
-                    data-testid="form-a-publication-doi-input"
-                  />
-                )}
-              />
-
-              <form.AppField
-                name={`publications[${row.index}].authors`}
-                children={(field) => (
-                  <field.TextField
-                    label="Autorzy"
-                    placeholder='np. "Kowalski J., Nowak A."'
-                    disabled={isReadonly}
-                    data-testid="form-a-publication-authors-input"
-                  />
-                )}
-              />
-
-              <form.AppField
-                name={`publications[${row.index}].title`}
-                children={(field) => (
-                  <field.TextField
-                    label="Tytuł"
-                    placeholder='np. "The impact of sea level rise on the coastal zone"'
-                    disabled={isReadonly}
-                    data-testid="form-a-publication-title-input"
-                  />
-                )}
-              />
-
-              <form.AppField
-                name={`publications[${row.index}].magazine`}
-                children={(field) => (
-                  <field.TextField
-                    label="Czasopismo"
-                    placeholder='np. "Journal of Marine Systems"'
-                    disabled={isReadonly}
-                    data-testid="form-a-publication-magazine-input"
-                  />
-                )}
-              />
-            </div>
-          ),
-          size: 50,
-        },
-        {
-          header: 'Rok wydania',
-          accessorFn: (row) => row.year,
-          enableColumnFilter: false,
-          enableSorting: false,
-          cell: ({ row }) => (
-            <form.AppField
-              name={`publications[${row.index}].year`}
-              children={(field) => (
-                <div>
-                  <AppYearPickerInput
-                    name={field.name}
-                    value={field.state.value ?? undefined}
-                    onChange={(value) => field.handleChange(value ?? null)}
-                    onBlur={field.handleBlur}
-                    label="Rok"
-                    disabled={isReadonly}
-                    data-testid-button="form-a-publication-year-button"
-                  />
-                  <field.FieldErrors />
-                </div>
-              )}
-            />
-          ),
-          size: 10,
-        },
-        {
-          header: 'Punkty ministerialne',
-          accessorFn: (row) => row.ministerialPoints,
-          enableColumnFilter: false,
-          enableSorting: false,
-          cell: ({ row }) => (
-            <form.AppField
-              name={`publications[${row.index}].ministerialPoints`}
-              children={(field) => (
-                <field.NumberField
-                  minimum={0}
-                  step={10}
-                  label="Punkty"
-                  disabled={isReadonly}
-                  data-testid-input="form-a-publication-points-input"
-                />
-              )}
-            />
-          ),
-          size: 10,
-        },
-        {
-          id: 'actions',
-          cell: ({ row }) => (
-            <div className="flex justify-end">
-              <AppTableDeleteRowButton
-                onClick={() => {
-                  removeRow(row.index);
-                }}
+  function getColumns(removeRow: (index: number) => void): ColumnDef<PublicationValues>[] {
+    return [
+      {
+        header: 'Lp.',
+        cell: ({ row }) => `${row.index + 1}. `,
+        size: 5,
+      },
+      {
+        header: 'Kategoria',
+        accessorFn: (row) => row.category,
+        enableColumnFilter: false,
+        enableSorting: false,
+        cell: ({ row }) => (
+          <form.AppField
+            name={`publications[${row.index}].category`}
+            children={(field) => (
+              <field.SelectField
+                onChange={field.handleChange as (value: string) => void}
+                allOptions={Object.values(PublicationCategory).map((role) => ({
+                  value: role,
+                  inlineLabel: getPublicationCategoryLabel(role),
+                }))}
                 disabled={isReadonly}
               />
-            </div>
-          ),
-          size: 5,
-        },
-      ];
-    }
+            )}
+          />
+        ),
+        size: 10,
+      },
+      {
+        header: 'Informacje',
+        accessorFn: (row) => `${row.doi}, ${row.authors}, ${row.title}, ${row.magazine}`,
+        enableColumnFilter: false,
+        enableSorting: false,
+        cell: ({ row }) => (
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <form.AppField
+              name={`publications[${row.index}].doi`}
+              children={(field) => (
+                <field.TextField
+                  label="DOI"
+                  placeholder='np. "10.1016/j.jmarsys.2019.03.007"'
+                  disabled={isReadonly}
+                  data-testid="form-a-publication-doi-input"
+                />
+              )}
+            />
 
-    return (
-      <AppAccordion title="9. Publikacje" expandedByDefault data-testid="form-a-publications-section">
-        <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center">
-          <h3 className="text-xl">
-            Publikacje kategorii <span className="font-semibold">temat</span>
-          </h3>
-          <p className="text-sm">
-            Publikacje z ubiegłych 5 lat związane <span className="font-semibold">bezpośrednio</span> tematycznie z
-            zadaniami do realizacji na planowanym rejsie{' '}
-            <span className="font-semibold">
-              opublikowane przez zespoł zaangażowany w realizację rejsu – z afiliacją UG.
-            </span>
-          </p>
-          <h3 className="text-xl">
-            Publikacje kategorii <span className="font-semibold">dopisek</span>
-          </h3>
-          <p className="text-sm">
-            Publikacje autorstwa zespołu zaangażowanego w realizację rejsu, ALE zawierające dopisek w treści publikacji
-            (w wersji angielskiej lub w innym języku):{' '}
-            <span className="font-semibold">
-              „…the research/study was conducted onboard r/v Oceanograf (the research vessel owned by the University of
-              Gdańsk)…”
-            </span>
-            ,
-            <span className="font-semibold">
-              „… samples for the present study were collected during a research cruise onboard r/v Oceanograf…”{' '}
-            </span>
-            lub podobny, ale wskazujący jednoznacznie, że badania w ramach niniejszej publikacji były prowadzone z
-            pokładu jednostki RV Oceanograf.
-          </p>
-        </header>
-        <div>
+            <form.AppField
+              name={`publications[${row.index}].authors`}
+              children={(field) => (
+                <field.TextField
+                  label="Autorzy"
+                  placeholder='np. "Kowalski J., Nowak A."'
+                  disabled={isReadonly}
+                  data-testid="form-a-publication-authors-input"
+                />
+              )}
+            />
+
+            <form.AppField
+              name={`publications[${row.index}].title`}
+              children={(field) => (
+                <field.TextField
+                  label="Tytuł"
+                  placeholder='np. "The impact of sea level rise on the coastal zone"'
+                  disabled={isReadonly}
+                  data-testid="form-a-publication-title-input"
+                />
+              )}
+            />
+
+            <form.AppField
+              name={`publications[${row.index}].magazine`}
+              children={(field) => (
+                <field.TextField
+                  label="Czasopismo"
+                  placeholder='np. "Journal of Marine Systems"'
+                  disabled={isReadonly}
+                  data-testid="form-a-publication-magazine-input"
+                />
+              )}
+            />
+          </div>
+        ),
+        size: 50,
+      },
+      {
+        header: 'Rok wydania',
+        accessorFn: (row) => row.year,
+        enableColumnFilter: false,
+        enableSorting: false,
+        cell: ({ row }) => (
           <form.AppField
-            name="publications"
-            mode="array"
+            name={`publications[${row.index}].year`}
             children={(field) => (
-              <>
-                <AppTable
-                  columns={getColumns((index) => {
-                    field.removeValue(index);
-                    field.handleChange((prev) => prev);
-                    field.handleBlur();
-                  })}
-                  data={field.state.value}
-                  buttons={() => [
-                    <DropdownElementSelectorButton
-                      key="new"
-                      options={Object.values(PublicationCategory).map((role) => ({
-                        value: getPublicationCategoryLabel(role),
+              <div>
+                <AppYearPickerInput
+                  name={field.name}
+                  value={field.state.value ?? undefined}
+                  onChange={(value) => field.handleChange(value ?? null)}
+                  onBlur={field.handleBlur}
+                  label="Rok"
+                  disabled={isReadonly}
+                  data-testid-button="form-a-publication-year-button"
+                />
+                <field.FieldErrors />
+              </div>
+            )}
+          />
+        ),
+        size: 10,
+      },
+      {
+        header: 'Punkty ministerialne',
+        accessorFn: (row) => row.ministerialPoints,
+        enableColumnFilter: false,
+        enableSorting: false,
+        cell: ({ row }) => (
+          <form.AppField
+            name={`publications[${row.index}].ministerialPoints`}
+            children={(field) => (
+              <field.NumberField
+                minimum={0}
+                step={10}
+                label="Punkty"
+                disabled={isReadonly}
+                data-testid-input="form-a-publication-points-input"
+              />
+            )}
+          />
+        ),
+        size: 10,
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => (
+          <div className="flex justify-end">
+            <AppTableDeleteRowButton
+              onClick={() => {
+                removeRow(row.index);
+              }}
+              disabled={isReadonly}
+            />
+          </div>
+        ),
+        size: 5,
+      },
+    ];
+  }
+
+  return (
+    <AppAccordion title="9. Publikacje" expandedByDefault data-testid="form-a-publications-section">
+      <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center">
+        <h3 className="text-xl">
+          Publikacje kategorii <span className="font-semibold">temat</span>
+        </h3>
+        <p className="text-sm">
+          Publikacje z ubiegłych 5 lat związane <span className="font-semibold">bezpośrednio</span> tematycznie z
+          zadaniami do realizacji na planowanym rejsie{' '}
+          <span className="font-semibold">
+            opublikowane przez zespoł zaangażowany w realizację rejsu – z afiliacją UG.
+          </span>
+        </p>
+        <h3 className="text-xl">
+          Publikacje kategorii <span className="font-semibold">dopisek</span>
+        </h3>
+        <p className="text-sm">
+          Publikacje autorstwa zespołu zaangażowanego w realizację rejsu, ALE zawierające dopisek w treści publikacji (w
+          wersji angielskiej lub w innym języku):{' '}
+          <span className="font-semibold">
+            „…the research/study was conducted onboard r/v Oceanograf (the research vessel owned by the University of
+            Gdańsk)…”
+          </span>
+          ,
+          <span className="font-semibold">
+            „… samples for the present study were collected during a research cruise onboard r/v Oceanograf…”{' '}
+          </span>
+          lub podobny, ale wskazujący jednoznacznie, że badania w ramach niniejszej publikacji były prowadzone z pokładu
+          jednostki RV Oceanograf.
+        </p>
+      </header>
+      <div>
+        <form.AppField
+          name="publications"
+          mode="array"
+          children={(field) => (
+            <>
+              <AppTable
+                columns={getColumns((index) => {
+                  field.removeValue(index);
+                  field.handleChange((prev) => prev);
+                  field.handleBlur();
+                })}
+                data={field.state.value}
+                buttons={() => [
+                  <DropdownElementSelectorButton
+                    key="new"
+                    options={Object.values(PublicationCategory).map((role) => ({
+                      value: getPublicationCategoryLabel(role),
+                      onClick: () => {
+                        field.pushValue({
+                          id: '',
+                          category: role,
+                          doi: '',
+                          authors: '',
+                          title: '',
+                          magazine: '',
+                          year: null,
+                          ministerialPoints: 0,
+                        });
+                        field.handleChange((prev: PublicationValues[]) => prev);
+                        field.handleBlur();
+                      },
+                    }))}
+                    variant="primary"
+                    disabled={isReadonly}
+                    data-testid="form-a-add-publication-btn"
+                  >
+                    Dodaj nową publikację
+                  </DropdownElementSelectorButton>,
+                  <DropdownElementSelectorButton
+                    key="historical"
+                    // dont show options with empty fields
+                    options={groupBy(
+                      initValues.historicalPublications.filter(
+                        (publication) =>
+                          publication.doi &&
+                          publication.authors &&
+                          publication.title &&
+                          publication.magazine &&
+                          publication.year
+                      ),
+                      (x) => x.category
+                    ).flatMap(([category, publications]) => [
+                      ...[
+                        {
+                          value: category,
+                          content: (
+                            <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
+                              {getPublicationCategoryLabel(category as PublicationCategory)}
+                            </div>
+                          ),
+                        },
+                      ],
+                      ...publications.map((publication) => ({
+                        value: JSON.stringify(publication),
+                        content: (
+                          <div className="w-full cursor-pointer rounded-lg px-2 inset-ring-blue-500 hover:bg-gray-100 focus:inset-ring-2">
+                            <div>
+                              <strong>DOI:</strong> {publication.doi}
+                            </div>
+                            <div>
+                              <strong>Autorzy:</strong> {publication.authors}
+                            </div>
+                            <div>
+                              <strong>Tytuł:</strong> {publication.title}
+                            </div>
+                            <div>
+                              <strong>Czasopismo:</strong> {publication.magazine}
+                            </div>
+                            <div>
+                              <strong>Rok:</strong> {publication.year}
+                            </div>
+                          </div>
+                        ),
                         onClick: () => {
-                          field.pushValue({
-                            id: '',
-                            category: role,
-                            doi: '',
-                            authors: '',
-                            title: '',
-                            magazine: '',
-                            year: null,
-                            ministerialPoints: 0,
-                          });
+                          field.pushValue(publication);
                           field.handleChange((prev: PublicationValues[]) => prev);
                           field.handleBlur();
                         },
-                      }))}
-                      variant="primary"
-                      disabled={isReadonly}
-                      data-testid="form-a-add-publication-btn"
-                    >
-                      Dodaj nową publikację
-                    </DropdownElementSelectorButton>,
-                    <DropdownElementSelectorButton
-                      key="historical"
-                      // dont show options with empty fields
-                      options={groupBy(
-                        initValues.historicalPublications.filter(
-                          (publication) =>
-                            publication.doi &&
-                            publication.authors &&
-                            publication.title &&
-                            publication.magazine &&
-                            publication.year
-                        ),
-                        (x) => x.category
-                      ).flatMap(([category, publications]) => [
-                        ...[
-                          {
-                            value: category,
-                            content: (
-                              <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
-                                {getPublicationCategoryLabel(category as PublicationCategory)}
-                              </div>
-                            ),
-                          },
-                        ],
-                        ...publications.map((publication) => ({
-                          value: JSON.stringify(publication),
-                          content: (
-                            <div className="w-full cursor-pointer rounded-lg px-2 inset-ring-blue-500 hover:bg-gray-100 focus:inset-ring-2">
-                              <div>
-                                <strong>DOI:</strong> {publication.doi}
-                              </div>
-                              <div>
-                                <strong>Autorzy:</strong> {publication.authors}
-                              </div>
-                              <div>
-                                <strong>Tytuł:</strong> {publication.title}
-                              </div>
-                              <div>
-                                <strong>Czasopismo:</strong> {publication.magazine}
-                              </div>
-                              <div>
-                                <strong>Rok:</strong> {publication.year}
-                              </div>
-                            </div>
-                          ),
-                          onClick: () => {
-                            field.pushValue(publication);
-                            field.handleChange((prev: PublicationValues[]) => prev);
-                            field.handleBlur();
-                          },
-                        })),
-                      ])}
-                      variant="primaryOutline"
-                      disabled={isReadonly}
-                      data-testid="form-a-add-historical-publication-btn"
-                    >
-                      Dodaj historyczną publikację
-                    </DropdownElementSelectorButton>,
-                  ]}
-                  variant="form"
-                  disabled={isReadonly}
-                  errors={getErrors(field.state.meta)}
-                  data-testid="form-a-publications-table"
-                />
-                <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-publications-errors" />
-              </>
-            )}
-          />
-        </div>
-      </AppAccordion>
-    );
-  },
-});
+                      })),
+                    ])}
+                    variant="primaryOutline"
+                    disabled={isReadonly}
+                    data-testid="form-a-add-historical-publication-btn"
+                  >
+                    Dodaj historyczną publikację
+                  </DropdownElementSelectorButton>,
+                ]}
+                variant="form"
+                disabled={isReadonly}
+                errors={getErrors(field.state.meta)}
+                data-testid="form-a-publications-table"
+              />
+              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-publications-errors" />
+            </>
+          )}
+        />
+      </div>
+    </AppAccordion>
+  );
+}

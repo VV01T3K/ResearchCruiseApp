@@ -4,7 +4,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { withForm } from '@/lib/form';
+import { useTypedAppFormContext } from '@/lib/form';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { CollectedSampleValues } from '@/routes/applications/$applicationId/-schemas/types/CollectedSampleValues';
@@ -69,50 +69,47 @@ const collectedSamplesColumns = (
   },
 ];
 
-export const CollectedSamplesSection = withForm({
-  defaultValues: formCDefaultValues,
-  props: {} as { context: FormCViewModel },
-  render: function CollectedSamplesSection({ form, context }) {
-    const { isReadonly } = context;
+export function CollectedSamplesSection({ context }: { context: FormCViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { isReadonly } = context;
 
-    return (
-      <AppAccordion
-        title="16. Lista próbek pobranych i poddanych analizie podczas rejsu"
-        expandedByDefault
-        data-testid="form-c-collected-samples-section"
-      >
-        <form.AppField
-          name="collectedSamples"
-          mode="array"
-          children={(field) => (
-            <AppTable
-              data={field.state.value}
-              columns={collectedSamplesColumns(form, (index) => field.removeValue(index), isReadonly)}
-              buttons={() => [
-                <AppButton
-                  key="new"
-                  data-testid="form-c-add-sample-btn"
-                  onClick={() => {
-                    field.pushValue({
-                      type: '',
-                      amount: 0,
-                      analysis: '',
-                      publishing: '',
-                    } satisfies CollectedSampleValues);
-                    field.handleChange((prev: CollectedSampleValues[]) => prev);
-                    field.handleBlur();
-                  }}
-                >
-                  Dodaj próbkę
-                </AppButton>,
-              ]}
-              variant="form"
-              emptyTableMessage="Nie dodano żadnej próbki"
-              disabled={isReadonly}
-            />
-          )}
-        />
-      </AppAccordion>
-    );
-  },
-});
+  return (
+    <AppAccordion
+      title="16. Lista próbek pobranych i poddanych analizie podczas rejsu"
+      expandedByDefault
+      data-testid="form-c-collected-samples-section"
+    >
+      <form.AppField
+        name="collectedSamples"
+        mode="array"
+        children={(field) => (
+          <AppTable
+            data={field.state.value}
+            columns={collectedSamplesColumns(form, (index) => field.removeValue(index), isReadonly)}
+            buttons={() => [
+              <AppButton
+                key="new"
+                data-testid="form-c-add-sample-btn"
+                onClick={() => {
+                  field.pushValue({
+                    type: '',
+                    amount: 0,
+                    analysis: '',
+                    publishing: '',
+                  } satisfies CollectedSampleValues);
+                  field.handleChange((prev: CollectedSampleValues[]) => prev);
+                  field.handleBlur();
+                }}
+              >
+                Dodaj próbkę
+              </AppButton>,
+            ]}
+            variant="form"
+            emptyTableMessage="Nie dodano żadnej próbki"
+            disabled={isReadonly}
+          />
+        )}
+      />
+    </AppAccordion>
+  );
+}

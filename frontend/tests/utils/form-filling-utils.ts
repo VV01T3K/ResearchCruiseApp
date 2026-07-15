@@ -40,6 +40,7 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
         const button = this.page
           .getByRole('button', { name: itemText, exact: true })
           .and(this.page.locator(':visible'));
+        if ((await button.count()) === 0) await this.dropdown.click();
         await button.first().click();
       }
       await this.page.waitForTimeout(100);

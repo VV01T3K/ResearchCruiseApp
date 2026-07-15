@@ -77,7 +77,7 @@ function FormBPage() {
     onSubmitInvalid: () => {
       trackFormSubmit('form-b', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
-      navigateToFirstError();
+      navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
     },
   });
   const context = {
@@ -119,13 +119,13 @@ function FormBPage() {
           console.error(err);
           if (installServerFormErrors(form, err)) {
             toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
-            navigateToFirstError();
+            navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
             return;
           }
           toast.error(
             'Nie udało się wysłać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie i spróbuj ponownie.'
           );
-          navigateToFirstError();
+          navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -142,7 +142,7 @@ function FormBPage() {
 
     if (commentError && !commentError.success) {
       toast.error(`Formularz błędny w sekcji nr 13:\n${commentError.error.issues[0].message}`);
-      navigateToFirstError();
+      navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
       return;
     }
 
@@ -168,7 +168,7 @@ function FormBPage() {
 
           console.error(err);
           toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
-          navigateToFirstError();
+          navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -195,7 +195,9 @@ function FormBPage() {
   return (
     <>
       <AppLayout title="Formularz B">
-        <FormView form={form} context={context} />
+        <form.AppForm>
+          <FormView context={context} />
+        </form.AppForm>
       </AppLayout>
     </>
   );

@@ -88,7 +88,7 @@ function NewCruiseApplicationPage() {
       trackFormSubmit('new-application', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
       toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-      navigateToFirstError();
+      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
     },
   });
 
@@ -111,7 +111,7 @@ function NewCruiseApplicationPage() {
     ) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
-      navigateToFirstError();
+      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
       return;
     }
 
@@ -130,11 +130,11 @@ function NewCruiseApplicationPage() {
           console.error(err);
           if (installServerFormErrors(form, err)) {
             toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-            navigateToFirstError();
+            navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
             return;
           }
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError();
+          navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -151,7 +151,7 @@ function NewCruiseApplicationPage() {
     ) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
-      navigateToFirstError();
+      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
       return;
     }
 
@@ -166,7 +166,7 @@ function NewCruiseApplicationPage() {
         onError: (err) => {
           console.error(err);
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError();
+          navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
         },
         onSettled: () => {
           setIsSaveDraftModalOpen(false);
@@ -179,7 +179,9 @@ function NewCruiseApplicationPage() {
   return (
     <>
       <AppLayout title="Formularz A">
-        <FormView form={form} context={context} />
+        <form.AppForm>
+          <FormView context={context} />
+        </form.AppForm>
       </AppLayout>
 
       <AppModal

@@ -4,7 +4,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { withForm } from '@/lib/form';
+import { useTypedAppFormContext } from '@/lib/form';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { ResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
@@ -101,57 +101,54 @@ const researchEquipmentsColumns = (
   },
 ];
 
-export const ResearchEquipmentsSection = withForm({
-  defaultValues: formBDefaultValues,
-  props: {} as { context: FormBViewModel },
-  render: function ResearchEquipmentsSection({ form, context }) {
-    const { isReadonly } = context;
+export function ResearchEquipmentsSection({ context }: { context: FormBViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formBDefaultValues });
+  const { isReadonly } = context;
 
-    return (
-      <AppAccordion
-        title="14. Lista sprzętu i aparatury badawczej planowanej do użycia podczas rejsu"
-        expandedByDefault
-        data-testid="form-b-research-equipments-section"
-      >
-        <form.AppField
-          name="researchEquipments"
-          mode="array"
-          children={(field) => (
-            <AppTable
-              data={field.state.value}
-              columns={researchEquipmentsColumns(
-                form,
-                (index) => {
-                  field.removeValue(index);
-                  field.handleChange((prev) => prev);
+  return (
+    <AppAccordion
+      title="14. Lista sprzętu i aparatury badawczej planowanej do użycia podczas rejsu"
+      expandedByDefault
+      data-testid="form-b-research-equipments-section"
+    >
+      <form.AppField
+        name="researchEquipments"
+        mode="array"
+        children={(field) => (
+          <AppTable
+            data={field.state.value}
+            columns={researchEquipmentsColumns(
+              form,
+              (index) => {
+                field.removeValue(index);
+                field.handleChange((prev) => prev);
+                field.handleBlur();
+              },
+              isReadonly
+            )}
+            buttons={() => [
+              <AppButton
+                key="new"
+                data-testid="form-b-add-research-equipment-btn"
+                onClick={() => {
+                  field.pushValue({
+                    name: '',
+                    insuranceStartDate: null,
+                    insuranceEndDate: null,
+                    permission: false,
+                  });
+                  field.handleChange((prev: ResearchEquipmentValues[]) => prev);
                   field.handleBlur();
-                },
-                isReadonly
-              )}
-              buttons={() => [
-                <AppButton
-                  key="new"
-                  data-testid="form-b-add-research-equipment-btn"
-                  onClick={() => {
-                    field.pushValue({
-                      name: '',
-                      insuranceStartDate: null,
-                      insuranceEndDate: null,
-                      permission: false,
-                    });
-                    field.handleChange((prev: ResearchEquipmentValues[]) => prev);
-                    field.handleBlur();
-                  }}
-                >
-                  Dodaj sprzęt / aparaturę
-                </AppButton>,
-              ]}
-              variant="form"
-              disabled={isReadonly}
-            />
-          )}
-        />
-      </AppAccordion>
-    );
-  },
-});
+                }}
+              >
+                Dodaj sprzęt / aparaturę
+              </AppButton>,
+            ]}
+            variant="form"
+            disabled={isReadonly}
+          />
+        )}
+      />
+    </AppAccordion>
+  );
+}

@@ -2,10 +2,14 @@ import type { CruiseResponse } from '@/api/generated/schemas';
 import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
 import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
-import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import type { AppFormApi } from '@/lib/form';
+import { useTypedAppFormContext } from '@/lib/form';
+import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 
-export type FormBFormApi = AppFormApi<FormBValues>;
+export function useFormBContext() {
+  return useTypedAppFormContext({ defaultValues: formBDefaultValues });
+}
+
+export type FormBFormApi = ReturnType<typeof useFormBContext>;
 
 export type FormBViewModel = {
   formAInitValues: FormAOptions;

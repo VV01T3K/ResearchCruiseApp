@@ -97,7 +97,7 @@ function FormAPage() {
       trackFormSubmit('form-a', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
       toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-      navigateToFirstError();
+      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
     },
   });
 
@@ -140,11 +140,11 @@ function FormAPage() {
           console.error(err);
           if (installServerFormErrors(form, err)) {
             toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-            navigateToFirstError();
+            navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
             return;
           }
           toast.error('Nie udało się zapisać formularza. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError();
+          navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
         },
         onSettled: () => {
           setIsSaveDraftModalOpen(false);
@@ -171,7 +171,9 @@ function FormAPage() {
   return (
     <>
       <AppLayout title="Formularz A">
-        <FormView form={form} context={context} />
+        <form.AppForm>
+          <FormView context={context} />
+        </form.AppForm>
       </AppLayout>
 
       <AppModal

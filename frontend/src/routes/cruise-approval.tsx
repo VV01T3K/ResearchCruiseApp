@@ -93,11 +93,12 @@ function SupervisorViewPage() {
   }
 
   return (
-    <SupervisorView
-      form={form}
-      formInitValues={supervisorReview.data.initValues}
-      handleAcceptForm={handleAcceptForm}
-      handleDenyForm={handleDenyForm}
-    />
+    <form.AppForm>
+      <SupervisorView
+        formInitValues={supervisorReview.data.initValues}
+        handleAcceptForm={handleAcceptForm}
+        handleDenyForm={handleDenyForm}
+      />
+    </form.AppForm>
   );
 }

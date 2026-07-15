@@ -191,11 +191,9 @@ const ManagerAndDeputyManagerValidationSchema = (initValues: FormAOptions) =>
 
 const ShipUsageValidationSchema = z
   .object({
-    shipUsage: z
-      .enum(['0', '1', '2', '3', '4'], {
-        error: 'Wymagane jest wskazanie sposobu korzystania z statku',
-      })
-      .optional(),
+    shipUsage: z.enum(['0', '1', '2', '3', '4'], {
+      error: 'Wymagane jest wskazanie sposobu korzystania z statku',
+    }),
     differentUsage: z.string(),
   })
   .superRefine(({ shipUsage, differentUsage }, ctx) => {
@@ -363,7 +361,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
   return z
     .object({
       year: z.string(),
-      periodSelectionType: z.enum(['precise', 'period']).optional(),
+      periodSelectionType: z.enum(['precise', 'period']),
       acceptablePeriod: CruisePeriodValidationSchema.or(literal('')),
       optimalPeriod: CruisePeriodValidationSchema.or(literal('')),
       precisePeriodStart: z.string().or(literal('')),
@@ -454,7 +452,7 @@ const OtherValidationSchema = (initValues: FormAOptions) =>
           (val) => initValues.years.includes(val),
           'Rok musi być jednym z dostępnych lat: ' + initValues.years.join(', ')
         ),
-      periodSelectionType: z.enum(['precise', 'period']).optional(),
+      periodSelectionType: z.enum(['precise', 'period']),
       acceptablePeriod: CruisePeriodValidationSchema.or(literal('')),
       optimalPeriod: CruisePeriodValidationSchema.or(literal('')),
       precisePeriodStart: z.string().or(literal('')),
@@ -485,7 +483,7 @@ const OtherValidationSchema = (initValues: FormAOptions) =>
       publications: PublicationValuesSchema.array(),
       spubTasks: SpubTaskValuesSchema.array(),
       supervisorEmail: z.email('Niepoprawny adres email'),
-      note: z.string().optional(),
+      note: z.string(),
     })
     .refine((val) => {
       const acceptablePeriod = val.acceptablePeriod;
@@ -598,24 +596,11 @@ const OtherValidationSchema = (initValues: FormAOptions) =>
     });
 
 export function getFormAValidationSchema(initValues: FormAOptions, blockades?: BlockadePeriod[]) {
-  const validations = [
-    ManagerAndDeputyManagerValidationSchema(initValues),
-    ShipUsageValidationSchema,
-    CruiseGoalValidationSchema,
-    BlockadeCollisionValidationSchema(blockades),
-    OtherValidationSchema(initValues),
-  ];
-
-  return FormAInputSchema.superRefine((form, ctx) => {
-    for (const validation of validations) {
-      const result = validation.safeParse(form);
-      if (!result.success) {
-        result.error.issues.forEach((issue) =>
-          ctx.addIssue({ code: 'custom', path: issue.path, message: issue.message })
-        );
-      }
-    }
-  });
+  return ManagerAndDeputyManagerValidationSchema(initValues)
+    .and(ShipUsageValidationSchema)
+    .and(CruiseGoalValidationSchema)
+    .and(BlockadeCollisionValidationSchema(blockades))
+    .and(OtherValidationSchema(initValues));
 }
 
 export function getFormAWriteSchema(initValues: FormAOptions, blockades?: BlockadePeriod[], applicationId?: string) {
