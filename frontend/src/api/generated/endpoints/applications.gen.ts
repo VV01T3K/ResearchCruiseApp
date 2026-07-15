@@ -36,8 +36,8 @@ import type {
   SupervisorReviewResponse
 } from '../schemas';
 
-import { customFetch } from '../../../lib/custom-fetch.ts';
-import type { ErrorType } from '../../../lib/custom-fetch.ts';
+import { customFetch } from '../../custom-fetch.ts';
+import type { ErrorType } from '../../custom-fetch.ts';
 
 
 type AwaitedInput<T> = PromiseLike<T> | T;

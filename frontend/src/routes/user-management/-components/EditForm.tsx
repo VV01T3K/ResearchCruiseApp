@@ -19,8 +19,8 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { getErrors } from '@/integrations/tanstack/form/errors';
-import { getRoleLabel, Role } from '@/types/user';
-import { User } from '@/types/user';
+import { getRoleLabel, Role } from '@/api/user';
+import { User } from '@/api/user';
 import {
   useAcceptUser,
   useAddUserRole,
@@ -31,7 +31,7 @@ import {
   useUpdateUser,
 } from '@/api/generated/endpoints/users.gen';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
-import { getProblemDetail } from '@/lib/custom-fetch';
+import { getProblemDetail } from '@/api/custom-fetch';
 
 type Props = {
   user?: User;

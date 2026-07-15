@@ -5,7 +5,7 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { ShipEquipmentOption } from '@/routes/applications/$applicationId/-schemas/types/ShipEquipmentOption';
+import { ShipEquipmentOption } from '@/api/applications/types/ShipEquipmentOption';
 
 const shipEquipmentColumns = (form: FormBFormApi, isReadonly: boolean): ColumnDef<ShipEquipmentOption>[] => [
   {

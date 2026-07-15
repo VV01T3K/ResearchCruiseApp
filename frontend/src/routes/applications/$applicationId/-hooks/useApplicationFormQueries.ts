@@ -10,7 +10,7 @@ import {
 } from '@/api/generated/endpoints/applications.gen';
 import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { ApiError } from '@/lib/custom-fetch';
+import { ApiError } from '@/api/custom-fetch';
 import { mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { mapFormBToValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { mapFormCToValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';

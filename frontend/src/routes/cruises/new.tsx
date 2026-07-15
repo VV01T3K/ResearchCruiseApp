@@ -14,8 +14,7 @@ import { FormView } from './-components/FormView';
 import { CreateCruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
-import type { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
-import type { CruiseApplicationSummary } from '@/api/generated/schemas';
+import { mapCruiseApplicationCandidate } from '@/api/applications/cruise-candidates';
 
 const searchSchema = z.object({
   blockade: z.boolean().optional(),
@@ -94,38 +93,4 @@ function NewCruisePage() {
       </AppLayout>
     </>
   );
-}
-
-function mapCruiseApplicationCandidate(application: CruiseApplicationSummary): CruiseApplicationCandidate {
-  return {
-    id: application.id ?? '',
-    number: application.number ?? '',
-    date: application.date ?? '',
-    year: application.year ?? 0,
-    cruiseManagerId: application.cruiseManagerId ?? '',
-    cruiseManagerEmail: application.cruiseManagerEmail ?? '',
-    cruiseManagerFirstName: application.cruiseManagerFirstName ?? '',
-    cruiseManagerLastName: application.cruiseManagerLastName ?? '',
-    deputyManagerId: application.deputyManagerId ?? '',
-    deputyManagerEmail: application.deputyManagerEmail ?? '',
-    deputyManagerFirstName: application.deputyManagerFirstName ?? '',
-    deputyManagerLastName: application.deputyManagerLastName ?? '',
-    hasFormA: application.hasFormA ?? false,
-    hasFormB: application.hasFormB ?? false,
-    hasFormC: application.hasFormC ?? false,
-    points: application.points ?? 0,
-    status: application.status ?? 'draft',
-    effectsDoneRate: application.effectsDoneRate ?? '0',
-    note: application.note ?? '',
-    cruiseHours: application.cruiseHours ?? '',
-    cruiseDays: application.cruiseDays ?? 0,
-    acceptablePeriodBeg: application.acceptablePeriodBeg ?? '',
-    acceptablePeriodEnd: application.acceptablePeriodEnd ?? '',
-    optimalPeriodBeg: application.optimalPeriodBeg ?? '',
-    optimalPeriodEnd: application.optimalPeriodEnd ?? '',
-    precisePeriodStart: application.precisePeriodStart ?? '',
-    precisePeriodEnd: application.precisePeriodEnd ?? '',
-    startDate: application.startDate ?? '',
-    endDate: application.endDate ?? '',
-  };
 }

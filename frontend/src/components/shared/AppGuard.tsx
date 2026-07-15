@@ -1,4 +1,4 @@
-import { Role } from '@/types/user';
+import { Role } from '@/api/user';
 import { useUserContext } from '@/providers/useUserContext';
 
 type Props = {

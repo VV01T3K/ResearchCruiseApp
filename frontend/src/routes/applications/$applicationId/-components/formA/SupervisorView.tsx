@@ -12,7 +12,7 @@ import { ResearchAreaSection } from '@/routes/applications/$applicationId/-compo
 import { ResearchTasksSection } from '@/routes/applications/$applicationId/-components/formA/ResearchTasksSection';
 import { SPUBTasksSection } from '@/routes/applications/$applicationId/-components/formA/SPUBTasksSection';
 import { SupervisorInfoSection } from '@/routes/applications/$applicationId/-components/formA/SupervisorInfoSection';
-import { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import { FormAOptions } from '@/api/applications/types/FormAOptions';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 type Props = {

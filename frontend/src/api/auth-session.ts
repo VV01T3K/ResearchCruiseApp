@@ -1,7 +1,7 @@
 import config from '@/config';
 import type { TokenResponse } from '@/api/generated/schemas';
-import type { AuthDetails } from '@/types/user';
-import { getStoredAuthDetails, setStoredAuthDetails } from '@/providers/StoredAuthDetails';
+import { getStoredAuthDetails, setStoredAuthDetails } from '@/api/auth-storage';
+import type { AuthDetails } from '@/api/user';
 
 const subscribers = new Set<(details: AuthDetails | undefined) => void>();
 let refreshPromise: Promise<AuthDetails | undefined> | undefined;

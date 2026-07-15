@@ -8,7 +8,7 @@ import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { Role } from '@/types/user';
+import { Role } from '@/api/user';
 import { StatusBadge } from './StatusBadge';
 import { TitleBadge } from './TitleBadge';
 import type {

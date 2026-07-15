@@ -12,7 +12,7 @@ import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLab
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useResetPassword } from '@/api/generated/endpoints/auth.gen';
-import { Result } from '@/types/user';
+import { Result } from '@/api/user';
 
 export const Route = createFileRoute('/(auth)/reset-password')({
   component: ResetPasswordPage,

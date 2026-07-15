@@ -1,12 +1,12 @@
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppGuard } from '@/components/shared/AppGuard';
-import { Role } from '@/types/user';
+import { Role } from '@/api/user';
 import { ApplicationsSection } from './ApplicationsSection';
 import { BasicInformationSection } from './BasicInformationSection';
 import { DateSelectionSection } from './DateSelectionSection';
 import { ManagerSelectionSection } from './ManagerSelectionSection';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
+import { CruiseApplicationCandidate } from '@/api/applications/types/CruiseApplicationCandidate';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import type { CruiseResponse } from '@/api/generated/schemas';
 

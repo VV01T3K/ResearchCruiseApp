@@ -16,7 +16,8 @@ import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
-import { ApplicationResponse, ApplicationStatus } from '@/routes/applications/-types';
+import { mapApplicationToCruiseCandidate } from '@/api/applications/cruise-candidates';
+import { ApplicationResponse, ApplicationStatus } from '@/api/applications/models';
 import { FormView } from '../-components/FormView';
 import { UpdateCruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 import {
@@ -30,7 +31,6 @@ import {
   useUpdateCruise,
 } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
-import type { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
 
 export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,
@@ -213,7 +213,7 @@ function CruiseDetailsPage() {
         (application) =>
           application.status === ApplicationStatus.Accepted || cruise.applications.some((x) => x.id === application.id)
       )
-      .map(mapApplicationToLegacyCruiseApplication);
+      .map(mapApplicationToCruiseCandidate);
   }
 
   return (
@@ -353,30 +353,4 @@ function CruiseDetailsPage() {
       </AppModal>
     </>
   );
-}
-
-function mapApplicationToLegacyCruiseApplication(application: ApplicationResponse): CruiseApplicationCandidate {
-  return {
-    ...application,
-    status: application.status,
-    cruiseManagerId: application.mainManager.id,
-    cruiseManagerEmail: application.mainManager.email,
-    cruiseManagerFirstName: application.mainManager.firstName,
-    cruiseManagerLastName: application.mainManager.lastName,
-    deputyManagerId: application.deputyManager.id,
-    deputyManagerEmail: application.deputyManager.email,
-    deputyManagerFirstName: application.deputyManager.firstName,
-    deputyManagerLastName: application.deputyManager.lastName,
-    note: application.note ?? '',
-    cruiseHours: application.cruiseHours ?? '',
-    cruiseDays: application.cruiseDays ?? 0,
-    acceptablePeriodBeg: application.acceptablePeriodBeg ?? '',
-    acceptablePeriodEnd: application.acceptablePeriodEnd ?? '',
-    optimalPeriodBeg: application.optimalPeriodBeg ?? '',
-    optimalPeriodEnd: application.optimalPeriodEnd ?? '',
-    precisePeriodStart: application.precisePeriodStart ?? '',
-    precisePeriodEnd: application.precisePeriodEnd ?? '',
-    startDate: application.startDate ?? '',
-    endDate: application.endDate ?? '',
-  };
 }

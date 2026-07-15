@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { Role } from '@/types/user';
+import { Role } from '@/api/user';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
@@ -17,26 +17,7 @@ import {
   useGetCurrentUserPublicationsSuspense,
   useImportCurrentUserPublications,
 } from '@/api/generated/endpoints/users.gen';
-import type { PublicationResponse } from '@/api/generated/schemas';
-
-type Publication = Omit<PublicationResponse, 'doi' | 'authors' | 'title' | 'magazine' | 'year'> & {
-  doi: string;
-  authors: string;
-  title: string;
-  magazine: string;
-  year: string;
-};
-
-function mapPublication(publication: PublicationResponse): Publication {
-  return {
-    ...publication,
-    doi: publication.doi ?? '',
-    authors: publication.authors ?? '',
-    title: publication.title ?? '',
-    magazine: publication.magazine ?? '',
-    year: publication.year ?? '',
-  };
-}
+import { mapPublication, type Publication } from '@/api/publications';
 
 export const Route = createFileRoute('/my-publications/')({
   component: MyPublicationsPage,

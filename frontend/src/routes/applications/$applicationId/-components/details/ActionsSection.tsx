@@ -2,12 +2,12 @@ import React from 'react';
 
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppGuard } from '@/components/shared/AppGuard';
-import { Role } from '@/types/user';
+import { Role } from '@/api/user';
 import { AcceptButton } from './actions/AcceptButton';
 import { RejectButton } from './actions/RejectButton';
 import { RejectConfirmation } from './actions/RejectConfirmation';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { ApplicationStatus } from '@/routes/applications/-types';
+import { ApplicationStatus } from '@/api/applications/models';
 
 type Props = {
   onAccept: () => void;

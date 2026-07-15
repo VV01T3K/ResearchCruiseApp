@@ -10,7 +10,7 @@ import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLab
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useUserContext } from '@/providers/useUserContext';
-import { SignInResult } from '@/types/user';
+import { SignInResult } from '@/api/user';
 
 export const Route = createFileRoute('/(auth)/login')({
   component: LoginPage,

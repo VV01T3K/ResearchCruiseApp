@@ -13,7 +13,7 @@ import { formBDefaultValues } from '@/routes/applications/$applicationId/-schema
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
-import { getResearchAreaName } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaOption';
+import { getResearchAreaName } from '@/api/applications/types/ResearchAreaOption';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 function getAction(action: 'Put' | 'Collect'): string {

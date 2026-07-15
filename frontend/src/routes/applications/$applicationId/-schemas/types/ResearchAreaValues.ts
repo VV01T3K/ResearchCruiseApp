@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { FormAOptions } from './FormAOptions';
+import { FormAOptions } from '@/api/applications/types/FormAOptions';
 
 export const ResearchAreaValuesInputSchema = z.object({
   areaId: z.string().nullable(),

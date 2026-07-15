@@ -1,6 +1,6 @@
 import config from '@/config';
 import type { ProblemDetails } from '@/api/generated/schemas';
-import { getValidAccessToken, refreshSession } from '@/lib/auth-session';
+import { getValidAccessToken, refreshSession } from '@/api/auth-session';
 
 export class ApiError extends Error {
   constructor(

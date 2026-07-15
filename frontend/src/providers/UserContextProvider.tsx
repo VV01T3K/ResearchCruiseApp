@@ -4,14 +4,14 @@ import React from 'react';
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
 import { useLogin } from '@/api/generated/endpoints/auth.gen';
 import { getCurrentUser, getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
-import { ApiError } from '@/lib/custom-fetch';
-import { refreshSession, setSession, subscribeAuthDetails, toAuthDetails } from '@/lib/auth-session';
+import { ApiError } from '@/api/custom-fetch';
+import { refreshSession, setSession, subscribeAuthDetails, toAuthDetails } from '@/api/auth-session';
 import { setSentryUser } from '@/integrations/sentry/client';
-import { Role } from '@/types/user';
+import { Role } from '@/api/user';
 import { UserContext, UserContextType } from '@/providers/UserContext';
-import { AuthDetails } from '@/types/user';
-import { SignInResult } from '@/types/user';
-import { getStoredAuthDetails } from '@/providers/StoredAuthDetails';
+import { AuthDetails } from '@/api/user';
+import { SignInResult } from '@/api/user';
+import { getStoredAuthDetails } from '@/api/auth-storage';
 
 type Props = {
   children: React.ReactNode;

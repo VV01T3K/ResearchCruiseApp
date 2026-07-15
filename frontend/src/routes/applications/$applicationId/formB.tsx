@@ -23,8 +23,8 @@ import {
   useUpdateApplicationFormB,
 } from '@/api/generated/endpoints/applications.gen';
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { mapFormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
-import { ApiError } from '@/lib/custom-fetch';
+import { mapFormBOptions } from '@/api/applications/types/FormBOptions';
+import { ApiError } from '@/api/custom-fetch';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setSchemaErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 

@@ -1,5 +1,5 @@
 import { AppBadge } from '@/components/shared/AppBadge';
-import { getRoleLabel, Role } from '@/types/user';
+import { getRoleLabel, Role } from '@/api/user';
 
 export function RoleBadge({ role }: { role: Role }) {
   if (role === Role.Administrator) {

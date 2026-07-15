@@ -1,8 +1,8 @@
 import { createContext } from 'react';
 
-import { Role } from '@/types/user';
-import { User } from '@/types/user';
-import { SignInResult } from '@/types/user';
+import { Role } from '@/api/user';
+import { User } from '@/api/user';
+import { SignInResult } from '@/api/user';
 
 export type UserContextType = {
   currentUser?: User | undefined;

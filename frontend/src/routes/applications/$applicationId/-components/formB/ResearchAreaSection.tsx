@@ -4,7 +4,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { ResearchAreaValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
-import { getResearchAreaName } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaOption';
+import { getResearchAreaName } from '@/api/applications/types/ResearchAreaOption';
 
 export function ResearchAreaSection({ context }: { context: FormBViewModel }) {
   const { formA, formAInitValues, isReadonly } = context;
