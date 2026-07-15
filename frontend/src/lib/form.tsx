@@ -1,4 +1,11 @@
-import { createFormHook, createFormHookContexts, useSelector } from '@tanstack/react-form';
+import {
+  createFormHook,
+  createFormHookContexts,
+  useSelector,
+  type AppFieldExtendedReactFormApi,
+  type FormAsyncValidateOrFn,
+  type FormValidateOrFn,
+} from '@tanstack/react-form';
 
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
@@ -6,6 +13,7 @@ import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
+import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { extractErrorMessage } from '@/lib/form-errors';
 import type { FormFileValues } from '@/types/form-file-values';
@@ -21,23 +29,23 @@ function useErrors() {
   return errors.map(extractErrorMessage);
 }
 
-type TextProps = Omit<
-  React.ComponentProps<typeof AppInput>,
-  'name' | 'value' | 'onBlur' | 'onChange' | 'errors' | 'type'
->;
+type TextProps = Omit<React.ComponentProps<typeof AppInput>, 'name' | 'value' | 'onBlur' | 'onChange' | 'errors'> & {
+  value?: string;
+  onChange?: (value: string) => void;
+};
 type WithoutFieldProps<T> = T extends unknown
   ? Omit<T, 'name' | 'value' | 'checked' | 'onBlur' | 'onChange' | 'errors'>
   : never;
 
-function TextField(props: TextProps) {
+function TextField({ value, onChange, ...props }: TextProps) {
   const field = useFieldContext<string>();
   return (
     <AppInput
       {...props}
       name={field.name}
-      value={field.state.value}
+      value={value ?? field.state.value}
       onBlur={field.handleBlur}
-      onChange={field.handleChange}
+      onChange={onChange ?? field.handleChange}
       errors={useErrors()}
     />
   );
@@ -58,9 +66,11 @@ function TextareaField(props: TextProps) {
   );
 }
 
-type NumberProps = WithoutFieldProps<React.ComponentProps<typeof AppNumberInput>>;
+type NumberProps = WithoutFieldProps<React.ComponentProps<typeof AppNumberInput>> & {
+  onChange?: (value: number) => void;
+};
 
-function NumberField(props: NumberProps) {
+function NumberField({ onChange, ...props }: NumberProps) {
   const field = useFieldContext<number>();
   return (
     <AppNumberInput
@@ -68,7 +78,7 @@ function NumberField(props: NumberProps) {
       name={field.name}
       value={field.state.value}
       onBlur={field.handleBlur}
-      onChange={field.handleChange}
+      onChange={onChange ?? field.handleChange}
       errors={useErrors()}
     />
   );
@@ -77,9 +87,9 @@ function NumberField(props: NumberProps) {
 type SelectProps = Omit<
   React.ComponentProps<typeof AppDropdownInput>,
   'name' | 'value' | 'onBlur' | 'onChange' | 'errors'
->;
+> & { onChange?: (value: string) => void };
 
-function SelectField(props: SelectProps) {
+function SelectField({ onChange, ...props }: SelectProps) {
   const field = useFieldContext<string>();
   return (
     <AppDropdownInput
@@ -87,7 +97,21 @@ function SelectField(props: SelectProps) {
       name={field.name}
       value={field.state.value}
       onBlur={field.handleBlur}
-      onChange={field.handleChange}
+      onChange={onChange ?? field.handleChange}
+      errors={useErrors()}
+    />
+  );
+}
+
+function BooleanSelectField({ onChange: _onChange, ...props }: SelectProps) {
+  const field = useFieldContext<boolean>();
+  return (
+    <AppDropdownInput
+      {...props}
+      name={field.name}
+      value={String(field.state.value)}
+      onBlur={field.handleBlur}
+      onChange={(value) => field.handleChange(value === 'true')}
       errors={useErrors()}
     />
   );
@@ -112,12 +136,46 @@ function CheckboxField(props: CheckboxProps) {
   );
 }
 
-type DateProps = WithoutFieldProps<React.ComponentProps<typeof AppDatePickerInput>>;
+function ArrayCheckboxField({ item, ...props }: CheckboxProps & { item: string }) {
+  const field = useFieldContext<string[]>();
+  return (
+    <AppCheckbox
+      {...props}
+      name={field.name}
+      checked={field.state.value.includes(item)}
+      onBlur={field.handleBlur}
+      onChange={(checked) =>
+        field.handleChange((values) => (checked ? [...values, item] : values.filter((value) => value !== item)))
+      }
+      errors={useErrors()}
+    />
+  );
+}
 
-function DateField(props: DateProps) {
+type DateProps = WithoutFieldProps<React.ComponentProps<typeof AppDatePickerInput>> & {
+  onChange?: (value: string | undefined) => void;
+};
+
+function DateField({ onChange, ...props }: DateProps) {
   const field = useFieldContext<string | undefined>();
   return (
     <AppDatePickerInput
+      {...props}
+      name={field.name}
+      value={field.state.value}
+      onBlur={field.handleBlur}
+      onChange={onChange ?? field.handleChange}
+      errors={useErrors()}
+    />
+  );
+}
+
+type MonthProps = WithoutFieldProps<React.ComponentProps<typeof AppMonthPickerInput>>;
+
+function MonthField(props: MonthProps) {
+  const field = useFieldContext<string | undefined>();
+  return (
+    <AppMonthPickerInput
       {...props}
       name={field.name}
       value={field.state.value}
@@ -147,22 +205,65 @@ function FileField(props: FileProps) {
   );
 }
 
+type FilesProps = Omit<
+  Extract<React.ComponentProps<typeof AppFileInput>, { allowMultiple: true }>,
+  'name' | 'value' | 'onBlur' | 'onChange' | 'errors'
+>;
+
+function FilesField(props: FilesProps) {
+  const field = useFieldContext<FormFileValues[]>();
+  return (
+    <AppFileInput
+      {...props}
+      allowMultiple
+      name={field.name}
+      value={field.state.value}
+      onBlur={field.handleBlur}
+      onChange={field.handleChange}
+      errors={useErrors()}
+    />
+  );
+}
+
 function FieldErrors() {
   return <AppInputErrorsList errors={useErrors()} />;
 }
 
-export const { useAppForm, useTypedAppFormContext, withForm, withFieldGroup } = createFormHook({
+const fieldComponents = {
+  TextField,
+  TextareaField,
+  NumberField,
+  SelectField,
+  BooleanSelectField,
+  CheckboxField,
+  ArrayCheckboxField,
+  DateField,
+  MonthField,
+  FileField,
+  FilesField,
+  FieldErrors,
+};
+
+export type AppFormApi<T> = AppFieldExtendedReactFormApi<
+  T,
+  FormValidateOrFn<T> | undefined,
+  FormValidateOrFn<T> | undefined,
+  FormAsyncValidateOrFn<T> | undefined,
+  FormValidateOrFn<T> | undefined,
+  FormAsyncValidateOrFn<T> | undefined,
+  FormValidateOrFn<T> | undefined,
+  FormAsyncValidateOrFn<T> | undefined,
+  FormValidateOrFn<T> | undefined,
+  FormAsyncValidateOrFn<T> | undefined,
+  FormAsyncValidateOrFn<T> | undefined,
+  unknown,
+  typeof fieldComponents,
+  Record<never, never>
+>;
+
+export const { useAppForm, useTypedAppFormContext, withForm } = createFormHook({
   fieldContext,
   formContext,
-  fieldComponents: {
-    TextField,
-    TextareaField,
-    NumberField,
-    SelectField,
-    CheckboxField,
-    DateField,
-    FileField,
-    FieldErrors,
-  },
+  fieldComponents,
   formComponents: {},
 });

@@ -10,7 +10,7 @@ import { FormView } from './-components/formB/FormView';
 import {
   FORM_B_FIELD_TO_SECTION,
   type FormBValues,
-  getFormBValidationSchema,
+  getFormBDraftWriteSchema,
   getFormBWriteSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
@@ -55,7 +55,7 @@ function FormBPage() {
   const revertToEditMutation = useRefillApplicationFormB();
 
   const defaultValues = (formB.data ?? {
-    isCruiseManagerPresent: 'true',
+    isCruiseManagerPresent: true,
     permissions: formA.data.permissions,
     ugTeams: formA.data.ugTeams,
     guestTeams: formA.data.guestTeams,
@@ -71,13 +71,13 @@ function FormBPage() {
     defaultValues,
     validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
     validators: {
-      onDynamic: getFormBValidationSchema(),
+      onDynamic: getFormBWriteSchema(),
     },
     onSubmit: async ({ value }) => handleValidSubmit(value),
     onSubmitInvalid: () => {
       trackFormSubmit('form-b', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
-      navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
+      navigateToFirstError();
     },
   });
   const context = {
@@ -100,7 +100,7 @@ function FormBPage() {
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: getFormBWriteSchema(false).parse(values),
+        data: getFormBWriteSchema().parse(values),
       },
       {
         onSuccess: () => {
@@ -119,13 +119,13 @@ function FormBPage() {
           console.error(err);
           if (installServerFormErrors(form, err)) {
             toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
-            navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
+            navigateToFirstError();
             return;
           }
           toast.error(
             'Nie udało się wysłać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie i spróbuj ponownie.'
           );
-          navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
+          navigateToFirstError();
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -142,7 +142,7 @@ function FormBPage() {
 
     if (commentError && !commentError.success) {
       toast.error(`Formularz błędny w sekcji nr 13:\n${commentError.error.issues[0].message}`);
-      navigateToFirstError(form, { cruiseDaysDetails: 13 });
+      navigateToFirstError();
       return;
     }
 
@@ -150,7 +150,7 @@ function FormBPage() {
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: getFormBWriteSchema(true).parse(form.state.values),
+        data: getFormBDraftWriteSchema().parse(form.state.values),
       },
       {
         onSuccess: () => {
@@ -168,7 +168,7 @@ function FormBPage() {
 
           console.error(err);
           toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
-          navigateToFirstError(form, FORM_B_FIELD_TO_SECTION);
+          navigateToFirstError();
         },
         onSettled: () => {
           toast.dismiss(loading);

@@ -1,8 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
@@ -33,7 +31,7 @@ export const ContractsSection = withForm({
           header: 'Kategoria',
           accessorFn: (row) => getContractCategoryName(row.category),
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`contracts[${row.index}].category`}
               children={(field) => getContractCategoryName(field.state.value)}
             />
@@ -45,49 +43,26 @@ export const ContractsSection = withForm({
           accessorFn: (row) => `${row.institutionName}, ${row.institutionUnit}, ${row.institutionLocalization}`,
           cell: ({ row }) => (
             <>
-              <form.Field
+              <form.AppField
                 name={`contracts[${row.index}].institutionName`}
                 children={(field) => (
-                  <AppInput
-                    name={field.name}
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
+                  <field.TextField
                     label="Nazwa instytucji"
                     placeholder='np. "Uniwersytet Gdański"'
                     disabled={isReadonly}
                   />
                 )}
               />
-              <form.Field
+              <form.AppField
                 name={`contracts[${row.index}].institutionUnit`}
                 children={(field) => (
-                  <AppInput
-                    name={field.name}
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
-                    label="Jednostka"
-                    placeholder='np. "Wydział Biologii"'
-                    disabled={isReadonly}
-                  />
+                  <field.TextField label="Jednostka" placeholder='np. "Wydział Biologii"' disabled={isReadonly} />
                 )}
               />
-              <form.Field
+              <form.AppField
                 name={`contracts[${row.index}].institutionLocalization`}
                 children={(field) => (
-                  <AppInput
-                    name={field.name}
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
-                    label="Lokalizacja instytucji"
-                    placeholder='np. "Gdańsk"'
-                    disabled={isReadonly}
-                  />
+                  <field.TextField label="Lokalizacja instytucji" placeholder='np. "Gdańsk"' disabled={isReadonly} />
                 )}
               />
             </>
@@ -98,19 +73,10 @@ export const ContractsSection = withForm({
           header: 'Opis',
           accessorFn: (row) => row.description,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`contracts[${row.index}].description`}
               children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
-                  label="Opis"
-                  placeholder='np. "Umowa o współpracy"'
-                  disabled={isReadonly}
-                />
+                <field.TextField label="Opis" placeholder='np. "Umowa o współpracy"' disabled={isReadonly} />
               )}
             />
           ),
@@ -122,16 +88,11 @@ export const ContractsSection = withForm({
           enableColumnFilter: false,
           enableSorting: false,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`contracts[${row.index}].scans`}
               children={(field) => (
-                <AppFileInput
-                  name={field.name}
-                  value={field.state.value}
+                <field.FilesField
                   allowMultiple={true}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   label="Skany"
                   uploadMessage="Kliknij lub przeciągnij pliki"
                   maxSizeInMb={2}
@@ -166,7 +127,7 @@ export const ContractsSection = withForm({
         data-testid="form-c-contracts-section"
       >
         <div>
-          <form.Field
+          <form.AppField
             name="contracts"
             mode="array"
             children={(field) => (

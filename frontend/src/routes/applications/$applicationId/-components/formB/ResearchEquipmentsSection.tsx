@@ -2,12 +2,8 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -26,17 +22,12 @@ const researchEquipmentsColumns = (
   {
     header: 'Nazwa sprzętu / aparatury',
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`researchEquipments[${row.index}].name`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="research-equipment-name-input"
             data-testid-errors="research-equipment-name-errors"
-            name={field.name}
-            value={field.state.value}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             placeholder="Wpisz nazwę sprzętu / aparatury"
             disabled={isReadonly}
           />
@@ -49,22 +40,18 @@ const researchEquipmentsColumns = (
     header: 'Data zgłoszenia do ubezpieczenia (jeśli zgłoszono)',
     cell: ({ row }) => (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <form.Field
+        <form.AppField
           name={`researchEquipments[${row.index}].insuranceStartDate`}
           children={(field) => (
-            <AppDatePickerInput
+            <field.DateField
               data-testid="research-equipment-insurance-start"
-              name={field.name}
-              value={field.state.value ?? ''}
               onChange={(e) => field.handleChange(e ?? '')}
-              onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta)}
               label="Data rozpoczęcia ubezpieczenia"
               disabled={isReadonly}
             />
           )}
         />
-        <form.Field
+        <form.AppField
           name={`researchEquipments[${row.index}].insuranceEndDate`}
           children={(field) => (
             <form.Subscribe
@@ -74,13 +61,9 @@ const researchEquipmentsColumns = (
                   field.handleChange(state);
                 }
                 return (
-                  <AppDatePickerInput
+                  <field.DateField
                     data-testid="research-equipment-insurance-end"
-                    name={field.name}
-                    value={field.state.value ?? ''}
                     onChange={(e) => field.handleChange(e ?? '')}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
                     label="Data zakończenia ubezpieczenia"
                     disabled={isReadonly}
                     selectionStartDate={state ? new Date(state) : undefined}
@@ -98,19 +81,10 @@ const researchEquipmentsColumns = (
   {
     header: 'Czy uzyskano zgodę opiekuna?',
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`researchEquipments[${row.index}].permission`}
         children={(field) => (
-          <AppCheckbox
-            size="md"
-            name={field.name}
-            checked={field.state.value === 'true'}
-            onChange={(value) => field.handleChange(value ? 'true' : 'false')}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
-            className="grid place-items-center"
-            disabled={isReadonly}
-          />
+          <field.CheckboxField size="md" className="grid place-items-center" disabled={isReadonly} />
         )}
       />
     ),
@@ -139,7 +113,7 @@ export const ResearchEquipmentsSection = withForm({
         expandedByDefault
         data-testid="form-b-research-equipments-section"
       >
-        <form.Field
+        <form.AppField
           name="researchEquipments"
           mode="array"
           children={(field) => (
@@ -163,7 +137,7 @@ export const ResearchEquipmentsSection = withForm({
                       name: '',
                       insuranceStartDate: null,
                       insuranceEndDate: null,
-                      permission: 'false',
+                      permission: false,
                     });
                     field.handleChange((prev: ResearchEquipmentValues[]) => prev);
                     field.handleBlur();

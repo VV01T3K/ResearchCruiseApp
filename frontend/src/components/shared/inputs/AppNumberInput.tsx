@@ -137,6 +137,7 @@ export function AppNumberInput({
             onChange={handleInputChange}
             onBlur={onBlur}
             disabled={disabled}
+            aria-invalid={!!errors?.length}
             className={cn(
               'block h-11 w-full border border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900',
               'transition duration-300 ease-in-out',

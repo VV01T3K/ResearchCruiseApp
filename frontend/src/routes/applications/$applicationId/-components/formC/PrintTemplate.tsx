@@ -141,11 +141,11 @@ export const PrintTemplate = withForm({
                 </div>
                 <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid grid-cols-4')}>
                   <div className="col-span-3">Zrealizowane: </div>
-                  <div>{x.done === 'true' ? 'Tak' : 'Nie'}</div>
+                  <div>{x.done ? 'Tak' : 'Nie'}</div>
                   <div className="col-span-3">Punkty naliczone kierownikowi: </div>
-                  <div>{x.managerConditionMet === 'true' ? 'Tak' : 'Nie'}</div>
+                  <div>{x.managerConditionMet ? 'Tak' : 'Nie'}</div>
                   <div className="col-span-3">Punkty naliczone zastępcy: </div>
-                  <div>{x.deputyConditionMet === 'true' ? 'Tak' : 'Nie'}</div>
+                  <div>{x.deputyConditionMet ? 'Tak' : 'Nie'}</div>
                 </span>
               </Fragment>
             ))}
@@ -423,7 +423,7 @@ export const PrintTemplate = withForm({
                   {!x.insuranceStartDate && !x.insuranceEndDate ? 'Nie zgłoszono' : ''}
                 </div>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
-                  {x.permission === 'true' ? 'Tak' : 'Nie'}
+                  {x.permission ? 'Tak' : 'Nie'}
                 </div>
               </Fragment>
             ))}

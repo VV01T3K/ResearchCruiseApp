@@ -1,9 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -18,20 +16,12 @@ const shipEquipmentColumns = (form: FormBFormApi, isReadonly: boolean): ColumnDe
   {
     header: 'W użyciu',
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`shipEquipmentsIds`}
         children={(field) => (
-          <AppCheckbox
+          <field.ArrayCheckboxField
+            item={row.original.id}
             size="md"
-            name={field.name}
-            checked={field.state.value.includes(row.original.id)}
-            onChange={(enable) =>
-              field.handleChange((prev) =>
-                enable ? [...prev, row.original.id] : prev.filter((id) => id !== row.original.id)
-              )
-            }
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             className="grid place-items-center"
             disabled={isReadonly}
           />
@@ -53,7 +43,7 @@ export const ShipEquipmentsSection = withForm({
         expandedByDefault
         data-testid="form-b-ship-equipments-section"
       >
-        <form.Field
+        <form.AppField
           name="shipEquipmentsIds"
           children={() => (
             <AppTable

@@ -2,7 +2,6 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
@@ -33,7 +32,7 @@ export const SPUBTasksSection = withForm({
           enableColumnFilter: false,
           enableSorting: false,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`spubTasks[${row.index}].yearFrom`}
               listeners={{
                 onChange: ({ value }) => {
@@ -63,7 +62,7 @@ export const SPUBTasksSection = withForm({
           enableColumnFilter: false,
           enableSorting: false,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`spubTasks[${row.index}].yearTo`}
               children={(field) => (
                 <AppYearPickerInput
@@ -85,15 +84,10 @@ export const SPUBTasksSection = withForm({
           enableColumnFilter: false,
           enableSorting: false,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`spubTasks[${row.index}].name`}
               children={(field) => (
-                <AppDropdownInput
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={(e) => field.handleChange(e as string)}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
+                <field.SelectField
                   allOptions={initValues?.standardSpubTasks.map((taskName) => ({
                     value: taskName,
                     inlineLabel: taskName,
@@ -130,7 +124,7 @@ export const SPUBTasksSection = withForm({
         data-testid="form-a-spub-tasks-section"
       >
         <div>
-          <form.Field
+          <form.AppField
             name="spubTasks"
             mode="array"
             children={(field) => (

@@ -7,15 +7,14 @@ import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors, getFormErrorMessage, navigateToFirstError } from '@/lib/form-errors';
+import { getFormErrorMessage, navigateToFirstError } from '@/lib/form-errors';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
   type FormAValues,
-  getFormAValidationSchema,
+  getFormADraftWriteSchema,
   getFormAWriteSchema,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import {
@@ -77,7 +76,7 @@ function NewCruiseApplicationPage() {
     defaultValues,
     validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
     validators: {
-      onDynamic: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
+      onDynamic: getFormAWriteSchema(initialStateQuery.data, blockadesQuery.data),
     },
     listeners: {
       onChange: ({ fieldApi }) => {
@@ -89,7 +88,7 @@ function NewCruiseApplicationPage() {
       trackFormSubmit('new-application', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
       toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+      navigateToFirstError();
     },
   });
 
@@ -112,7 +111,7 @@ function NewCruiseApplicationPage() {
     ) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
-      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+      navigateToFirstError();
       return;
     }
 
@@ -120,7 +119,7 @@ function NewCruiseApplicationPage() {
 
     saveMutation.mutate(
       {
-        data: getFormAWriteSchema(initialStateQuery.data, false, blockadesQuery.data).parse(form.state.values),
+        data: getFormAWriteSchema(initialStateQuery.data, blockadesQuery.data).parse(form.state.values),
       },
       {
         onSuccess: () => {
@@ -131,11 +130,11 @@ function NewCruiseApplicationPage() {
           console.error(err);
           if (installServerFormErrors(form, err)) {
             toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-            navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+            navigateToFirstError();
             return;
           }
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+          navigateToFirstError();
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -152,13 +151,13 @@ function NewCruiseApplicationPage() {
     ) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
-      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+      navigateToFirstError();
       return;
     }
 
     const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
     saveMutation.mutate(
-      { data: getFormAWriteSchema(initialStateQuery.data, true, blockadesQuery.data).parse(form.state.values) },
+      { data: getFormADraftWriteSchema().parse(form.state.values) },
       {
         onSuccess: () => {
           toast.success('Formularz został zapisany jako wersja robocza');
@@ -167,7 +166,7 @@ function NewCruiseApplicationPage() {
         onError: (err) => {
           console.error(err);
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+          navigateToFirstError();
         },
         onSettled: () => {
           setIsSaveDraftModalOpen(false);
@@ -189,17 +188,12 @@ function NewCruiseApplicationPage() {
         onClose={() => setIsSaveDraftModalOpen(false)}
       >
         <div className="space-y-4">
-          <form.Field
+          <form.AppField
             name="note"
             children={(field) => (
-              <AppInput
-                name={field.name}
-                value={field.state.value ?? ''}
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
+              <field.TextField
                 label="Notatka aktualnej wersji roboczej"
                 placeholder="Wpisz notatkę dot. aktualnej wersji roboczej"
-                errors={getErrors(field.state.meta)}
                 autoFocus
               />
             )}

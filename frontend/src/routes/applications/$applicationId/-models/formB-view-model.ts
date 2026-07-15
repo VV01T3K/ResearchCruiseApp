@@ -3,22 +3,9 @@ import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/
 import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
 import type { FormBOptions } from '@/routes/applications/$applicationId/-schemas/types/FormBOptions';
 import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import type { FormAsyncValidateOrFn, FormValidateOrFn, ReactFormExtendedApi } from '@tanstack/react-form';
+import type { AppFormApi } from '@/lib/form';
 
-export type FormBFormApi = ReactFormExtendedApi<
-  FormBValues,
-  FormValidateOrFn<FormBValues> | undefined,
-  FormValidateOrFn<FormBValues> | undefined,
-  FormAsyncValidateOrFn<FormBValues> | undefined,
-  FormValidateOrFn<FormBValues> | undefined,
-  FormAsyncValidateOrFn<FormBValues> | undefined,
-  FormValidateOrFn<FormBValues> | undefined,
-  FormAsyncValidateOrFn<FormBValues> | undefined,
-  FormValidateOrFn<FormBValues> | undefined,
-  FormAsyncValidateOrFn<FormBValues> | undefined,
-  FormAsyncValidateOrFn<FormBValues> | undefined,
-  unknown
->;
+export type FormBFormApi = AppFormApi<FormBValues>;
 
 export type FormBViewModel = {
   formAInitValues: FormAOptions;

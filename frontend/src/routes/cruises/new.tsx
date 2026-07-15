@@ -11,11 +11,7 @@ import { trackFormSubmit } from '@/lib/sentry';
 import { getFormErrorMessage, navigateToFirstError } from '@/lib/form-errors';
 import { useAppForm } from '@/lib/form';
 import { FormView } from './-components/FormView';
-import {
-  CreateCruiseFormSchema,
-  CruiseFormInputSchema,
-  cruiseFormDefaultValues,
-} from '@/routes/cruises/-schemas/form.schema';
+import { CreateCruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 import type { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
@@ -55,11 +51,11 @@ function NewCruisePage() {
       shipUnavailable: search.blockade ?? false,
     },
     validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
-    validators: { onDynamic: CruiseFormInputSchema },
+    validators: { onDynamic: CreateCruiseFormSchema },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('new-cruise', 'invalid', formApi.state);
       toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
-      navigateToFirstError(formApi, CRUISE_FIELD_TO_SECTION);
+      navigateToFirstError();
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('new-cruise', 'valid', formApi.state);
@@ -73,7 +69,7 @@ function NewCruisePage() {
           onError: (error) => {
             console.error(error);
             toast.error('Nie udało się utworzyć rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-            navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
+            navigateToFirstError();
           },
         }
       );

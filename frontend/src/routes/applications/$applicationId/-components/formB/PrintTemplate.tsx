@@ -412,7 +412,7 @@ export const PrintTemplate = withForm({
                   {!x.insuranceStartDate && !x.insuranceEndDate ? 'Nie zgłoszono' : ''}
                 </div>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
-                  {x.permission === 'true' ? 'Tak' : 'Nie'}
+                  {x.permission ? 'Tak' : 'Nie'}
                 </div>
               </Fragment>
             ))}

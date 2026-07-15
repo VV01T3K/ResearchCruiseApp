@@ -1,7 +1,5 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -21,15 +19,10 @@ export const SupervisorInfoSection = withForm({
               zgłoszenie może zostać odrzucone.
             </span>
           </AppAlert>
-          <form.Field
+          <form.AppField
             name="supervisorEmail"
             children={(field) => (
-              <AppInput
-                name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta)}
+              <field.TextField
                 label="Adres e-mail przełożonego"
                 showRequiredAsterisk
                 placeholder="Wprowadź adres e-mail przełożonego"

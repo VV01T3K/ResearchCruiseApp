@@ -15,7 +15,7 @@ export enum ResearchTaskType {
   OtherResearchTask = '11',
 }
 
-const ThesisResearchTaskInputSchema = z.object({
+export const ThesisResearchTaskInputSchema = z.object({
   type: z.enum([ResearchTaskType.BachelorThesis, ResearchTaskType.MasterThesis, ResearchTaskType.DoctoralThesis]),
   author: z.string(),
   title: z.string(),
@@ -26,22 +26,20 @@ export const ThesisResearchTaskValuesSchema = ThesisResearchTaskInputSchema.exte
 });
 export type ThesisResearchTaskValues = z.input<typeof ThesisResearchTaskInputSchema>;
 
-const ProjectPreparationResearchTaskInputSchema = z.object({
+export const ProjectPreparationResearchTaskInputSchema = z.object({
   type: z.enum([ResearchTaskType.ProjectPreparation]),
   title: z.string(),
   date: z.string(),
-  financingApproved: z.enum(['true', 'false']),
+  financingApproved: z.boolean(),
 });
 export const ProjectPreparationResearchTaskValuesSchema = ProjectPreparationResearchTaskInputSchema.extend({
   title: z.string().nonempty('Tytuł nie może być pusty'),
   date: z.string().nonempty('Data nie może być pusta'),
-  financingApproved: z.enum(['true', 'false'], {
-    error: 'Wymagane jest wskazanie czy finansowanie zostało zatwierdzone',
-  }),
+  financingApproved: z.boolean(),
 });
 export type ProjectPreparationResearchTaskValues = z.input<typeof ProjectPreparationResearchTaskInputSchema>;
 
-const ProjectResearchTaskInputSchema = z.object({
+export const ProjectResearchTaskInputSchema = z.object({
   type: z.enum([
     ResearchTaskType.DomesticProject,
     ResearchTaskType.ForeignProject,
@@ -64,7 +62,7 @@ export const ProjectResearchTaskValuesSchema = ProjectResearchTaskInputSchema.ex
 });
 export type ProjectResearchTaskValues = z.input<typeof ProjectResearchTaskInputSchema>;
 
-const DidacticsResearchTaskInputSchema = z.object({
+export const DidacticsResearchTaskInputSchema = z.object({
   type: z.enum([ResearchTaskType.Didactics]),
   description: z.string(),
 });
@@ -73,7 +71,7 @@ export const DidacticsResearchTaskValuesSchema = DidacticsResearchTaskInputSchem
 });
 export type DidacticsResearchTaskValues = z.input<typeof DidacticsResearchTaskInputSchema>;
 
-const OwnResearchTaskInputSchema = z.object({
+export const OwnResearchTaskInputSchema = z.object({
   type: z.enum([ResearchTaskType.OwnResearchTask]),
   title: z.string(),
   date: z.string(),
@@ -91,7 +89,7 @@ export const OwnResearchTaskValuesSchema = OwnResearchTaskInputSchema.extend({
 });
 export type OwnResearchTaskValues = z.input<typeof OwnResearchTaskInputSchema>;
 
-const OtherResearchTaskInputSchema = z.object({
+export const OtherResearchTaskInputSchema = z.object({
   type: z.enum([ResearchTaskType.OtherResearchTask]),
   description: z.string(),
 });
@@ -191,7 +189,7 @@ export function getEmptyTask(taskType: ResearchTaskType): ResearchTaskValues {
         type: ResearchTaskType.ProjectPreparation,
         title: '',
         date: '',
-        financingApproved: 'false',
+        financingApproved: false,
       };
     case ResearchTaskType.DomesticProject:
     case ResearchTaskType.ForeignProject:

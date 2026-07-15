@@ -28,7 +28,7 @@ export const FORM_B_FIELD_TO_SECTION: Record<string, number> = {
 };
 
 const FormBInputSchema = z.object({
-  isCruiseManagerPresent: z.enum(['true', 'false']),
+  isCruiseManagerPresent: z.boolean(),
   permissions: z
     .object({ description: z.string(), executive: z.string(), scan: FormFileValuesInputSchema.optional() })
     .array(),
@@ -66,7 +66,7 @@ const FormBInputSchema = z.object({
       name: z.string(),
       insuranceStartDate: z.string().nullable(),
       insuranceEndDate: z.string().nullable(),
-      permission: z.enum(['true', 'false']),
+      permission: z.boolean(),
     })
     .array(),
   shipEquipmentsIds: z.array(z.string()),
@@ -75,7 +75,7 @@ const FormBInputSchema = z.object({
 export type FormBValues = z.input<typeof FormBInputSchema>;
 
 export const formBDefaultValues: FormBValues = {
-  isCruiseManagerPresent: 'true',
+  isCruiseManagerPresent: true,
   permissions: [],
   ugTeams: [],
   guestTeams: [],
@@ -90,7 +90,7 @@ export const formBDefaultValues: FormBValues = {
 
 export function getFormBValidationSchema() {
   return z.object({
-    isCruiseManagerPresent: z.enum(['true', 'false']),
+    isCruiseManagerPresent: z.boolean(),
     permissions: PermissionValuesSchema.array().superRefine((permissions, ctx) => {
       permissions.forEach((permission, index) => {
         if (!permission.scan || !permission.scan.name.endsWith('.pdf')) {
@@ -119,13 +119,21 @@ export function getFormBValidationSchema() {
   });
 }
 
-export function getFormBWriteSchema(draft: boolean) {
-  const inputSchema = draft ? FormBInputSchema : getFormBValidationSchema();
+export function getFormBWriteSchema() {
+  return buildFormBWriteSchema(getFormBValidationSchema(), false);
+}
+
+export function getFormBDraftWriteSchema() {
+  return buildFormBWriteSchema(FormBInputSchema, true);
+}
+
+function buildFormBWriteSchema(inputSchema: z.ZodType<FormBValues, FormBValues>, draft: boolean) {
   return inputSchema
     .transform(
       (form): z.input<typeof FormBWriteRequest> => ({
         form: {
           ...form,
+          isCruiseManagerPresent: String(form.isCruiseManagerPresent),
           permissions: form.permissions.map((permission) => ({
             description: permission.description || null,
             executive: permission.executive || null,
@@ -142,6 +150,10 @@ export function getFormBWriteSchema(draft: boolean) {
             number: String(day.number),
             hours: String(day.hours),
           })),
+          researchEquipments: form.researchEquipments.map((equipment) => ({
+            ...equipment,
+            permission: String(equipment.permission),
+          })),
         },
         draft,
       })
@@ -152,7 +164,7 @@ export function getFormBWriteSchema(draft: boolean) {
 export function mapFormBToValues(form: FormBFields): FormBValues {
   return {
     ...form,
-    isCruiseManagerPresent: form.isCruiseManagerPresent === 'false' ? 'false' : 'true',
+    isCruiseManagerPresent: form.isCruiseManagerPresent === 'true',
     permissions: form.permissions.map((permission) => ({
       description: permission.description ?? '',
       executive: permission.executive ?? '',
@@ -178,7 +190,7 @@ export function mapFormBToValues(form: FormBFields): FormBValues {
     })),
     researchEquipments: form.researchEquipments.map((equipment) => ({
       ...equipment,
-      permission: equipment.permission === 'true' ? 'true' : 'false',
+      permission: equipment.permission === 'true',
     })),
   };
 }

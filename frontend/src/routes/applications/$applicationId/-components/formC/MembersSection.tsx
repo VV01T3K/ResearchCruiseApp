@@ -3,7 +3,6 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
@@ -48,19 +47,15 @@ export const MembersSection = withForm({
           enableSorting: false,
           accessorFn: (row) => row.noOfEmployees,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`ugTeams[${row.index}].noOfEmployees`}
               children={(field) => (
-                <AppNumberInput
-                  name={field.name}
-                  value={field.state.value}
+                <field.NumberField
                   minimum={0}
                   onChange={(x: number) => {
                     field.handleChange(x);
                     notifyRowsChanged();
                   }}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -75,19 +70,15 @@ export const MembersSection = withForm({
           enableSorting: false,
           accessorFn: (row) => row.noOfStudents,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`ugTeams[${row.index}].noOfStudents`}
               children={(field) => (
-                <AppNumberInput
-                  name={field.name}
-                  value={field.state.value}
+                <field.NumberField
                   minimum={0}
                   onChange={(x: number) => {
                     field.handleChange(x);
                     notifyRowsChanged();
                   }}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -131,19 +122,9 @@ export const MembersSection = withForm({
           enableSorting: false,
           accessorFn: (row) => row.name,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`guestTeams[${row.index}].name`}
-              children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
-                  containerClassName="mx-4"
-                  disabled={isReadonly}
-                />
-              )}
+              children={(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
             />
           ),
           size: 60,
@@ -154,19 +135,15 @@ export const MembersSection = withForm({
           enableSorting: false,
           accessorFn: (row) => row.noOfPersons,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`guestTeams[${row.index}].noOfPersons`}
               children={(field) => (
-                <AppNumberInput
-                  name={field.name}
-                  value={field.state.value}
+                <field.NumberField
                   minimum={0}
                   onChange={(x: number) => {
                     field.handleChange(x);
                     notifyRowsChanged();
                   }}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -268,7 +245,7 @@ export const MembersSection = withForm({
         data-testid="form-c-members-section"
       >
         <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
-          <form.Field
+          <form.AppField
             name="ugTeams"
             mode="array"
             children={(field) => (
@@ -314,7 +291,7 @@ export const MembersSection = withForm({
               </div>
             )}
           />
-          <form.Field
+          <form.AppField
             name="guestTeams"
             mode="array"
             children={(field) => (

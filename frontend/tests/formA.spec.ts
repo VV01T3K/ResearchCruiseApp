@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 
 import {
   formADefaultValues,
+  getFormADraftWriteSchema,
   getFormAWriteSchema,
   mapFormAToValues,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -19,7 +20,7 @@ test('draft form A requires the complete input shape while allowing empty values
     year: initValues.years[0],
     permissions: [{ description: '', executive: '', scan: undefined }],
   };
-  const schema = getFormAWriteSchema(initValues, true);
+  const schema = getFormADraftWriteSchema();
   expect(schema.safeParse(draft).success).toBe(true);
 
   const { note: _omitted, ...missingKey } = draft;
@@ -38,14 +39,16 @@ test('normalizes backend precise-period datetimes at the API boundary', () => {
     optimalPeriod: '',
     precisePeriodStart: '2026-07-20',
     precisePeriodEnd: '2026-07-23T00:00:00',
+    cruiseDays: 2,
+    cruiseHours: 3,
     note: '',
   };
 
-  const request = getFormAWriteSchema(initValues, false).parse(form);
+  const request = getFormAWriteSchema(initValues).parse(form);
 
   expect(request.form.precisePeriodStart).toBe('2026-07-20T00:00:00Z');
   expect(request.form.precisePeriodEnd).toBe('2026-07-23T00:00:00Z');
-  expect(request.form.cruiseHours).toBe(String(form.cruiseHours));
+  expect(request.form.cruiseHours).toBe(String(form.cruiseDays * 24 + form.cruiseHours));
   expect(request.form).not.toHaveProperty('cruiseDays');
 });
 
@@ -106,30 +109,25 @@ test.describe('cruise length section tests', () => {
     });
   });
 
-  // allowed cruise hours count is in range (0-1440] (right-side inclusive)
+  // Hours are the remainder after whole cruise days.
   const hourTestCases: [boolean, number][] = [
-    [false, 0],
-    [false, 1441],
-    [false, 1500],
+    [true, 0],
+    [false, 24],
+    [false, 100],
     [true, 1],
-    [true, 1000],
-    [true, 1439],
-    [true, 1440],
+    [true, 22],
+    [true, 23],
   ];
   test.describe('planned cruise hours constrains', () => {
     hourTestCases.forEach(([isValid, val]) => {
       test(`${isValid ? 'valid' : 'invalid'}-${val}`, async ({ formAPage }) => {
-        const LOWER_HOUR_LIMIT = 1;
-        const UPPER_HOUR_LIMIT = 1440;
+        const UPPER_HOUR_LIMIT = 23;
 
         await formAPage.sections.cruiseLengthSection.defaultFill();
         await formAPage.sections.cruiseLengthSection.cruiseHoursInput.fill(val.toString());
 
         if (isValid) {
           await formAPage.submitForm({ expectedResult: 'valid' });
-        } else if (val < LOWER_HOUR_LIMIT) {
-          await expect(formAPage.sections.cruiseLengthSection.invalidCruiseDurationMessage).toBeVisible();
-          await formAPage.submitForm({ expectedResult: 'invalid' });
         } else if (val > UPPER_HOUR_LIMIT) {
           await expect(formAPage.sections.cruiseLengthSection.cruiseHoursInput).toHaveValue(`${UPPER_HOUR_LIMIT}`); // input should cap the value
         }

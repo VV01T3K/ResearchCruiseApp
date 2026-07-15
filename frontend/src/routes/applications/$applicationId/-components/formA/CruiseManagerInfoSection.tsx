@@ -1,6 +1,4 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -19,15 +17,10 @@ export const CruiseManagerInfoSection = withForm({
         data-testid="form-a-cruise-manager-section"
       >
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <form.Field
+          <form.AppField
             name="cruiseManagerId"
             children={(field) => (
-              <AppDropdownInput
-                name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta)}
+              <field.SelectField
                 label="Kierownik rejsu"
                 showRequiredAsterisk
                 placeholder="Wybierz kierownika rejsu"
@@ -38,15 +31,10 @@ export const CruiseManagerInfoSection = withForm({
             )}
           />
 
-          <form.Field
+          <form.AppField
             name="deputyManagerId"
             children={(field) => (
-              <AppDropdownInput
-                name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta)}
+              <field.SelectField
                 label="Zastępca kierownika rejsu"
                 showRequiredAsterisk
                 placeholder="Wybierz zastępcę kierownika rejsu"
@@ -58,15 +46,10 @@ export const CruiseManagerInfoSection = withForm({
             )}
           />
 
-          <form.Field
+          <form.AppField
             name="year"
             children={(field) => (
-              <AppDropdownInput
-                name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta)}
+              <field.SelectField
                 label="Rok"
                 showRequiredAsterisk
                 placeholder="Wybierz rok"

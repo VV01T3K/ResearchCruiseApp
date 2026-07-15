@@ -3,9 +3,6 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
@@ -49,20 +46,16 @@ export const MembersSection = withForm({
           enableSorting: false,
           accessorFn: (row) => row.noOfEmployees,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`ugTeams[${row.index}].noOfEmployees`}
               children={(field) => (
-                <AppNumberInput
+                <field.NumberField
                   data-testid="ug-team-employees"
-                  name={field.name}
-                  value={field.state.value}
                   minimum={0}
                   onChange={(x: number) => {
                     field.handleChange(x);
                     notifyRowsChanged();
                   }}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -77,20 +70,16 @@ export const MembersSection = withForm({
           enableSorting: false,
           accessorFn: (row) => row.noOfStudents,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`ugTeams[${row.index}].noOfStudents`}
               children={(field) => (
-                <AppNumberInput
+                <field.NumberField
                   data-testid="ug-team-students"
-                  name={field.name}
-                  value={field.state.value}
                   minimum={0}
                   onChange={(x: number) => {
                     field.handleChange(x);
                     notifyRowsChanged();
                   }}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -135,17 +124,12 @@ export const MembersSection = withForm({
           enableSorting: false,
           accessorFn: (row) => row.name,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`guestTeams[${row.index}].name`}
               children={(field) => (
-                <AppInput
+                <field.TextField
                   data-testid="guest-team-name-input"
                   data-testid-errors="guest-team-name-errors"
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   containerClassName="mx-4"
                   disabled={isReadonly}
                 />
@@ -160,21 +144,17 @@ export const MembersSection = withForm({
           enableSorting: false,
           accessorFn: (row) => row.noOfPersons,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`guestTeams[${row.index}].noOfPersons`}
               children={(field) => (
-                <AppNumberInput
+                <field.NumberField
                   data-testid-input="guest-team-people-input"
                   data-testid-errors="guest-team-people-errors"
-                  name={field.name}
-                  value={field.state.value}
                   minimum={0}
                   onChange={(x: number) => {
                     field.handleChange(x);
                     notifyRowsChanged();
                   }}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -217,34 +197,24 @@ export const MembersSection = withForm({
           accessorFn: (row) => `${row.title} ${row.firstName} ${row.lastName}`,
           cell: ({ row }) => (
             <div className="grid grid-cols-5 gap-2">
-              <form.Field
+              <form.AppField
                 name={`crewMembers[${row.index}].title`}
                 children={(field) => (
-                  <AppInput
+                  <field.TextField
                     data-testid="crew-member-title-input"
                     data-testid-errors="crew-member-title-errors"
-                    name={field.name}
-                    value={field.state.value as string}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
                     label="Tytuł"
                     disabled={isReadonly}
                   />
                 )}
               />
 
-              <form.Field
+              <form.AppField
                 name={`crewMembers[${row.index}].firstName`}
                 children={(field) => (
-                  <AppInput
+                  <field.TextField
                     data-testid="crew-member-names-input"
                     data-testid-errors="crew-member-names-errors"
-                    name={field.name}
-                    value={field.state.value as string}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
                     label="Imiona"
                     containerClassName="col-span-2"
                     disabled={isReadonly}
@@ -252,17 +222,12 @@ export const MembersSection = withForm({
                 )}
               />
 
-              <form.Field
+              <form.AppField
                 name={`crewMembers[${row.index}].lastName`}
                 children={(field) => (
-                  <AppInput
+                  <field.TextField
                     data-testid="crew-member-surname-input"
                     data-testid-errors="crew-member-surname-errors"
-                    name={field.name}
-                    value={field.state.value as string}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
                     label="Nazwisko"
                     containerClassName="col-span-2"
                     disabled={isReadonly}
@@ -279,68 +244,50 @@ export const MembersSection = withForm({
           enableSorting: false,
           cell: ({ row }) => (
             <div className="grid grid-cols-2 gap-2">
-              <form.Field
+              <form.AppField
                 name={`crewMembers[${row.index}].birthPlace`}
                 children={(field) => (
-                  <AppInput
+                  <field.TextField
                     data-testid="crew-member-birthplace-input"
                     data-testid-errors="crew-member-birthplace-errors"
-                    name={field.name}
-                    value={field.state.value as string}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
                     label="Miejsce urodzenia"
                     disabled={isReadonly}
                   />
                 )}
               />
 
-              <form.Field
+              <form.AppField
                 name={`crewMembers[${row.index}].birthDate`}
                 children={(field) => (
-                  <AppDatePickerInput
+                  <field.DateField
                     data-testid-button="crew-member-birthdate-button"
                     data-testid-errors="crew-member-birthdate-errors"
-                    name={field.name}
-                    value={field.state.value as string}
                     onChange={(e) => field.handleChange(e ?? '')}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
                     label="Data urodzenia"
                     disabled={isReadonly}
                   />
                 )}
               />
 
-              <form.Field
+              <form.AppField
                 name={`crewMembers[${row.index}].documentNumber`}
                 children={(field) => (
-                  <AppInput
+                  <field.TextField
                     data-testid="crew-member-document-id-input"
                     data-testid-errors="crew-member-document-id-errors"
-                    name={field.name}
-                    value={field.state.value as string}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
                     label="Numer ID dokumentu"
                     disabled={isReadonly}
                   />
                 )}
               />
 
-              <form.Field
+              <form.AppField
                 name={`crewMembers[${row.index}].documentExpiryDate`}
                 children={(field) => (
-                  <AppDatePickerInput
+                  <field.DateField
                     data-testid-button="crew-member-document-expiry-button"
                     data-testid-errors="crew-member-document-expiry-errors"
-                    name={field.name}
-                    value={field.state.value as string}
                     onChange={(e) => field.handleChange(e ?? '')}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
                     label="Data ważności dokumentu"
                     disabled={isReadonly}
                   />
@@ -356,17 +303,12 @@ export const MembersSection = withForm({
           enableSorting: false,
           accessorFn: (row) => row.institution,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`crewMembers[${row.index}].institution`}
               children={(field) => (
-                <AppInput
+                <field.TextField
                   data-testid="crew-member-institution-input"
                   data-testid-errors="crew-member-institution-errors"
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   placeholder="Wprowadź nazwę jednostki"
                   disabled={isReadonly}
                 />
@@ -395,7 +337,7 @@ export const MembersSection = withForm({
       >
         <AppAlert>Rejs do 12 godzin w porze dziennej - 33 osoby, powyżej 12 godzin - 16 osób</AppAlert>
         <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
-          <form.Field
+          <form.AppField
             name="ugTeams"
             mode="array"
             children={(field) => (
@@ -441,7 +383,7 @@ export const MembersSection = withForm({
               </div>
             )}
           />
-          <form.Field
+          <form.AppField
             name="guestTeams"
             mode="array"
             children={(field) => (
@@ -497,7 +439,7 @@ export const MembersSection = withForm({
             )}
           />
         </div>
-        <form.Field
+        <form.AppField
           name="crewMembers"
           mode="array"
           children={(field) => (

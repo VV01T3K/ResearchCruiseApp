@@ -7,15 +7,14 @@ import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors, getFormErrorMessage, navigateToFirstError } from '@/lib/form-errors';
+import { getFormErrorMessage, navigateToFirstError } from '@/lib/form-errors';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
   type FormAValues,
-  getFormAValidationSchema,
+  getFormADraftWriteSchema,
   getFormAWriteSchema,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useFormAQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
@@ -86,7 +85,7 @@ function FormAPage() {
     defaultValues,
     validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
     validators: {
-      onDynamic: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
+      onDynamic: getFormAWriteSchema(initialStateQuery.data, blockadesQuery.data, applicationId),
     },
     listeners: {
       onChange: ({ fieldApi }) => {
@@ -98,7 +97,7 @@ function FormAPage() {
       trackFormSubmit('form-a', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
       toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+      navigateToFirstError();
     },
   });
 
@@ -129,12 +128,8 @@ function FormAPage() {
       {
         applicationId,
         data: draft
-          ? getFormAWriteSchema(initialStateQuery.data, true, blockadesQuery.data, applicationId).parse(
-              form.state.values
-            )
-          : getFormAWriteSchema(initialStateQuery.data, false, blockadesQuery.data, applicationId).parse(
-              form.state.values
-            ),
+          ? getFormADraftWriteSchema(applicationId).parse(form.state.values)
+          : getFormAWriteSchema(initialStateQuery.data, blockadesQuery.data, applicationId).parse(form.state.values),
       },
       {
         onSuccess: () => {
@@ -145,11 +140,11 @@ function FormAPage() {
           console.error(err);
           if (installServerFormErrors(form, err)) {
             toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-            navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+            navigateToFirstError();
             return;
           }
           toast.error('Nie udało się zapisać formularza. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+          navigateToFirstError();
         },
         onSettled: () => {
           setIsSaveDraftModalOpen(false);
@@ -185,17 +180,12 @@ function FormAPage() {
         onClose={() => setIsSaveDraftModalOpen(false)}
       >
         <div className="space-y-4">
-          <form.Field
+          <form.AppField
             name="note"
             children={(field) => (
-              <AppInput
-                name={field.name}
-                value={field.state.value ?? ''}
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
+              <field.TextField
                 label="Notatka aktualnej wersji roboczej"
                 placeholder="Wpisz notatkę dot. aktualnej wersji roboczej"
-                errors={getErrors(field.state.meta)}
                 autoFocus
               />
             )}

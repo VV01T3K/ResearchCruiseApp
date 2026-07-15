@@ -1,7 +1,5 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -44,19 +42,10 @@ export const CruiseManagerInfoSection = withForm({
             />
           </div>
           <div className="grid place-items-center">
-            <form.Field
+            <form.AppField
               name="isCruiseManagerPresent"
               children={(field) => (
-                <AppCheckbox
-                  size="md"
-                  name={field.name}
-                  checked={field.state.value === 'true'}
-                  onChange={(value) => field.handleChange(value ? 'true' : 'false')}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
-                  label="Czy kierownik jest obecny na rejsie?"
-                  disabled={isReadonly}
-                />
+                <field.CheckboxField size="md" label="Czy kierownik jest obecny na rejsie?" disabled={isReadonly} />
               )}
             />
           </div>

@@ -1,13 +1,13 @@
 /* eslint-disable @eslint-react/no-array-index-key */
+import { Button } from '@base-ui/react/button';
+import { Popover } from '@base-ui/react/popover';
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 import SearchIcon from 'bootstrap-icons/icons/search.svg?react';
-import { useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useState } from 'react';
 
 import { AppButtonVariant } from '@/components/shared/AppButton';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { cn } from '@/lib/utils';
-import { useOutsideClickDetection } from '@/hooks/shared/OutsideClickDetectionHook';
 
 type Props = {
   variant: AppButtonVariant;
@@ -25,61 +25,41 @@ type Props = {
 export function DropdownElementSelectorButton({ variant, options, children, disabled, 'data-testid': testId }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [position, setPosition] = useState({ left: 0, top: 0 });
-  const rootRef = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useOutsideClickDetection({ refs: [rootRef, menuRef], onOutsideClick: () => setExpanded(false) });
 
   const filteredOptions = options.filter(
     (option) =>
       option.value && option.value.trim().length > 0 && option.value.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  function toggleDropdown() {
-    const rect = rootRef.current?.getBoundingClientRect();
-    if (rect) setPosition({ left: rect.left + rect.width / 2, top: rect.top - 4 });
-    setExpanded((value) => !value);
-  }
-
   return (
-    <div ref={rootRef} className="relative inline-block">
-      <button
-        type="button"
-        className={cn(
-          'text-white outline-none hover:cursor-pointer disabled:cursor-default',
-          variants[variant],
-          'flex items-center gap-4 px-5 py-2.5'
-        )}
-        disabled={disabled}
-        data-testid={testId}
-        aria-expanded={expanded}
-        aria-haspopup="dialog"
-        onPointerDown={(event) => {
-          event.preventDefault();
-          toggleDropdown();
-        }}
-        onKeyDown={(event) => {
-          if (event.key !== 'Enter' && event.key !== ' ') return;
-          event.preventDefault();
-          toggleDropdown();
-        }}
+    <Popover.Root open={expanded} onOpenChange={setExpanded} modal={false}>
+      <Popover.Trigger
+        render={
+          <button
+            className={cn(
+              'text-white outline-none hover:cursor-pointer disabled:cursor-default',
+              variants[variant],
+              'flex items-center gap-4 px-5 py-2.5'
+            )}
+            disabled={disabled}
+            data-testid={testId}
+          />
+        }
       >
         <span>{children}</span>
-        <span className={cn('transition-transform duration-300 ease-out', expanded && 'rotate-180')}>
+        <span className="transition-transform duration-300 ease-out data-[popup-open]:rotate-180">
           <ChevronDownIcon className="h-5 w-5" />
         </span>
-      </button>
+      </Popover.Trigger>
 
-      {expanded &&
-        createPortal(
-          <div
-            ref={menuRef}
-            role="dialog"
-            aria-label="Wybierz element"
-            style={{ left: position.left, top: position.top }}
+      <Popover.Portal>
+        <Popover.Positioner className="z-50" sideOffset={4} align="center">
+          <Popover.Popup
             className={cn(
-              'fixed z-[9999] w-max max-w-sm min-w-64 -translate-x-1/2 -translate-y-full rounded-lg bg-white shadow-xl ring-1 ring-black/10',
+              'w-max max-w-sm min-w-64 origin-[var(--transform-origin)] rounded-lg bg-white shadow-xl ring-1 ring-black/10',
+              'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
+              'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
+              'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0',
               'flex max-h-96 flex-col overflow-hidden'
             )}
           >
@@ -90,6 +70,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
                   value={searchValue}
                   onChange={setSearchValue}
                   placeholder="Wyszukaj..."
+                  autoFocus
                   className="border-gray-200 bg-gray-50 pl-9"
                 />
               </div>
@@ -102,8 +83,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
                 <ul className="p-1">
                   {filteredOptions.map((option, i) => (
                     <li key={`${option.value}${i}`}>
-                      <button
-                        type="button"
+                      <Button
                         onClick={
                           option.onClick
                             ? () => {
@@ -120,16 +100,16 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
                         disabled={!option.onClick}
                       >
                         {option.content ?? option.value}
-                      </button>
+                      </Button>
                     </li>
                   ))}
                 </ul>
               )}
             </div>
-          </div>,
-          document.body
-        )}
-    </div>
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }
 

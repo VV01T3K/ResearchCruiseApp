@@ -1,11 +1,7 @@
 import { Row } from '@tanstack/react-table';
 
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
 import { useTypedAppFormContext } from '@/lib/form';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { getErrors } from '@/lib/form-errors';
 import { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
@@ -16,15 +12,10 @@ export function ProjectResearchTaskDetails({ row, disabled }: Props) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].title`}
         children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value as string}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
+          <field.TextField
             label="Tytuł"
             placeholder="Wprowadź tytuł"
             containerClassName="lg:col-span-2"
@@ -33,64 +24,29 @@ export function ProjectResearchTaskDetails({ row, disabled }: Props) {
         )}
       />
 
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].startDate`}
-        children={(field) => (
-          <AppMonthPickerInput
-            name={field.name}
-            value={field.state.value as string}
-            onBlur={field.handleBlur}
-            onChange={(value) => field.handleChange(value ?? '')}
-            errors={getErrors(field.state.meta)}
-            label="Data rozpoczęcia"
-            disabled={disabled}
-          />
-        )}
+        children={(field) => <field.MonthField label="Data rozpoczęcia" disabled={disabled} />}
       />
 
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].endDate`}
-        children={(field) => (
-          <AppMonthPickerInput
-            name={field.name}
-            value={field.state.value as string}
-            onBlur={field.handleBlur}
-            onChange={(value) => field.handleChange(value ?? '')}
-            errors={getErrors(field.state.meta)}
-            label="Data zakończenia"
-            disabled={disabled}
-          />
-        )}
+        children={(field) => <field.MonthField label="Data zakończenia" disabled={disabled} />}
       />
 
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].financingAmount`}
         children={(field) => (
-          <AppNumberInput
-            name={field.name}
-            value={field.state.value as number}
-            type="float"
-            minimum={0}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
-            label="Kwota finansowania [zł]"
-            disabled={disabled}
-          />
+          <field.NumberField type="float" minimum={0} label="Kwota finansowania [zł]" disabled={disabled} />
         )}
       />
 
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].securedAmount`}
         children={(field) => (
-          <AppNumberInput
-            name={field.name}
-            value={field.state.value as number}
+          <field.NumberField
             type="float"
             minimum={0}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             label="Środki zabezpieczone na realizację rejsu [zł]"
             disabled={disabled}
           />

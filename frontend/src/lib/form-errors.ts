@@ -47,30 +47,19 @@ export function getFormErrorMessage(form: AnyFormApi, sections: Record<string, n
     : `Formularz zawiera błędy:\n ${firstError.errorMessage}`;
 }
 
-function scrollToError(delay: number, fallbackElement?: Element | null): void {
-  const scroll = () =>
-    (document.querySelector('[data-error="true"]') ?? fallbackElement)?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    });
-  if (delay > 0) setTimeout(scroll, delay);
-  else scroll();
-}
+export function navigateToFirstError(): void {
+  const root = document.activeElement?.closest('form') ?? document;
+  const invalidField = root.querySelector<HTMLElement>('[aria-invalid="true"]');
+  if (!invalidField) return;
 
-export function navigateToFirstError(form: AnyFormApi | undefined, sections: Record<string, number>): void {
-  const firstError = form ? getFirstFormError(form, sections) : null;
-  const fieldElement = firstError ? document.getElementsByName(firstError.fieldName).item(0) : null;
-  const targetButton = Array.from(document.querySelectorAll<HTMLButtonElement>('h2 button')).find((button) =>
-    button.querySelector('span')?.textContent?.includes(`${firstError?.sectionNumber}.`)
-  );
-
-  if (targetButton && !targetButton.hasAttribute('data-panel-open')) {
-    targetButton.click();
-    scrollToError(150, fieldElement ?? targetButton);
-  } else {
-    fieldElement?.focus();
-    scrollToError(0, fieldElement ?? targetButton);
+  const hiddenPanel = invalidField.closest<HTMLElement>('[hidden]');
+  if (hiddenPanel) {
+    hiddenPanel.parentElement?.querySelector<HTMLElement>('button')?.click();
+    requestAnimationFrame(() => invalidField.focus());
+    return;
   }
+
+  invalidField.focus();
 }
 
 export function normalizeBackendFormPath(path: string): string {

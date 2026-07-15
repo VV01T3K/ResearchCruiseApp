@@ -10,7 +10,7 @@ import { FormView } from './-components/formC/FormView';
 import {
   FORM_C_FIELD_TO_SECTION,
   type FormCValues,
-  getFormCValidationSchema,
+  getFormCDraftWriteSchema,
   getFormCWriteSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
@@ -70,9 +70,9 @@ function FormCPage() {
       (task) =>
         ({
           ...task,
-          done: 'false',
-          managerConditionMet: 'false',
-          deputyConditionMet: 'false',
+          done: false,
+          managerConditionMet: false,
+          deputyConditionMet: false,
         }) satisfies ResearchTaskEffectValues
     ),
     contracts: formA.data.contracts,
@@ -92,13 +92,13 @@ function FormCPage() {
     defaultValues,
     validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
     validators: {
-      onDynamic: getFormCValidationSchema(formAInitValues.data),
+      onDynamic: getFormCWriteSchema(formAInitValues.data),
     },
     onSubmit: async ({ value }) => handleValidSubmit(value),
     onSubmitInvalid: () => {
       trackFormSubmit('form-c', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
-      navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
+      navigateToFirstError();
     },
   });
   const context = {
@@ -121,7 +121,7 @@ function FormCPage() {
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: getFormCWriteSchema(formAInitValues.data, false).parse(values),
+        data: getFormCWriteSchema(formAInitValues.data).parse(values),
       },
       {
         onSuccess: () => {
@@ -140,11 +140,11 @@ function FormCPage() {
           console.error(err);
           if (installServerFormErrors(form, err)) {
             toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
-            navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
+            navigateToFirstError();
             return;
           }
           toast.error('Nie udało się zapisać formularza. Sprawdź czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
+          navigateToFirstError();
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -158,7 +158,7 @@ function FormCPage() {
     await updateMutation.mutateAsync(
       {
         applicationId,
-        data: getFormCWriteSchema(formAInitValues.data, true).parse(form.state.values),
+        data: getFormCDraftWriteSchema().parse(form.state.values),
       },
       {
         onSuccess: () => {
@@ -176,7 +176,7 @@ function FormCPage() {
 
           console.error(err);
           toast.error('Nie udało się zapisać wersji roboczej formularza. Spróbuj ponownie.');
-          navigateToFirstError(form, FORM_C_FIELD_TO_SECTION);
+          navigateToFirstError();
         },
         onSettled: () => {
           toast.dismiss(loading);

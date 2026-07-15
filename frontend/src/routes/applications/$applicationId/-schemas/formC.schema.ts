@@ -127,23 +127,6 @@ export const formCDefaultValues: FormCValues = {
   photos: [],
 } satisfies FormCValues;
 
-const ShipUsageValidationSchema = z
-  .object({
-    shipUsage: z.enum(['0', '1', '2', '3', '4'], {
-      error: 'Wymagane jest wskazanie sposobu korzystania z statku',
-    }),
-    differentUsage: z.string(),
-  })
-  .superRefine(({ shipUsage, differentUsage }, ctx) => {
-    if (shipUsage === '4' && !differentUsage) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'w przypadku wyboru "inne" należy podać informacje o sposobie korzystania z statku',
-        path: ['differentUsage'],
-      });
-    }
-  });
-
 const OtherValidationSchema = (formAInitValues: FormAOptions) =>
   z.object({
     permissions: PermissionWithFileValuesSchema.array(),
@@ -164,10 +147,7 @@ const OtherValidationSchema = (formAInitValues: FormAOptions) =>
     researchTasksEffects: ResearchTaskEffectValuesSchema.array()
       .min(1, 'Co najmniej jedno zadanie badawcze jest wymagane')
       .refine(
-        (val) =>
-          val.every((x) =>
-            x.done === 'false' ? x.deputyConditionMet === 'false' && x.managerConditionMet === 'false' : true
-          ),
+        (val) => val.every((x) => (x.done ? true : !x.deputyConditionMet && !x.managerConditionMet)),
         'Jeżeli zadanie badawcze nie zostało skończone, nie można naliczyć punktów'
       ),
     contracts: ContractValuesSchema.array(),
@@ -185,11 +165,31 @@ const OtherValidationSchema = (formAInitValues: FormAOptions) =>
   });
 
 export function getFormCValidationSchema(formAInitValues: FormAOptions) {
-  return FormCInputSchema.and(ShipUsageValidationSchema).and(OtherValidationSchema(formAInitValues));
+  return FormCInputSchema.extend({
+    ...OtherValidationSchema(formAInitValues).shape,
+    shipUsage: z.enum(['0', '1', '2', '3', '4'], {
+      error: 'Wymagane jest wskazanie sposobu korzystania z statku',
+    }),
+  }).superRefine(({ shipUsage, differentUsage }, ctx) => {
+    if (shipUsage === '4' && !differentUsage) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'w przypadku wyboru "inne" należy podać informacje o sposobie korzystania z statku',
+        path: ['differentUsage'],
+      });
+    }
+  });
 }
 
-export function getFormCWriteSchema(formAInitValues: FormAOptions, draft: boolean) {
-  const inputSchema = draft ? FormCInputSchema : getFormCValidationSchema(formAInitValues);
+export function getFormCWriteSchema(formAInitValues: FormAOptions) {
+  return buildFormCWriteSchema(getFormCValidationSchema(formAInitValues), false);
+}
+
+export function getFormCDraftWriteSchema() {
+  return buildFormCWriteSchema(FormCInputSchema, true);
+}
+
+function buildFormCWriteSchema(inputSchema: z.ZodType<FormCValues, FormCValues>, draft: boolean) {
   return inputSchema
     .transform(
       (form): z.input<typeof FormCWriteRequest> => ({
@@ -212,6 +212,10 @@ export function getFormCWriteSchema(formAInitValues: FormAOptions, draft: boolea
             hours: String(day.hours),
           })),
           collectedSamples: form.collectedSamples.map((sample) => ({ ...sample, amount: String(sample.amount) })),
+          researchEquipments: form.researchEquipments.map((equipment) => ({
+            ...equipment,
+            permission: String(equipment.permission),
+          })),
           researchTasksEffects: form.researchTasksEffects.map((task) => ({
             type: task.type,
             title: 'title' in task ? task.title : null,
@@ -223,15 +227,15 @@ export function getFormCWriteSchema(formAInitValues: FormAOptions, draft: boolea
             endDate: 'endDate' in task ? task.endDate : null,
             financingAmount:
               'financingAmount' in task && task.financingAmount !== null ? String(task.financingAmount) : null,
-            financingApproved: 'financingApproved' in task ? task.financingApproved : null,
+            financingApproved: 'financingApproved' in task ? String(task.financingApproved) : null,
             description: 'description' in task ? task.description : null,
             securedAmount: 'securedAmount' in task && task.securedAmount !== null ? String(task.securedAmount) : null,
             ministerialPoints:
               'ministerialPoints' in task && task.ministerialPoints !== null ? String(task.ministerialPoints) : null,
             publicationMinisterialPoints: null,
-            done: task.done,
-            managerConditionMet: task.managerConditionMet,
-            deputyConditionMet: task.deputyConditionMet,
+            done: String(task.done),
+            managerConditionMet: String(task.managerConditionMet),
+            deputyConditionMet: String(task.deputyConditionMet),
           })),
           spubReportData: form.spubReportData || null,
           additionalDescription: form.additionalDescription || null,
@@ -278,9 +282,9 @@ export function mapFormCToValues(form: FormCFields): FormCValues {
     })),
     researchTasksEffects: form.researchTasksEffects.map((task) => ({
       ...mapResearchTaskToValues(task),
-      done: task.done === 'true' ? 'true' : 'false',
-      managerConditionMet: task.managerConditionMet === 'true' ? 'true' : 'false',
-      deputyConditionMet: task.deputyConditionMet === 'true' ? 'true' : 'false',
+      done: task.done === 'true',
+      managerConditionMet: task.managerConditionMet === 'true',
+      deputyConditionMet: task.deputyConditionMet === 'true',
     })),
     cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
       ...day,
@@ -290,7 +294,7 @@ export function mapFormCToValues(form: FormCFields): FormCValues {
     collectedSamples: form.collectedSamples.map((sample) => ({ ...sample, amount: toNumber(sample.amount) })),
     researchEquipments: form.researchEquipments.map((equipment) => ({
       ...equipment,
-      permission: equipment.permission === 'true' ? 'true' : 'false',
+      permission: equipment.permission === 'true',
     })),
     spubReportData: form.spubReportData ?? '',
     additionalDescription: form.additionalDescription ?? '',

@@ -11,6 +11,8 @@ type Props = {
   className?: string;
   disabled?: boolean;
   role?: React.HTMLAttributes<HTMLButtonElement>['role'];
+  name?: string;
+  'aria-invalid'?: boolean;
   'data-testid'?: string;
 } & (
   | { type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type']; onClick?: (evt: React.MouseEvent) => void }
@@ -18,7 +20,17 @@ type Props = {
 );
 export type AppButtonVariant = keyof typeof variants;
 export function AppButton(props: Props) {
-  const { children, className, disabled, role, variant = 'primary', size = 'md', 'data-testid': testId } = props;
+  const {
+    children,
+    className,
+    disabled,
+    role,
+    name,
+    variant = 'primary',
+    size = 'md',
+    'aria-invalid': ariaInvalid,
+    'data-testid': testId,
+  } = props;
 
   const button = (
     <Button
@@ -33,6 +45,8 @@ export function AppButton(props: Props) {
       onClick={props.type === 'link' ? undefined : props.onClick}
       disabled={disabled}
       role={role}
+      name={name}
+      aria-invalid={ariaInvalid}
       data-testid={testId}
     >
       {children}

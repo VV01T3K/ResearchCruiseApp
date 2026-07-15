@@ -1,6 +1,9 @@
 import { expect } from '@playwright/test';
 import { formTest as test } from '@tests/fixtures/fixtures';
-import { formBDefaultValues, getFormBWriteSchema } from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import {
+  formBDefaultValues,
+  getFormBDraftWriteSchema,
+} from '@/routes/applications/$applicationId/-schemas/formB.schema';
 
 import { MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { touchInput } from './utils/form-filling-utils';
@@ -10,10 +13,10 @@ test('draft form B requires the complete input shape while allowing empty values
     ...formBDefaultValues,
     permissions: [{ description: '', executive: '', scan: undefined }],
   };
-  expect(getFormBWriteSchema(true).safeParse(draft).success).toBe(true);
+  expect(getFormBDraftWriteSchema().safeParse(draft).success).toBe(true);
 
   const { shipEquipmentsIds: _omitted, ...missingKey } = draft;
-  expect(getFormBWriteSchema(true).safeParse(missingKey).success).toBe(false);
+  expect(getFormBDraftWriteSchema().safeParse(missingKey).success).toBe(false);
 });
 
 test('valid form B', async ({ formBPage }) => {

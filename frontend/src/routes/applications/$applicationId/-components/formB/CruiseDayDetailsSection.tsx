@@ -3,12 +3,9 @@ import { useRef } from 'react';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { toast } from '@/components/shared/layout/toast';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -31,17 +28,12 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.number,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].number`}
         children={(field) => (
-          <AppNumberInput
+          <field.NumberField
             data-testid-input="cruise-day-number-input"
             data-testid-errors="cruise-day-number-errors"
-            name={field.name}
-            value={field.state.value}
-            onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -57,17 +49,12 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.hours,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].hours`}
         children={(field) => (
-          <AppNumberInput
+          <field.NumberField
             data-testid-input="cruise-day-hours-input"
             data-testid-errors="cruise-day-hours-errors"
-            name={field.name}
-            value={field.state.value}
-            onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -83,17 +70,13 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.taskName,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].taskName`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="cruise-day-task-name-input"
             data-testid-errors="cruise-day-task-name-errors"
-            name={field.name}
-            value={field.state.value}
             onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             placeholder="Nazwa zadania"
           />
@@ -108,17 +91,13 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.region,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].region`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="cruise-day-region-input"
             data-testid-errors="cruise-day-region-errors"
-            name={field.name}
-            value={field.state.value}
             onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             placeholder="Rejon zadania"
           />
@@ -133,17 +112,13 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.position,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].position`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="cruise-day-position-input"
             data-testid-errors="cruise-day-position-errors"
-            name={field.name}
-            value={field.state.value}
             onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             placeholder="Pozycja"
           />
@@ -158,17 +133,13 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.comment,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].comment`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="cruise-day-comment-input"
             data-testid-errors="cruise-day-comment-errors"
-            name={field.name}
-            value={field.state.value}
             onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             placeholder="Uwagi"
           />
@@ -241,7 +212,7 @@ export const CruiseDayDetailsSection = withForm({
         expandedByDefault
         data-testid="form-b-cruise-day-details-section"
       >
-        <form.Field
+        <form.AppField
           name="cruiseDaysDetails"
           mode="array"
           children={(field) => (

@@ -2,8 +2,6 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
@@ -32,17 +30,12 @@ export const AdditionalPermissionsSection = withForm({
           enableColumnFilter: false,
           enableSorting: false,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`permissions[${row.index}].description`}
               children={(field) => (
-                <AppInput
+                <field.TextField
                   data-testid="permission-description-input"
                   data-testid-errors="permission-description-errors"
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   containerClassName="mx-4"
                   disabled={isReadonly}
                 />
@@ -57,17 +50,12 @@ export const AdditionalPermissionsSection = withForm({
           enableColumnFilter: false,
           enableSorting: false,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`permissions[${row.index}].executive`}
               children={(field) => (
-                <AppInput
+                <field.TextField
                   data-testid="permission-executive-input"
                   data-testid-errors="permission-executive-errors"
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   className="mx-4"
                   disabled={isReadonly}
                 />
@@ -91,18 +79,13 @@ export const AdditionalPermissionsSection = withForm({
           enableColumnFilter: false,
           enableSorting: false,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`permissions[${row.index}].scan`}
               children={(field) => (
-                <AppFileInput
+                <field.FileField
                   data-testid-button="permission-scan-button"
                   data-testid-errors="permission-scan-errors"
-                  name={field.name}
-                  value={field.state.value}
                   acceptedMimeTypes={['application/pdf']}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   disabled={isReadonly}
                 />
               )}
@@ -128,7 +111,7 @@ export const AdditionalPermissionsSection = withForm({
         expandedByDefault
         data-testid="form-b-additional-permissions-section"
       >
-        <form.Field
+        <form.AppField
           name="permissions"
           mode="array"
           children={(field) => (

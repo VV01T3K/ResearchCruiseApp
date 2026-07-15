@@ -94,6 +94,7 @@ export function AppDropdownInput({
         }}
       >
         <Select.Trigger
+          aria-invalid={!!hasError}
           className={cn(
             'relative inline-flex w-full items-center justify-between',
             'rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900',

@@ -18,11 +18,7 @@ import { useAppForm } from '@/lib/form';
 import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
 import { ApplicationResponse, ApplicationStatus } from '@/routes/applications/-types';
 import { FormView } from '../-components/FormView';
-import {
-  CruiseFormInputSchema,
-  UpdateCruiseFormSchema,
-  mapCruiseToValues,
-} from '@/routes/cruises/-schemas/form.schema';
+import { UpdateCruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 import {
   getGetCruiseQueryKey,
   getGetCruisesQueryKey,
@@ -81,10 +77,10 @@ function CruiseDetailsPage() {
   const form = useAppForm({
     defaultValues: mapCruiseToValues(cruiseQuery.data),
     validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
-    validators: { onDynamic: CruiseFormInputSchema },
+    validators: { onDynamic: UpdateCruiseFormSchema },
     onSubmitInvalid: ({ formApi }) => {
       toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
-      navigateToFirstError(formApi, CRUISE_FIELD_TO_SECTION);
+      navigateToFirstError();
     },
     onSubmit: ({ value }) => {
       updateCruiseMutation.mutate(
@@ -97,7 +93,7 @@ function CruiseDetailsPage() {
           onError: (error) => {
             console.error(error);
             toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-            navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
+            navigateToFirstError();
           },
         }
       );

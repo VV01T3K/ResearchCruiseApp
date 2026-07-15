@@ -6,10 +6,6 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -212,15 +208,11 @@ export const CruiseLengthSection = withForm({
             )}
             {periodSelectionType === 'precise' && (
               <>
-                <form.Field
+                <form.AppField
                   name="precisePeriodStart"
                   children={(field) => (
-                    <AppDatePickerInput
-                      name={field.name}
-                      value={field.state.value}
+                    <field.DateField
                       onChange={(newValue) => field.handleChange(newValue ?? '')}
-                      onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta)}
                       label="Dokładny termin rozpoczęcia rejsu"
                       type="date"
                       showRequiredAsterisk
@@ -233,18 +225,14 @@ export const CruiseLengthSection = withForm({
                 <form.Subscribe
                   selector={(state) => state.values.precisePeriodStart}
                   children={(precisePeriodStart) => (
-                    <form.Field
+                    <form.AppField
                       name="precisePeriodEnd"
                       children={(field) => (
-                        <AppDatePickerInput
-                          name={field.name}
-                          value={field.state.value}
+                        <field.DateField
                           onChange={(newValue) => {
                             field.handleChange(newValue ?? '');
                             form.validateField('precisePeriodStart', 'change');
                           }}
-                          onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta)}
                           label="Dokładny termin zakończenia rejsu"
                           type="date"
                           showRequiredAsterisk
@@ -267,15 +255,12 @@ export const CruiseLengthSection = withForm({
 
             {periodSelectionType === 'period' && (
               <>
-                <form.Field
+                <form.AppField
                   name="acceptablePeriod"
                   children={(field) => (
                     <CruiseApplicationPeriodInput
                       name={field.name}
                       value={field.state.value}
-                      onChange={field.handleChange}
-                      onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta)}
                       label="Dopuszczalny okres, w którym miałby się odbywać rejs"
                       showRequiredAsterisk
                       disabled={isReadonly}
@@ -287,15 +272,12 @@ export const CruiseLengthSection = withForm({
                 <form.Subscribe
                   selector={(state) => state.values.acceptablePeriod}
                   children={(acceptablePeriod) => (
-                    <form.Field
+                    <form.AppField
                       name="optimalPeriod"
                       children={(field) => (
                         <CruiseApplicationPeriodInput
                           name={field.name}
                           value={field.state.value}
-                          onChange={field.handleChange}
-                          onBlur={field.handleBlur}
-                          errors={getErrors(field.state.meta)}
                           maxValues={acceptablePeriod}
                           label="Optymalny okres, w którym miałby się odbywać rejs"
                           showRequiredAsterisk
@@ -341,22 +323,14 @@ export const CruiseLengthSection = withForm({
               </div>
             )}
 
-            <form.Field
+            <form.AppField
               name="cruiseDays"
               children={(field) => (
-                <AppNumberInput
-                  name={field.name}
-                  value={field.state.value}
+                <field.NumberField
                   minimum={0}
                   maximum={60}
                   step={1}
-                  type="float"
-                  onChange={(value) => {
-                    field.handleChange(value);
-                    form.setFieldValue('cruiseHours', value * 24);
-                  }}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
+                  type="integer"
                   label="Liczba planowanych dób rejsowych"
                   showRequiredAsterisk
                   disabled={isReadonly}
@@ -366,20 +340,13 @@ export const CruiseLengthSection = withForm({
               )}
             />
 
-            <form.Field
+            <form.AppField
               name="cruiseHours"
               children={(field) => (
-                <AppNumberInput
-                  name={field.name}
-                  value={field.state.value}
+                <field.NumberField
                   minimum={0}
-                  maximum={1440}
-                  onChange={(value) => {
-                    field.handleChange(value);
-                    form.setFieldValue('cruiseDays', value / 24);
-                  }}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
+                  maximum={23}
+                  type="integer"
                   label="Liczba planowanych godzin rejsowych"
                   showRequiredAsterisk
                   disabled={isReadonly}
@@ -390,16 +357,11 @@ export const CruiseLengthSection = withForm({
               )}
             />
 
-            <form.Field
+            <form.AppField
               name="periodNotes"
               children={(field) => (
                 <div className="lg:col-span-2">
-                  <AppInput
-                    name={field.name}
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
+                  <field.TextField
                     label="Uwagi dotyczące terminu"
                     placeholder='np. "Rejs w okresie wakacyjnym"'
                     disabled={isReadonly}
@@ -409,16 +371,11 @@ export const CruiseLengthSection = withForm({
               )}
             />
 
-            <form.Field
+            <form.AppField
               name="shipUsage"
               children={(field) => (
                 <div className="lg:col-span-2">
-                  <AppDropdownInput
-                    name="shipUsage"
-                    value={field.state.value as string}
-                    onChange={(e) => field.handleChange(e as string)}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
+                  <field.SelectField
                     label="Statek na potrzeby badań będzie wykorzystywany"
                     showRequiredAsterisk
                     allOptions={initValues?.shipUsages.map((shipUsage, i) => ({
@@ -444,15 +401,10 @@ export const CruiseLengthSection = withForm({
                         exit={{ opacity: 0, translateY: '-10%' }}
                         transition={{ ease: 'easeOut', duration: 0.2 }}
                       >
-                        <form.Field
+                        <form.AppField
                           name="differentUsage"
                           children={(field) => (
-                            <AppInput
-                              name={field.name}
-                              value={field.state.value}
-                              onChange={field.handleChange}
-                              onBlur={field.handleBlur}
-                              errors={getErrors(field.state.meta)}
+                            <field.TextField
                               label="Inny sposób użycia"
                               placeholder="np. statek badawczy"
                               showRequiredAsterisk

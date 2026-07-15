@@ -1,9 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
@@ -39,15 +36,11 @@ export const PublicationsSection = withForm({
           enableColumnFilter: false,
           enableSorting: false,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`publications[${row.index}].category`}
               children={(field) => (
-                <AppDropdownInput
-                  name={field.name}
-                  value={field.state.value}
+                <field.SelectField
                   onChange={field.handleChange as (value: string) => void}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   allOptions={Object.values(PublicationCategory).map((role) => ({
                     value: role,
                     inlineLabel: getPublicationCategoryLabel(role),
@@ -66,15 +59,10 @@ export const PublicationsSection = withForm({
           enableSorting: false,
           cell: ({ row }) => (
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              <form.Field
+              <form.AppField
                 name={`publications[${row.index}].doi`}
                 children={(field) => (
-                  <AppInput
-                    name={field.name}
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
+                  <field.TextField
                     label="DOI"
                     placeholder='np. "10.1016/j.jmarsys.2019.03.007"'
                     disabled={isReadonly}
@@ -83,15 +71,10 @@ export const PublicationsSection = withForm({
                 )}
               />
 
-              <form.Field
+              <form.AppField
                 name={`publications[${row.index}].authors`}
                 children={(field) => (
-                  <AppInput
-                    name={field.name}
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
+                  <field.TextField
                     label="Autorzy"
                     placeholder='np. "Kowalski J., Nowak A."'
                     disabled={isReadonly}
@@ -100,15 +83,10 @@ export const PublicationsSection = withForm({
                 )}
               />
 
-              <form.Field
+              <form.AppField
                 name={`publications[${row.index}].title`}
                 children={(field) => (
-                  <AppInput
-                    name={field.name}
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
+                  <field.TextField
                     label="Tytuł"
                     placeholder='np. "The impact of sea level rise on the coastal zone"'
                     disabled={isReadonly}
@@ -117,15 +95,10 @@ export const PublicationsSection = withForm({
                 )}
               />
 
-              <form.Field
+              <form.AppField
                 name={`publications[${row.index}].magazine`}
                 children={(field) => (
-                  <AppInput
-                    name={field.name}
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
+                  <field.TextField
                     label="Czasopismo"
                     placeholder='np. "Journal of Marine Systems"'
                     disabled={isReadonly}
@@ -169,17 +142,12 @@ export const PublicationsSection = withForm({
           enableColumnFilter: false,
           enableSorting: false,
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`publications[${row.index}].ministerialPoints`}
               children={(field) => (
-                <AppNumberInput
-                  name={field.name}
-                  value={field.state.value}
+                <field.NumberField
                   minimum={0}
                   step={10}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
                   label="Punkty"
                   disabled={isReadonly}
                   data-testid-input="form-a-publication-points-input"
@@ -238,7 +206,7 @@ export const PublicationsSection = withForm({
           </p>
         </header>
         <div>
-          <form.Field
+          <form.AppField
             name="publications"
             mode="array"
             children={(field) => (

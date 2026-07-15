@@ -144,6 +144,8 @@ export function AppFileInput({
         onDragOver={(e) => e.preventDefault()}
       >
         <label
+          aria-invalid={!!errors?.length}
+          tabIndex={errors?.length ? 0 : undefined}
           className={cn(
             'flex w-full flex-col items-center justify-center border-2 border-gray-300 text-gray-500',
             'cursor-pointer overflow-x-auto rounded-lg border-dashed bg-gray-50 hover:bg-gray-100',

@@ -1,7 +1,4 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { getErrors } from '@/lib/form-errors';
 import { withForm } from '@/lib/form';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -22,17 +19,13 @@ export const AdditionalDescriptionSection = withForm({
           Do ewentualnego wykorzystania do celów promocyjnych, na stronie internetowej, FB itp.; można załączyć zdjęcia
           w osobnych plikach
         </header>
-        <form.Field
+        <form.AppField
           name="additionalDescription"
           children={(field) => (
-            <AppInput
-              name={field.name}
-              value={field.state.value ?? ''}
+            <field.TextField
               onChange={field.setValue}
-              onBlur={field.handleBlur}
               type="textarea"
               className="h-48"
-              errors={getErrors(field.state.meta)}
               label="Dodatkowy opis"
               placeholder="Dodatkowy opis"
               disabled={isReadonly}
@@ -41,16 +34,11 @@ export const AdditionalDescriptionSection = withForm({
             />
           )}
         />
-        <form.Field
+        <form.AppField
           name="photos"
           children={(field) => (
-            <AppFileInput
-              name="photos"
-              value={field.state.value}
+            <field.FilesField
               label="Załączniki"
-              onChange={field.handleChange}
-              onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta)}
               disabled={isReadonly}
               allowMultiple
               maxSizeInMb={10}

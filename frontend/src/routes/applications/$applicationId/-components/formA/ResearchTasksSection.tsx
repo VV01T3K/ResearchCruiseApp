@@ -37,7 +37,7 @@ export const ResearchTasksSection = withForm({
           header: 'Zadanie',
           accessorFn: (row) => getTaskName(row.type),
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               key={row.index}
               name={`researchTasks[${row.index}].type`}
               children={(field) => getTaskName(field.state.value) ?? 'Nieznany typ'}
@@ -73,7 +73,7 @@ export const ResearchTasksSection = withForm({
         data-testid="form-a-research-tasks-section"
       >
         <div>
-          <form.Field
+          <form.AppField
             name="researchTasks"
             mode="array"
             children={(field) => (

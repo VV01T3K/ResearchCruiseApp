@@ -4,12 +4,8 @@ import { useState } from 'react';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/form-errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { withForm } from '@/lib/form';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
@@ -35,7 +31,7 @@ const shortResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`shortResearchEquipments[${row.index}].startDate`}
         listeners={{
           onChange: ({ value }) => {
@@ -46,14 +42,10 @@ const shortResearchEquipmentColumns = (
           },
         }}
         children={(field) => (
-          <AppDatePickerInput
+          <field.DateField
             data-testid-button="short-equipment-from-button"
             data-testid-errors="short-equipment-from-errors"
-            name={field.name}
-            value={field.state.value}
             onChange={(newValue) => field.handleChange(newValue ?? '')}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             minimalDate={allowPastDates ? undefined : new Date()}
           />
@@ -68,20 +60,16 @@ const shortResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`shortResearchEquipments[${row.index}].endDate`}
         children={(field) => (
           <form.Subscribe
             selector={(state) => state.values.shortResearchEquipments[row.index].startDate}
             children={(startDate) => (
-              <AppDatePickerInput
+              <field.DateField
                 data-testid-button="short-equipment-to-button"
                 data-testid-errors="short-equipment-to-errors"
-                name={field.name}
-                value={field.state.value}
                 onChange={(newValue) => field.handleChange(newValue ?? '')}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta)}
                 disabled={isReadonly}
                 selectionStartDate={startDate ? new Date(startDate) : undefined}
                 minimalDate={startDate ? new Date(startDate) : undefined}
@@ -99,17 +87,12 @@ const shortResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`shortResearchEquipments[${row.index}].name`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="short-equipment-name-input"
             data-testid-errors="short-equipment-name-errors"
-            name={field.name}
-            value={field.state.value}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             placeholder="Nazwa sprzętu"
             disabled={isReadonly}
           />
@@ -144,15 +127,10 @@ const longResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`longResearchEquipments[${row.index}].action`}
         children={(field) => (
-          <AppDropdownInput
-            name={field.name}
-            value={field.state.value}
-            onChange={(e) => field.handleChange(e as LongResearchEquipmentValues['action'])}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
+          <field.SelectField
             disabled={isReadonly}
             allOptions={[
               { value: 'Put', inlineLabel: 'Pozostawienie' },
@@ -170,17 +148,12 @@ const longResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`longResearchEquipments[${row.index}].duration`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="long-equipment-duration-input"
             data-testid-errors="long-equipment-duration-errors"
-            name={field.name}
-            value={field.state.value}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             placeholder="Czas"
             disabled={isReadonly}
           />
@@ -195,17 +168,12 @@ const longResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`longResearchEquipments[${row.index}].name`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="long-equipment-name-input"
             data-testid-errors="long-equipment-name-errors"
-            name={field.name}
-            value={field.state.value}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             placeholder="Nazwa sprzętu"
             disabled={isReadonly}
           />
@@ -241,7 +209,7 @@ const portColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`ports[${row.index}].startTime`}
         listeners={{
           onChange: ({ value }) => {
@@ -252,14 +220,10 @@ const portColumns = (
           },
         }}
         children={(field) => (
-          <AppDatePickerInput
+          <field.DateField
             data-testid-button="port-from-button"
             data-testid-errors="port-from-errors"
-            name={field.name}
-            value={field.state.value}
             onChange={(newValue) => field.handleChange(newValue ?? '')}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             disabled={isReadonly}
             type="datetime"
             minimalDate={allowPastDates ? undefined : new Date()}
@@ -275,20 +239,16 @@ const portColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`ports[${row.index}].endTime`}
         children={(field) => (
           <form.Subscribe
             selector={(state) => state.values.ports[row.index].startTime}
             children={(startTime) => (
-              <AppDatePickerInput
+              <field.DateField
                 data-testid-button="port-to-button"
                 data-testid-errors="port-to-errors"
-                name={field.name}
-                value={field.state.value}
                 onChange={(newValue) => field.handleChange(newValue ?? '')}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta)}
                 disabled={isReadonly}
                 type="datetime"
                 selectionStartDate={startTime ? new Date(startTime) : undefined}
@@ -307,17 +267,12 @@ const portColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`ports[${row.index}].name`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="port-name-input"
             data-testid-errors="port-name-errors"
-            name={field.name}
-            value={field.state.value}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta)}
             placeholder="Nazwa portu"
             disabled={isReadonly}
           />
@@ -352,7 +307,7 @@ export const CruiseDetailsSection = withForm({
         <div className="mt-8">
           <p className="text-lg font-semibold">Wystawienie sprzętu</p>
 
-          <form.Field
+          <form.AppField
             name="shortResearchEquipments"
             mode="array"
             children={(field) => (
@@ -409,7 +364,7 @@ export const CruiseDetailsSection = withForm({
 
         <div className="mt-8">
           <p className="text-lg font-semibold">Pozostawienie lub zabranie sprzętu</p>
-          <form.Field
+          <form.AppField
             name="longResearchEquipments"
             mode="array"
             children={(field) => (
@@ -459,7 +414,7 @@ export const CruiseDetailsSection = withForm({
         <div className="mt-8">
           <p className="text-lg font-semibold">Wchodzenie lub wychodzenie z portu</p>
 
-          <form.Field
+          <form.AppField
             name="ports"
             mode="array"
             children={(field) => (

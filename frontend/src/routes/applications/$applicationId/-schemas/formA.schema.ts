@@ -368,8 +368,8 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
       optimalPeriod: CruisePeriodValidationSchema.or(literal('')),
       precisePeriodStart: z.string().or(literal('')),
       precisePeriodEnd: z.string().or(literal('')),
-      cruiseDays: z.number().min(0).max(60),
-      cruiseHours: z.number().min(0).max(1440),
+      cruiseDays: z.number().int().min(0).max(60),
+      cruiseHours: z.number().int().min(0).max(23),
     })
     .superRefine(
       (
@@ -385,12 +385,10 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
         },
         ctx
       ) => {
-        if (cruiseHours !== cruiseDays * 24) {
-          ctx.addIssue({ code: 'custom', message: 'Liczba dni i godzin rejsu musi być zgodna', path: ['cruiseHours'] });
-        }
+        const totalCruiseHours = cruiseDays * 24 + cruiseHours;
         if (periodSelectionType === 'period') {
           if (acceptablePeriod !== '') {
-            const acceptableAnalysis = hasEnoughFreeSlotInPeriod(year, acceptablePeriod, cruiseHours);
+            const acceptableAnalysis = hasEnoughFreeSlotInPeriod(year, acceptablePeriod, totalCruiseHours);
             if (!acceptableAnalysis.canFitCruise) {
               ctx.addIssue({
                 code: 'custom',
@@ -402,7 +400,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
           }
 
           if (optimalPeriod !== '') {
-            const optimalAnalysis = hasEnoughFreeSlotInPeriod(year, optimalPeriod, cruiseHours);
+            const optimalAnalysis = hasEnoughFreeSlotInPeriod(year, optimalPeriod, totalCruiseHours);
             if (!optimalAnalysis.canFitCruise) {
               ctx.addIssue({
                 code: 'custom',
@@ -421,7 +419,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
 
         const start = new Date(precisePeriodStart);
         const end = new Date(precisePeriodEnd);
-        const cruiseDurationDays = cruiseHours / 24;
+        const cruiseDurationDays = totalCruiseHours / 24;
 
         if ((end.getTime() - start.getTime()) / DAY_IN_MILLISECONDS < cruiseDurationDays) {
           ctx.addIssue({
@@ -432,7 +430,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
           return;
         }
 
-        const slotAnalysis = hasEnoughFreeSlotInPrecisePeriod(precisePeriodStart, precisePeriodEnd, cruiseHours);
+        const slotAnalysis = hasEnoughFreeSlotInPrecisePeriod(precisePeriodStart, precisePeriodEnd, totalCruiseHours);
 
         if (!slotAnalysis.canFitCruise) {
           ctx.addIssue({
@@ -461,11 +459,8 @@ const OtherValidationSchema = (initValues: FormAOptions) =>
       optimalPeriod: CruisePeriodValidationSchema.or(literal('')),
       precisePeriodStart: z.string().or(literal('')),
       precisePeriodEnd: z.string().or(literal('')),
-      cruiseDays: z.number().min(0).max(60),
-      cruiseHours: z
-        .number()
-        .positive('Rejs musi trwać co najmniej godzinę i nie dłużej niż 60 dni (1440 godzin)')
-        .max(1440, 'Rejs musi trwać co najmniej godzinę i nie dłużej niż 60 dni (1440 godzin)'),
+      cruiseDays: z.number().int().min(0).max(60),
+      cruiseHours: z.number().int().min(0).max(23),
       periodNotes: z.string(),
       permissions: PermissionValuesSchema.array().refine(
         (val) => val.every((x) => !x.scan),
@@ -504,6 +499,15 @@ const OtherValidationSchema = (initValues: FormAOptions) =>
       );
     }, 'Okres optymalny musi zawierać się w okresie akceptowalnym')
     .superRefine((val, ctx) => {
+      const totalCruiseHours = val.cruiseDays * 24 + val.cruiseHours;
+      if (totalCruiseHours === 0 || totalCruiseHours > 1440) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['cruiseHours'],
+          message: 'Rejs musi trwać co najmniej godzinę i nie dłużej niż 60 dni',
+        });
+      }
+
       const precisePeriodStart = val.precisePeriodStart;
       const precisePeriodEnd = val.precisePeriodEnd;
       const acceptablePeriod = val.acceptablePeriod;
@@ -563,8 +567,8 @@ const OtherValidationSchema = (initValues: FormAOptions) =>
         if (acceptablePeriod !== '' && optimalPeriod !== '') {
           const year = parseInt(val.year, 10);
 
-          if (val.cruiseHours > 0 && !Number.isNaN(year)) {
-            const cruiseDurationDays = val.cruiseHours / 24;
+          if (totalCruiseHours > 0 && !Number.isNaN(year)) {
+            const cruiseDurationDays = totalCruiseHours / 24;
 
             if (!hasEnoughDaysInPeriod(acceptablePeriod, year, cruiseDurationDays)) {
               ctx.addIssue({
@@ -594,20 +598,39 @@ const OtherValidationSchema = (initValues: FormAOptions) =>
     });
 
 export function getFormAValidationSchema(initValues: FormAOptions, blockades?: BlockadePeriod[]) {
-  return FormAInputSchema.and(ManagerAndDeputyManagerValidationSchema(initValues))
-    .and(ShipUsageValidationSchema)
-    .and(CruiseGoalValidationSchema)
-    .and(BlockadeCollisionValidationSchema(blockades))
-    .and(OtherValidationSchema(initValues));
+  const validations = [
+    ManagerAndDeputyManagerValidationSchema(initValues),
+    ShipUsageValidationSchema,
+    CruiseGoalValidationSchema,
+    BlockadeCollisionValidationSchema(blockades),
+    OtherValidationSchema(initValues),
+  ];
+
+  return FormAInputSchema.superRefine((form, ctx) => {
+    for (const validation of validations) {
+      const result = validation.safeParse(form);
+      if (!result.success) {
+        result.error.issues.forEach((issue) =>
+          ctx.addIssue({ code: 'custom', path: issue.path, message: issue.message })
+        );
+      }
+    }
+  });
 }
 
-export function getFormAWriteSchema(
-  initValues: FormAOptions,
+export function getFormAWriteSchema(initValues: FormAOptions, blockades?: BlockadePeriod[], applicationId?: string) {
+  return buildFormAWriteSchema(getFormAValidationSchema(initValues, blockades), false, applicationId);
+}
+
+export function getFormADraftWriteSchema(applicationId?: string) {
+  return buildFormAWriteSchema(FormAInputSchema, true, applicationId);
+}
+
+function buildFormAWriteSchema(
+  inputSchema: z.ZodType<FormAValues, FormAValues>,
   draft: boolean,
-  blockades?: BlockadePeriod[],
   applicationId?: string
 ) {
-  const inputSchema = draft ? FormAInputSchema : getFormAValidationSchema(initValues, blockades);
   return inputSchema
     .transform((form): z.input<typeof FormAWriteRequest> => mapFormAWriteRequest(form, draft, applicationId))
     .pipe(FormAWriteRequest);
@@ -625,7 +648,7 @@ function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?:
       periodSelectionType: form.periodSelectionType ?? null,
       precisePeriodStart: toApiDateTime(form.precisePeriodStart),
       precisePeriodEnd: toApiDateTime(form.precisePeriodEnd),
-      cruiseHours: String(form.cruiseHours),
+      cruiseHours: String(form.cruiseDays * 24 + form.cruiseHours),
       periodNotes: form.periodNotes,
       shipUsage: form.shipUsage || null,
       differentUsage: form.differentUsage,
@@ -647,7 +670,7 @@ function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?:
         startDate: 'startDate' in task ? task.startDate : null,
         endDate: 'endDate' in task ? task.endDate : null,
         financingAmount: 'financingAmount' in task ? String(task.financingAmount) : null,
-        financingApproved: 'financingApproved' in task ? task.financingApproved : null,
+        financingApproved: 'financingApproved' in task ? String(task.financingApproved) : null,
         description: 'description' in task ? task.description : null,
         securedAmount: 'securedAmount' in task ? String(task.securedAmount) : null,
         ministerialPoints: 'ministerialPoints' in task ? String(task.ministerialPoints) : null,
@@ -706,8 +729,8 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
           : 'period',
     precisePeriodStart: form.precisePeriodStart ?? '',
     precisePeriodEnd: form.precisePeriodEnd ?? '',
-    cruiseDays: toNumber(form.cruiseHours) / 24,
-    cruiseHours: toNumber(form.cruiseHours),
+    cruiseDays: Math.floor(toNumber(form.cruiseHours) / 24),
+    cruiseHours: toNumber(form.cruiseHours) % 24,
     periodNotes: form.periodNotes,
     shipUsage: form.shipUsage ?? '',
     differentUsage: form.differentUsage,
@@ -773,7 +796,7 @@ export function mapResearchTaskToValues(task: ResearchTaskFields): FormAValues['
         type: task.type,
         title: task.title ?? '',
         date: task.date ?? '',
-        financingApproved: task.financingApproved === 'true' ? 'true' : 'false',
+        financingApproved: task.financingApproved === 'true',
       };
     case ResearchTaskType.DomesticProject:
     case ResearchTaskType.ForeignProject:

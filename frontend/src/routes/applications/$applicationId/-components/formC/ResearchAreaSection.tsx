@@ -1,7 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
@@ -31,11 +30,11 @@ export const ResearchAreaSection = withForm({
           header: 'Rejon prowadzenia badań',
           cell: ({ row }) => (
             <>
-              <form.Field
+              <form.AppField
                 name={`researchAreaDescriptions[${row.index}].areaId`}
                 children={(field) => <input type="hidden" name={field.name} value="" readOnly />}
               />
-              <form.Field
+              <form.AppField
                 listeners={{
                   onChange: () => {
                     form.setFieldValue(`researchAreaDescriptions[${row.index}].areaId`, null);
@@ -43,16 +42,12 @@ export const ResearchAreaSection = withForm({
                 }}
                 name={`researchAreaDescriptions[${row.index}].differentName`}
                 children={(field) => (
-                  <AppInput
-                    name={field.name}
+                  <field.TextField
                     value={
                       field.state.value ??
                       getResearchAreaName(formAInitValues.researchAreas, row.original.areaId ?? '') ??
                       ''
                     }
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta)}
                     placeholder="Nazwa rejonu"
                     disabled={isReadonly}
                   />
@@ -65,15 +60,10 @@ export const ResearchAreaSection = withForm({
         {
           header: 'Informacje dodatkowe',
           cell: ({ row }) => (
-            <form.Field
+            <form.AppField
               name={`researchAreaDescriptions[${row.index}].info`}
               children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta)}
+                <field.TextField
                   placeholder={isReadonly ? '' : 'np. szczegóły dotyczące celu rejsu'}
                   disabled={isReadonly}
                 />
@@ -100,7 +90,7 @@ export const ResearchAreaSection = withForm({
 
     return (
       <AppAccordion title="5. Rejony prowadzenia badań" expandedByDefault data-testid="form-c-research-area-section">
-        <form.Field
+        <form.AppField
           name="researchAreaDescriptions"
           mode="array"
           children={(field) => (
