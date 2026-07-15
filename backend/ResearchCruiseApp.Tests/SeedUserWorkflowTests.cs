@@ -35,7 +35,8 @@ public sealed class SeedUserWorkflowTests
         var emailSender = new EmailSender(
             configuration,
             new TemplateFileReader(),
-            new GlobalizationService()
+            new GlobalizationService(),
+            NullLogger<EmailSender>.Instance
         );
         const string email = "seed@example.com";
         const string role = "Administrator";
