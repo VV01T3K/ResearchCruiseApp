@@ -6,6 +6,13 @@ import type { AuthDetails } from '@/api/client/user';
 const subscribers = new Set<(details: AuthDetails | undefined) => void>();
 let refreshPromise: Promise<AuthDetails | undefined> | undefined;
 
+export class SessionRefreshError extends Error {
+  constructor(cause: unknown) {
+    super('Session refresh failed', { cause });
+    this.name = 'SessionRefreshError';
+  }
+}
+
 export function toAuthDetails(response: TokenResponse): AuthDetails {
   return {
     accessToken: response.accessToken,
@@ -52,7 +59,7 @@ async function refresh(): Promise<AuthDetails | undefined> {
     return details;
   } catch (error) {
     setSession(undefined);
-    throw error;
+    throw new SessionRefreshError(error);
   }
 }
 

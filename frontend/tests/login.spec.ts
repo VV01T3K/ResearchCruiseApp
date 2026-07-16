@@ -16,6 +16,13 @@ test('login with valid credentials', async ({ loginPage }) => {
   await expect(loginPage.page).toHaveURL('/');
 });
 
+test('login redirects to the requested route', async ({ loginPage }) => {
+  await loginPage.page.goto('/login?redirect=%2Fhelp');
+  await loginPage.login('test.email@gmail.com', 'someP@ssword');
+
+  await expect(loginPage.page).toHaveURL('/help');
+});
+
 test('login with invalid credentials', async ({ loginPage }) => {
   const userEmail = 'test.email@gmail.com';
   const userPassword = 'someP@ssword';

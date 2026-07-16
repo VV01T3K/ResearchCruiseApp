@@ -176,6 +176,14 @@ test.describe('session expiration and refresh', () => {
     await expect(page).toHaveURL('/user-management');
   });
 
+  test('failed initial refresh redirects a protected route to login', async ({ page }) => {
+    await setupAuthMocks(page, { refreshResponse: { status: 401 } });
+
+    await seedAuthAndNavigate(page, getAuthDetailsPayloadWithExpirations(-5_000, 24 * 60 * 60 * 1000));
+
+    await expect(page).toHaveURL(/\/login/);
+  });
+
   test('manual refresh button calls refresh endpoint and extends session', async ({ page }) => {
     await page.clock.install({ time: Date.now() });
     const extendedAuth = getRefreshResponsePayloadMs(24 * 60 * 60 * 1000);

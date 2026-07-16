@@ -1,7 +1,14 @@
 import { queryOptions, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { QueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 
-import { refreshSession, setSession, subscribeAuthDetails, toAuthDetails } from '@/api/client/auth-session';
+import {
+  refreshSession,
+  SessionRefreshError,
+  setSession,
+  subscribeAuthDetails,
+  toAuthDetails,
+} from '@/api/client/auth-session';
 import { getStoredAuthDetails } from '@/api/client/auth-storage';
 import { ApiError } from '@/api/client/custom-fetch';
 import type { Role, SignInResult, User } from '@/api/client/user';
@@ -16,13 +23,18 @@ export function currentUserQueryOptions() {
         const user = await getCurrentUser();
         return { ...user, roles: user.roles as Role[] };
       } catch (error) {
-        if (error instanceof ApiError && error.status === 401) return null;
+        if ((error instanceof ApiError && error.status === 401) || error instanceof SessionRefreshError) return null;
         throw error;
       }
     },
     refetchOnWindowFocus: false,
     staleTime: Infinity,
   });
+}
+
+function clearSession(queryClient: QueryClient) {
+  setSession(undefined);
+  queryClient.setQueryData(getGetCurrentUserQueryKey(), null);
 }
 
 export function useCurrentUser() {
@@ -51,8 +63,7 @@ export function useSignIn() {
       await queryClient.fetchQuery({ ...currentUserQueryOptions(), staleTime: 0 });
       return 'success';
     } catch (error) {
-      setSession(undefined);
-      queryClient.setQueryData(getGetCurrentUserQueryKey(), null);
+      clearSession(queryClient);
       return error instanceof ApiError && error.status === 401 ? 'invalid_credentials' : 'error';
     }
   };
@@ -64,8 +75,7 @@ export function useSessionActions() {
     await refreshSession();
   }, []);
   const signOut = useCallback(async () => {
-    setSession(undefined);
-    queryClient.setQueryData(getGetCurrentUserQueryKey(), null);
+    clearSession(queryClient);
   }, [queryClient]);
 
   return {
