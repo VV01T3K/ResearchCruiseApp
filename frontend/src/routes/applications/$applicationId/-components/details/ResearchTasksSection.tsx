@@ -3,12 +3,12 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
-import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
+import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { EvaluationFormAResearchTask } from '@/api/client/applications/models';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 export function ResearchTasksSection() {
-  const { evaluation } = useApplicationDetails();
+  const evaluation = useApplicationEvaluation();
 
   const columns: ColumnDef<EvaluationFormAResearchTask>[] = [
     {

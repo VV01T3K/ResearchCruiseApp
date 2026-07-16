@@ -12,7 +12,7 @@ import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { cn } from '@/lib/utils';
 import { User } from '@/api/client/user';
-import { useUserContext } from '@/providers/useUserContext';
+import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { GroupActionsSection } from './-components/GroupActionsSection';
 import { RoleBadge } from './-components/RoleBadge';
 import { EditForm } from './-components/EditForm';
@@ -38,13 +38,13 @@ const allowedRoles: Record<Role, Role[]> = {
 };
 
 function UserManagementPage() {
-  const userContext = useUserContext();
+  const currentUser = useCurrentUser();
   const [selectedUsers, setSelectedUsers] = React.useState<RowSelectionState>({});
   const [modalState, setModalState] = React.useState<ModalStates>({ state: 'none' });
   const usersQuery = useGetUsersSuspense({
     query: { select: (users) => users.map((user) => ({ ...user, roles: user.roles as Role[] })) },
   });
-  const currentUserRole = userContext.currentUser?.roles[0] as Role;
+  const currentUserRole = currentUser?.roles[0] as Role;
 
   async function handleModalClose() {
     setModalState({ state: 'none' });

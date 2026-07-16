@@ -14,7 +14,7 @@ import {
   UserManagementCard,
 } from '@/components/dashboard/Cards';
 import { Grid } from '@/components/dashboard/Grid';
-import { useUserContext } from '@/providers/useUserContext';
+import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
 
 export const Route = createFileRoute('/')({
   component: DashboardPage,
@@ -22,9 +22,9 @@ export const Route = createFileRoute('/')({
 });
 
 function DashboardPage() {
-  const userContext = useUserContext();
+  const currentUser = useCurrentUser();
 
-  if (userContext.isInRole(Role.Administrator)) {
+  if (isInRole(currentUser, Role.Administrator)) {
     return (
       <Grid>
         <NewCruiseApplicationCard className="col-span-2 row-span-2" />
@@ -40,7 +40,7 @@ function DashboardPage() {
     );
   }
 
-  if (userContext.isInRole(Role.ShipOwner)) {
+  if (isInRole(currentUser, Role.ShipOwner)) {
     return (
       <Grid>
         <CruisesCard className="col-span-2 row-span-2" />
@@ -56,7 +56,7 @@ function DashboardPage() {
     );
   }
 
-  if (userContext.isInRole(Role.CruiseManager)) {
+  if (isInRole(currentUser, Role.CruiseManager)) {
     return (
       <Grid>
         <NewCruiseApplicationCard className="col-span-2 row-span-2" />
@@ -71,7 +71,7 @@ function DashboardPage() {
     );
   }
 
-  if (userContext.isInRole(Role.Guest)) {
+  if (isInRole(currentUser, Role.Guest)) {
     return (
       <Grid>
         <CruisesCard className="col-span-2 row-span-2" />
@@ -83,7 +83,7 @@ function DashboardPage() {
     );
   }
 
-  if (userContext.isInRole(Role.ShipCrew)) {
+  if (isInRole(currentUser, Role.ShipCrew)) {
     return (
       <Grid>
         <CruisesCard className="col-span-2 row-span-2" />
@@ -97,8 +97,7 @@ function DashboardPage() {
 
   return (
     <AppAlert variant="danger">
-      Brak dashboarda przypisanego do ról: {userContext.currentUser?.roles.join(', ')}. Zgłoś ten fakt administratorom
-      strony.
+      Brak dashboarda przypisanego do ról: {currentUser?.roles.join(', ')}. Zgłoś ten fakt administratorom strony.
     </AppAlert>
   );
 }

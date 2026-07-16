@@ -4,7 +4,7 @@ import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { ChangePasswordForm } from './-components/ChangePasswordForm';
 import { EmailConfirmationBadge } from './-components/EmailConfirmationBadge';
-import { useUserContext } from '@/providers/useUserContext';
+import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 
 export const Route = createFileRoute('/account-settings/')({
   component: AccountSettingsPage,
@@ -12,9 +12,9 @@ export const Route = createFileRoute('/account-settings/')({
 });
 
 function AccountSettingsPage() {
-  const userContext = useUserContext();
+  const currentUser = useCurrentUser();
 
-  if (!userContext.currentUser) {
+  if (!currentUser) {
     return null;
   }
 
@@ -22,17 +22,14 @@ function AccountSettingsPage() {
     <AppLayout title="Ustawienia konta">
       <div className="space-y-8">
         <header className="flex items-center gap-4">
-          <AppAvatar fullName={`${userContext.currentUser.firstName} ${userContext.currentUser.lastName}`} />
+          <AppAvatar fullName={`${currentUser.firstName} ${currentUser.lastName}`} />
           <div>
             <p className="title text-xl font-semibold">
-              {userContext.currentUser.firstName} {userContext.currentUser.lastName}
+              {currentUser.firstName} {currentUser.lastName}
             </p>
             <p>
-              {userContext.currentUser?.email}{' '}
-              <EmailConfirmationBadge
-                email={userContext.currentUser.email}
-                emailConfirmed={userContext.currentUser.emailConfirmed}
-              />
+              {currentUser.email}{' '}
+              <EmailConfirmationBadge email={currentUser.email} emailConfirmed={currentUser.emailConfirmed} />
             </p>
           </div>
         </header>
