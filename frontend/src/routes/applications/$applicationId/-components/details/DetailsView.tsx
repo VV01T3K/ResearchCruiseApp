@@ -1,7 +1,6 @@
 import { toast } from '@/components/shared/layout/toast';
-import { ApplicationDetailsProvider } from '@/contexts/applications/ApplicationDetailsContext';
 import { useUpdateApplicationDecision } from '@/api/generated/endpoints/applications.gen';
-import { ApplicationResponse, EvaluationResponse } from '@/api/client/applications/models';
+import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 
 import { ActionsSection } from './ActionsSection';
 import { ContractsSection } from './ContractsSection';
@@ -12,11 +11,8 @@ import { PublicationsSection } from './PublicationsSection';
 import { ResearchTasksSection } from './ResearchTasksSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
 
-type Props = {
-  application: ApplicationResponse;
-  evaluation: EvaluationResponse;
-};
-export function DetailsView({ application, evaluation }: Props) {
+export function DetailsView() {
+  const application = useApplication();
   const decisionMutation = useUpdateApplicationDecision();
 
   function acceptApplication() {
@@ -50,7 +46,7 @@ export function DetailsView({ application, evaluation }: Props) {
   }
 
   return (
-    <ApplicationDetailsProvider value={{ application, evaluation }}>
+    <>
       <InformationSection />
       <ResearchTasksSection />
       <EffectPointsSection />
@@ -59,6 +55,6 @@ export function DetailsView({ application, evaluation }: Props) {
       <PublicationsSection />
       <SPUBTasksSection />
       <ActionsSection onAccept={acceptApplication} onReject={rejectApplication} />
-    </ApplicationDetailsProvider>
+    </>
   );
 }

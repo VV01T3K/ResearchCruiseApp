@@ -1,5 +1,5 @@
 import { Role } from '@/api/client/user';
-import { useUserContext } from '@/providers/useUserContext';
+import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
 
 type Props = {
   children: React.ReactNode;
@@ -8,13 +8,13 @@ type Props = {
   allowedUserIds?: string[];
 };
 export function AppGuard({ children, allowedRoles, allowedUserIds }: Props) {
-  const { currentUser, isInRole } = useUserContext();
+  const currentUser = useCurrentUser();
 
   if (allowedUserIds && !allowedUserIds.includes(currentUser?.id || '')) {
     return null;
   }
 
-  if (allowedRoles && !isInRole(allowedRoles)) {
+  if (allowedRoles && !isInRole(currentUser, allowedRoles)) {
     return null;
   }
   return children;

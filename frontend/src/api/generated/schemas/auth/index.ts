@@ -2,7 +2,6 @@
 export * from './confirmEmailParams.gen.ts';
 export * from './httpValidationProblemDetails.gen.ts';
 export * from './loginRequest.gen.ts';
-export * from './refreshTokensRequest.gen.ts';
 export * from './registerAccountRequest.gen.ts';
 export * from './requestPasswordResetRequest.gen.ts';
 export * from './resendConfirmationEmailRequest.gen.ts';

@@ -15,7 +15,7 @@ public static class MeEndpoints
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
-    private static async Task<Results<Ok<CurrentUserResponse>, NotFound>> Handle(
+    private static async Task<Results<Ok<CurrentUserResponse>, UnauthorizedHttpResult>> Handle(
         CurrentUserService currentUserService,
         IdentityService identityService
     )
@@ -23,12 +23,12 @@ public static class MeEndpoints
         var currentUserId = currentUserService.GetId();
         if (currentUserId is null)
         {
-            return TypedResults.NotFound();
+            return TypedResults.Unauthorized();
         }
 
         var currentUser = await identityService.GetUserDtoById(currentUserId.Value);
         return currentUser is null
-            ? TypedResults.NotFound()
+            ? TypedResults.Unauthorized()
             : TypedResults.Ok(CurrentUserResponse.From(currentUser));
     }
 }

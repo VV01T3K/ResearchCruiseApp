@@ -9,7 +9,7 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { getErrors } from '@/integrations/tanstack/form/errors';
-import { useUserContext } from '@/providers/useUserContext';
+import { useSignIn } from '@/integrations/tanstack/query/auth';
 import { SignInResult } from '@/api/client/user';
 
 export const Route = createFileRoute('/(auth)/login')({
@@ -30,7 +30,7 @@ const errorMessages = {
 };
 
 function LoginPage() {
-  const userContext = useUserContext();
+  const signIn = useSignIn();
   const router = useRouter();
   const { redirect } = Route.useSearch();
   const [signInResult, setSignInResult] = React.useState<SignInResult | undefined>(undefined);
@@ -48,18 +48,15 @@ function LoginPage() {
       trackFormSubmit('login', 'valid', formApi.state);
 
       setSignInResult(undefined);
-      const result = await userContext?.signIn(value.email, value.password);
-      await router.invalidate();
+      const result = await signIn(value.email, value.password);
 
       if (result !== 'success') {
         setSignInResult(result);
         return;
       }
 
-      // Delay redirection so that the user context has time to update
-      setTimeout(() => {
-        router.navigate({ to: redirect ?? '/' });
-      }, 50);
+      await router.invalidate();
+      await router.navigate({ to: redirect ?? '/' });
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('login', 'invalid', formApi.state);

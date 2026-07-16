@@ -4,12 +4,12 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
+import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 import { EvaluationFormAContract } from '@/api/client/applications/models';
 
 export function ContractsSection() {
-  const { evaluation } = useApplicationDetails();
+  const evaluation = useApplicationEvaluation();
 
   const columns: ColumnDef<EvaluationFormAContract>[] = [
     {

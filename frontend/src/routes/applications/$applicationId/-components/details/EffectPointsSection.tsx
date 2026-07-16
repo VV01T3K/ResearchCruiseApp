@@ -1,9 +1,9 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
+import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 
 export function EffectPointsSection() {
-  const { evaluation } = useApplicationDetails();
+  const evaluation = useApplicationEvaluation();
 
   return (
     <AppAccordion title="3. Efekty osiągnięte po poprzednich rejsach" expandedByDefault>

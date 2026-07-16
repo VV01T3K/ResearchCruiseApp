@@ -15,6 +15,9 @@ export class LoginPage {
     this.page = page;
 
     this.page.route(`${API_URL}/v2/users/me`, (route) => {
+      if (!route.request().headers().authorization) {
+        return route.fulfill({ status: 401 });
+      }
       route.fulfill({
         status: 200,
         body: JSON.stringify(getAdminAccountPayload()),

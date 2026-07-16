@@ -1,5 +1,4 @@
 import UGLogoIcon from '@/assets/uglogo.svg?react';
-import { useNavigate } from '@tanstack/react-router';
 import BoxArrowRightIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
 import BroadcastIcon from 'bootstrap-icons/icons/broadcast.svg?react';
 import EnvelopeIcon from 'bootstrap-icons/icons/envelope.svg?react';
@@ -9,11 +8,12 @@ import packageJson from '../../../../package.json';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLink } from '@/components/shared/AppLink';
 import { SessionStatusBadge } from '@/components/shared/SessionStatusBadge';
-import { useUserContext } from '@/providers/useUserContext';
+import { useAuthDetails, useCurrentUser, useSessionActions } from '@/integrations/tanstack/query/auth';
 
 export function AppNavbar() {
-  const userContext = useUserContext();
-  const navigate = useNavigate();
+  const currentUser = useCurrentUser();
+  const authDetails = useAuthDetails();
+  const { refresh, signOut } = useSessionActions();
 
   function openUGRadio() {
     window.open(
@@ -24,8 +24,7 @@ export function AppNavbar() {
   }
 
   async function onSignOutButtonClicked() {
-    await userContext.signOut();
-    await navigate({ to: '/login' });
+    await signOut();
   }
 
   return (
@@ -71,23 +70,24 @@ export function AppNavbar() {
           </AppLink>
         </motion.div>
         <AnimatePresence>
-          {userContext.currentUser && (
+          {currentUser && (
             <motion.div
               className="flex items-center gap-4"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
             >
-              {userContext.refreshTokenExpirationDate && (
+              {authDetails?.refreshTokenExpirationDate && (
                 <SessionStatusBadge
-                  refreshTokenExpirationDate={userContext.refreshTokenExpirationDate}
-                  onRefresh={userContext.refreshUser}
+                  refreshTokenExpirationDate={authDetails.refreshTokenExpirationDate}
+                  onRefresh={refresh}
                 />
               )}
               <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
                 <AppButton
                   onClick={() => onSignOutButtonClicked()}
                   title="Wyloguj"
+                  data-testid="sign-out-btn"
                   variant="plain"
                   className="p-0 text-white"
                 >

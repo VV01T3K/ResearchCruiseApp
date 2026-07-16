@@ -4,11 +4,11 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
+import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { EvaluationFormASpubTask } from '@/api/client/applications/models';
 
 export function SPUBTasksSection() {
-  const { evaluation } = useApplicationDetails();
+  const evaluation = useApplicationEvaluation();
 
   const columns: ColumnDef<EvaluationFormASpubTask>[] = [
     {

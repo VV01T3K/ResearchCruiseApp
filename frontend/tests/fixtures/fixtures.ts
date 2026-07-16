@@ -23,6 +23,11 @@ export const test = base.extend<{ forEachTest: void }>({
           contentType: 'application/json',
         });
       });
+      page.route(`${API_URL}/version`, (route) => route.fulfill({ status: 200, body: JSON.stringify('2.5.0') }));
+
+      // Unauthenticated routes still resolve the shared current-user query.
+      page.route(`${API_URL}/v2/auth/refresh`, (route) => route.fulfill({ status: 401 }));
+      page.route(`${API_URL}/v2/users/me`, (route) => route.fulfill({ status: 401 }));
 
       await use();
     },
@@ -41,7 +46,11 @@ export const loginTest = test.extend<{ loginPage: LoginPage }>({
   ],
 });
 
-export const formTest = test.extend<{ formAPage: FormAPage; formBPage: FormBPage; formCPage: FormCPage }>({
+export const formTest = test.extend<{
+  formAPage: FormAPage;
+  formBPage: FormBPage;
+  formCPage: FormCPage;
+}>({
   formAPage: [
     async ({ page }, use) => {
       const formAPage = await FormAPage.create(page);
