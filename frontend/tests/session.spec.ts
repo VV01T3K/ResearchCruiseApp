@@ -25,16 +25,26 @@ async function mockAuthenticatedPage(page: Page) {
   await page.route(`${API_URL}/v2/auth/logout`, (route) => route.fulfill({ status: 204 }));
 }
 
-async function mockRefreshSequence(page: Page, responses: Array<{ status: number; body?: object }>) {
+async function mockRefreshSequence(
+  page: Page,
+  responses: Array<{ status: number; body?: object; broadcastSession?: object }>
+) {
   let calls = 0;
-  await page.route(`${API_URL}/v2/auth/refresh`, (route) => {
+  await page.route(`${API_URL}/v2/auth/refresh`, async (route) => {
     const response = responses[Math.min(calls, responses.length - 1)];
     calls += 1;
-    return route.fulfill({
+    await route.fulfill({
       status: response.status,
       body: response.body ? JSON.stringify(response.body) : undefined,
       contentType: 'application/json',
     });
+    if (response.broadcastSession) {
+      await page.evaluate((session) => {
+        const channel = new BroadcastChannel('rca-auth-session');
+        channel.postMessage(session);
+        channel.close();
+      }, response.broadcastSession);
+    }
   });
   return () => calls;
 }
@@ -116,18 +126,18 @@ test.describe('session expiration and refresh', () => {
     await expect(page.getByText('Sesja wygasa')).toBeHidden();
   });
 
-  test('refresh retries once after another tab wins cookie rotation', async ({ page }) => {
+  test('refresh resumes from the session broadcast by the tab that wins cookie rotation', async ({ page }) => {
     await mockAuthenticatedPage(page);
+    const rotatedSession = sessionPayload(86_400_000, 86_400_000);
     const refreshCalls = await mockRefreshSequence(page, [
       { status: 200, body: sessionPayload(60_000, 60_000) },
-      { status: 409 },
-      { status: 200, body: sessionPayload(86_400_000, 86_400_000) },
+      { status: 409, broadcastSession: rotatedSession },
     ]);
 
     await page.goto('/user-management');
     await page.getByTestId('session-refresh-btn').click();
 
-    await expect.poll(refreshCalls).toBe(3);
+    await expect.poll(refreshCalls).toBe(2);
     await expect(page.getByText('Sesja wygasa')).toBeHidden();
   });
 
