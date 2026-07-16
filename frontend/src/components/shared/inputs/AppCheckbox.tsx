@@ -56,7 +56,7 @@ export function AppCheckbox({
           )}
         >
           <Checkbox.Indicator>
-            <CheckIcon />
+            <CheckIcon className="size-full" />
           </Checkbox.Indicator>
         </Checkbox.Root>
       </div>
