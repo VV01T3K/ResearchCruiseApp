@@ -25,7 +25,9 @@ export default function AppBackground() {
         className="fixed -z-50 h-screen w-full overflow-hidden bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url('${BackgroundPlaceholderUrl}')` }}
       >
-        <picture className={`block h-full w-full transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+        <picture
+          className={`block h-full w-full transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        >
           <source srcSet={BackgroundImageUrl} type="image/avif" />
           <img
             src={BackgroundFallbackUrl}
