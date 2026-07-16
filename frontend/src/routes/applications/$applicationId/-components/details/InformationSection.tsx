@@ -3,11 +3,11 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
+import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { ApplicationStatus, getApplicationStatusLabel } from '@/api/client/applications/models';
 
 export function InformationSection() {
-  const { application } = useApplicationDetails();
+  const application = useApplication();
   const isFormBReadOnly =
     application.status !== ApplicationStatus.FormBFilled && application.status !== ApplicationStatus.Undertaken;
 

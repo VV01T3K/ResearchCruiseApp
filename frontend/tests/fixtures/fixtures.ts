@@ -24,6 +24,9 @@ export const test = base.extend<{ forEachTest: void }>({
         });
       });
 
+      // Unauthenticated routes still resolve the shared current-user query.
+      page.route(`${API_URL}/v2/users/me`, (route) => route.fulfill({ status: 401 }));
+
       await use();
     },
     { auto: true },

@@ -9,10 +9,12 @@ import packageJson from '../../../../package.json';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLink } from '@/components/shared/AppLink';
 import { SessionStatusBadge } from '@/components/shared/SessionStatusBadge';
-import { useUserContext } from '@/providers/useUserContext';
+import { useAuthDetails, useCurrentUser, useSessionActions } from '@/integrations/tanstack/query/auth';
 
 export function AppNavbar() {
-  const userContext = useUserContext();
+  const currentUser = useCurrentUser();
+  const authDetails = useAuthDetails();
+  const { refresh, signOut } = useSessionActions();
   const navigate = useNavigate();
 
   function openUGRadio() {
@@ -24,7 +26,7 @@ export function AppNavbar() {
   }
 
   async function onSignOutButtonClicked() {
-    await userContext.signOut();
+    await signOut();
     await navigate({ to: '/login' });
   }
 
@@ -71,17 +73,17 @@ export function AppNavbar() {
           </AppLink>
         </motion.div>
         <AnimatePresence>
-          {userContext.currentUser && (
+          {currentUser && (
             <motion.div
               className="flex items-center gap-4"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
             >
-              {userContext.refreshTokenExpirationDate && (
+              {authDetails?.refreshTokenExpirationDate && (
                 <SessionStatusBadge
-                  refreshTokenExpirationDate={userContext.refreshTokenExpirationDate}
-                  onRefresh={userContext.refreshUser}
+                  refreshTokenExpirationDate={authDetails.refreshTokenExpirationDate}
+                  onRefresh={refresh}
                 />
               )}
               <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
