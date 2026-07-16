@@ -3,251 +3,139 @@ import { expect, Page } from '@playwright/test';
 import { API_URL, test } from './fixtures/fixtures';
 import { getAdminAccountPayload, getAuthDetailsPayload } from './fixtures/mockPayloads';
 
-function getAuthDetailsPayloadMs(timeoutMs: number) {
-  const deadline = new Date(Date.now() + timeoutMs);
-  const base = getAuthDetailsPayload();
+function sessionPayload(accessTokenOffsetMs: number, refreshTokenOffsetMs: number) {
   return {
-    ...base,
-    accessTokenExpirationDate: deadline.toISOString(),
-    refreshTokenExpirationDate: deadline.toISOString(),
+    ...getAuthDetailsPayload(),
+    accessTokenExpirationDate: new Date(Date.now() + accessTokenOffsetMs).toISOString(),
+    refreshTokenExpirationDate: new Date(Date.now() + refreshTokenOffsetMs).toISOString(),
   };
 }
 
-function getAuthDetailsPayloadWithExpirations(accessTokenOffsetMs: number, refreshTokenOffsetMs: number) {
-  const accessDeadline = new Date(Date.now() + accessTokenOffsetMs);
-  const refreshDeadline = new Date(Date.now() + refreshTokenOffsetMs);
-  const base = getAuthDetailsPayload();
-  return {
-    ...base,
-    accessTokenExpirationDate: accessDeadline.toISOString(),
-    refreshTokenExpirationDate: refreshDeadline.toISOString(),
-  };
-}
-
-function getRefreshResponsePayloadMs(timeoutMs: number) {
-  const deadline = new Date(Date.now() + timeoutMs).toISOString();
-  const base = getAuthDetailsPayload();
-  return {
-    accessToken: base.accessToken,
-    refreshToken: base.refreshToken,
-    accessTokenExpirationDate: deadline,
-    refreshTokenExpirationDate: deadline,
-  };
-}
-
-async function setupAuthMocks(
-  page: Page,
-  options: { refreshResponse?: { status: number; body?: object }; refreshHangs?: boolean } = {}
-) {
-  await page.route(`${API_URL}/v2/users/me`, (route) => {
-    if (!route.request().headers().authorization) {
-      return route.fulfill({ status: 401 });
-    }
-    return route.fulfill({
+async function mockAuthenticatedPage(page: Page) {
+  await page.route(`${API_URL}/v2/users/me`, (route) =>
+    route.fulfill({
       status: 200,
       body: JSON.stringify(getAdminAccountPayload()),
       contentType: 'application/json',
-    });
-  });
-
-  if (options.refreshHangs) {
-    await page.route(`${API_URL}/v2/auth/refresh`, () => {
-      // Intentionally never respond — simulates a hanging request
-    });
-  } else if (options.refreshResponse) {
-    await page.route(`${API_URL}/v2/auth/refresh`, (route) => {
-      return route.fulfill({
-        status: options.refreshResponse!.status,
-        body: options.refreshResponse!.body ? JSON.stringify(options.refreshResponse!.body) : undefined,
-        contentType: 'application/json',
-      });
-    });
-  }
+    })
+  );
+  await page.route(`${API_URL}/v2/users`, (route) =>
+    route.fulfill({ status: 200, body: JSON.stringify([]), contentType: 'application/json' })
+  );
+  await page.route(`${API_URL}/v2/auth/logout`, (route) => route.fulfill({ status: 204 }));
 }
 
-async function seedAuthAndNavigate(page: Page, authPayload: ReturnType<typeof getAuthDetailsPayloadMs>) {
-  await page.goto('/');
-  await page.evaluate(
-    (authDetails) => window.localStorage.setItem('authDetails', authDetails),
-    JSON.stringify(authPayload)
-  );
-  await page.goto('/');
+async function mockRefreshSequence(page: Page, responses: Array<{ status: number; body?: object }>) {
+  let calls = 0;
+  await page.route(`${API_URL}/v2/auth/refresh`, (route) => {
+    const response = responses[Math.min(calls, responses.length - 1)];
+    calls += 1;
+    return route.fulfill({
+      status: response.status,
+      body: response.body ? JSON.stringify(response.body) : undefined,
+      contentType: 'application/json',
+    });
+  });
+  return () => calls;
 }
 
 test.describe('session expiration and refresh', () => {
   test('profile server error is not treated as a logged-out session', async ({ page }) => {
+    await mockRefreshSequence(page, [{ status: 200, body: sessionPayload(86_400_000, 86_400_000) }]);
     let profileRequests = 0;
     await page.route(`${API_URL}/v2/users/me`, (route) => {
       profileRequests += 1;
       return route.fulfill({ status: 500 });
     });
 
-    await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(24 * 60 * 60 * 1000));
+    await page.goto('/');
 
     await expect.poll(() => profileRequests).toBeGreaterThan(1);
     await expect(page).not.toHaveURL(/\/login/);
-    expect(await page.evaluate(() => window.localStorage.getItem('authDetails'))).not.toBeNull();
   });
 
-  test('warning modal appears ~1 minute before session expires', async ({ page }) => {
-    await page.clock.install({ time: Date.now() });
-    await setupAuthMocks(page, {
-      refreshResponse: { status: 200, body: getRefreshResponsePayloadMs(24 * 60 * 60 * 1000) },
-    });
+  test('warning modal appears before the cookie-backed session expires', async ({ page }) => {
+    await mockAuthenticatedPage(page);
+    await mockRefreshSequence(page, [{ status: 200, body: sessionPayload(63_000, 63_000) }]);
 
-    await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(63_000));
-
-    const warningTitle = page.getByText('Sesja wygasa');
-
-    await expect(warningTitle).toBeVisible();
-  });
-
-  test('session expiry shows warning and redirects to login', async ({ page }) => {
-    await page.clock.install({ time: Date.now() });
-    await setupAuthMocks(page, { refreshHangs: true });
-
-    await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(10_000));
-
-    const warningTitle = page.getByText('Sesja wygasa');
-    await expect(warningTitle).toBeVisible({ timeout: 10_000 });
-
-    await page.clock.runFor(10_500);
-    await expect(page).toHaveURL(/\/login/);
-  });
-
-  test('auth removed from storage signs out after reload', async ({ page }) => {
-    await setupAuthMocks(page, {
-      refreshResponse: { status: 200, body: getRefreshResponsePayloadMs(24 * 60 * 60 * 1000) },
-    });
-
-    await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(24 * 60 * 60 * 1000));
-
-    await expect(page.getByTestId('session-status-badge')).toBeVisible();
-
-    // Remove persisted auth and validate app re-hydration on next load.
-    await page.evaluate(() => {
-      window.localStorage.removeItem('authDetails');
-    });
-
-    await page.reload();
-
-    await expect(page).toHaveURL(/\/login/, { timeout: 10_000 });
-    await expect(page.getByTestId('session-status-badge')).toBeHidden({ timeout: 10_000 });
-  });
-
-  test('expired access token on /user-management reload keeps route via refresh token', async ({ page }) => {
-    const extendedAuth = getRefreshResponsePayloadMs(24 * 60 * 60 * 1000);
-
-    await setupAuthMocks(page, {
-      refreshResponse: { status: 200, body: extendedAuth },
-    });
-    await page.route(`${API_URL}/v2/users`, (route) => {
-      return route.fulfill({
-        status: 200,
-        body: JSON.stringify([]),
-        contentType: 'application/json',
-      });
-    });
-
-    await seedAuthAndNavigate(page, getAuthDetailsPayloadWithExpirations(60_000, 24 * 60 * 60 * 1000));
     await page.goto('/user-management');
-    await expect(page).toHaveURL('/user-management');
 
-    await page.evaluate((expiredAccessTokenDateIso) => {
-      const raw = window.localStorage.getItem('authDetails');
-      if (!raw) {
-        return;
-      }
+    await expect(page.getByText('Sesja wygasa')).toBeVisible();
+  });
 
-      const details = JSON.parse(raw) as {
-        accessTokenExpirationDate: string;
-      };
-      details.accessTokenExpirationDate = expiredAccessTokenDateIso;
-      window.localStorage.setItem('authDetails', JSON.stringify(details));
-    }, new Date(Date.now() - 5_000).toISOString());
+  test('a reload bootstraps from the refresh cookie without persisting JWTs', async ({ page }) => {
+    await mockAuthenticatedPage(page);
+    const refreshCalls = await mockRefreshSequence(page, [
+      { status: 200, body: sessionPayload(86_400_000, 86_400_000) },
+    ]);
 
-    const refreshPromise = page.waitForResponse(
-      (res) => res.url().includes('/v2/auth/refresh') && res.request().method() === 'POST' && res.status() === 200
-    );
+    await page.goto('/user-management');
+    await expect(page.getByTestId('session-status-badge')).toBeVisible();
+    expect(await page.evaluate(() => window.localStorage.getItem('authDetails'))).toBeNull();
 
     await page.reload();
-    await refreshPromise;
 
     await expect(page).toHaveURL('/user-management');
+    await expect.poll(refreshCalls).toBeGreaterThan(1);
+    expect(await page.evaluate(() => window.localStorage.getItem('authDetails'))).toBeNull();
   });
 
   test('failed initial refresh redirects a protected route to login', async ({ page }) => {
-    await setupAuthMocks(page, { refreshResponse: { status: 401 } });
+    await mockRefreshSequence(page, [{ status: 401 }]);
 
-    await seedAuthAndNavigate(page, getAuthDetailsPayloadWithExpirations(-5_000, 24 * 60 * 60 * 1000));
+    await page.goto('/user-management');
 
     await expect(page).toHaveURL(/\/login/);
   });
 
-  test('manual refresh button calls refresh endpoint and extends session', async ({ page }) => {
-    await page.clock.install({ time: Date.now() });
-    const extendedAuth = getRefreshResponsePayloadMs(24 * 60 * 60 * 1000);
-    const initialSessionMs = 12_000;
-    await setupAuthMocks(page, {
-      refreshResponse: { status: 200, body: extendedAuth },
-    });
-    await page.route(`${API_URL}/v2/users`, (route) => {
-      return route.fulfill({
-        status: 200,
-        body: JSON.stringify([]),
-        contentType: 'application/json',
-      });
-    });
+  test('transient initial refresh failure is not treated as logout', async ({ page }) => {
+    await mockRefreshSequence(page, [{ status: 500 }]);
 
-    await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(initialSessionMs));
     await page.goto('/user-management');
-    await expect(page).toHaveURL('/user-management');
 
-    const beforeRefreshAuthDetails = await page.evaluate(() => {
-      const raw = window.localStorage.getItem('authDetails');
-      return raw ? (JSON.parse(raw) as { refreshTokenExpirationDate: string }) : null;
-    });
+    await expect(page).not.toHaveURL(/\/login/);
+  });
 
-    expect(beforeRefreshAuthDetails).not.toBeNull();
+  test('manual refresh uses the generated bodyless API contract', async ({ page }) => {
+    await mockAuthenticatedPage(page);
+    const initial = sessionPayload(60_000, 60_000);
+    const extended = sessionPayload(86_400_000, 86_400_000);
+    const refreshCalls = await mockRefreshSequence(page, [
+      { status: 200, body: initial },
+      { status: 200, body: extended },
+    ]);
 
-    const refreshBtn = page.getByTestId('session-refresh-btn');
-    await expect(refreshBtn).toBeVisible();
-
-    const refreshPromise = page.waitForResponse(
-      (res) => res.url().includes('/v2/auth/refresh') && res.request().method() === 'POST' && res.status() === 200
+    await page.goto('/user-management');
+    const refreshRequest = page.waitForRequest(
+      (request) => request.url().endsWith('/v2/auth/refresh') && request.method() === 'POST'
     );
+    await page.getByTestId('session-refresh-btn').click();
 
-    await refreshBtn.click();
-
-    const refreshResponse = await refreshPromise;
-    const body = refreshResponse.request().postDataJSON();
-    expect(body).toHaveProperty('accessToken');
-    expect(body).toHaveProperty('refreshToken');
-
-    await page.clock.runFor(1_000);
-
-    const afterRefreshAuthDetails = await page.evaluate(() => {
-      const raw = window.localStorage.getItem('authDetails');
-      return raw ? (JSON.parse(raw) as { refreshTokenExpirationDate: string }) : null;
-    });
-
-    expect(afterRefreshAuthDetails).not.toBeNull();
-    expect(afterRefreshAuthDetails!.refreshTokenExpirationDate).toBe(extendedAuth.refreshTokenExpirationDate);
-    expect(new Date(afterRefreshAuthDetails!.refreshTokenExpirationDate).getTime()).toBeGreaterThan(
-      new Date(beforeRefreshAuthDetails!.refreshTokenExpirationDate).getTime()
-    );
-    await expect(page).toHaveURL('/user-management');
+    expect((await refreshRequest).postData()).toBeNull();
+    await expect.poll(refreshCalls).toBe(2);
+    await expect(page.getByText('Sesja wygasa')).toBeHidden();
   });
 
   test('failed manual refresh clears the cached current user', async ({ page }) => {
-    await setupAuthMocks(page, { refreshResponse: { status: 401 } });
+    await mockAuthenticatedPage(page);
+    await mockRefreshSequence(page, [{ status: 200, body: sessionPayload(86_400_000, 86_400_000) }, { status: 401 }]);
 
-    await seedAuthAndNavigate(page, getAuthDetailsPayloadMs(24 * 60 * 60 * 1000));
+    await page.goto('/user-management');
     await expect(page.getByText('Zarządzanie użytkownikami')).toBeVisible();
-
     await page.getByTestId('session-refresh-btn').click();
 
     await expect(page.getByText('Zarządzanie użytkownikami')).toBeHidden();
-    await expect.poll(() => page.evaluate(() => window.localStorage.getItem('authDetails'))).toBeNull();
+  });
+
+  test('sign out calls the generated logout endpoint before clearing the session', async ({ page }) => {
+    await mockAuthenticatedPage(page);
+    await mockRefreshSequence(page, [{ status: 200, body: sessionPayload(86_400_000, 86_400_000) }]);
+    const logoutRequest = page.waitForRequest(`${API_URL}/v2/auth/logout`);
+
+    await page.goto('/user-management');
+    await page.getByTestId('sign-out-btn').click();
+
+    expect((await logoutRequest).method()).toBe('POST');
+    await expect(page).toHaveURL(/\/login/);
   });
 });

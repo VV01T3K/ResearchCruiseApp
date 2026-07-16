@@ -1,13 +1,17 @@
-import config from '@/config';
 import type { TokenResponse } from '@/api/generated/schemas';
-import { getStoredAuthDetails, setStoredAuthDetails } from '@/api/client/auth-storage';
+import { refreshTokens } from '@/api/generated/endpoints/auth.gen';
 import type { AuthDetails } from '@/api/client/user';
 
 const subscribers = new Set<(details: AuthDetails | undefined) => void>();
 let refreshPromise: Promise<AuthDetails | undefined> | undefined;
+let session: AuthDetails | undefined;
+let sessionState: 'unknown' | 'authenticated' | 'anonymous' = 'unknown';
 
 export class SessionRefreshError extends Error {
-  constructor(cause: unknown) {
+  constructor(
+    cause: unknown,
+    readonly unauthorized: boolean
+  ) {
     super('Session refresh failed', { cause });
     this.name = 'SessionRefreshError';
   }
@@ -16,15 +20,19 @@ export class SessionRefreshError extends Error {
 export function toAuthDetails(response: TokenResponse): AuthDetails {
   return {
     accessToken: response.accessToken,
-    refreshToken: response.refreshToken,
     accessTokenExpirationDate: new Date(response.accessTokenExpirationDate),
     refreshTokenExpirationDate: new Date(response.refreshTokenExpirationDate),
   };
 }
 
 export function setSession(details: AuthDetails | undefined) {
-  setStoredAuthDetails(details);
+  session = details;
+  sessionState = details ? 'authenticated' : 'anonymous';
   subscribers.forEach((subscriber) => subscriber(details));
+}
+
+export function getSession() {
+  return session;
 }
 
 export function subscribeAuthDetails(subscriber: (details: AuthDetails | undefined) => void) {
@@ -35,31 +43,15 @@ export function subscribeAuthDetails(subscriber: (details: AuthDetails | undefin
 }
 
 async function refresh(): Promise<AuthDetails | undefined> {
-  const current = getStoredAuthDetails();
-  if (!current) {
-    setSession(undefined);
-    return undefined;
-  }
-
   try {
-    const response = await fetch(`${config.apiUrl}/v2/auth/refresh`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        accessToken: current.accessToken,
-        refreshToken: current.refreshToken,
-      }),
-    });
-    if (!response.ok) {
-      throw new Error(`Session refresh failed with status ${response.status}`);
-    }
-
-    const details = toAuthDetails((await response.json()) as TokenResponse);
+    const details = toAuthDetails(await refreshTokens());
     setSession(details);
     return details;
   } catch (error) {
-    setSession(undefined);
-    throw new SessionRefreshError(error);
+    const unauthorized =
+      typeof error === 'object' && error !== null && 'status' in error && error.status === 401;
+    if (unauthorized) setSession(undefined);
+    throw new SessionRefreshError(error, unauthorized);
   }
 }
 
@@ -71,8 +63,7 @@ export function refreshSession() {
 }
 
 export async function getValidAccessToken() {
-  const current = getStoredAuthDetails();
-  if (!current) return undefined;
-  if (current.accessTokenExpirationDate > new Date()) return current.accessToken;
+  if (sessionState === 'anonymous') return undefined;
+  if (session && session.accessTokenExpirationDate.getTime() - Date.now() > 30_000) return session.accessToken;
   return (await refreshSession())?.accessToken;
 }

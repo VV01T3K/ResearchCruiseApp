@@ -13,7 +13,6 @@ import type {
   HttpValidationProblemDetails,
   LoginRequest,
   ProblemDetails,
-  RefreshTokensRequest,
   RegisterAccountRequest,
   RequestPasswordResetRequest,
   ResendConfirmationEmailRequest,
@@ -115,20 +114,90 @@ export const useLogin = <TError = ErrorType<HttpValidationProblemDetails | Probl
 /**
  * @summary Refresh account tokens.
  */
-export const refreshTokens = async (refreshTokensRequest: RefreshTokensRequest, options?: RequestInit): Promise<TokenResponse> => {
+export const refreshTokens = async ( options?: RequestInit): Promise<TokenResponse> => {
 
   return customFetch<TokenResponse>(getRefreshTokensUrl(),
   {
     ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(refreshTokensRequest)
+    method: 'POST'
+
+
   }
 );}
 
 
 
-export const getRegisterAccountUrl = () => {
+export const getLogoutUrl = () => {
+
+
+
+
+  return `/v2/auth/logout`
+}
+
+/**
+ * @summary Revoke the current refresh session.
+ */
+export const logout = async ( options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getLogoutUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getLogoutMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext> => {
+
+const mutationKey = ['logout'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof logout>>, void> = () => {
+
+
+          return  logout(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type LogoutMutationResult = NonNullable<Awaited<ReturnType<typeof logout>>>
+
+    export type LogoutMutationError = ErrorType<ProblemDetails>
+
+    /**
+ * @summary Revoke the current refresh session.
+ */
+export const useLogout = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof logout>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getLogoutMutationOptions(options), queryClient);
+    }
+    export const getRegisterAccountUrl = () => {
 
 
 
