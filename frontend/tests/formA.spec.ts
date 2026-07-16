@@ -97,7 +97,7 @@ test('valid form A', async ({ formAPage }) => {
 
 test('centers the first invalid field after submit', async ({ formAPage }) => {
   await formAPage.page.evaluate(() => {
-    const scrollIntoView = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollIntoView')!.value;
+    const scrollIntoView = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollIntoView')!.value;
     HTMLElement.prototype.scrollIntoView = function (options) {
       document.documentElement.dataset.lastScrollBlock = typeof options === 'object' ? options.block : '';
       scrollIntoView.call(this, options);
@@ -203,25 +203,31 @@ test.describe('cruise length section tests', () => {
     });
   });
 
-  // Hours are the remainder after whole cruise days.
+  // Hours are the total duration and stay synchronized with cruise days.
   const hourTestCases: [boolean, number][] = [
-    [true, 0],
-    [false, 24],
-    [false, 100],
+    [false, 0],
+    [true, 24],
+    [true, 100],
     [true, 1],
     [true, 22],
     [true, 23],
+    [true, 1440],
+    [false, 1441],
   ];
   test.describe('planned cruise hours constrains', () => {
     hourTestCases.forEach(([isValid, val]) => {
       test(`${isValid ? 'valid' : 'invalid'}-${val}`, async ({ formAPage }) => {
-        const UPPER_HOUR_LIMIT = 23;
+        const LOWER_HOUR_LIMIT = 1;
+        const UPPER_HOUR_LIMIT = 1440;
 
         await formAPage.sections.cruiseLengthSection.defaultFill();
         await formAPage.sections.cruiseLengthSection.cruiseHoursInput.fill(val.toString());
 
         if (isValid) {
           await formAPage.submitForm({ expectedResult: 'valid' });
+        } else if (val < LOWER_HOUR_LIMIT) {
+          await formAPage.submitForm({ expectedResult: 'invalid' });
+          await expect(formAPage.sections.cruiseLengthSection.invalidCruiseDurationMessage).toBeVisible();
         } else if (val > UPPER_HOUR_LIMIT) {
           await expect(formAPage.sections.cruiseLengthSection.cruiseHoursInput).toHaveValue(`${UPPER_HOUR_LIMIT}`); // input should cap the value
         }
