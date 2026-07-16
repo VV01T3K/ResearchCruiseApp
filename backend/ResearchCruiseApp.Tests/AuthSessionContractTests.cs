@@ -12,7 +12,11 @@ public sealed class AuthSessionContractTests
     [Fact]
     public void BrowserTokenResponseNeverExposesTheRefreshCredential()
     {
-        var response = new TokenResponse("access-token", DateTime.UtcNow, DateTime.UtcNow.AddHours(2));
+        var response = new TokenResponse(
+            "access-token",
+            DateTime.UtcNow,
+            DateTime.UtcNow.AddHours(2)
+        );
         var json = JsonSerializer.SerializeToElement(response, WebJsonOptions);
 
         Assert.Equal("access-token", json.GetProperty("accessToken").GetString());

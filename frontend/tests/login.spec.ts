@@ -40,7 +40,9 @@ test('successful login revokes the cookie if profile hydration fails', async ({ 
   await loginPage.login('test.email@gmail.com', 'someP@ssword');
 
   expect((await logoutRequest).method()).toBe('POST');
-  await expect(loginPage.page.getByText('Wystąpił błąd podczas logowania. Sprawdź połączenie z internetem.')).toBeVisible();
+  await expect(
+    loginPage.page.getByText('Wystąpił błąd podczas logowania. Sprawdź połączenie z internetem.')
+  ).toBeVisible();
 });
 
 test('empty credentials are rejected by form validation', async ({ loginPage }) => {
