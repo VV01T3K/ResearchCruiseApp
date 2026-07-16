@@ -20,7 +20,7 @@ type GlobalGuardType = {
 export const allowOnly: GlobalGuardType = {
   withRoles: (...roles: Role[]): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context, location }) => {
-      const currentUser = await context.queryClient.ensureQueryData(currentUserQueryOptions());
+      const currentUser = await context.queryClient.fetchQuery(currentUserQueryOptions());
 
       if (!currentUser) {
         throw redirect({
@@ -40,7 +40,7 @@ export const allowOnly: GlobalGuardType = {
   },
   authenticated: (): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context, location }) => {
-      const currentUser = await context.queryClient.ensureQueryData(currentUserQueryOptions());
+      const currentUser = await context.queryClient.fetchQuery(currentUserQueryOptions());
 
       if (!currentUser) {
         throw redirect({
@@ -54,7 +54,7 @@ export const allowOnly: GlobalGuardType = {
   },
   unauthenticated: (): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context }) => {
-      const currentUser = await context.queryClient.ensureQueryData(currentUserQueryOptions());
+      const currentUser = await context.queryClient.fetchQuery(currentUserQueryOptions());
 
       if (currentUser) {
         throw redirect({
