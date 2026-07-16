@@ -12,9 +12,7 @@ let authGeneration = 0;
 let logoutInProgress = false;
 let acceptBroadcastSessions = true;
 
-type AuthChannelMessage =
-  | { type: 'session'; session: TokenResponse }
-  | { type: 'logout' };
+type AuthChannelMessage = { type: 'session'; session: TokenResponse } | { type: 'logout' };
 
 const authChannel =
   typeof window === 'undefined' || typeof window.BroadcastChannel === 'undefined'
@@ -104,8 +102,7 @@ async function refresh(): Promise<AuthDetails | undefined> {
     setSession(details);
     return details;
   } catch (error) {
-    const unauthorized =
-      typeof error === 'object' && error !== null && 'status' in error && error.status === 401;
+    const unauthorized = typeof error === 'object' && error !== null && 'status' in error && error.status === 401;
     if (unauthorized) setSession(undefined);
     throw new SessionRefreshError(error, unauthorized);
   }
