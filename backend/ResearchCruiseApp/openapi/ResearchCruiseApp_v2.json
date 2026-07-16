@@ -418,9 +418,6 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found"
-          },
           "401": {
             "description": "Unauthorized",
             "content": {

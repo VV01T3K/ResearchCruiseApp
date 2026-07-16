@@ -44,7 +44,19 @@ export function subscribeAuthDetails(subscriber: (details: AuthDetails | undefin
 
 async function refresh(): Promise<AuthDetails | undefined> {
   try {
-    const details = toAuthDetails(await refreshTokens());
+    let response: TokenResponse;
+    try {
+      response = await refreshTokens();
+    } catch (error) {
+      const status = typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
+      if (status !== 409) throw error;
+
+      // Another tab can win refresh-token rotation. Give the shared cookie time to settle, then retry once.
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      response = await refreshTokens();
+    }
+
+    const details = toAuthDetails(response);
     setSession(details);
     return details;
   } catch (error) {

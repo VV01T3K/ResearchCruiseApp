@@ -116,6 +116,21 @@ test.describe('session expiration and refresh', () => {
     await expect(page.getByText('Sesja wygasa')).toBeHidden();
   });
 
+  test('refresh retries once after another tab wins cookie rotation', async ({ page }) => {
+    await mockAuthenticatedPage(page);
+    const refreshCalls = await mockRefreshSequence(page, [
+      { status: 200, body: sessionPayload(60_000, 60_000) },
+      { status: 409 },
+      { status: 200, body: sessionPayload(86_400_000, 86_400_000) },
+    ]);
+
+    await page.goto('/user-management');
+    await page.getByTestId('session-refresh-btn').click();
+
+    await expect.poll(refreshCalls).toBe(3);
+    await expect(page.getByText('Sesja wygasa')).toBeHidden();
+  });
+
   test('failed manual refresh clears the cached current user', async ({ page }) => {
     await mockAuthenticatedPage(page);
     await mockRefreshSequence(page, [{ status: 200, body: sessionPayload(86_400_000, 86_400_000) }, { status: 401 }]);

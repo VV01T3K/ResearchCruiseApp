@@ -12,7 +12,7 @@ import {
 } from '@/api/client/auth-session';
 import { ApiError } from '@/api/client/custom-fetch';
 import type { Role, SignInResult, User } from '@/api/client/user';
-import { useLogin, useLogout } from '@/api/generated/endpoints/auth.gen';
+import { logout as logoutSession, useLogin, useLogout } from '@/api/generated/endpoints/auth.gen';
 import { getCurrentUser, getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
 
 export function currentUserQueryOptions() {
@@ -58,17 +58,31 @@ export function isInRole(user: User | null, allowedRoles: Role | Role[]) {
 
 export function useSignIn() {
   const queryClient = useQueryClient();
-  const login = useLogin();
+  const { mutateAsync: login } = useLogin();
 
   return async (email: string, password: string): Promise<SignInResult> => {
+    let response;
     try {
-      const response = await login.mutateAsync({ data: { email, password } });
-      setSession(toAuthDetails(response));
-      await queryClient.fetchQuery({ ...currentUserQueryOptions(), staleTime: 0 });
-      return 'success';
+      response = await login({ data: { email, password } });
     } catch (error) {
       clearSession(queryClient);
       return error instanceof ApiError && error.status === 401 ? 'invalid_credentials' : 'error';
+    }
+
+    setSession(toAuthDetails(response));
+    try {
+      const user = await queryClient.fetchQuery({ ...currentUserQueryOptions(), staleTime: 0 });
+      if (!user) throw new Error('The authenticated account profile is unavailable');
+      return 'success';
+    } catch {
+      try {
+        await logoutSession();
+      } catch {
+        // The local session must still be cleared when server-side revocation is unavailable.
+      } finally {
+        clearSession(queryClient);
+      }
+      return 'error';
     }
   };
 }
