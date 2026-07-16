@@ -7,6 +7,7 @@ namespace ResearchCruiseApp.Api.Auth;
 public static class SessionsEndpoints
 {
     private const string RefreshTokenCookie = "rca_refresh_token";
+    private const string RefreshTokenCookiePath = "/v2/auth";
 
     public static void Map(RouteGroupBuilder group)
     {
@@ -92,7 +93,11 @@ public static class SessionsEndpoints
         return TypedResults.Ok(TokenResponse.From(result.Data!));
     }
 
-    private static async Task<NoContent> Logout(IdentityService identityService, HttpContext context)
+    private static async Task<NoContent> Logout(
+        IdentityService identityService,
+        HttpContext context,
+        IWebHostEnvironment environment
+    )
     {
         if (
             context.Request.Cookies.TryGetValue(RefreshTokenCookie, out var refreshToken)
@@ -102,7 +107,7 @@ public static class SessionsEndpoints
 
         context.Response.Cookies.Delete(
             RefreshTokenCookie,
-            new CookieOptions { HttpOnly = true, SameSite = SameSiteMode.Strict, Path = "/v2/auth" }
+            CreateRefreshTokenCookieOptions(environment.IsDevelopment())
         );
         return TypedResults.NoContent();
     }
@@ -116,15 +121,24 @@ public static class SessionsEndpoints
         context.Response.Cookies.Append(
             RefreshTokenCookie,
             response.RefreshToken,
-            new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = !environment.IsDevelopment(),
-                SameSite = SameSiteMode.Strict,
-                Path = "/v2/auth",
-                Expires = response.RefreshTokenExpirationDate,
-                IsEssential = true,
-            }
+            CreateRefreshTokenCookieOptions(
+                environment.IsDevelopment(),
+                response.RefreshTokenExpirationDate
+            )
         );
     }
+
+    internal static CookieOptions CreateRefreshTokenCookieOptions(
+        bool isDevelopment,
+        DateTime? expires = null
+    ) =>
+        new()
+        {
+            HttpOnly = true,
+            Secure = !isDevelopment,
+            SameSite = SameSiteMode.Strict,
+            Path = RefreshTokenCookiePath,
+            Expires = expires,
+            IsEssential = true,
+        };
 }
