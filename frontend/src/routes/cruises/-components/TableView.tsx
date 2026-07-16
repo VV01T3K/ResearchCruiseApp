@@ -1,7 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
-import dayjs from 'dayjs';
 
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';
@@ -9,6 +8,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { Role } from '@/types/user';
+import { formatDate } from '@/lib/dateUtils';
 import { StatusBadge } from './StatusBadge';
 import { TitleBadge } from './TitleBadge';
 import type {
@@ -17,8 +17,6 @@ import type {
 } from '@/api/generated/schemas';
 
 const emptyGuid = '00000000-0000-0000-0000-000000000000';
-const dateFormat = 'DD.MM.YYYY, HH:mm';
-
 type Props = {
   cruises: CruiseResponse[];
   deleteCruise: (cruise: CruiseResponse) => void;
@@ -46,14 +44,14 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     {
       header: 'Data rozpoczęcia',
       accessorFn: (row) => row.startDate,
-      cell: (cell) => dayjs(cell.getValue() as string).format(dateFormat),
+      cell: (cell) => formatDate(cell.getValue() as string, 'dateTime'),
       enableColumnFilter: false,
       size: 10,
     },
     {
       header: 'Data zakończenia',
       accessorFn: (row) => row.endDate,
-      cell: (cell) => dayjs(cell.getValue() as string).format(dateFormat),
+      cell: (cell) => formatDate(cell.getValue() as string, 'dateTime'),
       enableColumnFilter: false,
       size: 10,
     },

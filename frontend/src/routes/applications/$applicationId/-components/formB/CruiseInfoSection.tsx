@@ -1,10 +1,9 @@
 import SearchIcon from 'bootstrap-icons/icons/search.svg?react';
-import dayjs from 'dayjs';
-
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
 import { useFormB } from '@/contexts/applications/FormBContext';
+import { formatDate } from '@/lib/dateUtils';
 import type { CruiseResponse } from '@/api/generated/schemas';
 
 export function CruiseInfoSection() {
@@ -20,13 +19,9 @@ export function CruiseInfoSection() {
           </span>
           <span className="mt-4 font-semibold md:mt-0">Terminy rozpoczęcia i zakończenia:</span>
           <span className="inline-flex gap-2 text-nowrap">
-            <time dateTime={dayjs(cruise.startDate).toISOString()}>
-              {dayjs(cruise.startDate).format('DD.MM.YYYY HH:mm')}
-            </time>
+            <time dateTime={new Date(cruise.startDate).toISOString()}>{formatDate(cruise.startDate, 'dateTime')}</time>
             <span>-</span>
-            <time dateTime={dayjs(cruise.endDate).toISOString()}>
-              {dayjs(cruise.endDate).format('DD.MM.YYYY HH:mm')}
-            </time>
+            <time dateTime={new Date(cruise.endDate).toISOString()}>{formatDate(cruise.endDate, 'dateTime')}</time>
           </span>
         </div>
         <div className="grid place-items-center">
