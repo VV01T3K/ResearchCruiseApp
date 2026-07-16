@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AppButton } from '@/components/shared/AppButton';
+import { parseBackendDateTime } from '@/lib/dateUtils';
 import { AppMonthPickerPopover } from '@/components/shared/inputs/dates/AppMonthPickerPopover';
 import { AppDatePickerTimeInput } from '@/components/shared/inputs/dates/AppTimePickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
@@ -278,8 +279,7 @@ function getDateFromValue(value: string | undefined): Date | undefined {
   if (!value) {
     return undefined;
   }
-  const normalized = value.endsWith('Z') ? value : `${value}Z`;
-  return new Date(normalized);
+  return parseBackendDateTime(value);
 }
 
 function getValueFromDate(date: Date | undefined): string | undefined {
