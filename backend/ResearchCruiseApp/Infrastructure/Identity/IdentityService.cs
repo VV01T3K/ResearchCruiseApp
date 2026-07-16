@@ -287,13 +287,22 @@ internal class IdentityService(
             return Error.UnknownIdentity();
 
         var resetCode = Encoding.UTF8.GetString(resetCodeBytes);
+        var refreshToken = user.RefreshToken;
+        var refreshTokenExpiry = user.RefreshTokenExpiry;
+        user.RefreshToken = null;
+        user.RefreshTokenExpiry = null;
         var result = await userManager.ResetPasswordAsync(
             user,
             resetCode,
             resetPasswordFormDto.Password
         );
 
-        return result.Succeeded ? Result.Empty : Error.UnknownIdentity();
+        if (result.Succeeded)
+            return Result.Empty;
+
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiry = refreshTokenExpiry;
+        return Error.UnknownIdentity();
     }
 
     public async Task<Result<SeedUserStatus>> EnsureSeedUserWithRole(
