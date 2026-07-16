@@ -48,10 +48,10 @@ export const ProjectResearchTaskInputSchema = z.object({
     ResearchTaskType.CommercialProject,
   ]),
   title: z.string(),
-  financingAmount: z.number(),
+  financingAmount: z.number().nullable(),
   startDate: z.string(),
   endDate: z.string(),
-  securedAmount: z.number(),
+  securedAmount: z.number().nullable(),
 });
 export const ProjectResearchTaskValuesSchema = ProjectResearchTaskInputSchema.extend({
   title: z.string().nonempty('Tytuł nie może być pusty'),
@@ -76,7 +76,7 @@ export const OwnResearchTaskInputSchema = z.object({
   title: z.string(),
   date: z.string(),
   magazine: z.string(),
-  ministerialPoints: z.number(),
+  ministerialPoints: z.number().nullable(),
 });
 export const OwnResearchTaskValuesSchema = OwnResearchTaskInputSchema.extend({
   title: z.string().nonempty('Tytuł nie może być pusty'),

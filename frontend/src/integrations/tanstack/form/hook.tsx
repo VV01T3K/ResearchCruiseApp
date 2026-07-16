@@ -27,7 +27,7 @@ type TextProps = Omit<React.ComponentProps<typeof AppInput>, 'name' | 'value' | 
   onChange?: (value: string) => void;
 };
 type WithoutFieldProps<T> = T extends unknown
-  ? Omit<T, 'name' | 'value' | 'checked' | 'onBlur' | 'onChange' | 'errors'>
+  ? Omit<T, 'name' | 'value' | 'checked' | 'onBlur' | 'onChange' | 'errors' | 'nullable'>
   : never;
 
 function TextField({ value, onChange, ...props }: TextProps) {
@@ -73,6 +73,21 @@ function NumberField({ value, onChange, ...props }: NumberProps) {
       value={value ?? field.state.value}
       onBlur={field.handleBlur}
       onChange={onChange ?? field.handleChange}
+      errors={useErrors()}
+    />
+  );
+}
+
+function NullableNumberField({ value: _value, onChange: _onChange, ...props }: NumberProps) {
+  const field = useFieldContext<number | null>();
+  return (
+    <AppNumberInput
+      {...props}
+      nullable
+      name={field.name}
+      value={field.state.value}
+      onBlur={field.handleBlur}
+      onChange={field.handleChange}
       errors={useErrors()}
     />
   );
@@ -227,6 +242,7 @@ const fieldComponents = {
   TextField,
   TextareaField,
   NumberField,
+  NullableNumberField,
   SelectField,
   BooleanSelectField,
   CheckboxField,

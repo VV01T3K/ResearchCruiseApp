@@ -34,7 +34,12 @@ export function OwnResearchTaskDetails({ row, disabled }: Props) {
       <form.AppField
         name={`researchTasks[${row.index}].ministerialPoints`}
         children={(field) => (
-          <field.NumberField minimum={0} step={10} label="Przewidywane punkty ministerialne" disabled={disabled} />
+          <field.NullableNumberField
+            minimum={0}
+            step={10}
+            label="Przewidywane punkty ministerialne"
+            disabled={disabled}
+          />
         )}
       />
     </div>

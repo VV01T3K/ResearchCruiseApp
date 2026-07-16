@@ -610,11 +610,13 @@ function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?:
         date: 'date' in task ? task.date : null,
         startDate: 'startDate' in task ? task.startDate : null,
         endDate: 'endDate' in task ? task.endDate : null,
-        financingAmount: 'financingAmount' in task ? String(task.financingAmount) : null,
+        financingAmount:
+          'financingAmount' in task && task.financingAmount !== null ? String(task.financingAmount) : null,
         financingApproved: 'financingApproved' in task ? String(task.financingApproved) : null,
         description: 'description' in task ? task.description : null,
-        securedAmount: 'securedAmount' in task ? String(task.securedAmount) : null,
-        ministerialPoints: 'ministerialPoints' in task ? String(task.ministerialPoints) : null,
+        securedAmount: 'securedAmount' in task && task.securedAmount !== null ? String(task.securedAmount) : null,
+        ministerialPoints:
+          'ministerialPoints' in task && task.ministerialPoints !== null ? String(task.ministerialPoints) : null,
       })),
       contracts: form.contracts,
       ugTeams: form.ugTeams.map((team) => ({
@@ -758,10 +760,10 @@ export function mapResearchTaskToValues(task: ResearchTaskFields): FormAValues['
       return {
         type: task.type,
         title: task.title ?? '',
-        financingAmount: toNumber(task.financingAmount),
+        financingAmount: toNullableNumber(task.financingAmount),
         startDate: task.startDate ?? '',
         endDate: task.endDate ?? '',
-        securedAmount: toNumber(task.securedAmount),
+        securedAmount: toNullableNumber(task.securedAmount),
       };
     case ResearchTaskType.Didactics:
       return { type: task.type, description: task.description ?? '' };
@@ -771,7 +773,7 @@ export function mapResearchTaskToValues(task: ResearchTaskFields): FormAValues['
         title: task.title ?? '',
         date: task.date ?? '',
         magazine: task.magazine ?? '',
-        ministerialPoints: toNumber(task.ministerialPoints),
+        ministerialPoints: toNullableNumber(task.ministerialPoints),
       };
     default:
       return { type: ResearchTaskType.OtherResearchTask, description: task.description ?? '' };

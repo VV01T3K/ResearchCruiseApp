@@ -80,7 +80,7 @@ function ValidationForm() {
             <AppNumberInput
               name={field.name}
               value={field.state.value}
-              onChange={field.handleChange}
+              onChange={(value) => value !== null && field.handleChange(value)}
               onBlur={field.handleBlur}
               errors={getErrors(field.state.meta)}
               label="Age"

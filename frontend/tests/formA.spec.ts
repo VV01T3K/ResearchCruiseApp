@@ -5,6 +5,7 @@ import {
   getFormADraftWriteSchema,
   getFormAWriteSchema,
   mapFormAToValues,
+  mapResearchTaskToValues,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 import { API_URL, MOCK_PDF_FILEPATH } from './fixtures/consts';
@@ -27,9 +28,11 @@ test('draft form A requires the complete input shape while allowing empty values
   expect(schema.safeParse(missingKey).success).toBe(false);
 });
 
-test('rejects empty project numbers before mapping them to API strings', () => {
+test('preserves empty research task numbers through the form round trip', () => {
+  const initValues = getInitValuesAPayload();
   const draft = {
     ...formADefaultValues,
+    cruiseManagerId: initValues.cruiseManagers[0].id,
     researchTasks: [
       {
         type: '4' as const,
@@ -39,10 +42,27 @@ test('rejects empty project numbers before mapping them to API strings', () => {
         endDate: '',
         securedAmount: null,
       },
+      {
+        type: '10' as const,
+        title: '',
+        date: '',
+        magazine: '',
+        ministerialPoints: null,
+      },
     ],
   };
 
-  expect(getFormADraftWriteSchema().safeParse(draft).success).toBe(false);
+  expect(mapResearchTaskToValues({ type: '4', financingAmount: null, securedAmount: null })).toMatchObject({
+    financingAmount: null,
+    securedAmount: null,
+  });
+  expect(mapResearchTaskToValues({ type: '10', ministerialPoints: null })).toMatchObject({
+    ministerialPoints: null,
+  });
+
+  const request = getFormADraftWriteSchema().parse(draft);
+  expect(request.form.researchTasks![0]).toMatchObject({ financingAmount: null, securedAmount: null });
+  expect(request.form.researchTasks![1]).toMatchObject({ ministerialPoints: null });
 });
 
 test('normalizes backend precise-period datetimes at the API boundary', () => {

@@ -11,8 +11,9 @@ const effectFields = {
   deputyConditionMet: z.boolean(),
 };
 
-const withEffectFields = (schemas: typeof ResearchTaskValuesInputSchema.options) =>
-  z.union(schemas.map((schema) => schema.extend(effectFields)));
+const withEffectFields = (
+  schemas: typeof ResearchTaskValuesInputSchema.options | typeof ResearchTaskValuesSchema.options
+) => z.union(schemas.map((schema) => schema.extend(effectFields)));
 
 export const ResearchTaskEffectValuesInputSchema = withEffectFields(ResearchTaskValuesInputSchema.options);
 export const ResearchTaskEffectValuesSchema = withEffectFields(ResearchTaskValuesSchema.options);
