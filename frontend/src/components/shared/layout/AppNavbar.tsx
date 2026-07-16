@@ -1,5 +1,4 @@
 import UGLogoIcon from '@/assets/uglogo.svg?react';
-import { useNavigate } from '@tanstack/react-router';
 import BoxArrowRightIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
 import BroadcastIcon from 'bootstrap-icons/icons/broadcast.svg?react';
 import EnvelopeIcon from 'bootstrap-icons/icons/envelope.svg?react';
@@ -15,7 +14,6 @@ export function AppNavbar() {
   const currentUser = useCurrentUser();
   const authDetails = useAuthDetails();
   const { refresh, signOut } = useSessionActions();
-  const navigate = useNavigate();
 
   function openUGRadio() {
     window.open(
@@ -27,7 +25,6 @@ export function AppNavbar() {
 
   async function onSignOutButtonClicked() {
     await signOut();
-    await navigate({ to: '/login' });
   }
 
   return (
@@ -90,6 +87,7 @@ export function AppNavbar() {
                 <AppButton
                   onClick={() => onSignOutButtonClicked()}
                   title="Wyloguj"
+                  data-testid="sign-out-btn"
                   variant="plain"
                   className="p-0 text-white"
                 >

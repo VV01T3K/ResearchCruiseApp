@@ -4,15 +4,15 @@ import { useCallback, useEffect, useState } from 'react';
 
 import {
   refreshSession,
+  getSession,
   SessionRefreshError,
   setSession,
   subscribeAuthDetails,
   toAuthDetails,
 } from '@/api/client/auth-session';
-import { getStoredAuthDetails } from '@/api/client/auth-storage';
 import { ApiError } from '@/api/client/custom-fetch';
 import type { Role, SignInResult, User } from '@/api/client/user';
-import { useLogin } from '@/api/generated/endpoints/auth.gen';
+import { useLogin, useLogout } from '@/api/generated/endpoints/auth.gen';
 import { getCurrentUser, getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
 
 export function currentUserQueryOptions() {
@@ -23,12 +23,16 @@ export function currentUserQueryOptions() {
         const user = await getCurrentUser();
         return { ...user, roles: user.roles as Role[] };
       } catch (error) {
-        if ((error instanceof ApiError && error.status === 401) || error instanceof SessionRefreshError) return null;
+        if (
+          (error instanceof ApiError && error.status === 401) ||
+          (error instanceof SessionRefreshError && error.unauthorized)
+        )
+          return null;
         throw error;
       }
     },
-    refetchOnWindowFocus: false,
-    staleTime: Infinity,
+    refetchOnWindowFocus: true,
+    staleTime: 60_000,
   });
 }
 
@@ -42,7 +46,7 @@ export function useCurrentUser() {
 }
 
 export function useAuthDetails() {
-  const [authDetails, setAuthDetails] = useState(() => getStoredAuthDetails());
+  const [authDetails, setAuthDetails] = useState(() => getSession());
   useEffect(() => subscribeAuthDetails(setAuthDetails), []);
   return authDetails;
 }
@@ -71,12 +75,17 @@ export function useSignIn() {
 
 export function useSessionActions() {
   const queryClient = useQueryClient();
+  const { mutateAsync: logout } = useLogout();
   const refresh = useCallback(async () => {
     await refreshSession();
   }, []);
   const signOut = useCallback(async () => {
-    clearSession(queryClient);
-  }, [queryClient]);
+    try {
+      await logout();
+    } finally {
+      clearSession(queryClient);
+    }
+  }, [logout, queryClient]);
 
   return {
     refresh,

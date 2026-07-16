@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -107,6 +108,8 @@ internal class IdentityService(
             return Error.ForbiddenOperation();
 
         user.Accepted = false;
+        user.RefreshToken = null;
+        user.RefreshTokenExpiry = null;
 
         var identityResult = await userManager.UpdateAsync(user);
 
@@ -184,22 +187,35 @@ internal class IdentityService(
         return await CreateLoginResponseDto(user);
     }
 
-    public async Task<Result<LoginResponseDto>> RefreshUserTokens(RefreshDto refreshDto)
+    public async Task<Result<LoginResponseDto>> RefreshUserTokens(string refreshToken)
     {
-        var userIdResult = GetUserIdFromAccessToken(refreshDto.AccessToken);
-        if (userIdResult.Error is not null)
-            return userIdResult.Error;
-
-        var user = await userManager.FindByIdAsync(userIdResult.Data!);
+        var refreshTokenHash = HashRefreshToken(refreshToken);
+        var user = await userManager.Users.SingleOrDefaultAsync(candidate =>
+            candidate.RefreshToken == refreshTokenHash
+        );
         if (
             user is null
+            || !user.Accepted
+            || !user.EmailConfirmed
             || user.RefreshTokenExpiry < DateTime.UtcNow
-            || user.RefreshToken != refreshDto.RefreshToken
         )
-        {
             return Error.UnknownIdentity();
-        }
+
         return await CreateLoginResponseDto(user);
+    }
+
+    public async Task RevokeRefreshToken(string refreshToken)
+    {
+        var refreshTokenHash = HashRefreshToken(refreshToken);
+        var user = await userManager.Users.SingleOrDefaultAsync(candidate =>
+            candidate.RefreshToken == refreshTokenHash
+        );
+        if (user is null)
+            return;
+
+        user.RefreshToken = null;
+        user.RefreshTokenExpiry = null;
+        await userManager.UpdateAsync(user);
     }
 
     public async Task<Result> ChangePassword(ChangePasswordFormDto changePasswordFormDto)
@@ -221,6 +237,8 @@ internal class IdentityService(
         if (!identityResult.Succeeded)
             return Error.InvalidArgument();
 
+        user.RefreshToken = null;
+        user.RefreshTokenExpiry = null;
         await userManager.UpdateAsync(user);
         return Result.Empty;
     }
@@ -563,7 +581,7 @@ internal class IdentityService(
 
         var (refreshToken, refreshTokenExpiry) = CreateRefreshToken();
 
-        user.RefreshToken = refreshToken;
+        user.RefreshToken = HashRefreshToken(refreshToken);
         user.RefreshTokenExpiry = refreshTokenExpiry;
 
         var identityResult = await userManager.UpdateAsync(user);
@@ -637,42 +655,9 @@ internal class IdentityService(
         return (token, expiry);
     }
 
-    private Result<string> GetUserIdFromAccessToken(string accessToken)
+    private static string HashRefreshToken(string refreshToken)
     {
-        var securityKeyResult = CreateSecurityKey();
-        if (securityKeyResult.Error is not null)
-            return securityKeyResult.Error;
-
-        var validation = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = false, // We want to get the user id even from an expired token
-            ValidAudience = configuration["JWT:ValidAudience"],
-            ValidIssuer = configuration["JWT:ValidIssuer"],
-            IssuerSigningKey = securityKeyResult.Data,
-        };
-
-        try
-        {
-            var principal = new JwtSecurityTokenHandler().ValidateToken(
-                accessToken,
-                validation,
-                out _
-            );
-            if (principal is null)
-                return Error.UnknownIdentity();
-
-            var userName = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userName is null)
-                return Error.UnknownIdentity();
-
-            return userName;
-        }
-        catch (SecurityTokenArgumentException)
-        {
-            return Error.UnknownIdentity();
-        }
+        return Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken)));
     }
 
     private Result<SymmetricSecurityKey> CreateSecurityKey()

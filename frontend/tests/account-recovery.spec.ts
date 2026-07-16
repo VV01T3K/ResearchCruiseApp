@@ -1,14 +1,10 @@
 import { expect, Page } from '@playwright/test';
 
 import { API_URL, test } from './fixtures/fixtures';
-import { getAdminAccountPayload, getAuthDetailsPayload } from './fixtures/mockPayloads';
+import { getAdminAccountPayload, mockAuthenticatedSession } from './fixtures/mockPayloads';
 
 async function seedAuthenticatedUser(page: Page, emailConfirmed = true) {
-  await page.goto('/');
-  await page.evaluate(
-    (authDetails) => window.localStorage.setItem('authDetails', authDetails),
-    JSON.stringify(getAuthDetailsPayload())
-  );
+  await mockAuthenticatedSession(page);
   await page.route(`${API_URL}/v2/users/me`, (route) => {
     route.fulfill({
       status: 200,

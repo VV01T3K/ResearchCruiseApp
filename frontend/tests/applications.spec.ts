@@ -1,7 +1,7 @@
 import { expect, Page } from '@playwright/test';
 
 import { API_URL, test } from './fixtures/fixtures';
-import { getAdminAccountPayload, getAuthDetailsPayload } from './fixtures/mockPayloads';
+import { getAdminAccountPayload, mockAuthenticatedSession } from './fixtures/mockPayloads';
 
 const application = {
   id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
@@ -51,11 +51,7 @@ const evaluation = {
 };
 
 async function seedAuthenticatedAdmin(page: Page) {
-  await page.goto('/');
-  await page.evaluate(
-    (authDetails) => window.localStorage.setItem('authDetails', authDetails),
-    JSON.stringify(getAuthDetailsPayload())
-  );
+  await mockAuthenticatedSession(page);
   await page.route(`${API_URL}/v2/users/me`, (route) => {
     route.fulfill({
       status: 200,
