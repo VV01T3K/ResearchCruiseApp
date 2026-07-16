@@ -27,12 +27,13 @@ async function mockAuthenticatedPage(page: Page) {
 
 async function mockRefreshSequence(
   page: Page,
-  responses: Array<{ status: number; body?: object; broadcastSession?: object }>
+  responses: Array<{ status: number; body?: object; broadcastSession?: object; delayMs?: number }>
 ) {
   let calls = 0;
   await page.route(`${API_URL}/v2/auth/refresh`, async (route) => {
     const response = responses[Math.min(calls, responses.length - 1)];
     calls += 1;
+    if (response.delayMs) await new Promise((resolve) => setTimeout(resolve, response.delayMs));
     await route.fulfill({
       status: response.status,
       body: response.body ? JSON.stringify(response.body) : undefined,
@@ -41,7 +42,7 @@ async function mockRefreshSequence(
     if (response.broadcastSession) {
       await page.evaluate((session) => {
         const channel = new BroadcastChannel('rca-auth-session');
-        channel.postMessage(session);
+        channel.postMessage({ type: 'session', session });
         channel.close();
       }, response.broadcastSession);
     }
@@ -162,5 +163,38 @@ test.describe('session expiration and refresh', () => {
 
     expect((await logoutRequest).method()).toBe('POST');
     await expect(page).toHaveURL(/\/login/);
+  });
+
+  test('sign out waits for an in-flight refresh and remains logged out', async ({ page }) => {
+    await mockAuthenticatedPage(page);
+    await mockRefreshSequence(page, [
+      { status: 200, body: sessionPayload(60_000, 60_000) },
+      { status: 200, body: sessionPayload(86_400_000, 86_400_000), delayMs: 200 },
+    ]);
+
+    await page.goto('/user-management');
+    const refreshRequest = page.waitForRequest(`${API_URL}/v2/auth/refresh`);
+    void page.getByTestId('session-refresh-btn').click();
+    await refreshRequest;
+    await page.getByTestId('sign-out-btn').click();
+
+    await expect(page).toHaveURL(/\/login/);
+    await expect(page.getByTestId('session-status-badge')).toBeHidden();
+  });
+
+  test('logout in another tab clears this tab immediately', async ({ page }) => {
+    await mockAuthenticatedPage(page);
+    await mockRefreshSequence(page, [{ status: 200, body: sessionPayload(86_400_000, 86_400_000) }]);
+
+    await page.goto('/user-management');
+    await expect(page.getByTestId('session-status-badge')).toBeVisible();
+    await page.evaluate(() => {
+      const channel = new BroadcastChannel('rca-auth-session');
+      channel.postMessage({ type: 'logout' });
+      channel.close();
+    });
+
+    await expect(page).toHaveURL(/\/login/);
+    await expect(page.getByTestId('session-status-badge')).toBeHidden();
   });
 });

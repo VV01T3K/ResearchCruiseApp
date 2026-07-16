@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import {
   refreshSession,
+  prepareForLogout,
+  completeLogout,
   getSession,
   SessionRefreshError,
   setSession,
@@ -41,6 +43,11 @@ function clearSession(queryClient: QueryClient) {
   queryClient.setQueryData(getGetCurrentUserQueryKey(), null);
 }
 
+function clearSessionEverywhere(queryClient: QueryClient) {
+  completeLogout();
+  queryClient.setQueryData(getGetCurrentUserQueryKey(), null);
+}
+
 export function useCurrentUser() {
   return useQuery(currentUserQueryOptions()).data ?? null;
 }
@@ -75,12 +82,13 @@ export function useSignIn() {
       if (!user) throw new Error('The authenticated account profile is unavailable');
       return 'success';
     } catch {
+      await prepareForLogout();
       try {
         await logoutSession();
       } catch {
         // The local session must still be cleared when server-side revocation is unavailable.
       } finally {
-        clearSession(queryClient);
+        clearSessionEverywhere(queryClient);
       }
       return 'error';
     }
@@ -94,10 +102,11 @@ export function useSessionActions() {
     await refreshSession();
   }, []);
   const signOut = useCallback(async () => {
+    await prepareForLogout();
     try {
       await logout();
     } finally {
-      clearSession(queryClient);
+      clearSessionEverywhere(queryClient);
     }
   }, [logout, queryClient]);
 

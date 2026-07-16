@@ -8,14 +8,25 @@ let refreshPromise: Promise<AuthDetails | undefined> | undefined;
 let session: AuthDetails | undefined;
 let sessionState: 'unknown' | 'authenticated' | 'anonymous' = 'unknown';
 let sessionRevision = 0;
+let authGeneration = 0;
+let logoutInProgress = false;
+
+type AuthChannelMessage =
+  | { type: 'session'; session: TokenResponse }
+  | { type: 'logout' };
 
 const authChannel =
   typeof window === 'undefined' || typeof window.BroadcastChannel === 'undefined'
     ? undefined
     : new window.BroadcastChannel('rca-auth-session');
 
-authChannel?.addEventListener('message', (event: MessageEvent<TokenResponse>) => {
-  updateSession(toAuthDetails(event.data), false);
+authChannel?.addEventListener('message', (event: MessageEvent<AuthChannelMessage>) => {
+  if (event.data.type === 'logout') {
+    authGeneration += 1;
+    updateSession(undefined, false);
+    return;
+  }
+  if (!logoutInProgress) updateSession(toAuthDetails(event.data.session), false);
 });
 
 export class SessionRefreshError extends Error {
@@ -44,10 +55,13 @@ function updateSession(details: AuthDetails | undefined, broadcast: boolean) {
   if (details) concurrentRefreshWaiters.forEach((waiter) => waiter(details));
   if (details && broadcast) {
     authChannel?.postMessage({
-      accessToken: details.accessToken,
-      accessTokenExpirationDate: details.accessTokenExpirationDate.toISOString(),
-      refreshTokenExpirationDate: details.refreshTokenExpirationDate.toISOString(),
-    } satisfies TokenResponse);
+      type: 'session',
+      session: {
+        accessToken: details.accessToken,
+        accessTokenExpirationDate: details.accessTokenExpirationDate.toISOString(),
+        refreshTokenExpirationDate: details.refreshTokenExpirationDate.toISOString(),
+      },
+    } satisfies AuthChannelMessage);
   }
 }
 
@@ -68,6 +82,7 @@ export function subscribeAuthDetails(subscriber: (details: AuthDetails | undefin
 
 async function refresh(): Promise<AuthDetails | undefined> {
   const revisionBeforeRefresh = sessionRevision;
+  const generationBeforeRefresh = authGeneration;
   try {
     let details: AuthDetails;
     try {
@@ -78,9 +93,11 @@ async function refresh(): Promise<AuthDetails | undefined> {
 
       const concurrentSession = await waitForConcurrentRefresh(revisionBeforeRefresh);
       if (!concurrentSession) throw error;
+      if (logoutInProgress || authGeneration !== generationBeforeRefresh) return undefined;
       return concurrentSession;
     }
 
+    if (logoutInProgress || authGeneration !== generationBeforeRefresh) return undefined;
     setSession(details);
     return details;
   } catch (error) {
@@ -109,10 +126,32 @@ function waitForConcurrentRefresh(revisionBeforeRefresh: number) {
 }
 
 export function refreshSession() {
+  if (logoutInProgress) return Promise.resolve(undefined);
   refreshPromise ??= refresh().finally(() => {
     refreshPromise = undefined;
   });
   return refreshPromise;
+}
+
+export async function prepareForLogout() {
+  try {
+    await getValidAccessToken();
+  } catch {
+    // Logout can still revoke by refresh cookie when the access session cannot be recovered.
+  }
+  logoutInProgress = true;
+  authGeneration += 1;
+  try {
+    await refreshPromise;
+  } catch {
+    // The logout request remains authoritative after a failed in-flight refresh.
+  }
+}
+
+export function completeLogout() {
+  updateSession(undefined, false);
+  authChannel?.postMessage({ type: 'logout' } satisfies AuthChannelMessage);
+  logoutInProgress = false;
 }
 
 export async function getValidAccessToken() {
