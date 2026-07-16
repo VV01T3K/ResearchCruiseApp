@@ -1,10 +1,13 @@
-import BackgroundImageUrl from '@/assets/background.jpg';
+import BackgroundImageUrl from '@/assets/background.avif';
+import BackgroundPlaceholderUrl from '@/assets/background-placeholder.jpg';
 import { useRouterState } from '@tanstack/react-router';
 import { motion } from 'motion/react';
+import { useState } from 'react';
 
 export default function AppBackground() {
   const routerState = useRouterState();
   const isHomepage = routerState.location.pathname === '/';
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const variants = {
     transparent: {
@@ -18,9 +21,16 @@ export default function AppBackground() {
   return (
     <>
       <div
-        className={'fixed -z-50 h-screen w-full bg-[image:var(--bg)] bg-cover bg-center bg-no-repeat'}
-        style={{ '--bg': `url('${BackgroundImageUrl}')` } as React.CSSProperties}
-      />
+        className="fixed -z-50 h-screen w-full overflow-hidden bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url('${BackgroundPlaceholderUrl}')` }}
+      >
+        <img
+          src={BackgroundImageUrl}
+          onLoad={() => setIsLoaded(true)}
+          className={`h-full w-full object-cover transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          alt=""
+        />
+      </div>
       <motion.div
         className={'fixed -z-50 h-screen w-full'}
         variants={variants}

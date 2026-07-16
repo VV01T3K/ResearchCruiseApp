@@ -1,4 +1,4 @@
-import BackgroundImageUrl from '@/assets/background.jpg';
+import BackgroundPlaceholderUrl from '@/assets/background-placeholder.jpg';
 import { routeTree } from '@/routeTree.gen';
 import { createBrowserHistory, createRouter, RouterProvider } from '@tanstack/react-router';
 import React from 'react';
@@ -36,7 +36,7 @@ export function AppRouter() {
       <>
         <div
           className="fixed -z-50 h-screen w-full bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url('${BackgroundImageUrl}')` }}
+          style={{ backgroundImage: `url('${BackgroundPlaceholderUrl}')` }}
         />
         <div className="fixed -z-50 h-screen w-full" style={{ backdropFilter: 'blur(12px)' }} />
         <AppLoader />
