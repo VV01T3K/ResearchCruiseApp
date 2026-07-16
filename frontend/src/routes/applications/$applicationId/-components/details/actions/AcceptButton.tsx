@@ -1,4 +1,4 @@
-import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
+import { Check as CheckLgIcon } from 'lucide-react';
 
 import { AppButton } from '@/components/shared/AppButton';
 

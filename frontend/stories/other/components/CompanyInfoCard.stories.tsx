@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
+import { Globe2 as GlobeAmericasIcon } from 'lucide-react';
 
 import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
 

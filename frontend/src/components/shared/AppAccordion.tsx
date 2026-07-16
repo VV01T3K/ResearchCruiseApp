@@ -1,5 +1,5 @@
 import { Collapsible } from '@base-ui/react/collapsible';
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
+import { ChevronDown as ChevronDownIcon } from 'lucide-react';
 
 type Props = {
   title: string;

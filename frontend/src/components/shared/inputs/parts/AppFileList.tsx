@@ -1,5 +1,5 @@
-import DownloadIcon from 'bootstrap-icons/icons/download.svg?react';
-import XIcon from 'bootstrap-icons/icons/x.svg?react';
+import { Download as DownloadIcon } from 'lucide-react';
+import { X as XIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 

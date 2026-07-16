@@ -1,6 +1,6 @@
-import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
-import PrinterFillIcon from 'bootstrap-icons/icons/printer-fill.svg?react';
-import SendFillIcon from 'bootstrap-icons/icons/send-fill.svg?react';
+import { Save as FloppyFillIcon } from 'lucide-react';
+import { Printer as PrinterFillIcon } from 'lucide-react';
+import { Send as SendFillIcon } from 'lucide-react';
 
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppButton } from '@/components/shared/AppButton';

@@ -1,4 +1,4 @@
-import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
+import { Trash2 as TrashIcon } from 'lucide-react';
 
 import { AppButton } from '@/components/shared/AppButton';
 

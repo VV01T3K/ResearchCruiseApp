@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import BoxArrowUpRightIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
-import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
+import { ExternalLink as BoxArrowUpRightIcon } from 'lucide-react';
+import { Plus as PlusLgIcon } from 'lucide-react';
 import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';

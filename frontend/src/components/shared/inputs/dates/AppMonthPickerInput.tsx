@@ -1,5 +1,5 @@
-import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import { CalendarDays as CalendarEventIcon } from 'lucide-react';
+import { X as XLgIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';

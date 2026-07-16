@@ -1,12 +1,12 @@
-import AwardFillIcon from 'bootstrap-icons/icons/award-fill.svg?react';
-import BookIcon from 'bootstrap-icons/icons/book.svg?react';
-import CalendarCheckIcon from 'bootstrap-icons/icons/calendar-check.svg?react';
-import GearFillIcon from 'bootstrap-icons/icons/gear-fill.svg?react';
-import InfoIcon from 'bootstrap-icons/icons/info.svg?react';
-import InfoCircleIcon from 'bootstrap-icons/icons/info-circle.svg?react';
-import PeopleFillIcon from 'bootstrap-icons/icons/people-fill.svg?react';
-import PlusCircleFillIcon from 'bootstrap-icons/icons/plus-circle.svg?react';
-import UIRadiosIcon from 'bootstrap-icons/icons/ui-radios.svg?react';
+import { Award as AwardFillIcon } from 'lucide-react';
+import { BookOpen as BookIcon } from 'lucide-react';
+import { CalendarCheck as CalendarCheckIcon } from 'lucide-react';
+import { Settings as GearFillIcon } from 'lucide-react';
+import { Info as InfoIcon } from 'lucide-react';
+import { Info as InfoCircleIcon } from 'lucide-react';
+import { Users as PeopleFillIcon } from 'lucide-react';
+import { CirclePlus as PlusCircleFillIcon } from 'lucide-react';
+import { Radio as UIRadiosIcon } from 'lucide-react';
 
 import { GridCard } from './GridCard';
 

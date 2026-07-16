@@ -1,4 +1,4 @@
-import SearchIcon from 'bootstrap-icons/icons/search.svg?react';
+import { Search as SearchIcon } from 'lucide-react';
 import dayjs from 'dayjs';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';

@@ -1,4 +1,4 @@
-import CloudUploadIcon from 'bootstrap-icons/icons/cloud-upload.svg?react';
+import { CloudUpload as CloudUploadIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 

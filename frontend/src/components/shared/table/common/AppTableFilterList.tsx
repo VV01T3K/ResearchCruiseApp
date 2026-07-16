@@ -1,5 +1,5 @@
 import { Header } from '@tanstack/react-table';
-import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
+import { Trash2 as TrashIcon } from 'lucide-react';
 import React from 'react';
 
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';

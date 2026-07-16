@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
-import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
-import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
+import { Trash2 as TrashIcon } from 'lucide-react';
+import { ZoomIn as ZoomInIcon } from 'lucide-react';
 import dayjs from 'dayjs';
 
 import { AppAvatar } from '@/components/shared/AppAvatar';

@@ -1,7 +1,7 @@
 import { Toast } from '@base-ui/react/toast';
-import CheckCircleIcon from 'bootstrap-icons/icons/check-circle-fill.svg?react';
-import ExclamationCircleIcon from 'bootstrap-icons/icons/exclamation-circle-fill.svg?react';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import { CircleCheck as CheckCircleIcon } from 'lucide-react';
+import { CircleAlert as ExclamationCircleIcon } from 'lucide-react';
+import { X as XLgIcon } from 'lucide-react';
 
 import { toastManager } from './toast';
 

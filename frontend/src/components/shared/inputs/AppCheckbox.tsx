@@ -1,5 +1,5 @@
 import { Checkbox } from '@base-ui/react/checkbox';
-import CheckIcon from 'bootstrap-icons/icons/check-lg.svg?react';
+import { Check as CheckIcon } from 'lucide-react';
 import React from 'react';
 
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';

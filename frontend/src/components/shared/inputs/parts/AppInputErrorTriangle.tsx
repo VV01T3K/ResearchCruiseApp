@@ -1,4 +1,4 @@
-import ExclamationTriangleIcon from 'bootstrap-icons/icons/exclamation-triangle.svg?react';
+import { TriangleAlert as ExclamationTriangleIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 

@@ -1,8 +1,8 @@
-import CheckIcon from 'bootstrap-icons/icons/check.svg?react';
-import ExclamationCircleIcon from 'bootstrap-icons/icons/exclamation-circle.svg?react';
-import ExclamationTraingleIcon from 'bootstrap-icons/icons/exclamation-triangle.svg?react';
-import InfoCircleFillIcon from 'bootstrap-icons/icons/info-circle-fill.svg?react';
-import XIcon from 'bootstrap-icons/icons/x.svg?react';
+import { Check as CheckIcon } from 'lucide-react';
+import { CircleAlert as ExclamationCircleIcon } from 'lucide-react';
+import { TriangleAlert as ExclamationTraingleIcon } from 'lucide-react';
+import { Info as InfoCircleFillIcon } from 'lucide-react';
+import { X as XIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 

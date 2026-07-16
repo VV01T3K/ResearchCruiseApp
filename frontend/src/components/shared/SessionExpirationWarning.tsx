@@ -1,4 +1,4 @@
-import ExclamationTriangleFillIcon from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
+import { TriangleAlert as ExclamationTriangleFillIcon } from 'lucide-react';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';

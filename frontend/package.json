@@ -28,9 +28,9 @@
     "@tanstack/react-router": "^1.159.5",
     "@tanstack/react-router-devtools": "^1.159.5",
     "@tanstack/react-table": "^8.21.3",
-    "bootstrap-icons": "^1.13.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.19",
+    "lucide-react": "^0.547.0",
     "motion": "^12.34.0",
     "papaparse": "^5.5.3",
     "react": "^19.2.4",
@@ -65,7 +65,6 @@
     "storybook": "^10.2.8",
     "tailwindcss": "^4.2.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@latest",
-    "vite-plugin-svgr": "^5.2.0",
     "vite-plus": "^0.1.16"
   },
   "overrides": {

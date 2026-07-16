@@ -1,5 +1,5 @@
-import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
-import ClockIcon from 'bootstrap-icons/icons/clock.svg?react';
+import { RotateCw as ArrowClockwiseIcon } from 'lucide-react';
+import { Clock as ClockIcon } from 'lucide-react';
 import React from 'react';
 
 type Props = {

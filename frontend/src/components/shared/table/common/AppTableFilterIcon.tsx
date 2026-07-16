@@ -1,6 +1,6 @@
 import { Header } from '@tanstack/react-table';
-import FunnelIcon from 'bootstrap-icons/icons/funnel.svg?react';
-import FunnelFillIcon from 'bootstrap-icons/icons/funnel-fill.svg?react';
+import { Funnel as FunnelIcon } from 'lucide-react';
+import { Funnel as FunnelFillIcon } from 'lucide-react';
 
 export function AppTableFilterIcon<TData>({ header }: { header: Header<TData, unknown> }) {
   if (!header.column.getCanFilter()) {
