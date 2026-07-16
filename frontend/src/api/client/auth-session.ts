@@ -10,6 +10,7 @@ let sessionState: 'unknown' | 'authenticated' | 'anonymous' = 'unknown';
 let sessionRevision = 0;
 let authGeneration = 0;
 let logoutInProgress = false;
+let acceptBroadcastSessions = true;
 
 type AuthChannelMessage =
   | { type: 'session'; session: TokenResponse }
@@ -23,10 +24,11 @@ const authChannel =
 authChannel?.addEventListener('message', (event: MessageEvent<AuthChannelMessage>) => {
   if (event.data.type === 'logout') {
     authGeneration += 1;
+    acceptBroadcastSessions = false;
     updateSession(undefined, false);
     return;
   }
-  if (!logoutInProgress) updateSession(toAuthDetails(event.data.session), false);
+  if (!logoutInProgress && acceptBroadcastSessions) updateSession(toAuthDetails(event.data.session), false);
 });
 
 export class SessionRefreshError extends Error {
@@ -66,6 +68,7 @@ function updateSession(details: AuthDetails | undefined, broadcast: boolean) {
 }
 
 export function setSession(details: AuthDetails | undefined) {
+  if (details) acceptBroadcastSessions = true;
   updateSession(details, true);
 }
 
@@ -149,6 +152,7 @@ export async function prepareForLogout() {
 }
 
 export function completeLogout() {
+  acceptBroadcastSessions = false;
   updateSession(undefined, false);
   authChannel?.postMessage({ type: 'logout' } satisfies AuthChannelMessage);
   logoutInProgress = false;

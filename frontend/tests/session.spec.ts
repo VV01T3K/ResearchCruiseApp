@@ -184,7 +184,8 @@ test.describe('session expiration and refresh', () => {
 
   test('logout in another tab clears this tab immediately', async ({ page }) => {
     await mockAuthenticatedPage(page);
-    await mockRefreshSequence(page, [{ status: 200, body: sessionPayload(86_400_000, 86_400_000) }]);
+    const staleSession = sessionPayload(86_400_000, 86_400_000);
+    await mockRefreshSequence(page, [{ status: 200, body: staleSession }]);
 
     await page.goto('/user-management');
     await expect(page.getByTestId('session-status-badge')).toBeVisible();
@@ -194,6 +195,14 @@ test.describe('session expiration and refresh', () => {
       channel.close();
     });
 
+    await expect(page).toHaveURL(/\/login/);
+    await expect(page.getByTestId('session-status-badge')).toBeHidden();
+
+    await page.evaluate((session) => {
+      const channel = new BroadcastChannel('rca-auth-session');
+      channel.postMessage({ type: 'session', session });
+      channel.close();
+    }, staleSession);
     await expect(page).toHaveURL(/\/login/);
     await expect(page.getByTestId('session-status-badge')).toBeHidden();
   });
