@@ -95,15 +95,23 @@ public static class SessionsEndpoints
 
     private static async Task<NoContent> Logout(
         IdentityService identityService,
+        CurrentUserService currentUserService,
         HttpContext context,
         IWebHostEnvironment environment
     )
     {
-        if (
+        var currentUserId = currentUserService.GetId();
+        if (currentUserId is not null)
+        {
+            await identityService.RevokeRefreshToken(currentUserId.Value);
+        }
+        else if (
             context.Request.Cookies.TryGetValue(RefreshTokenCookie, out var refreshToken)
             && !string.IsNullOrWhiteSpace(refreshToken)
         )
+        {
             await identityService.RevokeRefreshToken(refreshToken);
+        }
 
         context.Response.Cookies.Delete(
             RefreshTokenCookie,

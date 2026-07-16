@@ -37,8 +37,8 @@ async function parseResponse(response: Response) {
 }
 
 export async function customFetch<T>(url: string, options: RequestInit): Promise<T> {
-  const isAuthRequest = url.startsWith('/v2/auth/');
-  const token = isAuthRequest ? undefined : await getValidAccessToken();
+  const isSessionBootstrapRequest = url === '/v2/auth/login' || url === '/v2/auth/refresh';
+  const token = isSessionBootstrapRequest ? undefined : await getValidAccessToken();
   const headers = new Headers(options.headers);
   if (token) headers.set('Authorization', `Bearer ${token}`);
 

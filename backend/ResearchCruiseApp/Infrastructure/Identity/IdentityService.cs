@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -207,15 +208,24 @@ internal class IdentityService(
     public async Task RevokeRefreshToken(string refreshToken)
     {
         var refreshTokenHash = HashRefreshToken(refreshToken);
-        var user = await userManager.Users.SingleOrDefaultAsync(candidate =>
-            candidate.RefreshToken == refreshTokenHash
-        );
-        if (user is null)
-            return;
+        await RevokeRefreshToken(user => user.RefreshToken == refreshTokenHash);
+    }
 
-        user.RefreshToken = null;
-        user.RefreshTokenExpiry = null;
-        await userManager.UpdateAsync(user);
+    public async Task RevokeRefreshToken(Guid userId)
+    {
+        await RevokeRefreshToken(user => user.Id == userId.ToString());
+    }
+
+    private async Task RevokeRefreshToken(Expression<Func<User, bool>> userPredicate)
+    {
+        await userManager
+            .Users.Where(userPredicate)
+            .ExecuteUpdateAsync(properties =>
+                properties
+                    .SetProperty(user => user.RefreshToken, (string?)null)
+                    .SetProperty(user => user.RefreshTokenExpiry, (DateTime?)null)
+                    .SetProperty(user => user.ConcurrencyStamp, Guid.NewGuid().ToString())
+            );
     }
 
     public async Task<Result> ChangePassword(ChangePasswordFormDto changePasswordFormDto)
