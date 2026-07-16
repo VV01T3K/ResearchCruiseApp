@@ -1,5 +1,5 @@
 import { Collapsible } from '@base-ui/react/collapsible';
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
+import { ChevronDown as ChevronDownIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
 import { AppAlert } from '@/components/shared/AppAlert';

@@ -1,5 +1,5 @@
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
-import ChevronUpIcon from 'bootstrap-icons/icons/chevron-up.svg?react';
+import { ChevronDown as ChevronDownIcon } from 'lucide-react';
+import { ChevronUp as ChevronUpIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { ColumnDef } from '@tanstack/react-table';
-import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
+import { ZoomIn as ZoomInIcon } from 'lucide-react';
 import dayjs from 'dayjs';
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';

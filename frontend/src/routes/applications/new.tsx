@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/types/user';
 import { useForm, useStore } from '@tanstack/react-form';
-import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
+import { Save as FloppyFillIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';

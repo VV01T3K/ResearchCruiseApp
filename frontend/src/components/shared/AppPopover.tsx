@@ -1,5 +1,5 @@
 import { Popover } from '@base-ui/react/popover';
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
+import { ChevronDown as ChevronDownIcon } from 'lucide-react';
 import React from 'react';
 
 import { AppButtonVariant } from '@/components/shared/AppButton';

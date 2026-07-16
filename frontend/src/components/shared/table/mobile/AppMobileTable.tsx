@@ -1,5 +1,5 @@
 import { flexRender, Header } from '@tanstack/react-table';
-import FunnelIcon from 'bootstrap-icons/icons/funnel.svg?react';
+import { Funnel as FunnelIcon } from 'lucide-react';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';

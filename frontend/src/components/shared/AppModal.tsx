@@ -1,5 +1,5 @@
 import { Dialog } from '@base-ui/react/dialog';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import { X as XLgIcon } from 'lucide-react';
 import React from 'react';
 
 import { cn } from '@/lib/utils';

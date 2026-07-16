@@ -1,6 +1,6 @@
 import { Select } from '@base-ui/react/select';
-import CheckIcon from 'bootstrap-icons/icons/check.svg?react';
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
+import { Check as CheckIcon } from 'lucide-react';
+import { ChevronDown as ChevronDownIcon } from 'lucide-react';
 import React from 'react';
 
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';

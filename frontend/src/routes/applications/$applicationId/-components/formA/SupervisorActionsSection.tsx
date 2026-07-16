@@ -1,5 +1,5 @@
-import CheckIcon from 'bootstrap-icons/icons/check-square-fill.svg?react';
-import TrashFillIcon from 'bootstrap-icons/icons/trash-fill.svg?react';
+import { SquareCheck as CheckIcon } from 'lucide-react';
+import { Trash2 as TrashFillIcon } from 'lucide-react';
 
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppButton } from '@/components/shared/AppButton';

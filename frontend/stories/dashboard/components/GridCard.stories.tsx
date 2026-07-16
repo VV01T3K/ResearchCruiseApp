@@ -1,6 +1,6 @@
 import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
+import { Globe2 as GlobeAmericasIcon } from 'lucide-react';
 
 import { Grid } from '@/components/dashboard/Grid';
 import { GridCard } from '@/components/dashboard/GridCard';
