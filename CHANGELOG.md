@@ -1,3 +1,7 @@
+## 2.5.1 - 2026-07-22
+#### Changes since *2.5.0*:
+* hotfix: rotate SMTP app password
+
 ## 2.5.0 - 2026-07-08
 #### Changes since *2.4.0*:
 * feat(sentry): searchable user roles and fuller diagnostic capture (#352)
