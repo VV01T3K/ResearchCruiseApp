@@ -1,4 +1,4 @@
-import { AuthDetails } from '@/types/user';
+import type { AuthDetails } from '@/api/client/user';
 
 export function getStoredAuthDetails(): AuthDetails | undefined {
   const data = localStorage.getItem('authDetails');

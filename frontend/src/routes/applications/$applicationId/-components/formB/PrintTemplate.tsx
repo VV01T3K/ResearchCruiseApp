@@ -1,16 +1,19 @@
 /* eslint-disable @eslint-react/no-array-index-key */
 import dayjs from 'dayjs';
 import { Fragment, RefObject } from 'react';
+import { useSelector } from '@tanstack/react-form';
 
 import { cn } from '@/lib/utils';
 import { PrintableResearchTaskDetails } from '@/components/print/research-task-details/PrintableResearchTaskDetails';
 import { PrintingPage } from '@/components/print/layout/PrintingPage';
 import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';
-import { useFormB } from '@/contexts/applications/FormBContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
+import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
-import { getResearchAreaName } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaOption';
+import { getResearchAreaName } from '@/api/client/applications/types/ResearchAreaOption';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 function getAction(action: 'Put' | 'Collect'): string {
@@ -27,10 +30,12 @@ function getAction(action: 'Put' | 'Collect'): string {
 
 type Props = {
   ref: RefObject<HTMLDivElement | null>;
+  context: FormBViewModel;
 };
-export function PrintTemplate({ ref }: Props) {
-  const { cruise, formAInitValues, formBInitValues, formA, form } = useFormB();
-  const values = form.state.values;
+export function PrintTemplate({ ref, context }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: formBDefaultValues });
+  const { cruise, formAInitValues, formBInitValues, formA } = context;
+  const values = useSelector(form.store, (state) => state.values);
 
   return (
     <PrintingPage ref={ref} title="Formularz B">
@@ -406,7 +411,7 @@ export function PrintTemplate({ ref }: Props) {
                 {!x.insuranceStartDate && !x.insuranceEndDate ? 'Nie zgłoszono' : ''}
               </div>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
-                {x.permission === 'true' ? 'Tak' : 'Nie'}
+                {x.permission ? 'Tak' : 'Nie'}
               </div>
             </Fragment>
           ))}

@@ -1,13 +1,11 @@
 import { Row } from '@tanstack/react-table';
 
-import { AnyReactFormApi } from '@/lib/form';
 import { DidacticsResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/DidacticsResearchTaskDetails';
 import { OtherResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/OtherResearchTaskDetails';
 import { OwnResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/OwnResearchTaskDetails';
 import { ProjectPreparationResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ProjectPreparationResearchTaskDetails';
 import { ProjectResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ProjectResearchTaskDetails';
 import { ThesisResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ThesisResearchTaskDetails';
-import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import {
   DidacticsResearchTaskValues,
   OtherResearchTaskValues,
@@ -20,31 +18,20 @@ import {
 } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: AnyReactFormApi<FormAValues>;
   row: Row<ResearchTaskValues>;
   disabled?: boolean;
-  hasFormBeenSubmitted?: boolean;
 };
-export function ResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted }: Props) {
+export function ResearchTaskDetails({ row, disabled }: Props) {
   switch (row.original.type) {
     case ResearchTaskType.BachelorThesis:
     case ResearchTaskType.MasterThesis:
     case ResearchTaskType.DoctoralThesis:
-      return (
-        <ThesisResearchTaskDetails
-          form={form}
-          row={row as Row<ThesisResearchTaskValues>}
-          disabled={disabled}
-          hasFormBeenSubmitted={hasFormBeenSubmitted}
-        />
-      );
+      return <ThesisResearchTaskDetails row={row as Row<ThesisResearchTaskValues>} disabled={disabled} />;
     case ResearchTaskType.ProjectPreparation:
       return (
         <ProjectPreparationResearchTaskDetails
-          form={form}
           row={row as Row<ProjectPreparationResearchTaskValues>}
           disabled={disabled}
-          hasFormBeenSubmitted={hasFormBeenSubmitted}
         />
       );
     case ResearchTaskType.DomesticProject:
@@ -52,41 +39,13 @@ export function ResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted 
     case ResearchTaskType.InternalUgProject:
     case ResearchTaskType.OtherProject:
     case ResearchTaskType.CommercialProject:
-      return (
-        <ProjectResearchTaskDetails
-          form={form}
-          row={row as Row<ProjectResearchTaskValues>}
-          disabled={disabled}
-          hasFormBeenSubmitted={hasFormBeenSubmitted}
-        />
-      );
+      return <ProjectResearchTaskDetails row={row as Row<ProjectResearchTaskValues>} disabled={disabled} />;
     case ResearchTaskType.Didactics:
-      return (
-        <DidacticsResearchTaskDetails
-          form={form}
-          row={row as Row<DidacticsResearchTaskValues>}
-          disabled={disabled}
-          hasFormBeenSubmitted={hasFormBeenSubmitted}
-        />
-      );
+      return <DidacticsResearchTaskDetails row={row as Row<DidacticsResearchTaskValues>} disabled={disabled} />;
     case ResearchTaskType.OwnResearchTask:
-      return (
-        <OwnResearchTaskDetails
-          form={form}
-          row={row as Row<OwnResearchTaskValues>}
-          disabled={disabled}
-          hasFormBeenSubmitted={hasFormBeenSubmitted}
-        />
-      );
+      return <OwnResearchTaskDetails row={row as Row<OwnResearchTaskValues>} disabled={disabled} />;
     case ResearchTaskType.OtherResearchTask:
-      return (
-        <OtherResearchTaskDetails
-          form={form}
-          row={row as Row<OtherResearchTaskValues>}
-          disabled={disabled}
-          hasFormBeenSubmitted={hasFormBeenSubmitted}
-        />
-      );
+      return <OtherResearchTaskDetails row={row as Row<OtherResearchTaskValues>} disabled={disabled} />;
     default:
       throw new Error(`Unknown research task type`);
   }

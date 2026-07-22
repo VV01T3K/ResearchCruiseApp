@@ -1,16 +1,19 @@
 import { ColumnDef } from '@tanstack/react-table';
+import { useSelector } from '@tanstack/react-form';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { getErrors } from '@/lib/utils';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 
-export function ResearchTasksEffectsSection() {
-  const { form, isReadonly, hasFormBeenSubmitted } = useFormC();
+export function ResearchTasksEffectsSection({ context }: { context: FormCViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { isReadonly } = context;
+  const researchTasksEffects = useSelector(form.store, (state) => state.values.researchTasksEffects);
 
   const columns: ColumnDef<ResearchTaskEffectValues>[] = [
     {
@@ -36,65 +39,40 @@ export function ResearchTasksEffectsSection() {
             selector={(state) => state.values.researchTasksEffects[row.index].done}
             children={(taskDone) => (
               <div className="flex items-center justify-center gap-4">
-                <form.Field
+                <form.AppField
                   name={`researchTasksEffects[${row.index}].done`}
+                  listeners={{
+                    onChange: ({ value }) => {
+                      if (value) return;
+                      form.setFieldValue(`researchTasksEffects[${row.index}].managerConditionMet`, false);
+                      form.setFieldValue(`researchTasksEffects[${row.index}].deputyConditionMet`, false);
+                    },
+                  }}
                   children={(field) => (
-                    <AppCheckbox
+                    <field.CheckboxField size="md" label="Zrealizowane" labelPosition="top" disabled={isReadonly} />
+                  )}
+                />
+                <form.AppField
+                  name={`researchTasksEffects[${row.index}].managerConditionMet`}
+                  children={(field) => (
+                    <field.CheckboxField
                       size="md"
-                      name={field.name}
-                      checked={field.state.value === 'true'}
-                      onChange={(value) => {
-                        field.handleChange(value ? 'true' : 'false');
-                      }}
-                      onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                      label="Zrealizowane"
+                      label="Czy naliczyć punkty kierownikowi?"
                       labelPosition="top"
-                      disabled={isReadonly}
+                      disabled={isReadonly || !taskDone}
                     />
                   )}
                 />
-                <form.Field
-                  name={`researchTasksEffects[${row.index}].managerConditionMet`}
-                  children={(field) => {
-                    if (field.state.value !== 'false' && taskDone === 'false') {
-                      field.handleChange('false');
-                    }
-                    return (
-                      <AppCheckbox
-                        size="md"
-                        name={field.name}
-                        checked={field.state.value === 'true'}
-                        onChange={(value) => field.handleChange(value ? 'true' : 'false')}
-                        onBlur={field.handleBlur}
-                        errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                        label="Czy naliczyć punkty kierownikowi?"
-                        labelPosition="top"
-                        disabled={isReadonly || taskDone === 'false'}
-                      />
-                    );
-                  }}
-                />
-                <form.Field
+                <form.AppField
                   name={`researchTasksEffects[${row.index}].deputyConditionMet`}
-                  children={(field) => {
-                    if (field.state.value !== 'false' && taskDone === 'false') {
-                      field.handleChange('false');
-                    }
-                    return (
-                      <AppCheckbox
-                        size="md"
-                        name={field.name}
-                        checked={field.state.value === 'true'}
-                        onChange={(value) => field.handleChange(value ? 'true' : 'false')}
-                        onBlur={field.handleBlur}
-                        errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                        label="Czy naliczyć punkty zastępcy?"
-                        labelPosition="top"
-                        disabled={isReadonly || taskDone === 'false'}
-                      />
-                    );
-                  }}
+                  children={(field) => (
+                    <field.CheckboxField
+                      size="md"
+                      label="Czy naliczyć punkty zastępcy?"
+                      labelPosition="top"
+                      disabled={isReadonly || !taskDone}
+                    />
+                  )}
                 />
               </div>
             )}
@@ -112,7 +90,7 @@ export function ResearchTasksEffectsSection() {
       data-testid="form-c-research-tasks-effects-section"
     >
       <AppTable
-        data={form.state.values.researchTasksEffects}
+        data={researchTasksEffects}
         columns={columns}
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego zadania."

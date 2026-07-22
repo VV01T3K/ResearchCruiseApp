@@ -1,20 +1,13 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { AnyReactFormApi } from '@/lib/form';
-import { getErrors } from '@/lib/utils';
-import { useFormC } from '@/contexts/applications/FormCContext';
-import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
-import { ShipEquipmentOption } from '@/routes/applications/$applicationId/-schemas/types/ShipEquipmentOption';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import { ShipEquipmentOption } from '@/api/client/applications/types/ShipEquipmentOption';
 
-const shipEquipmentColumns = (
-  form: AnyReactFormApi<FormCValues>,
-  hasFormBeenSubmitted: boolean,
-  isReadonly: boolean
-): ColumnDef<ShipEquipmentOption>[] => [
+const shipEquipmentColumns = (form: FormCFormApi, isReadonly: boolean): ColumnDef<ShipEquipmentOption>[] => [
   {
     header: 'Element',
     cell: ({ row }) => row.original.name,
@@ -23,20 +16,12 @@ const shipEquipmentColumns = (
   {
     header: 'W użyciu',
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`shipEquipmentsIds`}
-        children={(field: AnyFieldApi) => (
-          <AppCheckbox
+        children={(field) => (
+          <field.ArrayCheckboxField
+            item={row.original.id}
             size="md"
-            name={field.name}
-            checked={field.state.value.includes(row.original.id)}
-            onChange={(enable) =>
-              field.handleChange((prev: string[]) =>
-                enable ? [...prev, row.original.id] : prev.filter((id: string) => id !== row.original.id)
-              )
-            }
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             className="grid place-items-center"
             disabled={isReadonly}
           />
@@ -46,8 +31,9 @@ const shipEquipmentColumns = (
   },
 ];
 
-export function ShipEquipmentsSection() {
-  const { form, formBInitValues, hasFormBeenSubmitted, isReadonly } = useFormC();
+export function ShipEquipmentsSection({ context }: { context: FormCViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { formBInitValues, isReadonly } = context;
 
   return (
     <AppAccordion
@@ -55,12 +41,12 @@ export function ShipEquipmentsSection() {
       expandedByDefault
       data-testid="form-c-ship-equipments-section"
     >
-      <form.Field
+      <form.AppField
         name="shipEquipmentsIds"
         children={() => (
           <AppTable
             data={formBInitValues.shipEquipments}
-            columns={shipEquipmentColumns(form, hasFormBeenSubmitted, isReadonly)}
+            columns={shipEquipmentColumns(form, isReadonly)}
             buttons={() => []}
             variant="form"
             disabled={isReadonly}

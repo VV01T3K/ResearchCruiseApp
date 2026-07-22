@@ -1,17 +1,13 @@
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { getErrors } from '@/lib/utils';
-import { FormBContextType, useFormB } from '@/contexts/applications/FormBContext';
-import { ShipEquipmentOption } from '@/routes/applications/$applicationId/-schemas/types/ShipEquipmentOption';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
+import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import { ShipEquipmentOption } from '@/api/client/applications/types/ShipEquipmentOption';
 
-const shipEquipmentColumns = (
-  form: FormBContextType['form'],
-  hasFormBeenSubmitted: boolean,
-  isReadonly: boolean
-): ColumnDef<ShipEquipmentOption>[] => [
+const shipEquipmentColumns = (form: FormBFormApi, isReadonly: boolean): ColumnDef<ShipEquipmentOption>[] => [
   {
     header: 'Element',
     cell: ({ row }) => row.original.name,
@@ -20,20 +16,12 @@ const shipEquipmentColumns = (
   {
     header: 'W użyciu',
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`shipEquipmentsIds`}
         children={(field) => (
-          <AppCheckbox
+          <field.ArrayCheckboxField
+            item={row.original.id}
             size="md"
-            name={field.name}
-            checked={field.state.value.includes(row.original.id)}
-            onChange={(enable) =>
-              field.handleChange((prev) =>
-                enable ? [...prev, row.original.id] : prev.filter((id) => id !== row.original.id)
-              )
-            }
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             className="grid place-items-center"
             disabled={isReadonly}
           />
@@ -43,8 +31,9 @@ const shipEquipmentColumns = (
   },
 ];
 
-export function ShipEquipmentsSection() {
-  const { form, formBInitValues, hasFormBeenSubmitted, isReadonly } = useFormB();
+export function ShipEquipmentsSection({ context }: { context: FormBViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formBDefaultValues });
+  const { formBInitValues, isReadonly } = context;
 
   return (
     <AppAccordion
@@ -52,12 +41,12 @@ export function ShipEquipmentsSection() {
       expandedByDefault
       data-testid="form-b-ship-equipments-section"
     >
-      <form.Field
+      <form.AppField
         name="shipEquipmentsIds"
         children={() => (
           <AppTable
             data={formBInitValues.shipEquipments}
-            columns={shipEquipmentColumns(form, hasFormBeenSubmitted, isReadonly)}
+            columns={shipEquipmentColumns(form, isReadonly)}
             buttons={() => []}
             variant="form"
             disabled={isReadonly}

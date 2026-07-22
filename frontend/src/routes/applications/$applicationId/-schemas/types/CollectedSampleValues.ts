@@ -1,17 +1,18 @@
 import { z } from 'zod';
 
-export const CollectedSampleValuesSchema = z.object({
+export const CollectedSampleValuesInputSchema = z.object({
+  type: z.string(),
+  amount: z.number(),
+  analysis: z.string(),
+  publishing: z.string(),
+});
+
+export const CollectedSampleValuesSchema = CollectedSampleValuesInputSchema.extend({
   type: z
     .string()
     .nonempty('Typ próbki nie może być pusty')
     .max(10240, 'Typ próbki nie może być dłuższy niż 10240 znaków'),
-  amount: z
-    .string()
-    .refine((val) => {
-      const parsed = parseInt(val, 10);
-      return !isNaN(parsed) && parsed > 0;
-    }, 'Ilość musi być liczbą dodatnią')
-    .refine((val) => val.length <= 10240, 'Ilość nie może być dłuższa niż 10240 znaków'),
+  amount: z.number().positive('Ilość musi być liczbą dodatnią'),
   analysis: z
     .string()
     .nonempty('Analiza próbki nie może być pusta')
@@ -22,4 +23,4 @@ export const CollectedSampleValuesSchema = z.object({
     .max(10240, 'Publikacja próbki nie może być dłuższa niż 10240 znaków'),
 });
 
-export type CollectedSampleValues = z.infer<typeof CollectedSampleValuesSchema>;
+export type CollectedSampleValues = z.input<typeof CollectedSampleValuesInputSchema>;

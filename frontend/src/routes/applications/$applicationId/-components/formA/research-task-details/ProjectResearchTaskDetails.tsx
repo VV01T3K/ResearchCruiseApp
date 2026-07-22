@@ -1,31 +1,21 @@
 import { Row } from '@tanstack/react-table';
 
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
-import { AnyReactFormApi } from '@/lib/form';
-import { getErrors } from '@/lib/utils';
-import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: AnyReactFormApi<FormAValues>;
   row: Row<ProjectResearchTaskValues>;
   disabled?: boolean;
-  hasFormBeenSubmitted?: boolean;
 };
-export function ProjectResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted }: Props) {
+export function ProjectResearchTaskDetails({ row, disabled }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].title`}
         children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value as string}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+          <field.TextField
             label="Tytuł"
             placeholder="Wprowadź tytuł"
             containerClassName="lg:col-span-2"
@@ -34,64 +24,29 @@ export function ProjectResearchTaskDetails({ form, row, disabled, hasFormBeenSub
         )}
       />
 
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].startDate`}
-        children={(field) => (
-          <AppMonthPickerInput
-            name={field.name}
-            value={field.state.value as string}
-            onBlur={field.handleBlur}
-            onChange={(value) => field.handleChange(value ?? '')}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            label="Data rozpoczęcia"
-            disabled={disabled}
-          />
-        )}
+        children={(field) => <field.MonthField label="Data rozpoczęcia" disabled={disabled} />}
       />
 
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].endDate`}
-        children={(field) => (
-          <AppMonthPickerInput
-            name={field.name}
-            value={field.state.value as string}
-            onBlur={field.handleBlur}
-            onChange={(value) => field.handleChange(value ?? '')}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            label="Data zakończenia"
-            disabled={disabled}
-          />
-        )}
+        children={(field) => <field.MonthField label="Data zakończenia" disabled={disabled} />}
       />
 
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].financingAmount`}
         children={(field) => (
-          <AppNumberInput
-            name={field.name}
-            value={parseFloat(field.state.value as string)}
-            type="float"
-            minimum={0}
-            onChange={(e) => field.handleChange(e.toString())}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            label="Kwota finansowania [zł]"
-            disabled={disabled}
-          />
+          <field.NullableNumberField type="float" minimum={0} label="Kwota finansowania [zł]" disabled={disabled} />
         )}
       />
 
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].securedAmount`}
         children={(field) => (
-          <AppNumberInput
-            name={field.name}
-            value={parseFloat(field.state.value as string)}
+          <field.NullableNumberField
             type="float"
             minimum={0}
-            onChange={(e) => field.handleChange(e.toString())}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Środki zabezpieczone na realizację rejsu [zł]"
             disabled={disabled}
           />

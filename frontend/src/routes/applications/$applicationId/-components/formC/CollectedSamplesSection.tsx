@@ -1,39 +1,26 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { AnyReactFormApi } from '@/lib/form';
-import { getErrors } from '@/lib/utils';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { CollectedSampleValues } from '@/routes/applications/$applicationId/-schemas/types/CollectedSampleValues';
-import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
 
 const collectedSamplesColumns = (
-  form: AnyReactFormApi<FormCValues>,
-  field: AnyFieldApi,
-  hasFormBeenSubmitted: boolean,
+  form: FormCFormApi,
+  removeRow: (index: number) => void,
   isReadonly: boolean
 ): ColumnDef<CollectedSampleValues>[] => [
   {
     header: 'Rodzaj materiału badawczego/próbek/danych',
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`collectedSamples[${row.index}].type`}
         children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            placeholder="Wpisz rodzaj materiału badawczego/próbek/danych"
-            disabled={isReadonly}
-          />
+          <field.TextField placeholder="Wpisz rodzaj materiału badawczego/próbek/danych" disabled={isReadonly} />
         )}
       />
     ),
@@ -42,18 +29,9 @@ const collectedSamplesColumns = (
   {
     header: 'Ilość',
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`collectedSamples[${row.index}].amount`}
-        children={(field) => (
-          <AppNumberInput
-            name={field.name}
-            value={parseInt(field.state.value, 10) || 0}
-            onChange={(value) => field.handleChange(value.toString())}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            disabled={isReadonly}
-          />
-        )}
+        children={(field) => <field.NumberField disabled={isReadonly} />}
       />
     ),
     size: 5,
@@ -61,19 +39,9 @@ const collectedSamplesColumns = (
   {
     header: 'Analizy na zebranym materiale badawczym, przeprowadzone podczas rejsu lub do przeprowadzenia po rejsie',
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`collectedSamples[${row.index}].analysis`}
-        children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            placeholder="Wpisz zakres analiz"
-            disabled={isReadonly}
-          />
-        )}
+        children={(field) => <field.TextField placeholder="Wpisz zakres analiz" disabled={isReadonly} />}
       />
     ),
     size: 30,
@@ -81,18 +49,10 @@ const collectedSamplesColumns = (
   {
     header: 'Czy dane upubliczniono? (jeśli tak, to w jaki sposób, czy przesłano je np. do BHMW)',
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`collectedSamples[${row.index}].publishing`}
         children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            placeholder="Wpisz informacje o upublicznieniu danych"
-            disabled={isReadonly}
-          />
+          <field.TextField placeholder="Wpisz informacje o upublicznieniu danych" disabled={isReadonly} />
         )}
       />
     ),
@@ -102,15 +62,16 @@ const collectedSamplesColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton onClick={() => field.removeValue(row.index)} disabled={isReadonly} />
+        <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
       </div>
     ),
     size: 5,
   },
 ];
 
-export function CollectedSamplesSection() {
-  const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
+export function CollectedSamplesSection({ context }: { context: FormCViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { isReadonly } = context;
 
   return (
     <AppAccordion
@@ -118,13 +79,13 @@ export function CollectedSamplesSection() {
       expandedByDefault
       data-testid="form-c-collected-samples-section"
     >
-      <form.Field
+      <form.AppField
         name="collectedSamples"
         mode="array"
         children={(field) => (
           <AppTable
             data={field.state.value}
-            columns={collectedSamplesColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+            columns={collectedSamplesColumns(form, (index) => field.removeValue(index), isReadonly)}
             buttons={() => [
               <AppButton
                 key="new"
@@ -132,11 +93,10 @@ export function CollectedSamplesSection() {
                 onClick={() => {
                   field.pushValue({
                     type: '',
-                    amount: '0',
+                    amount: 0,
                     analysis: '',
                     publishing: '',
-                  } as CollectedSampleValues);
-                  field.handleChange((prev: CollectedSampleValues[]) => prev);
+                  } satisfies CollectedSampleValues);
                   field.handleBlur();
                 }}
               >

@@ -1,27 +1,27 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors, groupBy } from '@/lib/utils';
+import { getErrors } from '@/integrations/tanstack/form/errors';
+import { groupBy } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
-import { useFormA } from '@/contexts/applications/FormAContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import {
   getPublicationCategoryLabel,
   PublicationCategory,
   PublicationValues,
 } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
-export function PublicationsSection() {
-  const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
+export function PublicationsSection({ context }: { context: FormAViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
+  const { isReadonly, initValues } = context;
 
-  function getColumns(field: AnyFieldApi): ColumnDef<PublicationValues>[] {
+  function getColumns(removeRow: (index: number) => void): ColumnDef<PublicationValues>[] {
     return [
       {
         header: 'Lp.',
@@ -34,15 +34,11 @@ export function PublicationsSection() {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`publications[${row.index}].category`}
             children={(field) => (
-              <AppDropdownInput
-                name={field.name}
-                value={field.state.value}
+              <field.SelectField
                 onChange={field.handleChange as (value: string) => void}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 allOptions={Object.values(PublicationCategory).map((role) => ({
                   value: role,
                   inlineLabel: getPublicationCategoryLabel(role),
@@ -61,15 +57,10 @@ export function PublicationsSection() {
         enableSorting: false,
         cell: ({ row }) => (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <form.Field
+            <form.AppField
               name={`publications[${row.index}].doi`}
               children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                <field.TextField
                   label="DOI"
                   placeholder='np. "10.1016/j.jmarsys.2019.03.007"'
                   disabled={isReadonly}
@@ -78,15 +69,10 @@ export function PublicationsSection() {
               )}
             />
 
-            <form.Field
+            <form.AppField
               name={`publications[${row.index}].authors`}
               children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                <field.TextField
                   label="Autorzy"
                   placeholder='np. "Kowalski J., Nowak A."'
                   disabled={isReadonly}
@@ -95,15 +81,10 @@ export function PublicationsSection() {
               )}
             />
 
-            <form.Field
+            <form.AppField
               name={`publications[${row.index}].title`}
               children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                <field.TextField
                   label="Tytuł"
                   placeholder='np. "The impact of sea level rise on the coastal zone"'
                   disabled={isReadonly}
@@ -112,15 +93,10 @@ export function PublicationsSection() {
               )}
             />
 
-            <form.Field
+            <form.AppField
               name={`publications[${row.index}].magazine`}
               children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                <field.TextField
                   label="Czasopismo"
                   placeholder='np. "Journal of Marine Systems"'
                   disabled={isReadonly}
@@ -138,19 +114,21 @@ export function PublicationsSection() {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`publications[${row.index}].year`}
             children={(field) => (
-              <AppYearPickerInput
-                name={field.name}
-                value={field.state.value ? parseInt(field.state.value) : undefined}
-                onChange={(e) => field.handleChange(e?.toString() ?? '')}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                label="Rok"
-                disabled={isReadonly}
-                data-testid-button="form-a-publication-year-button"
-              />
+              <div>
+                <AppYearPickerInput
+                  name={field.name}
+                  value={field.state.value ?? undefined}
+                  onChange={(value) => field.handleChange(value ?? null)}
+                  onBlur={field.handleBlur}
+                  label="Rok"
+                  disabled={isReadonly}
+                  data-testid-button="form-a-publication-year-button"
+                />
+                <field.FieldErrors />
+              </div>
             )}
           />
         ),
@@ -162,17 +140,12 @@ export function PublicationsSection() {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`publications[${row.index}].ministerialPoints`}
             children={(field) => (
-              <AppNumberInput
-                name={field.name}
-                value={parseInt(field.state.value)}
+              <field.NumberField
                 minimum={0}
                 step={10}
-                onChange={(x: number) => field.handleChange(x.toString())}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Punkty"
                 disabled={isReadonly}
                 data-testid-input="form-a-publication-points-input"
@@ -188,9 +161,7 @@ export function PublicationsSection() {
           <div className="flex justify-end">
             <AppTableDeleteRowButton
               onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev: PublicationValues[]) => prev);
-                field.handleBlur();
+                removeRow(row.index);
               }}
               disabled={isReadonly}
             />
@@ -233,13 +204,16 @@ export function PublicationsSection() {
         </p>
       </header>
       <div>
-        <form.Field
+        <form.AppField
           name="publications"
           mode="array"
           children={(field) => (
             <>
               <AppTable
-                columns={getColumns(field)}
+                columns={getColumns((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 buttons={() => [
                   <DropdownElementSelectorButton
@@ -254,10 +228,9 @@ export function PublicationsSection() {
                           authors: '',
                           title: '',
                           magazine: '',
-                          year: '',
-                          ministerialPoints: '0',
+                          year: null,
+                          ministerialPoints: 0,
                         });
-                        field.handleChange((prev: PublicationValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -314,7 +287,6 @@ export function PublicationsSection() {
                         ),
                         onClick: () => {
                           field.pushValue(publication);
-                          field.handleChange((prev: PublicationValues[]) => prev);
                           field.handleBlur();
                         },
                       })),
@@ -328,10 +300,13 @@ export function PublicationsSection() {
                 ]}
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-publications-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-publications-errors" />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+                data-testid="form-a-publications-errors"
+              />
             </>
           )}
         />

@@ -8,7 +8,8 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/generated/endpoints/users.gen';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
-import { CruiseEffectView } from '@/routes/applications/$applicationId/-schemas/types/CruiseEffectView';
+import { CruiseEffectView } from '@/api/client/applications/types/CruiseEffectView';
+import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 export const Route = createFileRoute('/cruise-effects')({
   component: CruiseEffectsPage,
@@ -17,7 +18,18 @@ export const Route = createFileRoute('/cruise-effects')({
 
 function CruiseEffectsPage() {
   const effectsQuery = useGetCurrentUserCruiseEffectsSuspense({
-    query: { select: (effects) => effects as CruiseEffectView[] },
+    query: {
+      select: (effects): CruiseEffectView[] =>
+        effects.map(({ effect, ...cruiseEffect }) => ({
+          ...cruiseEffect,
+          effect: {
+            ...mapResearchTaskToValues(effect),
+            done: effect.done === 'true',
+            managerConditionMet: effect.managerConditionMet === 'true',
+            deputyConditionMet: effect.deputyConditionMet === 'true',
+          },
+        })),
+    },
   });
 
   const columns: ColumnDef<CruiseEffectView>[] = [

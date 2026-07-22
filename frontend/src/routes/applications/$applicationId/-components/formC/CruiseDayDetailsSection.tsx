@@ -1,22 +1,17 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { AnyReactFormApi } from '@/lib/form';
-import { getErrors } from '@/lib/utils';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
-import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
 
 const cruiseDayDetailsColumns = (
-  form: AnyReactFormApi<FormCValues>,
-  field: AnyFieldApi,
-  hasFormBeenSubmitted: boolean,
+  form: FormCFormApi,
+  removeRow: (index: number) => void,
   isReadonly: boolean
 ): ColumnDef<CruiseDayValues>[] => [
   {
@@ -25,20 +20,9 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.number,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].number`}
-        children={(field) => (
-          <AppNumberInput
-            name={field.name}
-            value={parseInt(field.state.value, 10)}
-            onChange={(e) => field.setValue(e.toString())}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            disabled={isReadonly}
-            minimum={0}
-            type="integer"
-          />
-        )}
+        children={(field) => <field.NumberField disabled={isReadonly} minimum={0} type="integer" />}
       />
     ),
     size: 10,
@@ -49,20 +33,9 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.hours,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].hours`}
-        children={(field) => (
-          <AppNumberInput
-            name={field.name}
-            value={parseInt(field.state.value, 10)}
-            onChange={(e) => field.setValue(e.toString())}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            disabled={isReadonly}
-            minimum={0}
-            type="integer"
-          />
-        )}
+        children={(field) => <field.NumberField disabled={isReadonly} minimum={0} type="integer" />}
       />
     ),
     size: 10,
@@ -73,18 +46,10 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.taskName,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].taskName`}
         children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value}
-            onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            disabled={isReadonly}
-            placeholder="Nazwa zadania"
-          />
+          <field.TextField onChange={field.setValue} disabled={isReadonly} placeholder="Nazwa zadania" />
         )}
       />
     ),
@@ -96,18 +61,10 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.region,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].region`}
         children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value}
-            onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            disabled={isReadonly}
-            placeholder="Rejon zadania"
-          />
+          <field.TextField onChange={field.setValue} disabled={isReadonly} placeholder="Rejon zadania" />
         )}
       />
     ),
@@ -119,19 +76,9 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.position,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].position`}
-        children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value}
-            onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            disabled={isReadonly}
-            placeholder="Pozycja"
-          />
-        )}
+        children={(field) => <field.TextField onChange={field.setValue} disabled={isReadonly} placeholder="Pozycja" />}
       />
     ),
     size: 20,
@@ -142,19 +89,9 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.comment,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].comment`}
-        children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value}
-            onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            disabled={isReadonly}
-            placeholder="Uwagi"
-          />
-        )}
+        children={(field) => <field.TextField onChange={field.setValue} disabled={isReadonly} placeholder="Uwagi" />}
       />
     ),
     size: 20,
@@ -165,9 +102,7 @@ const cruiseDayDetailsColumns = (
       <div className="flex justify-end">
         <AppTableDeleteRowButton
           onClick={() => {
-            field.removeValue(row.index);
-            field.handleChange((prev: CruiseDayValues[]) => prev);
-            field.handleBlur();
+            removeRow(row.index);
           }}
           disabled={isReadonly}
         />
@@ -177,8 +112,9 @@ const cruiseDayDetailsColumns = (
   },
 ];
 
-export function CruiseDayDetailsSection() {
-  const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
+export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { isReadonly } = context;
 
   return (
     <AppAccordion
@@ -186,26 +122,32 @@ export function CruiseDayDetailsSection() {
       expandedByDefault
       data-testid="form-c-cruise-day-details-section"
     >
-      <form.Field
+      <form.AppField
         name="cruiseDaysDetails"
         mode="array"
         children={(field) => (
           <AppTable
             data={field.state.value}
-            columns={cruiseDayDetailsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+            columns={cruiseDayDetailsColumns(
+              form,
+              (index) => {
+                field.removeValue(index);
+                field.handleBlur();
+              },
+              isReadonly
+            )}
             buttons={() => [
               <AppButton
                 key="new"
                 onClick={() => {
                   field.pushValue({
-                    number: '0',
-                    hours: '0',
+                    number: 0,
+                    hours: 0,
                     taskName: '',
                     region: '',
                     position: '',
                     comment: '',
                   });
-                  field.handleChange((prev: CruiseDayValues[]) => prev);
                   field.handleBlur();
                 }}
                 variant="primary"

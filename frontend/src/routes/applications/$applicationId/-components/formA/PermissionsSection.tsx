@@ -1,20 +1,21 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
-import { useFormA } from '@/contexts/applications/FormAContext';
+import { getErrors } from '@/integrations/tanstack/form/errors';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { PermissionValues } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
 
-export function PermissionsSection() {
-  const { form, isReadonly, hasFormBeenSubmitted } = useFormA();
+export function PermissionsSection({ context }: { context: FormAViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
+  const { isReadonly } = context;
 
-  function getColumns(field: AnyFieldApi): ColumnDef<PermissionValues>[] {
+  function getColumns(removeRow: (index: number) => void): ColumnDef<PermissionValues>[] {
     return [
       {
         header: 'Lp.',
@@ -27,19 +28,9 @@ export function PermissionsSection() {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`permissions[${row.index}].description`}
-            children={(field) => (
-              <AppInput
-                name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                containerClassName="mx-4"
-                disabled={isReadonly}
-              />
-            )}
+            children={(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
           />
         ),
         size: 45,
@@ -50,19 +41,9 @@ export function PermissionsSection() {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`permissions[${row.index}].executive`}
-            children={(field) => (
-              <AppInput
-                name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                className="mx-4"
-                disabled={isReadonly}
-              />
-            )}
+            children={(field) => <field.TextField className="mx-4" disabled={isReadonly} />}
           />
         ),
         size: 45,
@@ -73,9 +54,7 @@ export function PermissionsSection() {
           <div className="flex justify-end">
             <AppTableDeleteRowButton
               onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev: PermissionValues[]) => prev);
-                field.handleBlur();
+                removeRow(row.index);
               }}
               disabled={isReadonly}
             />
@@ -93,13 +72,16 @@ export function PermissionsSection() {
       data-testid="form-a-permissions-section"
     >
       <div>
-        <form.Field
+        <form.AppField
           name="permissions"
           mode="array"
           children={(field) => (
             <>
               <AppTable
-                columns={getColumns(field)}
+                columns={getColumns((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 buttons={() => [
                   <AppButton
@@ -110,7 +92,6 @@ export function PermissionsSection() {
                         executive: '',
                         scan: undefined,
                       } as PermissionValues);
-                      field.handleChange((prev: PermissionValues[]) => prev);
                       field.handleBlur();
                     }}
                     disabled={isReadonly}
@@ -122,10 +103,13 @@ export function PermissionsSection() {
                 emptyTableMessage="Nie dodano żadnego pozwolenia."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-permissions-table"
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-a-permissions-errors" />
+              <AppInputErrorsList
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+                data-testid="form-a-permissions-errors"
+              />
             </>
           )}
         />

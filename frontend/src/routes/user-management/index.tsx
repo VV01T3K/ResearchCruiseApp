@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { Role, getRoleLabel } from '@/types/user';
+import { Role, getRoleLabel } from '@/api/client/user';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import React from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';
@@ -11,7 +11,7 @@ import { AppModal } from '@/components/shared/AppModal';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { cn } from '@/lib/utils';
-import { User } from '@/types/user';
+import { User } from '@/api/client/user';
 import { useUserContext } from '@/providers/useUserContext';
 import { GroupActionsSection } from './-components/GroupActionsSection';
 import { RoleBadge } from './-components/RoleBadge';

@@ -1,15 +1,15 @@
 import { z } from 'zod';
 
-export const UgTeamValuesSchema = z.object({
-  ugUnitId: z.guid(),
-  noOfEmployees: z.string().refine((val) => {
-    const parsed = parseInt(val, 10);
-    return !isNaN(parsed) && parsed >= 0;
-  }, 'Liczba pracowników musi być liczbą nieujemną'),
-  noOfStudents: z.string().refine((val) => {
-    const parsed = parseInt(val, 10);
-    return !isNaN(parsed) && parsed >= 0;
-  }, 'Liczba studentów musi być liczbą nieujemną'),
+export const UgTeamValuesInputSchema = z.object({
+  ugUnitId: z.string(),
+  noOfEmployees: z.number(),
+  noOfStudents: z.number(),
 });
 
-export type UgTeamValues = z.infer<typeof UgTeamValuesSchema>;
+export const UgTeamValuesSchema = UgTeamValuesInputSchema.extend({
+  ugUnitId: z.guid(),
+  noOfEmployees: z.number().nonnegative('Liczba pracowników musi być liczbą nieujemną'),
+  noOfStudents: z.number().nonnegative('Liczba studentów musi być liczbą nieujemną'),
+});
+
+export type UgTeamValues = z.input<typeof UgTeamValuesInputSchema>;

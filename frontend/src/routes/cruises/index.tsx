@@ -9,7 +9,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { AppTabs } from '@/components/shared/AppTabs';
 import { toast } from '@/components/shared/layout/toast';
-import { Role } from '@/types/user';
+import { Role } from '@/api/client/user';
 import { Calendar } from './-components/Calendar';
 import { ExportForm } from './-components/ExportForm';
 import { TableView } from './-components/TableView';

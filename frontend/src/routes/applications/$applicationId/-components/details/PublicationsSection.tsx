@@ -6,7 +6,7 @@ import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { EvaluationFormAPublication } from '@/routes/applications/-types';
+import { EvaluationFormAPublication } from '@/api/client/applications/models';
 import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
 export function PublicationsSection() {
@@ -68,13 +68,13 @@ export function PublicationsSection() {
     },
     {
       header: 'Rok wydania',
-      accessorFn: (row) => parseInt(row.publication.year),
+      accessorFn: (row) => row.publication.year,
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
         <AppYearPickerInput
           name={`publications[${row.index}].publication.year`}
-          value={parseInt(row.original.publication.year)}
+          value={row.original.publication.year ?? undefined}
           showRequiredAsterisk
           disabled
         />
@@ -89,7 +89,7 @@ export function PublicationsSection() {
       cell: ({ row }) => (
         <AppNumberInput
           name={`publications[${row.index}].publication.ministerialPoints`}
-          value={parseInt(row.original.publication.ministerialPoints)}
+          value={row.original.publication.ministerialPoints}
           minimum={0}
           showRequiredAsterisk
           disabled

@@ -1,10 +1,11 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { getErrors } from '@/lib/utils';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 
-export function SPUBReportDataSection() {
-  const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
+export function SPUBReportDataSection({ context }: { context: FormCViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { isReadonly } = context;
 
   return (
     <AppAccordion
@@ -18,18 +19,13 @@ export function SPUBReportDataSection() {
         reprezentacyjnych, lub odbywając szkolenie doskonalące z wykonywania prac z wykorzystaniem aparatury
         naukowo-badawczej, itp.
       </header>
-      <form.Field
+      <form.AppField
         name="spubReportData"
         children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value ?? ''}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
+          <field.TextField
             label="Dodatkowe dane do raportu SPUB"
             type="textarea"
             className="h-48"
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             placeholder="Wpisz dodatkowe dane do raportu SPUB"
             disabled={isReadonly}
           />

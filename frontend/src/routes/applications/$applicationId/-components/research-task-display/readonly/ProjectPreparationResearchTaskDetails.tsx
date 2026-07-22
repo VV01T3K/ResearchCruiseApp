@@ -27,7 +27,7 @@ export function ProjectPreparationResearchTaskDetails({ data }: Props) {
 
       <AppDropdownInput
         name="researchTasks[].financingApproved"
-        value={data.financingApproved}
+        value={String(data.financingApproved)}
         allOptions={[
           { value: 'true', inlineLabel: 'Tak' },
           { value: 'false', inlineLabel: 'Nie' },

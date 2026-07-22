@@ -34,7 +34,7 @@ export function OwnResearchTaskDetails({ data }: Props) {
 
       <AppNumberInput
         name="researchTasks[].ministerialPoints"
-        value={parseInt(data.ministerialPoints)}
+        value={data.ministerialPoints}
         minimum={0}
         step={10}
         label="Przewidywane punkty ministerialne"

@@ -1,16 +1,16 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { useForm } from '@tanstack/react-form';
+import { revalidateLogic, useForm } from '@tanstack/react-form';
 import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
-import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors } from '@/lib/utils';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useUserContext } from '@/providers/useUserContext';
-import { SignInResult } from '@/types/user';
+import { SignInResult } from '@/api/client/user';
 
 export const Route = createFileRoute('/(auth)/login')({
   component: LoginPage,
@@ -19,8 +19,8 @@ export const Route = createFileRoute('/(auth)/login')({
 });
 
 const validationSchema = z.object({
-  email: z.email('Nieprawidłowy adres email').or(z.literal('')),
-  password: z.string().nonempty('Hasło nie może być puste').or(z.literal('')),
+  email: z.email('Nieprawidłowy adres email'),
+  password: z.string().nonempty('Hasło nie może być puste'),
 });
 
 const errorMessages = {
@@ -40,15 +40,12 @@ function LoginPage() {
       email: '',
       password: '',
     },
+    validationLogic: revalidateLogic({ mode: 'change', modeAfterSubmission: 'change' }),
     validators: {
-      onChange: validationSchema,
+      onDynamic: validationSchema,
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('login', 'valid', formApi.state);
-
-      if (!value.email || !value.password) {
-        throw new Error('Not all fields are filled despite validation');
-      }
 
       setSignInResult(undefined);
       const result = await userContext?.signIn(value.email, value.password);
@@ -86,8 +83,9 @@ function LoginPage() {
                 name={field.name}
                 value={field.state.value}
                 type="email"
+                onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 label="E-mail"
                 data-testid="login-email-input"
               />
@@ -101,8 +99,9 @@ function LoginPage() {
                 name={field.name}
                 value={field.state.value}
                 type="password"
+                onBlur={field.handleBlur}
                 onChange={field.handleChange}
-                errors={getErrors(field.state.meta)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 label="Hasło"
                 data-testid="login-password-input"
               />

@@ -2,20 +2,20 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
-import { useFormB } from '@/contexts/applications/FormBContext';
+import { getErrors } from '@/integrations/tanstack/form/errors';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
+import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { PermissionValues } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
 
-export function AdditionalPermissionsSection() {
-  const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
+export function AdditionalPermissionsSection({ context }: { context: FormBViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formBDefaultValues });
+  const { isReadonly } = context;
 
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  function getColumns(field: any): ColumnDef<PermissionValues>[] {
+  function getColumns(removeRow: (index: number) => void): ColumnDef<PermissionValues>[] {
     return [
       {
         header: 'Lp.',
@@ -28,17 +28,12 @@ export function AdditionalPermissionsSection() {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`permissions[${row.index}].description`}
             children={(field) => (
-              <AppInput
+              <field.TextField
                 data-testid="permission-description-input"
                 data-testid-errors="permission-description-errors"
-                name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 containerClassName="mx-4"
                 disabled={isReadonly}
               />
@@ -53,17 +48,12 @@ export function AdditionalPermissionsSection() {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`permissions[${row.index}].executive`}
             children={(field) => (
-              <AppInput
+              <field.TextField
                 data-testid="permission-executive-input"
                 data-testid-errors="permission-executive-errors"
-                name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
                 disabled={isReadonly}
               />
@@ -87,18 +77,13 @@ export function AdditionalPermissionsSection() {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`permissions[${row.index}].scan`}
             children={(field) => (
-              <AppFileInput
+              <field.FileField
                 data-testid-button="permission-scan-button"
                 data-testid-errors="permission-scan-errors"
-                name={field.name}
-                value={field.state.value}
                 acceptedMimeTypes={['application/pdf']}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 disabled={isReadonly}
               />
             )}
@@ -110,14 +95,7 @@ export function AdditionalPermissionsSection() {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
-              onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev: PermissionValues[]) => prev);
-                field.handleBlur();
-              }}
-              disabled={isReadonly}
-            />
+            <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
           </div>
         ),
         size: 5,
@@ -131,13 +109,16 @@ export function AdditionalPermissionsSection() {
       expandedByDefault
       data-testid="form-b-additional-permissions-section"
     >
-      <form.Field
+      <form.AppField
         name="permissions"
         mode="array"
         children={(field) => (
           <>
             <AppTable
-              columns={getColumns(field)}
+              columns={getColumns((index) => {
+                field.removeValue(index);
+                field.handleBlur();
+              })}
               data={field.state.value}
               buttons={() => [
                 <AppButton
@@ -145,7 +126,6 @@ export function AdditionalPermissionsSection() {
                   data-testid="form-b-add-permission-btn"
                   onClick={() => {
                     field.pushValue({ description: '', executive: '' });
-                    field.handleChange((prev: PermissionValues[]) => prev);
                     field.handleBlur();
                   }}
                   disabled={isReadonly}
@@ -156,9 +136,9 @@ export function AdditionalPermissionsSection() {
               emptyTableMessage="Nie dodano żadnego pozwolenia."
               variant="form"
               disabled={isReadonly}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
-            <AppInputErrorsList errors={getErrors(field.state.meta)} />
+            <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
           </>
         )}
       />

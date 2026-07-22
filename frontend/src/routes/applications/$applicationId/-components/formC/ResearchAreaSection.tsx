@@ -1,22 +1,23 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import { getErrors } from '@/integrations/tanstack/form/errors';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { ResearchAreaValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
-import { getResearchAreaName } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaOption';
+import { getResearchAreaName } from '@/api/client/applications/types/ResearchAreaOption';
 
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 
-export function ResearchAreaSection() {
-  const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
+export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { isReadonly, formAInitValues } = context;
 
-  function getColumns(field: AnyFieldApi): ColumnDef<ResearchAreaValues>[] {
+  function getColumns(removeRow: (index: number) => void): ColumnDef<ResearchAreaValues>[] {
     return [
       {
         header: 'Lp.',
@@ -27,11 +28,11 @@ export function ResearchAreaSection() {
         header: 'Rejon prowadzenia badań',
         cell: ({ row }) => (
           <>
-            <form.Field
+            <form.AppField
               name={`researchAreaDescriptions[${row.index}].areaId`}
               children={(field) => <input type="hidden" name={field.name} value="" readOnly />}
             />
-            <form.Field
+            <form.AppField
               listeners={{
                 onChange: () => {
                   form.setFieldValue(`researchAreaDescriptions[${row.index}].areaId`, null);
@@ -39,16 +40,12 @@ export function ResearchAreaSection() {
               }}
               name={`researchAreaDescriptions[${row.index}].differentName`}
               children={(field) => (
-                <AppInput
-                  name={field.name}
+                <field.TextField
                   value={
                     field.state.value ??
                     getResearchAreaName(formAInitValues.researchAreas, row.original.areaId ?? '') ??
                     ''
                   }
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   placeholder="Nazwa rejonu"
                   disabled={isReadonly}
                 />
@@ -61,15 +58,10 @@ export function ResearchAreaSection() {
       {
         header: 'Informacje dodatkowe',
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`researchAreaDescriptions[${row.index}].info`}
             children={(field) => (
-              <AppInput
-                name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              <field.TextField
                 placeholder={isReadonly ? '' : 'np. szczegóły dotyczące celu rejsu'}
                 disabled={isReadonly}
               />
@@ -83,9 +75,7 @@ export function ResearchAreaSection() {
           <div className="flex justify-end">
             <AppTableDeleteRowButton
               onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev: ResearchAreaValues[]) => prev);
-                field.handleBlur();
+                removeRow(row.index);
               }}
               disabled={isReadonly}
             />
@@ -98,13 +88,16 @@ export function ResearchAreaSection() {
 
   return (
     <AppAccordion title="5. Rejony prowadzenia badań" expandedByDefault data-testid="form-c-research-area-section">
-      <form.Field
+      <form.AppField
         name="researchAreaDescriptions"
         mode="array"
         children={(field) => (
           <>
             <AppTable
-              columns={getColumns(field)}
+              columns={getColumns((index) => {
+                field.removeValue(index);
+                field.handleBlur();
+              })}
               data={field.state.value}
               buttons={() => [
                 <DropdownElementSelectorButton
@@ -117,7 +110,6 @@ export function ResearchAreaSection() {
                         differentName: area.id != '' ? null : '',
                         info: '',
                       });
-                      field.handleChange((prev) => prev);
                       field.handleBlur();
                     },
                   }))}
@@ -130,9 +122,9 @@ export function ResearchAreaSection() {
               emptyTableMessage="Nie dodano żadnego rejonu."
               variant="form"
               disabled={isReadonly}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
-            <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+            <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
           </>
         )}
       />

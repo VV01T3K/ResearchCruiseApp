@@ -8,20 +8,18 @@ import {
   getGetApplicationFormBQueryKey,
   getGetApplicationFormCQueryKey,
 } from '@/api/generated/endpoints/applications.gen';
-import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
-import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/types/FormBValues';
-import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
-import { ApiError } from '@/lib/custom-fetch';
+import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import { ApiError } from '@/api/client/custom-fetch';
+import { mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { mapFormBToValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import { mapFormCToValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 
 export function useFormAQuery(applicationId: string) {
   return useSuspenseQuery({
     queryKey: getGetApplicationFormAQueryKey(applicationId),
     queryFn: async () => {
-      const form = (await getApplicationFormA(applicationId)) as FormAValues;
-      form.note ??= '';
-      form.precisePeriodStart ??= '';
-      form.precisePeriodEnd ??= '';
-      return form;
+      return mapFormAToValues(await getApplicationFormA(applicationId));
     },
   });
 }
@@ -31,7 +29,7 @@ export function useFormBQuery(applicationId: string) {
     queryKey: getGetApplicationFormBQueryKey(applicationId),
     queryFn: async (): Promise<FormBValues | null> => {
       try {
-        return (await getApplicationFormB(applicationId)) as FormBValues;
+        return mapFormBToValues(await getApplicationFormB(applicationId));
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) return null;
         throw error;
@@ -46,7 +44,7 @@ export function useFormCQuery(applicationId: string) {
     queryKey: getGetApplicationFormCQueryKey(applicationId),
     queryFn: async (): Promise<FormCValues | null> => {
       try {
-        return (await getApplicationFormC(applicationId)) as FormCValues;
+        return mapFormCToValues(await getApplicationFormC(applicationId));
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) return null;
         throw error;

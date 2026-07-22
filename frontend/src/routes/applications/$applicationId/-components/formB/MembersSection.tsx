@@ -3,25 +3,23 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/integrations/tanstack/form/errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
-import { useFormB } from '@/contexts/applications/FormBContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
+import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { CrewMemberValues } from '@/routes/applications/$applicationId/-schemas/types/CrewMemberValues';
 import { GuestTeamValues } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
 import { UgTeamValues } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
 
-export function MembersSection() {
-  const { form, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormB();
+export function MembersSection({ context }: { context: FormBViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formBDefaultValues });
+  const { isReadonly, formAInitValues } = context;
 
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  function getUgTeamsColumns(field: any): ColumnDef<UgTeamValues>[] {
-    const tableField = field;
+  function getUgTeamsColumns(removeRow: (index: number) => void): ColumnDef<UgTeamValues>[] {
     return [
       {
         header: 'Lp.',
@@ -43,20 +41,15 @@ export function MembersSection() {
         enableSorting: false,
         accessorFn: (row) => row.noOfEmployees,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`ugTeams[${row.index}].noOfEmployees`}
             children={(field) => (
-              <AppNumberInput
+              <field.NumberField
                 data-testid="ug-team-employees"
-                name={field.name}
-                value={parseInt(field.state.value)}
                 minimum={0}
                 onChange={(x: number) => {
-                  field.handleChange(x.toString());
-                  tableField.handleChange((prev: UgTeamValues[]) => prev);
+                  field.handleChange(x);
                 }}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
                 disabled={isReadonly}
               />
@@ -71,20 +64,15 @@ export function MembersSection() {
         enableSorting: false,
         accessorFn: (row) => row.noOfStudents,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`ugTeams[${row.index}].noOfStudents`}
             children={(field) => (
-              <AppNumberInput
+              <field.NumberField
                 data-testid="ug-team-students"
-                name={field.name}
-                value={parseInt(field.state.value)}
                 minimum={0}
                 onChange={(x: number) => {
-                  field.handleChange(x.toString());
-                  tableField.handleChange((prev: UgTeamValues[]) => prev);
+                  field.handleChange(x);
                 }}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
                 disabled={isReadonly}
               />
@@ -99,10 +87,7 @@ export function MembersSection() {
           <div className="flex justify-end">
             <AppTableDeleteRowButton
               onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev: UgTeamValues[]) => prev);
-                field.handleBlur();
-                tableField.handleChange((prev: UgTeamValues[]) => prev);
+                removeRow(row.index);
               }}
               disabled={isReadonly}
             />
@@ -113,9 +98,7 @@ export function MembersSection() {
     ];
   }
 
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  function getGuestTeams(field: any): ColumnDef<GuestTeamValues>[] {
-    const tableField = field;
+  function getGuestTeams(removeRow: (index: number) => void): ColumnDef<GuestTeamValues>[] {
     return [
       {
         header: 'Lp.',
@@ -130,17 +113,12 @@ export function MembersSection() {
         enableSorting: false,
         accessorFn: (row) => row.name,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`guestTeams[${row.index}].name`}
             children={(field) => (
-              <AppInput
+              <field.TextField
                 data-testid="guest-team-name-input"
                 data-testid-errors="guest-team-name-errors"
-                name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 containerClassName="mx-4"
                 disabled={isReadonly}
               />
@@ -155,21 +133,16 @@ export function MembersSection() {
         enableSorting: false,
         accessorFn: (row) => row.noOfPersons,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`guestTeams[${row.index}].noOfPersons`}
             children={(field) => (
-              <AppNumberInput
+              <field.NumberField
                 data-testid-input="guest-team-people-input"
                 data-testid-errors="guest-team-people-errors"
-                name={field.name}
-                value={parseInt(field.state.value)}
                 minimum={0}
                 onChange={(x: number) => {
-                  field.handleChange(x.toString());
-                  tableField.handleChange((prev: GuestTeamValues[]) => prev);
+                  field.handleChange(x);
                 }}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
                 disabled={isReadonly}
               />
@@ -184,10 +157,7 @@ export function MembersSection() {
           <div className="flex justify-end">
             <AppTableDeleteRowButton
               onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev: GuestTeamValues[]) => prev);
-                field.handleBlur();
-                tableField.handleChange((prev: GuestTeamValues[]) => prev);
+                removeRow(row.index);
               }}
               disabled={isReadonly}
             />
@@ -198,8 +168,7 @@ export function MembersSection() {
     ];
   }
 
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  function getCrewMembersColumns(field: any): ColumnDef<CrewMemberValues>[] {
+  function getCrewMembersColumns(removeRow: (index: number) => void): ColumnDef<CrewMemberValues>[] {
     return [
       {
         header: 'Lp.',
@@ -215,34 +184,24 @@ export function MembersSection() {
         accessorFn: (row) => `${row.title} ${row.firstName} ${row.lastName}`,
         cell: ({ row }) => (
           <div className="grid grid-cols-5 gap-2">
-            <form.Field
+            <form.AppField
               name={`crewMembers[${row.index}].title`}
               children={(field) => (
-                <AppInput
+                <field.TextField
                   data-testid="crew-member-title-input"
                   data-testid-errors="crew-member-title-errors"
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Tytuł"
                   disabled={isReadonly}
                 />
               )}
             />
 
-            <form.Field
+            <form.AppField
               name={`crewMembers[${row.index}].firstName`}
               children={(field) => (
-                <AppInput
+                <field.TextField
                   data-testid="crew-member-names-input"
                   data-testid-errors="crew-member-names-errors"
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Imiona"
                   containerClassName="col-span-2"
                   disabled={isReadonly}
@@ -250,17 +209,12 @@ export function MembersSection() {
               )}
             />
 
-            <form.Field
+            <form.AppField
               name={`crewMembers[${row.index}].lastName`}
               children={(field) => (
-                <AppInput
+                <field.TextField
                   data-testid="crew-member-surname-input"
                   data-testid-errors="crew-member-surname-errors"
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Nazwisko"
                   containerClassName="col-span-2"
                   disabled={isReadonly}
@@ -277,68 +231,50 @@ export function MembersSection() {
         enableSorting: false,
         cell: ({ row }) => (
           <div className="grid grid-cols-2 gap-2">
-            <form.Field
+            <form.AppField
               name={`crewMembers[${row.index}].birthPlace`}
               children={(field) => (
-                <AppInput
+                <field.TextField
                   data-testid="crew-member-birthplace-input"
                   data-testid-errors="crew-member-birthplace-errors"
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Miejsce urodzenia"
                   disabled={isReadonly}
                 />
               )}
             />
 
-            <form.Field
+            <form.AppField
               name={`crewMembers[${row.index}].birthDate`}
               children={(field) => (
-                <AppDatePickerInput
+                <field.DateField
                   data-testid-button="crew-member-birthdate-button"
                   data-testid-errors="crew-member-birthdate-errors"
-                  name={field.name}
-                  value={field.state.value as string}
                   onChange={(e) => field.handleChange(e ?? '')}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Data urodzenia"
                   disabled={isReadonly}
                 />
               )}
             />
 
-            <form.Field
+            <form.AppField
               name={`crewMembers[${row.index}].documentNumber`}
               children={(field) => (
-                <AppInput
+                <field.TextField
                   data-testid="crew-member-document-id-input"
                   data-testid-errors="crew-member-document-id-errors"
-                  name={field.name}
-                  value={field.state.value as string}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Numer ID dokumentu"
                   disabled={isReadonly}
                 />
               )}
             />
 
-            <form.Field
+            <form.AppField
               name={`crewMembers[${row.index}].documentExpiryDate`}
               children={(field) => (
-                <AppDatePickerInput
+                <field.DateField
                   data-testid-button="crew-member-document-expiry-button"
                   data-testid-errors="crew-member-document-expiry-errors"
-                  name={field.name}
-                  value={field.state.value as string}
                   onChange={(e) => field.handleChange(e ?? '')}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   label="Data ważności dokumentu"
                   disabled={isReadonly}
                 />
@@ -354,17 +290,12 @@ export function MembersSection() {
         enableSorting: false,
         accessorFn: (row) => row.institution,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`crewMembers[${row.index}].institution`}
             children={(field) => (
-              <AppInput
+              <field.TextField
                 data-testid="crew-member-institution-input"
                 data-testid-errors="crew-member-institution-errors"
-                name={field.name}
-                value={field.state.value as string}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 placeholder="Wprowadź nazwę jednostki"
                 disabled={isReadonly}
               />
@@ -377,15 +308,7 @@ export function MembersSection() {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
-              onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev: CrewMemberValues[]) => prev);
-                field.handleBlur();
-              }}
-              disabled={isReadonly}
-            />
-            ,
+            <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />,
           </div>
         ),
         size: 5,
@@ -401,13 +324,16 @@ export function MembersSection() {
     >
       <AppAlert>Rejs do 12 godzin w porze dziennej - 33 osoby, powyżej 12 godzin - 16 osób</AppAlert>
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
-        <form.Field
+        <form.AppField
           name="ugTeams"
           mode="array"
           children={(field) => (
             <div>
               <AppTable
-                columns={getUgTeamsColumns(field)}
+                columns={getUgTeamsColumns((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 buttons={() => [
                   <DropdownElementSelectorButton
@@ -419,10 +345,9 @@ export function MembersSection() {
                       onClick: () => {
                         field.pushValue({
                           ugUnitId: unit.id,
-                          noOfEmployees: '0',
-                          noOfStudents: '0',
+                          noOfEmployees: 0,
+                          noOfStudents: 0,
                         });
-                        field.handleChange((prev: UgTeamValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -435,22 +360,25 @@ export function MembersSection() {
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
               <AppInputErrorsList
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-b-ug-teams-errors"
               />
             </div>
           )}
         />
-        <form.Field
+        <form.AppField
           name="guestTeams"
           mode="array"
           children={(field) => (
             <div>
               <AppTable
-                columns={getGuestTeams(field)}
+                columns={getGuestTeams((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 buttons={() => [
                   <AppButton
@@ -458,8 +386,7 @@ export function MembersSection() {
                     variant="primary"
                     data-testid="form-b-add-guest-team-btn"
                     onClick={() => {
-                      field.pushValue({ name: '', noOfPersons: '0' });
-                      field.handleChange((prev: GuestTeamValues[]) => prev);
+                      field.pushValue({ name: '', noOfPersons: 0 });
                       field.handleBlur();
                     }}
                     className="flex items-center gap-4"
@@ -473,8 +400,7 @@ export function MembersSection() {
                     options={formAInitValues.historicalGuestInstitutions.map((institution) => ({
                       value: institution,
                       onClick: () => {
-                        field.pushValue({ name: institution, noOfPersons: '0' });
-                        field.handleChange((prev: GuestTeamValues[]) => prev);
+                        field.pushValue({ name: institution, noOfPersons: 0 });
                         field.handleBlur();
                       },
                     }))}
@@ -487,23 +413,26 @@ export function MembersSection() {
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
               <AppInputErrorsList
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-b-guest-teams-errors"
               />
             </div>
           )}
         />
       </div>
-      <form.Field
+      <form.AppField
         name="crewMembers"
         mode="array"
         children={(field) => (
           <>
             <AppTable
-              columns={getCrewMembersColumns(field)}
+              columns={getCrewMembersColumns((index) => {
+                field.removeValue(index);
+                field.handleBlur();
+              })}
               data={field.state.value}
               buttons={() => [
                 <AppButton
@@ -520,7 +449,6 @@ export function MembersSection() {
                       documentExpiryDate: '',
                       institution: '',
                     });
-                    field.handleChange((prev: CrewMemberValues[]) => prev);
                     field.handleBlur();
                   }}
                   disabled={isReadonly}
@@ -531,9 +459,12 @@ export function MembersSection() {
               emptyTableMessage="Nie dodano żadnego członka załogi."
               variant="form"
               disabled={isReadonly}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
-            <AppInputErrorsList errors={getErrors(field.state.meta)} data-testid="form-b-crew-members-errors" />
+            <AppInputErrorsList
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+              data-testid="form-b-crew-members-errors"
+            />
           </>
         )}
       />

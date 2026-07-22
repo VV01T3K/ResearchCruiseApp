@@ -8,10 +8,10 @@ import React from 'react';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
-import { Role } from '@/types/user';
-import { User } from '@/types/user';
+import { Role } from '@/api/client/user';
+import { User } from '@/api/client/user';
 import { useAcceptUser, useDeactivateUser, useDeleteUser } from '@/api/generated/endpoints/users.gen';
-import { getProblemDetail } from '@/lib/custom-fetch';
+import { getProblemDetail } from '@/api/client/custom-fetch';
 
 type Props = {
   selectedUsers: User[];

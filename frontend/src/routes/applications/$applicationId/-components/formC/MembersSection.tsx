@@ -1,26 +1,26 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/integrations/tanstack/form/errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { CrewMemberValues } from '@/routes/applications/$applicationId/-schemas/types/CrewMemberValues';
 import { GuestTeamValues } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
 import { UgTeamValues } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
 
-export function MembersSection() {
-  const { form, formB, isReadonly, formAInitValues, hasFormBeenSubmitted } = useFormC();
+export function MembersSection({ context }: { context: FormCViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { formB, isReadonly, formAInitValues } = context;
 
-  function getUgTeamsColumns(field: AnyFieldApi): ColumnDef<UgTeamValues>[] {
-    const tableField = field;
+  function getUgTeamsColumns(removeRow: (index: number) => void): ColumnDef<UgTeamValues>[] {
     return [
       {
         header: 'Lp.',
@@ -42,19 +42,14 @@ export function MembersSection() {
         enableSorting: false,
         accessorFn: (row) => row.noOfEmployees,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`ugTeams[${row.index}].noOfEmployees`}
             children={(field) => (
-              <AppNumberInput
-                name={field.name}
-                value={parseInt(field.state.value)}
+              <field.NumberField
                 minimum={0}
                 onChange={(x: number) => {
-                  field.handleChange(x.toString());
-                  tableField.handleChange((prev: UgTeamValues[]) => prev);
+                  field.handleChange(x);
                 }}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
                 disabled={isReadonly}
               />
@@ -69,19 +64,14 @@ export function MembersSection() {
         enableSorting: false,
         accessorFn: (row) => row.noOfStudents,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`ugTeams[${row.index}].noOfStudents`}
             children={(field) => (
-              <AppNumberInput
-                name={field.name}
-                value={parseInt(field.state.value)}
+              <field.NumberField
                 minimum={0}
                 onChange={(x: number) => {
-                  field.handleChange(x.toString());
-                  tableField.handleChange((prev: UgTeamValues[]) => prev);
+                  field.handleChange(x);
                 }}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
                 disabled={isReadonly}
               />
@@ -96,10 +86,7 @@ export function MembersSection() {
           <div className="flex justify-end">
             <AppTableDeleteRowButton
               onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev: UgTeamValues[]) => prev);
-                field.handleBlur();
-                tableField.handleChange((prev: UgTeamValues[]) => prev);
+                removeRow(row.index);
               }}
               disabled={isReadonly}
             />
@@ -110,8 +97,7 @@ export function MembersSection() {
     ];
   }
 
-  function getGuestTeams(field: AnyFieldApi): ColumnDef<GuestTeamValues>[] {
-    const tableField = field;
+  function getGuestTeams(removeRow: (index: number) => void): ColumnDef<GuestTeamValues>[] {
     return [
       {
         header: 'Lp.',
@@ -126,19 +112,9 @@ export function MembersSection() {
         enableSorting: false,
         accessorFn: (row) => row.name,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`guestTeams[${row.index}].name`}
-            children={(field) => (
-              <AppInput
-                name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                containerClassName="mx-4"
-                disabled={isReadonly}
-              />
-            )}
+            children={(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
           />
         ),
         size: 60,
@@ -149,19 +125,14 @@ export function MembersSection() {
         enableSorting: false,
         accessorFn: (row) => row.noOfPersons,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`guestTeams[${row.index}].noOfPersons`}
             children={(field) => (
-              <AppNumberInput
-                name={field.name}
-                value={parseInt(field.state.value)}
+              <field.NumberField
                 minimum={0}
                 onChange={(x: number) => {
-                  field.handleChange(x.toString());
-                  tableField.handleChange((prev: GuestTeamValues[]) => prev);
+                  field.handleChange(x);
                 }}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 className="mx-4"
                 disabled={isReadonly}
               />
@@ -176,10 +147,7 @@ export function MembersSection() {
           <div className="flex justify-end">
             <AppTableDeleteRowButton
               onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev: GuestTeamValues[]) => prev);
-                field.handleBlur();
-                tableField.handleChange((prev: GuestTeamValues[]) => prev);
+                removeRow(row.index);
               }}
               disabled={isReadonly}
             />
@@ -266,13 +234,16 @@ export function MembersSection() {
       data-testid="form-c-members-section"
     >
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
-        <form.Field
+        <form.AppField
           name="ugTeams"
           mode="array"
           children={(field) => (
             <div>
               <AppTable
-                columns={getUgTeamsColumns(field)}
+                columns={getUgTeamsColumns((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 buttons={() => [
                   <DropdownElementSelectorButton
@@ -283,10 +254,9 @@ export function MembersSection() {
                       onClick: () => {
                         field.pushValue({
                           ugUnitId: unit.id,
-                          noOfEmployees: '0',
-                          noOfStudents: '0',
+                          noOfEmployees: 0,
+                          noOfStudents: 0,
                         });
-                        field.handleChange((prev) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -299,27 +269,29 @@ export function MembersSection() {
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         />
-        <form.Field
+        <form.AppField
           name="guestTeams"
           mode="array"
           children={(field) => (
             <div>
               <AppTable
-                columns={getGuestTeams(field)}
+                columns={getGuestTeams((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 buttons={() => [
                   <AppButton
                     key="new"
                     variant="primary"
                     onClick={() => {
-                      field.pushValue({ name: '', noOfPersons: '0' });
-                      field.handleChange((prev) => prev);
+                      field.pushValue({ name: '', noOfPersons: 0 });
                       field.handleBlur();
                     }}
                     className="flex items-center gap-4"
@@ -332,8 +304,7 @@ export function MembersSection() {
                     options={formAInitValues.historicalGuestInstitutions.map((institution) => ({
                       value: institution,
                       onClick: () => {
-                        field.pushValue({ name: institution, noOfPersons: '0' });
-                        field.handleChange((prev) => prev);
+                        field.pushValue({ name: institution, noOfPersons: 0 });
                         field.handleBlur();
                       },
                     }))}
@@ -346,9 +317,9 @@ export function MembersSection() {
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, hasFormBeenSubmitted)} />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         />

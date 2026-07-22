@@ -4,7 +4,7 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { ApplicationStatus, getApplicationStatusLabel } from '@/routes/applications/-types';
+import { ApplicationStatus, getApplicationStatusLabel } from '@/api/client/applications/models';
 
 export function InformationSection() {
   const { application } = useApplicationDetails();
