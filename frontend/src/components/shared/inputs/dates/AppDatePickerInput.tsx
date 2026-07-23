@@ -1,7 +1,7 @@
-import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
-import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
-import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import { CalendarDays as CalendarEventIcon } from 'lucide-react';
+import { ChevronLeft as ChevronLeftIcon } from 'lucide-react';
+import { ChevronRight as ChevronRightIcon } from 'lucide-react';
+import { X as XLgIcon } from 'lucide-react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { AnimatePresence, motion } from 'motion/react';

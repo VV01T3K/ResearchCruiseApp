@@ -1,5 +1,5 @@
-import DashLgIcon from 'bootstrap-icons/icons/dash-lg.svg?react';
-import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
+import { Minus as DashLgIcon } from 'lucide-react';
+import { Plus as PlusLgIcon } from 'lucide-react';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';

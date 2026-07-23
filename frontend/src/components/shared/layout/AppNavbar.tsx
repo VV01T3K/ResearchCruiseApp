@@ -1,8 +1,8 @@
-import UGLogoIcon from '@/assets/uglogo.svg?react';
+import UGLogoUrl from '@/assets/uglogo.svg?url';
 import { useNavigate } from '@tanstack/react-router';
-import BoxArrowRightIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
-import BroadcastIcon from 'bootstrap-icons/icons/broadcast.svg?react';
-import EnvelopeIcon from 'bootstrap-icons/icons/envelope.svg?react';
+import { LogOut as BoxArrowRightIcon } from 'lucide-react';
+import { Radio as BroadcastIcon } from 'lucide-react';
+import { Mail as EnvelopeIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import packageJson from '../../../../package.json';
 
@@ -50,9 +50,9 @@ export function AppNavbar() {
         </motion.div>
       </div>
       <div className="flex gap-6">
-        <motion.div className="w-4" whileHover={{ scale: 1.3 }}>
+        <motion.div className="size-4" whileHover={{ scale: 1.3 }}>
           <AppLink href="https://ug.edu.pl" target="_blank" title="Uniwersytet Gdański" className="text-white">
-            <UGLogoIcon />
+            <img src={UGLogoUrl} alt="Uniwersytet Gdański" className="size-full object-contain" />
           </AppLink>
         </motion.div>
         <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>

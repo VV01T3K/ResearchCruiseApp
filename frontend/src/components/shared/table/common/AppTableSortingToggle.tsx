@@ -1,7 +1,7 @@
 import { Header } from '@tanstack/react-table';
-import SortDownIcon from 'bootstrap-icons/icons/sort-down.svg?react';
-import SortUpIcon from 'bootstrap-icons/icons/sort-up.svg?react';
-import XIcon from 'bootstrap-icons/icons/x.svg?react';
+import { ArrowDownAZ as SortDownIcon } from 'lucide-react';
+import { ArrowUpAZ as SortUpIcon } from 'lucide-react';
+import { X as XIcon } from 'lucide-react';
 
 export function AppTableSortingToggle<TData>({ header }: { header: Header<TData, unknown> }) {
   if (!header.column.getCanSort()) {

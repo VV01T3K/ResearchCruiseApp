@@ -1,5 +1,5 @@
-import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
-import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
+import { ChevronLeft as ChevronLeftIcon } from 'lucide-react';
+import { ChevronRight as ChevronRightIcon } from 'lucide-react';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';

@@ -1,4 +1,4 @@
-import SearchIcon from 'bootstrap-icons/icons/search.svg?react';
+import { Search as SearchIcon } from 'lucide-react';
 import dayjs from 'dayjs';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -31,7 +31,7 @@ export function CruiseInfoSection() {
         </div>
         <div className="grid place-items-center">
           <AppButton type="link" href={`/cruises/${cruise.id}`} variant="primaryOutline" className="grid gap-4 py-3">
-            <SearchIcon className="w-4" /> Pokaż szczegóły rejsu
+            <SearchIcon className="size-4" /> Pokaż szczegóły rejsu
           </AppButton>
         </div>
       </div>

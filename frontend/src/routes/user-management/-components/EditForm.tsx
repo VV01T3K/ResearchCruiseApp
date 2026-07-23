@@ -1,11 +1,11 @@
 import { useForm } from '@tanstack/react-form';
-import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
-import ExclamationTriangleFill from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
-import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
-import PersonFillCheckIcon from 'bootstrap-icons/icons/person-fill-check.svg?react';
-import PersonFillSlashIcon from 'bootstrap-icons/icons/person-fill-slash.svg?react';
-import PersonAddIcon from 'bootstrap-icons/icons/person-plus.svg?react';
-import TrashFillIcon from 'bootstrap-icons/icons/trash-fill.svg?react';
+import { Mail as EnvelopeFillIcon } from 'lucide-react';
+import { TriangleAlert as ExclamationTriangleFill } from 'lucide-react';
+import { Save as FloppyFillIcon } from 'lucide-react';
+import { UserRoundCheck as PersonFillCheckIcon } from 'lucide-react';
+import { UserRoundX as PersonFillSlashIcon } from 'lucide-react';
+import { UserRoundPlus as PersonAddIcon } from 'lucide-react';
+import { Trash2 as TrashFillIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 import { z } from 'zod';

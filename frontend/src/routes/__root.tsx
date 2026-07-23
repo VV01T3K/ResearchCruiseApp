@@ -5,8 +5,8 @@ import {
   useRouter,
   useRouterState,
 } from '@tanstack/react-router';
-import EmojiNeutralIcon from 'bootstrap-icons/icons/emoji-neutral.svg?react';
-import EmojiSmileUpsideDownIcon from 'bootstrap-icons/icons/emoji-smile-upside-down.svg?react';
+import { Meh as EmojiNeutralIcon } from 'lucide-react';
+import { Annoyed as EmojiSmileUpsideDownIcon } from 'lucide-react';
 
 import { UserContextType } from '@/providers/UserContext';
 import config from '@/config';

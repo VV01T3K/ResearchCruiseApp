@@ -1,8 +1,8 @@
 import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import { Check as CheckLgIcon } from 'lucide-react';
+import { X as XLgIcon } from 'lucide-react';
 import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
