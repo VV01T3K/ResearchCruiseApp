@@ -1,5 +1,5 @@
 /* eslint-disable @eslint-react/no-array-index-key */
-import dayjs from 'dayjs';
+import { formatDate } from '@/lib/dateUtils';
 import { Fragment, RefObject } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -40,7 +40,7 @@ export function PrintTemplate({ ref }: Props) {
           <span>{cruise.number}</span>
           <span>Terminy rozpoczęcia i zakończenia: </span>
           <span>
-            {dayjs(cruise.startDate).format('DD.MM.YYYY HH:mm')} - {dayjs(cruise.endDate).format('DD.MM.YYYY HH:mm')}
+            {formatDate(cruise.startDate, 'dateTime')} - {formatDate(cruise.endDate, 'dateTime')}
           </span>
         </div>
       </PrintingPageSection>
@@ -228,7 +228,7 @@ export function PrintTemplate({ ref }: Props) {
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Data urodzenia:</span>
-                  <span>{dayjs(x.birthDate).format('DD.MM.YYYY')}</span>
+                  <span>{formatDate(x.birthDate, 'date')}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Numer ID dokumentu:</span>
@@ -236,7 +236,7 @@ export function PrintTemplate({ ref }: Props) {
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Data ważności dokumentu:</span>
-                  <span>{dayjs(x.documentExpiryDate).format('DD.MM.YYYY')}</span>
+                  <span>{formatDate(x.documentExpiryDate, 'date')}</span>
                 </div>
               </div>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>{x.institution}</div>
@@ -314,10 +314,10 @@ export function PrintTemplate({ ref }: Props) {
               <Fragment key={i}>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
-                  {dayjs(x.startDate).format('DD.MM.YYYY')}
+                  {formatDate(x.startDate, 'date')}
                 </div>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
-                  {dayjs(x.endDate).format('DD.MM.YYYY')}
+                  {formatDate(x.endDate, 'date')}
                 </div>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>{x.name}</div>
               </Fragment>
@@ -356,10 +356,10 @@ export function PrintTemplate({ ref }: Props) {
               <Fragment key={i}>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
-                  {dayjs(x.startTime).format('DD.MM.YYYY HH:mm')}
+                  {formatDate(x.startTime, 'dateTime')}
                 </div>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
-                  {dayjs(x.endTime).format('DD.MM.YYYY HH:mm')}
+                  {formatDate(x.endTime, 'dateTime')}
                 </div>
                 <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-4 grid place-items-center')}>{x.name}</div>
               </Fragment>
@@ -400,9 +400,9 @@ export function PrintTemplate({ ref }: Props) {
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-1 grid place-items-center')}>{i + 1}.</div>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>{x.name}</div>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid place-items-center')}>
-                {x.insuranceStartDate ? dayjs(x.insuranceStartDate).format('DD.MM.YYYY') : ''}
+                {x.insuranceStartDate ? formatDate(x.insuranceStartDate, 'date') : ''}
                 {x.insuranceStartDate || x.insuranceEndDate ? ' - ' : ''}
-                {x.insuranceEndDate ? dayjs(x.insuranceEndDate).format('DD.MM.YYYY') : ''}
+                {x.insuranceEndDate ? formatDate(x.insuranceEndDate, 'date') : ''}
                 {!x.insuranceStartDate && !x.insuranceEndDate ? 'Nie zgłoszono' : ''}
               </div>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>

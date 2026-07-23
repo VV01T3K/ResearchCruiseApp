@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import { formatDate } from '@/lib/dateUtils';
 
 import { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
@@ -10,7 +10,7 @@ export function ProjectResearchTaskThumbnail({ task }: Props) {
     <div className="flex justify-center gap-2">
       <span>Tytuł: {task.title}</span>•
       <span>
-        {dayjs(task.startDate).format('MM.YYYY')} - {dayjs(task.endDate).format('MM.YYYY')}
+        {formatDate(task.startDate, 'monthYear')} - {formatDate(task.endDate, 'monthYear')}
       </span>
       •<span>Kwota: {task.financingAmount} zł</span>
     </div>

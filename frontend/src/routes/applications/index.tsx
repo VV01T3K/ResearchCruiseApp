@@ -2,7 +2,6 @@ import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { ColumnDef } from '@tanstack/react-table';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
-import dayjs from 'dayjs';
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
@@ -11,6 +10,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
+import { formatDate } from '@/lib/dateUtils';
 import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
 import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/routes/applications/-types';
 
@@ -18,8 +18,6 @@ export const Route = createFileRoute('/applications/')({
   component: ApplicationsPage,
   beforeLoad: allowOnly.authenticated(),
 });
-
-const dateFormat = 'DD.MM.YYYY';
 
 function ApplicationsPage() {
   const applicationsQuery = useGetApplicationsSuspense();
@@ -54,8 +52,8 @@ function ApplicationsPage() {
         if (start && end) {
           return (
             <div className="text-sm">
-              <div>od: {dayjs(start).format(dateFormat)}</div>
-              <div>do: {dayjs(end).format(dateFormat)}</div>
+              <div>od: {formatDate(start, 'date')}</div>
+              <div>do: {formatDate(end, 'date')}</div>
             </div>
           );
         }
@@ -71,8 +69,8 @@ function ApplicationsPage() {
         if (row.original.startDate && row.original.endDate) {
           return (
             <div className="text-sm">
-              <div>od: {dayjs(row.original.startDate).format(dateFormat)}</div>
-              <div>do: {dayjs(row.original.endDate).format(dateFormat)}</div>
+              <div>od: {formatDate(row.original.startDate, 'date')}</div>
+              <div>do: {formatDate(row.original.endDate, 'date')}</div>
             </div>
           );
         }

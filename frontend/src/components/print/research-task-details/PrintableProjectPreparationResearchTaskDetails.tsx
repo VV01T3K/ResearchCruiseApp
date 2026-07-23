@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import { formatDate } from '@/lib/dateUtils';
 
 import { ProjectPreparationResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
@@ -14,7 +14,7 @@ export function PrintableProjectPreparationResearchTaskDetails({ data }: Props) 
       </div>
       <div className="flex items-center justify-between">
         <span>Przewidywany termin składania: </span>
-        <span>{dayjs(data.date).format('DD.MM.YYYY')}</span>
+        <span>{formatDate(data.date, 'date')}</span>
       </div>
       <div className="flex items-center justify-between">
         <span>Otrzymano decyzję o finansowaniu?: </span>
