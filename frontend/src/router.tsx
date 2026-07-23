@@ -1,4 +1,6 @@
-import BackgroundImageUrl from '@/assets/background.jpg';
+import BackgroundImageUrl from '@/assets/background.avif';
+import BackgroundFallbackUrl from '@/assets/background.webp';
+import BackgroundPlaceholderUrl from '@/assets/background-placeholder.jpg';
 import { routeTree } from '@/routeTree.gen';
 import { createBrowserHistory, createRouter, RouterProvider } from '@tanstack/react-router';
 import React from 'react';
@@ -34,9 +36,13 @@ export function AppRouter() {
   if (!userContext.isReady) {
     return (
       <>
+        <picture className="hidden">
+          <source srcSet={BackgroundImageUrl} type="image/avif" />
+          <img src={BackgroundFallbackUrl} alt="" />
+        </picture>
         <div
           className="fixed -z-50 h-screen w-full bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url('${BackgroundImageUrl}')` }}
+          style={{ backgroundImage: `url('${BackgroundPlaceholderUrl}')` }}
         />
         <div className="fixed -z-50 h-screen w-full" style={{ backdropFilter: 'blur(12px)' }} />
         <AppLoader />
