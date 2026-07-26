@@ -21,7 +21,7 @@ export default function AppBackground() {
     <>
       <div className="fixed -z-50 h-screen w-full overflow-hidden">
         <div
-          className="absolute -inset-1 bg-cover bg-center bg-no-repeat blur-[2px]"
+          className="absolute -inset-5 bg-cover bg-center bg-no-repeat blur-[10px]"
           style={{ backgroundImage: `url('${BackgroundPlaceholderUrl}')` }}
         />
         <picture className="relative block h-full w-full">
