@@ -57,7 +57,6 @@ export function AccountSettingsCard({ className }: { className?: string }) {
       description="Zmień ustawienia swojego konta"
       href="/account-settings"
       Icon={Settings}
-      iconClassName="fill-current [&>circle]:fill-white"
       className={className}
     />
   );
