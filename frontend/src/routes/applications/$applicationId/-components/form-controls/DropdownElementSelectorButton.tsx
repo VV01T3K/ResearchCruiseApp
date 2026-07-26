@@ -36,6 +36,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
       <Popover.Trigger
         render={
           <button
+            type="button"
             className={cn(
               'text-white outline-none hover:cursor-pointer disabled:cursor-default',
               variants[variant],

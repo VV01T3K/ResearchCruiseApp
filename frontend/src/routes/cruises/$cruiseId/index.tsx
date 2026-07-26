@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { useForm } from '@tanstack/react-form';
+import { revalidateLogic } from '@tanstack/react-form';
 import { useQueryClient } from '@tanstack/react-query';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
@@ -13,11 +13,13 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
-import { getFormErrorMessage, navigateToFirstError } from '@/lib/utils';
+import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
-import { ApplicationResponse, ApplicationStatus } from '@/routes/applications/-types';
+import { mapApplicationToCruiseCandidate } from '@/api/client/applications/cruise-candidates';
+import { ApplicationResponse, ApplicationStatus } from '@/api/client/applications/models';
 import { FormView } from '../-components/FormView';
-import { getCruiseFormSchema, type CruiseFormValues } from '@/routes/cruises/-schemas/form.schema';
+import { UpdateCruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 import {
   getGetCruiseQueryKey,
   getGetCruisesQueryKey,
@@ -29,7 +31,6 @@ import {
   useUpdateCruise,
 } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
-import type { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
 
 export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,
@@ -37,12 +38,13 @@ export const Route = createFileRoute('/cruises/$cruiseId/')({
 });
 
 const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
-  startDate: 1,
-  endDate: 1,
-  'managersTeam.mainCruiseManagerId': 2,
-  'managersTeam.mainDeputyManagerId': 2,
-  cruiseApplicationsIds: 3,
-  title: 4,
+  title: 1,
+  shipUnavailable: 1,
+  startDate: 2,
+  endDate: 2,
+  'managersTeam.mainCruiseManagerId': 3,
+  'managersTeam.mainDeputyManagerId': 3,
+  cruiseApplicationsIds: 4,
 };
 
 function CruiseDetailsPage() {
@@ -73,36 +75,26 @@ function CruiseDetailsPage() {
   const [isConfirmEndModalOpen, setIsConfirmEndModalOpen] = React.useState(false);
   const [isConfirmRevertModalOpen, setIsConfirmRevertModalOpen] = React.useState(false);
 
-  const form = useForm({
-    defaultValues: mapCruiseToForm(cruiseQuery.data) as CruiseFormValues,
-    validators: {
-      onChange: getCruiseFormSchema(),
+  const form = useAppForm({
+    defaultValues: mapCruiseToValues(cruiseQuery.data),
+    validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
+    validators: { onDynamic: UpdateCruiseFormSchema },
+    onSubmitInvalid: ({ formApi }) => {
+      toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
+      navigateToFirstError();
+    },
+    onSubmit: async ({ value }) => {
+      try {
+        await updateCruiseMutation.mutateAsync({ cruiseId, data: UpdateCruiseFormSchema.parse(value) });
+        setEditMode(false);
+        toast.success('Rejs został zaktualizowany pomyślnie.');
+      } catch (error) {
+        console.error(error);
+        toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        navigateToFirstError();
+      }
     },
   });
-
-  function handleCruiseUpdate() {
-    form.validateAllFields('change');
-    if (!form.state.isValid) {
-      toast.error(getFormErrorMessage(form, CRUISE_FIELD_TO_SECTION));
-      navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
-      return;
-    }
-
-    updateCruiseMutation.mutate(
-      { cruiseId, data: getCruiseFormSchema().parse(form.state.values) },
-      {
-        onSuccess: () => {
-          setEditMode(false);
-          toast.success('Rejs został zaktualizowany pomyślnie.');
-        },
-        onError: (error) => {
-          console.error(error);
-          toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError(form, CRUISE_FIELD_TO_SECTION);
-        },
-      }
-    );
-  }
 
   function getButtons() {
     if (editMode) {
@@ -127,7 +119,7 @@ function CruiseDetailsPage() {
             <ArrowClockwiseIcon className="h-4 w-4" />
             Cofnij zmiany
           </AppButton>
-          <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={handleCruiseUpdate}>
+          <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={() => form.handleSubmit()}>
             <FloppyFillIcon className="h-4 w-4" />
             Zapisz rejs
           </AppButton>
@@ -221,21 +213,20 @@ function CruiseDetailsPage() {
         (application) =>
           application.status === ApplicationStatus.Accepted || cruise.applications.some((x) => x.id === application.id)
       )
-      .map(mapApplicationToLegacyCruiseApplication);
+      .map(mapApplicationToCruiseCandidate);
   }
 
   return (
     <>
       <AppLayout title={`Szczegóły rejsu nr. ${cruiseQuery.data?.number}`}>
-        <FormView
-          context={{
-            form,
-            cruise: cruiseQuery.data,
-            cruiseApplications: filterValidCruiseApplications(cruiseQuery.data, applicationQuery.data),
-            isReadonly: !editMode,
-          }}
-          buttons={getButtons()}
-        />
+        <form.AppForm>
+          <FormView
+            cruise={cruiseQuery.data}
+            cruiseApplications={filterValidCruiseApplications(cruiseQuery.data, applicationQuery.data)}
+            isReadonly={!editMode}
+            buttons={getButtons()}
+          />
+        </form.AppForm>
       </AppLayout>
 
       <AppModal
@@ -362,34 +353,4 @@ function CruiseDetailsPage() {
       </AppModal>
     </>
   );
-}
-
-function mapApplicationToLegacyCruiseApplication(application: ApplicationResponse): CruiseApplicationCandidate {
-  return {
-    ...application,
-    status: application.status,
-    cruiseManagerId: application.mainManager.id,
-    cruiseManagerEmail: application.mainManager.email,
-    cruiseManagerFirstName: application.mainManager.firstName,
-    cruiseManagerLastName: application.mainManager.lastName,
-    deputyManagerId: application.deputyManager.id,
-    deputyManagerEmail: application.deputyManager.email,
-    deputyManagerFirstName: application.deputyManager.firstName,
-    deputyManagerLastName: application.deputyManager.lastName,
-    cruiseHours: application.cruiseHours ?? '',
-  };
-}
-
-function mapCruiseToForm(cruise: CruiseResponse): CruiseFormValues {
-  return {
-    startDate: cruise.startDate,
-    endDate: cruise.endDate,
-    managersTeam: {
-      mainCruiseManagerId: cruise.mainManager.id,
-      mainDeputyManagerId: cruise.deputyManager.id,
-    },
-    cruiseApplicationsIds: cruise.applications.map((x) => x.id),
-    title: cruise.title || '',
-    shipUnavailable: cruise.shipUnavailable,
-  };
 }

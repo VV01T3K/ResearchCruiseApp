@@ -40,7 +40,7 @@ async function setupAuthMocks(
   options: { refreshResponse?: { status: number; body?: object }; refreshHangs?: boolean } = {}
 ) {
   await page.route(`${API_URL}/v2/users/me`, (route) => {
-    route.fulfill({
+    return route.fulfill({
       status: 200,
       body: JSON.stringify(getAdminAccountPayload()),
       contentType: 'application/json',
@@ -53,7 +53,7 @@ async function setupAuthMocks(
     });
   } else if (options.refreshResponse) {
     await page.route(`${API_URL}/v2/auth/refresh`, (route) => {
-      route.fulfill({
+      return route.fulfill({
         status: options.refreshResponse!.status,
         body: options.refreshResponse!.body ? JSON.stringify(options.refreshResponse!.body) : undefined,
         contentType: 'application/json',
@@ -139,7 +139,7 @@ test.describe('session expiration and refresh', () => {
       refreshResponse: { status: 200, body: extendedAuth },
     });
     await page.route(`${API_URL}/v2/users`, (route) => {
-      route.fulfill({
+      return route.fulfill({
         status: 200,
         body: JSON.stringify([]),
         contentType: 'application/json',
@@ -181,7 +181,7 @@ test.describe('session expiration and refresh', () => {
       refreshResponse: { status: 200, body: extendedAuth },
     });
     await page.route(`${API_URL}/v2/users`, (route) => {
-      route.fulfill({
+      return route.fulfill({
         status: 200,
         body: JSON.stringify([]),
         contentType: 'application/json',

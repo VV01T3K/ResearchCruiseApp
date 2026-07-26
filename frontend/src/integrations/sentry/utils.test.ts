@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test';
-import { createFormBreadcrumb, parseSampleRate } from './sentryUtils';
+import { createFormBreadcrumb, parseSampleRate } from './utils';
 
 describe('parseSampleRate', () => {
   it.each([

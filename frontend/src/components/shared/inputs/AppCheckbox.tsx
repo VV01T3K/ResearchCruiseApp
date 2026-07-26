@@ -47,6 +47,7 @@ export function AppCheckbox({
           onCheckedChange={(checked) => onChange?.(checked === true)}
           onBlur={onBlur}
           disabled={disabled}
+          aria-invalid={!!errors?.length}
           className={cn(
             'flex items-center justify-center rounded-md border border-gray-300 transition-all duration-300',
             sizes[size],

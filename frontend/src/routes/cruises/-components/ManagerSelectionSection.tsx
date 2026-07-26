@@ -1,35 +1,35 @@
-import { useStore } from '@tanstack/react-form';
+import { useSelector } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
-import { AppDropdownInput, AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
-import { getErrors } from '@/lib/utils';
+import { AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
 import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMappers';
-import { CruiseApplicationCandidate } from '@/routes/applications/$applicationId/-schemas/types/CruiseApplicationCandidate';
-import { UserOption } from '@/routes/applications/$applicationId/-schemas/types/UserOption';
-import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import { CruiseApplicationCandidate } from '@/api/client/applications/types/CruiseApplicationCandidate';
+import { UserOption } from '@/api/client/applications/types/UserOption';
+import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useGetAvailableCruiseManagersSuspense } from '@/api/generated/endpoints/users.gen';
-import type { CruiseManagerResponse } from '@/api/generated/schemas';
+import type { CruiseManagerResponse, CruiseResponse } from '@/api/generated/schemas';
 
-export function ManagerSelectionSection() {
-  const { isReadonly } = useCruiseForm();
+export function ManagerSelectionSection({
+  cruise,
+  cruiseApplications,
+  isReadonly,
+}: {
+  cruise?: CruiseResponse;
+  cruiseApplications: CruiseApplicationCandidate[];
+  isReadonly: boolean;
+}) {
+  const form = useTypedAppFormContext({ defaultValues: cruiseFormDefaultValues });
+  const usersQuery = useGetAvailableCruiseManagersSuspense();
+  const cruiseApplicationsIds = useSelector(form.store, (state) => state.values.cruiseApplicationsIds);
+  const selectedCruiseManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
+  const selectedDeputyManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
 
-  if (isReadonly) {
-    return <ManagerSelectionReadonly />;
-  }
-
-  return <ManagerSelectionEditable />;
-}
-
-function ManagerSelectionReadonly() {
-  const { form, cruise } = useCruiseForm();
-
-  const selectedCruiseManagerId = useStore(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
-  const selectedDeputyManagerId = useStore(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
-
-  const selectedManagersAsOptions = React.useMemo(() => {
+  const users = React.useMemo(() => {
+    if (!isReadonly) return getAllUsersForDropdown(usersQuery.data ?? [], cruiseApplications, cruiseApplicationsIds);
     const options: AppDropdownInputOption[] = [];
     if (cruise && selectedCruiseManagerId) {
       options.push(
@@ -52,66 +52,39 @@ function ManagerSelectionReadonly() {
       );
     }
     return options;
-  }, [cruise, selectedCruiseManagerId, selectedDeputyManagerId]);
+  }, [
+    cruise,
+    cruiseApplications,
+    cruiseApplicationsIds,
+    isReadonly,
+    selectedCruiseManagerId,
+    selectedDeputyManagerId,
+    usersQuery.data,
+  ]);
 
-  return (
-    <ManagerSelectionLayout
-      users={selectedManagersAsOptions}
-      cruiseManagersNotAssignedToApplication={[]}
-      isReadonly={true}
-      showWarnings={false}
-    />
-  );
-}
-
-function ManagerSelectionEditable() {
-  const { form, cruiseApplications } = useCruiseForm();
-  const usersQuery = useGetAvailableCruiseManagersSuspense();
-
-  const cruiseApplicationsIds = useStore(form.store, (state) => state.values.cruiseApplicationsIds);
-  const selectedCruiseManagerId = useStore(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
-  const selectedDeputyManagerId = useStore(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
-
-  const users = React.useMemo(() => {
-    return getAllUsersForDropdown(usersQuery.data ?? [], cruiseApplications, form.state.values.cruiseApplicationsIds);
-  }, [usersQuery.data, cruiseApplications, form.state.values.cruiseApplicationsIds]);
-
-  const cruiseManagersNotAssignedToApplication = React.useMemo(() => {
-    return getCruiseManagersNotAssignedToApplication(
-      usersQuery.data ?? [],
-      [selectedCruiseManagerId, selectedDeputyManagerId],
+  const cruiseManagersNotAssignedToApplication = React.useMemo(
+    () =>
+      isReadonly
+        ? []
+        : getCruiseManagersNotAssignedToApplication(
+            usersQuery.data ?? [],
+            [selectedCruiseManagerId, selectedDeputyManagerId],
+            cruiseApplications,
+            cruiseApplicationsIds
+          ),
+    [
       cruiseApplications,
-      cruiseApplicationsIds
-    );
-  }, [cruiseApplications, cruiseApplicationsIds, selectedCruiseManagerId, selectedDeputyManagerId, usersQuery.data]);
-
-  return (
-    <ManagerSelectionLayout
-      users={users}
-      cruiseManagersNotAssignedToApplication={cruiseManagersNotAssignedToApplication}
-      isReadonly={false}
-      showWarnings={true}
-    />
+      cruiseApplicationsIds,
+      isReadonly,
+      selectedCruiseManagerId,
+      selectedDeputyManagerId,
+      usersQuery.data,
+    ]
   );
-}
-
-function ManagerSelectionLayout({
-  users,
-  cruiseManagersNotAssignedToApplication,
-  isReadonly,
-  showWarnings,
-}: {
-  users: AppDropdownInputOption[];
-  cruiseManagersNotAssignedToApplication: CruiseManagerResponse[];
-  isReadonly: boolean;
-  showWarnings: boolean;
-}) {
-  const { form, hasFormBeenSubmitted } = useCruiseForm();
-  const cruiseApplicationsIds = useStore(form.store, (state) => state.values.cruiseApplicationsIds);
 
   return (
     <AppAccordion title="3. Kierownik główny i zastępca kierownika głównego" expandedByDefault>
-      {showWarnings && (
+      {!isReadonly && (
         <AnimatePresence initial={cruiseApplicationsIds.length !== 0}>
           {cruiseManagersNotAssignedToApplication.length > 0 && (
             <motion.div
@@ -131,15 +104,10 @@ function ManagerSelectionLayout({
       )}
 
       <div className="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-        <form.Field
+        <form.AppField
           name="managersTeam.mainCruiseManagerId"
           children={(field) => (
-            <AppDropdownInput
-              name={field.name}
-              value={field.state.value}
-              onChange={field.handleChange}
-              onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            <field.SelectField
               allOptions={users}
               label="Kierownik główny"
               placeholder="Wybierz kierownika głównego"
@@ -148,15 +116,10 @@ function ManagerSelectionLayout({
           )}
         />
 
-        <form.Field
+        <form.AppField
           name="managersTeam.mainDeputyManagerId"
           children={(field) => (
-            <AppDropdownInput
-              name={field.name}
-              value={field.state.value}
-              onChange={field.handleChange}
-              onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            <field.SelectField
               allOptions={users}
               label="Zastępca kierownika głównego"
               placeholder="Wybierz zastępcę kierownika głównego"
@@ -196,7 +159,8 @@ function getCruiseManagersNotAssignedToApplication(
         cruiseApplications,
         selectedCruiseApplicationsIds
       );
-    }) as CruiseManagerResponse[];
+    })
+    .filter((user): user is CruiseManagerResponse => user !== undefined);
 }
 
 function getAllUsersForDropdown(

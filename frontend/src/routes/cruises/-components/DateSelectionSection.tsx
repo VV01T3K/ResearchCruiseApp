@@ -1,16 +1,14 @@
-import { useStore } from '@tanstack/react-form';
+import { useSelector } from '@tanstack/react-form';
 import { useState } from 'react';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
-import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import { getErrors } from '@/lib/utils';
-import { useCruiseForm } from '@/contexts/cruises/CruiseFormContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 
-export function DateSelectionSection() {
-  const { form, isReadonly, hasFormBeenSubmitted } = useCruiseForm();
-
-  const cruiseStart = useStore(form.store, (state) => state.values.startDate);
+export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {
+  const form = useTypedAppFormContext({ defaultValues: cruiseFormDefaultValues });
+  const cruiseStart = useSelector(form.store, (state) => state.values.startDate);
   const cruiseStartDate = cruiseStart !== '' ? new Date(cruiseStart) : undefined;
 
   const [allowPastDates, setAllowPastDates] = useState(false);
@@ -21,15 +19,10 @@ export function DateSelectionSection() {
     <AppAccordion title="2. Termin rejsu" expandedByDefault>
       <div className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <form.Field
+          <form.AppField
             name="startDate"
             children={(field) => (
-              <AppDatePickerInput
-                name={field.name}
-                value={field.state.value}
-                onChange={(value) => field.handleChange(value as string)}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              <field.DateField
                 label="Data rozpoczęcia rejsu"
                 placeholder="Wybierz datę rozpoczęcia rejsu"
                 type="datetime"
@@ -40,15 +33,10 @@ export function DateSelectionSection() {
             )}
           />
 
-          <form.Field
+          <form.AppField
             name="endDate"
             children={(field) => (
-              <AppDatePickerInput
-                name={field.name}
-                value={field.state.value}
-                onChange={(value) => field.handleChange(value as string)}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+              <field.DateField
                 label="Data zakończenia rejsu"
                 placeholder="Wybierz datę zakończenia rejsu"
                 type="datetime"

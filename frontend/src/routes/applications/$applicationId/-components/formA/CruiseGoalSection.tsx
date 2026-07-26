@@ -1,25 +1,19 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { getErrors } from '@/lib/utils';
-import { useFormA } from '@/contexts/applications/FormAContext';
-import { CruiseGoal } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
-export function CruiseGoalSection() {
-  const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
+export function CruiseGoalSection({ context }: { context: FormAViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
+  const { isReadonly, initValues } = context;
 
   return (
     <AppAccordion title="5. Cel rejsu" expandedByDefault data-testid="form-a-cruise-goal-section">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <form.Field
+        <form.AppField
           name="cruiseGoal"
           children={(field) => (
-            <AppDropdownInput
-              name="cruiseGoal"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e as CruiseGoal)}
-              onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            <field.SelectField
               label="Cel rejsu"
               allOptions={initValues.cruiseGoals.map((cruiseGoal, index) => ({
                 value: index.toString(),
@@ -36,15 +30,10 @@ export function CruiseGoalSection() {
         <form.Subscribe
           selector={(state) => state.values.cruiseGoal}
           children={(cruiseGoal) => (
-            <form.Field
+            <form.AppField
               name="cruiseGoalDescription"
               children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                <field.TextField
                   label="Opis"
                   placeholder="np. szczegóły dotyczące celu rejsu"
                   disabled={!cruiseGoal || isReadonly}

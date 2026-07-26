@@ -1,11 +1,11 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { getErrors } from '@/lib/utils';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 
-export function AdditionalDescriptionSection() {
-  const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
+export function AdditionalDescriptionSection({ context }: { context: FormCViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { isReadonly } = context;
 
   return (
     <AppAccordion
@@ -17,17 +17,13 @@ export function AdditionalDescriptionSection() {
         Do ewentualnego wykorzystania do celów promocyjnych, na stronie internetowej, FB itp.; można załączyć zdjęcia w
         osobnych plikach
       </header>
-      <form.Field
+      <form.AppField
         name="additionalDescription"
         children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value ?? ''}
+          <field.TextField
             onChange={field.setValue}
-            onBlur={field.handleBlur}
             type="textarea"
             className="h-48"
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             label="Dodatkowy opis"
             placeholder="Dodatkowy opis"
             disabled={isReadonly}
@@ -36,16 +32,11 @@ export function AdditionalDescriptionSection() {
           />
         )}
       />
-      <form.Field
+      <form.AppField
         name="photos"
         children={(field) => (
-          <AppFileInput
-            name="photos"
-            value={field.state.value}
+          <field.FilesField
             label="Załączniki"
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
             allowMultiple
             maxSizeInMb={10}

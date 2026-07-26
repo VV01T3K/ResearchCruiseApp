@@ -1,37 +1,40 @@
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppGuard } from '@/components/shared/AppGuard';
-import { Role } from '@/types/user';
+import { Role } from '@/api/client/user';
 import { ApplicationsSection } from './ApplicationsSection';
 import { BasicInformationSection } from './BasicInformationSection';
 import { DateSelectionSection } from './DateSelectionSection';
 import { ManagerSelectionSection } from './ManagerSelectionSection';
-import { CruiseFormProvider, CruiseFormContextType } from '@/contexts/cruises/CruiseFormContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import { CruiseApplicationCandidate } from '@/api/client/applications/types/CruiseApplicationCandidate';
+import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
+import type { CruiseResponse } from '@/api/generated/schemas';
 
 type Props = {
-  context: CruiseFormContextType;
+  cruise?: CruiseResponse;
+  cruiseApplications: CruiseApplicationCandidate[];
+  isReadonly: boolean;
   buttons: React.ReactNode;
-
-  onSubmit?: () => void;
 };
 
-export function FormView({ context, buttons, onSubmit }: Props) {
+export function FormView({ cruise, cruiseApplications, isReadonly, buttons }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: cruiseFormDefaultValues });
   return (
-    <CruiseFormProvider value={context}>
-      <form
-        className="space-y-8"
-        onSubmit={(evt) => {
-          evt.preventDefault();
-          onSubmit?.();
-        }}
-      >
-        <BasicInformationSection />
-        <DateSelectionSection />
-        <ManagerSelectionSection />
-        <ApplicationsSection />
-        <AppGuard allowedRoles={[Role.ShipOwner, Role.Administrator]}>
-          <AppActionsSection children={buttons} />
-        </AppGuard>
-      </form>
-    </CruiseFormProvider>
+    <form
+      className="space-y-8"
+      onSubmit={(evt) => {
+        evt.preventDefault();
+        evt.stopPropagation();
+        void form.handleSubmit();
+      }}
+    >
+      <BasicInformationSection cruise={cruise} isReadonly={isReadonly} />
+      <DateSelectionSection isReadonly={isReadonly} />
+      <ManagerSelectionSection cruise={cruise} cruiseApplications={cruiseApplications} isReadonly={isReadonly} />
+      <ApplicationsSection cruiseApplications={cruiseApplications} isReadonly={isReadonly} />
+      <AppGuard allowedRoles={[Role.ShipOwner, Role.Administrator]}>
+        <AppActionsSection children={buttons} />
+      </AppGuard>
+    </form>
   );
 }

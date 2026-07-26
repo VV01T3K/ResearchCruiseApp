@@ -1,16 +1,14 @@
-import { useStore } from '@tanstack/react-form';
+import { useSelector } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import { getErrors } from '@/lib/utils';
-import { useFormA } from '@/contexts/applications/FormAContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import { getErrors } from '@/integrations/tanstack/form/errors';
+import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applications/periodUtils';
 import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
@@ -87,15 +85,16 @@ function getOverlappingBlockadesForPeriod(
   );
 }
 
-export function CruiseLengthSection() {
-  const { form, isReadonly, initValues, hasFormBeenSubmitted, blockades } = useFormA();
+export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
+  const { isReadonly, initValues, blockades } = context;
 
-  const year = useStore(form.store, (state) => state.values.year);
-  const periodSelectionType = useStore(form.store, (state) => state.values.periodSelectionType ?? 'period');
-  const acceptablePeriod = useStore(form.store, (state) => state.values.acceptablePeriod);
-  const optimalPeriod = useStore(form.store, (state) => state.values.optimalPeriod);
-  const precisePeriodStart = useStore(form.store, (state) => state.values.precisePeriodStart);
-  const precisePeriodEnd = useStore(form.store, (state) => state.values.precisePeriodEnd);
+  const year = useSelector(form.store, (state) => state.values.year);
+  const periodSelectionType = useSelector(form.store, (state) => state.values.periodSelectionType ?? 'period');
+  const acceptablePeriod = useSelector(form.store, (state) => state.values.acceptablePeriod);
+  const optimalPeriod = useSelector(form.store, (state) => state.values.optimalPeriod);
+  const precisePeriodStart = useSelector(form.store, (state) => state.values.precisePeriodStart);
+  const precisePeriodEnd = useSelector(form.store, (state) => state.values.precisePeriodEnd);
 
   // Initialize checkbox state based on whether saved start date is in the past
   const [allowPastDates, setAllowPastDates] = useState(() => {
@@ -162,8 +161,6 @@ export function CruiseLengthSection() {
       savedPreciseValuesRef.current = { start: precisePeriodStart, end: precisePeriodEnd };
     }
 
-    form.setFieldValue('periodSelectionType', value);
-
     if (value === 'period') {
       const restored = savedPeriodValuesRef.current;
       form.setFieldValue('acceptablePeriod', restored?.acceptable ?? (['0', '24'] as CruisePeriodType));
@@ -190,32 +187,34 @@ export function CruiseLengthSection() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {!isReadonly && (
             <div className="lg:col-span-2">
-              <AppDropdownInput
+              <form.AppField
                 name="periodSelectionType"
-                value={periodSelectionType}
-                onChange={(value) => handlePeriodSelectionChange(value as 'precise' | 'period')}
-                label="Wybierz sposób określenia terminu rejsu"
-                allOptions={[
-                  { value: 'precise', inlineLabel: 'Dokładny termin' },
-                  { value: 'period', inlineLabel: 'Okres dopuszczalny/optymalny' },
-                ]}
-                showRequiredAsterisk
-                data-testid="form-a-period-selection-type"
-                data-testid-button="form-a-period-selection-type-button"
+                children={(field) => (
+                  <field.SelectField
+                    onChange={(value) => {
+                      field.handleChange(value as 'precise' | 'period');
+                      handlePeriodSelectionChange(value as 'precise' | 'period');
+                    }}
+                    label="Wybierz sposób określenia terminu rejsu"
+                    allOptions={[
+                      { value: 'precise', inlineLabel: 'Dokładny termin' },
+                      { value: 'period', inlineLabel: 'Okres dopuszczalny/optymalny' },
+                    ]}
+                    showRequiredAsterisk
+                    data-testid="form-a-period-selection-type"
+                    data-testid-button="form-a-period-selection-type-button"
+                  />
+                )}
               />
             </div>
           )}
           {periodSelectionType === 'precise' && (
             <>
-              <form.Field
+              <form.AppField
                 name="precisePeriodStart"
                 children={(field) => (
-                  <AppDatePickerInput
-                    name={field.name}
-                    value={field.state.value}
+                  <field.DateField
                     onChange={(newValue) => field.handleChange(newValue ?? '')}
-                    onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                     label="Dokładny termin rozpoczęcia rejsu"
                     type="date"
                     showRequiredAsterisk
@@ -228,18 +227,11 @@ export function CruiseLengthSection() {
               <form.Subscribe
                 selector={(state) => state.values.precisePeriodStart}
                 children={(precisePeriodStart) => (
-                  <form.Field
+                  <form.AppField
                     name="precisePeriodEnd"
                     children={(field) => (
-                      <AppDatePickerInput
-                        name={field.name}
-                        value={field.state.value}
-                        onChange={(newValue) => {
-                          field.handleChange(newValue ?? '');
-                          form.validateField('precisePeriodStart', 'change');
-                        }}
-                        onBlur={field.handleBlur}
-                        errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                      <field.DateField
+                        onChange={(newValue) => field.handleChange(newValue ?? '')}
                         label="Dokładny termin zakończenia rejsu"
                         type="date"
                         showRequiredAsterisk
@@ -262,7 +254,7 @@ export function CruiseLengthSection() {
 
           {periodSelectionType === 'period' && (
             <>
-              <form.Field
+              <form.AppField
                 name="acceptablePeriod"
                 children={(field) => (
                   <CruiseApplicationPeriodInput
@@ -270,7 +262,7 @@ export function CruiseLengthSection() {
                     value={field.state.value}
                     onChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                    errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                     label="Dopuszczalny okres, w którym miałby się odbywać rejs"
                     showRequiredAsterisk
                     disabled={isReadonly}
@@ -282,7 +274,7 @@ export function CruiseLengthSection() {
               <form.Subscribe
                 selector={(state) => state.values.acceptablePeriod}
                 children={(acceptablePeriod) => (
-                  <form.Field
+                  <form.AppField
                     name="optimalPeriod"
                     children={(field) => (
                       <CruiseApplicationPeriodInput
@@ -290,7 +282,7 @@ export function CruiseLengthSection() {
                         value={field.state.value}
                         onChange={field.handleChange}
                         onBlur={field.handleBlur}
-                        errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                        errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                         maxValues={acceptablePeriod}
                         label="Optymalny okres, w którym miałby się odbywać rejs"
                         showRequiredAsterisk
@@ -337,72 +329,64 @@ export function CruiseLengthSection() {
           )}
 
           <form.Subscribe
-            selector={(state) => state.values.cruiseHours}
-            children={(cruiseHours) => {
-              return (
-                <form.Field
-                  name="cruiseHours"
-                  children={(field) => (
-                    <AppNumberInput
-                      name={field.name}
-                      value={parseFloat(cruiseHours) / 24}
-                      minimum={0}
-                      maximum={60}
-                      step={1}
-                      type="float"
-                      onChange={(x: number) => field.handleChange((x * 24).toString())}
-                      onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                      label="Liczba planowanych dób rejsowych"
-                      showRequiredAsterisk
-                      disabled={isReadonly}
-                      data-testid="form-a-cruise-days"
-                      data-testid-input="form-a-cruise-days-input"
-                    />
-                  )}
-                />
-              );
-            }}
+            selector={(state) => state.values.cruiseDays * 24 + state.values.cruiseHours}
+            children={(totalCruiseHours) => (
+              <form.AppField
+                name="cruiseDays"
+                children={(field) => (
+                  <field.NumberField
+                    value={totalCruiseHours / 24}
+                    onChange={(days) => {
+                      field.handleChange(Math.floor(days));
+                      form.setFieldValue('cruiseHours', Math.round((days % 1) * 24));
+                    }}
+                    minimum={0}
+                    maximum={60}
+                    step={1}
+                    type="float"
+                    label="Liczba planowanych dób rejsowych"
+                    showRequiredAsterisk
+                    disabled={isReadonly}
+                    data-testid="form-a-cruise-days"
+                    data-testid-input="form-a-cruise-days-input"
+                  />
+                )}
+              />
+            )}
           />
 
           <form.Subscribe
-            selector={(state) => state.values.cruiseHours}
-            children={(cruiseHours) => {
-              return (
-                <form.Field
-                  name="cruiseHours"
-                  children={(field) => (
-                    <AppNumberInput
-                      name={field.name}
-                      value={parseFloat(cruiseHours)}
-                      minimum={0}
-                      maximum={1440}
-                      onChange={(x: number) => field.handleChange(x.toString())}
-                      onBlur={field.handleBlur}
-                      errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                      label="Liczba planowanych godzin rejsowych"
-                      showRequiredAsterisk
-                      disabled={isReadonly}
-                      data-testid="form-a-cruise-hours"
-                      data-testid-input="form-a-cruise-hours-input"
-                      data-testid-errors="form-a-cruise-hours-errors"
-                    />
-                  )}
-                />
-              );
-            }}
+            selector={(state) => state.values.cruiseDays * 24 + state.values.cruiseHours}
+            children={(totalCruiseHours) => (
+              <form.AppField
+                name="cruiseHours"
+                children={(field) => (
+                  <field.NumberField
+                    value={totalCruiseHours}
+                    onChange={(hours) => {
+                      form.setFieldValue('cruiseDays', Math.floor(hours / 24));
+                      field.handleChange(hours % 24);
+                    }}
+                    minimum={0}
+                    maximum={1440}
+                    type="integer"
+                    label="Liczba planowanych godzin rejsowych"
+                    showRequiredAsterisk
+                    disabled={isReadonly}
+                    data-testid="form-a-cruise-hours"
+                    data-testid-input="form-a-cruise-hours-input"
+                    data-testid-errors="form-a-cruise-hours-errors"
+                  />
+                )}
+              />
+            )}
           />
 
-          <form.Field
+          <form.AppField
             name="periodNotes"
             children={(field) => (
               <div className="lg:col-span-2">
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                <field.TextField
                   label="Uwagi dotyczące terminu"
                   placeholder='np. "Rejs w okresie wakacyjnym"'
                   disabled={isReadonly}
@@ -412,16 +396,11 @@ export function CruiseLengthSection() {
             )}
           />
 
-          <form.Field
+          <form.AppField
             name="shipUsage"
             children={(field) => (
               <div className="lg:col-span-2">
-                <AppDropdownInput
-                  name="shipUsage"
-                  value={field.state.value as string}
-                  onChange={(e) => field.handleChange(e as string)}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                <field.SelectField
                   label="Statek na potrzeby badań będzie wykorzystywany"
                   showRequiredAsterisk
                   allOptions={initValues?.shipUsages.map((shipUsage, i) => ({
@@ -447,15 +426,10 @@ export function CruiseLengthSection() {
                       exit={{ opacity: 0, translateY: '-10%' }}
                       transition={{ ease: 'easeOut', duration: 0.2 }}
                     >
-                      <form.Field
+                      <form.AppField
                         name="differentUsage"
                         children={(field) => (
-                          <AppInput
-                            name={field.name}
-                            value={field.state.value}
-                            onChange={field.handleChange}
-                            onBlur={field.handleBlur}
-                            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                          <field.TextField
                             label="Inny sposób użycia"
                             placeholder="np. statek badawczy"
                             showRequiredAsterisk

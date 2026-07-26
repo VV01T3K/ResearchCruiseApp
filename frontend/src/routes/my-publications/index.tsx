@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { Role } from '@/types/user';
+import { Role } from '@/api/client/user';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
 import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
@@ -17,11 +17,7 @@ import {
   useGetCurrentUserPublicationsSuspense,
   useImportCurrentUserPublications,
 } from '@/api/generated/endpoints/users.gen';
-import type { PublicationResponse } from '@/api/generated/schemas';
-import { mapNullsToEmptyStrings } from '@/lib/utils';
-import type { DeepPresent } from '@/types/utils';
-
-type Publication = DeepPresent<PublicationResponse>;
+import { mapPublication, type Publication } from '@/api/client/publications';
 
 export const Route = createFileRoute('/my-publications/')({
   component: MyPublicationsPage,
@@ -33,7 +29,7 @@ function MyPublicationsPage() {
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = React.useState(false);
   const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense({
     query: {
-      select: (publications) => publications.map(mapNullsToEmptyStrings) as Publication[],
+      select: (publications) => publications.map(mapPublication),
     },
   });
   const deleteOwnPublicationMutation = useDeleteCurrentUserPublication();

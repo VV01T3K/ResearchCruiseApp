@@ -1,24 +1,24 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/integrations/tanstack/form/errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
-import { useFormA } from '@/contexts/applications/FormAContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import {
   ContractValues,
   getContractCategoryName,
 } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 
-export function ContractsSection() {
-  const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
+export function ContractsSection({ context }: { context: FormAViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
+  const { isReadonly, initValues } = context;
 
-  function getColumns(field: AnyFieldApi): ColumnDef<ContractValues>[] {
+  function getColumns(removeRow: (index: number) => void): ColumnDef<ContractValues>[] {
     return [
       {
         header: 'Lp.',
@@ -29,7 +29,7 @@ export function ContractsSection() {
         header: 'Kategoria',
         accessorFn: (row) => getContractCategoryName(row.category),
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`contracts[${row.index}].category`}
             children={(field) => getContractCategoryName(field.state.value)}
           />
@@ -41,49 +41,26 @@ export function ContractsSection() {
         accessorFn: (row) => `${row.institutionName}, ${row.institutionUnit}, ${row.institutionLocalization}`,
         cell: ({ row }) => (
           <>
-            <form.Field
+            <form.AppField
               name={`contracts[${row.index}].institutionName`}
               children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                <field.TextField
                   label="Nazwa instytucji"
                   placeholder='np. "Uniwersytet Gdański"'
                   disabled={isReadonly}
                 />
               )}
             />
-            <form.Field
+            <form.AppField
               name={`contracts[${row.index}].institutionUnit`}
               children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  label="Jednostka"
-                  placeholder='np. "Wydział Biologii"'
-                  disabled={isReadonly}
-                />
+                <field.TextField label="Jednostka" placeholder='np. "Wydział Biologii"' disabled={isReadonly} />
               )}
             />
-            <form.Field
+            <form.AppField
               name={`contracts[${row.index}].institutionLocalization`}
               children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                  label="Lokalizacja instytucji"
-                  placeholder='np. "Gdańsk"'
-                  disabled={isReadonly}
-                />
+                <field.TextField label="Lokalizacja instytucji" placeholder='np. "Gdańsk"' disabled={isReadonly} />
               )}
             />
           </>
@@ -94,19 +71,10 @@ export function ContractsSection() {
         header: 'Opis',
         accessorFn: (row) => row.description,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`contracts[${row.index}].description`}
             children={(field) => (
-              <AppInput
-                name={field.name}
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                label="Opis"
-                placeholder='np. "Umowa o współpracy"'
-                disabled={isReadonly}
-              />
+              <field.TextField label="Opis" placeholder='np. "Umowa o współpracy"' disabled={isReadonly} />
             )}
           />
         ),
@@ -118,16 +86,11 @@ export function ContractsSection() {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             name={`contracts[${row.index}].scans`}
             children={(field) => (
-              <AppFileInput
-                name={field.name}
-                value={field.state.value}
+              <field.FilesField
                 allowMultiple={true}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                 label="Skany"
                 uploadMessage="Kliknij lub przeciągnij pliki"
                 maxSizeInMb={2}
@@ -144,9 +107,7 @@ export function ContractsSection() {
           <div className="flex justify-end">
             <AppTableDeleteRowButton
               onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev: ContractValues[]) => prev);
-                field.handleBlur();
+                removeRow(row.index);
               }}
               disabled={isReadonly}
             />
@@ -164,13 +125,16 @@ export function ContractsSection() {
       data-testid="form-a-contracts-section"
     >
       <div>
-        <form.Field
+        <form.AppField
           name="contracts"
           mode="array"
           children={(field) => (
             <>
               <AppTable
-                columns={getColumns(field)}
+                columns={getColumns((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 buttons={() => [
                   <DropdownElementSelectorButton
@@ -189,7 +153,6 @@ export function ContractsSection() {
                           description: '',
                           scans: [],
                         });
-                        field.handleChange((prev: ContractValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -205,7 +168,6 @@ export function ContractsSection() {
                       value: `${contract.institutionName}, ${contract.institutionUnit}, ${contract.institutionLocalization} - ${contract.description}`,
                       onClick: () => {
                         field.pushValue(contract);
-                        field.handleChange((prev: ContractValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -219,11 +181,11 @@ export function ContractsSection() {
                 emptyTableMessage="Nie dodano żadnej umowy."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-contracts-table"
               />
               <AppInputErrorsList
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-contracts-errors"
               />
             </>

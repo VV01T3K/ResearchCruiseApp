@@ -21,57 +21,56 @@ import { ShipEquipmentsSection } from './ShipEquipmentsSection';
 import { ShipUsageSection } from './ShipUsageSection';
 import { SPUBReportDataSection } from './SPUBReportDataSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
-import { FormCContextType, FormCProvider } from '@/contexts/applications/FormCContext';
+import { useFormCContext, type FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 
 type Props = {
-  context: FormCContextType & {
-    onSubmit: () => void;
+  context: FormCViewModel & {
     onSaveDraft: () => void;
     actionsDisabled?: boolean;
   };
 };
 export function FormView({ context }: Props) {
-  function onSubmit(evt: React.SubmitEvent<HTMLFormElement>) {
-    evt.preventDefault();
-    context.onSubmit();
-  }
-
+  const form = useFormCContext();
   const componentRef = useRef(null);
 
-  const reactToPrintContent = () => {
-    return componentRef.current;
-  };
-
-  const handlePrint = useReactToPrint({});
+  const handlePrint = useReactToPrint({ contentRef: componentRef });
 
   return (
-    <FormCProvider value={context}>
-      <form className="space-y-8" onSubmit={onSubmit}>
-        <CruiseInfoSection />
-        <CruiseManagerInfoSection />
-        <ShipUsageSection />
-        <AdditionalPermissionsSection />
-        <ResearchAreaSection />
-        <CruiseGoalSection />
-        <ResearchTasksEffectsSection />
-        <ContractsSection />
-        <MembersSection />
-        <PublicationsSection />
-        <SPUBTasksSection />
-        <CruiseDetailsSection />
-        <CruiseDayDetailsSection />
-        <ResearchEquipmentsSection />
-        <ShipEquipmentsSection />
-        <CollectedSamplesSection />
-        <SPUBReportDataSection />
-        <AdditionalDescriptionSection />
+    <>
+      <form
+        className="space-y-8"
+        onSubmit={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          void form.handleSubmit();
+        }}
+      >
+        <CruiseInfoSection context={context} />
+        <CruiseManagerInfoSection context={context} />
+        <ShipUsageSection context={context} />
+        <AdditionalPermissionsSection context={context} />
+        <ResearchAreaSection context={context} />
+        <CruiseGoalSection context={context} />
+        <ResearchTasksEffectsSection context={context} />
+        <ContractsSection context={context} />
+        <MembersSection context={context} />
+        <PublicationsSection context={context} />
+        <SPUBTasksSection context={context} />
+        <CruiseDetailsSection context={context} />
+        <CruiseDayDetailsSection context={context} />
+        <ResearchEquipmentsSection context={context} />
+        <ShipEquipmentsSection context={context} />
+        <CollectedSamplesSection context={context} />
+        <SPUBReportDataSection context={context} />
+        <AdditionalDescriptionSection context={context} />
         <ActionsSection
           onSaveDraft={context.onSaveDraft}
-          onPrint={() => handlePrint(reactToPrintContent)}
+          onPrint={handlePrint}
           disabled={context.actionsDisabled}
+          context={context}
         />
       </form>
-      <PrintTemplate ref={componentRef} />
-    </FormCProvider>
+      <PrintTemplate ref={componentRef} context={context} />
+    </>
   );
 }

@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { getErrors } from '@/lib/utils';
+import { getErrors } from '@/integrations/tanstack/form/errors';
 
 // Zod validation schema
 const validationSchema = z.object({
@@ -80,7 +80,7 @@ function ValidationForm() {
             <AppNumberInput
               name={field.name}
               value={field.state.value}
-              onChange={field.handleChange}
+              onChange={(value) => value !== null && field.handleChange(value)}
               onBlur={field.handleBlur}
               errors={getErrors(field.state.meta)}
               label="Age"

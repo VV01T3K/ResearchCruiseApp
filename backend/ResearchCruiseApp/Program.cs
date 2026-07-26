@@ -3,6 +3,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
+using MailKit.Security;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi;
@@ -11,6 +13,7 @@ using ResearchCruiseApp.Infrastructure;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 using ResearchCruiseApp.Infrastructure.Sentry;
 using Scalar.AspNetCore;
+using Sentry;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -140,6 +143,29 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 var app = builder.Build();
+
+app.UseExceptionHandler(exceptionHandlerApp =>
+    exceptionHandlerApp.Run(async context =>
+    {
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+        var errorCode = context.TraceIdentifier;
+        if (exception is not null)
+        {
+            var hub = context.RequestServices.GetRequiredService<IHub>();
+            hub.ConfigureScope(scope => scope.SetTag("error.code", errorCode));
+            hub.CaptureException(exception);
+        }
+
+        await Results
+            .Problem(
+                detail: $"Wystąpił nieoczekiwany błąd. Kod błędu: {errorCode}",
+                statusCode: exception is AuthenticationException
+                    ? StatusCodes.Status503ServiceUnavailable
+                    : StatusCodes.Status500InternalServerError
+            )
+            .ExecuteAsync(context);
+    })
+);
 
 if (app.Environment.IsDevelopment())
 {

@@ -151,6 +151,8 @@ export function AppDatePickerInput({
         <div ref={inputRef}>
           <input type="hidden" name={name} value={value} disabled={disabled} />
           <AppButton
+            name={name}
+            aria-invalid={!!errors?.length}
             variant="plain"
             onClick={handleInputClick}
             className={cn(

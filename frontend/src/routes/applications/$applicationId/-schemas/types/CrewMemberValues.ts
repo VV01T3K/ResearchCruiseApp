@@ -1,6 +1,17 @@
 import { z } from 'zod';
 
-export const CrewMemberValuesSchema = z.object({
+export const CrewMemberValuesInputSchema = z.object({
+  title: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  birthPlace: z.string(),
+  birthDate: z.string(),
+  documentNumber: z.string(),
+  documentExpiryDate: z.string(),
+  institution: z.string(),
+});
+
+export const CrewMemberValuesSchema = CrewMemberValuesInputSchema.extend({
   title: z.string().nonempty('Tytuł jest wymagany'),
   firstName: z.string().nonempty('Imię jest wymagane'),
   lastName: z.string().nonempty('Nazwisko jest wymagane'),
@@ -11,4 +22,4 @@ export const CrewMemberValuesSchema = z.object({
   institution: z.string().nonempty('Instytucja jest wymagana'),
 });
 
-export type CrewMemberValues = z.infer<typeof CrewMemberValuesSchema>;
+export type CrewMemberValues = z.input<typeof CrewMemberValuesInputSchema>;

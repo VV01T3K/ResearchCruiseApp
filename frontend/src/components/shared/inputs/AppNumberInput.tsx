@@ -10,12 +10,10 @@ import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
 import { useInputCursorPosition } from '@/hooks/shared/InputCursorPositionHook';
 import { cn, roundNumber } from '@/lib/utils';
 
-type Props = {
+type CommonProps = {
   name: string;
-  value: number;
 
   onBlur?: () => void;
-  onChange?: (value: number) => void;
   errors?: string[];
   label?: React.ReactNode;
   showRequiredAsterisk?: boolean;
@@ -38,9 +36,15 @@ type Props = {
       precision?: number;
     }
 );
+type Props = CommonProps & {
+  nullable?: boolean;
+  value: number | null;
+  onChange?: { bivarianceHack(value: number | null): void }['bivarianceHack'];
+};
 export function AppNumberInput({
   name,
   value,
+  nullable,
   onBlur,
   onChange,
   errors,
@@ -59,14 +63,13 @@ export function AppNumberInput({
   'data-testid-errors': errorsTestId,
 }: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const [stringValue, setStringValue] = React.useState(value.toString());
+  const [stringValue, setStringValue] = React.useState(value?.toString() ?? '');
   const setCursorPosition = useInputCursorPosition({ inputRef });
 
   // Update the string value when the value changes
   React.useEffect(() => {
     // We want to round even the integer values to the precision, if such value was provided, but we don't want to add zeros at the end
-    const roundedValue = roundNumber(value, type === 'float' ? precision : 0);
-    const newStringValue = roundedValue.toString();
+    const newStringValue = value === null ? '' : roundNumber(value, type === 'float' ? precision : 0).toString();
     if (newStringValue !== stringValue) {
       // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
       setStringValue(newStringValue);
@@ -84,9 +87,8 @@ export function AppNumberInput({
     setCursorPosition(cursorPosition);
 
     if (stringInput === '') {
-      updateValue(0);
-      // Set the cursor after the zero
-      setCursorPosition(1);
+      updateValue(nullable ? null : 0);
+      if (!nullable) setCursorPosition(1);
       return;
     }
 
@@ -105,7 +107,13 @@ export function AppNumberInput({
     updateValue(parsedValue);
   }
 
-  function updateValue(newValue: number) {
+  function updateValue(newValue: number | null) {
+    if (newValue === null) {
+      (onChange as ((value: number | null) => void) | undefined)?.(null);
+      onBlur?.();
+      return;
+    }
+
     newValue = roundNumber(newValue, type === 'float' ? precision! : 0);
 
     if (minimum !== undefined && newValue < minimum) {
@@ -114,7 +122,7 @@ export function AppNumberInput({
       newValue = maximum;
     }
 
-    onChange?.(newValue);
+    (onChange as ((value: number) => void) | undefined)?.(newValue);
     onBlur?.();
   }
 
@@ -124,7 +132,7 @@ export function AppNumberInput({
       <div className="flex items-center">
         {!disabled && (
           <AppNumberInputButton
-            onClick={() => updateValue(value - step)}
+            onClick={() => updateValue((value ?? 0) - step)}
             side="left"
             disabled={false}
             inputToFocus={inputRef}
@@ -137,6 +145,7 @@ export function AppNumberInput({
             onChange={handleInputChange}
             onBlur={onBlur}
             disabled={disabled}
+            aria-invalid={!!errors?.length}
             className={cn(
               'block h-11 w-full border border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900',
               'transition duration-300 ease-in-out',
@@ -151,7 +160,7 @@ export function AppNumberInput({
         </div>
         {!disabled && (
           <AppNumberInputButton
-            onClick={() => updateValue(value + step)}
+            onClick={() => updateValue((value ?? 0) + step)}
             side="right"
             disabled={false}
             inputToFocus={inputRef}

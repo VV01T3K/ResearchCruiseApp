@@ -34,7 +34,7 @@ export function ProjectResearchTaskDetails({ data }: Props) {
 
       <AppNumberInput
         name="researchTasks[].financingAmount"
-        value={parseFloat(data.financingAmount)}
+        value={data.financingAmount}
         type="float"
         minimum={0}
         label="Kwota finansowania [zł]"
@@ -43,7 +43,7 @@ export function ProjectResearchTaskDetails({ data }: Props) {
 
       <AppNumberInput
         name="researchTasks[].securedAmount"
-        value={parseFloat(data.securedAmount)}
+        value={data.securedAmount}
         type="float"
         minimum={0}
         label="Środki zabezpieczone na realizację rejsu [zł]"

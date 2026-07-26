@@ -1,6 +1,6 @@
 import config from '@/config';
 import type { ProblemDetails } from '@/api/generated/schemas';
-import { getValidAccessToken, refreshSession } from '@/lib/auth-session';
+import { getValidAccessToken, refreshSession } from '@/api/client/auth-session';
 
 export class ApiError extends Error {
   constructor(
@@ -17,6 +17,11 @@ export type ErrorType<_Error> = ApiError;
 
 export function getProblemDetail(error: unknown, fallback: string) {
   return error instanceof ApiError ? (error.problem?.detail ?? fallback) : fallback;
+}
+
+export function getErrorMessage(error: unknown, context: string) {
+  const detail = error instanceof Error && error.message ? error.message : 'Nieznany błąd';
+  return `${context}: ${detail}`;
 }
 
 async function parseResponse(response: Response) {
