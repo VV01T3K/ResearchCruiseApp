@@ -1,5 +1,5 @@
-import { Minus as DashLgIcon } from 'lucide-react';
-import { Plus as PlusLgIcon } from 'lucide-react';
+import { Minus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
@@ -205,7 +205,7 @@ function AppNumberInputButton({ side, inputToFocus, onClick, disabled }: ButtonP
       variant="plain"
       size="plain"
     >
-      {side === 'left' ? <DashLgIcon /> : <PlusLgIcon />}
+      {side === 'left' ? <Minus /> : <Plus />}
     </AppButton>
   );
 }

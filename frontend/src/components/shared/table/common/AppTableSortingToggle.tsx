@@ -1,7 +1,7 @@
 import { Header } from '@tanstack/react-table';
-import { ArrowDownAZ as SortDownIcon } from 'lucide-react';
-import { ArrowUpAZ as SortUpIcon } from 'lucide-react';
-import { X as XIcon } from 'lucide-react';
+import { ArrowDownAZ } from 'lucide-react';
+import { ArrowUpAZ } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export function AppTableSortingToggle<TData>({ header }: { header: Header<TData, unknown> }) {
   if (!header.column.getCanSort()) {
@@ -11,7 +11,7 @@ export function AppTableSortingToggle<TData>({ header }: { header: Header<TData,
   if (header.column.getIsSorted() === 'desc') {
     return (
       <span className="flex items-center gap-2">
-        <XIcon className="h-4 w-4" />
+        <X className="h-4 w-4" />
         Usuń sortowanie
       </span>
     );
@@ -20,7 +20,7 @@ export function AppTableSortingToggle<TData>({ header }: { header: Header<TData,
   if (header.column.getIsSorted() === 'asc') {
     return (
       <span className="flex items-center gap-2">
-        <SortUpIcon className="h-4 w-4" />
+        <ArrowUpAZ className="h-4 w-4" />
         Sortuj rosnąco
       </span>
     );
@@ -29,7 +29,7 @@ export function AppTableSortingToggle<TData>({ header }: { header: Header<TData,
   // header.column.getIsSorted() === false
   return (
     <span className="flex items-center gap-2">
-      <SortDownIcon className="h-4 w-4" />
+      <ArrowDownAZ className="h-4 w-4" />
       Sortuj malejąco
     </span>
   );

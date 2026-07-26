@@ -1,5 +1,5 @@
 import { Checkbox } from '@base-ui/react/checkbox';
-import { Check as CheckIcon } from 'lucide-react';
+import { Check } from 'lucide-react';
 import React from 'react';
 
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
@@ -57,7 +57,7 @@ export function AppCheckbox({
           )}
         >
           <Checkbox.Indicator>
-            <CheckIcon className="size-full" />
+            <Check className="size-full" />
           </Checkbox.Indicator>
         </Checkbox.Root>
       </div>

@@ -1,5 +1,5 @@
 import { Popover } from '@base-ui/react/popover';
-import { ChevronDown as ChevronDownIcon } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import React from 'react';
 
 import { AppButtonVariant } from '@/components/shared/AppButton';
@@ -32,7 +32,7 @@ export function AppPopover({ children, modal, className, variant = 'plain' }: Pr
       >
         {children}
         <span className="transition-transform duration-300 ease-out data-[popup-open]:rotate-180">
-          <ChevronDownIcon className="h-6 w-6" />
+          <ChevronDown className="h-6 w-6" />
         </span>
       </Popover.Trigger>
 

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { ExternalLink as BoxArrowUpRightIcon } from 'lucide-react';
-import { Plus as PlusLgIcon } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';
@@ -49,19 +49,19 @@ function CruisesPage() {
     <AppGuard key="newCruise" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <AppButton type="link" href="/cruises/new">
         Nowy rejs
-        <PlusLgIcon className="ml-2 h-6 w-6" />
+        <Plus className="ml-2 h-6 w-6" />
       </AppButton>
     </AppGuard>,
     <AppGuard key="newBlockade" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <AppButton type="link" href="/cruises/new?blockade=true" variant="primaryOutline">
         Nowa blokada
-        <PlusLgIcon className="ml-2 h-6 w-6" />
+        <Plus className="ml-2 h-6 w-6" />
       </AppButton>
     </AppGuard>,
     <AppGuard key="exportCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <AppButton onClick={() => setIsExportModalOpen(true)} variant="primaryOutline">
         Eksport
-        <BoxArrowUpRightIcon className="ml-2 h-4 w-4" />
+        <ExternalLink className="ml-2 h-4 w-4" />
       </AppButton>
     </AppGuard>,
   ];

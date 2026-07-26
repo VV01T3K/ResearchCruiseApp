@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { ColumnDef } from '@tanstack/react-table';
-import { ZoomIn as ZoomInIcon } from 'lucide-react';
+import { ZoomIn } from 'lucide-react';
 import dayjs from 'dayjs';
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';
@@ -184,7 +184,7 @@ function ApplicationsPage() {
         <>
           <AppButton type="link" href={`/applications/${row.original.id}/details`} className="flex gap-2">
             Szczegóły
-            <ZoomInIcon className="h-4 w-4" />
+            <ZoomIn className="h-4 w-4" />
           </AppButton>
         </>
       ),

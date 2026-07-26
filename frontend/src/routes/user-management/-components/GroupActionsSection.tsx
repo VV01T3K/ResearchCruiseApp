@@ -1,7 +1,7 @@
-import { TriangleAlert as ExclamationTriangleFillIcon } from 'lucide-react';
-import { UserRoundCheck as PersonFillCheckIcon } from 'lucide-react';
-import { UserRoundX as PersonFillSlashIcon } from 'lucide-react';
-import { Trash2 as TrashFillIcon } from 'lucide-react';
+import { TriangleAlert } from 'lucide-react';
+import { UserRoundCheck } from 'lucide-react';
+import { UserRoundX } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import React from 'react';
 
@@ -132,12 +132,12 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
         >
           {deletionConfirmed ? (
             <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <ExclamationTriangleFillIcon className="h-4 w-4" />
+              <TriangleAlert className="h-4 w-4" />
               <span>Na pewno?</span>
             </motion.div>
           ) : (
             <div className="flex items-center gap-4">
-              <TrashFillIcon className="h-4 w-4" />
+              <Trash2 className="h-4 w-4" />
               <span>Usuń zaznaczonych użytkowników</span>
             </div>
           )}
@@ -152,7 +152,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           onClick={handleAcceptSelectedUsers}
         >
           <div className="flex items-center gap-4">
-            <PersonFillCheckIcon className="h-4 w-4" />
+            <UserRoundCheck className="h-4 w-4" />
             <span>Akceptuj zaznaczonych użytkowników</span>
           </div>
         </AppButton>
@@ -163,7 +163,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           onClick={handleUnAcceptSelectedUsers}
         >
           <div className="flex items-center gap-4">
-            <PersonFillSlashIcon className="h-4 w-4" />
+            <UserRoundX className="h-4 w-4" />
             <span>Usuń akceptację zaznaczonych użytkowników</span>
           </div>
         </AppButton>

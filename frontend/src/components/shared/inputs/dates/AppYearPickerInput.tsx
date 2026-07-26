@@ -1,9 +1,9 @@
 'use client';
 
-import { CalendarDays as CalendarEventIcon } from 'lucide-react';
-import { ChevronLeft as ChevronLeftIcon } from 'lucide-react';
-import { ChevronRight as ChevronRightIcon } from 'lucide-react';
-import { X as XLgIcon } from 'lucide-react';
+import { CalendarDays } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -119,7 +119,7 @@ export function AppYearPickerInput({
             <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
               <div ref={portalContainerRef}></div>
-              {!selectedYear && <CalendarEventIcon className="h-4 w-4" />}
+              {!selectedYear && <CalendarDays className="h-4 w-4" />}
             </span>
           </AppButton>
           <RemoveSelectedYearPortal
@@ -144,7 +144,7 @@ export function AppYearPickerInput({
                 onClick={() => setVisibleDecade((prev) => ({ from: prev.from - 11, to: prev.to - 11 }))}
                 className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
               >
-                <ChevronLeftIcon className="h-5 w-5" />
+                <ChevronLeft className="h-5 w-5" />
               </AppButton>
               <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">{`${visibleDecade.from}-${visibleDecade.to}`}</span>
               <AppButton
@@ -152,7 +152,7 @@ export function AppYearPickerInput({
                 onClick={() => setVisibleDecade((prev) => ({ from: prev.from + 11, to: prev.to + 11 }))}
                 className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
               >
-                <ChevronRightIcon className="h-5 w-5" />
+                <ChevronRight className="h-5 w-5" />
               </AppButton>
             </div>
             <div className="grid grid-cols-3 gap-4 px-4 py-2">
@@ -229,7 +229,7 @@ function RemoveSelectedYearPortal({
 
   return createPortal(
     <AppButton variant="plain" onClick={(evt) => onResetSelection(evt)} className="inline-block p-0 hover:text-red-500">
-      <XLgIcon className="h-4 w-4" />
+      <X className="h-4 w-4" />
     </AppButton>,
     portalContainer
   );

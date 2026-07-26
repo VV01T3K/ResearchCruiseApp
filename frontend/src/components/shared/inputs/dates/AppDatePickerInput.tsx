@@ -1,7 +1,7 @@
-import { CalendarDays as CalendarEventIcon } from 'lucide-react';
-import { ChevronLeft as ChevronLeftIcon } from 'lucide-react';
-import { ChevronRight as ChevronRightIcon } from 'lucide-react';
-import { X as XLgIcon } from 'lucide-react';
+import { CalendarDays } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import { X } from 'lucide-react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { AnimatePresence, motion } from 'motion/react';
@@ -174,7 +174,7 @@ export function AppDatePickerInput({
             <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
               <div ref={portalContainerRef}></div>
-              {!selectedDate && <CalendarEventIcon className="h-4 w-4" />}
+              {!selectedDate && <CalendarDays className="h-4 w-4" />}
             </span>
           </AppButton>
           <RemoveSelectedDatePortal
@@ -198,7 +198,7 @@ export function AppDatePickerInput({
                 onClick={() => handleMonthChange(-1)}
                 className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
               >
-                <ChevronLeftIcon className="h-5 w-5" />
+                <ChevronLeft className="h-5 w-5" />
               </AppButton>
 
               <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">
@@ -210,7 +210,7 @@ export function AppDatePickerInput({
                 onClick={() => handleMonthChange(1)}
                 className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
               >
-                <ChevronRightIcon className="h-5 w-5" />
+                <ChevronRight className="h-5 w-5" />
               </AppButton>
             </div>
             <div className="grid grid-cols-7 p-2" onMouseLeave={() => setHoveredDate(undefined)}>
@@ -419,7 +419,7 @@ function RemoveSelectedDatePortal({
 
   return createPortal(
     <AppButton variant="plain" onClick={onResetSelection} className="inline-block p-0 hover:text-red-500">
-      <XLgIcon className="h-4 w-4" />
+      <X className="h-4 w-4" />
     </AppButton>,
     portalContainer
   );

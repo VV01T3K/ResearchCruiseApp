@@ -6,8 +6,8 @@ import {
   useRouterState,
 } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
-import { Meh as EmojiNeutralIcon } from 'lucide-react';
-import { Annoyed as EmojiSmileUpsideDownIcon } from 'lucide-react';
+import { Meh } from 'lucide-react';
+import { Annoyed } from 'lucide-react';
 
 import config from '@/config';
 import { motion } from 'motion/react';
@@ -88,7 +88,7 @@ function AppErrorHandler({ error }: ErrorComponentProps) {
       <AppLayout title={'Wystąpił nieoczekiwany błąd'} variant="narrow">
         <div className="space-y-8">
           <div className="h-60">
-            <EmojiSmileUpsideDownIcon />
+            <Annoyed />
           </div>
           <div className="flex items-center justify-center gap-2 text-lg">
             <div>Opis błędu: </div>
@@ -112,7 +112,7 @@ function AppPageNotFoundHandler() {
     <AppLayout title={'Strona nie znaleziona'} variant="narrow">
       <div className="space-y-8">
         <div className="h-60">
-          <EmojiNeutralIcon />
+          <Meh />
         </div>
         <div className="text-center">
           Strona o adresie <span className="font-semibold">{router.state.location.pathname}</span> nie została

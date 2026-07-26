@@ -1,5 +1,5 @@
-import { Download as DownloadIcon } from 'lucide-react';
-import { X as XIcon } from 'lucide-react';
+import { Download } from 'lucide-react';
+import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
@@ -85,8 +85,8 @@ function AppFileListElement({ file, setFileInPreview, onRemove, disabled }: File
       </div>
 
       <div className="mr-2 flex flex-row items-center gap-2">
-        {onRemove && !disabled && <XIcon className="h-8 w-8" onClick={() => onRemove!(file)} />}
-        <DownloadIcon className="h-6 w-6" onClick={() => linkRef.current?.click()} />
+        {onRemove && !disabled && <X className="h-8 w-8" onClick={() => onRemove!(file)} />}
+        <Download className="h-6 w-6" onClick={() => linkRef.current?.click()} />
       </div>
 
       <a ref={linkRef} download={file.name} href={file.content} className="hidden" />

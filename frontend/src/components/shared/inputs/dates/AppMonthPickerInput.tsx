@@ -1,5 +1,5 @@
-import { CalendarDays as CalendarEventIcon } from 'lucide-react';
-import { X as XLgIcon } from 'lucide-react';
+import { CalendarDays } from 'lucide-react';
+import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -103,7 +103,7 @@ export function AppMonthPickerInput({
             <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
               <div ref={portalContainerRef}></div>
-              {!selectedDate && <CalendarEventIcon className="h-4 w-4" />}
+              {!selectedDate && <CalendarDays className="h-4 w-4" />}
             </span>
           </AppButton>
           <RemoveSelectedDatePortal
@@ -197,7 +197,7 @@ function RemoveSelectedDatePortal({
 
   return createPortal(
     <AppButton variant="plain" onClick={onResetSelection} className="inline-block p-0 hover:text-red-500">
-      <XLgIcon className="h-4 w-4" />
+      <X className="h-4 w-4" />
     </AppButton>,
     portalContainer
   );

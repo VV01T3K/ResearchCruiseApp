@@ -1,8 +1,8 @@
-import { Check as CheckIcon } from 'lucide-react';
-import { CircleAlert as ExclamationCircleIcon } from 'lucide-react';
-import { TriangleAlert as ExclamationTraingleIcon } from 'lucide-react';
-import { Info as InfoCircleFillIcon } from 'lucide-react';
-import { X as XIcon } from 'lucide-react';
+import { Check } from 'lucide-react';
+import { CircleAlert } from 'lucide-react';
+import { TriangleAlert } from 'lucide-react';
+import { Info } from 'lucide-react';
+import { X } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -37,7 +37,7 @@ export function AppAlert({ children, onClose, variant = 'primary', 'data-testid'
           onClick={onClose}
         >
           <span className="sr-only">Close</span>
-          <XIcon />
+          <X />
         </button>
       )}
     </div>
@@ -47,31 +47,31 @@ export function AppAlert({ children, onClose, variant = 'primary', 'data-testid'
 const variants = {
   primary: {
     screenReaderMessage: 'Notification',
-    icon: InfoCircleFillIcon,
+    icon: Info,
     containerClassName: 'text-primary-dark bg-primary-light',
     closeButtonClassName: 'bg-primary-light text-primary focus:ring-primary-400 p-1.5 hover:bg-primary-200',
   },
   success: {
     screenReaderMessage: 'Success',
-    icon: CheckIcon,
+    icon: Check,
     containerClassName: 'text-success-dark bg-success-light',
     closeButtonClassName: 'bg-success-light text-success focus:ring-success-300 p-1.5 hover:bg-success-200',
   },
   danger: {
     screenReaderMessage: 'Error',
-    icon: ExclamationCircleIcon,
+    icon: CircleAlert,
     containerClassName: 'text-danger-dark bg-danger-light',
     closeButtonClassName: 'bg-danger-light text-danger focus:ring-danger-400 p-1.5 hover:bg-danger-200',
   },
   warning: {
     screenReaderMessage: 'Warning',
-    icon: ExclamationTraingleIcon,
+    icon: TriangleAlert,
     containerClassName: 'text-warning-dark bg-warning-light',
     closeButtonClassName: 'bg-warning-light text-warning-dark focus:ring-warning-300 p-1.5 hover:bg-warning-100',
   },
   info: {
     screenReaderMessage: 'Info',
-    icon: InfoCircleFillIcon,
+    icon: Info,
     containerClassName: 'text-info-dark bg-info-light',
     closeButtonClassName: 'bg-info-light text-info focus:ring-info-300 p-1.5 hover:bg-info-100',
   },

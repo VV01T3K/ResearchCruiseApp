@@ -1,4 +1,4 @@
-import { CloudUpload as CloudUploadIcon } from 'lucide-react';
+import { CloudUpload } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
@@ -168,7 +168,7 @@ export function AppFileInput({
                 exit={{ opacity: 0, height: 0 }}
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-4 text-sm">
-                  <CloudUploadIcon className="mb-4 h-8 w-8" />
+                  <CloudUpload className="mb-4 h-8 w-8" />
                   {uploadMessage}
                   {notifications && notifications.length > 0 && (
                     <div className="mx-2 mt-1 rounded bg-danger-100 p-1 text-danger-900">

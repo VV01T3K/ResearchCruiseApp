@@ -1,4 +1,4 @@
-import { Trash2 as TrashFillIcon } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 import { AppButton } from '@/components/shared/AppButton';
 
@@ -29,7 +29,7 @@ export function RejectConfirmation({ onReject, setConfirmationMode }: Props) {
             setConfirmationMode(false);
           }}
         >
-          <TrashFillIcon className="h-4 w-4" />
+          <Trash2 className="h-4 w-4" />
           Potwierdź odrzucenie
         </AppButton>
       </div>

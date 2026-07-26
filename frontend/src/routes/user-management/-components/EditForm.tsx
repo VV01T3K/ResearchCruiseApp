@@ -1,11 +1,11 @@
 import { revalidateLogic, useForm } from '@tanstack/react-form';
-import { Mail as EnvelopeFillIcon } from 'lucide-react';
-import { TriangleAlert as ExclamationTriangleFill } from 'lucide-react';
-import { Save as FloppyFillIcon } from 'lucide-react';
-import { UserRoundCheck as PersonFillCheckIcon } from 'lucide-react';
-import { UserRoundX as PersonFillSlashIcon } from 'lucide-react';
-import { UserRoundPlus as PersonAddIcon } from 'lucide-react';
-import { Trash2 as TrashFillIcon } from 'lucide-react';
+import { Mail } from 'lucide-react';
+import { TriangleAlert } from 'lucide-react';
+import { Save } from 'lucide-react';
+import { UserRoundCheck } from 'lucide-react';
+import { UserRoundX } from 'lucide-react';
+import { UserRoundPlus } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 import { z } from 'zod';
@@ -370,12 +370,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting || !!submitError}>
                 {editMode ? (
                   <div className="flex items-center gap-4">
-                    <FloppyFillIcon className="h-4 w-4" />
+                    <Save className="h-4 w-4" />
                     <span>Zapisz</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-4">
-                    <PersonAddIcon className="h-4 w-4" />
+                    <UserRoundPlus className="h-4 w-4" />
                     <span>Dodaj</span>
                   </div>
                 )}
@@ -390,12 +390,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 >
                   {deletionConfirmed ? (
                     <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <ExclamationTriangleFill className="h-4 w-4" />
+                      <TriangleAlert className="h-4 w-4" />
                       <span>Czy na pewno?</span>
                     </motion.div>
                   ) : (
                     <div className="flex items-center gap-4">
-                      <TrashFillIcon className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" />
                       <span>Usuń</span>
                     </div>
                   )}
@@ -411,12 +411,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 >
                   {!user.accepted ? (
                     <div className="flex items-center gap-4">
-                      <PersonFillCheckIcon className="h-4 w-4" />
+                      <UserRoundCheck className="h-4 w-4" />
                       <span>Zaakceptuj konto użytkownika</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-4">
-                      <PersonFillSlashIcon className="h-4 w-4" />
+                      <UserRoundX className="h-4 w-4" />
                       <span>Cofnij akceptację konta</span>
                     </div>
                   )}
@@ -432,12 +432,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 >
                   {passwordResetSent ? (
                     <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <EnvelopeFillIcon className="h-4 w-4" />
+                      <Mail className="h-4 w-4" />
                       <span>Link do zmiany hasła wysłany</span>
                     </motion.div>
                   ) : (
                     <div className="flex items-center gap-4">
-                      <EnvelopeFillIcon className="h-4 w-4" />
+                      <Mail className="h-4 w-4" />
                       <span>Wyślij link do zmiany hasła</span>
                     </div>
                   )}

@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { Trash2 as TrashIcon } from 'lucide-react';
-import { ZoomIn as ZoomInIcon } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import { ZoomIn } from 'lucide-react';
 import dayjs from 'dayjs';
 
 import { AppAvatar } from '@/components/shared/AppAvatar';
@@ -139,13 +139,13 @@ function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
     <div className="grid min-w-30 grid-cols-1 gap-2">
       <AppButton variant="primary" type="link" href={`/cruises/${cruise.id}`}>
         Szczegóły
-        <ZoomInIcon className="ml-2 h-4 w-4" />
+        <ZoomIn className="ml-2 h-4 w-4" />
       </AppButton>
       <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
         {cruise.status === 'new' && (
           <AppButton variant="dangerOutline" onClick={() => deleteCruise(cruise)}>
             Usuń
-            <TrashIcon className="h-4 w-4" />
+            <Trash2 className="h-4 w-4" />
           </AppButton>
         )}
       </AppGuard>

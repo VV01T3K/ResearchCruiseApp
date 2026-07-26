@@ -1,5 +1,5 @@
 import { Collapsible } from '@base-ui/react/collapsible';
-import { ChevronDown as ChevronDownIcon } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
 import { AppAlert } from '@/components/shared/AppAlert';
@@ -31,7 +31,7 @@ export function BlockadeWarning({ year, blockades }: Props) {
                   <span className="text-sm font-normal">Rozwiń, aby zobaczyć wszystkie blokady</span>
                 </div>
                 <span className="ml-4 transition-transform duration-300 data-[panel-open]:rotate-180">
-                  <ChevronDownIcon className="h-5 w-5" />
+                  <ChevronDown className="h-5 w-5" />
                 </span>
               </Collapsible.Trigger>
               <Collapsible.Panel

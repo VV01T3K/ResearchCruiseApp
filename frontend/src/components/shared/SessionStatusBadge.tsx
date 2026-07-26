@@ -1,5 +1,5 @@
-import { RotateCw as ArrowClockwiseIcon } from 'lucide-react';
-import { Clock as ClockIcon } from 'lucide-react';
+import { RotateCw } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import React from 'react';
 
 type Props = {
@@ -68,7 +68,7 @@ export function SessionStatusBadge({ refreshTokenExpirationDate, onRefresh }: Pr
         isWarning ? 'bg-red-100 text-red-700' : 'bg-white/20 text-white'
       }`}
     >
-      <ClockIcon className="h-4 w-4" />
+      <Clock className="h-4 w-4" />
       <span data-testid="session-status-value" className="font-mono">
         {formatTimeRemaining(remainingMs)}
       </span>
@@ -79,10 +79,7 @@ export function SessionStatusBadge({ refreshTokenExpirationDate, onRefresh }: Pr
         disabled={isRefreshing}
         className="hover:opacity-70 disabled:opacity-40"
       >
-        <ArrowClockwiseIcon
-          className="h-4 w-4"
-          style={isRefreshing ? { animation: 'spin 0.5s linear infinite' } : undefined}
-        />
+        <RotateCw className="h-4 w-4" style={isRefreshing ? { animation: 'spin 0.5s linear infinite' } : undefined} />
       </button>
     </div>
   );

@@ -1,4 +1,4 @@
-import { TriangleAlert as ExclamationTriangleFillIcon } from 'lucide-react';
+import { TriangleAlert } from 'lucide-react';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
@@ -61,7 +61,7 @@ export function SessionExpirationWarning({ expirationDate, onRefreshSession, onS
     <AppModal title="Sesja wygasa" isOpen={isOpen} onClose={() => {}} dismissible={false}>
       <div className="flex flex-col gap-4">
         <div className="flex items-start gap-3 rounded-lg bg-warning-50 p-4">
-          <ExclamationTriangleFillIcon className="mt-0.5 h-5 w-5 shrink-0 text-warning-600" />
+          <TriangleAlert className="mt-0.5 h-5 w-5 shrink-0 text-warning-600" />
           <div>
             <p className="font-medium text-warning-800">
               Twoja sesja wygaśnie za <span className="font-mono font-bold">{formatTimeRemaining(remainingMs)}</span>.

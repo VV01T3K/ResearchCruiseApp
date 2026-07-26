@@ -2,8 +2,8 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { revalidateLogic } from '@tanstack/react-form';
-import { RotateCw as ArrowClockwiseIcon } from 'lucide-react';
-import { Save as FloppyFillIcon } from 'lucide-react';
+import { RotateCw } from 'lucide-react';
+import { Save } from 'lucide-react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
@@ -74,11 +74,11 @@ function NewCruisePage() {
   const buttons = (
     <>
       <AppButton className="w-36 !justify-center gap-4 lg:w-64" variant="primaryOutline" onClick={() => form.reset()}>
-        <ArrowClockwiseIcon className="h-4 w-4" />
+        <RotateCw className="h-4 w-4" />
         Wyczyść formularz
       </AppButton>
       <AppButton className="w-36 !justify-center gap-4 lg:w-64" type="submit">
-        <FloppyFillIcon className="h-4 w-4" />
+        <Save className="h-4 w-4" />
         Zapisz
       </AppButton>
     </>

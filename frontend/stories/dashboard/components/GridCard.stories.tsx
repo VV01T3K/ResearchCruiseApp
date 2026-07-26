@@ -1,6 +1,6 @@
 import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Globe2 as GlobeAmericasIcon } from 'lucide-react';
+import { Globe2 } from 'lucide-react';
 
 import { Grid } from '@/components/dashboard/Grid';
 import { GridCard } from '@/components/dashboard/GridCard';
@@ -9,7 +9,7 @@ const meta = {
   component: GridCard,
   args: {
     name: 'Grid card',
-    Icon: GlobeAmericasIcon,
+    Icon: Globe2,
     description: 'Grid card description',
     href: '#',
   },

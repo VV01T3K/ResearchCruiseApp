@@ -2,8 +2,8 @@ import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/api/client/user';
 import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
-import { ExternalLink as ExternalLinkIcon } from 'lucide-react';
-import { Trash2 as TrashIcon } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -108,7 +108,7 @@ function MyPublicationsPage() {
             deleteOwnPublicationMutation.mutateAsync({ publicationId: cell.row.original.id }).catch(() => {})
           }
         >
-          <TrashIcon className="mr-2 h-3 w-3" />
+          <Trash2 className="mr-2 h-3 w-3" />
           Usuń
         </AppButton>
       ),
@@ -139,7 +139,7 @@ function MyPublicationsPage() {
               target="_blank"
             >
               Przejdź do repozytorium BG
-              <ExternalLinkIcon className="ml-2 h-4 w-4" />
+              <ExternalLink className="ml-2 h-4 w-4" />
             </AppButton>,
             <AppButton
               key="removeAllPublications"
@@ -147,7 +147,7 @@ function MyPublicationsPage() {
               onClick={() => setIsDeleteAllModalOpen(true)}
               disabled={!ownPublicationsQuery.data?.length || deleteAllOwnPublicationsMutation.isPending}
             >
-              <TrashIcon className="mr-2 h-4 w-4" />
+              <Trash2 className="mr-2 h-4 w-4" />
               Usuń wszystkie publikacje
             </AppButton>,
             <AppButton
@@ -156,7 +156,7 @@ function MyPublicationsPage() {
               onClick={() => deleteSelectedPublications()}
               disabled={!Object.keys(selectedPublications).length || deleteOwnPublicationMutation.isPending}
             >
-              <TrashIcon className="mr-2 h-4 w-4" />
+              <Trash2 className="mr-2 h-4 w-4" />
               Usuń zaznaczone publikacje
             </AppButton>,
             ...defaultButtons,

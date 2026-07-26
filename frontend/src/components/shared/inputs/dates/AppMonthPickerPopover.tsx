@@ -1,5 +1,5 @@
-import { ChevronDown as ChevronDownIcon } from 'lucide-react';
-import { ChevronUp as ChevronUpIcon } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
+import { ChevronUp } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
@@ -49,7 +49,7 @@ export function AppMonthPickerPopover({ value, onChange, renderDate }: Props) {
             ? renderDate(value)
             : new Date(value.year, value.month).toLocaleDateString('pl-PL', { month: '2-digit', year: 'numeric' })}
           <span className="flex gap-2">
-            <span>{expanded ? <ChevronUpIcon className="h-4 w-4" /> : <ChevronDownIcon className="h-4 w-4" />}</span>
+            <span>{expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}</span>
           </span>
         </AppButton>
       </div>
