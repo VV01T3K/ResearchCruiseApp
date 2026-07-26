@@ -3,10 +3,6 @@ kind: ConfigMap
 metadata:
   name: research-cruise-app-backend-config
 data:
-  # Set explicitly rather than relying on the default: appsettings.Development.json ships in the
-  # published image, so a stray ASPNETCORE_ENVIRONMENT=Development would otherwise load its
-  # RefreshCookieSecure=false. Environment variables win over every JSON source.
-  Auth__RefreshCookieSecure: "true"
   Database__LogUserPasswordsWhenSeeding: "true"
   Database__MigrateAutomatically: "true"
   Database__SeedAutomatically: "true"

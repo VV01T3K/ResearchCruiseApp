@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -10,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi;
 using ResearchCruiseApp.Api;
-using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.Infrastructure;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 using ResearchCruiseApp.Infrastructure.Sentry;
@@ -90,45 +88,18 @@ builder
     })
     .AddApiExplorer(options => options.SubstituteApiVersionInUrl = true);
 builder.Services.AddAuthorization(AuthorizationPolicies.AddApiAuthorizationPolicies);
-
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     options.AddPolicy(
         RateLimitingPolicies.AuthSensitive,
         httpContext =>
-        {
-            // Read per request rather than captured here. Configuration sources added after this
-            // point are invisible to an eager read at service-registration time, which silently
-            // pins the limit to its default.
-            var configuration = httpContext.RequestServices.GetRequiredService<IConfiguration>();
-
-            return RateLimitPartition.GetFixedWindowLimiter(
-                httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-                _ => new FixedWindowRateLimiterOptions
-                {
-                    AutoReplenishment = true,
-                    PermitLimit = configuration.GetValue(
-                        "RateLimiting:AuthSensitive:PermitLimit",
-                        10
-                    ),
-                    QueueLimit = 0,
-                    Window = TimeSpan.FromSeconds(
-                        configuration.GetValue("RateLimiting:AuthSensitive:WindowSeconds", 60)
-                    ),
-                }
-            );
-        }
-    );
-    options.AddPolicy(
-        RateLimitingPolicies.SessionRefresh,
-        httpContext =>
             RateLimitPartition.GetFixedWindowLimiter(
                 httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
                 static _ => new FixedWindowRateLimiterOptions
                 {
                     AutoReplenishment = true,
-                    PermitLimit = 20,
+                    PermitLimit = 10,
                     QueueLimit = 0,
                     Window = TimeSpan.FromMinutes(1),
                 }
@@ -137,13 +108,6 @@ builder.Services.AddRateLimiter(options =>
     options.OnRejected = async (context, cancellationToken) =>
     {
         context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-        if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
-        {
-            context.HttpContext.Response.Headers.RetryAfter = (
-                (int)Math.Ceiling(retryAfter.TotalSeconds)
-            ).ToString(CultureInfo.InvariantCulture);
-        }
-
         await context.HttpContext.Response.WriteAsJsonAsync(
             new ProblemDetails
             {

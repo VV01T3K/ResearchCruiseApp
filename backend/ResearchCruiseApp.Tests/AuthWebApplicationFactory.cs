@@ -14,10 +14,6 @@ namespace ResearchCruiseApp.Tests;
 /// <summary>
 /// Boots the real HTTP pipeline against an in-memory SQLite database.
 /// </summary>
-/// <remarks>
-/// The rate limiter is a singleton per factory and every test shares the loopback partition, so
-/// each test class needs its own instance via <see cref="Xunit.IClassFixture{T}"/>.
-/// </remarks>
 internal sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
 {
     public const string UserEmail = "session@example.com";
@@ -27,14 +23,8 @@ internal sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
     // its last connection closes.
     private readonly SqliteConnection _connection = new("DataSource=:memory:");
 
-    private readonly Dictionary<string, string?> _configurationOverrides;
-
-    public AuthWebApplicationFactory(IDictionary<string, string?>? configurationOverrides = null)
+    public AuthWebApplicationFactory()
     {
-        _configurationOverrides = configurationOverrides is null
-            ? []
-            : new Dictionary<string, string?>(configurationOverrides);
-
         // The refresh cookie is Secure, and CookieContainer (unlike browsers and curl) has no
         // localhost exemption, so it would silently drop the cookie on an http base address.
         // TestServer does no real TLS; this only sets the request scheme.
@@ -48,28 +38,17 @@ internal sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
         builder.UseEnvironment("Testing");
 
         builder.ConfigureAppConfiguration(configuration =>
-        {
-            var settings = new Dictionary<string, string?>
-            {
-                ["JWT:ValidIssuer"] = "https://tests.local/",
-                ["JWT:ValidAudience"] = "https://tests.local/",
-                ["JWT:Secret"] = "TestSecretThatIsAtLeastTwoHundredFiftySixBitsLong!!",
-                ["JWT:AccessTokenLifetimeSeconds"] = "900",
-                ["JWT:RefreshTokenLifetimeSeconds"] = "7200",
-                // Raised well clear of the default so that tests which are not about throttling
-                // never trip it: the limiter is a singleton and they all share one partition.
-                ["RateLimiting:AuthSensitive:PermitLimit"] = "1000",
-                // Deliberately left unset so the endpoints exercise the fail-closed default:
-                // ["Auth:RefreshCookieSecure"]
-            };
-
-            foreach (var (key, value) in _configurationOverrides)
-            {
-                settings[key] = value;
-            }
-
-            configuration.AddInMemoryCollection(settings);
-        });
+            configuration.AddInMemoryCollection(
+                new Dictionary<string, string?>
+                {
+                    ["JWT:ValidIssuer"] = "https://tests.local/",
+                    ["JWT:ValidAudience"] = "https://tests.local/",
+                    ["JWT:Secret"] = "TestSecretThatIsAtLeastTwoHundredFiftySixBitsLong!!",
+                    ["JWT:AccessTokenLifetimeSeconds"] = "900",
+                    ["JWT:RefreshTokenLifetimeSeconds"] = "7200",
+                }
+            )
+        );
 
         builder.ConfigureServices(services =>
         {

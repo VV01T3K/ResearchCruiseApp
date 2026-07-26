@@ -81,10 +81,6 @@ export function subscribeAuthDetails(subscriber: (details: AuthDetails | undefin
   };
 }
 
-function getStatus(error: unknown) {
-  return typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
-}
-
 async function refresh(): Promise<AuthDetails | undefined> {
   const revisionBeforeRefresh = sessionRevision;
   const generationBeforeRefresh = authGeneration;
@@ -93,7 +89,7 @@ async function refresh(): Promise<AuthDetails | undefined> {
     try {
       details = toAuthDetails(await refreshTokens());
     } catch (error) {
-      const status = getStatus(error);
+      const status = typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
       if (status !== 409) throw error;
 
       const concurrentSession = await waitForConcurrentRefresh(revisionBeforeRefresh);
@@ -106,7 +102,7 @@ async function refresh(): Promise<AuthDetails | undefined> {
     setSession(details);
     return details;
   } catch (error) {
-    const unauthorized = getStatus(error) === 401;
+    const unauthorized = typeof error === 'object' && error !== null && 'status' in error && error.status === 401;
     if (unauthorized) setSession(undefined);
     throw new SessionRefreshError(error, unauthorized);
   }

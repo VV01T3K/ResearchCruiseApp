@@ -112,12 +112,8 @@ public sealed class AuthSessionEndpointTests
         Assert.Equal(HttpStatusCode.Unauthorized, replayResponse.StatusCode);
     }
 
-    /// <summary>
-    /// The factory deliberately leaves Auth:RefreshCookieSecure unset, so this pins the fail-closed
-    /// default: only appsettings.Development.json may opt out of Secure.
-    /// </summary>
     [Fact]
-    public async Task RefreshCookieAttributesFailClosedWhenSecureIsNotConfigured()
+    public async Task RefreshCookieHasSecureBrowserAttributes()
     {
         using var client = _factory.CreateSessionClient();
 
@@ -126,27 +122,6 @@ public sealed class AuthSessionEndpointTests
         Assert.True(cookie.HttpOnly);
         Assert.True(cookie.Secure);
         Assert.Equal(Microsoft.Net.Http.Headers.SameSiteMode.Strict, cookie.SameSite);
-    }
-
-    /// <summary>
-    /// Login, refresh and logout emit a delete at the pre-existing /v2/auth path so that local-dev
-    /// browsers, where both paths match the refresh URL, stop sending two values under one cookie
-    /// name.
-    /// Remove alongside SessionsEndpoints.LegacyRefreshTokenCookiePath.
-    /// </summary>
-    [Fact]
-    public async Task LoginAndRefreshClearTheCookieLeftAtTheLegacyPath()
-    {
-        using var client = _factory.CreateSessionClient();
-
-        var loginResponse = await LoginAsync(client);
-        AssertLegacyCookieDelete(loginResponse);
-
-        var refreshToken = GetRefreshCookie(loginResponse).Value.Value!;
-        var refreshResponse = await SendWithRefreshCookieAsync(client, RefreshPath, refreshToken);
-
-        Assert.Equal(HttpStatusCode.OK, refreshResponse.StatusCode);
-        AssertLegacyCookieDelete(refreshResponse);
     }
 
     private static Task<HttpResponseMessage> LoginAsync(HttpClient client) =>
@@ -170,11 +145,7 @@ public sealed class AuthSessionEndpointTests
         return await client.SendAsync(request);
     }
 
-    private static SetCookieHeaderValue GetRefreshCookie(HttpResponseMessage response) =>
-        // Login also emits a delete at the legacy path under the same cookie name.
-        GetRefreshCookies(response).Single(cookie => !string.IsNullOrEmpty(cookie.Value.Value));
-
-    private static List<SetCookieHeaderValue> GetRefreshCookies(HttpResponseMessage response)
+    private static SetCookieHeaderValue GetRefreshCookie(HttpResponseMessage response)
     {
         Assert.True(
             response.Headers.TryGetValues(HeaderNames.SetCookie, out var values),
@@ -183,16 +154,7 @@ public sealed class AuthSessionEndpointTests
 
         return SetCookieHeaderValue
             .ParseList([.. values!])
-            .Where(cookie => cookie.Name == RefreshCookieName)
-            .ToList();
-    }
-
-    private static void AssertLegacyCookieDelete(HttpResponseMessage response)
-    {
-        var legacy = GetRefreshCookies(response).Single(cookie => cookie.Path == "/v2/auth");
-
-        Assert.True(string.IsNullOrEmpty(legacy.Value.Value));
-        Assert.True(legacy.Expires < DateTimeOffset.UtcNow);
+            .Single(cookie => cookie.Name == RefreshCookieName);
     }
 
     /// <summary>RFC 6265 section 5.1.4 path-match.</summary>

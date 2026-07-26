@@ -61,10 +61,4 @@ public static class ApiComposition
 public static class RateLimitingPolicies
 {
     public const string AuthSensitive = nameof(AuthSensitive);
-
-    /// <summary>
-    /// Partitioned on the client IP, while keeping refresh and logout isolated from the login
-    /// bucket.
-    /// </summary>
-    public const string SessionRefresh = nameof(SessionRefresh);
 }

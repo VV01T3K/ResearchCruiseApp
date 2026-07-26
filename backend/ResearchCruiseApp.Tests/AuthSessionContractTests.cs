@@ -38,17 +38,17 @@ public sealed class AuthSessionContractTests
     public void RefreshCookieIsScopedToTheSiteRootAndJavaScriptCannotReadIt()
     {
         var expiration = DateTime.UtcNow.AddHours(2);
-        var secure = SessionsEndpoints.CreateRefreshTokenCookieOptions(true, expiration);
-        var insecure = SessionsEndpoints.CreateRefreshTokenCookieOptions(false, expiration);
+        var production = SessionsEndpoints.CreateRefreshTokenCookieOptions(false, expiration);
+        var development = SessionsEndpoints.CreateRefreshTokenCookieOptions(true, expiration);
 
-        Assert.True(secure.HttpOnly);
-        Assert.True(secure.Secure);
-        Assert.Equal(SameSiteMode.Strict, secure.SameSite);
+        Assert.True(production.HttpOnly);
+        Assert.True(production.Secure);
+        Assert.Equal(SameSiteMode.Strict, production.SameSite);
         // The browser matches Path against the URL it requested, which carries the /api prefix in
         // every containerized topology. See AuthSessionEndpointTests for the topology assertion.
-        Assert.Equal("/", secure.Path);
-        Assert.Equal(expiration, secure.Expires);
-        Assert.False(insecure.Secure);
+        Assert.Equal("/", production.Path);
+        Assert.Equal(expiration, production.Expires);
+        Assert.False(development.Secure);
     }
 
     [Fact]
