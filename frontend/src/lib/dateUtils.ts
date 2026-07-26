@@ -10,6 +10,10 @@ export function formatDate(value: string | Date, format: DateFormat): string {
         ? { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
         : { day: '2-digit', month: '2-digit', year: 'numeric' };
 
+  if (Number.isNaN(date.getTime())) {
+    return 'Invalid Date';
+  }
+
   return new Intl.DateTimeFormat('pl-PL', options).format(date).replace(', ', ' ');
 }
 
