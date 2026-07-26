@@ -1,5 +1,5 @@
 import { Dialog } from '@base-ui/react/dialog';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import { X } from 'lucide-react';
 import React from 'react';
 
 import { cn } from '@/lib/utils';
@@ -35,7 +35,7 @@ export function AppModal({ title, children, isOpen, onClose, className, dismissi
                   <button className="rounded-md p-2 text-gray-500 hover:cursor-pointer hover:bg-black/5 hover:text-gray-700" />
                 }
               >
-                <XLgIcon className="h-5 w-5" />
+                <X className="h-5 w-5" />
               </Dialog.Close>
             )}
           </header>

@@ -1,5 +1,5 @@
 import { Header } from '@tanstack/react-table';
-import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
+import { Trash2 } from 'lucide-react';
 import React from 'react';
 
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
@@ -98,7 +98,7 @@ export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TD
         disabled={!filterValue}
         expanded={expanded}
       >
-        <TrashIcon className="mr-2 h-4 w-4" />
+        <Trash2 className="mr-2 h-4 w-4" />
         Wyczyść filtry
       </AppTableListItem>
     </>

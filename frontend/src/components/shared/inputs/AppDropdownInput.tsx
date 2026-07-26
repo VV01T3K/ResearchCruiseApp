@@ -1,6 +1,6 @@
 import { Select } from '@base-ui/react/select';
-import CheckIcon from 'bootstrap-icons/icons/check.svg?react';
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
+import { Check } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import React from 'react';
 
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
@@ -112,7 +112,7 @@ export function AppDropdownInput({
             <AppInputErrorTriangle errors={errors} />
             {!disabled && (
               <Select.Icon className="transition-transform duration-300 ease-out data-[popup-open]:rotate-180">
-                <ChevronDownIcon className="h-5 w-5" />
+                <ChevronDown className="h-5 w-5" />
               </Select.Icon>
             )}
           </span>
@@ -145,7 +145,7 @@ export function AppDropdownInput({
                     >
                       <Select.ItemText>{opt.richLabel ?? opt.inlineLabel}</Select.ItemText>
                       <Select.ItemIndicator className="text-primary transition-transform duration-200 data-[ending-style]:scale-0">
-                        <CheckIcon className="h-4 w-4" />
+                        <Check className="h-4 w-4" />
                       </Select.ItemIndicator>
                     </Select.Item>
                   ))}

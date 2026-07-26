@@ -1,5 +1,5 @@
 import { Collapsible } from '@base-ui/react/collapsible';
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
+import { ChevronDown } from 'lucide-react';
 
 type Props = {
   title: string;
@@ -27,7 +27,7 @@ export function AppAccordion({
         >
           <span className="text-lg font-semibold">{title}</span>
           <span className="transition-transform duration-300 data-[panel-open]:rotate-180">
-            <ChevronDownIcon className="h-6 w-6" />
+            <ChevronDown className="h-6 w-6" />
           </span>
         </Collapsible.Trigger>
       </h2>

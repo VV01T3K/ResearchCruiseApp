@@ -2,11 +2,11 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { allowOnly } from '@/lib/guards';
 import { useForm } from '@tanstack/react-form';
-import BuildingFillIcon from 'bootstrap-icons/icons/building-fill.svg?react';
-import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
-import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
-import TelephoneFillIcon from 'bootstrap-icons/icons/telephone-fill.svg?react';
-import WindowStackIcon from 'bootstrap-icons/icons/window-stack.svg?react';
+import { Building2 } from 'lucide-react';
+import { Mail } from 'lucide-react';
+import { Globe2 } from 'lucide-react';
+import { Phone } from 'lucide-react';
+import { AppWindow } from 'lucide-react';
 import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -106,21 +106,21 @@ function HelpPage() {
           </form>
         </div>
         <div className="space-y-8">
-          <CompanyInfoCard icon={<BuildingFillIcon />} title="Biuro Armatora z jednostką r/v Oceanograf">
+          <CompanyInfoCard icon={<Building2 />} title="Biuro Armatora z jednostką r/v Oceanograf">
             <p className="font-semibold">Wydział Oceanografii i Geografii</p>
             <p>al. Marszałka Józefa Piłsudzkiego 46</p>
             <p>81-378 Gdynia</p>
           </CompanyInfoCard>
-          <CompanyInfoCard icon={<TelephoneFillIcon />} title="Telefon">
+          <CompanyInfoCard icon={<Phone />} title="Telefon">
             <AppLink href="tel:+48585236631">+48 58 523 66 31</AppLink>
           </CompanyInfoCard>
-          <CompanyInfoCard icon={<GlobeAmericasIcon />} title="Strona WWW">
+          <CompanyInfoCard icon={<Globe2 />} title="Strona WWW">
             <AppLink href="https://oceanograf.ug.edu.pl">https://oceanograf.ug.edu.pl</AppLink>
           </CompanyInfoCard>
-          <CompanyInfoCard icon={<EnvelopeFillIcon />} title="Email">
+          <CompanyInfoCard icon={<Mail />} title="Email">
             <AppLink href="mail:office.oceanograf@ug.edu.pl">office.oceanograf@ug.edu.pl</AppLink>
           </CompanyInfoCard>
-          <CompanyInfoCard icon={<WindowStackIcon />} title="Wersja aplikacji">
+          <CompanyInfoCard icon={<AppWindow />} title="Wersja aplikacji">
             <div className="grid grid-cols-2 gap-1 text-sm text-gray-500">
               <div>Wersja frontendu:</div>
               <div className="font-bold text-black">{APP_VERSION}</div>

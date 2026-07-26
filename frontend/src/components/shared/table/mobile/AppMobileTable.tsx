@@ -1,5 +1,5 @@
 import { flexRender, Header } from '@tanstack/react-table';
-import FunnelIcon from 'bootstrap-icons/icons/funnel.svg?react';
+import { Funnel } from 'lucide-react';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
@@ -21,7 +21,7 @@ export function AppMobileTable<T>({
 
   const defaultButtons: React.ReactNode[] = [
     <AppButton key="openFilterModalBtn" onClick={() => setIsFilterModalOpen(true)} variant="primary">
-      <FunnelIcon className="h-8 w-8" />
+      <Funnel className="h-8 w-8" />
     </AppButton>,
   ];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;

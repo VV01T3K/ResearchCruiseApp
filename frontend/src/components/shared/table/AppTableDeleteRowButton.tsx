@@ -1,4 +1,4 @@
-import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
+import { Trash2 } from 'lucide-react';
 
 import { AppButton } from '@/components/shared/AppButton';
 
@@ -9,7 +9,7 @@ type Props = {
 export function AppTableDeleteRowButton({ onClick, disabled }: Props) {
   return (
     <AppButton variant="dangerOutline" size="square" onClick={onClick} title="Usuń wiersz" disabled={disabled}>
-      <TrashIcon className="h-5 w-5" />
+      <Trash2 className="h-5 w-5" />
     </AppButton>
   );
 }

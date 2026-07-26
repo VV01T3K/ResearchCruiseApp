@@ -2,8 +2,8 @@ import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { revalidateLogic, useForm } from '@tanstack/react-form';
-import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import { Check } from 'lucide-react';
+import { X } from 'lucide-react';
 import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -93,7 +93,7 @@ function ResetPasswordPage() {
       <AppLayout title={title} variant="narrow">
         <div className="flex flex-col items-center">
           <div className="h-60">
-            {result === 'success' ? <CheckLgIcon className="text-success" /> : <XLgIcon className="text-danger" />}
+            {result === 'success' ? <Check className="text-success" /> : <X className="text-danger" />}
           </div>
           <div className="text-center text-gray-600">
             {result === 'success' && <>Hasło zostało pomyślnie zmienione. Możesz teraz się zalogować</>}

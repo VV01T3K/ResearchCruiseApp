@@ -1,16 +1,16 @@
 import { Toast } from '@base-ui/react/toast';
-import CheckCircleIcon from 'bootstrap-icons/icons/check-circle-fill.svg?react';
-import ExclamationCircleIcon from 'bootstrap-icons/icons/exclamation-circle-fill.svg?react';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import { CircleCheck } from 'lucide-react';
+import { CircleAlert } from 'lucide-react';
+import { X } from 'lucide-react';
 
 import { toastManager } from './toast';
 
 function ToastIcon({ type }: { type?: string }) {
   if (type === 'success') {
-    return <CheckCircleIcon className="h-5 w-5 text-green-500" />;
+    return <CircleCheck className="h-5 w-5 text-green-500" />;
   }
   if (type === 'error') {
-    return <ExclamationCircleIcon className="h-5 w-5 text-red-500" />;
+    return <CircleAlert className="h-5 w-5 text-red-500" />;
   }
   if (type === 'loading') {
     return <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />;
@@ -37,7 +37,7 @@ function ToastList() {
               className="flex h-6 w-6 items-center justify-center rounded-md text-gray-500 hover:cursor-pointer hover:bg-black/5 hover:text-gray-700"
               aria-label="Close"
             >
-              <XLgIcon className="h-4 w-4" />
+              <X className="h-4 w-4" />
             </Toast.Close>
           )}
         </div>

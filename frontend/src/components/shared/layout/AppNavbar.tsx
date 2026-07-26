@@ -1,7 +1,7 @@
-import UGLogoIcon from '@/assets/uglogo.svg?react';
-import BoxArrowRightIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
-import BroadcastIcon from 'bootstrap-icons/icons/broadcast.svg?react';
-import EnvelopeIcon from 'bootstrap-icons/icons/envelope.svg?react';
+import UGLogoUrl from '@/assets/uglogo.svg?url';
+import { LogOut } from 'lucide-react';
+import { Radio } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import packageJson from '../../../../package.json';
 
@@ -49,14 +49,14 @@ export function AppNavbar() {
         </motion.div>
       </div>
       <div className="flex gap-6">
-        <motion.div className="w-4" whileHover={{ scale: 1.3 }}>
+        <motion.div className="size-4" whileHover={{ scale: 1.3 }}>
           <AppLink href="https://ug.edu.pl" target="_blank" title="Uniwersytet Gdański" className="text-white">
-            <UGLogoIcon />
+            <img src={UGLogoUrl} alt="Uniwersytet Gdański" className="size-full object-contain" />
           </AppLink>
         </motion.div>
         <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
           <AppButton onClick={() => openUGRadio()} title="Radio MORS" variant="plain" className="p-0 text-white">
-            <BroadcastIcon />
+            <Radio className="size-5" />
           </AppButton>
         </motion.div>
         <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
@@ -66,7 +66,7 @@ export function AppNavbar() {
             title="Poczta Uniwersytecka"
             className="text-white"
           >
-            <EnvelopeIcon />
+            <Mail />
           </AppLink>
         </motion.div>
         <AnimatePresence>
@@ -91,7 +91,7 @@ export function AppNavbar() {
                   variant="plain"
                   className="p-0 text-white"
                 >
-                  <BoxArrowRightIcon />
+                  <LogOut />
                 </AppButton>
               </motion.div>
             </motion.div>

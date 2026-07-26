@@ -1,4 +1,4 @@
-import ExclamationTriangleIcon from 'bootstrap-icons/icons/exclamation-triangle.svg?react';
+import { TriangleAlert } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -11,9 +11,5 @@ export function AppInputErrorTriangle({ errors, mode = 'inline' }: Props) {
     return null;
   }
 
-  return (
-    <ExclamationTriangleIcon
-      className={cn('text-danger h-5 w-5', mode === 'absolute' ? 'absolute top-2.5 right-5' : '')}
-    />
-  );
+  return <TriangleAlert className={cn('text-danger h-5 w-5', mode === 'absolute' ? 'absolute top-2.5 right-5' : '')} />;
 }

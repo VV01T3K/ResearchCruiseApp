@@ -1,5 +1,5 @@
-import CheckIcon from 'bootstrap-icons/icons/check-square-fill.svg?react';
-import TrashFillIcon from 'bootstrap-icons/icons/trash-fill.svg?react';
+import { SquareCheck } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppButton } from '@/components/shared/AppButton';
@@ -12,11 +12,11 @@ export function SupervisorActionsSection({ onAccept, onDeny }: Props) {
   return (
     <AppActionsSection>
       <AppButton className="w-36 !justify-center gap-4 lg:w-48" variant="danger" onClick={onDeny}>
-        <TrashFillIcon className="h-4 w-4" />
+        <Trash2 className="h-4 w-4" />
         Odrzuć
       </AppButton>
       <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={onAccept}>
-        <CheckIcon className="h-4 w-4" />
+        <SquareCheck className="h-4 w-4" />
         Zaakceptuj
       </AppButton>
     </AppActionsSection>

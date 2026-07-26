@@ -1,12 +1,11 @@
-import AwardFillIcon from 'bootstrap-icons/icons/award-fill.svg?react';
-import BookIcon from 'bootstrap-icons/icons/book.svg?react';
-import CalendarCheckIcon from 'bootstrap-icons/icons/calendar-check.svg?react';
-import GearFillIcon from 'bootstrap-icons/icons/gear-fill.svg?react';
-import InfoIcon from 'bootstrap-icons/icons/info.svg?react';
-import InfoCircleIcon from 'bootstrap-icons/icons/info-circle.svg?react';
-import PeopleFillIcon from 'bootstrap-icons/icons/people-fill.svg?react';
-import PlusCircleFillIcon from 'bootstrap-icons/icons/plus-circle.svg?react';
-import UIRadiosIcon from 'bootstrap-icons/icons/ui-radios.svg?react';
+import { Award } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
+import { CalendarCheck } from 'lucide-react';
+import { Settings } from 'lucide-react';
+import { Info } from 'lucide-react';
+import { Users } from 'lucide-react';
+import { CirclePlus } from 'lucide-react';
+import { ListChecks } from 'lucide-react';
 
 import { GridCard } from './GridCard';
 
@@ -17,7 +16,7 @@ export function NewCruiseApplicationCard({ className }: { className?: string }) 
       name="Nowe zgłoszenie"
       description="Zgłoś nowy rejs"
       href="/applications/new"
-      Icon={PlusCircleFillIcon}
+      Icon={CirclePlus}
       className={className}
     />
   );
@@ -30,7 +29,7 @@ export function PriorityInformationCard({ className }: { className?: string }) {
       name="Informacje o priorytetyzacji"
       description="Dowiedz się więcej o zasadach priorytetyzacji"
       href="/priority-information"
-      Icon={InfoIcon}
+      Icon={Info}
       className={className}
     />
   );
@@ -43,7 +42,8 @@ export function UserManagementCard({ className }: { className?: string }) {
       name="Zarządzanie użytkownikami"
       description="Dodaj, edytuj lub usuń użytkowników"
       href="/user-management"
-      Icon={PeopleFillIcon}
+      Icon={Users}
+      iconClassName="fill-current"
       className={className}
     />
   );
@@ -56,7 +56,8 @@ export function AccountSettingsCard({ className }: { className?: string }) {
       name="Ustawienia konta"
       description="Zmień ustawienia swojego konta"
       href="/account-settings"
-      Icon={GearFillIcon}
+      Icon={Settings}
+      iconClassName="fill-current [&>circle]:fill-white"
       className={className}
     />
   );
@@ -69,7 +70,7 @@ export function ApplicationsCard({ className }: { className?: string }) {
       name="Zgłoszenia"
       description="Przeglądaj aktualne i historyczne zgłoszenia"
       href="/applications"
-      Icon={UIRadiosIcon}
+      Icon={ListChecks}
       className={className}
     />
   );
@@ -77,14 +78,7 @@ export function ApplicationsCard({ className }: { className?: string }) {
 
 export function HelpCard({ className }: { className?: string }) {
   return (
-    <GridCard
-      key="help"
-      name="Pomoc"
-      description="Uzyskaj pomoc"
-      href="/help"
-      Icon={InfoCircleIcon}
-      className={className}
-    />
+    <GridCard key="help" name="Pomoc" description="Uzyskaj pomoc" href="/help" Icon={Info} className={className} />
   );
 }
 
@@ -95,7 +89,7 @@ export function CruisesCard({ className }: { className?: string }) {
       name="Harmonogram rejsów"
       description="Przeglądaj oraz planuj rejsy"
       href="/cruises"
-      Icon={CalendarCheckIcon}
+      Icon={CalendarCheck}
       className={className}
     />
   );
@@ -108,7 +102,7 @@ export function PublicationsCard({ className }: { className?: string }) {
       name="Moje publikacje"
       description="Zarządzaj moimi publikacjami"
       href="/my-publications"
-      Icon={BookIcon}
+      Icon={BookOpen}
       className={className}
     />
   );
@@ -121,7 +115,8 @@ export function CruiseEffectsCard({ className }: { className?: string }) {
       name="Efekty rejsów"
       description="Przeglądaj efekty rejsów"
       href="/cruise-effects"
-      Icon={AwardFillIcon}
+      Icon={Award}
+      iconClassName="fill-current"
       className={className}
     />
   );

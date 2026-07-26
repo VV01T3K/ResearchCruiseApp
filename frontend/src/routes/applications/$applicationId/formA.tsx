@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { revalidateLogic } from '@tanstack/react-form';
-import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
+import { Save } from 'lucide-react';
 import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -176,7 +176,7 @@ function FormAPage() {
 
           <div className="flex justify-center gap-4">
             <AppButton className="gap-4" disabled={saveMutation.isPending} onClick={handleSaveDraft}>
-              <FloppyFillIcon className="h-4 w-4" />
+              <Save className="h-4 w-4" />
               Zapisz wersję roboczą
             </AppButton>
           </div>
