@@ -43,6 +43,7 @@ export function UserManagementCard({ className }: { className?: string }) {
       description="Dodaj, edytuj lub usuń użytkowników"
       href="/user-management"
       Icon={Users}
+      iconClassName="fill-current"
       className={className}
     />
   );
@@ -56,6 +57,7 @@ export function AccountSettingsCard({ className }: { className?: string }) {
       description="Zmień ustawienia swojego konta"
       href="/account-settings"
       Icon={Settings}
+      iconClassName="fill-current [&>circle]:fill-white"
       className={className}
     />
   );
@@ -114,6 +116,7 @@ export function CruiseEffectsCard({ className }: { className?: string }) {
       description="Przeglądaj efekty rejsów"
       href="/cruise-effects"
       Icon={Award}
+      iconClassName="fill-current"
       className={className}
     />
   );
