@@ -5,7 +5,7 @@ import { Settings } from 'lucide-react';
 import { Info } from 'lucide-react';
 import { Users } from 'lucide-react';
 import { CirclePlus } from 'lucide-react';
-import { Radio } from 'lucide-react';
+import { ListChecks } from 'lucide-react';
 
 import { GridCard } from './GridCard';
 
@@ -68,7 +68,7 @@ export function ApplicationsCard({ className }: { className?: string }) {
       name="Zgłoszenia"
       description="Przeglądaj aktualne i historyczne zgłoszenia"
       href="/applications"
-      Icon={Radio}
+      Icon={ListChecks}
       className={className}
     />
   );

@@ -56,7 +56,7 @@ export function AppNavbar() {
         </motion.div>
         <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
           <AppButton onClick={() => openUGRadio()} title="Radio MORS" variant="plain" className="p-0 text-white">
-            <Radio />
+            <Radio className="size-5" />
           </AppButton>
         </motion.div>
         <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
