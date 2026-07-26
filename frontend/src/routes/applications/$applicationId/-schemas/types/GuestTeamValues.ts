@@ -1,11 +1,13 @@
 import { z } from 'zod';
 
-export const GuestTeamValuesSchema = z.object({
-  name: z.string().nonempty('Instytucja jest wymagana'),
-  noOfPersons: z.string().refine((val) => {
-    const parsed = parseInt(val, 10);
-    return !isNaN(parsed) && parsed > 0;
-  }, 'Liczba osób musi być liczbą większą od 0'),
+export const GuestTeamValuesInputSchema = z.object({
+  name: z.string(),
+  noOfPersons: z.number(),
 });
 
-export type GuestTeamValues = z.infer<typeof GuestTeamValuesSchema>;
+export const GuestTeamValuesSchema = GuestTeamValuesInputSchema.extend({
+  name: z.string().nonempty('Instytucja jest wymagana'),
+  noOfPersons: z.number().positive('Liczba osób musi być liczbą większą od 0'),
+});
+
+export type GuestTeamValues = z.input<typeof GuestTeamValuesInputSchema>;

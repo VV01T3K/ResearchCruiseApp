@@ -1,24 +1,20 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { getErrors } from '@/lib/utils';
-import { useFormA } from '@/contexts/applications/FormAContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { mapPersonToLabel } from '@/lib/applications/PersonMappers';
 
-export function CruiseManagerInfoSection() {
-  const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
+export function CruiseManagerInfoSection({ context }: { context: FormAViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
+  const { isReadonly, initValues } = context;
 
   return (
     <AppAccordion title="1. Kierownik zgłaszanego rejsu" expandedByDefault data-testid="form-a-cruise-manager-section">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <form.Field
+        <form.AppField
           name="cruiseManagerId"
           children={(field) => (
-            <AppDropdownInput
-              name={field.name}
-              value={field.state.value}
-              onChange={field.handleChange}
-              onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            <field.SelectField
               label="Kierownik rejsu"
               showRequiredAsterisk
               placeholder="Wybierz kierownika rejsu"
@@ -29,15 +25,10 @@ export function CruiseManagerInfoSection() {
           )}
         />
 
-        <form.Field
+        <form.AppField
           name="deputyManagerId"
           children={(field) => (
-            <AppDropdownInput
-              name={field.name}
-              value={field.state.value}
-              onChange={field.handleChange}
-              onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            <field.SelectField
               label="Zastępca kierownika rejsu"
               showRequiredAsterisk
               placeholder="Wybierz zastępcę kierownika rejsu"
@@ -49,18 +40,10 @@ export function CruiseManagerInfoSection() {
           )}
         />
 
-        <form.Field
+        <form.AppField
           name="year"
           children={(field) => (
-            <AppDropdownInput
-              name={field.name}
-              value={field.state.value}
-              onChange={(newValue) => {
-                field.handleChange(newValue);
-                form.validateAllFields('change');
-              }}
-              onBlur={field.handleBlur}
-              errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+            <field.SelectField
               label="Rok"
               showRequiredAsterisk
               placeholder="Wybierz rok"

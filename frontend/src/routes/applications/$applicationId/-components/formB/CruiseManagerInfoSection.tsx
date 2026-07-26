@@ -1,11 +1,12 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { getErrors } from '@/lib/utils';
-import { useFormB } from '@/contexts/applications/FormBContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
+import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 
-export function CruiseManagerInfoSection() {
-  const { form, formA, formAInitValues, hasFormBeenSubmitted, isReadonly } = useFormB();
+export function CruiseManagerInfoSection({ context }: { context: FormBViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formBDefaultValues });
+  const { formA, formAInitValues, isReadonly } = context;
 
   return (
     <AppAccordion title="2. Kierownik zgłaszanego rejsu" expandedByDefault data-testid="form-b-cruise-manager-section">
@@ -35,19 +36,10 @@ export function CruiseManagerInfoSection() {
           />
         </div>
         <div className="grid place-items-center">
-          <form.Field
+          <form.AppField
             name="isCruiseManagerPresent"
             children={(field) => (
-              <AppCheckbox
-                size="md"
-                name={field.name}
-                checked={field.state.value === 'true'}
-                onChange={(value) => field.handleChange(value ? 'true' : 'false')}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                label="Czy kierownik jest obecny na rejsie?"
-                disabled={isReadonly}
-              />
+              <field.CheckboxField size="md" label="Czy kierownik jest obecny na rejsie?" disabled={isReadonly} />
             )}
           />
         </div>

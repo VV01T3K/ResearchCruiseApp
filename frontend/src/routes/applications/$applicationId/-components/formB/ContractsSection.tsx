@@ -4,14 +4,14 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useFormB } from '@/contexts/applications/FormBContext';
+import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import {
   ContractValues,
   getContractCategoryName,
 } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 
-export function ContractsSection() {
-  const { formA, isReadonly } = useFormB();
+export function ContractsSection({ context }: { context: FormBViewModel }) {
+  const { formA, isReadonly } = context;
 
   const columns: ColumnDef<ContractValues>[] = [
     {

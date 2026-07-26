@@ -2,14 +2,14 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import {
   getPublicationCategoryLabel,
   PublicationValues,
 } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
-export function PublicationsSection() {
-  const { formA } = useFormC();
+export function PublicationsSection({ context }: { context: FormCViewModel }) {
+  const { formA } = context;
 
   const columns: ColumnDef<PublicationValues>[] = [
     {
@@ -46,10 +46,10 @@ export function PublicationsSection() {
     {
       header: 'Rok wydania',
       accessorFn: (row) => {
-        if (row.year === '0') {
+        if (row.year === 0) {
           return 1900;
         } else {
-          return parseInt(row.year);
+          return row.year;
         }
       },
       enableColumnFilter: false,

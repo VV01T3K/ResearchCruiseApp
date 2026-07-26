@@ -32,6 +32,7 @@ export function AppAccordion({
         </Collapsible.Trigger>
       </h2>
       <Collapsible.Panel
+        keepMounted
         className="overflow-hidden px-4 transition-all duration-300 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0"
         data-testid={contentTestId}
       >

@@ -1,8 +1,8 @@
 import * as Sentry from '@sentry/react';
 
 import config from '@/config';
-import { createFormBreadcrumb, parseSampleRate } from '@/lib/sentryUtils';
-import { User } from '@/types/user';
+import { createFormBreadcrumb, parseSampleRate } from '@/integrations/sentry/utils';
+import { User } from '@/api/client/user';
 
 type FieldMeta = { errors: Array<unknown> };
 

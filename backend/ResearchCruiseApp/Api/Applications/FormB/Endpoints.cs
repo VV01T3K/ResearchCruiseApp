@@ -1,4 +1,3 @@
-using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
@@ -25,11 +24,13 @@ public static class FormBEndpoints
             .MapPut("/{applicationId:guid}/form-b", Update)
             .WithName("UpdateApplicationFormB")
             .WithSummary("Create or replace Form B.")
+            .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithDbTransaction()
+            .WithRequestValidation<FormBWriteRequest>()
             .RequireAuthorization(AuthorizationPolicies.ApplicationFormEditors);
 
         group
@@ -71,7 +72,6 @@ public static class FormBEndpoints
     private static async Task<Results<Created, ProblemHttpResult>> Update(
         Guid applicationId,
         FormBWriteRequest request,
-        IValidator<FormBWriteRequest> validator,
         UserPermissionVerifier userPermissionVerifier,
         FormBFactory forms,
         ApplicationDbContext dbContext,
@@ -79,10 +79,6 @@ public static class FormBEndpoints
         CancellationToken cancellationToken
     )
     {
-        var validation = await validator.ValidateAsync(request, cancellationToken);
-        if (!validation.IsValid)
-            return validation.ToApplicationResult().Error!.ToProblemHttpResult();
-
         var application = await dbContext
             .CruiseApplications.IncludeFormA()
             .IncludeFormB()

@@ -1,10 +1,10 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 
-export function CruiseGoalSection() {
-  const { formA, formAInitValues } = useFormC();
+export function CruiseGoalSection({ context }: { context: FormCViewModel }) {
+  const { formA, formAInitValues } = context;
 
   return (
     <AppAccordion title="6. Cel rejsu" expandedByDefault data-testid="form-c-cruise-goal-section">

@@ -1,9 +1,9 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 
-export function CruiseManagerInfoSection() {
-  const { formA, formAInitValues } = useFormC();
+export function CruiseManagerInfoSection({ context }: { context: FormCViewModel }) {
+  const { formA, formAInitValues } = context;
 
   return (
     <AppAccordion title="2. Kierownik zgłaszanego rejsu" expandedByDefault data-testid="form-c-cruise-manager-section">

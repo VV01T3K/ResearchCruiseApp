@@ -1,14 +1,21 @@
 import { z } from 'zod';
 
-import { ResearchTaskValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
-
-export const ResearchTaskEffectValuesSchema = z.intersection(
+import {
+  ResearchTaskValuesInputSchema,
   ResearchTaskValuesSchema,
-  z.object({
-    done: z.enum(['true', 'false']),
-    managerConditionMet: z.enum(['true', 'false']),
-    deputyConditionMet: z.enum(['true', 'false']),
-  })
-);
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
-export type ResearchTaskEffectValues = z.infer<typeof ResearchTaskEffectValuesSchema>;
+const effectFields = {
+  done: z.boolean(),
+  managerConditionMet: z.boolean(),
+  deputyConditionMet: z.boolean(),
+};
+
+const withEffectFields = (
+  schemas: typeof ResearchTaskValuesInputSchema.options | typeof ResearchTaskValuesSchema.options
+) => z.union(schemas.map((schema) => schema.extend(effectFields)));
+
+export const ResearchTaskEffectValuesInputSchema = withEffectFields(ResearchTaskValuesInputSchema.options);
+export const ResearchTaskEffectValuesSchema = withEffectFields(ResearchTaskValuesSchema.options);
+
+export type ResearchTaskEffectValues = z.input<typeof ResearchTaskEffectValuesInputSchema>;

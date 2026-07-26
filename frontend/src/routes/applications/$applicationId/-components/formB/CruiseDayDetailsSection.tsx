@@ -3,13 +3,12 @@ import { useRef } from 'react';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { toast } from '@/components/shared/layout/toast';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors } from '@/lib/utils';
-import { FormBContextType, useFormB } from '@/contexts/applications/FormBContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
+import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
 import {
   exportCruiseDayDetailsToXlsx,
@@ -19,10 +18,8 @@ import {
 } from '@/lib/applications/csvParser';
 
 const cruiseDayDetailsColumns = (
-  form: FormBContextType['form'],
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any,
-  hasFormBeenSubmitted: boolean,
+  form: FormBFormApi,
+  removeRow: (index: number) => void,
   isReadonly: boolean
 ): ColumnDef<CruiseDayValues>[] => [
   {
@@ -31,17 +28,12 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.number,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].number`}
         children={(field) => (
-          <AppNumberInput
+          <field.NumberField
             data-testid-input="cruise-day-number-input"
             data-testid-errors="cruise-day-number-errors"
-            name={field.name}
-            value={parseInt(field.state.value, 10)}
-            onChange={(e) => field.setValue(e.toString())}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -57,17 +49,12 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.hours,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].hours`}
         children={(field) => (
-          <AppNumberInput
+          <field.NumberField
             data-testid-input="cruise-day-hours-input"
             data-testid-errors="cruise-day-hours-errors"
-            name={field.name}
-            value={parseInt(field.state.value, 10)}
-            onChange={(e) => field.setValue(e.toString())}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
             minimum={0}
             type="integer"
@@ -83,17 +70,13 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.taskName,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].taskName`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="cruise-day-task-name-input"
             data-testid-errors="cruise-day-task-name-errors"
-            name={field.name}
-            value={field.state.value}
             onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
             placeholder="Nazwa zadania"
           />
@@ -108,17 +91,13 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.region,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].region`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="cruise-day-region-input"
             data-testid-errors="cruise-day-region-errors"
-            name={field.name}
-            value={field.state.value}
             onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
             placeholder="Rejon zadania"
           />
@@ -133,17 +112,13 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.position,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].position`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="cruise-day-position-input"
             data-testid-errors="cruise-day-position-errors"
-            name={field.name}
-            value={field.state.value}
             onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
             placeholder="Pozycja"
           />
@@ -158,17 +133,13 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.comment,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`cruiseDaysDetails[${row.index}].comment`}
         children={(field) => (
-          <AppInput
+          <field.TextField
             data-testid="cruise-day-comment-input"
             data-testid-errors="cruise-day-comment-errors"
-            name={field.name}
-            value={field.state.value}
             onChange={field.setValue}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
             placeholder="Uwagi"
           />
@@ -183,14 +154,7 @@ const cruiseDayDetailsColumns = (
           id: 'actions',
           cell: ({ row }) => (
             <div className="flex justify-end">
-              <AppTableDeleteRowButton
-                onClick={() => {
-                  field.removeValue(row.index);
-                  field.handleChange((prev: CruiseDayValues[]) => prev);
-                  field.handleBlur();
-                }}
-                disabled={isReadonly}
-              />
+              <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
             </div>
           ),
           size: 10,
@@ -199,8 +163,9 @@ const cruiseDayDetailsColumns = (
     : []),
 ];
 
-export function CruiseDayDetailsSection() {
-  const { form, hasFormBeenSubmitted, isReadonly } = useFormB();
+export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formBDefaultValues });
+  const { isReadonly } = context;
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -245,7 +210,7 @@ export function CruiseDayDetailsSection() {
       expandedByDefault
       data-testid="form-b-cruise-day-details-section"
     >
-      <form.Field
+      <form.AppField
         name="cruiseDaysDetails"
         mode="array"
         children={(field) => (
@@ -260,7 +225,14 @@ export function CruiseDayDetailsSection() {
             />
             <AppTable
               data={field.state.value}
-              columns={cruiseDayDetailsColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              columns={cruiseDayDetailsColumns(
+                form,
+                (index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                },
+                isReadonly
+              )}
               buttons={() => {
                 const buttons = [];
                 if (!isReadonly) {
@@ -270,14 +242,13 @@ export function CruiseDayDetailsSection() {
                       data-testid="form-b-add-cruise-day-task-btn"
                       onClick={() => {
                         field.pushValue({
-                          number: '0',
-                          hours: '0',
+                          number: 0,
+                          hours: 0,
                           taskName: '',
                           region: '',
                           position: '',
                           comment: '',
                         });
-                        field.handleChange((prev: CruiseDayValues[]) => prev);
                         field.handleBlur();
                       }}
                       variant="primary"
