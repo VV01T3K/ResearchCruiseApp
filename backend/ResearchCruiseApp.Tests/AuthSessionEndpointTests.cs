@@ -129,20 +129,24 @@ public sealed class AuthSessionEndpointTests
     }
 
     /// <summary>
-    /// Login and logout emit a delete at the pre-existing /v2/auth path so that local-dev browsers,
-    /// where both paths match the refresh URL, stop sending two values under one cookie name.
+    /// Login, refresh and logout emit a delete at the pre-existing /v2/auth path so that local-dev
+    /// browsers, where both paths match the refresh URL, stop sending two values under one cookie
+    /// name.
     /// Remove alongside SessionsEndpoints.LegacyRefreshTokenCookiePath.
     /// </summary>
     [Fact]
-    public async Task LoginClearsTheCookieLeftAtTheLegacyPath()
+    public async Task LoginAndRefreshClearTheCookieLeftAtTheLegacyPath()
     {
         using var client = _factory.CreateSessionClient();
 
-        var legacy = GetRefreshCookies(await LoginAsync(client))
-            .Single(cookie => cookie.Path == "/v2/auth");
+        var loginResponse = await LoginAsync(client);
+        AssertLegacyCookieDelete(loginResponse);
 
-        Assert.True(string.IsNullOrEmpty(legacy.Value.Value));
-        Assert.True(legacy.Expires < DateTimeOffset.UtcNow);
+        var refreshToken = GetRefreshCookie(loginResponse).Value.Value!;
+        var refreshResponse = await SendWithRefreshCookieAsync(client, RefreshPath, refreshToken);
+
+        Assert.Equal(HttpStatusCode.OK, refreshResponse.StatusCode);
+        AssertLegacyCookieDelete(refreshResponse);
     }
 
     private static Task<HttpResponseMessage> LoginAsync(HttpClient client) =>
@@ -181,6 +185,14 @@ public sealed class AuthSessionEndpointTests
             .ParseList([.. values!])
             .Where(cookie => cookie.Name == RefreshCookieName)
             .ToList();
+    }
+
+    private static void AssertLegacyCookieDelete(HttpResponseMessage response)
+    {
+        var legacy = GetRefreshCookies(response).Single(cookie => cookie.Path == "/v2/auth");
+
+        Assert.True(string.IsNullOrEmpty(legacy.Value.Value));
+        Assert.True(legacy.Expires < DateTimeOffset.UtcNow);
     }
 
     /// <summary>RFC 6265 section 5.1.4 path-match.</summary>

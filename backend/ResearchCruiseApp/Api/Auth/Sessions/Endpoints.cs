@@ -103,6 +103,7 @@ public static class SessionsEndpoints
         if (!result.IsSuccess)
             return result.Error!.ToProblemHttpResult();
 
+        DeleteLegacyRefreshTokenCookie(context, configuration);
         WriteRefreshTokenCookie(context, configuration, result.Data!);
         return TypedResults.Ok(TokenResponse.From(result.Data!));
     }

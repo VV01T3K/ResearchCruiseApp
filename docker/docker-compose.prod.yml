@@ -15,8 +15,9 @@ services:
       - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    # The backend trusts X-Forwarded-For (TrustAllProxies), so it must not be reachable from off-host.
     ports:
-      - 3000:8080
+      - 127.0.0.1:3000:8080
   frontend:
     container_name: researchcruiseapp-frontend
     image: ghcr.io/vv01t3k/researchcruiseapp/frontend

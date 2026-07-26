@@ -190,6 +190,9 @@ internal class IdentityService(
 
     public async Task<Result<LoginResponseDto>> RefreshUserTokens(string refreshToken)
     {
+        if (string.IsNullOrWhiteSpace(refreshToken))
+            return Error.UnknownIdentity();
+
         var refreshTokenHash = HashRefreshToken(refreshToken);
         var user = await userManager.Users.SingleOrDefaultAsync(candidate =>
             candidate.RefreshToken == refreshTokenHash
@@ -198,6 +201,9 @@ internal class IdentityService(
             user is null
             || !user.Accepted
             || !user.EmailConfirmed
+            // Null is not "< UtcNow", so a row holding a token but no expiry would be accepted
+            // forever.
+            || user.RefreshTokenExpiry is null
             || user.RefreshTokenExpiry < DateTime.UtcNow
         )
             return Error.UnknownIdentity();

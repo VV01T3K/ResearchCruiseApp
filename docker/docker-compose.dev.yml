@@ -15,6 +15,11 @@ services:
       - Database__LogUserPasswordsWhenSeeding=true
       - ConnectionStrings__Database=Server=db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
       - FrontendUrl=http://localhost:8080
+      # The stack runs as Production, so appsettings.Development.json does not apply. Without this
+      # the seeder tries to reach Gmail for each account it creates and startup waits out the
+      # timeouts.
+      - SmtpSettings__UseFakeSmtp=true
+      - SmtpSettings__FakeSmtpDirectory=/tmp/fake-emails
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
     ports:
