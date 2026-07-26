@@ -669,7 +669,7 @@ internal class IdentityService(
     {
         var lifetime = int.Parse(configuration["JWT:RefreshTokenLifetimeSeconds"] ?? "0");
         var expiry = DateTime.UtcNow.AddSeconds(lifetime);
-        var token = Convert.ToBase64String(randomGenerator.CreateSecureCodeBytes());
+        var token = Convert.ToBase64String(randomGenerator.CreateRefreshTokenBytes());
 
         return (token, expiry);
     }

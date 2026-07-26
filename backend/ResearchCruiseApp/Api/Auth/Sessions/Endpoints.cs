@@ -7,7 +7,19 @@ namespace ResearchCruiseApp.Api.Auth;
 public static class SessionsEndpoints
 {
     private const string RefreshTokenCookie = "rca_refresh_token";
-    private const string RefreshTokenCookiePath = "/v2/auth";
+
+    // The backend cannot know the browser-visible prefix: it is served bare by the vite dev server,
+    // under /api/ by frontend/nginx.conf (which strips the prefix before we see the request), and
+    // behind Caddy on top of that in staging. A narrower path is stored by the browser and then
+    // never sent back. HttpOnly + SameSite=Strict + rotation on every use carry the security here.
+    private const string RefreshTokenCookiePath = "/";
+
+    // Cookies written by an earlier revision of this branch. Only reachable in local dev, where both
+    // paths match /v2/auth/refresh and the browser would send two values for the same name.
+    // Remove one release after this ships.
+    private const string LegacyRefreshTokenCookiePath = "/v2/auth";
+
+    private const string RefreshCookieSecureConfigurationKey = "Auth:RefreshCookieSecure";
 
     public static void Map(RouteGroupBuilder group)
     {
@@ -59,7 +71,7 @@ public static class SessionsEndpoints
         LoginRequest request,
         IdentityService identityService,
         HttpContext context,
-        IWebHostEnvironment environment
+        IConfiguration configuration
     )
     {
         if (!await identityService.CanUserLogin(request.Email, request.Password))
@@ -71,14 +83,15 @@ public static class SessionsEndpoints
         if (!result.IsSuccess)
             return result.Error!.ToProblemHttpResult();
 
-        WriteRefreshTokenCookie(context, environment, result.Data!);
+        DeleteLegacyRefreshTokenCookie(context, configuration);
+        WriteRefreshTokenCookie(context, configuration, result.Data!);
         return TypedResults.Ok(TokenResponse.From(result.Data!));
     }
 
     private static async Task<Results<Ok<TokenResponse>, ProblemHttpResult>> Refresh(
         IdentityService identityService,
         HttpContext context,
-        IWebHostEnvironment environment
+        IConfiguration configuration
     )
     {
         if (!context.Request.Cookies.TryGetValue(RefreshTokenCookie, out var refreshToken))
@@ -89,7 +102,7 @@ public static class SessionsEndpoints
         if (!result.IsSuccess)
             return result.Error!.ToProblemHttpResult();
 
-        WriteRefreshTokenCookie(context, environment, result.Data!);
+        WriteRefreshTokenCookie(context, configuration, result.Data!);
         return TypedResults.Ok(TokenResponse.From(result.Data!));
     }
 
@@ -97,7 +110,7 @@ public static class SessionsEndpoints
         IdentityService identityService,
         CurrentUserService currentUserService,
         HttpContext context,
-        IWebHostEnvironment environment
+        IConfiguration configuration
     )
     {
         var currentUserId = currentUserService.GetId();
@@ -115,14 +128,18 @@ public static class SessionsEndpoints
 
         context.Response.Cookies.Delete(
             RefreshTokenCookie,
-            CreateRefreshTokenCookieOptions(environment.IsDevelopment())
+            CreateRefreshTokenCookieOptions(IsRefreshCookieSecure(configuration))
         );
+        // Must follow the delete above: ResponseCookies.Delete strips already-queued Set-Cookie
+        // headers whose value contains "path={options.Path}", and "path=/v2/auth" starts with
+        // "path=/", so deleting the current path last would drop the legacy header.
+        DeleteLegacyRefreshTokenCookie(context, configuration);
         return TypedResults.NoContent();
     }
 
     private static void WriteRefreshTokenCookie(
         HttpContext context,
-        IWebHostEnvironment environment,
+        IConfiguration configuration,
         LoginResponseDto response
     )
     {
@@ -130,20 +147,35 @@ public static class SessionsEndpoints
             RefreshTokenCookie,
             response.RefreshToken,
             CreateRefreshTokenCookieOptions(
-                environment.IsDevelopment(),
+                IsRefreshCookieSecure(configuration),
                 response.RefreshTokenExpirationDate
             )
         );
     }
 
+    private static void DeleteLegacyRefreshTokenCookie(
+        HttpContext context,
+        IConfiguration configuration
+    )
+    {
+        var options = CreateRefreshTokenCookieOptions(IsRefreshCookieSecure(configuration));
+        options.Path = LegacyRefreshTokenCookiePath;
+        context.Response.Cookies.Delete(RefreshTokenCookie, options);
+    }
+
+    // Defaults to true so a stray ASPNETCORE_ENVIRONMENT=Development cannot silently drop Secure in
+    // a deployed environment. Only appsettings.Development.json opts out.
+    private static bool IsRefreshCookieSecure(IConfiguration configuration) =>
+        configuration.GetValue(RefreshCookieSecureConfigurationKey, true);
+
     internal static CookieOptions CreateRefreshTokenCookieOptions(
-        bool isDevelopment,
+        bool secure,
         DateTime? expires = null
     ) =>
         new()
         {
             HttpOnly = true,
-            Secure = !isDevelopment,
+            Secure = secure,
             SameSite = SameSiteMode.Strict,
             Path = RefreshTokenCookiePath,
             Expires = expires,

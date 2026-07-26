@@ -5,6 +5,7 @@ namespace ResearchCruiseApp.Infrastructure.Security;
 internal class RandomGenerator
 {
     private const int SecureCodeBytesSize = 512;
+    private const int RefreshTokenBytesSize = 64;
     private const int SecurePasswordLength = 24;
     private const string Upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private const string Lower = "abcdefghijklmnopqrstuvwxyz";
@@ -14,6 +15,13 @@ internal class RandomGenerator
     public byte[] CreateSecureCodeBytes()
     {
         return GetRandomBytes(SecureCodeBytesSize);
+    }
+
+    // Kept separate from CreateSecureCodeBytes: the refresh token travels in a cookie on every
+    // request under its path, so 512 bits is the right trade against 4096.
+    public byte[] CreateRefreshTokenBytes()
+    {
+        return GetRandomBytes(RefreshTokenBytesSize);
     }
 
     public string CreateSecurePassword()
