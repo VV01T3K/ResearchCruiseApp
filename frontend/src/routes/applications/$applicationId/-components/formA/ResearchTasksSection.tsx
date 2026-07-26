@@ -1,15 +1,17 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { getErrors, groupBy } from '@/lib/utils';
+import { getErrors } from '@/integrations/tanstack/form/errors';
+import { groupBy } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { ResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ResearchTaskThumbnail';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ResearchTaskDetails';
-import { useFormA } from '@/contexts/applications/FormAContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import {
   getEmptyTask,
   getTaskName,
@@ -18,10 +20,11 @@ import {
   taskTypes,
 } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
-export function ResearchTasksSection() {
-  const { form, isReadonly, initValues, hasFormBeenSubmitted } = useFormA();
+export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
+  const { isReadonly, initValues } = context;
 
-  function getColumns(field: AnyFieldApi): ColumnDef<ResearchTaskValues>[] {
+  function getColumns(removeRow: (index: number) => void): ColumnDef<ResearchTaskValues>[] {
     return [
       {
         header: 'Lp.',
@@ -32,7 +35,7 @@ export function ResearchTasksSection() {
         header: 'Zadanie',
         accessorFn: (row) => getTaskName(row.type),
         cell: ({ row }) => (
-          <form.Field
+          <form.AppField
             key={row.index}
             name={`researchTasks[${row.index}].type`}
             children={(field) => getTaskName(field.state.value) ?? 'Nieznany typ'}
@@ -42,14 +45,7 @@ export function ResearchTasksSection() {
       },
       {
         header: 'Szczegóły',
-        cell: ({ row }) => (
-          <ResearchTaskDetails
-            form={form}
-            row={row}
-            disabled={isReadonly}
-            hasFormBeenSubmitted={hasFormBeenSubmitted}
-          />
-        ),
+        cell: ({ row }) => <ResearchTaskDetails row={row} disabled={isReadonly} />,
       },
       {
         id: 'actions',
@@ -57,9 +53,7 @@ export function ResearchTasksSection() {
           <div className="flex justify-end">
             <AppTableDeleteRowButton
               onClick={() => {
-                field.removeValue(row.index);
-                field.handleChange((prev: ResearchTaskValues[]) => prev);
-                field.handleBlur();
+                removeRow(row.index);
               }}
               disabled={isReadonly}
             />
@@ -77,13 +71,16 @@ export function ResearchTasksSection() {
       data-testid="form-a-research-tasks-section"
     >
       <div>
-        <form.Field
+        <form.AppField
           name="researchTasks"
           mode="array"
           children={(field) => (
             <>
               <AppTable
-                columns={getColumns(field)}
+                columns={getColumns((index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                })}
                 data={field.state.value}
                 showRequiredAsterisk
                 buttons={() => [
@@ -93,7 +90,6 @@ export function ResearchTasksSection() {
                       value: getTaskName(type),
                       onClick: () => {
                         field.pushValue(getEmptyTask(type));
-                        field.handleChange((prev: ResearchTaskValues[]) => prev);
                         field.handleBlur();
                       },
                     }))}
@@ -121,7 +117,6 @@ export function ResearchTasksSection() {
                         content: <ResearchTaskThumbnail task={task} />,
                         onClick: () => {
                           field.pushValue(task);
-                          field.handleChange((prev: ResearchTaskValues[]) => prev);
                           field.handleBlur();
                         },
                       })),
@@ -136,11 +131,11 @@ export function ResearchTasksSection() {
                 emptyTableMessage="Nie dodano żadnego zadania."
                 variant="form"
                 disabled={isReadonly}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-research-tasks-table"
               />
               <AppInputErrorsList
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 data-testid="form-a-research-tasks-errors"
               />
             </>

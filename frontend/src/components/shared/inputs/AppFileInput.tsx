@@ -6,8 +6,12 @@ import { AppFileList } from '@/components/shared/inputs/parts/AppFileList';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
-import { FormFileValues } from '@/types/form-file-values';
 import { cn } from '@/lib/utils';
+
+export type FileValue = {
+  name: string;
+  content: string;
+};
 
 type Props = {
   name: string;
@@ -31,14 +35,14 @@ type Props = {
 } & (
   | {
       allowMultiple: true;
-      value: FormFileValues[];
+      value: FileValue[];
 
-      onChange?: (value: FormFileValues[]) => void;
+      onChange?: (value: FileValue[]) => void;
     }
   | {
       allowMultiple?: false;
-      value?: FormFileValues;
-      onChange?: (value: FormFileValues) => void;
+      value?: FileValue;
+      onChange?: (value: FileValue) => void;
     }
 );
 
@@ -63,11 +67,11 @@ export function AppFileInput({
   'data-testid-input': inputTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
-  const [files, setFiles] = React.useState<FormFileValues[]>(allowMultiple ? value : value ? [value] : []);
+  const [files, setFiles] = React.useState<FileValue[]>(allowMultiple ? value : value ? [value] : []);
   const [notifications, setNotifications] = React.useState<string[]>([]);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  function updateFiles(newFiles: FormFileValues[]) {
+  function updateFiles(newFiles: FileValue[]) {
     setFiles(newFiles);
     if (allowMultiple) {
       onChange?.(newFiles);
@@ -106,7 +110,7 @@ export function AppFileInput({
     }
   }
 
-  async function loadFileList(files: FileList): Promise<FormFileValues[]> {
+  async function loadFileList(files: FileList): Promise<FileValue[]> {
     const newNotifications: string[] = [];
     const promises = Array.from(files)
       .filter((file) => {
@@ -130,7 +134,7 @@ export function AppFileInput({
     return await Promise.all(promises);
   }
 
-  function removeFile(file: FormFileValues) {
+  function removeFile(file: FileValue) {
     updateFiles(files.filter((f) => f !== file));
   }
 
@@ -144,6 +148,8 @@ export function AppFileInput({
         onDragOver={(e) => e.preventDefault()}
       >
         <label
+          aria-invalid={!!errors?.length}
+          tabIndex={errors?.length ? 0 : undefined}
           className={cn(
             'flex w-full flex-col items-center justify-center border-2 border-gray-300 text-gray-500',
             'cursor-pointer overflow-x-auto rounded-lg border-dashed bg-gray-50 hover:bg-gray-100',
@@ -201,7 +207,7 @@ export function AppFileInput({
   );
 }
 
-async function loadFile(file: File): Promise<FormFileValues> {
+async function loadFile(file: File): Promise<FileValue> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = () => {

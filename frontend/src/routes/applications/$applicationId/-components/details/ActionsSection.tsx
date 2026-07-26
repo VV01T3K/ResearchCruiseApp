@@ -2,19 +2,19 @@ import React from 'react';
 
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppGuard } from '@/components/shared/AppGuard';
-import { Role } from '@/types/user';
+import { Role } from '@/api/client/user';
 import { AcceptButton } from './actions/AcceptButton';
 import { RejectButton } from './actions/RejectButton';
 import { RejectConfirmation } from './actions/RejectConfirmation';
-import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { ApplicationStatus } from '@/routes/applications/-types';
+import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
+import { ApplicationStatus } from '@/api/client/applications/models';
 
 type Props = {
   onAccept: () => void;
   onReject: () => void;
 };
 export function ActionsSection({ onAccept, onReject }: Props) {
-  const { application } = useApplicationDetails();
+  const application = useApplication();
   const [confirmationMode, setConfirmationMode] = React.useState(false);
 
   if (confirmationMode) {

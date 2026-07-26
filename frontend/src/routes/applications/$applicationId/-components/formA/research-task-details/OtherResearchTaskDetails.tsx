@@ -1,33 +1,21 @@
 import { Row } from '@tanstack/react-table';
 
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AnyReactFormApi } from '@/lib/form';
-import { getErrors } from '@/lib/utils';
-import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { OtherResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: AnyReactFormApi<FormAValues>;
   row: Row<OtherResearchTaskValues>;
   disabled?: boolean;
-  hasFormBeenSubmitted?: boolean;
 };
-export function OtherResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted }: Props) {
+export function OtherResearchTaskDetails({ row, disabled }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div>
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].description`}
         children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value as string}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            label="Opis zadania"
-            placeholder="Wprowadź opis zadania"
-            disabled={disabled}
-          />
+          <field.TextField label="Opis zadania" placeholder="Wprowadź opis zadania" disabled={disabled} />
         )}
       />
     </div>

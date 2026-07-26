@@ -1,5 +1,6 @@
 /* eslint-disable @eslint-react/no-array-index-key */
 import { Fragment, RefObject } from 'react';
+import { useSelector } from '@tanstack/react-form';
 
 import { cn } from '@/lib/utils';
 import {
@@ -9,19 +10,23 @@ import {
 import { PrintableResearchTaskDetails } from '@/components/print/research-task-details/PrintableResearchTaskDetails';
 import { PrintingPage } from '@/components/print/layout/PrintingPage';
 import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';
-import { useFormA } from '@/contexts/applications/FormAContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
-import { getResearchAreaName } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaOption';
+import { getResearchAreaName } from '@/api/client/applications/types/ResearchAreaOption';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
   ref: RefObject<HTMLDivElement | null>;
+  context: FormAViewModel;
 };
-export function PrintTemplate({ ref }: Props) {
-  const { initValues, form } = useFormA();
-  const values = form.state.values;
+export function PrintTemplate({ ref, context }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
+  const { initValues } = context;
+  const values = useSelector(form.store, (state) => state.values);
 
   return (
     <PrintingPage ref={ref} title="Formularz A">
@@ -68,7 +73,7 @@ export function PrintTemplate({ ref }: Props) {
           )}
 
           <span>Liczba planowanych dób rejsowych: </span>
-          <span>{parseInt(values.cruiseHours) / 24}</span>
+          <span>{values.cruiseDays}</span>
           <span>Liczba planowanych godzin rejsowych:</span>
           <span>{values.cruiseHours} h</span>
           <span>Uwagi dotyczące terminu:</span>

@@ -12,7 +12,7 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
 import { formatDate } from '@/lib/dateUtils';
 import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
-import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/routes/applications/-types';
+import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/api/client/applications/models';
 
 export const Route = createFileRoute('/applications/')({
   component: ApplicationsPage,

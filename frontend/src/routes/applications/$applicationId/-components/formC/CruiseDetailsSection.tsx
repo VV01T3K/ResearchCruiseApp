@@ -1,26 +1,20 @@
-import type { AnyFieldApi } from '@tanstack/react-form';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
-import { AnyReactFormApi } from '@/lib/form';
-import { getErrors } from '@/lib/utils';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
-import { useFormC } from '@/contexts/applications/FormCContext';
-import { FormCValues } from '@/routes/applications/$applicationId/-schemas/types/FormCValues';
+import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { LongResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
 import { PortCallValues } from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
 import { ShortResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
 
 const shortResearchEquipmentColumns = (
-  form: AnyReactFormApi<FormCValues>,
-  field: AnyFieldApi,
-  hasFormBeenSubmitted: boolean,
+  form: FormCFormApi,
+  removeRow: (index: number) => void,
   isReadonly: boolean
 ): ColumnDef<ShortResearchEquipmentValues>[] => [
   {
@@ -34,17 +28,10 @@ const shortResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`shortResearchEquipments[${row.index}].startDate`}
         children={(field) => (
-          <AppDatePickerInput
-            name={field.name}
-            value={field.state.value}
-            onChange={(newValue) => field.handleChange(newValue ?? '')}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            disabled={isReadonly}
-          />
+          <field.DateField onChange={(newValue) => field.handleChange(newValue ?? '')} disabled={isReadonly} />
         )}
       />
     ),
@@ -56,7 +43,7 @@ const shortResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`shortResearchEquipments[${row.index}].endDate`}
         children={(field) => (
           <form.Subscribe
@@ -66,12 +53,8 @@ const shortResearchEquipmentColumns = (
                 field.handleChange(state);
               }
               return (
-                <AppDatePickerInput
-                  name={field.name}
-                  value={field.state.value}
+                <field.DateField
                   onChange={(newValue) => field.handleChange(newValue ?? '')}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   disabled={isReadonly}
                   selectionStartDate={state ? new Date(state) : undefined}
                   minimalDate={state ? new Date(state) : undefined}
@@ -90,19 +73,9 @@ const shortResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`shortResearchEquipments[${row.index}].name`}
-        children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            placeholder="Nazwa sprzętu"
-            disabled={isReadonly}
-          />
-        )}
+        children={(field) => <field.TextField placeholder="Nazwa sprzętu" disabled={isReadonly} />}
       />
     ),
   },
@@ -112,9 +85,7 @@ const shortResearchEquipmentColumns = (
       <div className="flex justify-end">
         <AppTableDeleteRowButton
           onClick={() => {
-            field.removeValue(row.index);
-            field.handleChange((prev: ShortResearchEquipmentValues[]) => prev);
-            field.handleBlur();
+            removeRow(row.index);
           }}
           disabled={isReadonly}
         />
@@ -125,9 +96,8 @@ const shortResearchEquipmentColumns = (
 ];
 
 const longResearchEquipmentColumns = (
-  form: AnyReactFormApi<FormCValues>,
-  field: AnyFieldApi,
-  hasFormBeenSubmitted: boolean,
+  form: FormCFormApi,
+  removeRow: (index: number) => void,
   isReadonly: boolean
 ): ColumnDef<LongResearchEquipmentValues>[] => [
   {
@@ -141,15 +111,10 @@ const longResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`longResearchEquipments[${row.index}].action`}
         children={(field) => (
-          <AppDropdownInput
-            name={field.name}
-            value={field.state.value}
-            onChange={(e) => field.handleChange(e as LongResearchEquipmentValues['action'])}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
+          <field.SelectField
             disabled={isReadonly}
             allOptions={[
               { value: 'Put', inlineLabel: 'Pozostawienie' },
@@ -167,19 +132,9 @@ const longResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`longResearchEquipments[${row.index}].duration`}
-        children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            placeholder="Czas"
-            disabled={isReadonly}
-          />
-        )}
+        children={(field) => <field.TextField placeholder="Czas" disabled={isReadonly} />}
       />
     ),
     size: 20,
@@ -190,19 +145,9 @@ const longResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`longResearchEquipments[${row.index}].name`}
-        children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            placeholder="Nazwa sprzętu"
-            disabled={isReadonly}
-          />
-        )}
+        children={(field) => <field.TextField placeholder="Nazwa sprzętu" disabled={isReadonly} />}
       />
     ),
   },
@@ -212,9 +157,7 @@ const longResearchEquipmentColumns = (
       <div className="flex justify-end">
         <AppTableDeleteRowButton
           onClick={() => {
-            field.removeValue(row.index);
-            field.handleChange((prev: LongResearchEquipmentValues[]) => prev);
-            field.handleBlur();
+            removeRow(row.index);
           }}
           disabled={isReadonly}
         />
@@ -225,9 +168,8 @@ const longResearchEquipmentColumns = (
 ];
 
 const portColumns = (
-  form: AnyReactFormApi<FormCValues>,
-  field: AnyFieldApi,
-  hasFormBeenSubmitted: boolean,
+  form: FormCFormApi,
+  removeRow: (index: number) => void,
   isReadonly: boolean
 ): ColumnDef<PortCallValues>[] => [
   {
@@ -241,15 +183,11 @@ const portColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`ports[${row.index}].startTime`}
         children={(field) => (
-          <AppDatePickerInput
-            name={field.name}
-            value={field.state.value}
+          <field.DateField
             onChange={(newValue) => field.handleChange(newValue ?? '')}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
             disabled={isReadonly}
             type="datetime"
           />
@@ -264,7 +202,7 @@ const portColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`ports[${row.index}].endTime`}
         children={(field) => (
           <form.Subscribe
@@ -274,12 +212,8 @@ const portColumns = (
                 field.handleChange(state);
               }
               return (
-                <AppDatePickerInput
-                  name={field.name}
-                  value={field.state.value}
+                <field.DateField
                   onChange={(newValue) => field.handleChange(newValue ?? '')}
-                  onBlur={field.handleBlur}
-                  errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
                   disabled={isReadonly}
                   type="datetime"
                   selectionStartDate={state ? new Date(state) : undefined}
@@ -299,19 +233,9 @@ const portColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.Field
+      <form.AppField
         name={`ports[${row.index}].name`}
-        children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            placeholder="Nazwa portu"
-            disabled={isReadonly}
-          />
-        )}
+        children={(field) => <field.TextField placeholder="Nazwa portu" disabled={isReadonly} />}
       />
     ),
   },
@@ -321,9 +245,7 @@ const portColumns = (
       <div className="flex justify-end">
         <AppTableDeleteRowButton
           onClick={() => {
-            field.removeValue(row.index);
-            field.handleChange((prev: PortCallValues[]) => prev);
-            field.handleBlur();
+            removeRow(row.index);
           }}
           disabled={isReadonly}
         />
@@ -333,8 +255,9 @@ const portColumns = (
   },
 ];
 
-export function CruiseDetailsSection() {
-  const { form, hasFormBeenSubmitted, isReadonly } = useFormC();
+export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { isReadonly } = context;
 
   return (
     <AppAccordion title="12. Szczegóły rejsu" expandedByDefault data-testid="form-c-cruise-details-section">
@@ -342,12 +265,19 @@ export function CruiseDetailsSection() {
 
       <div className="mt-8">
         <p className="text-lg font-semibold">Wystawienie sprzętu</p>
-        <form.Field
+        <form.AppField
           name="shortResearchEquipments"
           mode="array"
           children={(field) => (
             <AppTable
-              columns={shortResearchEquipmentColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              columns={shortResearchEquipmentColumns(
+                form,
+                (index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                },
+                isReadonly
+              )}
               data={field.state.value}
               buttons={() => [
                 <AppButton
@@ -358,7 +288,6 @@ export function CruiseDetailsSection() {
                       endDate: '',
                       name: '',
                     });
-                    field.handleChange((prev: ShortResearchEquipmentValues[]) => prev);
                     field.handleBlur();
                   }}
                 >
@@ -374,12 +303,19 @@ export function CruiseDetailsSection() {
 
       <div className="mt-8">
         <p className="text-lg font-semibold">Pozostawienie lub zabranie sprzętu</p>
-        <form.Field
+        <form.AppField
           name="longResearchEquipments"
           mode="array"
           children={(field) => (
             <AppTable
-              columns={longResearchEquipmentColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              columns={longResearchEquipmentColumns(
+                form,
+                (index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                },
+                isReadonly
+              )}
               data={field.state.value}
               buttons={() => [
                 <DropdownElementSelectorButton
@@ -395,7 +331,6 @@ export function CruiseDetailsSection() {
                         duration: '',
                         name: '',
                       });
-                      field.handleChange((prev: LongResearchEquipmentValues[]) => prev);
                       field.handleBlur();
                     },
                   }))}
@@ -414,12 +349,19 @@ export function CruiseDetailsSection() {
 
       <div className="mt-8">
         <p className="text-lg font-semibold">Wchodzenie lub wychodzenie z portu</p>
-        <form.Field
+        <form.AppField
           name="ports"
           mode="array"
           children={(field) => (
             <AppTable
-              columns={portColumns(form, field, hasFormBeenSubmitted, isReadonly)}
+              columns={portColumns(
+                form,
+                (index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                },
+                isReadonly
+              )}
               data={field.state.value}
               buttons={() => [
                 <AppButton
@@ -430,7 +372,6 @@ export function CruiseDetailsSection() {
                       endTime: '',
                       name: '',
                     });
-                    field.handleChange((prev: PortCallValues[]) => prev);
                     field.handleBlur();
                   }}
                 >

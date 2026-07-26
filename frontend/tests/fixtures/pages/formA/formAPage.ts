@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { API_URL } from '@tests/fixtures/consts';
-import { getAdminAccountPayload, getAuthDetailsPayload, getInitValuesAPayload } from '@tests/fixtures/mockPayloads';
+import { getAdminAccountPayload, getInitValuesAPayload, mockAuthenticatedSession } from '@tests/fixtures/mockPayloads';
 
 import { ContractsSection } from './ContractsSection';
 import { CruiseGoalSection } from './CruiseGoalSection';
@@ -23,6 +23,7 @@ export class FormAPage {
   public readonly validationErrorMessage: Locator;
 
   public static async create(page: Page): Promise<FormAPage> {
+    await mockAuthenticatedSession(page);
     page.route(`${API_URL}/v2/applications/form-a/context`, (route) => {
       route.fulfill({
         status: 200,
@@ -49,13 +50,6 @@ export class FormAPage {
         status: 200,
       });
     });
-
-    // mock local storage
-    await page.goto('/');
-
-    await page.evaluate((authDetails) => {
-      window.localStorage.setItem('authDetails', authDetails);
-    }, JSON.stringify(getAuthDetailsPayload()));
 
     const formAPage = new FormAPage(page);
     await formAPage.goto();
