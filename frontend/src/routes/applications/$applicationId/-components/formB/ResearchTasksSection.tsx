@@ -3,14 +3,14 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
-import { useFormB } from '@/contexts/applications/FormBContext';
+import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import {
   getTaskName,
   ResearchTaskValues,
 } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
-export function ResearchTasksSection() {
-  const { formA, isReadonly } = useFormB();
+export function ResearchTasksSection({ context }: { context: FormBViewModel }) {
+  const { formA, isReadonly } = context;
 
   const columns: ColumnDef<ResearchTaskValues>[] = [
     {

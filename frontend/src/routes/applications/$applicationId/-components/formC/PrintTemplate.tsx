@@ -1,16 +1,19 @@
 /* eslint-disable @eslint-react/no-array-index-key */
 import dayjs from 'dayjs';
 import { Fragment, RefObject } from 'react';
+import { useSelector } from '@tanstack/react-form';
 
 import { cn } from '@/lib/utils';
 import { PrintableResearchTaskDetails } from '@/components/print/research-task-details/PrintableResearchTaskDetails';
 import { PrintingPage } from '@/components/print/layout/PrintingPage';
 import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';
-import { useFormC } from '@/contexts/applications/FormCContext';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
-import { getResearchAreaName } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaOption';
+import { getResearchAreaName } from '@/api/client/applications/types/ResearchAreaOption';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 function getAction(action: 'Put' | 'Collect'): string {
@@ -27,10 +30,12 @@ function getAction(action: 'Put' | 'Collect'): string {
 
 type Props = {
   ref: RefObject<HTMLDivElement | null>;
+  context: FormCViewModel;
 };
-export function PrintTemplate({ ref }: Props) {
-  const { formAInitValues, formBInitValues, form, formA, formB, cruise } = useFormC();
-  const values = form.state.values;
+export function PrintTemplate({ ref, context }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+  const { formAInitValues, formBInitValues, formA, formB, cruise } = context;
+  const values = useSelector(form.store, (state) => state.values);
 
   return (
     <PrintingPage ref={ref} title="Formularz C">
@@ -135,11 +140,11 @@ export function PrintTemplate({ ref }: Props) {
               </div>
               <span className={cn(i > 0 ? 'mt-4' : '', 'col-span-3 grid grid-cols-4')}>
                 <div className="col-span-3">Zrealizowane: </div>
-                <div>{x.done === 'true' ? 'Tak' : 'Nie'}</div>
+                <div>{x.done ? 'Tak' : 'Nie'}</div>
                 <div className="col-span-3">Punkty naliczone kierownikowi: </div>
-                <div>{x.managerConditionMet === 'true' ? 'Tak' : 'Nie'}</div>
+                <div>{x.managerConditionMet ? 'Tak' : 'Nie'}</div>
                 <div className="col-span-3">Punkty naliczone zastępcy: </div>
-                <div>{x.deputyConditionMet === 'true' ? 'Tak' : 'Nie'}</div>
+                <div>{x.deputyConditionMet ? 'Tak' : 'Nie'}</div>
               </span>
             </Fragment>
           ))}
@@ -417,7 +422,7 @@ export function PrintTemplate({ ref }: Props) {
                 {!x.insuranceStartDate && !x.insuranceEndDate ? 'Nie zgłoszono' : ''}
               </div>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
-                {x.permission === 'true' ? 'Tak' : 'Nie'}
+                {x.permission ? 'Tak' : 'Nie'}
               </div>
             </Fragment>
           ))}

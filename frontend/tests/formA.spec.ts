@@ -1,16 +1,74 @@
 import { expect } from '@playwright/test';
 
-import { getFormAWriteSchema } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import {
+  formADefaultValues,
+  getFormADraftWriteSchema,
+  getFormAWriteSchema,
+  mapFormAToValues,
+  mapResearchTaskToValues,
+} from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
-import { MOCK_PDF_FILEPATH } from './fixtures/consts';
+import { API_URL, MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { formTest as test } from './fixtures/fixtures';
 import { getFormAPayload, getInitValuesAPayload } from './fixtures/mockPayloads';
 import { touchInput } from './utils/form-filling-utils';
 
+test('draft form A requires the complete input shape while allowing empty values', () => {
+  const initValues = getInitValuesAPayload();
+  const draft = {
+    ...formADefaultValues,
+    cruiseManagerId: initValues.cruiseManagers[0].id,
+    year: initValues.years[0],
+    permissions: [{ description: '', executive: '', scan: undefined }],
+  };
+  const schema = getFormADraftWriteSchema();
+  expect(schema.safeParse(draft).success).toBe(true);
+
+  const { note: _omitted, ...missingKey } = draft;
+  expect(schema.safeParse(missingKey).success).toBe(false);
+});
+
+test('preserves empty research task numbers through the form round trip', () => {
+  const initValues = getInitValuesAPayload();
+  const draft = {
+    ...formADefaultValues,
+    cruiseManagerId: initValues.cruiseManagers[0].id,
+    researchTasks: [
+      {
+        type: '4' as const,
+        title: '',
+        financingAmount: null,
+        startDate: '',
+        endDate: '',
+        securedAmount: null,
+      },
+      {
+        type: '10' as const,
+        title: '',
+        date: '',
+        magazine: '',
+        ministerialPoints: null,
+      },
+    ],
+  };
+
+  expect(mapResearchTaskToValues({ type: '4', financingAmount: null, securedAmount: null })).toMatchObject({
+    financingAmount: null,
+    securedAmount: null,
+  });
+  expect(mapResearchTaskToValues({ type: '10', ministerialPoints: null })).toMatchObject({
+    ministerialPoints: null,
+  });
+
+  const request = getFormADraftWriteSchema().parse(draft);
+  expect(request.form.researchTasks![0]).toMatchObject({ financingAmount: null, securedAmount: null });
+  expect(request.form.researchTasks![1]).toMatchObject({ ministerialPoints: null });
+});
+
 test('normalizes backend precise-period datetimes at the API boundary', () => {
   const initValues = getInitValuesAPayload();
   const form = {
-    ...getFormAPayload(),
+    ...mapFormAToValues(getFormAPayload()),
     cruiseManagerId: initValues.cruiseManagers[0].id,
     deputyManagerId: initValues.deputyManagers[1].id,
     year: initValues.years[0],
@@ -19,18 +77,78 @@ test('normalizes backend precise-period datetimes at the API boundary', () => {
     optimalPeriod: '',
     precisePeriodStart: '2026-07-20',
     precisePeriodEnd: '2026-07-23T00:00:00',
+    cruiseDays: 2,
+    cruiseHours: 3,
     note: '',
   };
 
-  const request = getFormAWriteSchema(initValues, false).parse(form);
+  const request = getFormAWriteSchema(initValues).parse(form);
 
   expect(request.form.precisePeriodStart).toBe('2026-07-20T00:00:00Z');
   expect(request.form.precisePeriodEnd).toBe('2026-07-23T00:00:00Z');
+  expect(request.form.cruiseHours).toBe(String(form.cruiseDays * 24 + form.cruiseHours));
+  expect(request.form).not.toHaveProperty('cruiseDays');
 });
 
 test('valid form A', async ({ formAPage }) => {
   await formAPage.fillForm(); // Fill the form with default values
   await formAPage.submitForm({ expectedResult: 'valid' });
+});
+
+test('centers the first invalid field after submit', async ({ formAPage }) => {
+  await formAPage.page.evaluate(() => {
+    const scrollIntoView = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollIntoView')!.value;
+    HTMLElement.prototype.scrollIntoView = function (options) {
+      document.documentElement.dataset.lastScrollBlock = typeof options === 'object' ? options.block : '';
+      scrollIntoView.call(this, options);
+    };
+  });
+  await formAPage.submitButton.click();
+
+  const firstInvalidField = formAPage.page.locator('[aria-invalid="true"], [data-error="true"]').first();
+  await expect(firstInvalidField).toBeFocused();
+  await expect(formAPage.page.locator('html')).toHaveAttribute('data-last-scroll-block', 'center');
+  await expect
+    .poll(async () => {
+      const box = await firstInvalidField.boundingBox();
+      const viewportHeight = formAPage.page.viewportSize()!.height;
+      const fieldCenter = box ? box.y + box.height / 2 : 0;
+      return fieldCenter > viewportHeight * 0.25 && fieldCenter < viewportHeight * 0.75;
+    })
+    .toBe(true);
+});
+
+test('shows server validation errors on their fields', async ({ formAPage }) => {
+  await formAPage.fillForm();
+  await formAPage.page.route(`${API_URL}/v2/applications`, (route) =>
+    route.fulfill({
+      status: 400,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({ errors: { 'Form.SupervisorEmail': ['Adres przełożonego został odrzucony'] } }),
+    })
+  );
+
+  await formAPage.submitButton.click();
+
+  await expect(formAPage.sections.supervisorInfoSection.invalidEmailMessage).toContainText(
+    'Adres przełożonego został odrzucony'
+  );
+  await expect(formAPage.sections.supervisorInfoSection.supervisorEmailInput).toBeFocused();
+});
+
+test('shows a support code when saving fails', async ({ formAPage }) => {
+  await formAPage.fillForm();
+  await formAPage.page.route(`${API_URL}/v2/applications`, (route) =>
+    route.fulfill({
+      status: 503,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({ detail: 'Wystąpił nieoczekiwany błąd. Kod błędu: 0HNC7ABC123' }),
+    })
+  );
+
+  await formAPage.submitButton.click();
+
+  await expect(formAPage.validationErrorMessage).toContainText('Kod błędu: 0HNC7ABC123');
 });
 
 test.describe('cruise manager info section tests', () => {
@@ -76,8 +194,8 @@ test.describe('cruise length section tests', () => {
         if (isValid) {
           await formAPage.submitForm({ expectedResult: 'valid' });
         } else if (val < LOWER_DAY_LIMIT) {
-          await expect(formAPage.sections.cruiseLengthSection.invalidCruiseDurationMessage).toBeVisible();
           await formAPage.submitForm({ expectedResult: 'invalid' });
+          await expect(formAPage.sections.cruiseLengthSection.invalidCruiseDurationMessage).toBeVisible();
         } else if (val > UPPER_DAY_LIMIT) {
           await expect(formAPage.sections.cruiseLengthSection.cruiseDaysInput).toHaveValue(`${UPPER_DAY_LIMIT}`); // input should cap the value
         }
@@ -85,15 +203,16 @@ test.describe('cruise length section tests', () => {
     });
   });
 
-  // allowed cruise hours count is in range (0-1440] (right-side inclusive)
+  // Hours are the total duration and stay synchronized with cruise days.
   const hourTestCases: [boolean, number][] = [
     [false, 0],
-    [false, 1441],
-    [false, 1500],
+    [true, 24],
+    [true, 100],
     [true, 1],
-    [true, 1000],
-    [true, 1439],
+    [true, 22],
+    [true, 23],
     [true, 1440],
+    [false, 1441],
   ];
   test.describe('planned cruise hours constrains', () => {
     hourTestCases.forEach(([isValid, val]) => {
@@ -107,8 +226,8 @@ test.describe('cruise length section tests', () => {
         if (isValid) {
           await formAPage.submitForm({ expectedResult: 'valid' });
         } else if (val < LOWER_HOUR_LIMIT) {
-          await expect(formAPage.sections.cruiseLengthSection.invalidCruiseDurationMessage).toBeVisible();
           await formAPage.submitForm({ expectedResult: 'invalid' });
+          await expect(formAPage.sections.cruiseLengthSection.invalidCruiseDurationMessage).toBeVisible();
         } else if (val > UPPER_HOUR_LIMIT) {
           await expect(formAPage.sections.cruiseLengthSection.cruiseHoursInput).toHaveValue(`${UPPER_HOUR_LIMIT}`); // input should cap the value
         }
@@ -180,6 +299,7 @@ test.describe('research area section tests', () => {
     await researchAreaRow.additionalInfoInput.fill('Dodatkowe informacje o rejonie badań');
 
     await researchAreaRow.nameInput.fill(''); // make sure the input is empty
+    await researchAreaRow.nameInput.input.blur();
     await expect(researchAreaRow.nameInput.errors.required).toBeVisible();
     await formAPage.submitForm();
     await expect(formAPage.submissionApprovedMessage, 'form should not be approved').toBeHidden();
@@ -232,8 +352,10 @@ test.describe('research tasks section tests', () => {
   });
 
   test('no research tasks', async ({ formAPage }) => {
-    await formAPage.submitForm({ expectedResult: 'invalid' });
+    await formAPage.submitButton.click();
     await expect(formAPage.sections.researchTasksSection.noResearchTasksMessage).toBeVisible();
+    await expect(formAPage.sections.researchTasksSection.noResearchTasksMessage).toBeFocused();
+    await formAPage.page.getByLabel('Close').first().click();
 
     await formAPage.sections.researchTasksSection.addNewTaskDropdown.selectOption('Praca magisterska');
     await expect(formAPage.sections.researchTasksSection.noResearchTasksMessage).toBeHidden();
@@ -350,6 +472,7 @@ test.describe('members section tests', () => {
     await expect(membersSection.emptyGuestTeamNameMessage).toBeVisible();
 
     await membersSection.guestTeamRow('first').teamNameInput.fill('Jakiś zespół');
+    await membersSection.guestTeamRow('first').teamNameInput.blur();
     await expect(membersSection.emptyGuestTeamNameMessage).toBeHidden();
 
     await formAPage.submitForm({ expectedResult: 'invalid' });

@@ -25,6 +25,13 @@ test('login with invalid credentials', async ({ loginPage }) => {
   await expect(loginPage.incorrectEmailOrPasswordMessage).toBeVisible();
 });
 
+test('empty credentials are rejected by form validation', async ({ loginPage }) => {
+  await loginPage.submitButton.click();
+
+  await expect(loginPage.invalidEmailMessage).toBeVisible();
+  await expect(loginPage.page.getByText('Hasło nie może być puste')).toBeVisible();
+});
+
 test.describe('login form validation', () => {
   [
     { email: 'only-text' },
@@ -34,12 +41,16 @@ test.describe('login form validation', () => {
   ].forEach(({ email }) => {
     test(`enter invalid email [${email}]`, async ({ loginPage }) => {
       await loginPage.emailInput.fill(email);
+      await loginPage.emailInput.blur();
       await expect(loginPage.invalidEmailMessage).toBeVisible();
       await expect(loginPage.submitButton).toBeDisabled();
 
       // Message should disappear after correcting the email
       await loginPage.emailInput.fill('valid-email@gmail.com');
       await expect(loginPage.invalidEmailMessage).toBeHidden();
+      await expect(loginPage.submitButton).toBeDisabled();
+
+      await loginPage.passwordInput.fill('someP@ssword');
       await expect(loginPage.submitButton).toBeEnabled();
     });
   });

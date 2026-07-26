@@ -67,6 +67,7 @@ export function AppInput({
           onBlur={onBlur}
           onChange={(evt) => onChange?.(evt.target.value)}
           disabled={disabled}
+          aria-invalid={!!errors?.length}
           className={cn(
             className,
             'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',

@@ -4,7 +4,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
-import { EvaluationUgTeamResponse } from '@/routes/applications/-types';
+import { EvaluationUgTeamResponse } from '@/api/client/applications/models';
 import { GuestTeamValues } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
 
 export function MembersSection() {
@@ -84,7 +84,7 @@ export function MembersSection() {
       cell: ({ row }) => (
         <AppNumberInput
           name={`guestTeams[${row.index}].noOfPersons`}
-          value={parseInt(row.original.noOfPersons)}
+          value={row.original.noOfPersons}
           minimum={0}
           className="mx-4"
           showRequiredAsterisk

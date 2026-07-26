@@ -2,6 +2,7 @@ import { expect, Page } from '@playwright/test';
 
 import { API_URL, test } from './fixtures/fixtures';
 import { getAdminAccountPayload, getAuthDetailsPayload, getInitValuesAPayload } from './fixtures/mockPayloads';
+import { CreateCruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 
 const manager = {
   id: '11111111-1111-1111-1111-111111111111',
@@ -15,6 +16,23 @@ const deputy = {
   firstName: 'Grace',
   lastName: 'Hopper',
 };
+
+test('cruise submission schema validates the generated request boundary', () => {
+  const result = CreateCruiseFormSchema.safeParse({
+    ...cruiseFormDefaultValues,
+    startDate: '2026-06-01T08:00:00.000Z',
+    endDate: '2026-06-02T08:00:00.000Z',
+    managersTeam: {
+      mainCruiseManagerId: 'not-a-guid',
+      mainDeputyManagerId: deputy.id,
+    },
+  });
+
+  expect(result.success).toBe(false);
+  if (!result.success) {
+    expect(result.error.issues[0]?.path).toEqual(['managersTeam', 'mainCruiseManagerId']);
+  }
+});
 
 function getCruise(status: 'new' | 'confirmed' | 'ended' = 'new') {
   return {

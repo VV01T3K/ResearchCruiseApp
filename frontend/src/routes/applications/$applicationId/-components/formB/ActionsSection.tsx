@@ -5,17 +5,18 @@ import SendFillIcon from 'bootstrap-icons/icons/send-fill.svg?react';
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';
-import { Role } from '@/types/user';
-import { useFormB } from '@/contexts/applications/FormBContext';
+import { Role } from '@/api/client/user';
+import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 
 type Props = {
   onSaveDraft: () => void;
   onRevertToEdit?: () => void;
   onPrint?: () => void;
   disabled?: boolean;
+  context: FormBViewModel;
 };
-export function ActionsSection({ onSaveDraft, onRevertToEdit, onPrint, disabled }: Props) {
-  const { isReadonly } = useFormB();
+export function ActionsSection({ onSaveDraft, onRevertToEdit, onPrint, disabled, context }: Props) {
+  const { isReadonly } = context;
 
   return (
     <AppActionsSection>

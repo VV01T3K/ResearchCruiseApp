@@ -1,4 +1,3 @@
-using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
@@ -17,9 +16,11 @@ public static class FormAEndpoints
             .MapPost("", Create)
             .WithName("CreateApplication")
             .WithSummary("Create an application from Form A.")
+            .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
+            .WithRequestValidation<FormAWriteRequest>()
             .RequireAuthorization(AuthorizationPolicies.ApplicationFormEditors);
 
         group
@@ -34,16 +35,17 @@ public static class FormAEndpoints
             .MapPut("/{applicationId:guid}/form-a", Update)
             .WithName("UpdateApplicationFormA")
             .WithSummary("Update Form A.")
+            .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithRequestValidation<FormAWriteRequest>()
             .RequireAuthorization(AuthorizationPolicies.ApplicationFormEditors);
     }
 
     private static async Task<Results<Created, ProblemHttpResult>> Create(
         FormAWriteRequest request,
-        IValidator<FormAWriteRequest> validator,
         FormAFactory forms,
         ApplicationFactory applications,
         ApplicationDbContext dbContext,
@@ -52,10 +54,6 @@ public static class FormAEndpoints
         CancellationToken cancellationToken
     )
     {
-        var validation = await validator.ValidateAsync(request, cancellationToken);
-        if (!validation.IsValid)
-            return validation.ToApplicationResult().Error!.ToProblemHttpResult();
-
         if (!request.Draft)
         {
             var periodValidation = await ValidatePrecisePeriodAgainstBlockades(
@@ -117,7 +115,6 @@ public static class FormAEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Update(
         Guid applicationId,
         FormAWriteRequest request,
-        IValidator<FormAWriteRequest> validator,
         UserPermissionVerifier userPermissionVerifier,
         ApplicationDbContext dbContext,
         FormAFactory forms,
@@ -127,10 +124,6 @@ public static class FormAEndpoints
         CancellationToken cancellationToken
     )
     {
-        var validation = await validator.ValidateAsync(request, cancellationToken);
-        if (!validation.IsValid)
-            return validation.ToApplicationResult().Error!.ToProblemHttpResult();
-
         var application = await dbContext
             .CruiseApplications.IncludeFormA()
             .IncludeFormAContent()

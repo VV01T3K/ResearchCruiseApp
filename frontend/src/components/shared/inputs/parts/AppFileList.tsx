@@ -4,19 +4,19 @@ import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { AppModal } from '@/components/shared/AppModal';
-import { FormFileValues } from '@/types/form-file-values';
+import type { FileValue } from '@/components/shared/inputs/AppFileInput';
 import { cn, createModalPortal } from '@/lib/utils';
 
 type FileListProps = {
-  files: FormFileValues[];
+  files: FileValue[];
 
-  onRemove?: (file: FormFileValues) => void;
+  onRemove?: (file: FileValue) => void;
   disabled?: boolean;
   className?: string;
 };
 
 export function AppFileList({ files, onRemove, disabled, className }: FileListProps) {
-  const [fileInPreview, setFileInPreview] = React.useState<FormFileValues | undefined>(undefined);
+  const [fileInPreview, setFileInPreview] = React.useState<FileValue | undefined>(undefined);
 
   return (
     <>
@@ -63,10 +63,10 @@ export function AppFileList({ files, onRemove, disabled, className }: FileListPr
 }
 
 type FileListElementProps = {
-  file: FormFileValues;
-  setFileInPreview: (file: FormFileValues) => void;
+  file: FileValue;
+  setFileInPreview: (file: FileValue) => void;
 
-  onRemove?: (file: FormFileValues) => void;
+  onRemove?: (file: FileValue) => void;
   disabled?: boolean;
 };
 

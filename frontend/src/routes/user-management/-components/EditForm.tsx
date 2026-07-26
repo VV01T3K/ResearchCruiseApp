@@ -1,4 +1,4 @@
-import { useForm } from '@tanstack/react-form';
+import { revalidateLogic, useForm } from '@tanstack/react-form';
 import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
 import ExclamationTriangleFill from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
@@ -17,10 +17,10 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
-import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors } from '@/lib/utils';
-import { getRoleLabel, Role } from '@/types/user';
-import { User } from '@/types/user';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { getErrors } from '@/integrations/tanstack/form/errors';
+import { getRoleLabel, Role } from '@/api/client/user';
+import { User } from '@/api/client/user';
 import {
   useAcceptUser,
   useAddUserRole,
@@ -31,7 +31,7 @@ import {
   useUpdateUser,
 } from '@/api/generated/endpoints/users.gen';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
-import { getProblemDetail } from '@/lib/custom-fetch';
+import { getProblemDetail } from '@/api/client/custom-fetch';
 
 type Props = {
   user?: User;
@@ -49,10 +49,10 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
 
   const validationSchema = z
     .object({
-      email: z.email('Niepoprawny adres email').or(z.literal('')),
-      firstName: z.string().nonempty('Imię nie może być puste').or(z.literal('')),
-      lastName: z.string().nonempty('Nazwisko nie może być puste').or(z.literal('')),
-      role: z.enum(Role).or(z.literal('')),
+      email: z.email('Niepoprawny adres email'),
+      firstName: z.string().nonempty('Imię nie może być puste'),
+      lastName: z.string().nonempty('Nazwisko nie może być puste'),
+      role: z.enum(Role, { error: 'Rola nie może być pusta' }),
     })
     .superRefine(({ email }, ctx) => {
       if (allUsers.some((u) => u.email.toLowerCase() === email.toLowerCase() && (!editMode || u.id !== user?.id))) {
@@ -68,7 +68,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         return ctx.addIssue({
           code: 'custom',
           message: 'Nie masz uprawnień do nadania wybranej roli',
-          path: ['roles'],
+          path: ['role'],
         });
       }
     });
@@ -116,15 +116,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
       lastName: user?.lastName ?? '',
       role: user?.roles[0] ?? '',
     },
+    validationLogic: revalidateLogic({ mode: 'change', modeAfterSubmission: 'change' }),
     validators: {
-      onChange: validationSchema,
+      onDynamic: validationSchema,
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit(editMode ? 'edit-user' : 'add-user', 'valid', formApi.state);
-
-      if (!value.email || !value.firstName || !value.lastName || !value.role) {
-        throw new Error('Not all fields are filled despite validation');
-      }
 
       if (editMode) {
         const loading = toast.loading('Zapisywanie zmian...');
@@ -304,7 +301,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               placeholder="Jan"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={getErrors(field.state.meta)}
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
           )}
         />
@@ -319,7 +316,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               placeholder="Kowalski"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={getErrors(field.state.meta)}
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
           )}
         />
@@ -335,7 +332,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               type="email"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={getErrors(field.state.meta)}
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
           )}
         />
@@ -353,7 +350,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               label="Rola"
               onBlur={field.handleBlur}
               onChange={field.handleChange}
-              errors={getErrors(field.state.meta)}
+              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
           )}
         />

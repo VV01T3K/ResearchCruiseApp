@@ -1,21 +1,14 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
-import { useForm } from '@tanstack/react-form';
 import {
   useGetApplicationSupervisorReviewSuspense,
   useUpdateApplicationSupervisorReviewDecision,
 } from '@/api/generated/endpoints/applications.gen';
-import type { SupervisorReviewResponse as GeneratedSupervisorReviewResponse } from '@/api/generated/schemas';
-import { ApiError, getProblemDetail } from '@/lib/custom-fetch';
+import { ApiError, getProblemDetail } from '@/api/client/custom-fetch';
 import { toast } from '@/components/shared/layout/toast';
 import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';
-import { CruisePeriodType, FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
-import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
-
-type SupervisorReviewResponse = Omit<GeneratedSupervisorReviewResponse, 'form' | 'initValues'> & {
-  form: FormAValues;
-  initValues: FormAOptions;
-};
+import { mapFormAOptions, mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
 
 export const Route = createFileRoute('/cruise-approval')({
   component: SupervisorViewPage,
@@ -39,11 +32,7 @@ function SupervisorViewPage() {
     {
       query: {
         select: (value) => {
-          const review = value as SupervisorReviewResponse;
-          review.form.note ??= '';
-          review.form.periodSelectionType =
-            review.form.precisePeriodEnd || review.form.precisePeriodStart ? 'precise' : 'period';
-          return review;
+          return { ...value, form: mapFormAToValues(value.form), initValues: mapFormAOptions(value.initValues) };
         },
       },
     }
@@ -51,48 +40,8 @@ function SupervisorViewPage() {
   const answerMutation = useUpdateApplicationSupervisorReviewDecision();
   const formA = supervisorReview.data.form;
 
-  const form = useForm({
-    defaultValues: (formA
-      ? {
-          ...formA,
-          acceptablePeriod: formA.acceptablePeriod ?? '',
-          optimalPeriod: formA.optimalPeriod ?? '',
-          precisePeriodStart: formA.precisePeriodStart ?? '',
-          precisePeriodEnd: formA.precisePeriodEnd ?? '',
-          periodSelectionType:
-            formA.periodSelectionType === 'precise' || formA.periodSelectionType === 'period'
-              ? formA.periodSelectionType
-              : formA.precisePeriodStart || formA.precisePeriodEnd
-                ? 'precise'
-                : 'period',
-        }
-      : {
-          id: undefined,
-          cruiseManagerId: '',
-          deputyManagerId: '',
-          year: supervisorReview.data.initValues.years[0],
-          acceptablePeriod: ['0', '24'] as CruisePeriodType,
-          optimalPeriod: ['0', '24'] as CruisePeriodType,
-          precisePeriodStart: '',
-          precisePeriodEnd: '',
-          periodSelectionType: 'period' as const,
-          cruiseHours: '0',
-          periodNotes: '',
-          shipUsage: '',
-          differentUsage: '',
-          permissions: [],
-          researchAreaDescriptions: [],
-          cruiseGoal: '',
-          cruiseGoalDescription: '',
-          researchTasks: [],
-          contracts: [],
-          ugTeams: [],
-          guestTeams: [],
-          publications: [],
-          spubTasks: [],
-          supervisorEmail: '',
-          note: '',
-        }) as FormAValues,
+  const form = useAppForm({
+    defaultValues: formA,
   });
 
   function handleAcceptForm() {
@@ -144,11 +93,12 @@ function SupervisorViewPage() {
   }
 
   return (
-    <SupervisorView
-      form={form}
-      formInitValues={supervisorReview.data.initValues}
-      handleAcceptForm={handleAcceptForm}
-      handleDenyForm={handleDenyForm}
-    />
+    <form.AppForm>
+      <SupervisorView
+        formInitValues={supervisorReview.data.initValues}
+        handleAcceptForm={handleAcceptForm}
+        handleDenyForm={handleDenyForm}
+      />
+    </form.AppForm>
   );
 }
