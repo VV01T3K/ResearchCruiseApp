@@ -73,16 +73,6 @@
         ],
         "summary": "Refresh account tokens.",
         "operationId": "RefreshTokens",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RefreshTokensRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "OK",
@@ -123,6 +113,20 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/v2/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Revoke the current refresh session.",
+        "operationId": "Logout",
+        "responses": {
+          "204": {
+            "description": "No Content"
           }
         }
       }
@@ -403,9 +407,6 @@
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
           },
           "401": {
             "description": "Unauthorized",
@@ -4754,21 +4755,6 @@
           }
         }
       },
-      "RefreshTokensRequest": {
-        "required": [
-          "accessToken",
-          "refreshToken"
-        ],
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string"
-          },
-          "refreshToken": {
-            "type": "string"
-          }
-        }
-      },
       "RegisterAccountRequest": {
         "required": [
           "email",
@@ -5233,7 +5219,6 @@
         "required": [
           "accessToken",
           "accessTokenExpirationDate",
-          "refreshToken",
           "refreshTokenExpirationDate"
         ],
         "type": "object",
@@ -5244,9 +5229,6 @@
           "accessTokenExpirationDate": {
             "type": "string",
             "format": "date-time"
-          },
-          "refreshToken": {
-            "type": "string"
           },
           "refreshTokenExpirationDate": {
             "type": "string",

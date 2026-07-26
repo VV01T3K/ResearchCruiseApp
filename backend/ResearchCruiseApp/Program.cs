@@ -128,7 +128,8 @@ builder.Services.AddCors(options =>
             policyBuilder
                 .WithOrigins(builder.Configuration["FrontendUrl"] ?? "")
                 .AllowAnyMethod()
-                .AllowAnyHeader();
+                .AllowAnyHeader()
+                .AllowCredentials();
         }
     );
 });

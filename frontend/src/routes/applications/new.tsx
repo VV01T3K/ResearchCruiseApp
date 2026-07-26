@@ -24,7 +24,7 @@ import {
 } from '@/api/generated/endpoints/applications.gen';
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
-import { useUserContext } from '@/providers/useUserContext';
+import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setSchemaErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { getErrorMessage } from '@/api/client/custom-fetch';
@@ -36,7 +36,7 @@ export const Route = createFileRoute('/applications/new')({
 
 function NewCruiseApplicationPage() {
   const navigate = useNavigate();
-  const userContext = useUserContext();
+  const currentUser = useCurrentUser()!;
   const initialStateQuery = useGetApplicationFormAContextSuspense({
     query: { select: mapFormAOptions },
   });
@@ -46,7 +46,7 @@ function NewCruiseApplicationPage() {
 
   const defaultValues: FormAValues = {
     ...formADefaultValues,
-    cruiseManagerId: userContext.currentUser!.id,
+    cruiseManagerId: currentUser.id,
     year: initialStateQuery.data.years[0],
   } satisfies FormAValues;
   const [selectedYear, setSelectedYear] = useState(defaultValues.year);
@@ -83,10 +83,7 @@ function NewCruiseApplicationPage() {
   async function handleValidSubmit() {
     trackFormSubmit('new-application', 'valid', form.state);
 
-    if (
-      form.state.values.cruiseManagerId !== userContext.currentUser!.id &&
-      form.state.values.deputyManagerId !== userContext.currentUser!.id
-    ) {
+    if (form.state.values.cruiseManagerId !== currentUser.id && form.state.values.deputyManagerId !== currentUser.id) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
       navigateToFirstError();
@@ -117,10 +114,7 @@ function NewCruiseApplicationPage() {
   }
 
   async function handleSavingDraft() {
-    if (
-      form.state.values.cruiseManagerId !== userContext.currentUser!.id &&
-      form.state.values.deputyManagerId !== userContext.currentUser!.id
-    ) {
+    if (form.state.values.cruiseManagerId !== currentUser.id && form.state.values.deputyManagerId !== currentUser.id) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
       navigateToFirstError();

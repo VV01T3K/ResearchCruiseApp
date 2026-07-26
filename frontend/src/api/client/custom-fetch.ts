@@ -37,17 +37,17 @@ async function parseResponse(response: Response) {
 }
 
 export async function customFetch<T>(url: string, options: RequestInit): Promise<T> {
-  const isAuthRequest = url.startsWith('/v2/auth/');
-  const token = isAuthRequest ? undefined : await getValidAccessToken();
+  const isSessionBootstrapRequest = url === '/v2/auth/login' || url === '/v2/auth/refresh';
+  const token = isSessionBootstrapRequest ? undefined : await getValidAccessToken();
   const headers = new Headers(options.headers);
   if (token) headers.set('Authorization', `Bearer ${token}`);
 
-  let response = await fetch(config.apiUrl + url, { ...options, headers });
+  let response = await fetch(config.apiUrl + url, { ...options, credentials: 'include', headers });
   if (response.status === 401 && token) {
     const refreshed = await refreshSession();
     if (refreshed) {
       headers.set('Authorization', `Bearer ${refreshed.accessToken}`);
-      response = await fetch(config.apiUrl + url, { ...options, headers });
+      response = await fetch(config.apiUrl + url, { ...options, credentials: 'include', headers });
     }
   }
 

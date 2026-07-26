@@ -2,11 +2,11 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { API_URL, TESTED_FORM_ID } from '@tests/fixtures/consts';
 import {
   getAdminAccountPayload,
-  getAuthDetailsPayload,
   getCruisePayload,
   getFormAPayload,
   getInitValuesAPayload,
   getInitValuesBPayload,
+  mockAuthenticatedSession,
 } from '@tests/fixtures/mockPayloads';
 
 import { AdditionalPermissionsSection } from './AdditionalPermissionsSection';
@@ -35,6 +35,7 @@ export class FormBPage {
   public readonly validationErrorMessage: Locator;
 
   public static async create(page: Page, formId: string = TESTED_FORM_ID): Promise<FormBPage> {
+    await mockAuthenticatedSession(page);
     page.route(`${API_URL}/v2/applications/form-a/context`, (route) => {
       route.fulfill({
         status: 200,
@@ -90,13 +91,6 @@ export class FormBPage {
         body: JSON.stringify([]),
       });
     });
-
-    // mock local storage
-    await page.goto('/');
-
-    await page.evaluate((authDetails) => {
-      window.localStorage.setItem('authDetails', authDetails);
-    }, JSON.stringify(getAuthDetailsPayload()));
 
     const formBPage = new FormBPage(page, formId);
     await formBPage.goto();
