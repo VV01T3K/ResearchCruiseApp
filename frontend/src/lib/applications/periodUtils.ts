@@ -1,8 +1,5 @@
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc.js';
-dayjs.extend(utc);
-
 import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { parseBackendDateTime } from '@/lib/dateUtils';
 
 export const MAX_PERIOD_EDGE_VALUE = 24;
 
@@ -61,8 +58,7 @@ export function convertPeriodNumberToDate(periodNumber: string, year: number): D
 }
 
 function parseBackendDateTimeType(value: string): Date {
-  const normalized = value.endsWith('Z') ? value : `${value}Z`;
-  return dayjs.utc(normalized).toDate();
+  return parseBackendDateTime(value);
 }
 
 type DisplayPeriodSource = {
