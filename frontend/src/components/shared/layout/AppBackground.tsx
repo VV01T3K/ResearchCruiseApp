@@ -1,4 +1,5 @@
-import BackgroundImageUrl from '@/assets/background.jpg';
+import BackgroundImageUrl from '@/assets/background.avif';
+import BackgroundFallbackUrl from '@/assets/background.webp';
 import { useRouterState } from '@tanstack/react-router';
 import { motion } from 'motion/react';
 
@@ -17,10 +18,17 @@ export default function AppBackground() {
 
   return (
     <>
-      <div
-        className={'fixed -z-50 h-screen w-full bg-[image:var(--bg)] bg-cover bg-center bg-no-repeat'}
-        style={{ '--bg': `url('${BackgroundImageUrl}')` } as React.CSSProperties}
-      />
+      <div className="fixed -z-50 h-screen w-full overflow-hidden">
+        <picture className="block h-full w-full">
+          <source srcSet={BackgroundImageUrl} type="image/avif" />
+          <img
+            src={BackgroundFallbackUrl}
+            onLoad={() => document.getElementById('background-placeholder')?.remove()}
+            className="h-full w-full object-cover"
+            alt=""
+          />
+        </picture>
+      </div>
       <motion.div
         className={'fixed -z-50 h-screen w-full'}
         variants={variants}
