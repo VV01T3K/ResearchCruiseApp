@@ -11,30 +11,20 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Tests;
 
-/// <summary>
-/// Boots the real HTTP pipeline against an in-memory SQLite database.
-/// </summary>
 internal sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
 {
     public const string UserEmail = "session@example.com";
     public const string UserPassword = "SessionPassword1!";
 
-    // Held open for the lifetime of the factory: an in-memory SQLite database is dropped as soon as
-    // its last connection closes.
     private readonly SqliteConnection _connection = new("DataSource=:memory:");
 
     public AuthWebApplicationFactory()
     {
-        // The refresh cookie is Secure, and CookieContainer (unlike browsers and curl) has no
-        // localhost exemption, so it would silently drop the cookie on an http base address.
-        // TestServer does no real TLS; this only sets the request scheme.
         ClientOptions.BaseAddress = new Uri("https://localhost");
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        // WebApplicationInitializationExtensions.InitializeDatabase early-returns for "Testing", so
-        // nothing reaches for SQL Server or seeds.
         builder.UseEnvironment("Testing");
 
         builder.ConfigureAppConfiguration(configuration =>
@@ -59,23 +49,9 @@ internal sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
         });
     }
 
-    /// <summary>
-    /// Creates a client that talks to the https base address and keeps no cookie jar of its own.
-    /// </summary>
-    /// <remarks>
-    /// Two defaults make this necessary. <c>CreateClient</c> installs its own
-    /// <see cref="CookieContainerHandler"/>, which would keep supplying a valid rotated cookie to
-    /// tests that mean to control the Cookie header themselves. And the
-    /// <c>CreateDefaultClient(handlers)</c> overload ignores <see cref="ClientOptions"/> and
-    /// hardcodes an http base address, on which <see cref="System.Net.CookieContainer"/> silently
-    /// drops the Secure refresh cookie.
-    /// </remarks>
     public HttpClient CreateSessionClient(params DelegatingHandler[] handlers) =>
         CreateDefaultClient(ClientOptions.BaseAddress, handlers);
 
-    /// <summary>
-    /// Creates a confirmed, accepted user that <see cref="IdentityService.CanUserLogin"/> accepts.
-    /// </summary>
     public async Task SeedUserAsync()
     {
         await using var scope = Services.CreateAsyncScope();
@@ -117,9 +93,7 @@ internal sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
 
     private static void RemoveDbContextRegistrations(IServiceCollection services)
     {
-        // AddDbContext registers the options plus (since EF 9) an IDbContextOptionsConfiguration
-        // that still points at SQL Server. Leaving either behind makes the replacement a no-op.
-        var doomed = services
+        var registrations = services
             .Where(descriptor =>
                 descriptor.ServiceType == typeof(DbContextOptions<ApplicationDbContext>)
                 || descriptor.ServiceType == typeof(DbContextOptions)
@@ -136,7 +110,7 @@ internal sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
             )
             .ToList();
 
-        foreach (var descriptor in doomed)
+        foreach (var descriptor in registrations)
         {
             services.Remove(descriptor);
         }

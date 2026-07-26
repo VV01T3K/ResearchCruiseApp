@@ -44,8 +44,6 @@ public sealed class AuthSessionContractTests
         Assert.True(production.HttpOnly);
         Assert.True(production.Secure);
         Assert.Equal(SameSiteMode.Strict, production.SameSite);
-        // The browser matches Path against the URL it requested, which carries the /api prefix in
-        // every containerized topology. See AuthSessionEndpointTests for the topology assertion.
         Assert.Equal("/", production.Path);
         Assert.Equal(expiration, production.Expires);
         Assert.False(development.Secure);

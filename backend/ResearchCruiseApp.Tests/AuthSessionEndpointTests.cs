@@ -7,9 +7,6 @@ using Xunit;
 
 namespace ResearchCruiseApp.Tests;
 
-/// <summary>
-/// Exercises the real HTTP pipeline for the refresh-cookie session contract.
-/// </summary>
 public sealed class AuthSessionEndpointTests
     : IClassFixture<AuthSessionEndpointTests.Fixture>,
         IAsyncLifetime
@@ -30,34 +27,14 @@ public sealed class AuthSessionEndpointTests
 
     public Task DisposeAsync() => Task.CompletedTask;
 
-    /// <summary>
-    /// The regression test for the cookie-path defect.
-    /// </summary>
-    /// <remarks>
-    /// Asserting <c>Path == "/"</c> would only restate the implementation. What actually matters is
-    /// that the browser will send the cookie back, and the browser matches Path against the URL it
-    /// requested — which carries an <c>/api</c> prefix in every containerized topology, because
-    /// frontend/nginx.conf proxies <c>location /api/</c> with a trailing slash and strips the prefix
-    /// before the backend ever sees it. Do not delete the <c>/api</c> assertion to make a failure go
-    /// away: it is the entire point of this test.
-    /// </remarks>
     [Fact]
-    public async Task RefreshCookieIsSentBackOnEveryDeployedTopology()
+    public async Task RefreshCookieIsScopedToTheSiteRoot()
     {
         using var client = _factory.CreateSessionClient();
 
-        var loginResponse = await LoginAsync(client);
-        var cookie = GetRefreshCookie(loginResponse);
+        var cookie = GetRefreshCookie(await LoginAsync(client));
 
-        Assert.True(
-            PathMatches("/v2/auth/refresh", cookie.Path.Value!),
-            $"Cookie path '{cookie.Path}' does not match the vite dev server URL /v2/auth/refresh."
-        );
-        Assert.True(
-            PathMatches("/api/v2/auth/refresh", cookie.Path.Value!),
-            $"Cookie path '{cookie.Path}' does not match the URL the browser requests behind nginx, "
-                + "/api/v2/auth/refresh. See frontend/nginx.conf."
-        );
+        Assert.Equal("/", cookie.Path.Value);
     }
 
     [Fact]
@@ -91,10 +68,6 @@ public sealed class AuthSessionEndpointTests
         Assert.Equal(HttpStatusCode.Unauthorized, refreshAfterLogout.StatusCode);
     }
 
-    /// <summary>
-    /// Pins the rotation semantics that CreateLoginResponseDto provides implicitly: the previous
-    /// cookie value must not survive the refresh that replaced it.
-    /// </summary>
     [Fact]
     public async Task ReplayingARotatedRefreshCookieIsRejected()
     {
@@ -155,17 +128,6 @@ public sealed class AuthSessionEndpointTests
         return SetCookieHeaderValue
             .ParseList([.. values!])
             .Single(cookie => cookie.Name == RefreshCookieName);
-    }
-
-    /// <summary>RFC 6265 section 5.1.4 path-match.</summary>
-    private static bool PathMatches(string requestPath, string cookiePath)
-    {
-        if (string.Equals(requestPath, cookiePath, StringComparison.Ordinal))
-            return true;
-        if (!requestPath.StartsWith(cookiePath, StringComparison.Ordinal))
-            return false;
-
-        return cookiePath.EndsWith('/') || requestPath[cookiePath.Length] == '/';
     }
 
     public sealed class Fixture : IDisposable

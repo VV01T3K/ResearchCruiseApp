@@ -7,7 +7,7 @@ namespace ResearchCruiseApp.Api.Auth;
 public static class SessionsEndpoints
 {
     private const string RefreshTokenCookie = "rca_refresh_token";
-    private const string RefreshTokenCookiePath = "/"; // Deployed browser URL has an /api prefix.
+    private const string RefreshTokenCookiePath = "/";
 
     public static void Map(RouteGroupBuilder group)
     {

@@ -134,18 +134,10 @@ export function refreshSession() {
 }
 
 export async function prepareForLogout() {
-  try {
-    await getValidAccessToken();
-  } catch {
-    // Logout can still revoke by refresh cookie when the access session cannot be recovered.
-  }
+  await getValidAccessToken().catch(() => undefined);
   logoutInProgress = true;
   authGeneration += 1;
-  try {
-    await refreshPromise;
-  } catch {
-    // The logout request remains authoritative after a failed in-flight refresh.
-  }
+  await refreshPromise?.catch(() => undefined);
 }
 
 export function completeLogout() {

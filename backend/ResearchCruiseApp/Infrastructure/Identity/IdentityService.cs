@@ -201,8 +201,6 @@ internal class IdentityService(
             user is null
             || !user.Accepted
             || !user.EmailConfirmed
-            // Null is not "< UtcNow", so a row holding a token but no expiry would be accepted
-            // forever.
             || user.RefreshTokenExpiry is null
             || user.RefreshTokenExpiry < DateTime.UtcNow
         )
@@ -675,7 +673,7 @@ internal class IdentityService(
     {
         var lifetime = int.Parse(configuration["JWT:RefreshTokenLifetimeSeconds"] ?? "0");
         var expiry = DateTime.UtcNow.AddSeconds(lifetime);
-        var token = Convert.ToBase64String(randomGenerator.CreateRefreshTokenBytes());
+        var token = Convert.ToBase64String(randomGenerator.CreateSecureCodeBytes());
 
         return (token, expiry);
     }

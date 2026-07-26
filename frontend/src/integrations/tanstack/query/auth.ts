@@ -83,13 +83,8 @@ export function useSignIn() {
       return 'success';
     } catch {
       await prepareForLogout();
-      try {
-        await logoutSession();
-      } catch {
-        // The local session must still be cleared when server-side revocation is unavailable.
-      } finally {
-        clearSessionEverywhere(queryClient);
-      }
+      await logoutSession().catch(() => undefined);
+      clearSessionEverywhere(queryClient);
       return 'error';
     }
   };

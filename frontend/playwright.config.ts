@@ -27,10 +27,6 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    /* Note this is 5174 while appsettings.Development.json sets FrontendUrl to 5173. Harmless
-       while the fixtures mock the API wholesale and chromium runs with --disable-web-security,
-       but the CORS policy now sets AllowCredentials, so pointing these tests at a real backend
-       would get them rejected. */
     baseURL: 'http://localhost:5174',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
