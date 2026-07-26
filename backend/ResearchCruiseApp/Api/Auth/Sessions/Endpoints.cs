@@ -51,7 +51,7 @@ public static class SessionsEndpoints
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .RequireRateLimiting(RateLimitingPolicies.SessionRefresh)
             .AllowAnonymous();
     }
 
@@ -63,7 +63,8 @@ public static class SessionsEndpoints
             .WithSummary("Revoke the current refresh session.")
             .Produces(StatusCodes.Status204NoContent)
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            // Not AuthSensitive: sharing the login bucket meant a throttled user could not log out.
+            .RequireRateLimiting(RateLimitingPolicies.SessionRefresh)
             .AllowAnonymous();
     }
 

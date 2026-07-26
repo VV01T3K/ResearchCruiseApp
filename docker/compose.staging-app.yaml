@@ -6,6 +6,9 @@ services:
     environment:
       # Explicit because appsettings.Development.json ships in the image; see kubernetes/base/backend/configmap.yaml.
       - Auth__RefreshCookieSecure=true
+      # Caddy -> frontend nginx -> backend.
+      - ForwardedHeaders__ForwardLimit=3
+      - ForwardedHeaders__TrustAllProxies=true
       - Database__SeedAutomatically=${DATABASE_SEED_AUTOMATICALLY:-true}
       - Database__MigrateAutomatically=${DATABASE_MIGRATE_AUTOMATICALLY:-true}
       - Database__LogUserPasswordsWhenSeeding=${DATABASE_LOG_USER_PASSWORDS_WHEN_SEEDING:-true}

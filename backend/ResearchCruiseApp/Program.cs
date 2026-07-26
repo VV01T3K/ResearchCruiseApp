@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -5,10 +6,12 @@ using System.Threading.RateLimiting;
 using Asp.Versioning;
 using MailKit.Security;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi;
 using ResearchCruiseApp.Api;
+using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.Infrastructure;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 using ResearchCruiseApp.Infrastructure.Sentry;
@@ -88,18 +91,66 @@ builder
     })
     .AddApiExplorer(options => options.SubstituteApiVersionInUrl = true);
 builder.Services.AddAuthorization(AuthorizationPolicies.AddApiAuthorizationPolicies);
+
+// Only XForwardedFor. XForwardedProto is deliberately left out: the refresh cookie's Secure flag is
+// config-driven (Auth:RefreshCookieSecure) and UseHttpsRedirection is a no-op because no HTTPS port
+// is configured in any container. If anyone ever configures one, XForwardedProto becomes mandatory
+// here or every proxied request will 307 to itself.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
+    options.ForwardLimit = builder.Configuration.GetValue("ForwardedHeaders:ForwardLimit", 1);
+
+    if (builder.Configuration.GetValue("ForwardedHeaders:TrustAllProxies", false))
+    {
+        // KnownProxies/KnownNetworks default to loopback, but the real peer is a dynamically
+        // assigned pod or container IP. Safe to clear here specifically: the backend Service is
+        // ClusterIP with no ingress path of its own (the staging ingress routes only to the
+        // frontend) and compose keeps it on an internal network, so XFF is not externally
+        // spoofable.
+        options.KnownProxies.Clear();
+        options.KnownIPNetworks.Clear();
+    }
+});
+
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     options.AddPolicy(
         RateLimitingPolicies.AuthSensitive,
         httpContext =>
+        {
+            // Read per request rather than captured here. Configuration sources added after this
+            // point are invisible to an eager read at service-registration time, which silently
+            // pins the limit to its default.
+            var configuration = httpContext.RequestServices.GetRequiredService<IConfiguration>();
+
+            return RateLimitPartition.GetFixedWindowLimiter(
+                httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                _ => new FixedWindowRateLimiterOptions
+                {
+                    AutoReplenishment = true,
+                    PermitLimit = configuration.GetValue(
+                        "RateLimiting:AuthSensitive:PermitLimit",
+                        10
+                    ),
+                    QueueLimit = 0,
+                    Window = TimeSpan.FromSeconds(
+                        configuration.GetValue("RateLimiting:AuthSensitive:WindowSeconds", 60)
+                    ),
+                }
+            );
+        }
+    );
+    options.AddPolicy(
+        RateLimitingPolicies.SessionRefresh,
+        httpContext =>
             RateLimitPartition.GetFixedWindowLimiter(
                 httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
                 static _ => new FixedWindowRateLimiterOptions
                 {
                     AutoReplenishment = true,
-                    PermitLimit = 10,
+                    PermitLimit = 20,
                     QueueLimit = 0,
                     Window = TimeSpan.FromMinutes(1),
                 }
@@ -108,6 +159,13 @@ builder.Services.AddRateLimiter(options =>
     options.OnRejected = async (context, cancellationToken) =>
     {
         context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+        {
+            context.HttpContext.Response.Headers.RetryAfter = (
+                (int)Math.Ceiling(retryAfter.TotalSeconds)
+            ).ToString(CultureInfo.InvariantCulture);
+        }
+
         await context.HttpContext.Response.WriteAsJsonAsync(
             new ProblemDetails
             {
@@ -144,6 +202,10 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 var app = builder.Build();
+
+// Must stay first: everything downstream that reads Connection.RemoteIpAddress - the rate limiter
+// above all - sees the proxy's address until this has run.
+app.UseForwardedHeaders();
 
 app.UseExceptionHandler(exceptionHandlerApp =>
     exceptionHandlerApp.Run(async context =>

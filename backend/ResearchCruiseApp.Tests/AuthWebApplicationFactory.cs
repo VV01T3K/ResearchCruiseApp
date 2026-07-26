@@ -27,8 +27,14 @@ internal sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
     // its last connection closes.
     private readonly SqliteConnection _connection = new("DataSource=:memory:");
 
-    public AuthWebApplicationFactory()
+    private readonly Dictionary<string, string?> _configurationOverrides;
+
+    public AuthWebApplicationFactory(IDictionary<string, string?>? configurationOverrides = null)
     {
+        _configurationOverrides = configurationOverrides is null
+            ? []
+            : new Dictionary<string, string?>(configurationOverrides);
+
         // The refresh cookie is Secure, and CookieContainer (unlike browsers and curl) has no
         // localhost exemption, so it would silently drop the cookie on an http base address.
         // TestServer does no real TLS; this only sets the request scheme.
@@ -42,19 +48,28 @@ internal sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
         builder.UseEnvironment("Testing");
 
         builder.ConfigureAppConfiguration(configuration =>
-            configuration.AddInMemoryCollection(
-                new Dictionary<string, string?>
-                {
-                    ["JWT:ValidIssuer"] = "https://tests.local/",
-                    ["JWT:ValidAudience"] = "https://tests.local/",
-                    ["JWT:Secret"] = "TestSecretThatIsAtLeastTwoHundredFiftySixBitsLong!!",
-                    ["JWT:AccessTokenLifetimeSeconds"] = "900",
-                    ["JWT:RefreshTokenLifetimeSeconds"] = "7200",
-                    // Deliberately left unset so the endpoints exercise the fail-closed default:
-                    // ["Auth:RefreshCookieSecure"]
-                }
-            )
-        );
+        {
+            var settings = new Dictionary<string, string?>
+            {
+                ["JWT:ValidIssuer"] = "https://tests.local/",
+                ["JWT:ValidAudience"] = "https://tests.local/",
+                ["JWT:Secret"] = "TestSecretThatIsAtLeastTwoHundredFiftySixBitsLong!!",
+                ["JWT:AccessTokenLifetimeSeconds"] = "900",
+                ["JWT:RefreshTokenLifetimeSeconds"] = "7200",
+                // Raised well clear of the default so that tests which are not about throttling
+                // never trip it: the limiter is a singleton and they all share one partition.
+                ["RateLimiting:AuthSensitive:PermitLimit"] = "1000",
+                // Deliberately left unset so the endpoints exercise the fail-closed default:
+                // ["Auth:RefreshCookieSecure"]
+            };
+
+            foreach (var (key, value) in _configurationOverrides)
+            {
+                settings[key] = value;
+            }
+
+            configuration.AddInMemoryCollection(settings);
+        });
 
         builder.ConfigureServices(services =>
         {

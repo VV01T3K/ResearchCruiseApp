@@ -3,6 +3,9 @@ services:
     container_name: researchcruiseapp-backend
     image: ghcr.io/vv01t3k/researchcruiseapp/backend
     environment:
+      # frontend nginx -> backend.
+      - ForwardedHeaders__ForwardLimit=1
+      - ForwardedHeaders__TrustAllProxies=true
       - Database__SeedAutomatically=false
       - Database__MigrateAutomatically=false
       - Database__LogUserPasswordsWhenSeeding=false
