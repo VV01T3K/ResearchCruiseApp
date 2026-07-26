@@ -1,32 +1,34 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { useForm, useStore } from '@tanstack/react-form';
+import { revalidateLogic } from '@tanstack/react-form';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
-import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors, getFormErrorMessage, mapNullsToEmptyStrings, navigateToFirstError } from '@/lib/utils';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   FORM_A_FIELD_TO_SECTION,
-  getFormAValidationSchema,
+  type FormAValues,
+  formADefaultValues,
+  getFormADraftWriteSchema,
   getFormAWriteSchema,
-  parseFormADraft,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useFormAQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
   useGetApplicationFormAContextSuspense,
   useUpdateApplicationFormA,
 } from '@/api/generated/endpoints/applications.gen';
-import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
-import type { FormAOptions } from '@/routes/applications/$applicationId/-schemas/types/FormAOptions';
+import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useUserContext } from '@/providers/useUserContext';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { setSchemaErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
+import { getErrorMessage } from '@/api/client/custom-fetch';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({
   component: FormAPage,
@@ -43,97 +45,47 @@ function FormAPage() {
   const navigate = useNavigate();
   const userContext = useUserContext();
   const initialStateQuery = useGetApplicationFormAContextSuspense({
-    query: { select: (context) => context as FormAOptions },
+    query: { select: mapFormAOptions },
   });
   const saveMutation = useUpdateApplicationFormA();
   const formA = useFormAQuery(applicationId);
 
   const editMode = mode === 'edit';
-  const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = useState(false);
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
 
-  const form = useForm({
-    defaultValues: (formA.data
-      ? {
-          ...formA.data,
-          deputyManagerId: formA.data.deputyManagerId ?? '',
-          permissions: formA.data.permissions.map((p) => ({
-            ...p,
-            description: p.description ?? '',
-            executive: p.executive ?? '',
-            scan: undefined,
-          })),
-          acceptablePeriod: formA.data.acceptablePeriod?.length === 0 ? '' : (formA.data.acceptablePeriod ?? ''),
-          optimalPeriod: formA.data.optimalPeriod?.length === 0 ? '' : (formA.data.optimalPeriod ?? ''),
-          precisePeriodStart: formA.data.precisePeriodStart ?? '',
-          precisePeriodEnd: formA.data.precisePeriodEnd ?? '',
-          periodSelectionType:
-            formA.data.periodSelectionType === 'precise' || formA.data.periodSelectionType === 'period'
-              ? formA.data.periodSelectionType
-              : formA.data.precisePeriodStart || formA.data.precisePeriodEnd
-                ? 'precise'
-                : 'period',
-          contracts: mapNullsToEmptyStrings(formA.data.contracts),
-          researchTasks: mapNullsToEmptyStrings(formA.data.researchTasks),
-          guestTeams: mapNullsToEmptyStrings(formA.data.guestTeams),
-          publications: mapNullsToEmptyStrings(formA.data.publications),
-          spubTasks: mapNullsToEmptyStrings(formA.data.spubTasks),
-        }
-      : {
-          id: undefined,
-          cruiseManagerId: userContext.currentUser!.id,
-          deputyManagerId: '',
-          year: initialStateQuery.data.years[0],
-          acceptablePeriod: ['0', '24'],
-          optimalPeriod: ['0', '24'],
-          precisePeriodStart: '',
-          precisePeriodEnd: '',
-          periodSelectionType: 'period',
-          cruiseHours: '0',
-          periodNotes: '',
-          shipUsage: '',
-          differentUsage: '',
-          permissions: [],
-          researchAreaDescriptions: [],
-          cruiseGoal: '',
-          cruiseGoalDescription: '',
-          researchTasks: [],
-          contracts: [],
-          ugTeams: [],
-          guestTeams: [],
-          publications: [],
-          spubTasks: [],
-          supervisorEmail: '',
-          note: '',
-        }) as FormAValues,
+  const defaultValues = (formA.data ?? {
+    ...formADefaultValues,
+    cruiseManagerId: userContext.currentUser!.id,
+    year: initialStateQuery.data.years[0],
+    acceptablePeriod: ['0', '24'],
+    optimalPeriod: ['0', '24'],
+  }) satisfies FormAValues;
+  const [selectedYear, setSelectedYear] = useState(defaultValues.year);
+  const blockadesQuery = useGetCruiseBlockades({ year: +selectedYear });
+  const form = useAppForm({
+    defaultValues,
+    validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
     validators: {
-      onChange: getFormAValidationSchema(initialStateQuery.data),
+      onDynamic: getFormAWriteSchema(initialStateQuery.data, blockadesQuery.data, applicationId),
+    },
+    listeners: {
+      onChange: ({ fieldApi }) => {
+        if (fieldApi.name === 'year') setSelectedYear(String(fieldApi.state.value));
+      },
+    },
+    onSubmit: () => handleValidSubmit(),
+    onSubmitInvalid: () => {
+      trackFormSubmit('form-a', 'invalid', form.state);
+      setIsSaveDraftModalOpen(false);
+      toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
+      navigateToFirstError();
     },
   });
-
-  const year = useStore(form.store, (state) => state.values.year);
-  const blockadesQuery = useGetCruiseBlockades({ year: +year });
-
-  useEffect(() => {
-    const newValidators = {
-      onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
-    };
-    form.update({
-      validators: newValidators,
-    });
-
-    // Re-validate the fields that depend on blockades if form has been submitted
-    if (hasFormBeenSubmitted) {
-      form.validate('change');
-    }
-  }, [blockadesQuery.data, blockadesQuery.status, initialStateQuery.data, hasFormBeenSubmitted, form]);
 
   const context = {
     form,
     initValues: initialStateQuery.data,
     isReadonly: !editMode,
-    hasFormBeenSubmitted,
-    onSubmit: handleSubmit,
     blockades: blockadesQuery.data,
     onSaveDraft: () => setIsSaveDraftModalOpen(true),
     actionsDisabled: saveMutation.isPending,
@@ -144,63 +96,49 @@ function FormAPage() {
     return dto.cruiseManagerId === userId || dto.deputyManagerId === userId;
   }
 
-  function saveForm(draft: boolean, loadingMessage: string, successMessage: string) {
+  async function saveForm(draft: boolean, loadingMessage: string, successMessage: string) {
     if (!isCurrentUserManagerOrDeputy(form.state.values)) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
       return;
     }
 
-    const loading = toast.loading(loadingMessage);
-    saveMutation.mutate(
-      {
-        applicationId,
-        data: draft
-          ? parseFormADraft(form.state.values, applicationId)
-          : getFormAWriteSchema(initialStateQuery.data, false, blockadesQuery.data, applicationId).parse(
-              form.state.values
-            ),
-      },
-      {
-        onSuccess: () => {
-          navigate({ to: '/' });
-          toast.success(successMessage);
-        },
-        onError: (err) => {
-          console.error(err);
-          toast.error('Nie udało się zapisać formularza. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
-        },
-        onSettled: () => {
-          setIsSaveDraftModalOpen(false);
-          toast.dismiss(loading);
-        },
-      }
-    );
-  }
-
-  async function handleSubmit() {
-    const currentValidators = {
-      onChange: getFormAValidationSchema(initialStateQuery.data, blockadesQuery.data),
-    };
-    form.update({
-      validators: currentValidators,
-    });
-
-    setHasFormBeenSubmitted(true);
-    await form.validate('change');
-
-    if (!form.state.isValid) {
-      trackFormSubmit('form-a', 'invalid', form.state);
-      setIsSaveDraftModalOpen(false);
+    const schema = draft
+      ? getFormADraftWriteSchema(applicationId)
+      : getFormAWriteSchema(initialStateQuery.data, blockadesQuery.data, applicationId);
+    if (setSchemaErrors(form, schema)) {
       toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-      navigateToFirstError(form, FORM_A_FIELD_TO_SECTION);
+      navigateToFirstError();
       return;
     }
 
+    const loading = toast.loading(loadingMessage);
+    try {
+      await saveMutation.mutateAsync({
+        applicationId,
+        data: schema.parse(form.state.values),
+      });
+      navigate({ to: '/' });
+      toast.success(successMessage);
+    } catch (err) {
+      console.error(err);
+      if (setServerFormErrors(form, err)) {
+        toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
+        navigateToFirstError();
+        return;
+      }
+      toast.error(getErrorMessage(err, 'Nie udało się zapisać formularza'));
+      navigateToFirstError();
+    } finally {
+      setIsSaveDraftModalOpen(false);
+      toast.dismiss(loading);
+    }
+  }
+
+  async function handleValidSubmit() {
     trackFormSubmit('form-a', 'valid', form.state);
 
-    saveForm(
+    await saveForm(
       false,
       'Zapisywanie formularza...',
       'Formularz został zapisany i wysłany do potwierdzenia przez przełożonego'
@@ -208,13 +146,15 @@ function FormAPage() {
   }
 
   function handleSaveDraft() {
-    saveForm(true, 'Zapisywanie wersji roboczej formularza...', 'Formularz został zapisany jako wersja robocza');
+    void saveForm(true, 'Zapisywanie wersji roboczej formularza...', 'Formularz został zapisany jako wersja robocza');
   }
 
   return (
     <>
       <AppLayout title="Formularz A">
-        <FormView context={context} />
+        <form.AppForm>
+          <FormView context={context} />
+        </form.AppForm>
       </AppLayout>
 
       <AppModal
@@ -223,17 +163,12 @@ function FormAPage() {
         onClose={() => setIsSaveDraftModalOpen(false)}
       >
         <div className="space-y-4">
-          <form.Field
+          <form.AppField
             name="note"
             children={(field) => (
-              <AppInput
-                name={field.name}
-                value={field.state.value ?? ''}
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
+              <field.TextField
                 label="Notatka aktualnej wersji roboczej"
                 placeholder="Wpisz notatkę dot. aktualnej wersji roboczej"
-                errors={getErrors(field.state.meta)}
                 autoFocus
               />
             )}

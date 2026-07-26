@@ -1,4 +1,3 @@
-using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
@@ -24,11 +23,13 @@ public static class FormCEndpoints
             .MapPut("/{applicationId:guid}/form-c", Update)
             .WithName("UpdateApplicationFormC")
             .WithSummary("Create or replace Form C.")
+            .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithDbTransaction()
+            .WithRequestValidation<FormCWriteRequest>()
             .RequireAuthorization(AuthorizationPolicies.ApplicationFormEditors);
 
         group
@@ -70,7 +71,6 @@ public static class FormCEndpoints
     private static async Task<Results<Created, ProblemHttpResult>> Update(
         Guid applicationId,
         FormCWriteRequest request,
-        IValidator<FormCWriteRequest> validator,
         FormCFactory forms,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
@@ -79,10 +79,6 @@ public static class FormCEndpoints
         CancellationToken cancellationToken
     )
     {
-        var validation = await validator.ValidateAsync(request, cancellationToken);
-        if (!validation.IsValid)
-            return validation.ToApplicationResult().Error!.ToProblemHttpResult();
-
         var application = await dbContext
             .CruiseApplications.IncludeFormA()
             .IncludeFormC()

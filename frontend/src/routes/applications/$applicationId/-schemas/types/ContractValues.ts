@@ -6,8 +6,16 @@ export function getContractCategoryName(category: ContractValues['category']): s
   return category === 'domestic' ? 'Krajowa' : 'Międzynarodowa';
 }
 
-export const ContractValuesSchema = z.object({
+export const ContractValuesInputSchema = z.object({
   category: z.enum(['domestic', 'international']),
+  institutionName: z.string(),
+  institutionUnit: z.string(),
+  institutionLocalization: z.string(),
+  description: z.string(),
+  scans: FormFileValuesSchema.array(),
+});
+
+export const ContractValuesSchema = ContractValuesInputSchema.extend({
   institutionName: z.string().nonempty('Nazwa instytucji jest wymagana'),
   institutionUnit: z.string().nonempty('Jednostka jest wymagana'),
   institutionLocalization: z.string().nonempty('Lokalizacja instytucji jest wymagana'),
@@ -15,4 +23,4 @@ export const ContractValuesSchema = z.object({
   scans: FormFileValuesSchema.array(),
 });
 
-export type ContractValues = z.infer<typeof ContractValuesSchema>;
+export type ContractValues = z.input<typeof ContractValuesInputSchema>;

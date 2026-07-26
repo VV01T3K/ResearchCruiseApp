@@ -1,50 +1,25 @@
 import { Row } from '@tanstack/react-table';
 
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AnyReactFormApi } from '@/lib/form';
-import { getErrors } from '@/lib/utils';
-import { FormAValues } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { ThesisResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  form: AnyReactFormApi<FormAValues>;
   row: Row<ThesisResearchTaskValues>;
   disabled?: boolean;
-  hasFormBeenSubmitted?: boolean;
 };
-export function ThesisResearchTaskDetails({ form, row, disabled, hasFormBeenSubmitted }: Props) {
+export function ThesisResearchTaskDetails({ row, disabled }: Props) {
+  const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].author`}
-        children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value as string}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            label="Autor"
-            placeholder="Wprowadź autora"
-            disabled={disabled}
-          />
-        )}
+        children={(field) => <field.TextField label="Autor" placeholder="Wprowadź autora" disabled={disabled} />}
       />
 
-      <form.Field
+      <form.AppField
         name={`researchTasks[${row.index}].title`}
-        children={(field) => (
-          <AppInput
-            name={field.name}
-            value={field.state.value as string}
-            onChange={field.handleChange}
-            onBlur={field.handleBlur}
-            errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-            label="Tytuł"
-            placeholder="Wprowadź tytuł"
-            disabled={disabled}
-          />
-        )}
+        children={(field) => <field.TextField label="Tytuł" placeholder="Wprowadź tytuł" disabled={disabled} />}
       />
     </div>
   );

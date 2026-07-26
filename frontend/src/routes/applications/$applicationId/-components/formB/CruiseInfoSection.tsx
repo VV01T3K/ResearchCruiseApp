@@ -4,11 +4,11 @@ import dayjs from 'dayjs';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
-import { useFormB } from '@/contexts/applications/FormBContext';
+import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import type { CruiseResponse } from '@/api/generated/schemas';
 
-export function CruiseInfoSection() {
-  const { cruise } = useFormB();
+export function CruiseInfoSection({ context }: { context: FormBViewModel }) {
+  const { cruise } = context;
 
   return (
     <AppAccordion title="1. Informacje o rejsie" expandedByDefault data-testid="form-b-cruise-info-section">
