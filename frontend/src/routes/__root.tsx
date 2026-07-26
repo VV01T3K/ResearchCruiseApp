@@ -5,11 +5,11 @@ import {
   useRouter,
   useRouterState,
 } from '@tanstack/react-router';
+import type { QueryClient } from '@tanstack/react-query';
 import EmojiNeutralIcon from 'bootstrap-icons/icons/emoji-neutral.svg?react';
 import EmojiSmileUpsideDownIcon from 'bootstrap-icons/icons/emoji-smile-upside-down.svg?react';
 
 import config from '@/config';
-import { UserContextType } from '@/providers/UserContext';
 import { motion } from 'motion/react';
 import { lazy, Suspense } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
@@ -20,9 +20,10 @@ import { AppNavbar } from '@/components/shared/layout/AppNavbar';
 import { AppNetworkDisconnectAlert } from '@/components/shared/layout/AppNetworkDisconnectAlert';
 import { AppToaster } from '@/components/shared/layout/AppToaster';
 import { TanStackQueryDevtools } from '@/integrations/tanstack/query/devtools';
+import { AuthSession } from '@/integrations/tanstack/query/AuthSession';
 
 type RouterContext = {
-  userContext?: UserContextType;
+  queryClient: QueryClient;
 };
 
 export const Route = createRootRouteWithContext<RouterContext>()({
@@ -41,6 +42,7 @@ function RootLayout() {
   return (
     <>
       <AppToaster />
+      <AuthSession />
       <div className="sticky top-0 z-100">
         <div className="relative z-100">
           <AppNavbar />
