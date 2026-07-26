@@ -1,14 +1,12 @@
 import { ParsedLocation, redirect } from '@tanstack/react-router';
+import type { QueryClient } from '@tanstack/react-query';
 
-import { getCurrentUser } from '@/api/generated/endpoints/users.gen';
 import { Role } from '@/api/client/user';
-import { User } from '@/api/client/user';
-import { UserContextType } from '@/providers/UserContext';
-import { getStoredAuthDetails } from '@/api/client/auth-storage';
+import { currentUserQueryOptions } from '@/integrations/tanstack/query/auth';
 
 type GuardContextType = {
   context: {
-    userContext?: UserContextType | undefined;
+    queryClient: QueryClient;
   };
   location: ParsedLocation<object>;
 };
@@ -19,27 +17,10 @@ type GlobalGuardType = {
   unauthenticated: () => (context: GuardContextType) => Promise<void>;
 };
 
-async function resolveCurrentUser(userContext?: UserContextType): Promise<User | undefined> {
-  if (userContext?.currentUser) {
-    return userContext.currentUser;
-  }
-
-  const storedAuthDetails = getStoredAuthDetails();
-  if (!storedAuthDetails) {
-    return undefined;
-  }
-
-  try {
-    return (await getCurrentUser()) as User;
-  } catch {
-    return undefined;
-  }
-}
-
 export const allowOnly: GlobalGuardType = {
   withRoles: (...roles: Role[]): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context, location }) => {
-      const currentUser = await resolveCurrentUser(context.userContext);
+      const currentUser = await context.queryClient.fetchQuery(currentUserQueryOptions());
 
       if (!currentUser) {
         throw redirect({
@@ -59,7 +40,7 @@ export const allowOnly: GlobalGuardType = {
   },
   authenticated: (): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context, location }) => {
-      const currentUser = await resolveCurrentUser(context.userContext);
+      const currentUser = await context.queryClient.fetchQuery(currentUserQueryOptions());
 
       if (!currentUser) {
         throw redirect({
@@ -73,7 +54,7 @@ export const allowOnly: GlobalGuardType = {
   },
   unauthenticated: (): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context }) => {
-      const currentUser = await resolveCurrentUser(context.userContext);
+      const currentUser = await context.queryClient.fetchQuery(currentUserQueryOptions());
 
       if (currentUser) {
         throw redirect({

@@ -46,13 +46,6 @@ public class ResetPasswordFormDto
     public string EmailBase64 { get; init; } = null!;
 }
 
-public class RefreshDto
-{
-    public string AccessToken { get; set; } = null!;
-
-    public string RefreshToken { get; init; } = null!;
-}
-
 public class LoginResponseDto
 {
     public string AccessToken { get; set; } = null!;
