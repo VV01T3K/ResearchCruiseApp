@@ -10,12 +10,3 @@ public sealed class LoginValidator : AbstractValidator<LoginRequest>
         RuleFor(request => request.Password).NotEmpty();
     }
 }
-
-public sealed class RefreshTokensValidator : AbstractValidator<RefreshTokensRequest>
-{
-    public RefreshTokensValidator()
-    {
-        RuleFor(request => request.AccessToken).NotEmpty();
-        RuleFor(request => request.RefreshToken).NotEmpty();
-    }
-}

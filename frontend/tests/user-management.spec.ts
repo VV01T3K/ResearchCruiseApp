@@ -1,7 +1,7 @@
 import { expect, Page } from '@playwright/test';
 
 import { API_URL, test } from './fixtures/fixtures';
-import { getAdminAccountPayload, getAuthDetailsPayload } from './fixtures/mockPayloads';
+import { getAdminAccountPayload, mockAuthenticatedSession } from './fixtures/mockPayloads';
 
 const user = {
   id: '11111111-1111-1111-1111-111111111111',
@@ -14,11 +14,7 @@ const user = {
 };
 
 async function seedAuthenticatedAdmin(page: Page) {
-  await page.goto('/');
-  await page.evaluate(
-    (authDetails) => window.localStorage.setItem('authDetails', authDetails),
-    JSON.stringify(getAuthDetailsPayload())
-  );
+  await mockAuthenticatedSession(page);
   await page.route(`${API_URL}/v2/users/me`, (route) => {
     route.fulfill({
       status: 200,
@@ -44,6 +40,33 @@ test('user management list loads from the v2 users route', async ({ page }) => {
 
   await expect(page.getByText('Managed User')).toBeVisible();
   expect(requested).toBe(true);
+});
+
+test('role guard refreshes stale account data before allowing navigation', async ({ page }) => {
+  await mockAuthenticatedSession(page);
+  let profileRequests = 0;
+  let account = getAdminAccountPayload();
+  await page.route(`${API_URL}/v2/users/me`, (route) => {
+    profileRequests += 1;
+    return route.fulfill({
+      status: 200,
+      body: JSON.stringify(account),
+      contentType: 'application/json',
+    });
+  });
+
+  await page.goto('/');
+  await expect(page.getByText('Zarządzanie użytkownikami')).toBeVisible();
+
+  account = { ...account, roles: ['Guest'] };
+  await page.evaluate(() => {
+    const staleTime = Date.now() + 60_001;
+    Date.now = () => staleTime;
+  });
+  await page.getByText('Zarządzanie użytkownikami').click();
+
+  await expect.poll(() => profileRequests).toBeGreaterThan(1);
+  await expect(page).toHaveURL('/');
 });
 
 test('user management create, update, delete, accept, and deactivate use v2 routes', async ({ page }) => {

@@ -6,7 +6,7 @@ import { Role } from '@/api/client/user';
 import { AcceptButton } from './actions/AcceptButton';
 import { RejectButton } from './actions/RejectButton';
 import { RejectConfirmation } from './actions/RejectConfirmation';
-import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
+import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { ApplicationStatus } from '@/api/client/applications/models';
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
   onReject: () => void;
 };
 export function ActionsSection({ onAccept, onReject }: Props) {
-  const { application } = useApplicationDetails();
+  const application = useApplication();
   const [confirmationMode, setConfirmationMode] = React.useState(false);
 
   if (confirmationMode) {

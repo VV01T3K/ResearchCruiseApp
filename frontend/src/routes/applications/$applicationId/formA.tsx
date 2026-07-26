@@ -25,7 +25,7 @@ import {
 } from '@/api/generated/endpoints/applications.gen';
 import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
-import { useUserContext } from '@/providers/useUserContext';
+import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setSchemaErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { getErrorMessage } from '@/api/client/custom-fetch';
@@ -43,7 +43,7 @@ function FormAPage() {
   const mode = Route.useSearch().mode ?? 'view';
 
   const navigate = useNavigate();
-  const userContext = useUserContext();
+  const currentUser = useCurrentUser()!;
   const initialStateQuery = useGetApplicationFormAContextSuspense({
     query: { select: mapFormAOptions },
   });
@@ -55,7 +55,7 @@ function FormAPage() {
 
   const defaultValues = (formA.data ?? {
     ...formADefaultValues,
-    cruiseManagerId: userContext.currentUser!.id,
+    cruiseManagerId: currentUser.id,
     year: initialStateQuery.data.years[0],
     acceptablePeriod: ['0', '24'],
     optimalPeriod: ['0', '24'],
@@ -92,7 +92,7 @@ function FormAPage() {
   };
 
   function isCurrentUserManagerOrDeputy(dto: FormAValues) {
-    const userId = userContext.currentUser!.id;
+    const userId = currentUser.id;
     return dto.cruiseManagerId === userId || dto.deputyManagerId === userId;
   }
 

@@ -1,5 +1,5 @@
 import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
-import { MockUserContextProvider } from '@stories/mocks/MockUserContextProvider';
+import { MockAuthQueryProvider } from '@stories/mocks/MockAuthQueryProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { AppNavbar } from '@/components/shared/layout/AppNavbar';
@@ -15,9 +15,9 @@ type Story = StoryObj<typeof meta>;
 export const LoggedIn: Story = {
   decorators: [
     (Story) => (
-      <MockUserContextProvider loggedIn>
+      <MockAuthQueryProvider loggedIn>
         <Story />
-      </MockUserContextProvider>
+      </MockAuthQueryProvider>
     ),
     (Story) => (
       <MockRouterProvider>
@@ -30,9 +30,9 @@ export const LoggedIn: Story = {
 export const LoggedOut: Story = {
   decorators: [
     (Story) => (
-      <MockUserContextProvider>
+      <MockAuthQueryProvider>
         <Story />
-      </MockUserContextProvider>
+      </MockAuthQueryProvider>
     ),
     (Story) => (
       <MockRouterProvider>

@@ -5,12 +5,12 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useApplicationDetails } from '@/contexts/applications/ApplicationDetailsContext';
+import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { EvaluationFormAPublication } from '@/api/client/applications/models';
 import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
 export function PublicationsSection() {
-  const { evaluation } = useApplicationDetails();
+  const evaluation = useApplicationEvaluation();
 
   const columns: ColumnDef<EvaluationFormAPublication>[] = [
     {
