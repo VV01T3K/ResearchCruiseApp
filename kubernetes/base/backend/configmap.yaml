@@ -7,9 +7,6 @@ data:
   # published image, so a stray ASPNETCORE_ENVIRONMENT=Development would otherwise load its
   # RefreshCookieSecure=false. Environment variables win over every JSON source.
   Auth__RefreshCookieSecure: "true"
-  # ingress-nginx -> frontend nginx -> backend.
-  ForwardedHeaders__ForwardLimit: "2"
-  ForwardedHeaders__TrustAllProxies: "true"
   Database__LogUserPasswordsWhenSeeding: "true"
   Database__MigrateAutomatically: "true"
   Database__SeedAutomatically: "true"

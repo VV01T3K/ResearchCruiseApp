@@ -7,9 +7,6 @@ services:
     build:
       context: ../backend
     environment:
-      # frontend nginx -> backend.
-      - ForwardedHeaders__ForwardLimit=1
-      - ForwardedHeaders__TrustAllProxies=true
       - Database__SeedAutomatically=true
       - Database__MigrateAutomatically=true
       - Database__LogUserPasswordsWhenSeeding=true

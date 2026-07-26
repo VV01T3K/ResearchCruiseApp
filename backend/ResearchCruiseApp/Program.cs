@@ -6,7 +6,6 @@ using System.Threading.RateLimiting;
 using Asp.Versioning;
 using MailKit.Security;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi;
@@ -91,27 +90,6 @@ builder
     })
     .AddApiExplorer(options => options.SubstituteApiVersionInUrl = true);
 builder.Services.AddAuthorization(AuthorizationPolicies.AddApiAuthorizationPolicies);
-
-// Only XForwardedFor. XForwardedProto is deliberately left out: the refresh cookie's Secure flag is
-// config-driven (Auth:RefreshCookieSecure) and UseHttpsRedirection is a no-op because no HTTPS port
-// is configured in any container. If anyone ever configures one, XForwardedProto becomes mandatory
-// here or every proxied request will 307 to itself.
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
-    options.ForwardLimit = builder.Configuration.GetValue("ForwardedHeaders:ForwardLimit", 1);
-
-    if (builder.Configuration.GetValue("ForwardedHeaders:TrustAllProxies", false))
-    {
-        // KnownProxies/KnownNetworks default to loopback, but the real peer is a dynamically
-        // assigned pod or container IP. Safe to clear here specifically: the backend Service is
-        // ClusterIP with no ingress path of its own (the staging ingress routes only to the
-        // frontend) and compose keeps it on an internal network, so XFF is not externally
-        // spoofable.
-        options.KnownProxies.Clear();
-        options.KnownIPNetworks.Clear();
-    }
-});
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -202,10 +180,6 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 var app = builder.Build();
-
-// Must stay first: everything downstream that reads Connection.RemoteIpAddress - the rate limiter
-// above all - sees the proxy's address until this has run.
-app.UseForwardedHeaders();
 
 app.UseExceptionHandler(exceptionHandlerApp =>
     exceptionHandlerApp.Run(async context =>
