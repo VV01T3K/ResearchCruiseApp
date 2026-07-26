@@ -3,12 +3,10 @@ import BackgroundPlaceholderUrl from '@/assets/background-placeholder.jpg';
 import BackgroundFallbackUrl from '@/assets/background.webp';
 import { useRouterState } from '@tanstack/react-router';
 import { motion } from 'motion/react';
-import { useState } from 'react';
 
 export default function AppBackground() {
   const routerState = useRouterState();
   const isHomepage = routerState.location.pathname === '/';
-  const [isLoaded, setIsLoaded] = useState(false);
 
   const variants = {
     transparent: {
@@ -21,20 +19,14 @@ export default function AppBackground() {
 
   return (
     <>
-      <div
-        className="fixed -z-50 h-screen w-full overflow-hidden bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('${BackgroundPlaceholderUrl}')` }}
-      >
-        <picture
-          className={`block h-full w-full transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-        >
+      <div className="fixed -z-50 h-screen w-full overflow-hidden">
+        <div
+          className="absolute -inset-1 bg-cover bg-center bg-no-repeat blur-[2px]"
+          style={{ backgroundImage: `url('${BackgroundPlaceholderUrl}')` }}
+        />
+        <picture className="relative block h-full w-full">
           <source srcSet={BackgroundImageUrl} type="image/avif" />
-          <img
-            src={BackgroundFallbackUrl}
-            onLoad={() => setIsLoaded(true)}
-            className="h-full w-full object-cover"
-            alt=""
-          />
+          <img src={BackgroundFallbackUrl} className="h-full w-full object-cover" alt="" />
         </picture>
       </div>
       <motion.div
