@@ -60,7 +60,7 @@ export function GridCard({ name, className, Icon, description, href }: Props) {
                 transition: 'all 0.3s',
               }}
             >
-              <Icon />
+              <Icon className="size-full" />
             </motion.div>
             <motion.h3 className="text-md font-semibold text-primary md:text-lg xl:text-xl">{name}</motion.h3>
           </motion.div>
