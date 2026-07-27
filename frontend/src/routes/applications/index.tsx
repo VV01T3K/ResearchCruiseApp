@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { ColumnDef } from '@tanstack/react-table';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
+import { useMemo } from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
@@ -11,7 +12,7 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
 import { formatDate } from '@/lib/dateUtils';
-import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
+import { useCruiseApplicationsInfiniteQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
 import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/api/client/applications/models';
 
 export const Route = createFileRoute('/applications/')({
@@ -20,7 +21,11 @@ export const Route = createFileRoute('/applications/')({
 });
 
 function ApplicationsPage() {
-  const applicationsQuery = useGetApplicationsSuspense();
+  const applicationsQuery = useCruiseApplicationsInfiniteQuery();
+  const applications = useMemo(
+    () => applicationsQuery.data.pages.flatMap((page) => page.items),
+    [applicationsQuery.data]
+  );
 
   const columns: ColumnDef<ApplicationResponse>[] = [
     {
@@ -201,10 +206,15 @@ function ApplicationsPage() {
     <>
       <AppLayout title="Zgłoszenia" variant="wide">
         <AppTable
-          data={applicationsQuery.data}
+          data={applications}
           columns={columns}
           buttons={(defaultButtons) => [...defaultButtons]}
           initialSortingState={initialSortingState}
+          infiniteScroll={{
+            hasNextPage: applicationsQuery.hasNextPage,
+            isFetchingNextPage: applicationsQuery.isFetchingNextPage,
+            fetchNextPage: applicationsQuery.fetchNextPage,
+          }}
         />
       </AppLayout>
     </>
