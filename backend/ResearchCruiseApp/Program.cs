@@ -11,6 +11,7 @@ using Microsoft.OpenApi;
 using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Infrastructure;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
+using ResearchCruiseApp.Infrastructure.Persistence.Initialization.DevData;
 using ResearchCruiseApp.Infrastructure.Sentry;
 using Scalar.AspNetCore;
 using Sentry;
@@ -144,6 +145,9 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 var app = builder.Build();
+
+if (await app.RunSeedApplicationsCommand(args))
+    return;
 
 app.UseExceptionHandler(exceptionHandlerApp =>
     exceptionHandlerApp.Run(async context =>
