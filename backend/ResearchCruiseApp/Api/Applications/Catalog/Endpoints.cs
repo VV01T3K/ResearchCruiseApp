@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
@@ -29,6 +30,11 @@ public static class CatalogEndpoints
     private static async Task<Ok<ApplicationsPageResponse>> GetAll(
         string? cursor,
         int pageSize,
+        List<int>? numbers,
+        List<DateOnly>? dates,
+        List<string>? statuses,
+        List<int>? years,
+        List<string>? cruiseManagers,
         ApplicationReader projection,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
@@ -37,6 +43,14 @@ public static class CatalogEndpoints
     {
         var hasCursor = CruiseApplicationsCursor.TryDecode(cursor, out var cursorNumber, out var cursorId);
         var clampedPageSize = Math.Clamp(pageSize, 1, 100);
+
+        var parsedStatuses = statuses?
+            .Select(s => Enum.TryParse<CruiseApplicationStatus>(s, ignoreCase: true, out var parsed)
+                ? parsed
+                : (CruiseApplicationStatus?)null)
+            .Where(s => s.HasValue)
+            .Select(s => s!.Value)
+            .ToList();
 
         var query = dbContext
             .CruiseApplications.IncludeForms()
@@ -49,6 +63,32 @@ public static class CatalogEndpoints
             query = query.Where(a =>
                 a.Number < cursorNumber
                 || (a.Number == cursorNumber && a.Id.CompareTo(cursorId) < 0)
+            );
+        }
+
+        if (numbers is { Count: > 0 })
+            query = query.Where(a => numbers.Contains(a.Number));
+
+        if (dates is { Count: > 0 })
+            query = query.Where(a => dates.Contains(a.Date));
+
+        if (parsedStatuses is { Count: > 0 })
+            query = query.Where(a => parsedStatuses.Contains(a.Status));
+
+        if (years is { Count: > 0 })
+        {
+            var yearStrings = years.Select(y => y.ToString()).ToList();
+            query = query.Where(a => a.FormA != null && yearStrings.Contains(a.FormA.Year));
+        }
+
+        if (cruiseManagers is { Count: > 0 })
+        {
+            query = query.Where(a =>
+                a.FormA != null
+                && dbContext.Users.Any(u =>
+                    u.Id == a.FormA.CruiseManagerId.ToString()
+                    && cruiseManagers.Contains(u.FirstName + " " + u.LastName)
+                )
             );
         }
 
