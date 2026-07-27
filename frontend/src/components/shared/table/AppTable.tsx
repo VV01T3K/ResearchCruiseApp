@@ -13,6 +13,7 @@ import {
 } from '@tanstack/react-table';
 
 import { AppDesktopTable } from '@/components/shared/table/desktop/AppDesktopTable';
+import { InfiniteScrollProps } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
 import { AppMobileTable } from '@/components/shared/table/mobile/AppMobileTable';
 import { useWindowSize } from '@/hooks/shared/WindowSizeHook';
 
@@ -29,6 +30,7 @@ type Props<T> = {
   variant?: 'form' | 'table';
   disabled?: boolean;
   errors?: string[];
+  infiniteScroll?: InfiniteScrollProps;
   'data-testid'?: string;
 };
 
@@ -45,6 +47,7 @@ export function AppTable<T>({
   variant = 'table',
   disabled = false,
   errors,
+  infiniteScroll,
   'data-testid': testId,
 }: Props<T>) {
   'use no memo'; // Disable React Compiler memoization for TanStack Table compatibility
@@ -86,6 +89,7 @@ export function AppTable<T>({
       showRequiredAsterisk={showRequiredAsterisk}
       variant={variant}
       errors={errors}
+      infiniteScroll={infiniteScroll}
       data-testid={testId}
     />
   );
