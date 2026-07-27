@@ -1,7 +1,7 @@
 import { useMutation, useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 
 import { client } from '@/lib/api';
-import { getApplications } from '@/api/generated/endpoints/applications.gen';
+import { customFetch } from '@/api/client/custom-fetch';
 import { ApplicationResponse } from '@/api/client/applications/models';
 import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDto';
 import { CruiseDto } from '@/api/dto/applications/ApplicationCruiseDto';
@@ -23,9 +23,16 @@ type CruiseApplicationsPage = {
   nextCursor: string | null;
 };
 
-async function fetchCruiseApplicationsPage(): Promise<CruiseApplicationsPage> {
-  const items = await getApplications();
-  return { items, nextCursor: null };
+const CRUISE_APPLICATIONS_PAGE_SIZE = 20;
+
+async function fetchCruiseApplicationsPage({
+  pageParam,
+}: {
+  pageParam: string | null;
+}): Promise<CruiseApplicationsPage> {
+  const params = new URLSearchParams({ pageSize: String(CRUISE_APPLICATIONS_PAGE_SIZE) });
+  if (pageParam) params.set('cursor', pageParam);
+  return customFetch<CruiseApplicationsPage>(`/v2/applications?${params}`);
 }
 
 export function useCruiseApplicationsInfiniteQuery() {
