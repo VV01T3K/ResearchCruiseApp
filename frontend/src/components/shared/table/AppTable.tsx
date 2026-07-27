@@ -1,5 +1,6 @@
 import {
   ColumnDef,
+  ColumnFiltersState,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
@@ -25,6 +26,8 @@ type Props<T> = {
   showRequiredAsterisk?: boolean;
   rowSelectionState?: RowSelectionState;
   setRowSelectionState?: OnChangeFn<RowSelectionState>;
+  columnFiltersState?: ColumnFiltersState;
+  setColumnFiltersState?: OnChangeFn<ColumnFiltersState>;
   initialSortingState?: SortingState;
   getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string;
   variant?: 'form' | 'table';
@@ -42,6 +45,8 @@ export function AppTable<T>({
   showRequiredAsterisk = false,
   rowSelectionState,
   setRowSelectionState,
+  columnFiltersState,
+  setColumnFiltersState,
   initialSortingState,
   getRowId,
   variant = 'table',
@@ -66,8 +71,10 @@ export function AppTable<T>({
       sortingFn: 'alphanumeric',
     },
     onRowSelectionChange: setRowSelectionState,
+    onColumnFiltersChange: setColumnFiltersState,
     state: {
       rowSelection: rowSelectionState,
+      columnFilters: columnFiltersState,
       columnVisibility: {
         actions: !disabled,
       },
