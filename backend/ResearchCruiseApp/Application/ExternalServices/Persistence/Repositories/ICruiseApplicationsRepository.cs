@@ -10,7 +10,10 @@ public interface ICruiseApplicationsRepository : IRepository<CruiseApplication>
         CancellationToken cancellationToken
     );
 
-    Task<List<CruiseApplication>> GetAllWithFormsAndFormAContentAndEffects(
+    Task<List<CruiseApplication>> GetKeysetPageWithFormsAndFormAContentAndEffects(
+        int? cursorNumber,
+        Guid? cursorId,
+        int pageSize,
         CancellationToken cancellationToken
     );
 

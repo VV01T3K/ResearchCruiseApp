@@ -37,9 +37,15 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
         Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
     )]
     [HttpGet]
-    public async Task<IActionResult> GetAllCruiseApplications()
+    public async Task<IActionResult> GetAllCruiseApplications(
+        [FromQuery] string? cursor,
+        [FromQuery] int pageSize = 20
+    )
     {
-        var result = await mediator.Send(new GetAllCruiseApplicationsQuery());
+        var clampedPageSize = Math.Clamp(pageSize, 1, 100);
+        var result = await mediator.Send(
+            new GetAllCruiseApplicationsQuery(cursor, clampedPageSize)
+        );
         return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
     }
 

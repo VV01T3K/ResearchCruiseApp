@@ -11,15 +11,24 @@ public class GetAllCruiseApplicationsHandler(
     ICruiseApplicationDtosFactory cruiseApplicationDtosFactory,
     ICruiseApplicationsRepository cruiseApplicationsRepository,
     IUserPermissionVerifier userPermissionVerifier
-) : IRequestHandler<GetAllCruiseApplicationsQuery, Result<List<CruiseApplicationDto>>>
+) : IRequestHandler<GetAllCruiseApplicationsQuery, Result<CruiseApplicationsPageDto>>
 {
-    public async Task<Result<List<CruiseApplicationDto>>> Handle(
+    public async Task<Result<CruiseApplicationsPageDto>> Handle(
         GetAllCruiseApplicationsQuery request,
         CancellationToken cancellationToken
     )
     {
+        var hasCursor = CruiseApplicationsCursor.TryDecode(
+            request.Cursor,
+            out var cursorNumber,
+            out var cursorId
+        );
+
         var cruiseApplications =
-            await cruiseApplicationsRepository.GetAllWithFormsAndFormAContentAndEffects(
+            await cruiseApplicationsRepository.GetKeysetPageWithFormsAndFormAContentAndEffects(
+                hasCursor ? cursorNumber : null,
+                hasCursor ? cursorId : null,
+                request.PageSize,
                 cancellationToken
             );
 
@@ -33,6 +42,17 @@ public class GetAllCruiseApplicationsHandler(
                 );
         }
 
-        return cruiseApplicationDtos;
+        // The cursor always advances over every DB row this call examined (not just the
+        // ones that survived the permission filter above), so a page can come back
+        // smaller than PageSize - or even empty - without ever skipping or re-visiting a row.
+        var nextCursor =
+            cruiseApplications.Count == request.PageSize
+                ? CruiseApplicationsCursor.Encode(
+                    cruiseApplications[^1].Number,
+                    cruiseApplications[^1].Id
+                )
+                : null;
+
+        return new CruiseApplicationsPageDto(cruiseApplicationDtos, nextCursor);
     }
 }

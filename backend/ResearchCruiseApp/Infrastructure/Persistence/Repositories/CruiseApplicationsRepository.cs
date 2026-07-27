@@ -22,15 +22,35 @@ internal class CruiseApplicationsRepository
             .ToListAsync(cancellationToken);
     }
 
-    public Task<List<CruiseApplication>> GetAllWithFormsAndFormAContentAndEffects(
+    public Task<List<CruiseApplication>> GetKeysetPageWithFormsAndFormAContentAndEffects(
+        int? cursorNumber,
+        Guid? cursorId,
+        int pageSize,
         CancellationToken cancellationToken
     )
     {
-        return DbContext
+        var query = DbContext
             .CruiseApplications.IncludeForms()
             .IncludeFormAContent()
             .IncludeEffects()
             .IncludeCruise()
+            .AsQueryable();
+
+        if (cursorNumber is not null && cursorId is not null)
+        {
+            query = query.Where(cruiseApplication =>
+                cruiseApplication.Number < cursorNumber
+                || (
+                    cruiseApplication.Number == cursorNumber
+                    && cruiseApplication.Id.CompareTo(cursorId.Value) < 0
+                )
+            );
+        }
+
+        return query
+            .OrderByDescending(cruiseApplication => cruiseApplication.Number)
+            .ThenByDescending(cruiseApplication => cruiseApplication.Id)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
     }
 
