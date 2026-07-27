@@ -14,6 +14,7 @@ public interface ICruiseApplicationsRepository : IRepository<CruiseApplication>
         int? cursorNumber,
         Guid? cursorId,
         int pageSize,
+        CruiseApplicationsFilter filter,
         CancellationToken cancellationToken
     );
 

@@ -17,4 +17,16 @@ public static class EnumExtensions
 
         return stringValueAttribute.Value;
     }
+
+    public static TEnum? GetEnumFromStringValue<TEnum>(string value)
+        where TEnum : struct, Enum
+    {
+        foreach (var enumValue in Enum.GetValues<TEnum>())
+        {
+            if (((Enum)(object)enumValue).GetStringValue() == value)
+                return enumValue;
+        }
+
+        return null;
+    }
 }

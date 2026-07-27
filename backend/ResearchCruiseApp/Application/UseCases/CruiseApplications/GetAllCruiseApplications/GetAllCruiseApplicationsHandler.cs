@@ -1,9 +1,11 @@
 using MediatR;
+using ResearchCruiseApp.Application.Common.Extensions;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Application.Models.Common.ServiceResult;
 using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.Factories.CruiseApplicationDtos;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
+using ResearchCruiseApp.Domain.Common.Enums;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.GetAllCruiseApplications;
 
@@ -24,11 +26,31 @@ public class GetAllCruiseApplicationsHandler(
             out var cursorId
         );
 
+        // Unlike the other filters, Status can't be forwarded as-is: the DB column is a
+        // plain int, but the client sends the Polish display label, so each one has to be
+        // translated back to the enum. Unrecognized labels are silently dropped.
+        var statuses = request
+            .Statuses?.Select(status =>
+                EnumExtensions.GetEnumFromStringValue<CruiseApplicationStatus>(status)
+            )
+            .Where(status => status is not null)
+            .Select(status => status!.Value)
+            .ToList();
+
+        var filter = new CruiseApplicationsFilter(
+            request.Numbers,
+            request.Dates,
+            statuses,
+            request.Years,
+            request.CruiseManagerFullNames
+        );
+
         var cruiseApplications =
             await cruiseApplicationsRepository.GetKeysetPageWithFormsAndFormAContentAndEffects(
                 hasCursor ? cursorNumber : null,
                 hasCursor ? cursorId : null,
                 request.PageSize,
+                filter,
                 cancellationToken
             );
 

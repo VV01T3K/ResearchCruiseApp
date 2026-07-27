@@ -39,12 +39,25 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllCruiseApplications(
         [FromQuery] string? cursor,
-        [FromQuery] int pageSize = 20
+        [FromQuery] int pageSize = 20,
+        [FromQuery] List<int>? number = null,
+        [FromQuery] List<DateOnly>? date = null,
+        [FromQuery] List<string>? status = null,
+        [FromQuery] List<int>? year = null,
+        [FromQuery] List<string>? cruiseManager = null
     )
     {
         var clampedPageSize = Math.Clamp(pageSize, 1, 100);
         var result = await mediator.Send(
-            new GetAllCruiseApplicationsQuery(cursor, clampedPageSize)
+            new GetAllCruiseApplicationsQuery(
+                cursor,
+                clampedPageSize,
+                number,
+                date,
+                status,
+                year,
+                cruiseManager
+            )
         );
         return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
     }

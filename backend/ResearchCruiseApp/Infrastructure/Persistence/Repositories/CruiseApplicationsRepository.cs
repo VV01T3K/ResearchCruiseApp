@@ -26,6 +26,7 @@ internal class CruiseApplicationsRepository
         int? cursorNumber,
         Guid? cursorId,
         int pageSize,
+        CruiseApplicationsFilter filter,
         CancellationToken cancellationToken
     )
     {
@@ -43,6 +44,39 @@ internal class CruiseApplicationsRepository
                 || (
                     cruiseApplication.Number == cursorNumber
                     && cruiseApplication.Id.CompareTo(cursorId.Value) < 0
+                )
+            );
+        }
+
+        if (filter.Numbers is { Count: > 0 })
+            query = query.Where(cruiseApplication =>
+                filter.Numbers.Contains(cruiseApplication.Number)
+            );
+
+        if (filter.Dates is { Count: > 0 })
+            query = query.Where(cruiseApplication => filter.Dates.Contains(cruiseApplication.Date));
+
+        if (filter.Statuses is { Count: > 0 })
+            query = query.Where(cruiseApplication =>
+                filter.Statuses.Contains(cruiseApplication.Status)
+            );
+
+        if (filter.Years is { Count: > 0 })
+        {
+            var years = filter.Years.Select(year => year.ToString()).ToList();
+            query = query.Where(cruiseApplication =>
+                cruiseApplication.FormA != null && years.Contains(cruiseApplication.FormA.Year)
+            );
+        }
+
+        if (filter.CruiseManagerFullNames is { Count: > 0 })
+        {
+            var cruiseManagerFullNames = filter.CruiseManagerFullNames;
+            query = query.Where(cruiseApplication =>
+                cruiseApplication.FormA != null
+                && DbContext.Users.Any(user =>
+                    user.Id == cruiseApplication.FormA.CruiseManagerId.ToString()
+                    && cruiseManagerFullNames.Contains(user.FirstName + " " + user.LastName)
                 )
             );
         }
