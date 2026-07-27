@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, ColumnFiltersState } from '@tanstack/react-table';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
 import dayjs from 'dayjs';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
@@ -11,7 +11,10 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
-import { useCruiseApplicationsInfiniteQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
+import {
+  CruiseApplicationsFilter,
+  useCruiseApplicationsInfiniteQuery,
+} from '@/api/hooks/applications/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/dto/applications/CruiseApplicationDto';
 
 export const Route = createFileRoute('/_authed/applications/')({
@@ -20,8 +23,22 @@ export const Route = createFileRoute('/_authed/applications/')({
 
 const dateFormat = 'DD.MM.YYYY';
 
+function columnFiltersToApiFilter(columnFilters: ColumnFiltersState): CruiseApplicationsFilter {
+  const getValues = (id: string) => columnFilters.find((filter) => filter.id === id)?.value as string[] | undefined;
+
+  return {
+    number: getValues('number')?.map(Number),
+    date: getValues('date'),
+    status: getValues('status'),
+    year: getValues('year')?.map(Number),
+    cruiseManager: getValues('cruiseManager'),
+  };
+}
+
 function ApplicationsPage() {
-  const applicationsQuery = useCruiseApplicationsInfiniteQuery();
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const filter = useMemo(() => columnFiltersToApiFilter(columnFilters), [columnFilters]);
+  const applicationsQuery = useCruiseApplicationsInfiniteQuery(filter);
   const applications = useMemo(
     () => applicationsQuery.data.pages.flatMap((page) => page.items),
     [applicationsQuery.data]
@@ -37,12 +54,14 @@ function ApplicationsPage() {
       size: 2,
     },
     {
+      id: 'date',
       header: 'Data',
       accessorFn: (row) => row.date,
       enableSorting: false,
       size: 5,
     },
     {
+      id: 'year',
       header: 'Rok rejsu',
       accessorFn: (row) => row.year.toString(),
       enableSorting: false,
@@ -52,6 +71,7 @@ function ApplicationsPage() {
       header: 'Liczba dni',
       accessorFn: (row) => (row.cruiseDays !== null ? `${parseFloat(row.cruiseDays.toFixed(2))}` : '-'),
       enableSorting: false,
+      enableColumnFilter: false,
       size: 5,
     },
     {
@@ -90,6 +110,7 @@ function ApplicationsPage() {
       size: 20,
     },
     {
+      id: 'cruiseManager',
       header: 'Kierownik',
       accessorFn: (row) => `${row.cruiseManagerFirstName} ${row.cruiseManagerLastName}`,
       cell: ({ row }) => (
@@ -134,9 +155,11 @@ function ApplicationsPage() {
       accessorFn: (row) => `${row.points} pkt.`,
       cell: ({ row }) => <AppBadge>{row.original.points} pkt.</AppBadge>,
       enableSorting: false,
+      enableColumnFilter: false,
       size: 5,
     },
     {
+      id: 'status',
       header: 'Status',
       accessorFn: (row) => row.status,
       enableSorting: false,
@@ -218,6 +241,8 @@ function ApplicationsPage() {
           columns={columns}
           buttons={(defaultButtons) => [...defaultButtons]}
           initialSortingState={initialSortingState}
+          columnFiltersState={columnFilters}
+          setColumnFiltersState={setColumnFilters}
           infiniteScroll={{
             hasNextPage: applicationsQuery.hasNextPage,
             isFetchingNextPage: applicationsQuery.isFetchingNextPage,
