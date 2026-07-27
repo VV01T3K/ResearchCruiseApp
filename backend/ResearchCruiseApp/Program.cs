@@ -1,5 +1,6 @@
 using ResearchCruiseApp.Application;
 using ResearchCruiseApp.Infrastructure;
+using ResearchCruiseApp.Infrastructure.Persistence.Initialization.DevData;
 using ResearchCruiseApp.Infrastructure.Sentry;
 using ResearchCruiseApp.Web.Configuration;
 
@@ -21,6 +22,9 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 var app = builder.Build();
+
+if (await app.RunSeedApplicationsCommand(args))
+    return;
 
 await app.Configure();
 
