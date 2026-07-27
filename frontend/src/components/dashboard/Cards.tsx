@@ -5,6 +5,7 @@ import { Settings } from 'lucide-react';
 import { Info } from 'lucide-react';
 import { Users } from 'lucide-react';
 import { CirclePlus } from 'lucide-react';
+import { CircleHelp } from 'lucide-react';
 import { ListChecks } from 'lucide-react';
 
 import { GridCard } from './GridCard';
@@ -43,7 +44,6 @@ export function UserManagementCard({ className }: { className?: string }) {
       description="Dodaj, edytuj lub usuń użytkowników"
       href="/user-management"
       Icon={Users}
-      iconClassName="fill-current"
       className={className}
     />
   );
@@ -77,7 +77,14 @@ export function ApplicationsCard({ className }: { className?: string }) {
 
 export function HelpCard({ className }: { className?: string }) {
   return (
-    <GridCard key="help" name="Pomoc" description="Uzyskaj pomoc" href="/help" Icon={Info} className={className} />
+    <GridCard
+      key="help"
+      name="Pomoc"
+      description="Uzyskaj pomoc"
+      href="/help"
+      Icon={CircleHelp}
+      className={className}
+    />
   );
 }
 
@@ -115,7 +122,6 @@ export function CruiseEffectsCard({ className }: { className?: string }) {
       description="Przeglądaj efekty rejsów"
       href="/cruise-effects"
       Icon={Award}
-      iconClassName="fill-current"
       className={className}
     />
   );

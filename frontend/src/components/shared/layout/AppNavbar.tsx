@@ -49,9 +49,14 @@ export function AppNavbar() {
         </motion.div>
       </div>
       <div className="flex gap-6">
-        <motion.div className="size-4" whileHover={{ scale: 1.3 }}>
-          <AppLink href="https://ug.edu.pl" target="_blank" title="Uniwersytet Gdański" className="text-white">
-            <img src={UGLogoUrl} alt="Uniwersytet Gdański" className="size-full object-contain" />
+        <motion.div className="h-5" whileHover={{ scale: 1.3 }}>
+          <AppLink
+            href="https://ug.edu.pl"
+            target="_blank"
+            title="Uniwersytet Gdański"
+            className="block h-full text-white"
+          >
+            <img src={UGLogoUrl} alt="Uniwersytet Gdański" className="h-full w-auto" />
           </AppLink>
         </motion.div>
         <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
