@@ -26,21 +26,39 @@ public static class CatalogEndpoints
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
-    private static async Task<Ok<List<ApplicationResponse>>> GetAll(
+    private static async Task<Ok<ApplicationsPageResponse>> GetAll(
+        string? cursor,
+        int pageSize,
         ApplicationReader projection,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken
     )
     {
-        var applications = await dbContext
+        var hasCursor = CruiseApplicationsCursor.TryDecode(cursor, out var cursorNumber, out var cursorId);
+        var clampedPageSize = Math.Clamp(pageSize, 1, 100);
+
+        var query = dbContext
             .CruiseApplications.IncludeForms()
             .IncludeFormAContent()
             .IncludeEffects()
-            .IncludeCruise()
-            .ToListAsync(cancellationToken);
-        var visibleApplications = new List<ApplicationResponse>();
+            .IncludeCruise();
 
+        if (hasCursor)
+        {
+            query = query.Where(a =>
+                a.Number < cursorNumber
+                || (a.Number == cursorNumber && a.Id.CompareTo(cursorId) < 0)
+            );
+        }
+
+        var applications = await query
+            .OrderByDescending(a => a.Number)
+            .ThenByDescending(a => a.Id)
+            .Take(clampedPageSize)
+            .ToListAsync(cancellationToken);
+
+        var visibleApplications = new List<ApplicationResponse>();
         foreach (var application in applications)
         {
             if (await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application))
@@ -51,7 +69,13 @@ public static class CatalogEndpoints
             }
         }
 
-        return TypedResults.Ok(visibleApplications);
+        // The cursor advances over every DB row examined (not just those that survived the
+        // permission filter), so a page can come back smaller than pageSize without skipping rows.
+        var nextCursor = applications.Count == clampedPageSize
+            ? CruiseApplicationsCursor.Encode(applications[^1].Number, applications[^1].Id)
+            : null;
+
+        return TypedResults.Ok(new ApplicationsPageResponse(visibleApplications, nextCursor));
     }
 
     private static async Task<Results<Ok<ApplicationResponse>, NotFound>> Get(

@@ -11,6 +11,8 @@ public sealed record ApplicationPersonResponse(
     string LastName
 );
 
+public sealed record ApplicationsPageResponse(List<ApplicationResponse> Items, string? NextCursor);
+
 public sealed record ApplicationResponse(
     Guid Id,
     string Number,
