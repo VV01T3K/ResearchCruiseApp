@@ -18,16 +18,20 @@ export function useCruiseApplicationsQuery() {
 
 type CruiseApplicationsPage = {
   items: CruiseApplicationDto[];
-  // Always null until the backend exposes keyset pagination for
-  // GET /api/CruiseApplications (ordered by Number/id). Once it does, this
-  // is the one place that needs to start reading a real cursor from the
-  // response and forwarding it as a query param in the fetch below.
   nextCursor: string | null;
 };
 
-async function fetchCruiseApplicationsPage(): Promise<CruiseApplicationsPage> {
-  const res = await client.get('/api/CruiseApplications');
-  return { items: res.data as CruiseApplicationDto[], nextCursor: null };
+const CRUISE_APPLICATIONS_PAGE_SIZE = 20;
+
+async function fetchCruiseApplicationsPage({
+  pageParam,
+}: {
+  pageParam: string | null;
+}): Promise<CruiseApplicationsPage> {
+  const res = await client.get('/api/CruiseApplications', {
+    params: { cursor: pageParam ?? undefined, pageSize: CRUISE_APPLICATIONS_PAGE_SIZE },
+  });
+  return res.data as CruiseApplicationsPage;
 }
 
 export function useCruiseApplicationsInfiniteQuery() {

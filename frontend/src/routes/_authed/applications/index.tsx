@@ -33,21 +33,25 @@ function ApplicationsPage() {
       header: 'Nr',
       accessorFn: (row) => row.number,
       sortDescFirst: true,
+      enableSorting: false,
       size: 2,
     },
     {
       header: 'Data',
       accessorFn: (row) => row.date,
+      enableSorting: false,
       size: 5,
     },
     {
       header: 'Rok rejsu',
       accessorFn: (row) => row.year.toString(),
+      enableSorting: false,
       size: 5,
     },
     {
       header: 'Liczba dni',
       accessorFn: (row) => (row.cruiseDays !== null ? `${parseFloat(row.cruiseDays.toFixed(2))}` : '-'),
+      enableSorting: false,
       size: 5,
     },
     {
@@ -97,6 +101,7 @@ function ApplicationsPage() {
           <span>{`${row.original.cruiseManagerFirstName} ${row.original.cruiseManagerLastName}`}</span>
         </div>
       ),
+      enableSorting: false,
       size: 20,
     },
     {
@@ -128,11 +133,13 @@ function ApplicationsPage() {
       header: 'Punkty',
       accessorFn: (row) => `${row.points} pkt.`,
       cell: ({ row }) => <AppBadge>{row.original.points} pkt.</AppBadge>,
+      enableSorting: false,
       size: 5,
     },
     {
       header: 'Status',
       accessorFn: (row) => row.status,
+      enableSorting: false,
       cell: ({ row }) => (
         <>
           <p className="mb-2 text-right italic sm:text-center">
