@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { ColumnDef } from '@tanstack/react-table';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
 import dayjs from 'dayjs';
+import { useMemo } from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
@@ -10,7 +11,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
-import { useCruiseApplicationsQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
+import { useCruiseApplicationsInfiniteQuery } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
 import { CruiseApplicationDto, CruiseApplicationStatus } from '@/api/dto/applications/CruiseApplicationDto';
 
 export const Route = createFileRoute('/_authed/applications/')({
@@ -20,7 +21,11 @@ export const Route = createFileRoute('/_authed/applications/')({
 const dateFormat = 'DD.MM.YYYY';
 
 function ApplicationsPage() {
-  const applicationsQuery = useCruiseApplicationsQuery();
+  const applicationsQuery = useCruiseApplicationsInfiniteQuery();
+  const applications = useMemo(
+    () => applicationsQuery.data.pages.flatMap((page) => page.items),
+    [applicationsQuery.data]
+  );
 
   const columns: ColumnDef<CruiseApplicationDto>[] = [
     {
@@ -202,10 +207,15 @@ function ApplicationsPage() {
     <>
       <AppLayout title="Zgłoszenia" variant="wide">
         <AppTable
-          data={applicationsQuery.data}
+          data={applications}
           columns={columns}
           buttons={(defaultButtons) => [...defaultButtons]}
           initialSortingState={initialSortingState}
+          infiniteScroll={{
+            hasNextPage: applicationsQuery.hasNextPage,
+            isFetchingNextPage: applicationsQuery.isFetchingNextPage,
+            fetchNextPage: applicationsQuery.fetchNextPage,
+          }}
         />
       </AppLayout>
     </>

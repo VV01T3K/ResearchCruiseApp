@@ -1,4 +1,4 @@
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 
 import { client } from '@/lib/api';
 import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDto';
@@ -13,6 +13,29 @@ export function useCruiseApplicationsQuery() {
       return client.get('/api/CruiseApplications');
     },
     select: (res) => res.data as CruiseApplicationDto[],
+  });
+}
+
+type CruiseApplicationsPage = {
+  items: CruiseApplicationDto[];
+  // Always null until the backend exposes keyset pagination for
+  // GET /api/CruiseApplications (ordered by Number/id). Once it does, this
+  // is the one place that needs to start reading a real cursor from the
+  // response and forwarding it as a query param in the fetch below.
+  nextCursor: string | null;
+};
+
+async function fetchCruiseApplicationsPage(): Promise<CruiseApplicationsPage> {
+  const res = await client.get('/api/CruiseApplications');
+  return { items: res.data as CruiseApplicationDto[], nextCursor: null };
+}
+
+export function useCruiseApplicationsInfiniteQuery() {
+  return useSuspenseInfiniteQuery({
+    queryKey: ['cruiseApplications', 'infinite'],
+    queryFn: fetchCruiseApplicationsPage,
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
   });
 }
 
