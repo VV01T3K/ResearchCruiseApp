@@ -23,22 +23,50 @@ type CruiseApplicationsPage = {
   nextCursor: string | null;
 };
 
+export type CruiseApplicationsFilter = {
+  number?: number[];
+  date?: string[];
+  status?: string[];
+  year?: number[];
+  cruiseManager?: string[];
+};
+
 const CRUISE_APPLICATIONS_PAGE_SIZE = 20;
+
+// Axios's default array serialization uses number[]=1&number[]=2, but ASP.NET Core's
+// [FromQuery] List<T> binding only recognizes repeated bare keys (number=1&number=2).
+function serializeRepeatedParams(params: Record<string, unknown>): string {
+  const searchParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null) continue;
+    if (Array.isArray(value)) {
+      value.forEach((item) => searchParams.append(key, String(item)));
+    } else {
+      searchParams.append(key, String(value));
+    }
+  }
+  return searchParams.toString();
+}
 
 async function fetchCruiseApplicationsPage({
   pageParam,
+  filter,
 }: {
   pageParam: string | null;
+  filter: CruiseApplicationsFilter;
 }): Promise<CruiseApplicationsPage> {
-  const params = new URLSearchParams({ pageSize: String(CRUISE_APPLICATIONS_PAGE_SIZE) });
-  if (pageParam) params.set('cursor', pageParam);
-  return customFetch<CruiseApplicationsPage>(`/v2/applications?${params}`);
+  const queryString = serializeRepeatedParams({
+    cursor: pageParam ?? undefined,
+    pageSize: CRUISE_APPLICATIONS_PAGE_SIZE,
+    ...filter,
+  });
+  return customFetch<CruiseApplicationsPage>(`/v2/applications?${queryString}`);
 }
 
-export function useCruiseApplicationsInfiniteQuery() {
+export function useCruiseApplicationsInfiniteQuery(filter: CruiseApplicationsFilter = {}) {
   return useSuspenseInfiniteQuery({
-    queryKey: ['cruiseApplications', 'infinite'],
-    queryFn: fetchCruiseApplicationsPage,
+    queryKey: ['cruiseApplications', 'infinite', filter],
+    queryFn: ({ pageParam }) => fetchCruiseApplicationsPage({ pageParam, filter }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
   });
