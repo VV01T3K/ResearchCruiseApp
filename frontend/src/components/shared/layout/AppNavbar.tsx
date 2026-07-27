@@ -49,19 +49,19 @@ export function AppNavbar() {
         </motion.div>
       </div>
       <div className="flex gap-6">
-        <motion.div className="h-5" whileHover={{ scale: 1.3 }}>
+        <motion.div className="w-4" whileHover={{ scale: 1.3 }}>
           <AppLink
             href="https://ug.edu.pl"
             target="_blank"
             title="Uniwersytet Gdański"
-            className="block h-full text-white"
+            className="block w-full text-white"
           >
-            <img src={UGLogoUrl} alt="Uniwersytet Gdański" className="h-full w-auto" />
+            <img src={UGLogoUrl} alt="Uniwersytet Gdański" className="h-auto w-full" />
           </AppLink>
         </motion.div>
         <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
           <AppButton onClick={() => openUGRadio()} title="Radio MORS" variant="plain" className="p-0 text-white">
-            <Radio className="size-5" />
+            <Radio />
           </AppButton>
         </motion.div>
         <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
