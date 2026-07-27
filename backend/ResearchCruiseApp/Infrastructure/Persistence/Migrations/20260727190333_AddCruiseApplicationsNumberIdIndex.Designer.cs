@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260727190333_AddCruiseApplicationsNumberIdIndex")]
+    partial class AddCruiseApplicationsNumberIdIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1651,7 +1654,7 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                     b.ToTable("UserPublications");
                 });
 
-            modelBuilder.Entity("ResearchCruiseApp.Infrastructure.Identity.User", b =>
+            modelBuilder.Entity("ResearchCruiseApp.Infrastructure.Services.Identity.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -1927,7 +1930,7 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("ResearchCruiseApp.Infrastructure.Identity.User", null)
+                    b.HasOne("ResearchCruiseApp.Infrastructure.Services.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1936,7 +1939,7 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("ResearchCruiseApp.Infrastructure.Identity.User", null)
+                    b.HasOne("ResearchCruiseApp.Infrastructure.Services.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1951,7 +1954,7 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ResearchCruiseApp.Infrastructure.Identity.User", null)
+                    b.HasOne("ResearchCruiseApp.Infrastructure.Services.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1960,7 +1963,7 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("ResearchCruiseApp.Infrastructure.Identity.User", null)
+                    b.HasOne("ResearchCruiseApp.Infrastructure.Services.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
