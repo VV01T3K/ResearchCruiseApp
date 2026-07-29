@@ -32,7 +32,10 @@
     <PackageReference Include="MailKit" Version="4.16.0" />
     <PackageReference Include="MimeKit" Version="4.16.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.5" />
+    <PackageReference
+      Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"
+      Version="10.0.5"
+    />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
     <PackageReference
       Include="Microsoft.Extensions.ApiDescription.Server"
