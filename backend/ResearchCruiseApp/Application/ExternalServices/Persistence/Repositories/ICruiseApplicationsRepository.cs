@@ -18,6 +18,8 @@ public interface ICruiseApplicationsRepository : IRepository<CruiseApplication>
         CancellationToken cancellationToken
     );
 
+    Task<List<CruiseApplication>> GetAllWithFormA(CancellationToken cancellationToken);
+
     Task<CruiseApplication?> GetByIdWithFormA(Guid id, CancellationToken cancellationToken);
 
     Task LoadFormA(CruiseApplication cruiseApplication, CancellationToken cancellationToken);

@@ -13,6 +13,7 @@ using ResearchCruiseApp.Application.UseCases.CruiseApplications.DeleteOwnPublica
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetAllCruiseApplications;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetCruiseApplicationById;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetCruiseApplicationEvaluation;
+using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetCruiseApplicationManagers;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetCruiseApplicationsForCruise;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetCruiseForCruiseApplication;
 using ResearchCruiseApp.Application.UseCases.CruiseApplications.GetFormA;
@@ -59,6 +60,16 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
                 cruiseManager
             )
         );
+        return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
+    }
+
+    [Authorize(
+        Roles = $"{RoleName.Administrator}, {RoleName.Shipowner}, {RoleName.CruiseManager}, {RoleName.Guest}, {RoleName.ShipCrew}"
+    )]
+    [HttpGet("managers")]
+    public async Task<IActionResult> GetCruiseApplicationManagers()
+    {
+        var result = await mediator.Send(new GetCruiseApplicationManagersQuery());
         return result.IsSuccess ? Ok(result.Data) : this.CreateError(result);
     }
 

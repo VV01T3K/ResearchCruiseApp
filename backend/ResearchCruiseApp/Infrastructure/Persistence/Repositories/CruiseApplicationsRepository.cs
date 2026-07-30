@@ -88,6 +88,14 @@ internal class CruiseApplicationsRepository
             .ToListAsync(cancellationToken);
     }
 
+    public Task<List<CruiseApplication>> GetAllWithFormA(CancellationToken cancellationToken)
+    {
+        return DbContext
+            .CruiseApplications.IncludeFormA()
+            .Where(cruiseApplication => cruiseApplication.FormA != null)
+            .ToListAsync(cancellationToken);
+    }
+
     public Task<CruiseApplication?> GetByIdWithFormA(Guid id, CancellationToken cancellationToken)
     {
         return DbContext
