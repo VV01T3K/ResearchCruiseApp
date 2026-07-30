@@ -19,6 +19,13 @@ public static class CatalogEndpoints
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
 
         group
+            .MapGet("/managers", GetManagers)
+            .WithName("GetApplicationManagers")
+            .WithSummary("Get managers of applications visible to the current user.")
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
+
+        group
             .MapGet("/{applicationId:guid}", Get)
             .WithName("GetApplication")
             .WithSummary("Get one visible application.")
@@ -116,6 +123,38 @@ public static class CatalogEndpoints
             : null;
 
         return TypedResults.Ok(new ApplicationsPageResponse(visibleApplications, nextCursor));
+    }
+
+    private static async Task<Ok<List<ApplicationPersonResponse>>> GetManagers(
+        ApplicationDbContext dbContext,
+        UserPermissionVerifier userPermissionVerifier,
+        CancellationToken cancellationToken
+    )
+    {
+        var applications = await dbContext
+            .CruiseApplications.IncludeFormA()
+            .Where(a => a.FormA != null)
+            .ToListAsync(cancellationToken);
+
+        var visibleManagerIds = new HashSet<Guid>();
+        foreach (var application in applications)
+        {
+            if (await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application))
+                visibleManagerIds.Add(application.FormA!.CruiseManagerId);
+        }
+
+        var managerIdStrings = visibleManagerIds.Select(id => id.ToString()).ToList();
+        var managers = await dbContext.Users
+            .Where(u => managerIdStrings.Contains(u.Id))
+            .Select(u => new ApplicationPersonResponse(
+                Guid.Parse(u.Id),
+                u.Email ?? string.Empty,
+                u.FirstName,
+                u.LastName
+            ))
+            .ToListAsync(cancellationToken);
+
+        return TypedResults.Ok(managers);
     }
 
     private static async Task<Results<Ok<ApplicationResponse>, NotFound>> Get(

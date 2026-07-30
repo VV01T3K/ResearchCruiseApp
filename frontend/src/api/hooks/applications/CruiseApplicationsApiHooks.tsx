@@ -7,6 +7,7 @@ import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDt
 import { CruiseDto } from '@/api/dto/applications/ApplicationCruiseDto';
 import { EvaluationDto } from '@/api/dto/applications/EvaluationDto';
 import { UserEffectDto } from '@/api/dto/applications/UserEffectDto';
+import type { ApplicationPersonResponse } from '@/api/generated/schemas';
 
 export function useCruiseApplicationsQuery() {
   return useSuspenseQuery({
@@ -73,6 +74,13 @@ export function useCruiseApplicationsInfiniteQuery(filter: CruiseApplicationsFil
     // screen while a new filter's page loads, instead of suspending the whole table.
     placeholderData: keepPreviousData,
     throwOnError: true,
+  });
+}
+
+export function useCruiseApplicationManagersQuery() {
+  return useSuspenseQuery({
+    queryKey: ['cruiseApplications', 'managers'],
+    queryFn: () => customFetch<ApplicationPersonResponse[]>('/v2/applications/managers'),
   });
 }
 

@@ -15,6 +15,7 @@ import { getDisplayPeriod } from '@/lib/applications/periodUtils';
 import { formatDate } from '@/lib/dateUtils';
 import {
   CruiseApplicationsFilter,
+  useCruiseApplicationManagersQuery,
   useCruiseApplicationsInfiniteQuery,
 } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
 import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/api/client/applications/models';
@@ -55,6 +56,10 @@ function ApplicationsPage() {
   const yearFilterOptions = Array.from(
     { length: currentYear + YEAR_FILTER_OPTIONS_AHEAD - EARLIEST_APPLICATION_YEAR + 1 },
     (_, index) => (EARLIEST_APPLICATION_YEAR + index).toString()
+  );
+  const cruiseManagersQuery = useCruiseApplicationManagersQuery();
+  const cruiseManagerFilterOptions = cruiseManagersQuery.data.map(
+    (manager) => `${manager.firstName} ${manager.lastName}`
   );
 
   const columns: ColumnDef<ApplicationResponse>[] = [
@@ -139,6 +144,7 @@ function ApplicationsPage() {
         </div>
       ),
       enableSorting: false,
+      meta: { filterOptions: cruiseManagerFilterOptions },
       size: 20,
     },
     {
