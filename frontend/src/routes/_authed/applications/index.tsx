@@ -9,6 +9,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
+import { AppLoader } from '@/components/shared/layout/AppLoader';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
 import {
@@ -22,6 +23,15 @@ export const Route = createFileRoute('/_authed/applications/')({
 });
 
 const dateFormat = 'DD.MM.YYYY';
+
+// CruiseApplicationStatus.New isn't a status the backend actually has - excluded so
+// it doesn't show up as a filter option that can never match anything.
+const statusFilterOptions = Object.values(CruiseApplicationStatus).filter(
+  (status) => status !== CruiseApplicationStatus.New
+);
+
+const EARLIEST_APPLICATION_YEAR = 2024;
+const YEAR_FILTER_OPTIONS_AHEAD = 3;
 
 function columnFiltersToApiFilter(columnFilters: ColumnFiltersState): CruiseApplicationsFilter {
   const getValues = (id: string) => columnFilters.find((filter) => filter.id === id)?.value as string[] | undefined;
@@ -40,8 +50,13 @@ function ApplicationsPage() {
   const filter = useMemo(() => columnFiltersToApiFilter(columnFilters), [columnFilters]);
   const applicationsQuery = useCruiseApplicationsInfiniteQuery(filter);
   const applications = useMemo(
-    () => applicationsQuery.data.pages.flatMap((page) => page.items),
+    () => applicationsQuery.data?.pages.flatMap((page) => page.items) ?? [],
     [applicationsQuery.data]
+  );
+  const currentYear = new Date().getFullYear();
+  const yearFilterOptions = Array.from(
+    { length: currentYear + YEAR_FILTER_OPTIONS_AHEAD - EARLIEST_APPLICATION_YEAR + 1 },
+    (_, index) => (EARLIEST_APPLICATION_YEAR + index).toString()
   );
 
   const columns: ColumnDef<CruiseApplicationDto>[] = [
@@ -51,6 +66,7 @@ function ApplicationsPage() {
       accessorFn: (row) => row.number,
       sortDescFirst: true,
       enableSorting: false,
+      enableColumnFilter: false,
       size: 2,
     },
     {
@@ -58,6 +74,7 @@ function ApplicationsPage() {
       header: 'Data',
       accessorFn: (row) => row.date,
       enableSorting: false,
+      enableColumnFilter: false,
       size: 5,
     },
     {
@@ -65,6 +82,7 @@ function ApplicationsPage() {
       header: 'Rok rejsu',
       accessorFn: (row) => row.year.toString(),
       enableSorting: false,
+      meta: { filterOptions: yearFilterOptions },
       size: 5,
     },
     {
@@ -163,9 +181,10 @@ function ApplicationsPage() {
       header: 'Status',
       accessorFn: (row) => row.status,
       enableSorting: false,
+      meta: { filterOptions: statusFilterOptions },
       cell: ({ row }) => (
         <>
-          <p className="mb-2 text-right italic sm:text-center">
+          <p className="mb-2 text-center italic">
             {row.original.status}
             {row.original.status === CruiseApplicationStatus.Draft ? ` (${row.original.note})` : null}
           </p>
@@ -232,6 +251,14 @@ function ApplicationsPage() {
       desc: true,
     },
   ];
+
+  if (applicationsQuery.isPending) {
+    return (
+      <AppLayout title="Zgłoszenia" variant="wide">
+        <AppLoader />
+      </AppLayout>
+    );
+  }
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { useMutation, useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 
 import { client } from '@/lib/api';
 import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDto';
@@ -65,11 +65,15 @@ async function fetchCruiseApplicationsPage({
 }
 
 export function useCruiseApplicationsInfiniteQuery(filter: CruiseApplicationsFilter = {}) {
-  return useSuspenseInfiniteQuery({
+  return useInfiniteQuery({
     queryKey: ['cruiseApplications', 'infinite', filter],
     queryFn: ({ pageParam }) => fetchCruiseApplicationsPage({ pageParam, filter }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    // Keeps the previous filter's rows (and the currently open filter dropdown) on
+    // screen while a new filter's page loads, instead of suspending the whole table.
+    placeholderData: keepPreviousData,
+    throwOnError: true,
   });
 }
 
