@@ -16,9 +16,25 @@ export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TD
     header.column.getFilterValue() as TData[] | undefined
   );
   const [searchValue, setSearchValue] = React.useState<string>('');
-  const uniqueValues = React.useMemo(() => {
+
+  // Prefer a column-supplied static option list over deriving one from loaded rows.
+  const computeUniqueValues = React.useCallback(() => {
+    const staticOptions = header.column.columnDef.meta?.filterOptions;
+    if (staticOptions) {
+      return staticOptions.map((value): [any, number] => [value, 0]);
+    }
     return Array.from(header.column.getFacetedUniqueValues().entries()).sort();
   }, [header.column]);
+
+  // Snapshot options on open so picking one can't make others vanish mid-selection.
+  const [uniqueValues, setUniqueValues] = React.useState(computeUniqueValues);
+
+  React.useEffect(() => {
+    if (expanded) {
+      setUniqueValues(computeUniqueValues());
+    }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [expanded]);
 
   const areAllChecked = React.useMemo(() => {
     return uniqueValues.every(([value]) => (filterValue ?? []).includes(value));
