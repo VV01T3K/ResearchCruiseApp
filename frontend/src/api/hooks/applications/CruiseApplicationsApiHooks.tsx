@@ -32,6 +32,13 @@ export type CruiseApplicationsFilter = {
   cruiseManager?: string[];
 };
 
+export type CruiseApplicationsSort = {
+  sortBy: string;
+  descending: boolean;
+};
+
+const DEFAULT_SORT: CruiseApplicationsSort = { sortBy: 'number', descending: true };
+
 const CRUISE_APPLICATIONS_PAGE_SIZE = 20;
 
 // Axios's default array serialization uses number[]=1&number[]=2, but ASP.NET Core's
@@ -52,22 +59,29 @@ function serializeRepeatedParams(params: Record<string, unknown>): string {
 async function fetchCruiseApplicationsPage({
   pageParam,
   filter,
+  sort,
 }: {
   pageParam: string | null;
   filter: CruiseApplicationsFilter;
+  sort: CruiseApplicationsSort;
 }): Promise<CruiseApplicationsPage> {
   const queryString = serializeRepeatedParams({
     cursor: pageParam ?? undefined,
     pageSize: CRUISE_APPLICATIONS_PAGE_SIZE,
+    sortBy: sort.sortBy,
+    descending: sort.descending,
     ...filter,
   });
   return customFetch<CruiseApplicationsPage>(`/v2/applications?${queryString}`);
 }
 
-export function useCruiseApplicationsInfiniteQuery(filter: CruiseApplicationsFilter = {}) {
+export function useCruiseApplicationsInfiniteQuery(
+  filter: CruiseApplicationsFilter = {},
+  sort: CruiseApplicationsSort = DEFAULT_SORT
+) {
   return useInfiniteQuery({
-    queryKey: ['cruiseApplications', 'infinite', filter],
-    queryFn: ({ pageParam }) => fetchCruiseApplicationsPage({ pageParam, filter }),
+    queryKey: ['cruiseApplications', 'infinite', filter, sort],
+    queryFn: ({ pageParam }) => fetchCruiseApplicationsPage({ pageParam, filter, sort }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     // Keeps the previous filter's rows (and the currently open filter dropdown) on

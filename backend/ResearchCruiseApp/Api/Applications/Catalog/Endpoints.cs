@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
@@ -36,7 +37,6 @@ public static class CatalogEndpoints
 
     private static async Task<Ok<ApplicationsPageResponse>> GetAll(
         string? cursor,
-        int pageSize,
         List<int>? numbers,
         List<DateOnly>? dates,
         List<string>? statuses,
@@ -45,10 +45,13 @@ public static class CatalogEndpoints
         ApplicationReader projection,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken,
+        int pageSize = 20,
+        string sortBy = "number",
+        bool descending = true
     )
     {
-        var hasCursor = CruiseApplicationsCursor.TryDecode(cursor, out var cursorNumber, out var cursorId);
+        var hasCursor = CruiseApplicationsCursor.TryDecode(cursor, out var cursorSortValue, out var cursorId);
         var clampedPageSize = Math.Clamp(pageSize, 1, 100);
 
         var parsedStatuses = statuses?
@@ -59,49 +62,23 @@ public static class CatalogEndpoints
             .Select(s => s!.Value)
             .ToList();
 
+        var filter = new CruiseApplicationsFilter(numbers, dates, parsedStatuses, years, cruiseManagers);
+
         var query = dbContext
             .CruiseApplications.IncludeForms()
             .IncludeFormAContent()
             .IncludeEffects()
-            .IncludeCruise();
+            .IncludeCruise()
+            .ApplyFilter(filter, dbContext.Users);
 
-        if (hasCursor)
+        query = sortBy switch
         {
-            query = query.Where(a =>
-                a.Number < cursorNumber
-                || (a.Number == cursorNumber && a.Id.CompareTo(cursorId) < 0)
-            );
-        }
-
-        if (numbers is { Count: > 0 })
-            query = query.Where(a => numbers.Contains(a.Number));
-
-        if (dates is { Count: > 0 })
-            query = query.Where(a => dates.Contains(a.Date));
-
-        if (parsedStatuses is { Count: > 0 })
-            query = query.Where(a => parsedStatuses.Contains(a.Status));
-
-        if (years is { Count: > 0 })
-        {
-            var yearStrings = years.Select(y => y.ToString()).ToList();
-            query = query.Where(a => a.FormA != null && yearStrings.Contains(a.FormA.Year));
-        }
-
-        if (cruiseManagers is { Count: > 0 })
-        {
-            query = query.Where(a =>
-                a.FormA != null
-                && dbContext.Users.Any(u =>
-                    u.Id == a.FormA.CruiseManagerId.ToString()
-                    && cruiseManagers.Contains(u.FirstName + " " + u.LastName)
-                )
-            );
-        }
+            "date" => query.ApplyDateSort(hasCursor ? cursorSortValue : null, hasCursor ? cursorId : (Guid?)null, descending),
+            "year" => query.ApplyYearSort(hasCursor ? cursorSortValue : null, hasCursor ? cursorId : (Guid?)null, descending),
+            _ => query.ApplyNumberSort(hasCursor ? cursorSortValue : null, hasCursor ? cursorId : (Guid?)null, descending),
+        };
 
         var applications = await query
-            .OrderByDescending(a => a.Number)
-            .ThenByDescending(a => a.Id)
             .Take(clampedPageSize)
             .ToListAsync(cancellationToken);
 
@@ -119,11 +96,19 @@ public static class CatalogEndpoints
         // The cursor advances over every DB row examined (not just those that survived the
         // permission filter), so a page can come back smaller than pageSize without skipping rows.
         var nextCursor = applications.Count == clampedPageSize
-            ? CruiseApplicationsCursor.Encode(applications[^1].Number, applications[^1].Id)
+            ? CruiseApplicationsCursor.Encode(GetSortValue(applications[^1], sortBy), applications[^1].Id)
             : null;
 
         return TypedResults.Ok(new ApplicationsPageResponse(visibleApplications, nextCursor));
     }
+
+    private static string GetSortValue(CruiseApplication application, string sortBy) =>
+        sortBy switch
+        {
+            "date" => application.Date.ToString("yyyy-MM-dd"),
+            "year" => application.FormA!.Year,
+            _ => application.Number.ToString(),
+        };
 
     private static async Task<Ok<List<ApplicationPersonResponse>>> GetManagers(
         ApplicationDbContext dbContext,

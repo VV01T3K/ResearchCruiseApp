@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { ColumnDef, ColumnFiltersState } from '@tanstack/react-table';
+import { ColumnDef, ColumnFiltersState, SortingState } from '@tanstack/react-table';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
 import { useMemo, useState } from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';
@@ -15,6 +15,7 @@ import { getDisplayPeriod } from '@/lib/applications/periodUtils';
 import { formatDate } from '@/lib/dateUtils';
 import {
   CruiseApplicationsFilter,
+  CruiseApplicationsSort,
   useCruiseApplicationManagersQuery,
   useCruiseApplicationsInfiniteQuery,
 } from '@/api/hooks/applications/CruiseApplicationsApiHooks';
@@ -43,11 +44,19 @@ function columnFiltersToApiFilter(columnFilters: ColumnFiltersState): CruiseAppl
   };
 }
 
+const DEFAULT_SORTING_STATE: SortingState = [{ id: 'number', desc: true }];
+
+function sortingStateToApiSort(sorting: SortingState): CruiseApplicationsSort {
+  const [sort] = sorting;
+  return sort ? { sortBy: sort.id, descending: sort.desc } : { sortBy: 'number', descending: true };
+}
 
 function ApplicationsPage() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const filter = useMemo(() => columnFiltersToApiFilter(columnFilters), [columnFilters]);
-  const applicationsQuery = useCruiseApplicationsInfiniteQuery(filter);
+  const [sorting, setSorting] = useState<SortingState>(DEFAULT_SORTING_STATE);
+  const sort = useMemo(() => sortingStateToApiSort(sorting), [sorting]);
+  const applicationsQuery = useCruiseApplicationsInfiniteQuery(filter, sort);
   const applications = useMemo(
     () => applicationsQuery.data?.pages.flatMap((page) => page.items) ?? [],
     [applicationsQuery.data]
@@ -68,7 +77,6 @@ function ApplicationsPage() {
       header: 'Nr',
       accessorFn: (row) => row.number,
       sortDescFirst: true,
-      enableSorting: false,
       enableColumnFilter: false,
       size: 2,
     },
@@ -76,7 +84,6 @@ function ApplicationsPage() {
       id: 'date',
       header: 'Data',
       accessorFn: (row) => row.date,
-      enableSorting: false,
       enableColumnFilter: false,
       size: 5,
     },
@@ -84,7 +91,6 @@ function ApplicationsPage() {
       id: 'year',
       header: 'Rok rejsu',
       accessorFn: (row) => row.year.toString(),
-      enableSorting: false,
       meta: { filterOptions: yearFilterOptions },
       size: 5,
     },
@@ -248,13 +254,6 @@ function ApplicationsPage() {
     },
   ];
 
-  const initialSortingState = [
-    {
-      id: 'number',
-      desc: true,
-    },
-  ];
-
   if (applicationsQuery.isPending) {
     return (
       <AppLayout title="Zgłoszenia" variant="wide">
@@ -270,7 +269,9 @@ function ApplicationsPage() {
           data={applications}
           columns={columns}
           buttons={(defaultButtons) => [...defaultButtons]}
-          initialSortingState={initialSortingState}
+          sortingState={sorting}
+          setSortingState={setSorting}
+          enableMultiSort={false}
           columnFiltersState={columnFilters}
           setColumnFiltersState={setColumnFilters}
           infiniteScroll={{
