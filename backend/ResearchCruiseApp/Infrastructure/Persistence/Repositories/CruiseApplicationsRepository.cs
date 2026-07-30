@@ -23,7 +23,9 @@ internal class CruiseApplicationsRepository
     }
 
     public Task<List<CruiseApplication>> GetKeysetPageWithFormsAndFormAContentAndEffects(
-        int? cursorNumber,
+        string sortBy,
+        bool descending,
+        string? cursorSortValue,
         Guid? cursorId,
         int pageSize,
         CruiseApplicationsFilter filter,
@@ -35,57 +37,17 @@ internal class CruiseApplicationsRepository
             .IncludeFormAContent()
             .IncludeEffects()
             .IncludeCruise()
-            .AsQueryable();
+            .ApplyFilter(filter, DbContext.Users);
 
-        if (cursorNumber is not null && cursorId is not null)
+        var cursor = cursorSortValue is not null && cursorId is not null ? cursorSortValue : null;
+        query = sortBy switch
         {
-            query = query.Where(cruiseApplication =>
-                cruiseApplication.Number < cursorNumber
-                || (
-                    cruiseApplication.Number == cursorNumber
-                    && cruiseApplication.Id.CompareTo(cursorId.Value) < 0
-                )
-            );
-        }
+            "date" => query.ApplyDateSort(cursor, cursorId, descending),
+            "year" => query.ApplyYearSort(cursor, cursorId, descending),
+            _ => query.ApplyNumberSort(cursor, cursorId, descending),
+        };
 
-        if (filter.Numbers is { Count: > 0 })
-            query = query.Where(cruiseApplication =>
-                filter.Numbers.Contains(cruiseApplication.Number)
-            );
-
-        if (filter.Dates is { Count: > 0 })
-            query = query.Where(cruiseApplication => filter.Dates.Contains(cruiseApplication.Date));
-
-        if (filter.Statuses is { Count: > 0 })
-            query = query.Where(cruiseApplication =>
-                filter.Statuses.Contains(cruiseApplication.Status)
-            );
-
-        if (filter.Years is { Count: > 0 })
-        {
-            var years = filter.Years.Select(year => year.ToString()).ToList();
-            query = query.Where(cruiseApplication =>
-                cruiseApplication.FormA != null && years.Contains(cruiseApplication.FormA.Year)
-            );
-        }
-
-        if (filter.CruiseManagerFullNames is { Count: > 0 })
-        {
-            var cruiseManagerFullNames = filter.CruiseManagerFullNames;
-            query = query.Where(cruiseApplication =>
-                cruiseApplication.FormA != null
-                && DbContext.Users.Any(user =>
-                    user.Id == cruiseApplication.FormA.CruiseManagerId.ToString()
-                    && cruiseManagerFullNames.Contains(user.FirstName + " " + user.LastName)
-                )
-            );
-        }
-
-        return query
-            .OrderByDescending(cruiseApplication => cruiseApplication.Number)
-            .ThenByDescending(cruiseApplication => cruiseApplication.Id)
-            .Take(pageSize)
-            .ToListAsync(cancellationToken);
+        return query.Take(pageSize).ToListAsync(cancellationToken);
     }
 
     public Task<List<CruiseApplication>> GetAllWithFormA(CancellationToken cancellationToken)

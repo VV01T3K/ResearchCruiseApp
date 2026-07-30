@@ -41,6 +41,8 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetAllCruiseApplications(
         [FromQuery] string? cursor,
         [FromQuery] int pageSize = 20,
+        [FromQuery] string sortBy = "number",
+        [FromQuery] bool descending = true,
         [FromQuery] List<int>? number = null,
         [FromQuery] List<DateOnly>? date = null,
         [FromQuery] List<string>? status = null,
@@ -53,6 +55,8 @@ public class CruiseApplicationsController(IMediator mediator) : ControllerBase
             new GetAllCruiseApplicationsQuery(
                 cursor,
                 clampedPageSize,
+                sortBy,
+                descending,
                 number,
                 date,
                 status,

@@ -5,17 +5,17 @@ namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.GetAllCruise
 
 internal static class CruiseApplicationsCursor
 {
-    private record CursorPayload(int Number, Guid Id);
+    private record CursorPayload(string SortValue, Guid Id);
 
-    public static string Encode(int number, Guid id)
+    public static string Encode(string sortValue, Guid id)
     {
-        var json = JsonSerializer.Serialize(new CursorPayload(number, id));
+        var json = JsonSerializer.Serialize(new CursorPayload(sortValue, id));
         return Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
     }
 
-    public static bool TryDecode(string? cursor, out int number, out Guid id)
+    public static bool TryDecode(string? cursor, out string sortValue, out Guid id)
     {
-        number = default;
+        sortValue = "";
         id = default;
 
         if (string.IsNullOrEmpty(cursor))
@@ -28,7 +28,7 @@ internal static class CruiseApplicationsCursor
             if (payload is null)
                 return false;
 
-            number = payload.Number;
+            sortValue = payload.SortValue;
             id = payload.Id;
             return true;
         }

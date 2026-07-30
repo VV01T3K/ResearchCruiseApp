@@ -7,6 +7,8 @@ namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.GetAllCruise
 public record GetAllCruiseApplicationsQuery(
     string? Cursor,
     int PageSize,
+    string SortBy,
+    bool Descending,
     List<int>? Numbers,
     List<DateOnly>? Dates,
     List<string>? Statuses,

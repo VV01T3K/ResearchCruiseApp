@@ -11,7 +11,9 @@ public interface ICruiseApplicationsRepository : IRepository<CruiseApplication>
     );
 
     Task<List<CruiseApplication>> GetKeysetPageWithFormsAndFormAContentAndEffects(
-        int? cursorNumber,
+        string sortBy,
+        bool descending,
+        string? cursorSortValue,
         Guid? cursorId,
         int pageSize,
         CruiseApplicationsFilter filter,

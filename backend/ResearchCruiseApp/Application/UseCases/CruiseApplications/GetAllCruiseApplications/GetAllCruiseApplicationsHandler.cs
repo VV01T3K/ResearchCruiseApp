@@ -6,6 +6,7 @@ using ResearchCruiseApp.Application.Models.DTOs.CruiseApplications;
 using ResearchCruiseApp.Application.Services.Factories.CruiseApplicationDtos;
 using ResearchCruiseApp.Application.Services.UserPermissionVerifier;
 using ResearchCruiseApp.Domain.Common.Enums;
+using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Application.UseCases.CruiseApplications.GetAllCruiseApplications;
 
@@ -22,7 +23,7 @@ public class GetAllCruiseApplicationsHandler(
     {
         var hasCursor = CruiseApplicationsCursor.TryDecode(
             request.Cursor,
-            out var cursorNumber,
+            out var cursorSortValue,
             out var cursorId
         );
 
@@ -47,7 +48,9 @@ public class GetAllCruiseApplicationsHandler(
 
         var cruiseApplications =
             await cruiseApplicationsRepository.GetKeysetPageWithFormsAndFormAContentAndEffects(
-                hasCursor ? cursorNumber : null,
+                request.SortBy,
+                request.Descending,
+                hasCursor ? cursorSortValue : null,
                 hasCursor ? cursorId : null,
                 request.PageSize,
                 filter,
@@ -70,11 +73,19 @@ public class GetAllCruiseApplicationsHandler(
         var nextCursor =
             cruiseApplications.Count == request.PageSize
                 ? CruiseApplicationsCursor.Encode(
-                    cruiseApplications[^1].Number,
+                    GetSortValue(cruiseApplications[^1], request.SortBy),
                     cruiseApplications[^1].Id
                 )
                 : null;
 
         return new CruiseApplicationsPageDto(cruiseApplicationDtos, nextCursor);
     }
+
+    private static string GetSortValue(CruiseApplication cruiseApplication, string sortBy) =>
+        sortBy switch
+        {
+            "date" => cruiseApplication.Date.ToString("yyyy-MM-dd"),
+            "year" => cruiseApplication.FormA!.Year,
+            _ => cruiseApplication.Number.ToString(),
+        };
 }
