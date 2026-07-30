@@ -2,7 +2,6 @@ import { Popover } from '@base-ui/react/popover';
 import { Header } from '@tanstack/react-table';
 
 import { AppTableFilterList } from '@/components/shared/table/common/AppTableFilterList';
-import { AppTableListItem } from '@/components/shared/table/common/AppTableListItem';
 import { AppTableSortingToggle } from '@/components/shared/table/common/AppTableSortingToggle';
 import { cn } from '@/lib/utils';
 
@@ -30,9 +29,7 @@ export function AppDesktopTableHeaderDropdown<TData, TValue>({ header, capabilit
       >
         <div className="py-1">
           {supportsSort && <p>Sortowanie</p>}
-          <AppTableListItem onClick={() => header.column.toggleSorting()} isRendered={supportsSort} expanded={expanded}>
-            <AppTableSortingToggle header={header} />
-          </AppTableListItem>
+          {supportsSort && <AppTableSortingToggle header={header} expanded={expanded} />}
 
           {supportsFilter && supportsSort && <hr className="my-0.5 h-px border-0 bg-gray-700" />}
 
