@@ -92,7 +92,7 @@ export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TD
         </div>
       </div>
 
-      <div className="max-h-32 overflow-y-auto">
+      <div className="max-h-32 overflow-x-auto overflow-y-auto">
         {uniqueValues
           .filter(([value]) => value.toString().includes(searchValue))
           .map((value) => (
