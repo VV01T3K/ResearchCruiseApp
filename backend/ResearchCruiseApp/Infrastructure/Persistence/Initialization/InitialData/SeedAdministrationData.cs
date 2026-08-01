@@ -13,9 +13,4 @@ internal static class SeedAdministrationData
             RoleName.Guest,
             RoleName.ShipCrew,
         };
-
-    public const string AdminEmail = "admin@admin.com";
-    public const string AdminFirstName = "Admin";
-    public const string AdminLastName = "Admin";
-    public const string AdminPassword = "Admin@123";
 }
