@@ -261,11 +261,7 @@ function ApplicationsPage() {
   ];
 
   if (applicationsQuery.isPending) {
-    return (
-      <AppLayout title="Zgłoszenia" variant="wide">
-        <AppLoader />
-      </AppLayout>
-    );
+    return <AppLoader />;
   }
 
   return (
