@@ -1,6 +1,6 @@
 ﻿namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
-internal static class InitialShipEquipmentData
+internal static class SeedShipEquipmentData
 {
     public static string[] ShipEquipmentsNames =>
         [
