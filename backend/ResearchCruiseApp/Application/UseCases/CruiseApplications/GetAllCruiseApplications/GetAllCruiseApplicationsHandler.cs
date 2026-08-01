@@ -23,6 +23,7 @@ public class GetAllCruiseApplicationsHandler(
     {
         var hasCursor = CruiseApplicationsCursor.TryDecode(
             request.Cursor,
+            request.SortBy,
             out var cursorSortValue,
             out var cursorId
         );

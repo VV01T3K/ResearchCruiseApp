@@ -13,7 +13,7 @@ internal static class CruiseApplicationsCursor
         return Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
     }
 
-    public static bool TryDecode(string? cursor, out string sortValue, out Guid id)
+    public static bool TryDecode(string? cursor, string sortBy, out string sortValue, out Guid id)
     {
         sortValue = "";
         id = default;
@@ -25,7 +25,7 @@ internal static class CruiseApplicationsCursor
         {
             var json = Encoding.UTF8.GetString(Convert.FromBase64String(cursor));
             var payload = JsonSerializer.Deserialize<CursorPayload>(json);
-            if (payload is null)
+            if (payload is null || !IsValidForSort(payload.SortValue, sortBy))
                 return false;
 
             sortValue = payload.SortValue;
@@ -38,4 +38,12 @@ internal static class CruiseApplicationsCursor
             return false;
         }
     }
+
+    private static bool IsValidForSort(string sortValue, string sortBy) =>
+        sortBy switch
+        {
+            "date" => DateOnly.TryParseExact(sortValue, "yyyy-MM-dd", out _),
+            "year" => true,
+            _ => int.TryParse(sortValue, out _),
+        };
 }
