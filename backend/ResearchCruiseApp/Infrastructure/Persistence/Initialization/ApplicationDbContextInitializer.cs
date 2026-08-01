@@ -19,13 +19,14 @@ internal class ApplicationDbContextInitializer(
     {
         await Migrate();
 
-        if (configuration.GetValue<bool>("Database:SeedAutomatically"))
+        await SeedRoleData();
+        await SeedUgUnits();
+        await SeedResearchAreas();
+        await SeedShipEquipments();
+
+        if (configuration.GetSection("Database:SeedAccountsAutomatically").Value?.ToBool() ?? false)
         {
-            await SeedRoleData();
             await SeedUsersData();
-            await SeedUgUnits();
-            await SeedResearchAreas();
-            await SeedShipEquipments();
         }
     }
 
@@ -43,6 +44,9 @@ internal class ApplicationDbContextInitializer(
 
         foreach (var user in users)
         {
+            if (await identityService.UserWithEmailExists(user.Email!))
+                continue;
+
             var password = randomGenerator.CreateSecurePassword();
             var result = await identityService.EnsureSeedUserWithRole(
                 user.Email,
