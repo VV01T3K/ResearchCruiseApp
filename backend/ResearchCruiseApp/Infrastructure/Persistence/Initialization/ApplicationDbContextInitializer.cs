@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
@@ -72,7 +72,7 @@ internal class ApplicationDbContextInitializer(
 
     private async Task SeedRoleData()
     {
-        var roleNames = InitialAdministrationData.RoleNames;
+        var roleNames = SeedAdministrationData.RoleNames;
 
         foreach (var roleName in roleNames)
         {
@@ -86,7 +86,7 @@ internal class ApplicationDbContextInitializer(
         if (await applicationDbContext.UgUnits.AnyAsync())
             return;
 
-        foreach (var ugUnitName in InitialUgUnitData.UgUnitsNames)
+        foreach (var ugUnitName in SeedUgUnitData.UgUnitsNames)
         {
             var newUgUnit = new UgUnit { Name = ugUnitName, IsActive = true };
             await applicationDbContext.UgUnits.AddAsync(newUgUnit);
@@ -100,7 +100,7 @@ internal class ApplicationDbContextInitializer(
         if (await applicationDbContext.ResearchAreas.AnyAsync())
             return;
 
-        foreach (var researchAreaName in InitialResearchAreaData.ResearchAreaNames)
+        foreach (var researchAreaName in SeedResearchAreaData.ResearchAreaNames)
         {
             var newResearchArea = new ResearchArea { Name = researchAreaName, IsActive = true };
             await applicationDbContext.ResearchAreas.AddAsync(newResearchArea);
@@ -114,7 +114,7 @@ internal class ApplicationDbContextInitializer(
         if (await applicationDbContext.ShipEquipments.AnyAsync())
             return;
 
-        foreach (var shipEquipmentName in InitialShipEquipmentData.ShipEquipmentsNames)
+        foreach (var shipEquipmentName in SeedShipEquipmentData.ShipEquipmentsNames)
         {
             var newShipEquipment = new ShipEquipment { Name = shipEquipmentName, IsActive = true };
             await applicationDbContext.ShipEquipments.AddAsync(newShipEquipment);

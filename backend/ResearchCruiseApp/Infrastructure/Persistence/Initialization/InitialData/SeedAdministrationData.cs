@@ -2,7 +2,7 @@
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
-internal static class InitialAdministrationData
+internal static class SeedAdministrationData
 {
     public static string[] RoleNames =>
         new[]
