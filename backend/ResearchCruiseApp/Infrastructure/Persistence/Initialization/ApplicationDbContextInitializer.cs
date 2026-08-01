@@ -83,43 +83,59 @@ internal class ApplicationDbContextInitializer(
 
     private async Task SeedUgUnits()
     {
-        if (await applicationDbContext.UgUnits.AnyAsync())
+        var existingNames = (
+            await applicationDbContext.UgUnits.Select(ugUnit => ugUnit.Name).ToListAsync()
+        ).ToHashSet();
+
+        var newUgUnits = SeedUgUnitData
+            .UgUnitsNames.Where(name => !existingNames.Contains(name))
+            .Select(name => new UgUnit { Name = name, IsActive = true })
+            .ToList();
+
+        if (newUgUnits.Count == 0)
             return;
 
-        foreach (var ugUnitName in SeedUgUnitData.UgUnitsNames)
-        {
-            var newUgUnit = new UgUnit { Name = ugUnitName, IsActive = true };
-            await applicationDbContext.UgUnits.AddAsync(newUgUnit);
-        }
-
+        await applicationDbContext.UgUnits.AddRangeAsync(newUgUnits);
         await applicationDbContext.SaveChangesAsync();
     }
 
     private async Task SeedResearchAreas()
     {
-        if (await applicationDbContext.ResearchAreas.AnyAsync())
+        var existingNames = (
+            await applicationDbContext
+                .ResearchAreas.Select(researchArea => researchArea.Name)
+                .ToListAsync()
+        ).ToHashSet();
+
+        var newResearchAreas = SeedResearchAreaData
+            .ResearchAreaNames.Where(name => !existingNames.Contains(name))
+            .Select(name => new ResearchArea { Name = name, IsActive = true })
+            .ToList();
+
+        if (newResearchAreas.Count == 0)
             return;
 
-        foreach (var researchAreaName in SeedResearchAreaData.ResearchAreaNames)
-        {
-            var newResearchArea = new ResearchArea { Name = researchAreaName, IsActive = true };
-            await applicationDbContext.ResearchAreas.AddAsync(newResearchArea);
-        }
-
+        await applicationDbContext.ResearchAreas.AddRangeAsync(newResearchAreas);
         await applicationDbContext.SaveChangesAsync();
     }
 
     private async Task SeedShipEquipments()
     {
-        if (await applicationDbContext.ShipEquipments.AnyAsync())
+        var existingNames = (
+            await applicationDbContext
+                .ShipEquipments.Select(shipEquipment => shipEquipment.Name)
+                .ToListAsync()
+        ).ToHashSet();
+
+        var newShipEquipments = SeedShipEquipmentData
+            .ShipEquipmentsNames.Where(name => !existingNames.Contains(name))
+            .Select(name => new ShipEquipment { Name = name, IsActive = true })
+            .ToList();
+
+        if (newShipEquipments.Count == 0)
             return;
 
-        foreach (var shipEquipmentName in SeedShipEquipmentData.ShipEquipmentsNames)
-        {
-            var newShipEquipment = new ShipEquipment { Name = shipEquipmentName, IsActive = true };
-            await applicationDbContext.ShipEquipments.AddAsync(newShipEquipment);
-        }
-
+        await applicationDbContext.ShipEquipments.AddRangeAsync(newShipEquipments);
         await applicationDbContext.SaveChangesAsync();
     }
 }
