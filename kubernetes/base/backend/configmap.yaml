@@ -5,4 +5,4 @@ metadata:
 data:
   Database__LogUserPasswordsWhenSeeding: "true"
   Database__MigrateAutomatically: "true"
-  Database__SeedAutomatically: "true"
+  Database__SeedAccountsAutomatically: "true"

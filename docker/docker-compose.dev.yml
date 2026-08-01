@@ -7,7 +7,7 @@ services:
     build:
       context: ../backend
     environment:
-      - Database__SeedAutomatically=true
+      - Database__SeedAccountsAutomatically=true
       - Database__MigrateAutomatically=true
       - Database__LogUserPasswordsWhenSeeding=true
       - ConnectionStrings__Database=Server=db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
