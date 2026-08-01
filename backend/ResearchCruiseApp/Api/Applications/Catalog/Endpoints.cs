@@ -51,7 +51,7 @@ public static class CatalogEndpoints
         bool descending = true
     )
     {
-        var hasCursor = CruiseApplicationsCursor.TryDecode(cursor, out var cursorSortValue, out var cursorId);
+        var hasCursor = CruiseApplicationsCursor.TryDecode(cursor, sortBy, out var cursorSortValue, out var cursorId);
         var clampedPageSize = Math.Clamp(pageSize, 1, 100);
 
         var parsedStatuses = statuses?
