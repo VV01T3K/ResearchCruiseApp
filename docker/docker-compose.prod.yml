@@ -4,7 +4,6 @@ services:
     image: ghcr.io/vv01t3k/researchcruiseapp/backend
     environment:
       - Database__SeedAccountsAutomatically=false
-      - Database__MigrateAutomatically=false
       - Database__LogUserPasswordsWhenSeeding=false
       - ConnectionStrings__Database=Server=host.docker.internal,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
       - FrontendUrl=http://localhost:8080

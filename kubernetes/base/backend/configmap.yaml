@@ -4,5 +4,4 @@ metadata:
   name: research-cruise-app-backend-config
 data:
   Database__LogUserPasswordsWhenSeeding: "true"
-  Database__MigrateAutomatically: "true"
   Database__SeedAccountsAutomatically: "true"
