@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
@@ -37,11 +38,11 @@ public static class CatalogEndpoints
 
     private static async Task<Ok<ApplicationsPageResponse>> GetAll(
         string? cursor,
-        List<int>? numbers,
-        List<DateOnly>? dates,
-        List<string>? statuses,
-        List<int>? years,
-        List<string>? cruiseManagers,
+        int[]? number,
+        DateOnly[]? date,
+        string[]? status,
+        int[]? year,
+        string[]? cruiseManager,
         ApplicationReader projection,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
@@ -51,18 +52,31 @@ public static class CatalogEndpoints
         bool descending = true
     )
     {
-        var hasCursor = CruiseApplicationsCursor.TryDecode(cursor, sortBy, out var cursorSortValue, out var cursorId);
+        var hasCursor = CruiseApplicationsCursor.TryDecode(
+            cursor,
+            sortBy,
+            out var cursorSortValue,
+            out var cursorId
+        );
         var clampedPageSize = Math.Clamp(pageSize, 1, 100);
 
-        var parsedStatuses = statuses?
-            .Select(s => Enum.TryParse<CruiseApplicationStatus>(s, ignoreCase: true, out var parsed)
-                ? parsed
-                : (CruiseApplicationStatus?)null)
+        var parsedStatuses = status
+            ?.Select(s =>
+                Enum.TryParse<CruiseApplicationStatus>(s, ignoreCase: true, out var parsed)
+                    ? parsed
+                    : (CruiseApplicationStatus?)null
+            )
             .Where(s => s.HasValue)
             .Select(s => s!.Value)
             .ToList();
 
-        var filter = new CruiseApplicationsFilter(numbers, dates, parsedStatuses, years, cruiseManagers);
+        var filter = new CruiseApplicationsFilter(
+            number?.ToList(),
+            date?.ToList(),
+            parsedStatuses,
+            year?.ToList(),
+            cruiseManager?.ToList()
+        );
 
         var query = dbContext
             .CruiseApplications.IncludeForms()
@@ -73,14 +87,24 @@ public static class CatalogEndpoints
 
         query = sortBy switch
         {
-            "date" => query.ApplyDateSort(hasCursor ? cursorSortValue : null, hasCursor ? cursorId : (Guid?)null, descending),
-            "year" => query.ApplyYearSort(hasCursor ? cursorSortValue : null, hasCursor ? cursorId : (Guid?)null, descending),
-            _ => query.ApplyNumberSort(hasCursor ? cursorSortValue : null, hasCursor ? cursorId : (Guid?)null, descending),
+            "date" => query.ApplyDateSort(
+                hasCursor ? cursorSortValue : null,
+                hasCursor ? cursorId : (Guid?)null,
+                descending
+            ),
+            "year" => query.ApplyYearSort(
+                hasCursor ? cursorSortValue : null,
+                hasCursor ? cursorId : (Guid?)null,
+                descending
+            ),
+            _ => query.ApplyNumberSort(
+                hasCursor ? cursorSortValue : null,
+                hasCursor ? cursorId : (Guid?)null,
+                descending
+            ),
         };
 
-        var applications = await query
-            .Take(clampedPageSize)
-            .ToListAsync(cancellationToken);
+        var applications = await query.Take(clampedPageSize).ToListAsync(cancellationToken);
 
         var visibleApplications = new List<ApplicationResponse>();
         foreach (var application in applications)
@@ -95,9 +119,13 @@ public static class CatalogEndpoints
 
         // The cursor advances over every DB row examined (not just those that survived the
         // permission filter), so a page can come back smaller than pageSize without skipping rows.
-        var nextCursor = applications.Count == clampedPageSize
-            ? CruiseApplicationsCursor.Encode(GetSortValue(applications[^1], sortBy), applications[^1].Id)
-            : null;
+        var nextCursor =
+            applications.Count == clampedPageSize
+                ? CruiseApplicationsCursor.Encode(
+                    GetSortValue(applications[^1], sortBy),
+                    applications[^1].Id
+                )
+                : null;
 
         return TypedResults.Ok(new ApplicationsPageResponse(visibleApplications, nextCursor));
     }
@@ -129,8 +157,8 @@ public static class CatalogEndpoints
         }
 
         var managerIdStrings = visibleManagerIds.Select(id => id.ToString()).ToList();
-        var managers = await dbContext.Users
-            .Where(u => managerIdStrings.Contains(u.Id))
+        var managers = await dbContext
+            .Users.Where(u => managerIdStrings.Contains(u.Id))
             .Select(u => new ApplicationPersonResponse(
                 Guid.Parse(u.Id),
                 u.Email ?? string.Empty,

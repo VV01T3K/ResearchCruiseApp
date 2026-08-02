@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Query;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Infrastructure.Services.Identity;
+using ResearchCruiseApp.Infrastructure.Identity;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
 
