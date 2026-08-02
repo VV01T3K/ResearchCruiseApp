@@ -20,6 +20,7 @@ public static class CruisePlanningEndpoints
     }
 
     private static async Task<Ok<List<CruiseApplicationSummary>>> Get(
+        Guid? cruiseId,
         ApplicationReader projection,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
@@ -29,13 +30,20 @@ public static class CruisePlanningEndpoints
         var applications = await dbContext
             .CruiseApplications.IncludeForms()
             .IncludeFormAContent()
+            .IncludeCruise()
             .ToListAsync(cancellationToken);
         var visibleApplications = new List<CruiseApplicationSummary>();
 
         foreach (var application in applications)
         {
-            if (
+            // Always include applications already attached to the cruise being edited,
+            // regardless of status, so it doesn't drop off its own candidate list.
+            var isEligible =
                 application.Status == CruiseApplicationStatus.Accepted
+                || (cruiseId is not null && application.Cruise?.Id == cruiseId);
+
+            if (
+                isEligible
                 && await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application)
             )
             {
