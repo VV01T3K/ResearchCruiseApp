@@ -56,7 +56,7 @@ async function fetchCruiseApplicationsPage({
     descending: sort.descending,
     ...filter,
   });
-  return customFetch<CruiseApplicationsPage>(`/v2/applications?${queryString}`);
+  return customFetch<CruiseApplicationsPage>(`/v2/applications?${queryString}`, { method: 'GET' });
 }
 
 export function useCruiseApplicationsInfiniteQuery(
@@ -78,6 +78,6 @@ export function useCruiseApplicationsInfiniteQuery(
 export function useCruiseApplicationManagersQuery() {
   return useSuspenseQuery({
     queryKey: ['cruiseApplications', 'managers'],
-    queryFn: () => customFetch<ApplicationPersonResponse[]>('/v2/applications/managers'),
+    queryFn: () => customFetch<ApplicationPersonResponse[]>('/v2/applications/managers', { method: 'GET' }),
   });
 }

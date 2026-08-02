@@ -73,6 +73,7 @@ export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TD
   }
 
   const { supportsFilter } = getCapabilities(header);
+  const getFilterOptionLabel = header.column.columnDef.meta?.getFilterOptionLabel;
 
   return (
     <>
@@ -103,7 +104,7 @@ export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TD
               expanded={expanded}
             >
               <AppCheckbox name={`isFilterChecked-${value}`} checked={isFilterChecked(value[0])} />
-              {value[0]}
+              {getFilterOptionLabel ? getFilterOptionLabel(value[0]) : value[0]}
             </AppTableListItem>
           ))}
       </div>
