@@ -47,7 +47,7 @@ public static class CatalogEndpoints
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
         CancellationToken cancellationToken,
-        int pageSize = 20,
+        int? pageSize = null,
         string sortBy = "number",
         bool descending = true
     )
@@ -58,7 +58,7 @@ public static class CatalogEndpoints
             out var cursorSortValue,
             out var cursorId
         );
-        var clampedPageSize = Math.Clamp(pageSize, 1, 100);
+        var clampedPageSize = Math.Clamp(pageSize ?? 20, 1, 100);
 
         var parsedStatuses = status
             ?.Select(s =>
