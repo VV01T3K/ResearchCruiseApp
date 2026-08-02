@@ -31,7 +31,6 @@ const statusFilterOptions = Object.values(ApplicationStatus);
 const EARLIEST_APPLICATION_YEAR = 2024;
 const YEAR_FILTER_OPTIONS_AHEAD = 3;
 
-
 function columnFiltersToApiFilter(columnFilters: ColumnFiltersState): CruiseApplicationsFilter {
   const getValues = (id: string) => columnFilters.find((filter) => filter.id === id)?.value as string[] | undefined;
 
@@ -192,7 +191,10 @@ function ApplicationsPage() {
       header: 'Status',
       accessorFn: (row) => row.status,
       enableSorting: false,
-      meta: { filterOptions: statusFilterOptions },
+      meta: {
+        filterOptions: statusFilterOptions,
+        getFilterOptionLabel: (value) => getApplicationStatusLabel(value as ApplicationStatus),
+      },
       cell: ({ row }) => (
         <>
           <p className="mb-2 text-right italic sm:text-center">
