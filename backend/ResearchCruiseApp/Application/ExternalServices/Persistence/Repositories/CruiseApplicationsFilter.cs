@@ -1,4 +1,4 @@
-using ResearchCruiseApp.Domain.Common.Enums;
+using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 

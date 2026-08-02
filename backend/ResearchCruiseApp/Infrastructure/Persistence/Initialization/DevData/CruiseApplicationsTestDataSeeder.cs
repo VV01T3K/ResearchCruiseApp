@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Application.Common.Constants;
 using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Domain.Common.Enums;
+using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Infrastructure.Services.Identity;
+using ResearchCruiseApp.Infrastructure.Identity;
+using ResearchCruiseApp.Infrastructure.Security;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization.DevData;
 
@@ -52,7 +52,7 @@ internal static class CruiseApplicationsTestDataSeeder
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var randomGenerator = scope.ServiceProvider.GetRequiredService<IRandomGenerator>();
+        var randomGenerator = scope.ServiceProvider.GetRequiredService<RandomGenerator>();
 
         await dbContext.Database.MigrateAsync();
 
@@ -145,7 +145,7 @@ internal static class CruiseApplicationsTestDataSeeder
     private static async Task<List<User>> GetOrCreateSeedManagers(
         UserManager<User> userManager,
         RoleManager<IdentityRole> roleManager,
-        IRandomGenerator randomGenerator,
+        RandomGenerator randomGenerator,
         Random random
     )
     {
