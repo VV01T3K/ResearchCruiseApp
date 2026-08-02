@@ -18,7 +18,7 @@ import {
   CruiseApplicationsSort,
   useCruiseApplicationManagersQuery,
   useCruiseApplicationsInfiniteQuery,
-} from '@/api/hooks/applications/CruiseApplicationsApiHooks';
+} from '@/api/client/applications/catalog';
 import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/api/client/applications/models';
 
 export const Route = createFileRoute('/applications/')({
