@@ -63,12 +63,19 @@ async function seedAuthenticatedAdmin(page: Page) {
 
 test('application list loads from the v2 route', async ({ page }) => {
   await seedAuthenticatedAdmin(page);
+  await page.route(`${API_URL}/v2/applications/managers`, (route) => {
+    route.fulfill({
+      status: 200,
+      body: JSON.stringify([]),
+      contentType: 'application/json',
+    });
+  });
   let requested = false;
-  await page.route(`${API_URL}/v2/applications`, async (route) => {
+  await page.route(`${API_URL}/v2/applications?*`, async (route) => {
     requested = true;
     await route.fulfill({
       status: 200,
-      body: JSON.stringify([application]),
+      body: JSON.stringify({ items: [application], nextCursor: null }),
       contentType: 'application/json',
     });
   });
