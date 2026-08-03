@@ -135,6 +135,18 @@ internal static class CruiseApplicationsQueryableExtensions
         return query.Include(cruiseApplication => cruiseApplication.FormC!.ResearchTaskEffects);
     }
 
+    // Only the collections ApplicationScoringService.GetPointsSum reads (their stored .Points values)
+    public static IQueryable<CruiseApplication> IncludeFormAPoints(
+        this IQueryable<CruiseApplication> query
+    )
+    {
+        return query
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAContracts)
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAPublications)
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormASpubTasks);
+    }
+
     public static IQueryable<CruiseApplication> ApplyFilter(
         this IQueryable<CruiseApplication> query,
         CruiseApplicationsFilter filter,
