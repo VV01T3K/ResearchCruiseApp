@@ -22,8 +22,8 @@ import type {
   ApplicationPersonResponse,
   ApplicationResponse,
   ApplicationsPageResponse,
+  CruiseApplicationCandidateResponse,
   CruiseApplicationEvaluation,
-  CruiseApplicationSummary,
   FormAFields,
   FormAOptions,
   FormAWriteRequest,
@@ -688,9 +688,9 @@ export const useUpdateApplicationDecision = <TError = ErrorType<ProblemDetails>,
 /**
  * @summary Get applications eligible for cruise planning.
  */
-export const getApplicationsForCruisePlanning = async (params?: GetApplicationsForCruisePlanningParams, options?: RequestInit): Promise<CruiseApplicationSummary[]> => {
+export const getApplicationsForCruisePlanning = async (params?: GetApplicationsForCruisePlanningParams, options?: RequestInit): Promise<CruiseApplicationCandidateResponse[]> => {
 
-  return customFetch<CruiseApplicationSummary[]>(getGetApplicationsForCruisePlanningUrl(params),
+  return customFetch<CruiseApplicationCandidateResponse[]>(getGetApplicationsForCruisePlanningUrl(params),
   {
     ...options,
     method: 'GET'
