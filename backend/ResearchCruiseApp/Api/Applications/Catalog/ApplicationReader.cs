@@ -52,6 +52,33 @@ internal class ApplicationReader(
         return dto;
     }
 
+    public async Task<CruiseApplicationCandidateResponse> CreateCandidate(
+        CruiseApplication application
+    )
+    {
+        var dto = new CruiseApplicationCandidateResponse
+        {
+            Id = application.Id,
+            Number = application.Number.ToString(),
+            Year = application.FormA is null ? default : int.Parse(application.FormA.Year),
+            CruiseManagerId = application.FormA?.CruiseManagerId ?? Guid.Empty,
+            DeputyManagerId = application.FormA?.DeputyManagerId ?? Guid.Empty,
+            HasFormA = application.FormA is not null,
+            HasFormB = application.FormB is not null,
+            HasFormC = application.FormC is not null,
+            Points = evaluator.GetPointsSum(application),
+        };
+
+        if (application.FormA?.CruiseManagerId is { } managerId)
+        {
+            var manager = await identityService.GetUserDtoById(managerId);
+            dto.CruiseManagerFirstName = manager?.FirstName ?? string.Empty;
+            dto.CruiseManagerLastName = manager?.LastName ?? string.Empty;
+        }
+
+        return dto;
+    }
+
     public async Task<CruiseApplicationEvaluation> CreateEvaluationDetails(
         CruiseApplication application
     )

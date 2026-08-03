@@ -19,7 +19,7 @@ public static class CruisePlanningEndpoints
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
-    private static async Task<Ok<List<CruiseApplicationSummary>>> Get(
+    private static async Task<Ok<List<CruiseApplicationCandidateResponse>>> Get(
         Guid? cruiseId,
         ApplicationReader projection,
         ApplicationDbContext dbContext,
@@ -29,10 +29,10 @@ public static class CruisePlanningEndpoints
     {
         var applications = await dbContext
             .CruiseApplications.IncludeForms()
-            .IncludeFormAContent()
+            .IncludeFormAPoints()
             .IncludeCruise()
             .ToListAsync(cancellationToken);
-        var visibleApplications = new List<CruiseApplicationSummary>();
+        var visibleApplications = new List<CruiseApplicationCandidateResponse>();
 
         foreach (var application in applications)
         {
@@ -47,7 +47,7 @@ public static class CruisePlanningEndpoints
                 && await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application)
             )
             {
-                visibleApplications.Add(await projection.Create(application));
+                visibleApplications.Add(await projection.CreateCandidate(application));
             }
         }
 

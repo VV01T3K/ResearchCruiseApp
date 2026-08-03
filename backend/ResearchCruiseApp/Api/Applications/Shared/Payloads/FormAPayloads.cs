@@ -195,6 +195,35 @@ public class CruiseApplicationSummary
     public DateTime? EndDate { get; init; }
 }
 
+// Lighter-weight than CruiseApplicationSummary: only the fields the cruise-planning
+// candidate picker (attach/detach applications on a cruise) actually renders.
+public class CruiseApplicationCandidateResponse
+{
+    public Guid Id { get; init; }
+
+    public string Number { get; init; } = null!;
+
+    [JsonNumberHandling(JsonNumberHandling.Strict)]
+    public int Year { get; init; }
+
+    public Guid CruiseManagerId { get; init; }
+
+    public string CruiseManagerFirstName { get; set; } = null!;
+
+    public string CruiseManagerLastName { get; set; } = null!;
+
+    public Guid DeputyManagerId { get; init; }
+
+    public bool HasFormA { get; init; }
+
+    public bool HasFormB { get; init; }
+
+    public bool HasFormC { get; init; }
+
+    [JsonNumberHandling(JsonNumberHandling.Strict)]
+    public int Points { get; set; }
+}
+
 public class CruiseApplicationEvaluation
 {
     public List<ScoredResearchTask> FormAResearchTasks { get; init; } = [];
