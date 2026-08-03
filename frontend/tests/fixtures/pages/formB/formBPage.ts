@@ -85,7 +85,13 @@ export class FormBPage {
     });
 
     // return empty list of applications
-    page.route(`${API_URL}/v2/applications`, (route) => {
+    page.route(`${API_URL}/v2/applications?*`, (route) => {
+      route.fulfill({
+        status: 200,
+        body: JSON.stringify({ items: [], nextCursor: null }),
+      });
+    });
+    page.route(`${API_URL}/v2/applications/managers`, (route) => {
       route.fulfill({
         status: 200,
         body: JSON.stringify([]),
