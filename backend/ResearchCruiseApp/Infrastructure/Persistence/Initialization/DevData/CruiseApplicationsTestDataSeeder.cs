@@ -22,6 +22,7 @@ internal static class CruiseApplicationsTestDataSeeder
     private const string SeedEmailDomain = "seed.researchcruiseapp.test";
     private const int SeedManagersCount = 3;
     private const int SeedCruisesCount = 4;
+    private const int MaxApplicationsPerCruise = 4;
 
     private static readonly string[] FirstNames =
     [
@@ -64,6 +65,13 @@ internal static class CruiseApplicationsTestDataSeeder
             random
         );
         var cruises = await GetOrCreateSeedCruises(dbContext, managers, random);
+        var cruiseIds = cruises.Select(cruise => cruise.Id).ToList();
+        var attachedCounts = await dbContext
+            .CruiseApplications.Where(application =>
+                application.Cruise != null && cruiseIds.Contains(application.Cruise.Id)
+            )
+            .GroupBy(application => application.Cruise!.Id)
+            .ToDictionaryAsync(group => group.Key, group => group.Count());
 
         var statuses = Enum.GetValues<CruiseApplicationStatus>();
 
@@ -72,7 +80,9 @@ internal static class CruiseApplicationsTestDataSeeder
         {
             var manager = managers[random.Next(managers.Count)];
             var deputy = managers[random.Next(managers.Count)];
-            var cruise = random.NextDouble() < 0.7 ? cruises[random.Next(cruises.Count)] : null;
+            var cruise = PickCruiseWithCapacity(cruises, attachedCounts, random);
+            if (cruise is not null)
+                attachedCounts[cruise.Id] = attachedCounts.GetValueOrDefault(cruise.Id) + 1;
 
             newApplications.Add(
                 new CruiseApplication
@@ -229,6 +239,24 @@ internal static class CruiseApplicationsTestDataSeeder
         dbContext.Cruises.AddRange(cruises);
         await dbContext.SaveChangesAsync();
         return cruises;
+    }
+
+    private static Cruise? PickCruiseWithCapacity(
+        List<Cruise> cruises,
+        Dictionary<Guid, int> attachedCounts,
+        Random random
+    )
+    {
+        if (random.NextDouble() >= 0.7)
+            return null;
+
+        var availableCruises = cruises
+            .Where(cruise => attachedCounts.GetValueOrDefault(cruise.Id) < MaxApplicationsPerCruise)
+            .ToList();
+
+        return availableCruises.Count == 0
+            ? null
+            : availableCruises[random.Next(availableCruises.Count)];
     }
 
     private static DateTime PastDate(Random random, int yearsBack) =>
