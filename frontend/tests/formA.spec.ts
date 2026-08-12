@@ -10,8 +10,11 @@ import {
 
 import { API_URL, MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { formTest as test } from './fixtures/fixtures';
+import { type FormAPage } from './fixtures/pages/formA/formAPage';
 import { getFormAPayload, getInitValuesAPayload } from './fixtures/mockPayloads';
 import { touchInput } from './utils/form-filling-utils';
+
+type FormASection = keyof FormAPage['sections'];
 
 test('draft form A requires the complete input shape while allowing empty values', () => {
   const initValues = getInitValuesAPayload();
@@ -90,9 +93,82 @@ test('normalizes backend precise-period datetimes at the API boundary', () => {
   expect(request.form).not.toHaveProperty('cruiseDays');
 });
 
-test('valid form A', async ({ formAPage }) => {
-  await formAPage.fillForm(); // Fill the form with default values
+/** Section → the form fields that must report an error when that section is invalid. */
+const REQUIRED_SECTION_FIELDS = {
+  cruiseManagerInfoSection: ['deputyManagerId'],
+  cruiseLengthSection: ['cruiseHours', 'shipUsage'],
+  researchAreaSection: ['researchAreaDescriptions'],
+  cruiseGoalSection: ['cruiseGoal'],
+  researchTasksSection: ['researchTasks'],
+  membersSection: ['ugTeams'],
+  supervisorInfoSection: ['supervisorEmail'],
+} as const;
+
+/** Section → fields that must report an error when the section holds a row of invalid data. */
+const INVALID_ROW_SECTION_FIELDS = {
+  permissionsSection: ['permissions'],
+  researchAreaSection: ['researchAreaDescriptions'],
+  researchTasksSection: ['researchTasks'],
+  contractsSection: ['contracts'],
+  membersSection: ['ugTeams', 'guestTeams'],
+  publicationsSection: ['publications'],
+  spubTasksSection: ['spubTasks'],
+} as const;
+
+/**
+ * TanStack keys array rows as `permissions[0].description`, so a section-level field
+ * matches either exactly or as the prefix of a row path.
+ */
+function hasError(errors: Record<string, string[]>, field: string) {
+  return Object.keys(errors).some((key) => key === field || key.startsWith(`${field}[`) || key.startsWith(`${field}.`));
+}
+
+/**
+ * Checks each section separately against a single validation result, reporting one step per
+ * section. Soft assertions keep every section evaluated, so one failing section still shows
+ * that all the others behaved as expected.
+ */
+async function expectSectionsInvalid(
+  errors: Record<string, string[]>,
+  sectionFields: Record<string, readonly string[]>
+) {
+  const reportedKeys = Object.keys(errors).join(', ') || '(none)';
+
+  for (const [section, fields] of Object.entries(sectionFields)) {
+    await test.step(section, () => {
+      for (const field of fields) {
+        expect
+          .soft(hasError(errors, field), `${section}: expected an error on "${field}"; reported: [${reportedKeys}]`)
+          .toBe(true);
+      }
+    });
+  }
+}
+
+test('all sections valid', async ({ formAPage }) => {
+  await formAPage.fillForm();
   await formAPage.submitForm({ expectedResult: 'valid' });
+});
+
+test('all required sections missing', async ({ formAPage }) => {
+  await formAPage.fillForm({ except: Object.keys(REQUIRED_SECTION_FIELDS) as FormASection[] });
+
+  await formAPage.submitButton.click();
+
+  // The form does not navigate when invalid, so its TanStack state can be read directly.
+  // One submit yields an independent verdict per section.
+  const errors = await formAPage.getInvalidFormState();
+  await expectSectionsInvalid(errors, REQUIRED_SECTION_FIELDS);
+});
+
+test('all sections filled with invalid rows', async ({ formAPage }) => {
+  // Every list-based section gets one row with empty required fields and negative counts
+  await formAPage.fillForm({ withInvalidRows: true });
+
+  await formAPage.submitButton.click();
+
+  const errors = await formAPage.getInvalidFormState();
+  await expectSectionsInvalid(errors, INVALID_ROW_SECTION_FIELDS);
 });
 
 test('centers the first invalid field after submit', async ({ formAPage }) => {
@@ -151,168 +227,40 @@ test('shows a support code when saving fails', async ({ formAPage }) => {
   await expect(formAPage.validationErrorMessage).toContainText('Kod błędu: 0HNC7ABC123');
 });
 
-test.describe('cruise manager info section tests', () => {
-  test.beforeEach(async ({ formAPage }) => {
-    await formAPage.fillForm({ except: ['cruiseManagerInfoSection'] });
-  });
-
-  test('cruise assistant not set', async ({ formAPage }) => {
-    // when the assistant is not set, the form should be invalid
-    await formAPage.submitForm({ expectedResult: 'invalid' });
-    await expect(formAPage.sections.cruiseManagerInfoSection.missingDeputyManagerMessage).toBeVisible();
-
-    // correctly select the assistant after failed verification
-    await formAPage.sections.cruiseManagerInfoSection.deputyManagerDropdown.selectOption('Kierownik Kierowniczy');
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-});
-
 test.describe('cruise length section tests', () => {
   test.beforeEach(async ({ formAPage }) => {
     await formAPage.fillForm({ except: ['cruiseLengthSection'] });
   });
 
-  // allowed cruise days count is in range (0-60] (right-side inclusive)
-  const dayTestCases: [boolean, number][] = [
-    [false, 0],
-    [false, 61],
-    [false, 100],
-    [true, 1],
-    [true, 45],
-    [true, 59],
-    [true, 60],
+  // The number inputs cap out-of-range values in the browser, which the schema cannot do
+  const cappingCases: [string, number, number][] = [
+    ['days', 61, 60],
+    ['days', 100, 60],
+    ['hours', 1441, 1440],
+    ['hours', 1500, 1440],
   ];
-  test.describe('planned cruise days constrains', () => {
-    dayTestCases.forEach(([isValid, val]) => {
-      test(`${isValid ? 'valid' : 'invalid'}-${val}`, async ({ formAPage }) => {
-        const LOWER_DAY_LIMIT = 1;
-        const UPPER_DAY_LIMIT = 60;
 
-        await formAPage.sections.cruiseLengthSection.defaultFill();
-        await formAPage.sections.cruiseLengthSection.cruiseDaysInput.fill(val.toString());
+  cappingCases.forEach(([field, input, expectedValue]) => {
+    test(`${field} input caps ${input} to ${expectedValue}`, async ({ formAPage }) => {
+      const section = formAPage.sections.cruiseLengthSection;
+      const target = field === 'days' ? section.cruiseDaysInput : section.cruiseHoursInput;
 
-        if (isValid) {
-          await formAPage.submitForm({ expectedResult: 'valid' });
-        } else if (val < LOWER_DAY_LIMIT) {
-          await formAPage.submitForm({ expectedResult: 'invalid' });
-          await expect(formAPage.sections.cruiseLengthSection.invalidCruiseDurationMessage).toBeVisible();
-        } else if (val > UPPER_DAY_LIMIT) {
-          await expect(formAPage.sections.cruiseLengthSection.cruiseDaysInput).toHaveValue(`${UPPER_DAY_LIMIT}`); // input should cap the value
-        }
-      });
+      await section.defaultFill();
+      await target.fill(input.toString());
+      await expect(target).toHaveValue(`${expectedValue}`);
     });
   });
 
-  // Hours are the total duration and stay synchronized with cruise days.
-  const hourTestCases: [boolean, number][] = [
-    [false, 0],
-    [true, 24],
-    [true, 100],
-    [true, 1],
-    [true, 22],
-    [true, 23],
-    [true, 1440],
-    [false, 1441],
-  ];
-  test.describe('planned cruise hours constrains', () => {
-    hourTestCases.forEach(([isValid, val]) => {
-      test(`${isValid ? 'valid' : 'invalid'}-${val}`, async ({ formAPage }) => {
-        const LOWER_HOUR_LIMIT = 1;
-        const UPPER_HOUR_LIMIT = 1440;
+  test('alternative ship usage field appears and is required', async ({ formAPage }) => {
+    const section = formAPage.sections.cruiseLengthSection;
+    await section.defaultFill();
+    await section.shipUsageDropdown.selectOption('w inny sposób');
 
-        await formAPage.sections.cruiseLengthSection.defaultFill();
-        await formAPage.sections.cruiseLengthSection.cruiseHoursInput.fill(val.toString());
+    await touchInput(section.alternativeShipUsageInput);
+    await expect(section.emptyAlternativeShipUsageMessage).toBeVisible();
 
-        if (isValid) {
-          await formAPage.submitForm({ expectedResult: 'valid' });
-        } else if (val < LOWER_HOUR_LIMIT) {
-          await formAPage.submitForm({ expectedResult: 'invalid' });
-          await expect(formAPage.sections.cruiseLengthSection.invalidCruiseDurationMessage).toBeVisible();
-        } else if (val > UPPER_HOUR_LIMIT) {
-          await expect(formAPage.sections.cruiseLengthSection.cruiseHoursInput).toHaveValue(`${UPPER_HOUR_LIMIT}`); // input should cap the value
-        }
-      });
-    });
-  });
-
-  test('alternative ship usage', async ({ formAPage }) => {
-    await formAPage.sections.cruiseLengthSection.defaultFill();
-    await formAPage.sections.cruiseLengthSection.shipUsageDropdown.selectOption('w inny sposób');
-
-    await touchInput(formAPage.sections.cruiseLengthSection.alternativeShipUsageInput);
-    await expect(formAPage.sections.cruiseLengthSection.emptyAlternativeShipUsageMessage).toBeVisible();
-
-    await formAPage.submitForm();
-    await expect(formAPage.submissionApprovedMessage, 'form should not be approved').toBeHidden();
-
-    // correctly fill out different usage field
-    await formAPage.sections.cruiseLengthSection.alternativeShipUsageInput.fill('jakieś inne użycie');
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-});
-
-test.describe('permissions section tests', () => {
-  test.beforeEach(async ({ formAPage }) => {
-    await formAPage.fillForm({ except: ['permissionsSection'] });
-  });
-
-  test('no permissions', async ({ formAPage }) => {
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-
-  test('empty permission', async ({ formAPage }) => {
-    const permissionsSection = formAPage.sections.permissionsSection;
-    await permissionsSection.addPermission('', '');
-    await formAPage.submitForm({ expectedResult: 'invalid' });
-    await expect(permissionsSection.descriptionRequiredMessage).toBeVisible();
-    await expect(permissionsSection.executiveRequiredMessage).toBeVisible();
-
-    await permissionsSection.desctiptionInput('first').fill('jakiś opis');
-    await expect(permissionsSection.descriptionRequiredMessage).toBeHidden();
-    await permissionsSection.executiveInput('first').fill('jakiś organ');
-    await expect(permissionsSection.executiveRequiredMessage).toBeHidden();
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-});
-
-test.describe('research area section tests', () => {
-  test.beforeEach(async ({ formAPage }) => {
-    await formAPage.fillForm({ except: ['researchAreaSection'] });
-  });
-
-  test('no research areas', async ({ formAPage }) => {
-    const researchAreaSection = formAPage.sections.researchAreaSection;
-
-    await formAPage.submitForm({ expectedResult: 'invalid' });
-    await expect(researchAreaSection.noResearchAreasMessage).toBeVisible();
-
-    await researchAreaSection.addResearchAreaDropdown.selectOption('Głębia Gdańska');
-    await expect(researchAreaSection.noResearchAreasMessage).toBeHidden();
-    await researchAreaSection.researchAreaRow('last').additionalInfoInput.fill('Dodatkowe informacje o rejonie badań');
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-
-  test('missing area name', async ({ formAPage }) => {
-    const researchAreaSection = formAPage.sections.researchAreaSection;
-    await researchAreaSection.addResearchAreaDropdown.selectOption('Głębia Gdańska');
-    const researchAreaRow = researchAreaSection.researchAreaRow('last');
-    await researchAreaRow.additionalInfoInput.fill('Dodatkowe informacje o rejonie badań');
-
-    await researchAreaRow.nameInput.fill(''); // make sure the input is empty
-    await researchAreaRow.nameInput.input.blur();
-    await expect(researchAreaRow.nameInput.errors.required).toBeVisible();
-    await formAPage.submitForm();
-    await expect(formAPage.submissionApprovedMessage, 'form should not be approved').toBeHidden();
-
-    await researchAreaRow.nameInput.fill('Jakaś strefa');
-    await expect(researchAreaRow.nameInput.errors.required).toBeHidden();
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-
-  test('missing additional info', async ({ formAPage }) => {
-    const researchAreaSection = formAPage.sections.researchAreaSection;
-    await researchAreaSection.addResearchAreaDropdown.selectOption('Głębia Gdańska');
-
+    await section.alternativeShipUsageInput.fill('jakieś inne użycie');
+    await expect(section.emptyAlternativeShipUsageMessage).toBeHidden();
     await formAPage.submitForm({ expectedResult: 'valid' });
   });
 });
@@ -322,64 +270,15 @@ test.describe('cruise goal section tests', () => {
     await formAPage.fillForm({ except: ['cruiseGoalSection'] });
   });
 
-  test('no cruise goal chosen', async ({ formAPage }) => {
-    await formAPage.submitForm({ expectedResult: 'invalid' });
-    await expect(formAPage.sections.cruiseGoalSection.noCruiseGoalChosenMessage).toBeVisible();
+  test('goal description field appears and is required', async ({ formAPage }) => {
+    const section = formAPage.sections.cruiseGoalSection;
+    await section.cruiseGoalDropdown.selectOption('Komercyjny');
 
-    await formAPage.sections.cruiseGoalSection.cruiseGoalDropdown.selectOption('Komercyjny');
-    await expect(formAPage.sections.cruiseGoalSection.noCruiseGoalChosenMessage).toBeHidden();
-  });
+    await touchInput(section.cruiseGoalDescriptionInput);
+    await expect(section.noCruiseGoalDescriptionMessage).toBeVisible();
 
-  test('empty goal description', async ({ formAPage }) => {
-    const cruiseGoalSection = formAPage.sections.cruiseGoalSection;
-    await cruiseGoalSection.cruiseGoalDropdown.selectOption('Komercyjny');
-
-    await touchInput(cruiseGoalSection.cruiseGoalDescriptionInput);
-    await expect(cruiseGoalSection.noCruiseGoalDescriptionMessage).toBeVisible();
-
-    await formAPage.submitForm();
-    await expect(formAPage.submissionApprovedMessage, 'form should not be approved').toBeHidden();
-
-    await cruiseGoalSection.cruiseGoalDescriptionInput.fill('Jakiś opis');
-    await expect(cruiseGoalSection.noCruiseGoalDescriptionMessage).toBeHidden();
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-});
-
-test.describe('research tasks section tests', () => {
-  test.beforeEach(async ({ formAPage }) => {
-    await formAPage.fillForm({ except: ['researchTasksSection'] });
-  });
-
-  test('no research tasks', async ({ formAPage }) => {
-    await formAPage.submitButton.click();
-    await expect(formAPage.sections.researchTasksSection.noResearchTasksMessage).toBeVisible();
-    await expect(formAPage.sections.researchTasksSection.noResearchTasksMessage).toBeFocused();
-    await formAPage.page.getByLabel('Close').first().click();
-
-    await formAPage.sections.researchTasksSection.addNewTaskDropdown.selectOption('Praca magisterska');
-    await expect(formAPage.sections.researchTasksSection.noResearchTasksMessage).toBeHidden();
-  });
-
-  test('no author and title', async ({ formAPage }) => {
-    const researchTasksSection = formAPage.sections.researchTasksSection;
-    await researchTasksSection.addNewTaskDropdown.selectOption('Praca doktorska');
-
-    // for the 'empty' message to appear, the field must be detected as touched, so it is filled with some value at first
-    await touchInput(researchTasksSection.authorInput('first'));
-    await touchInput(researchTasksSection.titleInput('first'));
-
-    await expect(researchTasksSection.emptyAuthorMessage).toBeVisible();
-    await expect(researchTasksSection.emptyTitleMessage).toBeVisible();
-
-    await formAPage.submitForm();
-    await expect(formAPage.submissionApprovedMessage, 'form should not be approved').toBeHidden();
-
-    await researchTasksSection.authorInput('first').fill('Jakiś autor');
-    await expect(researchTasksSection.emptyAuthorMessage).toBeHidden();
-    await researchTasksSection.titleInput('first').fill('Jakiś tytuł');
-    await expect(researchTasksSection.emptyTitleMessage).toBeHidden();
-
+    await section.cruiseGoalDescriptionInput.fill('Jakiś opis');
+    await expect(section.noCruiseGoalDescriptionMessage).toBeHidden();
     await formAPage.submitForm({ expectedResult: 'valid' });
   });
 });
@@ -389,222 +288,56 @@ test.describe('contracts section tests', () => {
     await formAPage.fillForm({ except: ['contractsSection'] });
   });
 
-  test('no contracts', async ({ formAPage }) => {
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-
-  test.fixme('missing data', async ({ formAPage }) => {
+  // Row-level contract validation is unit tested; this covers the scan upload, which is UI only.
+  test.fixme('scan file is required', async ({ formAPage }) => {
     const contractsSection = formAPage.sections.contractsSection;
     await contractsSection.addNewContractDropdown.selectOption('Międzynarodowa');
     const contractRow = contractsSection.contractRow('first');
 
-    await formAPage.submitForm();
-    await expect(formAPage.submissionApprovedMessage).toBeHidden();
-
-    // for the 'empty' message to appear, the field must be detected as touched, so it is filled with some value at first
-    const inputFields = [
+    for (const inputField of [
       contractRow.institutionNameInput,
       contractRow.institutionUnitInput,
       contractRow.institutionLocationInput,
       contractRow.descriptionInput,
-    ];
-    for (const inputField of inputFields) {
-      await touchInput(inputField);
-      await expect(inputField.errors.required).toBeVisible();
-    }
-
-    for (const inputField of inputFields) {
-      await expect(inputField.errors.required).toBeVisible();
+    ]) {
       await inputField.fill('Wartość');
-      await expect(inputField.errors.required).toBeHidden();
     }
 
     await formAPage.submitForm({ expectedResult: 'invalid' });
-
     await expect(contractRow.scanFileInput.errors.required).toBeVisible();
 
     await contractRow.scanFileInput.send(MOCK_PDF_FILEPATH);
     await expect(contractRow.scanFileInput.errors.required).toBeHidden();
-
     await formAPage.submitForm({ expectedResult: 'valid' });
   });
 });
 
-test.describe('members section tests', () => {
+test.describe('adding rows through the UI', () => {
   test.beforeEach(async ({ formAPage }) => {
-    await formAPage.fillForm({ except: ['membersSection'] });
+    await formAPage.fillForm({
+      except: ['researchAreaSection', 'researchTasksSection', 'membersSection'],
+    });
   });
 
-  test('missing UG team', async ({ formAPage }) => {
-    const membersSection = formAPage.sections.membersSection;
-    await formAPage.submitForm({ expectedResult: 'invalid' });
-    await expect(membersSection.noUGUnitsMessage).toBeVisible();
+  test('rows added via dropdowns and buttons make the form submittable', async ({ formAPage }) => {
+    const { researchAreaSection, researchTasksSection, membersSection } = formAPage.sections;
+
+    await researchAreaSection.addResearchAreaDropdown.selectOption('Głębia Gdańska');
+    await expect(researchAreaSection.noResearchAreasMessage).toBeHidden();
+
+    await researchTasksSection.addNewTaskDropdown.selectOption('Praca doktorska');
+    await expect(researchTasksSection.noResearchTasksMessage).toBeHidden();
+    await researchTasksSection.authorInput('first').fill('Jakiś autor');
+    await researchTasksSection.titleInput('first').fill('Jakiś tytuł');
 
     await membersSection.addUGUnitDropdown.selectOption('Biuro Prawne (0300)');
     await expect(membersSection.noUGUnitsMessage).toBeHidden();
-  });
-
-  ['employees', 'students'].forEach((whoToIncrease) => {
-    test(`invalid UG team members count - ${whoToIncrease}`, async ({ formAPage }) => {
-      const membersSection = formAPage.sections.membersSection;
-      await membersSection.addUGUnitDropdown.selectOption('Biuro Prawne (0300)');
-      await formAPage.submitForm({ expectedResult: 'invalid' });
-      await expect(membersSection.invalidUGNofMembersMessage).toBeVisible();
-
-      if (whoToIncrease == 'employees') {
-        await membersSection.ugUnitRow('first').noOfEmployeesInput.fill('1');
-      } else {
-        await membersSection.ugUnitRow('first').noOfStudentsInput.fill('1');
-      }
-
-      await expect(membersSection.invalidUGNofMembersMessage).toBeHidden();
-      await formAPage.submitForm({ expectedResult: 'valid' });
-    });
-  });
-
-  test('guest team input', async ({ formAPage }) => {
-    const membersSection = formAPage.sections.membersSection;
-    await membersSection.addUGUnitDropdown.selectOption('Biuro Prawne (0300)');
     await membersSection.ugUnitRow('first').noOfEmployeesInput.fill('1');
+
     await membersSection.addNewGuestTeamButton.click();
-
-    await touchInput(membersSection.guestTeamRow('first').teamNameInput);
-    await expect(membersSection.emptyGuestTeamNameMessage).toBeVisible();
-
     await membersSection.guestTeamRow('first').teamNameInput.fill('Jakiś zespół');
-    await membersSection.guestTeamRow('first').teamNameInput.blur();
-    await expect(membersSection.emptyGuestTeamNameMessage).toBeHidden();
-
-    await formAPage.submitForm({ expectedResult: 'invalid' });
-    await expect(membersSection.invalidGuestTeamCountMessage).toBeVisible();
-
     await membersSection.guestTeamRow('first').noOfPeopleInput.fill('1');
-    await expect(membersSection.invalidGuestTeamCountMessage).toBeHidden();
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-});
-
-test.describe('publications section tests', () => {
-  test.beforeEach(async ({ formAPage }) => {
-    await formAPage.fillForm({ except: ['publicationsSection'] });
-  });
-
-  test('no publications', async ({ formAPage }) => {
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-
-  test('missing publication data', async ({ formAPage }) => {
-    const publicationsSection = formAPage.sections.publicationsSection;
-    await publicationsSection.addPublicationDropdown.selectOption('Temat');
-
-    await formAPage.submitForm();
-    await expect(formAPage.submissionApprovedMessage, 'form should not be approved').toBeHidden();
-
-    // for the 'empty' message to appear, the field must be detected as touched, so it is filled with some value at first
-    const inputFields = [
-      publicationsSection.doiInput('first'),
-      publicationsSection.titleInput('first'),
-      publicationsSection.authorsInput('first'),
-      publicationsSection.magazineInput('first'),
-    ];
-    for (const inputField of inputFields) {
-      await touchInput(inputField);
-    }
-
-    await expect(publicationsSection.emptyDoiMessage).toBeVisible();
-    await expect(publicationsSection.emptyTitleMessage).toBeVisible();
-    await expect(publicationsSection.emptyAuthorsMessage).toBeVisible();
-    await expect(publicationsSection.emptyMagazineMessage).toBeVisible();
-
-    await publicationsSection.doiInput('first').fill('Jakieś doi');
-    await expect(publicationsSection.emptyDoiMessage).toBeHidden();
-
-    await publicationsSection.titleInput('first').fill('Jakiś tytuł');
-    await expect(publicationsSection.emptyTitleMessage).toBeHidden();
-
-    await publicationsSection.authorsInput('first').fill('Jakiś autor');
-    await expect(publicationsSection.emptyAuthorsMessage).toBeHidden();
-
-    await publicationsSection.magazineInput('first').fill('Jakiś magazyn');
-    await expect(publicationsSection.emptyMagazineMessage).toBeHidden();
-
-    await formAPage.submitForm({ expectedResult: 'invalid' });
-    await expect(publicationsSection.emptyYearMessage).toBeVisible();
-
-    await publicationsSection.chooseYearDropdown('first').selectOption('2025');
-    await expect(publicationsSection.emptyYearMessage).toBeHidden();
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-});
-
-test.describe('SPUB tasks section tests', () => {
-  test.beforeEach(async ({ formAPage }) => {
-    await formAPage.fillForm({ except: ['spubTasksSection'] });
-  });
-
-  test('no SPUB tasks', async ({ formAPage }) => {
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-
-  test('missing SPUB task data', async ({ formAPage }) => {
-    const spubTasksSection = formAPage.sections.spubTasksSection;
-    await spubTasksSection.addNewTaskButton.click();
-    const taskRow = spubTasksSection.taskRow('first');
-
-    await formAPage.submitForm({ expectedResult: 'invalid' });
-    await expect(taskRow.nameDropdown.errors.required).toBeVisible();
-    await expect(taskRow.startYearDropdown.errors.required).toBeVisible();
-    await expect(taskRow.endYearDropdown.errors.required).toBeVisible();
-
-    await taskRow.nameDropdown.dropdown.click();
-    await formAPage.page.getByRole('option').first().click();
-    await expect(taskRow.nameDropdown.errors.required).toBeHidden();
-
-    await taskRow.startYearDropdown.selectOption('2023');
-    await expect(taskRow.startYearDropdown.errors.required).toBeHidden();
-
-    await taskRow.endYearDropdown.selectOption('2025');
-    await expect(taskRow.endYearDropdown.errors.required).toBeHidden();
 
     await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-});
-
-test.describe('supervisor info section tests', () => {
-  test.beforeEach(async ({ formAPage }) => {
-    await formAPage.fillForm({ except: ['supervisorInfoSection'] });
-  });
-
-  test('missing supervisor email', async ({ formAPage }) => {
-    const supervisorInfoSection = formAPage.sections.supervisorInfoSection;
-    await formAPage.submitForm({ expectedResult: 'invalid' });
-    await expect(supervisorInfoSection.missingEmailMessage).toBeVisible();
-
-    await supervisorInfoSection.supervisorEmailInput.fill('mail@gmail.com');
-    await expect(supervisorInfoSection.missingEmailMessage).toBeHidden();
-    await formAPage.submitForm({ expectedResult: 'valid' });
-  });
-
-  test.describe('email validation', () => {
-    const cases: [string, boolean][] = [
-      ['abcd', false],
-      ['abcd@', false],
-      ['abcd@gmail', false],
-      ['abcd@gmail.com', true],
-      ['abcd@wp.pl', true],
-      ['abc+def@gmail.com', true],
-    ];
-    cases.forEach(([email, isValid]) => {
-      test(`email validation - ${email}`, async ({ formAPage }) => {
-        const supervisorInfoSection = formAPage.sections.supervisorInfoSection;
-        await supervisorInfoSection.supervisorEmailInput.fill(email);
-        if (isValid) {
-          await formAPage.submitForm({ expectedResult: 'valid' });
-        } else {
-          await formAPage.submitForm();
-          await expect(formAPage.submissionApprovedMessage, 'form should not be approved').toBeHidden();
-        }
-      });
-    });
   });
 });
