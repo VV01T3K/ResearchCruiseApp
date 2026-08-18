@@ -1,4 +1,4 @@
-import { useStore, type AnyFormApi } from '@tanstack/react-form';
+import { useSelector, type AnyFormApi } from '@tanstack/react-form';
 
 type Props = {
   form: AnyFormApi;
@@ -25,9 +25,9 @@ function toMessage(error: unknown): string {
  * the latter.
  */
 export function FormStateProbe({ form }: Props) {
-  const isValid = useStore(form.store, (state) => state.isValid);
+  const isValid = useSelector(form.store, (state) => state.isValid);
 
-  const errors = useStore(form.store, (state) => {
+  const errors = useSelector(form.store, (state) => {
     const collected: Record<string, string[]> = {};
 
     const add = (key: string, rawErrors: unknown[]) => {
