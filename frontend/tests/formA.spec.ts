@@ -181,6 +181,8 @@ test.describe('cruise length section tests', () => {
     await expect(section.emptyAlternativeShipUsageMessage).toBeVisible();
 
     await section.alternativeShipUsageInput.fill('jakieś inne użycie');
+    // plain Locator, so it does not get FormInput.fill's automatic blur
+    await section.alternativeShipUsageInput.blur();
     await expect(section.emptyAlternativeShipUsageMessage).toBeHidden();
     await formAPage.submitForm({ expectedResult: 'valid' });
   });
@@ -199,6 +201,8 @@ test.describe('cruise goal section tests', () => {
     await expect(section.noCruiseGoalDescriptionMessage).toBeVisible();
 
     await section.cruiseGoalDescriptionInput.fill('Jakiś opis');
+    // plain Locator, so it does not get FormInput.fill's automatic blur
+    await section.cruiseGoalDescriptionInput.blur();
     await expect(section.noCruiseGoalDescriptionMessage).toBeHidden();
     await formAPage.submitForm({ expectedResult: 'valid' });
   });

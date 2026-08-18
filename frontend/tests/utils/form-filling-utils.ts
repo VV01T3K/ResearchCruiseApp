@@ -92,8 +92,17 @@ export class FormInput<TErrors extends Record<string, Locator> = Record<string, 
     this.errors = options?.errors ?? ({} as TErrors);
   }
 
+  /**
+   * Fills the input and blurs it.
+   *
+   * The form fields wire `onChange={field.setValue}`, which updates the value without
+   * triggering change-validation, so `field.state.meta.errors` — and therefore the rendered
+   * error message — only recomputes on blur. Filling without blurring leaves a stale error
+   * on screen even though the value is already correct.
+   */
   async fill(value: string) {
     await this.input.fill(value);
+    await this.input.blur();
   }
 }
 
