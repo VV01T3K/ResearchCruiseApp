@@ -1,26 +1,8 @@
 import { expect } from '@playwright/test';
 import { formTest as test } from '@tests/fixtures/fixtures';
-import { formBDefaultValues, getFormBDraftWriteSchema } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 
 import { MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { touchInput } from './utils/form-filling-utils';
-
-test('draft form B requires the complete input shape while allowing empty values', () => {
-  const draft = {
-    ...formBDefaultValues,
-    permissions: [{ description: '', executive: '', scan: undefined }],
-  };
-  expect(getFormBDraftWriteSchema().safeParse(draft).success).toBe(true);
-
-  const { shipEquipmentsIds: _omitted, ...missingKey } = draft;
-  expect(getFormBDraftWriteSchema().safeParse(missingKey).success).toBe(false);
-  expect(
-    getFormBDraftWriteSchema().safeParse({
-      ...draft,
-      cruiseDaysDetails: [{ number: 0, hours: 0, taskName: '', region: '', position: '', comment: 'x'.repeat(1025) }],
-    }).success
-  ).toBe(false);
-});
 
 /** Section → fields that must report an error when the section holds a row of invalid data. */
 const INVALID_ROW_SECTION_FIELDS = {

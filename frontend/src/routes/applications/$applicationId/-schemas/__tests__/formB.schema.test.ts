@@ -5,6 +5,7 @@ import formBBase from '@tests/assets/api-mocks/api_CruiseApplications_id_formB.j
 import {
   formBDefaultValues,
   type FormBValues,
+  getFormBDraftWriteSchema,
   getFormBValidationSchema,
   mapFormBToValues,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -38,7 +39,11 @@ const validRows = {
     startDate: '2025-06-01',
     endDate: '2025-06-02',
   } satisfies FormBValues['shortResearchEquipments'][number],
-  longEquipment: { name: 'Boja', action: 'Put', duration: '10' } satisfies FormBValues['longResearchEquipments'][number],
+  longEquipment: {
+    name: 'Boja',
+    action: 'Put',
+    duration: '10',
+  } satisfies FormBValues['longResearchEquipments'][number],
   port: { name: 'Gdynia', startTime: '2025-06-01', endTime: '2025-06-02' } satisfies FormBValues['ports'][number],
   cruiseDay: {
     number: 1,
@@ -266,5 +271,26 @@ describe('formB schema – cruise day details', () => {
 
   it('accepts a comment of exactly 1024 characters', () => {
     expectAccepted(validPayload({ cruiseDaysDetails: [{ ...validRows.cruiseDay, comment: 'A'.repeat(1024) }] }));
+  });
+});
+
+describe('formB schema – draft requests', () => {
+  it('draft accepts empty values but still requires the complete input shape', () => {
+    const draft = {
+      ...formBDefaultValues,
+      permissions: [{ description: '', executive: '', scan: undefined }],
+    };
+    expect(getFormBDraftWriteSchema().safeParse(draft).success).toBe(true);
+
+    const { shipEquipmentsIds: _omitted, ...missingKey } = draft;
+    expect(getFormBDraftWriteSchema().safeParse(missingKey).success).toBe(false);
+  });
+
+  it('draft still enforces the cruise day comment length limit', () => {
+    const draft = {
+      ...formBDefaultValues,
+      cruiseDaysDetails: [{ number: 0, hours: 0, taskName: '', region: '', position: '', comment: 'x'.repeat(1025) }],
+    };
+    expect(getFormBDraftWriteSchema().safeParse(draft).success).toBe(false);
   });
 });

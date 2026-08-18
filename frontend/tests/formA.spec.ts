@@ -1,102 +1,23 @@
 import { expect } from '@playwright/test';
 
-import {
-  formADefaultValues,
-  getFormADraftWriteSchema,
-  getFormAWriteSchema,
-  mapFormAToValues,
-  mapResearchTaskToValues,
-} from '@/routes/applications/$applicationId/-schemas/formA.schema';
-
 import { API_URL, MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { formTest as test } from './fixtures/fixtures';
 import { type FormAPage } from './fixtures/pages/formA/formAPage';
-import { getFormAPayload, getInitValuesAPayload } from './fixtures/mockPayloads';
 import { touchInput } from './utils/form-filling-utils';
 
 type FormASection = keyof FormAPage['sections'];
 
-test('draft form A requires the complete input shape while allowing empty values', () => {
-  const initValues = getInitValuesAPayload();
-  const draft = {
-    ...formADefaultValues,
-    cruiseManagerId: initValues.cruiseManagers[0].id,
-    year: initValues.years[0],
-    permissions: [{ description: '', executive: '', scan: undefined }],
-  };
-  const schema = getFormADraftWriteSchema();
-  expect(schema.safeParse(draft).success).toBe(true);
-
-  const { note: _omitted, ...missingKey } = draft;
-  expect(schema.safeParse(missingKey).success).toBe(false);
-});
-
-test('preserves empty research task numbers through the form round trip', () => {
-  const initValues = getInitValuesAPayload();
-  const draft = {
-    ...formADefaultValues,
-    cruiseManagerId: initValues.cruiseManagers[0].id,
-    researchTasks: [
-      {
-        type: '4' as const,
-        title: '',
-        financingAmount: null,
-        startDate: '',
-        endDate: '',
-        securedAmount: null,
-      },
-      {
-        type: '10' as const,
-        title: '',
-        date: '',
-        magazine: '',
-        ministerialPoints: null,
-      },
-    ],
-  };
-
-  expect(mapResearchTaskToValues({ type: '4', financingAmount: null, securedAmount: null })).toMatchObject({
-    financingAmount: null,
-    securedAmount: null,
-  });
-  expect(mapResearchTaskToValues({ type: '10', ministerialPoints: null })).toMatchObject({
-    ministerialPoints: null,
-  });
-
-  const request = getFormADraftWriteSchema().parse(draft);
-  expect(request.form.researchTasks![0]).toMatchObject({ financingAmount: null, securedAmount: null });
-  expect(request.form.researchTasks![1]).toMatchObject({ ministerialPoints: null });
-});
-
-test('normalizes backend precise-period datetimes at the API boundary', () => {
-  const initValues = getInitValuesAPayload();
-  const form = {
-    ...mapFormAToValues(getFormAPayload()),
-    cruiseManagerId: initValues.cruiseManagers[0].id,
-    deputyManagerId: initValues.deputyManagers[1].id,
-    year: initValues.years[0],
-    periodSelectionType: 'precise' as const,
-    acceptablePeriod: '',
-    optimalPeriod: '',
-    precisePeriodStart: '2026-07-20',
-    precisePeriodEnd: '2026-07-23T00:00:00',
-    cruiseDays: 2,
-    cruiseHours: 3,
-    note: '',
-  };
-
-  const request = getFormAWriteSchema(initValues).parse(form);
-
-  expect(request.form.precisePeriodStart).toBe('2026-07-20T00:00:00Z');
-  expect(request.form.precisePeriodEnd).toBe('2026-07-23T00:00:00Z');
-  expect(request.form.cruiseHours).toBe(String(form.cruiseDays * 24 + form.cruiseHours));
-  expect(request.form).not.toHaveProperty('cruiseDays');
-});
-
-/** Section → the form fields that must report an error when that section is invalid. */
+/**
+ * Section → the form fields that must report an error when that section is invalid.
+ *
+ * Only field-level (object shape) rules can appear here. Zod skips `.superRefine` when the
+ * object shape itself fails, so cross-field rules — the `cruiseHours` cruise-duration check
+ * among them — never fire for a payload that also blanks a field-level one such as
+ * `shipUsage`. Those rules are covered in `formA.schema.test.ts` instead.
+ */
 const REQUIRED_SECTION_FIELDS = {
   cruiseManagerInfoSection: ['deputyManagerId'],
-  cruiseLengthSection: ['cruiseHours', 'shipUsage'],
+  cruiseLengthSection: ['shipUsage'],
   researchAreaSection: ['researchAreaDescriptions'],
   cruiseGoalSection: ['cruiseGoal'],
   researchTasksSection: ['researchTasks'],

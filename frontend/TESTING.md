@@ -4,8 +4,8 @@ Two layers, split by what they can actually prove:
 
 | Layer                     | Runner             | Location            | Count | Time   |
 | ------------------------- | ------------------ | ------------------- | ----- | ------ |
-| Unit (validation schemas) | Vitest (`vp test`) | `src/**/__tests__/` | 172   | ~0.5 s |
-| End-to-end (browser)      | Playwright         | `tests/`            | 44    | ~2 min |
+| Unit (validation schemas) | Vitest (`vp test`) | `src/**/__tests__/` | 178   | ~0.5 s |
+| End-to-end (browser)      | Playwright         | `tests/`            | 80    | ~2 min |
 
 ## Commands
 
@@ -23,7 +23,7 @@ First-time browser setup: `vp dlx playwright install --with-deps`.
 ## The split: what belongs where
 
 Validation in this app is pure Zod. Given a payload, the schema returns a verdict — no DOM,
-no rendering, no event handling. Those cases belong in unit tests, where 172 of them run in
+no rendering, no event handling. Those cases belong in unit tests, where 178 of them run in
 half a second instead of costing a page load each.
 
 A test earns its place in the browser only if it needs one:
@@ -45,9 +45,9 @@ rules, list minimums) is covered at the schema level.
 
 | File                   | Tests | Schema under test                      |
 | ---------------------- | ----- | -------------------------------------- |
-| `formA.schema.test.ts` | 77    | `getFormAValidationSchema(initValues)` |
-| `formB.schema.test.ts` | 52    | `getFormBValidationSchema()`           |
-| `formC.schema.test.ts` | 40    | `getFormCValidationSchema(initValues)` |
+| `formA.schema.test.ts` | 80    | `getFormAValidationSchema(initValues)` |
+| `formB.schema.test.ts` | 54    | `getFormBValidationSchema()`           |
+| `formC.schema.test.ts` | 41    | `getFormCValidationSchema(initValues)` |
 
 `src/validation/__tests__/loginValidation.test.ts` — 3 tests for `loginValidationSchema`.
 
@@ -68,13 +68,15 @@ Each file follows the same shape:
 
 ### What is covered
 
-**Form A** — email formats; `cruiseHours` bounds (`-100`, `-1`, `0`, `abc`, `''`, `1441`
-rejected; `1`, `720`, `1440` accepted); ship usage and its conditional `differentUsage`;
-cruise goal and its conditional description; manager ≠ deputy; required vs optional sections;
-UG teams (negative counts, zero total, duplicate units); guest teams; permissions; contracts;
-publications (including negative ministerial points); SPUB tasks; research tasks; research
-areas; cruise periods (optimal inside acceptable, period long enough for the cruise, precise
-start/end ordering); year.
+**Form A** — email formats; cruise duration, expressed as a `cruiseDays` + `cruiseHours` pair
+and validated on their total (`0 + 0` and `60 + 1` rejected; `1 + 0`, `30 + 0`, `59 + 23` and
+`60 + 0` accepted); ship usage and its conditional `differentUsage`; cruise goal and its
+conditional description; manager ≠ deputy; required vs optional sections; UG teams (negative
+counts, zero total, duplicate units); guest teams; permissions; contracts; publications
+(including negative ministerial points); SPUB tasks; research tasks; research areas; cruise
+periods (optimal inside acceptable, period long enough for the cruise, precise start/end
+ordering); year; and the write/draft request schemas (draft shape completeness, null-preserving
+research task numbers, precise-period datetime normalisation).
 
 **Form B** — `isCruiseManagerPresent`; UG teams; guest teams; permissions (scan required and
 must be `.pdf`); crew members (all eight fields); short, long and research equipment; ports;
@@ -88,8 +90,9 @@ have its conditions met); collected samples (amount must be positive); contracts
 
 ## E2E tests — Playwright
 
-`tests/` — `formA.spec.ts` (11), `formB.spec.ts` (8), `formC.spec.ts` (14),
-`login.spec.ts` (3), `session.spec.ts` (5), `server-health-message.spec.ts` (3).
+`tests/` — `formA.spec.ts` (14), `formB.spec.ts` (8), `formC.spec.ts` (15),
+`login.spec.ts` (5), `session.spec.ts` (11), `server-health-message.spec.ts` (3), plus
+auth, user-management, applications, cruises and supervisor-review specs.
 
 ### Fixtures and how a form is loaded
 
@@ -158,6 +161,13 @@ for (const [section, fields] of Object.entries(sectionFields)) {
 section is still evaluated. A single broken section is reported by name while the others are
 shown to have behaved correctly — the diagnosability of per-section tests, at the cost of one
 page load. Failure messages include the full list of reported keys.
+
+**Only field-level rules can be asserted here.** Zod runs `.superRefine` on a `ZodObject` only
+after the object shape itself parses, so a payload that blanks a field-level rule short-circuits
+every cross-field rule. Blanking Form A's cruise length section clears `shipUsage`, which fails
+`z.enum` at the shape level — so the `cruiseHours` duration check inside `superRefine` never
+runs and can never appear in the error map. Cross-field rules belong in the schema unit tests,
+where a payload can isolate them.
 
 ### What stays in the browser
 

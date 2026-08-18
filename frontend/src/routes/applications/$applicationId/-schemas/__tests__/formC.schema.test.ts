@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest';
 
 import initValuesJson from '@tests/assets/api-mocks/api_forms_InitValues_A.json' with { type: 'json' };
 
-import { formCDefaultValues, type FormCValues, getFormCValidationSchema } from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import {
+  formCDefaultValues,
+  type FormCValues,
+  getFormCDraftWriteSchema,
+  getFormCValidationSchema,
+} from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 import type { FormAOptions } from '@/api/client/applications/types/FormAOptions';
 
@@ -214,5 +219,19 @@ describe('formC schema – research areas', () => {
     expectAccepted(
       validPayload({ researchAreaDescriptions: [{ areaId: null, differentName: 'Własny rejon', info: '' }] })
     );
+  });
+});
+
+describe('formC schema – draft requests', () => {
+  it('draft accepts empty values but still requires the complete input shape', () => {
+    const draft = {
+      ...formCDefaultValues,
+      permissions: [{ description: '', executive: '', scan: undefined }],
+    };
+    const draftSchema = getFormCDraftWriteSchema();
+    expect(draftSchema.safeParse(draft).success).toBe(true);
+
+    const { photos: _omitted, ...missingKey } = draft;
+    expect(draftSchema.safeParse(missingKey).success).toBe(false);
   });
 });

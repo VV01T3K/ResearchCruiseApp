@@ -1,21 +1,8 @@
 import { expect } from '@playwright/test';
 import { formTest as test } from '@tests/fixtures/fixtures';
-import { formCDefaultValues, getFormCDraftWriteSchema } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 
 import { API_URL, MOCK_IMAGE_FILEPATH, MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { touchInput } from './utils/form-filling-utils';
-
-test('draft form C requires the complete input shape while allowing empty values', () => {
-  const draft = {
-    ...formCDefaultValues,
-    permissions: [{ description: '', executive: '', scan: undefined }],
-  };
-  const schema = getFormCDraftWriteSchema();
-  expect(schema.safeParse(draft).success).toBe(true);
-
-  const { photos: _omitted, ...missingKey } = draft;
-  expect(schema.safeParse(missingKey).success).toBe(false);
-});
 
 test('missing form B shows not found', async ({ formCPage }) => {
   await formCPage.page.route(`${API_URL}/v2/applications/${formCPage.formId}/form-b`, (route) =>

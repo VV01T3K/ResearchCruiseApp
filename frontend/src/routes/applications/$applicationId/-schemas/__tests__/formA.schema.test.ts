@@ -6,8 +6,11 @@ import initValuesJson from '@tests/assets/api-mocks/api_forms_InitValues_A.json'
 import {
   formADefaultValues,
   type FormAValues,
+  getFormADraftWriteSchema,
   getFormAValidationSchema,
+  getFormAWriteSchema,
   mapFormAToValues,
+  mapResearchTaskToValues,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { CruiseGoal } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import { PublicationCategory } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
@@ -389,5 +392,81 @@ describe('formA schema – cruise periods', () => {
 describe('formA schema – year', () => {
   it('rejects a year outside the available years', () => {
     expectRejectedAt(validPayload({ year: '1999' }), 'year');
+  });
+});
+
+describe('formA schema – write and draft requests', () => {
+  it('draft accepts empty values but still requires the complete input shape', () => {
+    const draft = {
+      ...formADefaultValues,
+      cruiseManagerId: initValues.cruiseManagers[0].id,
+      year: initValues.years[0],
+      permissions: [{ description: '', executive: '', scan: undefined }],
+    };
+    const schema = getFormADraftWriteSchema();
+    expect(schema.safeParse(draft).success).toBe(true);
+
+    const { note: _omitted, ...missingKey } = draft;
+    expect(schema.safeParse(missingKey).success).toBe(false);
+  });
+
+  it('preserves empty research task numbers through the form round trip', () => {
+    const draft = {
+      ...formADefaultValues,
+      cruiseManagerId: initValues.cruiseManagers[0].id,
+      researchTasks: [
+        {
+          type: '4' as const,
+          title: '',
+          financingAmount: null,
+          startDate: '',
+          endDate: '',
+          securedAmount: null,
+        },
+        {
+          type: '10' as const,
+          title: '',
+          date: '',
+          magazine: '',
+          ministerialPoints: null,
+        },
+      ],
+    };
+
+    expect(mapResearchTaskToValues({ type: '4', financingAmount: null, securedAmount: null })).toMatchObject({
+      financingAmount: null,
+      securedAmount: null,
+    });
+    expect(mapResearchTaskToValues({ type: '10', ministerialPoints: null })).toMatchObject({
+      ministerialPoints: null,
+    });
+
+    const request = getFormADraftWriteSchema().parse(draft);
+    expect(request.form.researchTasks![0]).toMatchObject({ financingAmount: null, securedAmount: null });
+    expect(request.form.researchTasks![1]).toMatchObject({ ministerialPoints: null });
+  });
+
+  it('normalizes backend precise-period datetimes at the API boundary', () => {
+    const form = {
+      ...mapFormAToValues(formABase as unknown as FormAFields),
+      cruiseManagerId: initValues.cruiseManagers[0].id,
+      deputyManagerId: initValues.deputyManagers[1].id,
+      year: initValues.years[0],
+      periodSelectionType: 'precise' as const,
+      acceptablePeriod: '' as const,
+      optimalPeriod: '' as const,
+      precisePeriodStart: '2026-07-20',
+      precisePeriodEnd: '2026-07-23T00:00:00',
+      cruiseDays: 2,
+      cruiseHours: 3,
+      note: '',
+    };
+
+    const request = getFormAWriteSchema(initValues).parse(form);
+
+    expect(request.form.precisePeriodStart).toBe('2026-07-20T00:00:00Z');
+    expect(request.form.precisePeriodEnd).toBe('2026-07-23T00:00:00Z');
+    expect(request.form.cruiseHours).toBe(String(form.cruiseDays * 24 + form.cruiseHours));
+    expect(request.form).not.toHaveProperty('cruiseDays');
   });
 });
