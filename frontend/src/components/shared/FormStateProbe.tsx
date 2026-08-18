@@ -1,5 +1,7 @@
 import { useSelector, type AnyFormApi } from '@tanstack/react-form';
 
+import config from '@/config';
+
 type Props = {
   form: AnyFormApi;
 };
@@ -24,7 +26,7 @@ function toMessage(error: unknown): string {
  * no mounted field — array-level refinements such as `ugTeams.refine(...)` — only ever reach
  * the latter.
  */
-export function FormStateProbe({ form }: Props) {
+function FormStateProbeInternal({ form }: Props) {
   const isValid = useSelector(form.store, (state) => state.isValid);
 
   const errors = useSelector(form.store, (state) => {
@@ -64,4 +66,10 @@ export function FormStateProbe({ form }: Props) {
       aria-hidden="true"
     />
   );
+}
+
+export function FormStateProbe({ form }: Props) {
+  if (!config.dev) return null;
+
+  return <FormStateProbeInternal form={form} />;
 }
