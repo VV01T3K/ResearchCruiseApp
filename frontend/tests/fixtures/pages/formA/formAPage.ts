@@ -271,11 +271,35 @@ export class FormAPage {
     return payload;
   }
 
+  /**
+   * Makes the save fail. An existing application is edited, so the form submits
+   * `PUT /v2/applications/{id}/form-a` — not the `POST /v2/applications` create route.
+   *
+   * Registered after `setFormAResponse`, so it takes precedence for the PUT and falls back
+   * to the GET handler that serves the form payload.
+   */
+  public async failSaveWith(status: number, body: unknown) {
+    await this.page.route(`${API_URL}/v2/applications/${this.formId}/form-a`, (route) => {
+      if (route.request().method() !== 'PUT') {
+        return route.fallback();
+      }
+      route.fulfill({
+        status,
+        contentType: 'application/problem+json',
+        body: JSON.stringify(body),
+      });
+    });
+  }
+
   private async setFormAResponse(payload: FormAFields) {
     const url = `${API_URL}/v2/applications/${this.formId}/form-a`;
 
     await this.page.unroute(url).catch(() => undefined);
     await this.page.route(url, (route) => {
+      if (route.request().method() === 'PUT') {
+        return route.fulfill({ status: 200 });
+      }
+
       route.fulfill({
         status: 200,
         body: JSON.stringify(payload),

@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 
-import { API_URL, MOCK_PDF_FILEPATH } from './fixtures/consts';
+import { MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { formTest as test } from './fixtures/fixtures';
 import { type FormAPage } from './fixtures/pages/formA/formAPage';
 import { touchInput } from './utils/form-filling-utils';
@@ -93,6 +93,10 @@ test('all sections filled with invalid rows', async ({ formAPage }) => {
 });
 
 test('centers the first invalid field after submit', async ({ formAPage }) => {
+  // The fixture loads a valid application, so blank a section to give submit something to fail
+  // on. It has to be a mid-form section: an element at the very top or bottom of the document
+  // cannot be scrolled to the middle of the viewport, which is what this test asserts.
+  await formAPage.fillForm({ except: ['cruiseGoalSection'] });
   await formAPage.page.evaluate(() => {
     const scrollIntoView = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollIntoView')!.value;
     HTMLElement.prototype.scrollIntoView = function (options) {
@@ -117,13 +121,9 @@ test('centers the first invalid field after submit', async ({ formAPage }) => {
 
 test('shows server validation errors on their fields', async ({ formAPage }) => {
   await formAPage.fillForm();
-  await formAPage.page.route(`${API_URL}/v2/applications`, (route) =>
-    route.fulfill({
-      status: 400,
-      contentType: 'application/problem+json',
-      body: JSON.stringify({ errors: { 'Form.SupervisorEmail': ['Adres przełożonego został odrzucony'] } }),
-    })
-  );
+  await formAPage.failSaveWith(400, {
+    errors: { 'Form.SupervisorEmail': ['Adres przełożonego został odrzucony'] },
+  });
 
   await formAPage.submitButton.click();
 
@@ -135,13 +135,7 @@ test('shows server validation errors on their fields', async ({ formAPage }) => 
 
 test('shows a support code when saving fails', async ({ formAPage }) => {
   await formAPage.fillForm();
-  await formAPage.page.route(`${API_URL}/v2/applications`, (route) =>
-    route.fulfill({
-      status: 503,
-      contentType: 'application/problem+json',
-      body: JSON.stringify({ detail: 'Wystąpił nieoczekiwany błąd. Kod błędu: 0HNC7ABC123' }),
-    })
-  );
+  await formAPage.failSaveWith(503, { detail: 'Wystąpił nieoczekiwany błąd. Kod błędu: 0HNC7ABC123' });
 
   await formAPage.submitButton.click();
 
