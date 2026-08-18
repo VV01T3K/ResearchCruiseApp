@@ -4,7 +4,7 @@ Two layers, split by what they can actually prove:
 
 | Layer                     | Runner             | Location            | Count | Time   |
 | ------------------------- | ------------------ | ------------------- | ----- | ------ |
-| Unit (validation schemas) | Vitest (`vp test`) | `src/**/__tests__/` | 190   | ~0.5 s |
+| Unit (validation schemas) | Vitest (`vp test`) | `src/**/__tests__/` | 172   | ~0.5 s |
 | End-to-end (browser)      | Playwright         | `tests/`            | 44    | ~2 min |
 
 ## Commands
@@ -23,7 +23,7 @@ First-time browser setup: `vp dlx playwright install --with-deps`.
 ## The split: what belongs where
 
 Validation in this app is pure Zod. Given a payload, the schema returns a verdict — no DOM,
-no rendering, no event handling. Those cases belong in unit tests, where 190 of them run in
+no rendering, no event handling. Those cases belong in unit tests, where 172 of them run in
 half a second instead of costing a page load each.
 
 A test earns its place in the browser only if it needs one:
@@ -41,13 +41,13 @@ rules, list minimums) is covered at the schema level.
 
 ## Unit tests — validation schemas
 
-`src/routes/_authed/applications/$applicationId/-schemas/__tests__/`
+`src/routes/applications/$applicationId/-schemas/__tests__/`
 
 | File                   | Tests | Schema under test                      |
 | ---------------------- | ----- | -------------------------------------- |
-| `formA.schema.test.ts` | 84    | `getFormAValidationSchema(initValues)` |
-| `formB.schema.test.ts` | 60    | `getFormBValidationSchema()`           |
-| `formC.schema.test.ts` | 43    | `getFormCValidationSchema(initValues)` |
+| `formA.schema.test.ts` | 77    | `getFormAValidationSchema(initValues)` |
+| `formB.schema.test.ts` | 52    | `getFormBValidationSchema()`           |
+| `formC.schema.test.ts` | 40    | `getFormCValidationSchema(initValues)` |
 
 `src/validation/__tests__/loginValidation.test.ts` — 3 tests for `loginValidationSchema`.
 
