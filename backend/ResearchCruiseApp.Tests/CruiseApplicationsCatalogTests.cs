@@ -51,6 +51,15 @@ public sealed class CruiseApplicationsCatalogTests
                 CruiseApplicationsSortField.Date
             )
         );
+        Assert.True(
+            CruiseApplicationsSorting.IsValidCursorValue("2026", CruiseApplicationsSortField.Year)
+        );
+        Assert.False(
+            CruiseApplicationsSorting.IsValidCursorValue(
+                "not-a-year",
+                CruiseApplicationsSortField.Year
+            )
+        );
     }
 
     private static CruiseApplication Application(int number, Guid managerId)
