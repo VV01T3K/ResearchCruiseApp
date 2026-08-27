@@ -11,6 +11,8 @@ services:
       - FrontendUrl=${FRONTEND_URL:-https://cruise.wsiwiec.com}
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-1}
+      - SmtpSettings__SmtpUsername=${SMTP_USERNAME:?Set SMTP_USERNAME in the deployment environment}
+      - SmtpSettings__SmtpPassword=${SMTP_PASSWORD:?Set SMTP_PASSWORD in the deployment environment}
     networks:
       - researchcruiseapp-network
   frontend:
