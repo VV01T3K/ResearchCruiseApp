@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "path": "README.md",
+      "description": "Local development, architecture, commands, and deployment overview"
+    },
+    {
+      "path": "frontend/TESTING.md",
+      "description": "Test-layer boundaries, fixtures, and guidance for adding stable unit and Playwright tests",
+      "scope": ["frontend/**"]
+    },
+    {
+      "path": "docs/permissions.md",
+      "description": "Role and permission model for the application",
+      "scope": ["backend/**", "frontend/src/**"]
+    },
+    {
+      "path": "frontend/vite.config.ts",
+      "description": "Frontend build, API, runtime configuration, and generated client setup",
+      "scope": ["frontend/**"]
+    },
+    {
+      "path": "docker/docker-compose.dev.yml",
+      "description": "Authoritative local development service wiring and environment defaults",
+      "scope": ["docker/**", "frontend/**", "backend/**"]
+    }
+  ]
+}

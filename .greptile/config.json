@@ -1,0 +1,35 @@
+{
+  "strictness": 2,
+  "commentTypes": ["logic", "syntax", "style"],
+  "triggerOnUpdates": true,
+  "statusCheck": true,
+  "statusCommentsEnabled": true,
+  "ignorePatterns": ".greptile/**\n**/node_modules/**\n**/dist/**\n**/bin/**\n**/obj/**\n**/*.generated.ts\n**/*.lock\n**/*.pdf\n**/*.png\n**/*.jpg\n**/*.ico",
+  "instructions": "ResearchCruiseApp is a Polish-language application for planning and managing research cruises. Review changed code in the context of the frontend/backend API contract, role-based access rules, and the three-stage Form A -> Form B -> Form C workflow. Prioritize runtime correctness, authorization, data loss, API contract mismatches, and regressions over stylistic preferences. Treat generated API clients and migrations as outputs that should be regenerated or reviewed against their source. Do not report intentional test mocks, fixed test dates, or existing legacy code unless the change makes them unsafe or incorrect.",
+  "rules": [
+    {
+      "id": "authz-boundaries",
+      "rule": "For every endpoint or UI action that reads or mutates user, cruise, or application data, verify authorization is enforced for the relevant role and resource owner. Do not rely on a frontend route guard as the security boundary.",
+      "scope": ["backend/**/*.cs", "frontend/src/api/**", "frontend/src/routes/**"],
+      "severity": "high"
+    },
+    {
+      "id": "api-contract-sync",
+      "rule": "When backend request/response contracts change, check the generated OpenAPI document and the generated frontend client, schemas, and hooks. Flag changes that update only one side or bypass the generated API layer without a clear reason.",
+      "scope": ["backend/**/*.cs", "frontend/src/api/**", "frontend/orval.config.ts"],
+      "severity": "high"
+    },
+    {
+      "id": "deterministic-tests",
+      "rule": "Tests must not depend on the machine clock, timezone, network, or an unmocked API. Use the shared fixed test clock and explicit fixtures for time-sensitive behavior; advance fake time deliberately when testing timers.",
+      "scope": ["frontend/tests/**", "frontend/src/**/__tests__/**", "backend/**/*Tests.cs"],
+      "severity": "medium"
+    },
+    {
+      "id": "validation-and-workflow",
+      "rule": "Preserve validation and workflow invariants across the Form A, Form B, and Form C lifecycle. Cross-field constraints, date ordering, required attachments, and draft-versus-final behavior need focused automated coverage when changed.",
+      "scope": ["backend/**/*.cs", "frontend/src/routes/**", "frontend/tests/**"],
+      "severity": "high"
+    }
+  ]
+}

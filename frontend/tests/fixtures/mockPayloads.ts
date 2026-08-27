@@ -6,7 +6,7 @@ import formBPayload from '@tests/assets/api-mocks/api_CruiseApplications_id_form
 import initValuesAPayload from '@tests/assets/api-mocks/api_forms_InitValues_A.json' with { type: 'json' };
 import initValuesBPayload from '@tests/assets/api-mocks/api_forms_InitValues_B.json' with { type: 'json' };
 import authDetailsPayload from '@tests/assets/api-mocks/authDetails.json' with { type: 'json' };
-import { API_URL } from '@tests/fixtures/consts';
+import { API_URL, TEST_NOW } from '@tests/fixtures/consts';
 
 export const getAdminAccountPayload = () => {
   return accountAdminPayload;
@@ -33,8 +33,7 @@ export const getInitValuesBPayload = () => {
 };
 
 export const getAuthDetailsPayload = (timeoutHours: number = 24) => {
-  const expirationDate = new Date();
-  expirationDate.setTime(expirationDate.getTime() + timeoutHours * 60 * 60 * 1000); // add timeout in hours
+  const expirationDate = new Date(TEST_NOW.getTime() + timeoutHours * 60 * 60 * 1000);
 
   return {
     ...authDetailsPayload,

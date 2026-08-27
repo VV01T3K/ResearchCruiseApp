@@ -1,6 +1,6 @@
 import { expect, Page } from '@playwright/test';
 
-import { API_URL, test } from './fixtures/fixtures';
+import { API_URL, TEST_NOW, test } from './fixtures/fixtures';
 import { getAdminAccountPayload, mockAuthenticatedSession } from './fixtures/mockPayloads';
 
 const user = {
@@ -59,10 +59,7 @@ test('role guard refreshes stale account data before allowing navigation', async
   await expect(page.getByText('Zarządzanie użytkownikami')).toBeVisible();
 
   account = { ...account, roles: ['Guest'] };
-  await page.evaluate(() => {
-    const staleTime = Date.now() + 60_001;
-    Date.now = () => staleTime;
-  });
+  await page.clock.setFixedTime(new Date(TEST_NOW.getTime() + 60_001));
   await page.getByText('Zarządzanie użytkownikami').click();
 
   await expect.poll(() => profileRequests).toBeGreaterThan(1);

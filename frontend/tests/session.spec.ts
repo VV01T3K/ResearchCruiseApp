@@ -1,13 +1,13 @@
 import { expect, Page } from '@playwright/test';
 
-import { API_URL, test } from './fixtures/fixtures';
+import { API_URL, TEST_NOW, test } from './fixtures/fixtures';
 import { getAdminAccountPayload, getAuthDetailsPayload } from './fixtures/mockPayloads';
 
 function sessionPayload(accessTokenOffsetMs: number, refreshTokenOffsetMs: number) {
   return {
     ...getAuthDetailsPayload(),
-    accessTokenExpirationDate: new Date(Date.now() + accessTokenOffsetMs).toISOString(),
-    refreshTokenExpirationDate: new Date(Date.now() + refreshTokenOffsetMs).toISOString(),
+    accessTokenExpirationDate: new Date(TEST_NOW.getTime() + accessTokenOffsetMs).toISOString(),
+    refreshTokenExpirationDate: new Date(TEST_NOW.getTime() + refreshTokenOffsetMs).toISOString(),
   };
 }
 

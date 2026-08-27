@@ -1,15 +1,18 @@
 import { test as base } from '@playwright/test';
-import { API_URL, TESTED_FORM_ID } from '@tests/fixtures/consts';
+import { API_URL, TESTED_FORM_ID, TEST_NOW } from '@tests/fixtures/consts';
 
 import { FormAPage } from './pages/formA/formAPage';
 import { FormBPage } from './pages/formB/formBPage';
 import { FormCPage } from './pages/formC/formCPage';
 import { LoginPage } from './pages/loginPage';
-export { API_URL, ASSETS_DIR } from '@tests/fixtures/consts';
+export { API_URL, ASSETS_DIR, TEST_NOW } from '@tests/fixtures/consts';
 
 export const test = base.extend<{ forEachTest: void }>({
   forEachTest: [
     async ({ page }, use) => {
+      // Date-picker options and application session timers must not depend on the day CI runs.
+      await page.clock.install({ time: TEST_NOW });
+
       // By default raise an error if the API is not mocked
       page.route(`${API_URL}/**`, (route) => {
         throw new Error(`API call not mocked: ${route.request().url()}`);
