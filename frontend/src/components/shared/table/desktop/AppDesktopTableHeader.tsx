@@ -25,6 +25,7 @@ export function AppDesktopTableHeader<TData, TValue>({ header, children }: Props
             <Popover.Trigger
               render={
                 <button
+                  data-testid={`${header.column.id}-header-menu`}
                   className={cn(
                     'text-default outline-none hover:cursor-pointer disabled:cursor-default',
                     supportsDropdown ? 'cursor-pointer' : '',

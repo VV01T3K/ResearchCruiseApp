@@ -26,37 +26,27 @@ internal class UserPermissionVerifier(
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
         var currentUserId = currentUserService.GetId();
-        var cruiseManagerId = cruiseApplication.FormA?.CruiseManagerId;
-        var deputyManagerId = cruiseApplication.FormA?.DeputyManagerId;
 
         if (currentUserId is null)
             return false;
 
-        if (
-            currentUserRoles.Contains(RoleName.Administrator)
-            || currentUserRoles.Contains(RoleName.Shipowner)
-            || currentUserRoles.Contains(RoleName.Guest)
-            || currentUserRoles.Contains(RoleName.ShipCrew)
-        )
-        {
-            if (cruiseApplication.Status == CruiseApplicationStatus.Draft)
-            {
-                return currentUserId == cruiseManagerId || currentUserId == deputyManagerId;
-            }
+        return CruiseApplicationPermissionRules.CanView(
+            currentUserRoles,
+            currentUserId.Value,
+            cruiseApplication
+        );
+    }
 
-            return true;
-        }
-
-        // currentUserId is not null so comparing with null will give false
-        if (
-            cruiseApplication.FormA?.CruiseManagerId == currentUserId
-            || cruiseApplication.FormA?.DeputyManagerId == currentUserId
-        )
-        {
-            return true;
-        }
-
-        return false;
+    public async Task<IQueryable<CruiseApplication>> FilterVisibleCruiseApplications(
+        IQueryable<CruiseApplication> query
+    )
+    {
+        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        return CruiseApplicationPermissionRules.FilterVisible(
+            query,
+            currentUserRoles,
+            currentUserService.GetId()
+        );
     }
 
     public async Task<bool> CanCurrentUserViewCruise(Cruise cruise)

@@ -42,7 +42,7 @@ public static class CatalogEndpoints
         DateOnly[]? date,
         string[]? status,
         int[]? year,
-        string[]? cruiseManager,
+        Guid[]? cruiseManager,
         ApplicationReader projection,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
@@ -52,9 +52,10 @@ public static class CatalogEndpoints
         bool descending = true
     )
     {
+        var sortField = CruiseApplicationsSorting.Parse(sortBy);
         var hasCursor = CruiseApplicationsCursor.TryDecode(
             cursor,
-            sortBy,
+            sortField,
             out var cursorSortValue,
             out var cursorId
         );
@@ -78,65 +79,42 @@ public static class CatalogEndpoints
             cruiseManager?.ToList()
         );
 
-        var query = dbContext
-            .CruiseApplications.IncludeForms()
+        var visibleApplications = await userPermissionVerifier.FilterVisibleCruiseApplications(
+            dbContext.CruiseApplications
+        );
+        var query = visibleApplications
+            .IncludeForms()
             .IncludeFormAContent()
             .IncludeEffects()
             .IncludeCruise()
-            .ApplyFilter(filter, dbContext.Users);
+            .ApplyFilter(filter);
 
-        query = sortBy switch
-        {
-            "date" => query.ApplyDateSort(
-                hasCursor ? cursorSortValue : null,
-                hasCursor ? cursorId : (Guid?)null,
-                descending
-            ),
-            "year" => query.ApplyYearSort(
-                hasCursor ? cursorSortValue : null,
-                hasCursor ? cursorId : (Guid?)null,
-                descending
-            ),
-            _ => query.ApplyNumberSort(
-                hasCursor ? cursorSortValue : null,
-                hasCursor ? cursorId : (Guid?)null,
-                descending
-            ),
-        };
+        query = CruiseApplicationsSorting.Apply(
+            query,
+            sortField,
+            hasCursor ? cursorSortValue : null,
+            hasCursor ? cursorId : null,
+            descending
+        );
 
         var applications = await query.Take(clampedPageSize).ToListAsync(cancellationToken);
 
-        var visibleApplications = new List<ApplicationResponse>();
+        var responses = new List<ApplicationResponse>();
         foreach (var application in applications)
         {
-            if (await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application))
-            {
-                visibleApplications.Add(
-                    ApplicationResponse.From(await projection.Create(application))
-                );
-            }
+            responses.Add(ApplicationResponse.From(await projection.Create(application)));
         }
 
-        // The cursor advances over every DB row examined (not just those that survived the
-        // permission filter), so a page can come back smaller than pageSize without skipping rows.
         var nextCursor =
             applications.Count == clampedPageSize
                 ? CruiseApplicationsCursor.Encode(
-                    GetSortValue(applications[^1], sortBy),
+                    CruiseApplicationsSorting.GetValue(applications[^1], sortField),
                     applications[^1].Id
                 )
                 : null;
 
-        return TypedResults.Ok(new ApplicationsPageResponse(visibleApplications, nextCursor));
+        return TypedResults.Ok(new ApplicationsPageResponse(responses, nextCursor));
     }
-
-    private static string GetSortValue(CruiseApplication application, string sortBy) =>
-        sortBy switch
-        {
-            "date" => application.Date.ToString("yyyy-MM-dd"),
-            "year" => application.FormA!.Year,
-            _ => application.Number.ToString(),
-        };
 
     private static async Task<Ok<List<ApplicationPersonResponse>>> GetManagers(
         ApplicationDbContext dbContext,
@@ -144,17 +122,14 @@ public static class CatalogEndpoints
         CancellationToken cancellationToken
     )
     {
-        var applications = await dbContext
-            .CruiseApplications.IncludeFormA()
+        var visibleApplications = await userPermissionVerifier.FilterVisibleCruiseApplications(
+            dbContext.CruiseApplications
+        );
+        var visibleManagerIds = await visibleApplications
             .Where(a => a.FormA != null)
+            .Select(a => a.FormA!.CruiseManagerId)
+            .Distinct()
             .ToListAsync(cancellationToken);
-
-        var visibleManagerIds = new HashSet<Guid>();
-        foreach (var application in applications)
-        {
-            if (await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application))
-                visibleManagerIds.Add(application.FormA!.CruiseManagerId);
-        }
 
         var managerIdStrings = visibleManagerIds.Select(id => id.ToString()).ToList();
         var managers = await dbContext

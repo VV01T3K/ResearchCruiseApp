@@ -1,5 +1,6 @@
 using ResearchCruiseApp.Api.Users;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using Xunit;
 
@@ -47,6 +48,36 @@ public sealed class AccessControlTests
     }
 
     [Fact]
+    public void ApplicationVisibilityIsAppliedBeforePagination()
+    {
+        var currentUserId = Guid.NewGuid();
+        var otherUserId = Guid.NewGuid();
+        var ownDraft = Application(currentUserId, CruiseApplicationStatus.Draft);
+        var ownSubmitted = Application(currentUserId, CruiseApplicationStatus.Accepted);
+        var otherDraft = Application(otherUserId, CruiseApplicationStatus.Draft);
+        var otherSubmitted = Application(otherUserId, CruiseApplicationStatus.Accepted);
+        var applications = new[]
+        {
+            ownDraft,
+            ownSubmitted,
+            otherDraft,
+            otherSubmitted,
+        }.AsQueryable();
+
+        var managerVisible = CruiseApplicationPermissionRules
+            .FilterVisible(applications, [RoleName.CruiseManager], currentUserId)
+            .Select(application => application.Id)
+            .ToList();
+        var shipownerVisible = CruiseApplicationPermissionRules
+            .FilterVisible(applications, [RoleName.Shipowner], currentUserId)
+            .Select(application => application.Id)
+            .ToList();
+
+        Assert.Equal([ownDraft.Id, ownSubmitted.Id], managerVisible);
+        Assert.Equal([ownDraft.Id, ownSubmitted.Id, otherSubmitted.Id], shipownerVisible);
+    }
+
+    [Fact]
     public async Task UserEmailValidationCoversCreateAndOptionalUpdate()
     {
         var createResult = await new CreateUserValidator().ValidateAsync(
@@ -62,5 +93,15 @@ public sealed class AccessControlTests
         Assert.False(createResult.IsValid);
         Assert.True(emptyUpdateResult.IsValid);
         Assert.False(invalidUpdateResult.IsValid);
+    }
+
+    private static CruiseApplication Application(Guid managerId, CruiseApplicationStatus status)
+    {
+        return new CruiseApplication
+        {
+            Id = Guid.NewGuid(),
+            Status = status,
+            FormA = new FormA { CruiseManagerId = managerId, DeputyManagerId = Guid.NewGuid() },
+        };
     }
 }

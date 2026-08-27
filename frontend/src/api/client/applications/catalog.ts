@@ -17,7 +17,7 @@ export type CruiseApplicationsFilter = {
 };
 
 export type CruiseApplicationsSort = {
-  sortBy: string;
+  sortBy: 'number' | 'date' | 'year';
   descending: boolean;
 };
 
