@@ -23,7 +23,7 @@ internal static class CruiseApplicationsSorting
         return field switch
         {
             CruiseApplicationsSortField.Date => DateOnly.TryParseExact(value, "yyyy-MM-dd", out _),
-            CruiseApplicationsSortField.Year => true,
+            CruiseApplicationsSortField.Year => int.TryParse(value, out _),
             _ => int.TryParse(value, out _),
         };
     }
