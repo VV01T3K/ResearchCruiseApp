@@ -7,7 +7,7 @@ type Props = {
   name: string;
   value: string;
 
-  type?: 'text' | 'password' | 'email';
+  type?: 'text' | 'password' | 'email' | 'number' | 'date';
   onBlur?: () => void;
   onChange?: (value: string) => void;
   errors?: string[];

@@ -5,6 +5,7 @@ import { InfiniteScrollProps } from '@/components/shared/table/common/AppTableIn
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends RowData, TValue> {
     filterOptions?: string[];
+    filterInputType?: 'number' | 'date';
     getFilterOptionLabel?: (value: string) => string;
   }
 }

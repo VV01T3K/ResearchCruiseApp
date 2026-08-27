@@ -149,8 +149,7 @@ internal static class CruiseApplicationsQueryableExtensions
 
     public static IQueryable<CruiseApplication> ApplyFilter(
         this IQueryable<CruiseApplication> query,
-        CruiseApplicationsFilter filter,
-        IQueryable<User> users
+        CruiseApplicationsFilter filter
     )
     {
         if (filter.Numbers is { Count: > 0 })
@@ -174,127 +173,12 @@ internal static class CruiseApplicationsQueryableExtensions
             );
         }
 
-        if (filter.CruiseManagerFullNames is { Count: > 0 })
-        {
-            var cruiseManagerFullNames = filter.CruiseManagerFullNames;
+        if (filter.CruiseManagerIds is { Count: > 0 })
             query = query.Where(cruiseApplication =>
                 cruiseApplication.FormA != null
-                && users.Any(user =>
-                    user.Id == cruiseApplication.FormA.CruiseManagerId.ToString()
-                    && cruiseManagerFullNames.Contains(user.FirstName + " " + user.LastName)
-                )
+                && filter.CruiseManagerIds.Contains(cruiseApplication.FormA.CruiseManagerId)
             );
-        }
 
         return query;
-    }
-
-    public static IQueryable<CruiseApplication> ApplyNumberSort(
-        this IQueryable<CruiseApplication> query,
-        string? cursorSortValue,
-        Guid? cursorId,
-        bool descending
-    )
-    {
-        if (cursorSortValue is not null && cursorId is not null)
-        {
-            var cursorNumber = int.Parse(cursorSortValue);
-            query = descending
-                ? query.Where(cruiseApplication =>
-                    cruiseApplication.Number < cursorNumber
-                    || (
-                        cruiseApplication.Number == cursorNumber
-                        && cruiseApplication.Id.CompareTo(cursorId.Value) < 0
-                    )
-                )
-                : query.Where(cruiseApplication =>
-                    cruiseApplication.Number > cursorNumber
-                    || (
-                        cruiseApplication.Number == cursorNumber
-                        && cruiseApplication.Id.CompareTo(cursorId.Value) > 0
-                    )
-                );
-        }
-
-        return descending
-            ? query
-                .OrderByDescending(cruiseApplication => cruiseApplication.Number)
-                .ThenByDescending(cruiseApplication => cruiseApplication.Id)
-            : query
-                .OrderBy(cruiseApplication => cruiseApplication.Number)
-                .ThenBy(cruiseApplication => cruiseApplication.Id);
-    }
-
-    public static IQueryable<CruiseApplication> ApplyDateSort(
-        this IQueryable<CruiseApplication> query,
-        string? cursorSortValue,
-        Guid? cursorId,
-        bool descending
-    )
-    {
-        if (cursorSortValue is not null && cursorId is not null)
-        {
-            var cursorDate = DateOnly.ParseExact(cursorSortValue, "yyyy-MM-dd");
-            query = descending
-                ? query.Where(cruiseApplication =>
-                    cruiseApplication.Date < cursorDate
-                    || (
-                        cruiseApplication.Date == cursorDate
-                        && cruiseApplication.Id.CompareTo(cursorId.Value) < 0
-                    )
-                )
-                : query.Where(cruiseApplication =>
-                    cruiseApplication.Date > cursorDate
-                    || (
-                        cruiseApplication.Date == cursorDate
-                        && cruiseApplication.Id.CompareTo(cursorId.Value) > 0
-                    )
-                );
-        }
-
-        return descending
-            ? query
-                .OrderByDescending(cruiseApplication => cruiseApplication.Date)
-                .ThenByDescending(cruiseApplication => cruiseApplication.Id)
-            : query
-                .OrderBy(cruiseApplication => cruiseApplication.Date)
-                .ThenBy(cruiseApplication => cruiseApplication.Id);
-    }
-
-    public static IQueryable<CruiseApplication> ApplyYearSort(
-        this IQueryable<CruiseApplication> query,
-        string? cursorSortValue,
-        Guid? cursorId,
-        bool descending
-    )
-    {
-        query = query.Where(cruiseApplication => cruiseApplication.FormA != null);
-
-        if (cursorSortValue is not null && cursorId is not null)
-        {
-            query = descending
-                ? query.Where(cruiseApplication =>
-                    cruiseApplication.FormA!.Year.CompareTo(cursorSortValue) < 0
-                    || (
-                        cruiseApplication.FormA.Year == cursorSortValue
-                        && cruiseApplication.Id.CompareTo(cursorId.Value) < 0
-                    )
-                )
-                : query.Where(cruiseApplication =>
-                    cruiseApplication.FormA!.Year.CompareTo(cursorSortValue) > 0
-                    || (
-                        cruiseApplication.FormA.Year == cursorSortValue
-                        && cruiseApplication.Id.CompareTo(cursorId.Value) > 0
-                    )
-                );
-        }
-
-        return descending
-            ? query
-                .OrderByDescending(cruiseApplication => cruiseApplication.FormA!.Year)
-                .ThenByDescending(cruiseApplication => cruiseApplication.Id)
-            : query
-                .OrderBy(cruiseApplication => cruiseApplication.FormA!.Year)
-                .ThenBy(cruiseApplication => cruiseApplication.Id);
     }
 }

@@ -74,6 +74,27 @@ export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TD
 
   const { supportsFilter } = getCapabilities(header);
   const getFilterOptionLabel = header.column.columnDef.meta?.getFilterOptionLabel;
+  const filterInputType = header.column.columnDef.meta?.filterInputType;
+
+  if (filterInputType) {
+    const value = String(filterValue?.[0] ?? '');
+    return (
+      <div className="px-4 py-3">
+        <AppFloatingLabelInput
+          name={`${header.column.id}-filter`}
+          type={filterInputType}
+          label="Filtruj"
+          value={value}
+          onChange={(nextValue) => {
+            const nextFilter = nextValue ? ([nextValue] as TData[]) : undefined;
+            setFilterValue(nextFilter);
+            header.column.setFilterValue(nextFilter);
+          }}
+          data-testid={`${header.column.id}-filter-input`}
+        />
+      </div>
+    );
+  }
 
   return (
     <>

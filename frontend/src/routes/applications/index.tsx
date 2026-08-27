@@ -47,7 +47,10 @@ const DEFAULT_SORTING_STATE: SortingState = [{ id: 'number', desc: true }];
 
 function sortingStateToApiSort(sorting: SortingState): CruiseApplicationsSort {
   const [sort] = sorting;
-  return sort ? { sortBy: sort.id, descending: sort.desc } : { sortBy: 'number', descending: true };
+  const sortBy = sort?.id;
+  return sortBy === 'date' || sortBy === 'year' || sortBy === 'number'
+    ? { sortBy, descending: sort.desc }
+    : { sortBy: 'number', descending: true };
 }
 
 function ApplicationsPage() {
@@ -66,8 +69,9 @@ function ApplicationsPage() {
     (_, index) => (EARLIEST_APPLICATION_YEAR + index).toString()
   );
   const cruiseManagersQuery = useCruiseApplicationManagersQuery();
-  const cruiseManagerFilterOptions = cruiseManagersQuery.data.map(
-    (manager) => `${manager.firstName} ${manager.lastName}`
+  const cruiseManagerFilterOptions = cruiseManagersQuery.data.map((manager) => manager.id);
+  const cruiseManagerFilterLabels = new Map(
+    cruiseManagersQuery.data.map((manager) => [manager.id, `${manager.firstName} ${manager.lastName}`])
   );
 
   const columns: ColumnDef<ApplicationResponse>[] = [
@@ -76,7 +80,7 @@ function ApplicationsPage() {
       header: 'Nr',
       accessorFn: (row) => row.number,
       sortDescFirst: true,
-      enableColumnFilter: false,
+      meta: { filterInputType: 'number' },
       size: 2,
     },
     {
@@ -84,7 +88,7 @@ function ApplicationsPage() {
       header: 'Data',
       accessorFn: (row) => row.date,
       sortDescFirst: true,
-      enableColumnFilter: false,
+      meta: { filterInputType: 'date' },
       size: 5,
     },
     {
@@ -140,7 +144,7 @@ function ApplicationsPage() {
     {
       id: 'cruiseManager',
       header: 'Kierownik',
-      accessorFn: (row) => `${row.mainManager.firstName} ${row.mainManager.lastName}`,
+      accessorFn: (row) => row.mainManager.id,
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <AppAvatar
@@ -151,7 +155,10 @@ function ApplicationsPage() {
         </div>
       ),
       enableSorting: false,
-      meta: { filterOptions: cruiseManagerFilterOptions },
+      meta: {
+        filterOptions: cruiseManagerFilterOptions,
+        getFilterOptionLabel: (managerId) => cruiseManagerFilterLabels.get(managerId) ?? managerId,
+      },
       size: 20,
     },
     {
