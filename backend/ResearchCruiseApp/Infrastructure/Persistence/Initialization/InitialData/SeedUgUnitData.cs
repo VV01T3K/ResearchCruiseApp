@@ -1,6 +1,6 @@
 ﻿namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
-internal class SeedUgUnitData
+internal static class SeedUgUnitData
 {
     public static string[] UgUnitsNames =>
         new[]

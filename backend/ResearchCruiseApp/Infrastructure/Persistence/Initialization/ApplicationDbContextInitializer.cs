@@ -15,24 +15,83 @@ internal class ApplicationDbContextInitializer(
     ILogger<ApplicationDbContextInitializer> logger
 )
 {
+    private const string SeedLockResource = "ResearchCruiseApp:DatabaseSeed";
+
     public async Task Initialize()
     {
         await Migrate();
 
-        await SeedRoleData();
-        await SeedUgUnits();
-        await SeedResearchAreas();
-        await SeedShipEquipments();
-
-        if (configuration.GetSection("Database:SeedAccountsAutomatically").Value?.ToBool() ?? false)
+        var seedLockAcquired = await AcquireSeedLock();
+        try
         {
-            await SeedUsersData();
+            await SeedRoleData();
+            await SeedReferenceData();
+
+            if (
+                configuration.GetSection("Database:SeedAccountsAutomatically").Value?.ToBool()
+                ?? false
+            )
+            {
+                await SeedUsersData();
+            }
+        }
+        finally
+        {
+            if (seedLockAcquired)
+                await ReleaseSeedLock();
         }
     }
 
     private Task Migrate()
     {
         return applicationDbContext.Database.MigrateAsync();
+    }
+
+    private async Task<bool> AcquireSeedLock()
+    {
+        if (!applicationDbContext.Database.IsSqlServer())
+            return false;
+
+        await applicationDbContext.Database.OpenConnectionAsync();
+        try
+        {
+            await applicationDbContext.Database.ExecuteSqlInterpolatedAsync(
+                $"""
+                DECLARE @result int;
+                EXEC @result = sys.sp_getapplock
+                    @Resource = {SeedLockResource},
+                    @LockMode = 'Exclusive',
+                    @LockOwner = 'Session',
+                    @LockTimeout = 60000;
+                IF @result < 0
+                    THROW 51000, 'Timed out waiting for the database seed lock.', 1;
+                """
+            );
+            return true;
+        }
+        catch
+        {
+            await applicationDbContext.Database.CloseConnectionAsync();
+            throw;
+        }
+    }
+
+    private async Task ReleaseSeedLock()
+    {
+        try
+        {
+            await applicationDbContext.Database.ExecuteSqlInterpolatedAsync(
+                $"""
+                EXEC sys.sp_releaseapplock
+                    @Resource = {SeedLockResource},
+                    @LockOwner = 'Session';
+                """
+            );
+        }
+        finally
+        {
+            await applicationDbContext.Database.CloseConnectionAsync();
+        }
     }
 
     private async Task SeedUsersData()
@@ -85,61 +144,45 @@ internal class ApplicationDbContextInitializer(
         }
     }
 
-    private async Task SeedUgUnits()
+    private async Task SeedReferenceData()
     {
-        var existingNames = (
-            await applicationDbContext.UgUnits.Select(ugUnit => ugUnit.Name).ToListAsync()
-        ).ToHashSet();
+        await SeedNamedEntities(
+            applicationDbContext.UgUnits,
+            SeedUgUnitData.UgUnitsNames,
+            name => new UgUnit { Name = name, IsActive = true },
+            entity => entity.Name
+        );
+        await SeedNamedEntities(
+            applicationDbContext.ResearchAreas,
+            SeedResearchAreaData.ResearchAreaNames,
+            name => new ResearchArea { Name = name, IsActive = true },
+            entity => entity.Name
+        );
+        await SeedNamedEntities(
+            applicationDbContext.ShipEquipments,
+            SeedShipEquipmentData.ShipEquipmentsNames,
+            name => new ShipEquipment { Name = name, IsActive = true },
+            entity => entity.Name
+        );
 
-        var newUgUnits = SeedUgUnitData
-            .UgUnitsNames.Where(name => !existingNames.Contains(name))
-            .Select(name => new UgUnit { Name = name, IsActive = true })
-            .ToList();
-
-        if (newUgUnits.Count == 0)
-            return;
-
-        await applicationDbContext.UgUnits.AddRangeAsync(newUgUnits);
         await applicationDbContext.SaveChangesAsync();
     }
 
-    private async Task SeedResearchAreas()
+    private static async Task SeedNamedEntities<TEntity>(
+        DbSet<TEntity> entities,
+        IEnumerable<string> seedNames,
+        Func<string, TEntity> createEntity,
+        System.Linq.Expressions.Expression<Func<TEntity, string>> selectName
+    )
+        where TEntity : class
     {
-        var existingNames = (
-            await applicationDbContext
-                .ResearchAreas.Select(researchArea => researchArea.Name)
-                .ToListAsync()
-        ).ToHashSet();
-
-        var newResearchAreas = SeedResearchAreaData
-            .ResearchAreaNames.Where(name => !existingNames.Contains(name))
-            .Select(name => new ResearchArea { Name = name, IsActive = true })
+        var existingNames = (await entities.Select(selectName).ToListAsync()).ToHashSet();
+        var newEntities = seedNames
+            .Where(name => !existingNames.Contains(name))
+            .Select(createEntity)
             .ToList();
 
-        if (newResearchAreas.Count == 0)
-            return;
-
-        await applicationDbContext.ResearchAreas.AddRangeAsync(newResearchAreas);
-        await applicationDbContext.SaveChangesAsync();
-    }
-
-    private async Task SeedShipEquipments()
-    {
-        var existingNames = (
-            await applicationDbContext
-                .ShipEquipments.Select(shipEquipment => shipEquipment.Name)
-                .ToListAsync()
-        ).ToHashSet();
-
-        var newShipEquipments = SeedShipEquipmentData
-            .ShipEquipmentsNames.Where(name => !existingNames.Contains(name))
-            .Select(name => new ShipEquipment { Name = name, IsActive = true })
-            .ToList();
-
-        if (newShipEquipments.Count == 0)
-            return;
-
-        await applicationDbContext.ShipEquipments.AddRangeAsync(newShipEquipments);
-        await applicationDbContext.SaveChangesAsync();
+        if (newEntities.Count > 0)
+            await entities.AddRangeAsync(newEntities);
     }
 }
