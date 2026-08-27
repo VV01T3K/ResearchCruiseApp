@@ -3,9 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { loginValidationSchema } from '@/validation/auth';
 
 describe('loginValidationSchema', () => {
-  it('accepts empty fields for initial state', () => {
+  it('rejects empty credentials', () => {
     const result = loginValidationSchema.safeParse({ email: '', password: '' });
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.map((issue) => issue.path[0])).toEqual(['email', 'password']);
+    }
   });
 
   it('rejects invalid emails', () => {

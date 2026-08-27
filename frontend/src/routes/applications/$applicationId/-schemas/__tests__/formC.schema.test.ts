@@ -8,11 +8,16 @@ import {
   getFormCDraftWriteSchema,
   getFormCValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import {
+  createSchemaAssertions,
+  override,
+} from '@/routes/applications/$applicationId/-schemas/__tests__/schemaTestUtils';
 import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 import type { FormAOptions } from '@/api/client/applications/types/FormAOptions';
 
 const initValues = initValuesJson as unknown as FormAOptions;
 const schema = getFormCValidationSchema(initValues);
+const { expectAccepted, expectRejectedAt } = createSchemaAssertions(schema);
 type ResearchTaskEffect = FormCValues['researchTasksEffects'][number];
 
 const UG_UNIT_ID = '8f8e8ba8-af4f-43e1-3a51-08ddaf6348b7';
@@ -44,11 +49,6 @@ const validRows = {
   } satisfies FormCValues['contracts'][number],
 };
 
-/** Copies a row with one field replaced. Keeps the unavoidable computed-key cast in one place. */
-function override<T>(row: T, field: string, value: unknown): T {
-  return { ...row, [field]: value } as T;
-}
-
 function validPayload(overrides: Partial<FormCValues> = {}): FormCValues {
   return {
     ...formCDefaultValues,
@@ -63,27 +63,6 @@ function validPayload(overrides: Partial<FormCValues> = {}): FormCValues {
     spubTasks: [],
     ...overrides,
   };
-}
-
-function expectRejectedAt(payload: FormCValues, path: string) {
-  const result = schema.safeParse(payload);
-  expect(result.success, `expected payload to be rejected because of "${path}"`).toBe(false);
-
-  if (!result.success) {
-    const paths = result.error.issues.map((issue) => issue.path.join('.'));
-    expect(
-      paths.some((p) => p === path || p.startsWith(path)),
-      `issue paths were: ${paths.join(', ')}`
-    ).toBe(true);
-  }
-}
-
-function expectAccepted(payload: FormCValues) {
-  const result = schema.safeParse(payload);
-  if (!result.success) {
-    const details = result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
-    expect.fail(`expected payload to be accepted, but got: ${details}`);
-  }
 }
 
 describe('formC schema – baseline', () => {

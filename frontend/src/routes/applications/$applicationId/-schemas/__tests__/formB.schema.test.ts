@@ -9,9 +9,14 @@ import {
   getFormBValidationSchema,
   mapFormBToValues,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import {
+  createSchemaAssertions,
+  override,
+} from '@/routes/applications/$applicationId/-schemas/__tests__/schemaTestUtils';
 import type { FormBFields } from '@/api/generated/schemas';
 
 const schema = getFormBValidationSchema();
+const { expectAccepted, expectRejectedAt } = createSchemaAssertions(schema);
 
 const UG_UNIT_ID = '8f8e8ba8-af4f-43e1-3a51-08ddaf6348b7';
 
@@ -61,38 +66,12 @@ const validRows = {
   } satisfies FormBValues['researchEquipments'][number],
 };
 
-/** Copies a row with one field replaced. Keeps the unavoidable computed-key cast in one place. */
-function override<T>(row: T, field: string, value: unknown): T {
-  return { ...row, [field]: value } as T;
-}
-
 function validPayload(overrides: Partial<FormBValues> = {}): FormBValues {
   return {
     ...formBDefaultValues,
     ...mapFormBToValues(formBBase as unknown as FormBFields),
     ...overrides,
   };
-}
-
-function expectRejectedAt(payload: FormBValues, path: string) {
-  const result = schema.safeParse(payload);
-  expect(result.success, `expected payload to be rejected because of "${path}"`).toBe(false);
-
-  if (!result.success) {
-    const paths = result.error.issues.map((issue) => issue.path.join('.'));
-    expect(
-      paths.some((p) => p === path || p.startsWith(path)),
-      `issue paths were: ${paths.join(', ')}`
-    ).toBe(true);
-  }
-}
-
-function expectAccepted(payload: FormBValues) {
-  const result = schema.safeParse(payload);
-  if (!result.success) {
-    const details = result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
-    expect.fail(`expected payload to be accepted, but got: ${details}`);
-  }
 }
 
 describe('formB schema – baseline', () => {

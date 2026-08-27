@@ -1,5 +1,6 @@
-import { expect, type Locator, type Page } from '@playwright/test';
+import { type Locator, type Page } from '@playwright/test';
 import { API_URL, TESTED_FORM_ID } from '@tests/fixtures/consts';
+import { clonePayload, getInvalidFormState, submitForm } from '@tests/fixtures/pages/formPageUtils';
 import {
   getAdminAccountPayload,
   getFormAPayload,
@@ -95,11 +96,7 @@ export class FormAPage {
   // Use after submit when the form is expected to be invalid (no navigation happens).
   // Waits for TanStack Form validation to complete and data-valid to become "false".
   public async getInvalidFormState(): Promise<Record<string, string[]>> {
-    const el = this.page.locator('[data-testid="form-state"]');
-    // Retry until validation has run and reflected isValid=false in the DOM
-    await expect(el).toHaveAttribute('data-valid', 'false', { timeout: 10000 });
-    const errorsJson = await el.getAttribute('data-errors');
-    return JSON.parse(errorsJson ?? '{}');
+    return getInvalidFormState(this.page);
   }
 
   /**
@@ -123,48 +120,15 @@ export class FormAPage {
     expectedResult,
     message,
   }: { expectedResult?: 'valid' | 'invalid'; message?: string } = {}) {
-    const initialUrl = this.page.url();
-    await this.submitButton.click();
-
-    // Wait for any toast to appear and log its content for debugging
-    const anyToast = this.toastMessage.locator('[data-testid^="toast-"]').first();
-    try {
-      await anyToast.waitFor({ state: 'visible', timeout: 5000 });
-      const testId = await anyToast.getAttribute('data-testid');
-      const toastType = testId?.replace('toast-', '');
-      const toastText = await anyToast.textContent();
-      console.log(`[FormA Toast] Type: ${toastType}, Text: ${toastText}`);
-    } catch {
-      console.log('[FormA Toast] No toast appeared within timeout');
-    }
-
-    switch (expectedResult) {
-      case 'valid':
-        await Promise.any([
-          this.page.waitForURL((url) => url.toString() !== initialUrl, { timeout: 10000 }),
-          this.submissionApprovedMessage.waitFor({ state: 'visible', timeout: 10000 }),
-        ]);
-        break;
-      case 'invalid':
-        {
-          const outcome = await Promise.race([
-            this.validationErrorMessage.waitFor({ state: 'visible', timeout: 10000 }).then(() => 'error'),
-            this.page.waitForURL((url) => url.toString() !== initialUrl, { timeout: 10000 }).then(() => 'navigated'),
-          ]);
-
-          if (outcome === 'navigated') {
-            throw new Error('Form submitted successfully but expected invalid results.');
-          }
-
-          await expect(this.validationErrorMessage, { message: message }).toBeVisible();
-        }
-        await this.toastMessage.getByLabel('Close').first().click();
-        break;
-    }
-  }
-
-  private clonePayload<T>(payload: T): T {
-    return JSON.parse(JSON.stringify(payload)) as T;
+    await submitForm({
+      page: this.page,
+      submitButton: this.submitButton,
+      toastMessage: this.toastMessage,
+      submissionApprovedMessage: this.submissionApprovedMessage,
+      validationErrorMessage: this.validationErrorMessage,
+      expectedResult,
+      message,
+    });
   }
 
   /**
@@ -205,7 +169,7 @@ export class FormAPage {
   }
 
   private buildFormAData(except: (keyof FormAPage['sections'])[] = []): FormAFields {
-    const payload = this.clonePayload(getFormAPayload()) as unknown as FormAFields;
+    const payload = clonePayload(getFormAPayload()) as unknown as FormAFields;
     const adminAccount = getAdminAccountPayload();
     const initValues = getInitValuesAPayload();
     const deputyCandidate = initValues.deputyManagers.find((manager) => manager.id !== adminAccount.id);

@@ -15,11 +15,16 @@ import {
 import { CruiseGoal } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import { PublicationCategory } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import {
+  createSchemaAssertions,
+  override,
+} from '@/routes/applications/$applicationId/-schemas/__tests__/schemaTestUtils';
 import type { FormAOptions } from '@/api/client/applications/types/FormAOptions';
 import type { FormAFields } from '@/api/generated/schemas';
 
 const initValues = initValuesJson as unknown as FormAOptions;
 const schema = getFormAValidationSchema(initValues);
+const { expectAccepted, expectRejectedAt } = createSchemaAssertions(schema);
 
 const UG_UNIT_ID = '8f8e8ba8-af4f-43e1-3a51-08ddaf6348b7';
 const RESEARCH_AREA_ID = 'cb2b71c0-14d8-4cec-562b-08ddaf6348c2';
@@ -60,11 +65,6 @@ const validRows = {
   } satisfies FormAValues['researchAreaDescriptions'][number],
 };
 
-/** Copies a row with one field replaced. Keeps the unavoidable computed-key cast in one place. */
-function override<T>(row: T, field: string, value: unknown): T {
-  return { ...row, [field]: value } as T;
-}
-
 function validPayload(overrides: Partial<FormAValues> = {}): FormAValues {
   const base = mapFormAToValues(formABase as unknown as FormAFields);
   return {
@@ -77,28 +77,6 @@ function validPayload(overrides: Partial<FormAValues> = {}): FormAValues {
     note: '',
     ...overrides,
   };
-}
-
-/** Asserts the payload is rejected and that at least one issue points at `path`. */
-function expectRejectedAt(payload: FormAValues, path: string) {
-  const result = schema.safeParse(payload);
-  expect(result.success, `expected payload to be rejected because of "${path}"`).toBe(false);
-
-  if (!result.success) {
-    const paths = result.error.issues.map((issue) => issue.path.join('.'));
-    expect(
-      paths.some((p) => p === path || p.startsWith(path)),
-      `issue paths were: ${paths.join(', ')}`
-    ).toBe(true);
-  }
-}
-
-function expectAccepted(payload: FormAValues) {
-  const result = schema.safeParse(payload);
-  if (!result.success) {
-    const details = result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
-    expect.fail(`expected payload to be accepted, but got: ${details}`);
-  }
 }
 
 describe('formA schema – baseline', () => {
