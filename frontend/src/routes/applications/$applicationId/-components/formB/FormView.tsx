@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 
+import { FormStateProbe } from '@/components/shared/FormStateProbe';
 import { ActionsSection } from './ActionsSection';
 import { AdditionalPermissionsSection } from './AdditionalPermissionsSection';
 import { ContractsSection } from './ContractsSection';
@@ -35,6 +36,7 @@ export function FormView({ context }: Props) {
 
   return (
     <>
+      <FormStateProbe form={form} />
       <form
         className="space-y-8"
         onSubmit={(event) => {

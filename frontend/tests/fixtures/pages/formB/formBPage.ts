@@ -1,9 +1,11 @@
-import { expect, type Locator, type Page } from '@playwright/test';
+import { type Locator, type Page } from '@playwright/test';
 import { API_URL, TESTED_FORM_ID } from '@tests/fixtures/consts';
+import { clonePayload, getInvalidFormState, submitForm } from '@tests/fixtures/pages/formPageUtils';
 import {
   getAdminAccountPayload,
   getCruisePayload,
   getFormAPayload,
+  getFormBPayload,
   getInitValuesAPayload,
   getInitValuesBPayload,
   mockAuthenticatedSession,
@@ -129,40 +131,124 @@ export class FormBPage {
     this.validationErrorMessage = this.toastMessage.getByTestId('toast-error').first();
   }
 
-  public async fillForm({ except }: { except?: (keyof FormBPage['sections'])[] } = {}) {
-    except ??= [];
-    const sections = Object.entries(this.sections);
-    for (const [key, section] of sections) {
-      if (except.includes(key as keyof FormBPage['sections'])) {
-        continue;
-      }
-      await section.defaultFill();
+  // Use after submit when the form is expected to be invalid (no navigation happens).
+  // Waits for TanStack Form validation to complete and data-valid to become "false".
+  public async getInvalidFormState(): Promise<Record<string, string[]>> {
+    return getInvalidFormState(this.page);
+  }
+
+  /**
+   * Loads the form via the mocked API.
+   * @param except sections cleared out entirely (empty arrays)
+   * @param withInvalidRows fills every list-based section with a row of invalid data,
+   *                        so that row-level validation can be checked for all sections at once
+   */
+  public async fillForm({
+    except,
+    withInvalidRows,
+  }: { except?: (keyof FormBPage['sections'])[]; withInvalidRows?: boolean } = {}) {
+    const payload = this.buildFormBData(except ?? []);
+    if (withInvalidRows) {
+      this.applyInvalidRows(payload);
     }
+    await this.setFormBResponse(payload);
+    await this.goto('edit');
+    await this.submitButton.waitFor({ state: 'visible' });
   }
 
   public async submitForm({ expectedResult }: { expectedResult?: 'valid' | 'invalid' } = {}) {
-    await this.submitButton.click();
+    await submitForm({
+      page: this.page,
+      submitButton: this.submitButton,
+      toastMessage: this.toastMessage,
+      submissionApprovedMessage: this.submissionApprovedMessage,
+      validationErrorMessage: this.validationErrorMessage,
+      expectedResult,
+    });
+  }
 
-    // Wait for any toast to appear and log its content for debugging
-    const anyToast = this.toastMessage.locator('[data-testid^="toast-"]').first();
-    try {
-      await anyToast.waitFor({ state: 'visible', timeout: 5000 });
-      const testId = await anyToast.getAttribute('data-testid');
-      const toastType = testId?.replace('toast-', '');
-      const toastText = await anyToast.textContent();
-      console.log(`[FormB Toast] Type: ${toastType}, Text: ${toastText}`);
-    } catch {
-      console.log('[FormB Toast] No toast appeared within timeout');
+  /**
+   * Fills every list-based section with a single row of invalid data:
+   * required text fields are left empty and numeric fields are given negative values.
+   */
+  private applyInvalidRows(payload: ReturnType<typeof getFormBPayload>) {
+    const ugUnitId = getFormBPayload().ugTeams[0].ugUnitId;
+
+    // permissions require a PDF scan, so an empty row fails on every field
+    payload.permissions = [{ description: '', executive: '' }] as typeof payload.permissions;
+    payload.ugTeams = [{ ugUnitId, noOfEmployees: '-1', noOfStudents: '-1' }];
+    payload.guestTeams = [{ name: '', noOfPersons: '-1' }] as typeof payload.guestTeams;
+    payload.crewMembers = [
+      {
+        title: '',
+        firstName: '',
+        lastName: '',
+        birthPlace: '',
+        birthDate: '',
+        documentNumber: '',
+        documentExpiryDate: '',
+        institution: '',
+      },
+    ] as typeof payload.crewMembers;
+    payload.shortResearchEquipments = [
+      { name: '', startDate: '', endDate: '' },
+    ] as typeof payload.shortResearchEquipments;
+    payload.longResearchEquipments = [
+      { name: '', action: 'Put', duration: '' },
+    ] as typeof payload.longResearchEquipments;
+    payload.ports = [{ name: '', startTime: '', endTime: '' }] as typeof payload.ports;
+    payload.cruiseDaysDetails = [
+      { number: '', hours: '', taskName: '', region: '', position: '', comment: '' },
+    ] as typeof payload.cruiseDaysDetails;
+    payload.researchEquipments = [
+      { name: '', insuranceStartDate: null, insuranceEndDate: null, permission: 'true' },
+    ] as typeof payload.researchEquipments;
+  }
+
+  private buildFormBData(except: (keyof FormBPage['sections'])[] = []) {
+    const payload = clonePayload(getFormBPayload());
+
+    if (except.includes('membersSection')) {
+      payload.guestTeams = [];
+      payload.crewMembers = [];
     }
 
-    switch (expectedResult) {
-      case 'valid':
-        await expect(this.submissionApprovedMessage).toBeVisible();
-        break;
-      case 'invalid':
-        await expect(this.validationErrorMessage).toBeVisible();
-        await this.toastMessage.getByLabel('Close').first().click();
-        break;
+    if (except.includes('additionalPermissionsSection')) {
+      payload.permissions = [];
     }
+
+    if (except.includes('cruiseDetailsSection')) {
+      payload.shortResearchEquipments = [];
+      payload.longResearchEquipments = [];
+      payload.ports = [];
+    }
+
+    if (except.includes('cruiseDayDetailsSection')) {
+      payload.cruiseDaysDetails = [];
+    }
+
+    if (except.includes('researchEquipmentsSection')) {
+      payload.researchEquipments = [];
+    }
+
+    return payload;
+  }
+
+  private async setFormBResponse(payload: ReturnType<typeof getFormBPayload>) {
+    const url = `${API_URL}/v2/applications/${this.formId}/form-b`;
+
+    await this.page.unroute(url).catch(() => undefined);
+    await this.page.route(url, (route) => {
+      if (route.request().method() === 'PUT') {
+        return route.fulfill({
+          status: 200,
+        });
+      }
+
+      route.fulfill({
+        status: 200,
+        body: JSON.stringify(payload),
+      });
+    });
   }
 }
