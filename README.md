@@ -18,8 +18,7 @@ The application aims to streamline processes related to the booking, management,
 
 | Environment Variable                    | Description                                    | Example                                                                         | Required |
 | --------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------- | -------- |
-| `Database__SeedAutomatically`           | Seed the database with test data               | `true`                                                                          | No       |
-| `Database__MigrateAutomatically`        | Migrate the database automatically             | `true`                                                                          | No       |
+| `Database__SeedAccountsAutomatically`   | Seed configured user accounts automatically    | `true`                                                                          | No       |
 | `Database__LogUserPasswordsWhenSeeding` | Log user passwords when seeding                | `true`                                                                          | No       |
 | `ConnectionStrings__Database`           | Database connection string                     | `db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False` | Yes      |
 | `FrontendUrl`                           | Frontend URL - for CORS and email verification | `http://localhost:3000`                                                         | Yes      |
