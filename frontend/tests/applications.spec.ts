@@ -63,12 +63,19 @@ async function seedAuthenticatedAdmin(page: Page) {
 
 test('application list loads from the v2 route', async ({ page }) => {
   await seedAuthenticatedAdmin(page);
+  await page.route(`${API_URL}/v2/applications/managers`, (route) => {
+    route.fulfill({
+      status: 200,
+      body: JSON.stringify([]),
+      contentType: 'application/json',
+    });
+  });
   let requested = false;
-  await page.route(`${API_URL}/v2/applications`, async (route) => {
+  await page.route(`${API_URL}/v2/applications?*`, async (route) => {
     requested = true;
     await route.fulfill({
       status: 200,
-      body: JSON.stringify([application]),
+      body: JSON.stringify({ items: [application], nextCursor: null }),
       contentType: 'application/json',
     });
   });
@@ -77,6 +84,46 @@ test('application list loads from the v2 route', async ({ page }) => {
 
   await expect(page.getByText('Ada Lovelace')).toBeVisible();
   expect(requested).toBe(true);
+});
+
+test('application filters send number, date, and manager id', async ({ page }) => {
+  await seedAuthenticatedAdmin(page);
+  const firstManagerId = '33333333-3333-3333-3333-333333333333';
+  const secondManagerId = '44444444-4444-4444-4444-444444444444';
+  await page.route(`${API_URL}/v2/applications/managers`, (route) => {
+    route.fulfill({
+      status: 200,
+      body: JSON.stringify([
+        { id: firstManagerId, email: 'jan.1@example.com', firstName: 'Jan', lastName: 'Kowalski' },
+        { id: secondManagerId, email: 'jan.2@example.com', firstName: 'Jan', lastName: 'Kowalski' },
+      ]),
+      contentType: 'application/json',
+    });
+  });
+  const requests: URL[] = [];
+  await page.route(`${API_URL}/v2/applications?*`, async (route) => {
+    requests.push(new URL(route.request().url()));
+    await route.fulfill({
+      status: 200,
+      body: JSON.stringify({ items: [application], nextCursor: null }),
+      contentType: 'application/json',
+    });
+  });
+
+  await page.goto('/applications');
+  await page.getByTestId('number-header-menu').click();
+  await page.getByTestId('number-filter-input').fill('17');
+  await expect.poll(() => requests.at(-1)?.searchParams.get('number')).toBe('17');
+  await page.keyboard.press('Escape');
+
+  await page.getByTestId('date-header-menu').click();
+  await page.getByTestId('date-filter-input').fill('2026-05-16');
+  await expect.poll(() => requests.at(-1)?.searchParams.get('date')).toBe('2026-05-16');
+  await page.keyboard.press('Escape');
+
+  await page.getByTestId('cruiseManager-header-menu').click();
+  await page.getByRole('menuitem', { name: 'Jan Kowalski' }).first().click();
+  await expect.poll(() => requests.at(-1)?.searchParams.get('cruiseManager')).toBe(firstManagerId);
 });
 
 test('application detail and evaluation load from v2 routes', async ({ page }) => {

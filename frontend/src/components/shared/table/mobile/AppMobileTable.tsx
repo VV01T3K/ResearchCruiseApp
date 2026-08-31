@@ -4,6 +4,7 @@ import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
 import { AppModal } from '@/components/shared/AppModal';
+import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
 import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/components/shared/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/lib/utils';
@@ -15,6 +16,7 @@ export function AppMobileTable<T>({
   variant,
   showRequiredAsterisk,
   errors,
+  infiniteScroll,
   'data-testid': testId,
 }: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
@@ -78,6 +80,13 @@ export function AppMobileTable<T>({
                       </span>
                     )}
                   </div>
+                </td>
+              </tr>
+            )}
+            {infiniteScroll && (
+              <tr>
+                <td colSpan={table.getAllColumns().length} className="p-0">
+                  <AppTableInfiniteScrollTrigger {...infiniteScroll} />
                 </td>
               </tr>
             )}

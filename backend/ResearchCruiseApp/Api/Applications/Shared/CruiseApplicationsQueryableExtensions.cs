@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Identity;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
 
@@ -131,5 +133,52 @@ internal static class CruiseApplicationsQueryableExtensions
     )
     {
         return query.Include(cruiseApplication => cruiseApplication.FormC!.ResearchTaskEffects);
+    }
+
+    // Only the collections ApplicationScoringService.GetPointsSum reads (their stored .Points values)
+    public static IQueryable<CruiseApplication> IncludeFormAPoints(
+        this IQueryable<CruiseApplication> query
+    )
+    {
+        return query
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAContracts)
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAPublications)
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormASpubTasks);
+    }
+
+    public static IQueryable<CruiseApplication> ApplyFilter(
+        this IQueryable<CruiseApplication> query,
+        CruiseApplicationsFilter filter
+    )
+    {
+        if (filter.Numbers is { Count: > 0 })
+            query = query.Where(cruiseApplication =>
+                filter.Numbers.Contains(cruiseApplication.Number)
+            );
+
+        if (filter.Dates is { Count: > 0 })
+            query = query.Where(cruiseApplication => filter.Dates.Contains(cruiseApplication.Date));
+
+        if (filter.Statuses is { Count: > 0 })
+            query = query.Where(cruiseApplication =>
+                filter.Statuses.Contains(cruiseApplication.Status)
+            );
+
+        if (filter.Years is { Count: > 0 })
+        {
+            var years = filter.Years.Select(year => year.ToString()).ToList();
+            query = query.Where(cruiseApplication =>
+                cruiseApplication.FormA != null && years.Contains(cruiseApplication.FormA.Year)
+            );
+        }
+
+        if (filter.CruiseManagerIds is { Count: > 0 })
+            query = query.Where(cruiseApplication =>
+                cruiseApplication.FormA != null
+                && filter.CruiseManagerIds.Contains(cruiseApplication.FormA.CruiseManagerId)
+            );
+
+        return query;
     }
 }

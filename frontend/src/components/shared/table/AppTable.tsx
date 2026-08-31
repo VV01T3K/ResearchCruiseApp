@@ -1,5 +1,6 @@
 import {
   ColumnDef,
+  ColumnFiltersState,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
@@ -13,6 +14,7 @@ import {
 } from '@tanstack/react-table';
 
 import { AppDesktopTable } from '@/components/shared/table/desktop/AppDesktopTable';
+import { InfiniteScrollProps } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
 import { AppMobileTable } from '@/components/shared/table/mobile/AppMobileTable';
 import { useWindowSize } from '@/hooks/shared/WindowSizeHook';
 
@@ -24,11 +26,17 @@ type Props<T> = {
   showRequiredAsterisk?: boolean;
   rowSelectionState?: RowSelectionState;
   setRowSelectionState?: OnChangeFn<RowSelectionState>;
+  columnFiltersState?: ColumnFiltersState;
+  setColumnFiltersState?: OnChangeFn<ColumnFiltersState>;
   initialSortingState?: SortingState;
+  sortingState?: SortingState;
+  setSortingState?: OnChangeFn<SortingState>;
+  enableMultiSort?: boolean;
   getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string;
   variant?: 'form' | 'table';
   disabled?: boolean;
   errors?: string[];
+  infiniteScroll?: InfiniteScrollProps;
   'data-testid'?: string;
 };
 
@@ -40,11 +48,17 @@ export function AppTable<T>({
   showRequiredAsterisk = false,
   rowSelectionState,
   setRowSelectionState,
+  columnFiltersState,
+  setColumnFiltersState,
   initialSortingState,
+  sortingState,
+  setSortingState,
+  enableMultiSort = true,
   getRowId,
   variant = 'table',
   disabled = false,
   errors,
+  infiniteScroll,
   'data-testid': testId,
 }: Props<T>) {
   'use no memo'; // Disable React Compiler memoization for TanStack Table compatibility
@@ -62,9 +76,14 @@ export function AppTable<T>({
       filterFn: 'arrIncludesSome',
       sortingFn: 'alphanumeric',
     },
-    onRowSelectionChange: setRowSelectionState,
+    ...(setRowSelectionState !== undefined && { onRowSelectionChange: setRowSelectionState }),
+    ...(setColumnFiltersState !== undefined && { onColumnFiltersChange: setColumnFiltersState }),
+    ...(setSortingState !== undefined && { onSortingChange: setSortingState }),
+    enableMultiSort,
     state: {
-      rowSelection: rowSelectionState,
+      ...(rowSelectionState !== undefined && { rowSelection: rowSelectionState }),
+      ...(columnFiltersState !== undefined && { columnFilters: columnFiltersState }),
+      ...(sortingState !== undefined && { sorting: sortingState }),
       columnVisibility: {
         actions: !disabled,
       },
@@ -86,6 +105,7 @@ export function AppTable<T>({
       showRequiredAsterisk={showRequiredAsterisk}
       variant={variant}
       errors={errors}
+      infiniteScroll={infiniteScroll}
       data-testid={testId}
     />
   );

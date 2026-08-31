@@ -1,17 +1,24 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, ColumnFiltersState, SortingState } from '@tanstack/react-table';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
+import { useMemo, useState } from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
+import { AppLoader } from '@/components/shared/layout/AppLoader';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
 import { formatDate } from '@/lib/dateUtils';
-import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
+import {
+  CruiseApplicationsFilter,
+  CruiseApplicationsSort,
+  useCruiseApplicationManagersQuery,
+  useCruiseApplicationsInfiniteQuery,
+} from '@/api/client/applications/catalog';
 import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/api/client/applications/models';
 
 export const Route = createFileRoute('/applications/')({
@@ -19,8 +26,53 @@ export const Route = createFileRoute('/applications/')({
   beforeLoad: allowOnly.authenticated(),
 });
 
+const statusFilterOptions = Object.values(ApplicationStatus);
+
+const EARLIEST_APPLICATION_YEAR = 2024;
+const YEAR_FILTER_OPTIONS_AHEAD = 3;
+
+function columnFiltersToApiFilter(columnFilters: ColumnFiltersState): CruiseApplicationsFilter {
+  const getValues = (id: string) => columnFilters.find((filter) => filter.id === id)?.value as string[] | undefined;
+
+  return {
+    number: getValues('number')?.map(Number),
+    date: getValues('date'),
+    status: getValues('status'),
+    year: getValues('year')?.map(Number),
+    cruiseManager: getValues('cruiseManager'),
+  };
+}
+
+const DEFAULT_SORTING_STATE: SortingState = [{ id: 'number', desc: true }];
+
+function sortingStateToApiSort(sorting: SortingState): CruiseApplicationsSort {
+  const [sort] = sorting;
+  const sortBy = sort?.id;
+  return sortBy === 'date' || sortBy === 'year' || sortBy === 'number'
+    ? { sortBy, descending: sort.desc }
+    : { sortBy: 'number', descending: true };
+}
+
 function ApplicationsPage() {
-  const applicationsQuery = useGetApplicationsSuspense();
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const filter = useMemo(() => columnFiltersToApiFilter(columnFilters), [columnFilters]);
+  const [sorting, setSorting] = useState<SortingState>(DEFAULT_SORTING_STATE);
+  const sort = useMemo(() => sortingStateToApiSort(sorting), [sorting]);
+  const applicationsQuery = useCruiseApplicationsInfiniteQuery(filter, sort);
+  const applications = useMemo(
+    () => applicationsQuery.data?.pages.flatMap((page) => page.items) ?? [],
+    [applicationsQuery.data]
+  );
+  const currentYear = new Date().getFullYear();
+  const yearFilterOptions = Array.from(
+    { length: currentYear + YEAR_FILTER_OPTIONS_AHEAD - EARLIEST_APPLICATION_YEAR + 1 },
+    (_, index) => (EARLIEST_APPLICATION_YEAR + index).toString()
+  );
+  const cruiseManagersQuery = useCruiseApplicationManagersQuery();
+  const cruiseManagerFilterOptions = cruiseManagersQuery.data.map((manager) => manager.id);
+  const cruiseManagerFilterLabels = new Map(
+    cruiseManagersQuery.data.map((manager) => [manager.id, `${manager.firstName} ${manager.lastName}`])
+  );
 
   const columns: ColumnDef<ApplicationResponse>[] = [
     {
@@ -28,21 +80,30 @@ function ApplicationsPage() {
       header: 'Nr',
       accessorFn: (row) => row.number,
       sortDescFirst: true,
+      meta: { filterInputType: 'number' },
       size: 2,
     },
     {
+      id: 'date',
       header: 'Data',
       accessorFn: (row) => row.date,
+      sortDescFirst: true,
+      meta: { filterInputType: 'date' },
       size: 5,
     },
     {
+      id: 'year',
       header: 'Rok rejsu',
       accessorFn: (row) => row.year.toString(),
+      sortDescFirst: true,
+      meta: { filterOptions: yearFilterOptions },
       size: 5,
     },
     {
       header: 'Liczba dni',
       accessorFn: (row) => (row.cruiseDays !== null ? `${parseFloat(row.cruiseDays.toFixed(2))}` : '-'),
+      enableSorting: false,
+      enableColumnFilter: false,
       size: 5,
     },
     {
@@ -81,8 +142,9 @@ function ApplicationsPage() {
       size: 20,
     },
     {
+      id: 'cruiseManager',
       header: 'Kierownik',
-      accessorFn: (row) => `${row.mainManager.firstName} ${row.mainManager.lastName}`,
+      accessorFn: (row) => row.mainManager.id,
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <AppAvatar
@@ -92,6 +154,11 @@ function ApplicationsPage() {
           <span>{`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}</span>
         </div>
       ),
+      enableSorting: false,
+      meta: {
+        filterOptions: cruiseManagerFilterOptions,
+        getFilterOptionLabel: (managerId) => cruiseManagerFilterLabels.get(managerId) ?? managerId,
+      },
       size: 20,
     },
     {
@@ -122,11 +189,19 @@ function ApplicationsPage() {
       header: 'Punkty',
       accessorFn: (row) => `${row.points} pkt.`,
       cell: ({ row }) => <AppBadge>{row.original.points} pkt.</AppBadge>,
+      enableSorting: false,
+      enableColumnFilter: false,
       size: 5,
     },
     {
+      id: 'status',
       header: 'Status',
       accessorFn: (row) => row.status,
+      enableSorting: false,
+      meta: {
+        filterOptions: statusFilterOptions,
+        getFilterOptionLabel: (value) => getApplicationStatusLabel(value as ApplicationStatus),
+      },
       cell: ({ row }) => (
         <>
           <p className="mb-2 text-right italic sm:text-center">
@@ -190,21 +265,27 @@ function ApplicationsPage() {
     },
   ];
 
-  const initialSortingState = [
-    {
-      id: 'number',
-      desc: true,
-    },
-  ];
+  if (applicationsQuery.isPending) {
+    return <AppLoader />;
+  }
 
   return (
     <>
       <AppLayout title="Zgłoszenia" variant="wide">
         <AppTable
-          data={applicationsQuery.data}
+          data={applications}
           columns={columns}
           buttons={(defaultButtons) => [...defaultButtons]}
-          initialSortingState={initialSortingState}
+          sortingState={sorting}
+          setSortingState={setSorting}
+          enableMultiSort={false}
+          columnFiltersState={columnFilters}
+          setColumnFiltersState={setColumnFilters}
+          infiniteScroll={{
+            hasNextPage: applicationsQuery.hasNextPage,
+            isFetchingNextPage: applicationsQuery.isFetchingNextPage,
+            fetchNextPage: applicationsQuery.fetchNextPage,
+          }}
         />
       </AppLayout>
     </>

@@ -49,6 +49,7 @@ export default defineConfig({
         bypassCSP: true,
         launchOptions: {
           args: ['--disable-web-security'],
+          executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
         },
       },
     },

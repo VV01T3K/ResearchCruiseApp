@@ -16,9 +16,25 @@ export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TD
     header.column.getFilterValue() as TData[] | undefined
   );
   const [searchValue, setSearchValue] = React.useState<string>('');
-  const uniqueValues = React.useMemo(() => {
+
+  // Prefer a column-supplied static option list over deriving one from loaded rows.
+  const computeUniqueValues = React.useCallback(() => {
+    const staticOptions = header.column.columnDef.meta?.filterOptions;
+    if (staticOptions) {
+      return staticOptions.map((value): [any, number] => [value, 0]);
+    }
     return Array.from(header.column.getFacetedUniqueValues().entries()).sort();
   }, [header.column]);
+
+  // Snapshot options on open so picking one can't make others vanish mid-selection.
+  const [uniqueValues, setUniqueValues] = React.useState(computeUniqueValues);
+
+  React.useEffect(() => {
+    if (expanded) {
+      setUniqueValues(computeUniqueValues());
+    }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [expanded]);
 
   const areAllChecked = React.useMemo(() => {
     return uniqueValues.every(([value]) => (filterValue ?? []).includes(value));
@@ -57,6 +73,28 @@ export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TD
   }
 
   const { supportsFilter } = getCapabilities(header);
+  const getFilterOptionLabel = header.column.columnDef.meta?.getFilterOptionLabel;
+  const filterInputType = header.column.columnDef.meta?.filterInputType;
+
+  if (filterInputType) {
+    const value = String(filterValue?.[0] ?? '');
+    return (
+      <div className="px-4 py-3">
+        <AppFloatingLabelInput
+          name={`${header.column.id}-filter`}
+          type={filterInputType}
+          label="Filtruj"
+          value={value}
+          onChange={(nextValue) => {
+            const nextFilter = nextValue ? ([nextValue] as TData[]) : undefined;
+            setFilterValue(nextFilter);
+            header.column.setFilterValue(nextFilter);
+          }}
+          data-testid={`${header.column.id}-filter-input`}
+        />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -76,7 +114,7 @@ export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TD
         </div>
       </div>
 
-      <div className="max-h-32 overflow-y-auto">
+      <div className="max-h-32 overflow-x-auto overflow-y-auto">
         {uniqueValues
           .filter(([value]) => value.toString().includes(searchValue))
           .map((value) => (
@@ -87,7 +125,7 @@ export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TD
               expanded={expanded}
             >
               <AppCheckbox name={`isFilterChecked-${value}`} checked={isFilterChecked(value[0])} />
-              {value[0]}
+              {getFilterOptionLabel ? getFilterOptionLabel(value[0]) : value[0]}
             </AppTableListItem>
           ))}
       </div>

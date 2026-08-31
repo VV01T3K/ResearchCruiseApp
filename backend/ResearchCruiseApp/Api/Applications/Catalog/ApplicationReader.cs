@@ -13,17 +13,18 @@ internal class ApplicationReader(
 {
     public async Task<CruiseApplicationSummary> Create(CruiseApplication application)
     {
+        var common = ReadCommonFields(application);
         var dto = new CruiseApplicationSummary
         {
-            Id = application.Id,
-            Number = application.Number.ToString(),
+            Id = common.Id,
+            Number = common.Number,
             Date = application.Date,
-            Year = application.FormA is null ? default : int.Parse(application.FormA.Year),
-            CruiseManagerId = application.FormA?.CruiseManagerId ?? Guid.Empty,
-            DeputyManagerId = application.FormA?.DeputyManagerId ?? Guid.Empty,
-            HasFormA = application.FormA is not null,
-            HasFormB = application.FormB is not null,
-            HasFormC = application.FormC is not null,
+            Year = common.Year,
+            CruiseManagerId = common.CruiseManagerId,
+            DeputyManagerId = common.DeputyManagerId,
+            HasFormA = common.HasFormA,
+            HasFormB = common.HasFormB,
+            HasFormC = common.HasFormC,
             Status = application.Status,
             Note = application.Note,
             CruiseHours = application.FormA?.CruiseHours,
@@ -50,6 +51,48 @@ internal class ApplicationReader(
         AddCruiseDays(dto);
 
         return dto;
+    }
+
+    public async Task<CruiseApplicationCandidateResponse> CreateCandidate(
+        CruiseApplication application
+    )
+    {
+        var common = ReadCommonFields(application);
+        var dto = new CruiseApplicationCandidateResponse
+        {
+            Id = common.Id,
+            Number = common.Number,
+            Year = common.Year,
+            CruiseManagerId = common.CruiseManagerId,
+            DeputyManagerId = common.DeputyManagerId,
+            HasFormA = common.HasFormA,
+            HasFormB = common.HasFormB,
+            HasFormC = common.HasFormC,
+            Points = evaluator.GetPointsSum(application),
+        };
+
+        if (application.FormA?.CruiseManagerId is { } managerId)
+        {
+            var manager = await identityService.GetUserDtoById(managerId);
+            dto.CruiseManagerFirstName = manager?.FirstName ?? string.Empty;
+            dto.CruiseManagerLastName = manager?.LastName ?? string.Empty;
+        }
+
+        return dto;
+    }
+
+    private static CommonApplicationFields ReadCommonFields(CruiseApplication application)
+    {
+        return new CommonApplicationFields(
+            application.Id,
+            application.Number.ToString(),
+            application.FormA is null ? default : int.Parse(application.FormA.Year),
+            application.FormA?.CruiseManagerId ?? Guid.Empty,
+            application.FormA?.DeputyManagerId ?? Guid.Empty,
+            application.FormA is not null,
+            application.FormB is not null,
+            application.FormC is not null
+        );
     }
 
     public async Task<CruiseApplicationEvaluation> CreateEvaluationDetails(
@@ -136,4 +179,15 @@ internal class ApplicationReader(
 
         return result;
     }
+
+    private sealed record CommonApplicationFields(
+        Guid Id,
+        string Number,
+        int Year,
+        Guid CruiseManagerId,
+        Guid DeputyManagerId,
+        bool HasFormA,
+        bool HasFormB,
+        bool HasFormC
+    );
 }

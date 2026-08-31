@@ -19,9 +19,11 @@ import type {
 import type {
   ApplicationCruiseResponse,
   ApplicationDecisionRequest,
+  ApplicationPersonResponse,
   ApplicationResponse,
+  ApplicationsPageResponse,
+  CruiseApplicationCandidateResponse,
   CruiseApplicationEvaluation,
-  CruiseApplicationSummary,
   FormAFields,
   FormAOptions,
   FormAWriteRequest,
@@ -31,6 +33,8 @@ import type {
   FormCFields,
   FormCWriteRequest,
   GetApplicationSupervisorReviewParams,
+  GetApplicationsForCruisePlanningParams,
+  GetApplicationsParams,
   ProblemDetails,
   SupervisorDecisionRequest,
   SupervisorReviewResponse
@@ -64,20 +68,35 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   return result;
 };
 
-export const getGetApplicationsUrl = () => {
+export const getGetApplicationsUrl = (params?: GetApplicationsParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["number","date","status","year","cruiseManager"];
 
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
-  return `/v2/applications`
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v2/applications?${stringifiedParams}` : `/v2/applications`
 }
 
 /**
  * @summary Get visible applications.
  */
-export const getApplications = async ( options?: RequestInit): Promise<ApplicationResponse[]> => {
+export const getApplications = async (params?: GetApplicationsParams, options?: RequestInit): Promise<ApplicationsPageResponse> => {
 
-  return customFetch<ApplicationResponse[]>(getGetApplicationsUrl(),
+  return customFetch<ApplicationsPageResponse>(getGetApplicationsUrl(params),
   {
     ...options,
     method: 'GET'
@@ -90,23 +109,23 @@ export const getApplications = async ( options?: RequestInit): Promise<Applicati
 
 
 
-export const getGetApplicationsQueryKey = () => {
+export const getGetApplicationsQueryKey = (params?: GetApplicationsParams,) => {
     return [
-    'v2','applications'
+    'v2','applications', ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetApplicationsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplications>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplications>>, TError = ErrorType<ProblemDetails>>(params?: GetApplicationsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApplicationsQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetApplicationsQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApplications>>> = ({ signal }) => getApplications({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApplications>>> = ({ signal }) => getApplications(params, { signal, ...requestOptions });
 
 
 
@@ -120,15 +139,15 @@ export type GetApplicationsSuspenseQueryError = ErrorType<ProblemDetails>
 
 
 export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof getApplications>>, TError = ErrorType<ProblemDetails>>(
-  options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params: undefined |  GetApplicationsParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof getApplications>>, TError = ErrorType<ProblemDetails>>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: GetApplicationsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof getApplications>>, TError = ErrorType<ProblemDetails>>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: GetApplicationsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -136,11 +155,11 @@ export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof get
  */
 
 export function useGetApplicationsSuspense<TData = Awaited<ReturnType<typeof getApplications>>, TError = ErrorType<ProblemDetails>>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: GetApplicationsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplications>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApplicationsSuspenseQueryOptions(options)
+  const queryOptions = getGetApplicationsSuspenseQueryOptions(params,options)
 
   const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -222,7 +241,95 @@ export const useCreateApplication = <TError = ErrorType<ProblemDetails>,
       > => {
       return useMutation(getCreateApplicationMutationOptions(options), queryClient);
     }
-    export const getGetApplicationUrl = (applicationId: string,) => {
+    export const getGetApplicationManagersUrl = () => {
+
+
+
+
+  return `/v2/applications/managers`
+}
+
+/**
+ * @summary Get managers of applications visible to the current user.
+ */
+export const getApplicationManagers = async ( options?: RequestInit): Promise<ApplicationPersonResponse[]> => {
+
+  return customFetch<ApplicationPersonResponse[]>(getGetApplicationManagersUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetApplicationManagersQueryKey = () => {
+    return [
+    'v2','applications','managers'
+    ] as const;
+    }
+
+
+export const getGetApplicationManagersSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationManagers>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationManagers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApplicationManagersQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApplicationManagers>>> = ({ signal }) => getApplicationManagers({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationManagers>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApplicationManagersSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApplicationManagers>>>
+export type GetApplicationManagersSuspenseQueryError = ErrorType<ProblemDetails>
+
+
+export function useGetApplicationManagersSuspense<TData = Awaited<ReturnType<typeof getApplicationManagers>>, TError = ErrorType<ProblemDetails>>(
+  options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationManagers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApplicationManagersSuspense<TData = Awaited<ReturnType<typeof getApplicationManagers>>, TError = ErrorType<ProblemDetails>>(
+  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationManagers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApplicationManagersSuspense<TData = Awaited<ReturnType<typeof getApplicationManagers>>, TError = ErrorType<ProblemDetails>>(
+  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationManagers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get managers of applications visible to the current user.
+ */
+
+export function useGetApplicationManagersSuspense<TData = Awaited<ReturnType<typeof getApplicationManagers>>, TError = ErrorType<ProblemDetails>>(
+  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationManagers>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApplicationManagersSuspenseQueryOptions(options)
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getGetApplicationUrl = (applicationId: string,) => {
 
 
 
@@ -563,20 +670,27 @@ export const useUpdateApplicationDecision = <TError = ErrorType<ProblemDetails>,
       const backupQueryClient = useQueryClient();
       return useMutation(getUpdateApplicationDecisionMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
     }
-    export const getGetApplicationsForCruisePlanningUrl = () => {
+    export const getGetApplicationsForCruisePlanningUrl = (params?: GetApplicationsForCruisePlanningParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/v2/applications/for-cruise-planning`
+  return stringifiedParams.length > 0 ? `/v2/applications/for-cruise-planning?${stringifiedParams}` : `/v2/applications/for-cruise-planning`
 }
 
 /**
  * @summary Get applications eligible for cruise planning.
  */
-export const getApplicationsForCruisePlanning = async ( options?: RequestInit): Promise<CruiseApplicationSummary[]> => {
+export const getApplicationsForCruisePlanning = async (params?: GetApplicationsForCruisePlanningParams, options?: RequestInit): Promise<CruiseApplicationCandidateResponse[]> => {
 
-  return customFetch<CruiseApplicationSummary[]>(getGetApplicationsForCruisePlanningUrl(),
+  return customFetch<CruiseApplicationCandidateResponse[]>(getGetApplicationsForCruisePlanningUrl(params),
   {
     ...options,
     method: 'GET'
@@ -589,23 +703,23 @@ export const getApplicationsForCruisePlanning = async ( options?: RequestInit): 
 
 
 
-export const getGetApplicationsForCruisePlanningQueryKey = () => {
+export const getGetApplicationsForCruisePlanningQueryKey = (params?: GetApplicationsForCruisePlanningParams,) => {
     return [
-    'v2','applications','for-cruise-planning'
+    'v2','applications','for-cruise-planning', ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetApplicationsForCruisePlanningSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationsForCruisePlanningSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ErrorType<ProblemDetails>>(params?: GetApplicationsForCruisePlanningParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApplicationsForCruisePlanningQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetApplicationsForCruisePlanningQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>> = ({ signal }) => getApplicationsForCruisePlanning({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>> = ({ signal }) => getApplicationsForCruisePlanning(params, { signal, ...requestOptions });
 
 
 
@@ -619,15 +733,15 @@ export type GetApplicationsForCruisePlanningSuspenseQueryError = ErrorType<Probl
 
 
 export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ErrorType<ProblemDetails>>(
-  options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params: undefined |  GetApplicationsForCruisePlanningParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ErrorType<ProblemDetails>>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: GetApplicationsForCruisePlanningParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ErrorType<ProblemDetails>>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: GetApplicationsForCruisePlanningParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -635,11 +749,11 @@ export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<Retu
  */
 
 export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError = ErrorType<ProblemDetails>>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: GetApplicationsForCruisePlanningParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationsForCruisePlanning>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApplicationsForCruisePlanningSuspenseQueryOptions(options)
+  const queryOptions = getGetApplicationsForCruisePlanningSuspenseQueryOptions(params,options)
 
   const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
