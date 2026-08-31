@@ -15,7 +15,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "playwright test",
-    "test:ui": "playwright test --ui"
+    "test:ui": "playwright test --ui",
+    "test:unit": "vp test run"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",
@@ -65,7 +66,8 @@
     "tailwindcss": "^4.2.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@latest",
     "vite-plugin-svgr": "^5.2.0",
-    "vite-plus": "^0.1.16"
+    "vite-plus": "^0.1.16",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
   },
   "overrides": {
     "vite": "npm:@voidzero-dev/vite-plus-core@latest",

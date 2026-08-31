@@ -1,33 +1,63 @@
 import { expect } from '@playwright/test';
 import { formTest as test } from '@tests/fixtures/fixtures';
-import {
-  formBDefaultValues,
-  getFormBDraftWriteSchema,
-} from '@/routes/applications/$applicationId/-schemas/formB.schema';
 
 import { MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { touchInput } from './utils/form-filling-utils';
 
-test('draft form B requires the complete input shape while allowing empty values', () => {
-  const draft = {
-    ...formBDefaultValues,
-    permissions: [{ description: '', executive: '', scan: undefined }],
-  };
-  expect(getFormBDraftWriteSchema().safeParse(draft).success).toBe(true);
+/** Section → fields that must report an error when the section holds a row of invalid data. */
+const INVALID_ROW_SECTION_FIELDS = {
+  additionalPermissionsSection: ['permissions'],
+  membersSection: ['ugTeams', 'guestTeams', 'crewMembers'],
+  cruiseDetailsSection: ['shortResearchEquipments', 'longResearchEquipments', 'ports'],
+  cruiseDayDetailsSection: ['cruiseDaysDetails'],
+  researchEquipmentsSection: ['researchEquipments'],
+} as const;
 
-  const { shipEquipmentsIds: _omitted, ...missingKey } = draft;
-  expect(getFormBDraftWriteSchema().safeParse(missingKey).success).toBe(false);
-  expect(
-    getFormBDraftWriteSchema().safeParse({
-      ...draft,
-      cruiseDaysDetails: [{ number: 0, hours: 0, taskName: '', region: '', position: '', comment: 'x'.repeat(1025) }],
-    }).success
-  ).toBe(false);
+/**
+ * TanStack keys array rows as `ports[0].name`, so a section-level field matches either
+ * exactly or as the prefix of a row path.
+ */
+function hasError(errors: Record<string, string[]>, field: string) {
+  return Object.keys(errors).some((key) => key === field || key.startsWith(`${field}[`) || key.startsWith(`${field}.`));
+}
+
+/**
+ * Checks each section separately against a single validation result, reporting one step per
+ * section. Soft assertions keep every section evaluated, so one failing section still shows
+ * that all the others behaved as expected.
+ */
+async function expectSectionsInvalid(
+  errors: Record<string, string[]>,
+  sectionFields: Record<string, readonly string[]>
+) {
+  const reportedKeys = Object.keys(errors).join(', ') || '(none)';
+
+  for (const [section, fields] of Object.entries(sectionFields)) {
+    await test.step(section, () => {
+      for (const field of fields) {
+        expect
+          .soft(hasError(errors, field), `${section}: expected an error on "${field}"; reported: [${reportedKeys}]`)
+          .toBe(true);
+      }
+    });
+  }
+}
+
+test('all sections valid', async ({ formBPage }) => {
+  await formBPage.fillForm();
+  await formBPage.submitForm({ expectedResult: 'valid' });
 });
 
-test('valid form B', async ({ formBPage }) => {
-  await formBPage.fillForm(); // Fill the form with default values
-  await formBPage.submitForm({ expectedResult: 'valid' });
+test('all sections filled with invalid rows', async ({ formBPage }) => {
+  // Every list-based section gets one row with empty required fields and negative counts
+  await formBPage.fillForm({ withInvalidRows: true });
+
+  await formBPage.submitButton.click();
+
+  // The form does not navigate when invalid, so its TanStack state can be read directly.
+  // One submit yields an independent verdict per section.
+  const errors = await formBPage.getInvalidFormState();
+  await expectSectionsInvalid(errors, INVALID_ROW_SECTION_FIELDS);
 });
 
 test.describe('additional permissions section tests', () => {
@@ -35,50 +65,20 @@ test.describe('additional permissions section tests', () => {
     await formBPage.fillForm({ except: ['additionalPermissionsSection'] });
   });
 
-  test('no permissions added', async ({ formBPage }) => {
-    await formBPage.submitForm({ expectedResult: 'valid' });
-  });
+  // The scan upload is the one part of a permission row that cannot be unit tested
+  test('permission added through the UI requires a scan', async ({ formBPage }) => {
+    const section = formBPage.sections.additionalPermissionsSection;
+    await section.addPermissionButton.click();
+    const permissionRow = section.permissionRow('last');
 
-  test('add permission', async ({ formBPage }) => {
-    const additionalPermissionsSection = formBPage.sections.additionalPermissionsSection;
-    await additionalPermissionsSection.addPermissionButton.click();
-    const permissionRow = additionalPermissionsSection.permissionRow('last');
     await permissionRow.descriptionInput.fill('Jakiś opis');
     await permissionRow.executiveInput.fill('Jakiś organ');
-    await permissionRow.scanFileInput.send(MOCK_PDF_FILEPATH);
-    await formBPage.submitForm({ expectedResult: 'valid' });
-  });
 
-  test('missing description and executive', async ({ formBPage }) => {
-    const additionalPermissionsSection = formBPage.sections.additionalPermissionsSection;
-    await additionalPermissionsSection.addPermissionButton.click();
-    const permissionRow = additionalPermissionsSection.permissionRow('last');
-    await permissionRow.scanFileInput.send(MOCK_PDF_FILEPATH);
     await formBPage.submitForm({ expectedResult: 'invalid' });
-
-    await expect(permissionRow.descriptionInput.errors.required).toBeVisible();
-    await expect(permissionRow.executiveInput.errors.required).toBeVisible();
-
-    await permissionRow.descriptionInput.fill('Jakiś opis');
-    await expect(permissionRow.descriptionInput.errors.required).toBeHidden();
-    await permissionRow.executiveInput.fill('Jakiś organ');
-    await expect(permissionRow.executiveInput.errors.required).toBeHidden();
-
-    await formBPage.submitForm({ expectedResult: 'valid' });
-  });
-
-  test('missing scan file', async ({ formBPage }) => {
-    const additionalPermissionsSection = formBPage.sections.additionalPermissionsSection;
-    await additionalPermissionsSection.addPermissionButton.click();
-    const permissionRow = additionalPermissionsSection.permissionRow('last');
-    await permissionRow.descriptionInput.fill('Jakiś opis');
-    await permissionRow.executiveInput.fill('Jakiś organ');
-    await formBPage.submitForm({ expectedResult: 'invalid' });
-
     await expect(permissionRow.scanFileInput.errors.required).toBeVisible();
+
     await permissionRow.scanFileInput.send(MOCK_PDF_FILEPATH);
     await expect(permissionRow.scanFileInput.errors.required).toBeHidden();
-
     await formBPage.submitForm({ expectedResult: 'valid' });
   });
 });
@@ -88,7 +88,7 @@ test.describe('members section tests', () => {
     await formBPage.fillForm({ except: ['membersSection'] });
   });
 
-  test('duplicate faculty', async ({ formBPage }) => {
+  test('duplicate faculty is reported and clears when a row is removed', async ({ formBPage }) => {
     const membersSection = formBPage.sections.membersSection;
     await membersSection.addUGUnitDropdown.selectOption('Szkoły Doktorskie (0C00)');
     await membersSection.ugUnitRow('last').noOfEmployeesInput.fill('1');
@@ -104,62 +104,30 @@ test.describe('members section tests', () => {
     await formBPage.submitForm({ expectedResult: 'valid' });
   });
 
-  test('guest team input', async ({ formBPage }) => {
+  test('rows added through the UI make the form submittable', async ({ formBPage }) => {
     const membersSection = formBPage.sections.membersSection;
+
     await membersSection.addNewGuestTeamButton.click();
     const guestTeamRow = membersSection.guestTeamRow('first');
-
-    // for the 'empty' message to appear, the field must be detected as touched, so it is filled with some value at first
     await touchInput(guestTeamRow.teamNameInput);
     await expect(guestTeamRow.teamNameInput.errors.required).toBeVisible();
-
     await guestTeamRow.teamNameInput.fill('Jakiś zespół');
-    await guestTeamRow.teamNameInput.input.blur();
-    await expect(guestTeamRow.teamNameInput.errors.required).toBeHidden();
-
-    await formBPage.submitForm({ expectedResult: 'invalid' });
-    await expect(guestTeamRow.noOfPeopleInput.errors.invalidValue).toBeVisible();
-
     await guestTeamRow.noOfPeopleInput.fill('1');
-    await expect(guestTeamRow.noOfPeopleInput.errors.invalidValue).toBeHidden();
-    await formBPage.submitForm({ expectedResult: 'valid' });
-  });
 
-  test('permission inputs', async ({ formBPage }) => {
-    const membersSection = formBPage.sections.membersSection;
     await membersSection.addPermissionButton.click();
-
     const permissionRow = membersSection.permissionRow('first');
-    const inputFields = [
+    for (const inputField of [
       permissionRow.titleInput,
       permissionRow.namesInput,
       permissionRow.surnameInput,
       permissionRow.birthplaceInput,
       permissionRow.documentIdInput,
       permissionRow.unitNameInput,
-    ];
-    for (const inputField of inputFields) {
-      await touchInput(inputField);
-      await expect(inputField.errors.required).toBeVisible();
-    }
-
-    await formBPage.submitForm();
-    await expect(formBPage.submissionApprovedMessage).toBeHidden();
-
-    for (const inputField of inputFields) {
+    ]) {
       await inputField.fill('Wartość');
-      await expect(inputField.errors.required).toBeHidden();
     }
-
-    await formBPage.submitForm({ expectedResult: 'invalid' });
-
-    await expect(permissionRow.birthdayDropdown.errors.required).toBeVisible();
-    await expect(permissionRow.documentExpirationDateDropdown.errors.required).toBeVisible();
-
     await permissionRow.birthdayDropdown.selectOption('11');
-    await expect(permissionRow.birthdayDropdown.errors.required).toBeHidden();
     await permissionRow.documentExpirationDateDropdown.selectOption('11');
-    await expect(permissionRow.documentExpirationDateDropdown.errors.required).toBeHidden();
 
     await formBPage.submitForm({ expectedResult: 'valid' });
   });
@@ -170,77 +138,26 @@ test.describe('cruise details section tests', () => {
     await formBPage.fillForm({ except: ['cruiseDetailsSection'] });
   });
 
-  test('equipment input', async ({ formBPage }) => {
-    const cruiseDetailsSection = formBPage.sections.cruiseDetailsSection;
-    await cruiseDetailsSection.addEquipmentButton.click();
-    const equipmentRow = cruiseDetailsSection.equipmentRow('first');
+  test('equipment, action and port rows added through the UI make the form submittable', async ({ formBPage }) => {
+    const section = formBPage.sections.cruiseDetailsSection;
     const currentDay = String(await formBPage.page.evaluate(() => new Date().getDate()));
 
-    await formBPage.submitForm();
-    await expect(formBPage.submissionApprovedMessage).toBeHidden();
-
-    await touchInput(equipmentRow.nameInput);
-    await expect(equipmentRow.nameInput.errors.required).toBeVisible();
-
+    await section.addEquipmentButton.click();
+    const equipmentRow = section.equipmentRow('first');
     await equipmentRow.nameInput.fill('Jakiś sprzęt');
-    await expect(equipmentRow.nameInput.errors.required).toBeHidden();
-
-    await formBPage.submitForm({ expectedResult: 'invalid' });
-    await expect(equipmentRow.fromDateDropdown.errors.required).toBeVisible();
-    await expect(equipmentRow.toDateDropdown.errors.required).toBeVisible();
-
     await equipmentRow.fromDateDropdown.selectOption(currentDay);
-    await expect(equipmentRow.fromDateDropdown.errors.required).toBeHidden();
     await equipmentRow.toDateDropdown.selectOption(currentDay);
-    await expect(equipmentRow.toDateDropdown.errors.required).toBeHidden();
 
-    await formBPage.submitForm({ expectedResult: 'valid' });
-  });
-
-  test('equipment action input', async ({ formBPage }) => {
-    const cruiseDetailsSection = formBPage.sections.cruiseDetailsSection;
-    await cruiseDetailsSection.addEquipmentActionDropdown.selectOption('Pozostawienie');
-    const actionRow = cruiseDetailsSection.equipmentActionRow('first');
-
-    await formBPage.submitForm();
-    await expect(formBPage.submissionApprovedMessage).toBeHidden();
-
-    await touchInput(actionRow.timeInput);
-    await expect(actionRow.timeInput.errors.required).toBeVisible();
-    await touchInput(actionRow.nameInput);
-    await expect(actionRow.nameInput.errors.required).toBeVisible();
-
+    await section.addEquipmentActionDropdown.selectOption('Pozostawienie');
+    const actionRow = section.equipmentActionRow('first');
     await actionRow.timeInput.fill('10');
-    await expect(actionRow.timeInput.errors.required).toBeHidden();
     await actionRow.nameInput.fill('Jakaś nazwa');
-    await expect(actionRow.nameInput.errors.required).toBeHidden();
 
-    await formBPage.submitForm({ expectedResult: 'valid' });
-  });
-
-  test('port input', async ({ formBPage }) => {
-    const cruiseDetailsSection = formBPage.sections.cruiseDetailsSection;
-    await cruiseDetailsSection.addPortButton.click();
-    const portRow = cruiseDetailsSection.portRow('first');
-    const currentDay = String(await formBPage.page.evaluate(() => new Date().getDate()));
-
-    await formBPage.submitForm();
-    await expect(formBPage.submissionApprovedMessage).toBeHidden();
-
-    await touchInput(portRow.nameInput);
-    await expect(portRow.nameInput.errors.required).toBeVisible();
-
+    await section.addPortButton.click();
+    const portRow = section.portRow('first');
     await portRow.nameInput.fill('Jakaś nazwa');
-    await expect(portRow.nameInput.errors.required).toBeHidden();
-
-    await formBPage.submitForm({ expectedResult: 'invalid' });
-    await expect(portRow.fromDateDropdown.errors.required).toBeVisible();
-    await expect(portRow.toDateDropdown.errors.required).toBeVisible();
-
     await portRow.fromDateDropdown.selectOption(currentDay);
-    await expect(portRow.fromDateDropdown.errors.required).toBeHidden();
     await portRow.toDateDropdown.selectOption(currentDay);
-    await expect(portRow.toDateDropdown.errors.required).toBeHidden();
 
     await formBPage.submitForm({ expectedResult: 'valid' });
   });
@@ -251,21 +168,15 @@ test.describe('cruise day details section tests', () => {
     await formBPage.fillForm({ except: ['cruiseDayDetailsSection'] });
   });
 
-  test('task input', async ({ formBPage }) => {
-    const cruiseDayDetailsSection = formBPage.sections.cruiseDayDetailsSection;
-    await cruiseDayDetailsSection.addTaskButton.click();
-    const taskRow = cruiseDayDetailsSection.taskRow('first');
-    await formBPage.submitForm();
-    await expect(formBPage.submissionApprovedMessage).toBeHidden();
+  test('task row added through the UI makes the form submittable', async ({ formBPage }) => {
+    const section = formBPage.sections.cruiseDayDetailsSection;
+    await section.addTaskButton.click();
+    const taskRow = section.taskRow('first');
 
-    const inputFields = [taskRow.nameInput, taskRow.regionInput, taskRow.positionInput];
+    await touchInput(taskRow.nameInput);
+    await expect(taskRow.nameInput.errors.required).toBeVisible();
 
-    for (const inputField of inputFields) {
-      await touchInput(inputField);
-      await expect(inputField.errors.required).toBeVisible();
-    }
-
-    for (const inputField of inputFields) {
+    for (const inputField of [taskRow.nameInput, taskRow.regionInput, taskRow.positionInput]) {
       await inputField.fill('Wartość');
       await expect(inputField.errors.required).toBeHidden();
     }
@@ -279,13 +190,10 @@ test.describe('research equipments section tests', () => {
     await formBPage.fillForm({ except: ['researchEquipmentsSection'] });
   });
 
-  test('equipment input', async ({ formBPage }) => {
-    const researchEquipmentsSection = formBPage.sections.researchEquipmentsSection;
-    await researchEquipmentsSection.addEquipmentButton.click();
-    const equipmentRow = researchEquipmentsSection.equipmentRow('first');
-
-    await formBPage.submitForm();
-    await expect(formBPage.submissionApprovedMessage).toBeHidden();
+  test('equipment row added through the UI makes the form submittable', async ({ formBPage }) => {
+    const section = formBPage.sections.researchEquipmentsSection;
+    await section.addEquipmentButton.click();
+    const equipmentRow = section.equipmentRow('first');
 
     await touchInput(equipmentRow.nameInput);
     await expect(equipmentRow.nameInput.errors.required).toBeVisible();
