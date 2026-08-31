@@ -1,5 +1,6 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { z } from 'zod';
+import { loginValidationSchema } from '@/validation/auth';
 import { allowOnly } from '@/lib/guards';
 import { revalidateLogic, useForm } from '@tanstack/react-form';
 import React from 'react';
@@ -16,11 +17,6 @@ export const Route = createFileRoute('/(auth)/login')({
   component: LoginPage,
   beforeLoad: allowOnly.unauthenticated(),
   validateSearch: z.object({ redirect: z.string().optional() }),
-});
-
-const validationSchema = z.object({
-  email: z.email('Nieprawidłowy adres email'),
-  password: z.string().nonempty('Hasło nie może być puste'),
 });
 
 const errorMessages = {
@@ -42,7 +38,7 @@ function LoginPage() {
     },
     validationLogic: revalidateLogic({ mode: 'change', modeAfterSubmission: 'change' }),
     validators: {
-      onDynamic: validationSchema,
+      onDynamic: loginValidationSchema,
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('login', 'valid', formApi.state);
