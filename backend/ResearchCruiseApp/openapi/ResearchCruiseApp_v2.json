@@ -1825,16 +1825,112 @@
         ],
         "summary": "Get visible applications.",
         "operationId": "GetApplications",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "number",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "cruiseManager",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "number"
+            }
+          },
+          {
+            "name": "descending",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationResponse"
-                  }
+                  "$ref": "#/components/schemas/ApplicationsPageResponse"
                 }
               }
             }
@@ -1893,6 +1989,40 @@
           },
           "403": {
             "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/applications/managers": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Get managers of applications visible to the current user.",
+        "operationId": "GetApplicationManagers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationPersonResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -2142,6 +2272,16 @@
         ],
         "summary": "Get applications eligible for cruise planning.",
         "operationId": "GetApplicationsForCruisePlanning",
+        "parameters": [
+          {
+            "name": "cruiseId",
+            "in": "query",
+            "schema": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -2150,7 +2290,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CruiseApplicationSummary"
+                    "$ref": "#/components/schemas/CruiseApplicationCandidateResponse"
                   }
                 }
               }
@@ -3114,6 +3254,27 @@
           }
         }
       },
+      "ApplicationsPageResponse": {
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationResponse"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "ApplicationSummaryResponse": {
         "required": [
           "id",
@@ -3358,6 +3519,49 @@
           }
         }
       },
+      "CruiseApplicationCandidateResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cruiseManagerId": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "cruiseManagerFirstName": {
+            "type": "string"
+          },
+          "cruiseManagerLastName": {
+            "type": "string"
+          },
+          "deputyManagerId": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "hasFormA": {
+            "type": "boolean"
+          },
+          "hasFormB": {
+            "type": "boolean"
+          },
+          "hasFormC": {
+            "type": "boolean"
+          },
+          "points": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "CruiseApplicationEvaluation": {
         "type": "object",
         "properties": {
@@ -3418,142 +3622,6 @@
           "undertaken",
           "reported"
         ]
-      },
-      "CruiseApplicationSummary": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            "type": "string"
-          },
-          "number": {
-            "type": "string"
-          },
-          "date": {
-            "type": "string",
-            "format": "date"
-          },
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cruiseManagerId": {
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            "type": "string"
-          },
-          "cruiseManagerEmail": {
-            "type": "string"
-          },
-          "cruiseManagerFirstName": {
-            "type": "string"
-          },
-          "cruiseManagerLastName": {
-            "type": "string"
-          },
-          "deputyManagerId": {
-            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            "type": "string"
-          },
-          "deputyManagerEmail": {
-            "type": "string"
-          },
-          "deputyManagerFirstName": {
-            "type": "string"
-          },
-          "deputyManagerLastName": {
-            "type": "string"
-          },
-          "hasFormA": {
-            "type": "boolean"
-          },
-          "hasFormB": {
-            "type": "boolean"
-          },
-          "hasFormC": {
-            "type": "boolean"
-          },
-          "points": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "status": {
-            "$ref": "#/components/schemas/CruiseApplicationStatus"
-          },
-          "effectsDoneRate": {
-            "type": "string"
-          },
-          "note": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "cruiseHours": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "cruiseDays": {
-            "type": [
-              "null",
-              "number"
-            ],
-            "format": "float"
-          },
-          "acceptablePeriodBeg": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "acceptablePeriodEnd": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "optimalPeriodBeg": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "optimalPeriodEnd": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "precisePeriodStart": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "precisePeriodEnd": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "startDate": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "endDate": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          }
-        }
       },
       "CruiseDayFields": {
         "type": "object",

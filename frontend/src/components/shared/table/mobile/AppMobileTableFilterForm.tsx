@@ -1,4 +1,7 @@
 import { flexRender, Header, Table } from '@tanstack/react-table';
+import SortDownIcon from 'bootstrap-icons/icons/sort-down.svg?react';
+import SortUpIcon from 'bootstrap-icons/icons/sort-up.svg?react';
+import XIcon from 'bootstrap-icons/icons/x.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 import { Fragment } from 'react/jsx-runtime';
@@ -6,7 +9,6 @@ import { Fragment } from 'react/jsx-runtime';
 import { AppTableClearFiltersButton } from '@/components/shared/table/common/AppTableClearFiltersButton';
 import { AppTableFilterIcon } from '@/components/shared/table/common/AppTableFilterIcon';
 import { AppTableFilterList } from '@/components/shared/table/common/AppTableFilterList';
-import { AppTableSortingToggle } from '@/components/shared/table/common/AppTableSortingToggle';
 import { getCapabilities } from '@/components/shared/table/common/utils';
 import { useOutsideClickDetection } from '@/hooks/shared/OutsideClickDetectionHook';
 import { cn } from '@/lib/utils';
@@ -52,12 +54,29 @@ function FormElement<T>({ header }: FormElementProps<T>) {
 }
 
 function SortFormElement<T>({ header }: FormElementProps<T>) {
+  const isSorted = header.column.getIsSorted();
+
   return (
-    <div
-      className={cn('flex items-center justify-end gap-2', header.column.getIsSorted() ? 'font-bold' : '')}
-      onClick={() => header.column.toggleSorting()}
-    >
-      <AppTableSortingToggle header={header} />
+    <div className="flex items-center justify-end gap-3">
+      <div
+        className={cn('flex items-center gap-1', isSorted === 'asc' ? 'font-bold' : '')}
+        onClick={() => header.column.toggleSorting(false)}
+      >
+        <SortUpIcon className="h-4 w-4" />
+        Rosnąco
+      </div>
+      <div
+        className={cn('flex items-center gap-1', isSorted === 'desc' ? 'font-bold' : '')}
+        onClick={() => header.column.toggleSorting(true)}
+      >
+        <SortDownIcon className="h-4 w-4" />
+        Malejąco
+      </div>
+      {isSorted && (
+        <div className="flex items-center" onClick={() => header.column.clearSorting()}>
+          <XIcon className="h-4 w-4" />
+        </div>
+      )}
     </div>
   );
 }
