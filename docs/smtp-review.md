@@ -17,21 +17,22 @@ and did not resolve its exposure through Git history or built images.
 `t3code/fix-email-secrets`, removes credentials from application settings and maps
 required Komodo variables into staging. Its approach is appropriate and the branch
 is not orphaned. At review time it is open and mergeable, one commit behind staging.
-Its existing build and lint checks passed; its August 27 browser test run failed
+Its original build and lint checks passed; its August 27 browser test run failed
 three cruise-length tests. These checks need rerunning against the current base;
 the old failures do not establish an SMTP regression.
 
-## Improvements prepared in this worktree
+## Improvements and PR split
 
-The follow-up branch is stacked on PR #405 and contains the following additions
-to its five-file fix:
+The required development and build-context corrections are included directly in
+PR #405. PR #411 is stacked on it and contains only the additional production
+wiring, README update, and operational/review documentation.
 
-| Finding | Change |
-| --- | --- |
-| Docker development never selected ASP.NET Development or enabled fake SMTP, so removing base credentials would break its mail flows. | Explicitly enable fake SMTP, writing to `/tmp/fake-emails` in the container. |
-| The production Compose file would have no source of credentials after removing the defaults. Issue #390 deferred this work. | Add the same required credential mappings now, without enabling production deployment. |
-| Ignoring secrets in Git does not exclude them from Docker contexts. The root context had no `.env` exclusions; the backend excluded `.env` but not `.env.*`. | Exclude both filename patterns and captured fake emails from both Docker build contexts. |
-| The PR's instruction to restart after changing secrets is insufficient if the existing container retains its original environment. | Document container recreation, pre-merge Komodo setup, revocation, delivery verification, and rollback-related exposure in old images. |
+| Finding | Change | PR |
+| --- | --- | --- |
+| Docker development never selected ASP.NET Development or enabled fake SMTP, so removing base credentials would break its mail flows. | Explicitly enable fake SMTP, writing to `/tmp/fake-emails` in the container. | #405 |
+| The production Compose file would have no source of credentials after removing the defaults. Issue #390 deferred this work. | Add the same required credential mappings now, without enabling production deployment. | #411 |
+| Ignoring secrets in Git does not exclude them from Docker contexts. The root context had no `.env` exclusions; the backend excluded `.env` but not `.env.*`. | Exclude both filename patterns and captured fake emails from both Docker build contexts. | #405 |
+| The PR's instruction to restart after changing secrets is insufficient if the existing container retains its original environment. | Correct #405's deployment instructions and add a detailed rollout guide in the follow-up. | #405 / #411 |
 
 See [SMTP configuration and rollout](smtp-configuration.md) for the operational steps.
 No C# mail transport, authentication endpoint, database, or frontend behavior was changed.
@@ -56,9 +57,9 @@ No real credential was tested, and no email was sent.
 
 - Configure a fresh Gmail app password in Komodo, deploy/recreate, verify delivery,
   and revoke exposed passwords. Old commits and images still contain those passwords.
-- Merge the follow-up through PR #405, or retarget it to staging after #405 merges,
-  and rerun CI against the resulting staging base. Publishing this follow-up does
-  not deploy the change or configure the live credentials.
+- Merge #405 first for the required staging fix; then retarget #411 to staging for
+  the additional improvements and rerun CI. Publishing these changes does not
+  deploy them or configure the live credentials.
 - Apply the fix to main before reviving production. This local change does not
   sanitize either remote branch or rewrite history.
 - Registration persists the user before email is sent; an SMTP failure can leave an
