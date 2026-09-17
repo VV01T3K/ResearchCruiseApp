@@ -71,7 +71,7 @@ async function mockCruiseDetailDependencies(page: Page, cruise = getCruise()) {
     }
     return route.fulfill({ status: 204 });
   });
-  await page.route(`${API_URL}/v2/applications`, (route) => {
+  await page.route(`${API_URL}/v2/applications/for-cruise-planning?*`, (route) => {
     route.fulfill({
       status: 200,
       body: JSON.stringify([]),
@@ -207,14 +207,6 @@ test('cruise detail update and lifecycle actions use v2 routes', async ({ page }
       contentType: 'application/json',
     });
   });
-  await page.route(`${API_URL}/v2/applications`, (route) => {
-    route.fulfill({
-      status: 200,
-      body: JSON.stringify([]),
-      contentType: 'application/json',
-    });
-  });
-
   await page.goto(`/cruises/${cruise.id}`);
   await page.getByRole('button', { name: 'Edytuj' }).click();
   await page.getByRole('button', { name: 'Zapisz rejs' }).click();

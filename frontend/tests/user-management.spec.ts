@@ -42,6 +42,28 @@ test('user management list loads from the v2 users route', async ({ page }) => {
   expect(requested).toBe(true);
 });
 
+test('shared tables retain local sorting and filtering', async ({ page }) => {
+  await seedAuthenticatedAdmin(page);
+  await page.route(`${API_URL}/v2/users`, (route) =>
+    route.fulfill({
+      json: [
+        { ...user, id: '22222222-2222-2222-2222-222222222222', email: 'zebra@example.com' },
+        { ...user, email: 'alpha@example.com' },
+      ],
+    })
+  );
+  await page.goto('/user-management');
+  await page.getByRole('button', { name: 'Email', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
+  await expect(page.locator('tbody tr').first()).toContainText('alpha@example.com');
+  await page.getByRole('menuitem', { name: 'zebra@example.com', exact: true }).click();
+  await expect(page.locator('tbody tr')).toHaveCount(1);
+  await expect(page.locator('tbody tr')).toContainText('zebra@example.com');
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Wyczyść filtry', exact: true }).click();
+  await expect(page.locator('tbody tr')).toHaveCount(2);
+});
+
 test('role guard refreshes stale account data before allowing navigation', async ({ page }) => {
   await mockAuthenticatedSession(page);
   let profileRequests = 0;
