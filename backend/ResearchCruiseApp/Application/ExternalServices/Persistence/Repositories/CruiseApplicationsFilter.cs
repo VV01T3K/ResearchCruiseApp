@@ -7,5 +7,5 @@ public record CruiseApplicationsFilter(
     List<DateOnly>? Dates,
     List<CruiseApplicationStatus>? Statuses,
     List<int>? Years,
-    List<string>? CruiseManagerFullNames
+    List<Guid>? CruiseManagerIds
 );

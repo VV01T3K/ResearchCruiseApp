@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Query;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Infrastructure.Identity;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
 
@@ -149,8 +148,7 @@ internal static class CruiseApplicationsQueryableExtensions
 
     public static IQueryable<CruiseApplication> ApplyFilter(
         this IQueryable<CruiseApplication> query,
-        CruiseApplicationsFilter filter,
-        IQueryable<User> users
+        CruiseApplicationsFilter filter
     )
     {
         if (filter.Numbers is { Count: > 0 })
@@ -174,15 +172,11 @@ internal static class CruiseApplicationsQueryableExtensions
             );
         }
 
-        if (filter.CruiseManagerFullNames is { Count: > 0 })
+        if (filter.CruiseManagerIds is { Count: > 0 })
         {
-            var cruiseManagerFullNames = filter.CruiseManagerFullNames;
             query = query.Where(cruiseApplication =>
                 cruiseApplication.FormA != null
-                && users.Any(user =>
-                    user.Id == cruiseApplication.FormA.CruiseManagerId.ToString()
-                    && cruiseManagerFullNames.Contains(user.FirstName + " " + user.LastName)
-                )
+                && filter.CruiseManagerIds.Contains(cruiseApplication.FormA.CruiseManagerId)
             );
         }
 

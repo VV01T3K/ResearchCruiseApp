@@ -32,6 +32,8 @@ type Props<T> = {
   sortingState?: SortingState;
   setSortingState?: OnChangeFn<SortingState>;
   enableMultiSort?: boolean;
+  manualSorting?: boolean;
+  manualFiltering?: boolean;
   getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string;
   variant?: 'form' | 'table';
   disabled?: boolean;
@@ -54,6 +56,8 @@ export function AppTable<T>({
   sortingState,
   setSortingState,
   enableMultiSort = true,
+  manualSorting = false,
+  manualFiltering = false,
   getRowId,
   variant = 'table',
   disabled = false,
@@ -80,6 +84,8 @@ export function AppTable<T>({
     ...(setColumnFiltersState !== undefined && { onColumnFiltersChange: setColumnFiltersState }),
     ...(setSortingState !== undefined && { onSortingChange: setSortingState }),
     enableMultiSort,
+    manualSorting,
+    manualFiltering,
     state: {
       ...(rowSelectionState !== undefined && { rowSelection: rowSelectionState }),
       ...(columnFiltersState !== undefined && { columnFilters: columnFiltersState }),

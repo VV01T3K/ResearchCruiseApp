@@ -86,6 +86,87 @@ test('application list loads from the v2 route', async ({ page }) => {
   expect(requested).toBe(true);
 });
 
+test('pagination continues through empty pages and resets for sorting and filters', async ({ page }) => {
+  await seedAuthenticatedAdmin(page);
+  await page.route(`${API_URL}/v2/applications/managers`, (route) => route.fulfill({ json: [] }));
+  const requests: URLSearchParams[] = [];
+  const items = Array.from({ length: 20 }, (_, index) => ({
+    ...application,
+    id: `application-${index}`,
+    number: String(100 - index),
+  }));
+  await page.route(`${API_URL}/v2/applications?*`, (route) => {
+    const params = new URL(route.request().url()).searchParams;
+    requests.push(params);
+    if (params.has('year') || params.get('descending') === 'false') {
+      return route.fulfill({ json: { items: [application], nextCursor: null } });
+    }
+    if (params.get('cursor') === 'empty') {
+      return route.fulfill({ json: { items: [], nextCursor: 'last' } });
+    }
+    if (params.get('cursor') === 'last') {
+      return route.fulfill({ json: { items: [{ ...application, number: '77' }], nextCursor: null } });
+    }
+    return route.fulfill({ json: { items, nextCursor: 'empty' } });
+  });
+
+  await page.goto('/applications');
+  await expect(page.getByRole('cell', { name: '100', exact: true })).toBeVisible();
+  await page.getByRole('cell', { name: '81', exact: true }).scrollIntoViewIfNeeded();
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect(page.getByRole('cell', { name: '77', exact: true })).toBeVisible();
+  expect(requests.map((params) => params.get('cursor'))).toEqual([null, 'empty', 'last']);
+  await expect(page.getByRole('cell', { name: '100', exact: true })).toHaveCount(1);
+
+  await page.getByRole('button', { name: 'Nr', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
+  await expect.poll(() => requests.at(-1)?.get('descending')).toBe('false');
+  expect(requests.at(-1)?.has('cursor')).toBe(false);
+  await expect(page.getByRole('cell', { name: '100', exact: true })).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Rok rejsu', exact: true }).click();
+  await page.getByRole('menuitem', { name: '2026', exact: true }).click();
+  await expect.poll(() => requests.at(-1)?.get('year')).toBe('2026');
+  expect(requests.at(-1)?.has('cursor')).toBe(false);
+});
+
+test('number, date and same-named manager filters send exact values', async ({ page }) => {
+  await seedAuthenticatedAdmin(page);
+  const otherManager = {
+    ...application.mainManager,
+    id: '33333333-3333-3333-3333-333333333333',
+    email: 'other@example.com',
+  };
+  await page.route(`${API_URL}/v2/applications/managers`, (route) =>
+    route.fulfill({ json: [application.mainManager, otherManager] })
+  );
+  let params = new URLSearchParams();
+  await page.route(`${API_URL}/v2/applications?*`, (route) => {
+    params = new URL(route.request().url()).searchParams;
+    return route.fulfill({ json: { items: [application], nextCursor: null } });
+  });
+  await page.goto('/applications');
+  await page.getByRole('button', { name: 'Nr', exact: true }).click();
+  await page.getByLabel('Numer zgłoszenia').fill('17');
+  await expect.poll(() => params.get('number')).toBe('17');
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Data', exact: true }).click();
+  await page.getByLabel('Data zgłoszenia').fill('2026-05-16');
+  await expect.poll(() => params.get('date')).toBe('2026-05-16');
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Kierownik', exact: true }).click();
+  await page.getByLabel('Szukaj').fill('other@example.com');
+  await page.getByRole('menuitem', { name: 'Ada Lovelace (other@example.com)' }).click();
+  await expect.poll(() => params.getAll('cruiseManager')).toEqual([otherManager.id]);
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Wyczyść filtry', exact: true }).click();
+  await expect.poll(() => params.has('cruiseManager') || params.has('number') || params.has('date')).toBe(false);
+  await page.getByRole('button', { name: 'Kierownik', exact: true }).click();
+  await expect(
+    page.getByRole('menuitem', { name: 'Ada Lovelace (other@example.com)' }).getByRole('checkbox')
+  ).not.toBeChecked();
+});
+
 test('application detail and evaluation load from v2 routes', async ({ page }) => {
   await seedAuthenticatedAdmin(page);
   const requests: string[] = [];
