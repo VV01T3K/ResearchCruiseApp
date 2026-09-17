@@ -48,7 +48,7 @@ The application can be run using Docker compose. Multiple configuration files ar
 
 See [the Sentry on-prem migration notes](docs/sentry/sentry-on-prem-migration.md) for the planned move to a self-hosted Sentry instance.
 
-SMTP credentials must not be added to `appsettings*.json` or another tracked file. Local development uses the fake SMTP sender by default. The staging Compose deployment reads `SMTP_USERNAME` and `SMTP_PASSWORD` from the Komodo stack environment and maps them to the backend's `SmtpSettings` configuration. Copy `docker/.env.staging.template` only for local deployment setup and keep the populated file untracked.
+SMTP credentials must not be added to `appsettings*.json` or another tracked file. Local development uses the fake SMTP sender by default, including Docker development. Staging and production Compose require `SMTP_USERNAME` and `SMTP_PASSWORD` in the deployment environment and map them to the backend's `SmtpSettings` configuration. For staging, configure these in the Komodo stack environment. Copy `docker/.env.staging.template` only for local deployment setup and keep the populated file untracked. See [SMTP configuration and rollout](docs/smtp-configuration.md) for setup, rotation, and verification.
 
 ### Kubernetes
 
