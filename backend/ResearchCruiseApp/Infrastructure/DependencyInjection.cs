@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.Infrastructure.Persistence;
@@ -22,8 +23,14 @@ public static class DependencyInjection
 
         services.AddCustomIdentity(configuration);
 
+        var smtpOptions = services
+            .AddOptions<SmtpSettings>()
+            .Bind(configuration.GetSection(SmtpSettings.SectionName));
+        services.AddSingleton<IValidateOptions<SmtpSettings>, SmtpSettingsValidator>();
+
         if (enableEmailDelivery)
         {
+            smtpOptions.ValidateOnStart();
             services
                 .AddDataProtection()
                 .SetApplicationName("ResearchCruiseApp")
@@ -34,9 +41,9 @@ public static class DependencyInjection
         services.AddScoped<EmailOutbox>();
         services.AddScoped<EmailOutboxDispatcher>();
         services.AddScoped<IEmailTransport>(provider =>
-            configuration.GetValue<bool>("SmtpSettings:UseFakeSmtp")
-                ? new FakeEmailTransport(configuration)
-                : new SmtpEmailTransport(configuration)
+            provider.GetRequiredService<IOptions<SmtpSettings>>().Value.UseFakeSmtp
+                ? new FakeEmailTransport(provider.GetRequiredService<IOptions<SmtpSettings>>())
+                : new SmtpEmailTransport(provider.GetRequiredService<IOptions<SmtpSettings>>())
         );
 
         services.AddHttpContextAccessor();

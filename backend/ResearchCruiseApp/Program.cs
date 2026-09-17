@@ -7,6 +7,7 @@ using MailKit.Security;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Infrastructure;
@@ -204,6 +205,8 @@ app.MapHealthChecks("/health");
 
 if (!isOpenApiGen)
 {
+    // Fail before migrations/seeding or accepting requests; hosted-service validation is later.
+    _ = app.Services.GetRequiredService<IOptions<SmtpSettings>>().Value;
     await app.InitializeDatabase();
 }
 

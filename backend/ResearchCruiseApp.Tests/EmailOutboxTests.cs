@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using ResearchCruiseApp.Infrastructure.Email;
 using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
@@ -233,15 +234,11 @@ public sealed class EmailOutboxTests
         var directory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         try
         {
-            var configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(
-                    new Dictionary<string, string?>
-                    {
-                        ["SmtpSettings:FakeSmtpDirectory"] = directory,
-                    }
+            var transport = new FakeEmailTransport(
+                Options.Create(
+                    new SmtpSettings { UseFakeSmtp = true, FakeSmtpDirectory = directory }
                 )
-                .Build();
-            var transport = new FakeEmailTransport(configuration);
+            );
             var id = Guid.NewGuid();
             var payload = new EmailPayload("recipient@example.com", "subject", "body");
             await transport.Deliver(id, payload, CancellationToken.None);

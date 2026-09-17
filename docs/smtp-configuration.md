@@ -73,7 +73,24 @@ queue/database failures still fail and roll back the transaction. See
 [durable email delivery](email-delivery.md) for retry limits, failure monitoring,
 key storage, migration, and the possibility of duplicate delivery after a crash.
 
-Direct hosting does not have Compose's required-variable checks; missing settings
-are currently detected when email is sent. There is no live Gmail check at startup.
-Local fake-email tests and successful image builds cannot establish that a deployed
-credential is valid.
+The backend validates SMTP configuration before database migration/seeding and
+before starting background workers or accepting requests, including direct hosting
+without Compose. In real SMTP mode it requires a hostname/IP address, port 1–65535,
+a mailbox address for `SmtpUsername`, and a nonblank `SmtpPassword`. Errors identify
+the configuration keys without printing credential values. The transport uses
+implicit TLS; Gmail's port is 465, not the STARTTLS submission port 587.
+
+Direct hosts must supply `SmtpSettings__SmtpUsername` and
+`SmtpSettings__SmtpPassword` through their process environment or secret provider.
+The short Compose inputs `SMTP_USERNAME` and `SMTP_PASSWORD` alone will not work.
+After changing settings, restart/recreate the backend process so its validated
+settings are reloaded.
+
+Fake SMTP skips real-server and credential validation and instead requires a
+nonblank, syntactically valid output directory. Filesystem permissions are checked
+when a message is written. OpenAPI document generation skips startup validation
+and email processing so builds do not require credentials or a live database.
+
+Validation does not connect to Gmail or prove a password is valid. Local fake-email
+tests and successful image builds cannot establish that a deployed credential is
+accepted; the rollout delivery checks still apply.

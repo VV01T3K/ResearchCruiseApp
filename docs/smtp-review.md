@@ -3,6 +3,8 @@
 This records the original configuration review. The subsequent retry PR implements
 the durable queue described in [email delivery](email-delivery.md); its transaction
 handling supersedes the registration partial-success limitation below.
+The following configuration-validation PR also adds startup validation for direct
+hosting; the original limitation below is retained as review history.
 
 ## Conclusion
 
