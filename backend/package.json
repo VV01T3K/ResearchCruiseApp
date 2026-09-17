@@ -10,6 +10,8 @@
     "test": "dotnet test ResearchCruiseApp.sln --no-restore --no-build",
     "staged": "dotnet csharpier format",
     "seed": "mise run seed",
+    "seed:applications": "dotnet run --project ResearchCruiseApp -- seed-applications",
+    "seed:applications:remove": "dotnet run --project ResearchCruiseApp -- seed-applications remove",
     "ef:drop": "dotnet ef database drop --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext -f",
     "ef:update": "dotnet ef database update --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext",
     "ef:migration:add": "dotnet ef migrations add --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext -o Infrastructure/Persistence/Migrations",

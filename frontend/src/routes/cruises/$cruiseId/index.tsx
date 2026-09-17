@@ -15,9 +15,8 @@ import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { useGetApplicationsSuspense } from '@/api/generated/endpoints/applications.gen';
-import { mapApplicationToCruiseCandidate } from '@/api/client/applications/cruise-candidates';
-import { ApplicationResponse, ApplicationStatus } from '@/api/client/applications/models';
+import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
+import { mapCruiseApplicationCandidate } from '@/api/client/applications/cruise-candidates';
 import { FormView } from '../-components/FormView';
 import { UpdateCruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 import {
@@ -30,7 +29,6 @@ import {
   useRemoveCruiseConfirmation,
   useUpdateCruise,
 } from '@/api/generated/endpoints/cruises.gen';
-import type { CruiseResponse } from '@/api/generated/schemas';
 
 export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,
@@ -52,7 +50,10 @@ function CruiseDetailsPage() {
 
   const queryClient = useQueryClient();
   const cruiseQuery = useGetCruiseSuspense(cruiseId);
-  const applicationQuery = useGetApplicationsSuspense();
+  const applicationQuery = useGetApplicationsForCruisePlanningSuspense(
+    { cruiseId },
+    { query: { select: (applications) => applications.map(mapCruiseApplicationCandidate) } }
+  );
   const updateCruiseMutation = useUpdateCruise();
   const confirmCruiseMutation = useConfirmCruise();
   const deleteCruiseMutation = useDeleteCruise({
@@ -207,22 +208,13 @@ function CruiseDetailsPage() {
     }
   }
 
-  function filterValidCruiseApplications(cruise: CruiseResponse, cruiseApplications: ApplicationResponse[]) {
-    return cruiseApplications
-      .filter(
-        (application) =>
-          application.status === ApplicationStatus.Accepted || cruise.applications.some((x) => x.id === application.id)
-      )
-      .map(mapApplicationToCruiseCandidate);
-  }
-
   return (
     <>
       <AppLayout title={`Szczegóły rejsu nr. ${cruiseQuery.data?.number}`}>
         <form.AppForm>
           <FormView
             cruise={cruiseQuery.data}
-            cruiseApplications={filterValidCruiseApplications(cruiseQuery.data, applicationQuery.data)}
+            cruiseApplications={applicationQuery.data}
             isReadonly={!editMode}
             buttons={getButtons()}
           />
