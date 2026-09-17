@@ -37,7 +37,7 @@ const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
 };
 
 function NewCruisePage() {
-  const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense({
+  const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense(undefined, {
     query: { select: (applications) => applications.map(mapCruiseApplicationCandidate) },
   });
   const createCruiseMutation = useCreateCruise();

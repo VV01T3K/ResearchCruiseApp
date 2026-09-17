@@ -1,4 +1,14 @@
-import { Table } from '@tanstack/react-table';
+import { RowData, Table } from '@tanstack/react-table';
+import { InfiniteScrollProps } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
+
+// Lets a column supply a known-complete filter option list instead of deriving it from loaded rows.
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData extends RowData, TValue> {
+    filterOptions?: string[];
+    filterInputType?: 'number' | 'date';
+    getFilterOptionLabel?: (value: string) => string;
+  }
+}
 
 export type TableProps<T> = {
   table: Table<T>;
@@ -7,5 +17,6 @@ export type TableProps<T> = {
   variant?: 'form' | 'table';
   errors?: string[];
   showRequiredAsterisk?: boolean;
+  infiniteScroll?: InfiniteScrollProps;
   'data-testid'?: string;
 };

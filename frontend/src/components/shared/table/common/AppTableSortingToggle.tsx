@@ -3,34 +3,50 @@ import SortDownIcon from 'bootstrap-icons/icons/sort-down.svg?react';
 import SortUpIcon from 'bootstrap-icons/icons/sort-up.svg?react';
 import XIcon from 'bootstrap-icons/icons/x.svg?react';
 
-export function AppTableSortingToggle<TData>({ header }: { header: Header<TData, unknown> }) {
+import { AppTableListItem } from '@/components/shared/table/common/AppTableListItem';
+
+export function AppTableSortingToggle<TData>({
+  header,
+  expanded,
+}: {
+  header: Header<TData, unknown>;
+  expanded: boolean;
+}) {
   if (!header.column.getCanSort()) {
     return null;
   }
 
-  if (header.column.getIsSorted() === 'desc') {
-    return (
-      <span className="flex items-center gap-2">
-        <XIcon className="h-4 w-4" />
-        Usuń sortowanie
-      </span>
-    );
-  }
+  const isSorted = header.column.getIsSorted();
 
-  if (header.column.getIsSorted() === 'asc') {
-    return (
-      <span className="flex items-center gap-2">
-        <SortUpIcon className="h-4 w-4" />
-        Sortuj rosnąco
-      </span>
-    );
-  }
-
-  // header.column.getIsSorted() === false
   return (
-    <span className="flex items-center gap-2">
-      <SortDownIcon className="h-4 w-4" />
-      Sortuj malejąco
-    </span>
+    <>
+      <AppTableListItem
+        onClick={() => header.column.toggleSorting(false)}
+        isRendered
+        disabled={isSorted === 'asc'}
+        expanded={expanded}
+      >
+        <SortUpIcon className="mr-2 h-4 w-4" />
+        Sortuj rosnąco
+      </AppTableListItem>
+      <AppTableListItem
+        onClick={() => header.column.toggleSorting(true)}
+        isRendered
+        disabled={isSorted === 'desc'}
+        expanded={expanded}
+      >
+        <SortDownIcon className="mr-2 h-4 w-4" />
+        Sortuj malejąco
+      </AppTableListItem>
+      <AppTableListItem
+        onClick={() => header.column.clearSorting()}
+        isRendered
+        disabled={!isSorted}
+        expanded={expanded}
+      >
+        <XIcon className="mr-2 h-4 w-4" />
+        Usuń sortowanie
+      </AppTableListItem>
+    </>
   );
 }
