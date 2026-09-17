@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,12 +14,30 @@ public static class DependencyInjection
 {
     public static void AddInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration
+        IConfiguration configuration,
+        bool enableEmailDelivery = true
     )
     {
         services.AddPersistence(configuration);
 
         services.AddCustomIdentity(configuration);
+
+        if (enableEmailDelivery)
+        {
+            services
+                .AddDataProtection()
+                .SetApplicationName("ResearchCruiseApp")
+                .PersistKeysToDbContext<ApplicationDbContext>();
+            services.AddHostedService<EmailOutboxWorker>();
+        }
+        services.AddSingleton(TimeProvider.System);
+        services.AddScoped<EmailOutbox>();
+        services.AddScoped<EmailOutboxDispatcher>();
+        services.AddScoped<IEmailTransport>(provider =>
+            configuration.GetValue<bool>("SmtpSettings:UseFakeSmtp")
+                ? new FakeEmailTransport(configuration)
+                : new SmtpEmailTransport(configuration)
+        );
 
         services.AddHttpContextAccessor();
 

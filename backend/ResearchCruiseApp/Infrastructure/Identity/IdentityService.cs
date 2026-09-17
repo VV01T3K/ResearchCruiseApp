@@ -87,6 +87,8 @@ internal class IdentityService(
 
     public async Task<Result> AcceptUser(Guid id)
     {
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null)
             return Error.ResourceNotFound();
@@ -99,6 +101,7 @@ internal class IdentityService(
 
         await emailSender.SendAccountAcceptedMessage(await CreateUserDto(user));
 
+        await transaction.CommitAsync();
         return Result.Empty;
     }
 
@@ -138,6 +141,8 @@ internal class IdentityService(
 
     public async Task<Result> RegisterUser(RegisterFormDto registerForm, string roleName)
     {
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
         if (!userManager.SupportsUserEmail)
             return Error.ServiceUnavailable();
 
@@ -157,6 +162,7 @@ internal class IdentityService(
             emailConfirmationCode
         );
 
+        await transaction.CommitAsync();
         return identityResult.ToApplicationResult();
     }
 
@@ -317,6 +323,8 @@ internal class IdentityService(
         string roleName
     )
     {
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser is not null)
         {
@@ -342,9 +350,11 @@ internal class IdentityService(
         }
         catch (Exception exception)
         {
-            logger.LogWarning(exception, "Seed user notification failed: {Email}", email);
+            logger.LogWarning(exception, "Seed user notification could not be queued");
+            throw;
         }
 
+        await transaction.CommitAsync();
         return SeedUserStatus.Created;
     }
 
@@ -356,6 +366,8 @@ internal class IdentityService(
         IReadOnlyCollection<string> roleNames
     )
     {
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
         var result = await CreateUserWithRoles(email, firstName, lastName, password, roleNames);
         if (!result.IsSuccess)
             return result.Error!;
@@ -366,6 +378,7 @@ internal class IdentityService(
             password
         );
 
+        await transaction.CommitAsync();
         return Result.Empty;
     }
 
@@ -524,6 +537,8 @@ internal class IdentityService(
         string? lastName
     )
     {
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null)
             return Error.ForbiddenOperation();
@@ -547,6 +562,7 @@ internal class IdentityService(
             await ResendEmailConfirmationEmail(user.Email, userRoles.First());
         }
 
+        await transaction.CommitAsync();
         return Result.Empty;
     }
 

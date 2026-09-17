@@ -1,13 +1,11 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Resources;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using MimeKit;
 using NeoSmart.Utils;
 using ResearchCruiseApp.App_GlobalResources;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
-using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace ResearchCruiseApp.Infrastructure.Email;
 
@@ -15,7 +13,7 @@ internal class EmailSender(
     IConfiguration configuration,
     TemplateFileReader templateFileReader,
     GlobalizationService globalizationService,
-    ILogger<EmailSender> logger
+    EmailOutbox outbox
 )
 {
     public async Task SendEmailConfirmationEmail(
@@ -130,55 +128,8 @@ internal class EmailSender(
         await SendEmail(email, emailSubject, emailMessage);
     }
 
-    private async Task SendEmail(string email, string subject, string body)
-    {
-        var smtpSettings = configuration.GetSection("SmtpSettings");
-
-        if (smtpSettings.GetValue<bool>("UseFakeSmtp"))
-        {
-            var directory = Path.GetFullPath(
-                smtpSettings.GetValue<string>("FakeSmtpDirectory") ?? "fake-emails"
-            );
-            Directory.CreateDirectory(directory);
-
-            var path = Path.Combine(
-                directory,
-                $"{DateTime.UtcNow:yyyyMMdd-HHmmss}-{Guid.NewGuid():N}.html"
-            );
-            await File.WriteAllTextAsync(path, $"<!-- To: {email}\nSubject: {subject} -->\n{body}");
-            if (logger.IsEnabled(LogLevel.Information))
-            {
-                logger.LogInformation("Fake SMTP: email to {Email} saved to {Path}", email, path);
-            }
-            return;
-        }
-
-        using var client = new SmtpClient();
-        await client.ConnectAsync(
-            smtpSettings.GetSection("SmtpServer").Value!,
-            int.Parse(smtpSettings.GetSection("SmtpPort").Value ?? ""),
-            true
-        );
-        await client.AuthenticateAsync(
-            smtpSettings.GetSection("SmtpUsername").Value!,
-            smtpSettings.GetSection("SmtpPassword").Value!
-        );
-
-        var bodyBuilder = new BodyBuilder { HtmlBody = body };
-
-        var message = new MimeMessage { Body = bodyBuilder.ToMessageBody() };
-        message.From.Add(
-            new MailboxAddress(
-                smtpSettings.GetSection("SenderName").Value,
-                smtpSettings.GetSection("SmtpUsername").Value!
-            )
-        );
-        message.To.Add(new MailboxAddress(email, email));
-        message.Subject = subject;
-
-        await client.SendAsync(message);
-        await client.DisconnectAsync(true);
-    }
+    private Task SendEmail(string email, string subject, string body) =>
+        outbox.Enqueue(email, subject, body);
 
     private string GetFrontEndUrl()
     {

@@ -4,9 +4,12 @@ internal class TemplateFileReader
 {
     private readonly string _emailTemplatesPath;
 
-    public TemplateFileReader()
+    public TemplateFileReader(IHostEnvironment environment)
+        : this(environment.ContentRootPath) { }
+
+    internal TemplateFileReader(string contentRootPath)
     {
-        var templatesPath = "wwwroot" + Path.DirectorySeparatorChar + "Templates";
+        var templatesPath = Path.Combine(contentRootPath, "wwwroot", "Templates");
         _emailTemplatesPath = templatesPath + Path.DirectorySeparatorChar + "EmailTemplates";
     }
 

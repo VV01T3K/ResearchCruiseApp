@@ -16,11 +16,12 @@ using Scalar.AspNetCore;
 using Sentry;
 
 var builder = WebApplication.CreateBuilder(args);
+var isOpenApiGen = Assembly.GetEntryAssembly()?.GetName().Name == "GetDocument.Insider";
 
 builder.AddResearchCruiseAppSentry();
 
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration, enableEmailDelivery: !isOpenApiGen);
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
@@ -201,7 +202,6 @@ app.MapGet(
 
 app.MapHealthChecks("/health");
 
-var isOpenApiGen = Assembly.GetEntryAssembly()?.GetName().Name == "GetDocument.Insider";
 if (!isOpenApiGen)
 {
     await app.InitializeDatabase();

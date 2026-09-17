@@ -67,17 +67,11 @@ before production is revived. Kubernetes manifests are outside this Compose fix.
 
 ## Failure behavior and remaining limitations
 
-Real email delivery is synchronous. MailKit authentication failures become HTTP
-503 responses with a support code; other unhandled mail failures can become HTTP
-500 responses. Correlate the support code with server logs to establish whether the
-cause is authentication, connectivity, or another mail failure. Do not expose raw
-SMTP responses or credentials in client errors.
-
-Registration persists the account before sending confirmation. If delivery fails,
-the account may exist despite the failed request; use confirmation resend after
-restoring mail delivery instead of assuming registration was rolled back. A durable
-email queue/outbox would address retry and partial-success behavior, but requires a
-separate application-level change.
+Email is durably queued with the related database changes and delivered by a
+background worker. SMTP failures retry without failing the original request;
+queue/database failures still fail and roll back the transaction. See
+[durable email delivery](email-delivery.md) for retry limits, failure monitoring,
+key storage, migration, and the possibility of duplicate delivery after a crash.
 
 Direct hosting does not have Compose's required-variable checks; missing settings
 are currently detected when email is sent. There is no live Gmail check at startup.
