@@ -44,34 +44,3 @@ test('successful login revokes the cookie if profile hydration fails', async ({ 
     loginPage.page.getByText('Wystąpił błąd podczas logowania. Sprawdź połączenie z internetem.')
   ).toBeVisible();
 });
-
-test('empty credentials are rejected by form validation', async ({ loginPage }) => {
-  await loginPage.submitButton.click();
-
-  await expect(loginPage.invalidEmailMessage).toBeVisible();
-  await expect(loginPage.page.getByText('Hasło nie może być puste')).toBeVisible();
-});
-
-test.describe('login form validation', () => {
-  [
-    { email: 'only-text' },
-    { email: 'invalid@domain' },
-    { email: 'invalid@domain.' },
-    { email: 'invalid@domain..com' },
-  ].forEach(({ email }) => {
-    test(`enter invalid email [${email}]`, async ({ loginPage }) => {
-      await loginPage.emailInput.fill(email);
-      await loginPage.emailInput.blur();
-      await expect(loginPage.invalidEmailMessage).toBeVisible();
-      await expect(loginPage.submitButton).toBeDisabled();
-
-      // Message should disappear after correcting the email
-      await loginPage.emailInput.fill('valid-email@gmail.com');
-      await expect(loginPage.invalidEmailMessage).toBeHidden();
-      await expect(loginPage.submitButton).toBeDisabled();
-
-      await loginPage.passwordInput.fill('someP@ssword');
-      await expect(loginPage.submitButton).toBeEnabled();
-    });
-  });
-});

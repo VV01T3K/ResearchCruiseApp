@@ -12,7 +12,10 @@ The backend build writes the checked-in OpenAPI document to
 `backend/ResearchCruiseApp/openapi/ResearchCruiseApp_v2.json`. Orval generates the fetch client,
 TanStack Query hooks, and Zod schemas under `src/api/generated`; commit both outputs.
 
-## Tests (Playwright)
+## Tests
 
+- Unit tests (validation schemas, no browser): `vp run test:unit`
+- End-to-end tests (Playwright): `vp run test`
 - Install browsers (first time / CI): `vp dlx playwright install --with-deps`
-- Run tests: `vp run test`
+
+See [TESTING.md](./TESTING.md) for what each layer covers and how to add tests.
