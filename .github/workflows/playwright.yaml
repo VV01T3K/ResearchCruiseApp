@@ -9,6 +9,9 @@ on:
     branches:
       - main
       - staging
+      - t3code/fix-email-secrets
+      - t3code/smtp-deployment-followup
+      - t3code/email-delivery-retries
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
