@@ -79,7 +79,8 @@ public static class CatalogEndpoints
         );
 
         var query = dbContext
-            .CruiseApplications.IncludeForms()
+            .CruiseApplications.Where(await userPermissionVerifier.GetApplicationVisibilityFilter())
+            .IncludeForms()
             .IncludeFormAContent()
             .IncludeEffects()
             .IncludeCruise()
@@ -104,28 +105,23 @@ public static class CatalogEndpoints
             ),
         };
 
-        var applications = await query.Take(clampedPageSize).ToListAsync(cancellationToken);
+        var applications = await query.Take(clampedPageSize + 1).ToListAsync(cancellationToken);
+        var hasMore = applications.Count > clampedPageSize;
+        if (hasMore)
+            applications.RemoveAt(clampedPageSize);
 
         var visibleApplications = new List<ApplicationResponse>();
         foreach (var application in applications)
         {
-            if (await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application))
-            {
-                visibleApplications.Add(
-                    ApplicationResponse.From(await projection.Create(application))
-                );
-            }
+            visibleApplications.Add(ApplicationResponse.From(await projection.Create(application)));
         }
 
-        // The cursor advances over every DB row examined (not just those that survived the
-        // permission filter), so a page can come back smaller than pageSize without skipping rows.
-        var nextCursor =
-            applications.Count == clampedPageSize
-                ? CruiseApplicationsCursor.Encode(
-                    GetSortValue(applications[^1], sortBy),
-                    applications[^1].Id
-                )
-                : null;
+        var nextCursor = hasMore
+            ? CruiseApplicationsCursor.Encode(
+                GetSortValue(applications[^1], sortBy),
+                applications[^1].Id
+            )
+            : null;
 
         return TypedResults.Ok(new ApplicationsPageResponse(visibleApplications, nextCursor));
     }
@@ -144,21 +140,18 @@ public static class CatalogEndpoints
         CancellationToken cancellationToken
     )
     {
-        var applications = await dbContext
-            .CruiseApplications.IncludeFormA()
+        // GUID text casing differs by database provider. SQL LOWER is translatable and
+        // culture independent for hexadecimal IDs; ToLowerInvariant is not translated.
+#pragma warning disable CA1304, CA1311
+        var managerIds = dbContext
+            .CruiseApplications.Where(await userPermissionVerifier.GetApplicationVisibilityFilter())
             .Where(a => a.FormA != null)
-            .ToListAsync(cancellationToken);
-
-        var visibleManagerIds = new HashSet<Guid>();
-        foreach (var application in applications)
-        {
-            if (await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application))
-                visibleManagerIds.Add(application.FormA!.CruiseManagerId);
-        }
-
-        var managerIdStrings = visibleManagerIds.Select(id => id.ToString()).ToList();
+            .Select(a => a.FormA!.CruiseManagerId.ToString().ToLower());
         var managers = await dbContext
-            .Users.Where(u => managerIdStrings.Contains(u.Id))
+            .Users.Where(u => managerIds.Contains(u.Id.ToLower()))
+            .OrderBy(u => u.LastName)
+            .ThenBy(u => u.FirstName)
+            .ThenBy(u => u.Id)
             .Select(u => new ApplicationPersonResponse(
                 Guid.Parse(u.Id),
                 u.Email ?? string.Empty,
@@ -166,6 +159,7 @@ public static class CatalogEndpoints
                 u.LastName
             ))
             .ToListAsync(cancellationToken);
+#pragma warning restore CA1304, CA1311
 
         return TypedResults.Ok(managers);
     }
