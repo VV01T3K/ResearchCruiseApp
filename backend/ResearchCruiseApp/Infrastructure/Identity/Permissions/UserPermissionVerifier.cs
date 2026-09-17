@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 
@@ -8,6 +9,9 @@ internal class UserPermissionVerifier(
     CurrentUserService currentUserService
 )
 {
+    private Expression<Func<CruiseApplication, bool>>? _applicationVisibility;
+    private Func<CruiseApplication, bool>? _canViewApplication;
+
     public async Task<bool> CanCurrentUserAssignRole(string roleName)
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
@@ -24,39 +28,37 @@ internal class UserPermissionVerifier(
 
     public async Task<bool> CanCurrentUserViewCruiseApplication(CruiseApplication cruiseApplication)
     {
+        _canViewApplication ??= (await GetApplicationVisibilityFilter()).Compile();
+        return _canViewApplication(cruiseApplication);
+    }
+
+    public async Task<Expression<Func<CruiseApplication, bool>>> GetApplicationVisibilityFilter()
+    {
+        if (_applicationVisibility is not null)
+            return _applicationVisibility;
+
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
         var currentUserId = currentUserService.GetId();
-        var cruiseManagerId = cruiseApplication.FormA?.CruiseManagerId;
-        var deputyManagerId = cruiseApplication.FormA?.DeputyManagerId;
 
         if (currentUserId is null)
-            return false;
+            return _applicationVisibility = application => false;
 
-        if (
+        var canViewOthers =
             currentUserRoles.Contains(RoleName.Administrator)
             || currentUserRoles.Contains(RoleName.Shipowner)
             || currentUserRoles.Contains(RoleName.Guest)
-            || currentUserRoles.Contains(RoleName.ShipCrew)
-        )
-        {
-            if (cruiseApplication.Status == CruiseApplicationStatus.Draft)
-            {
-                return currentUserId == cruiseManagerId || currentUserId == deputyManagerId;
-            }
+            || currentUserRoles.Contains(RoleName.ShipCrew);
 
-            return true;
-        }
-
-        // currentUserId is not null so comparing with null will give false
-        if (
-            cruiseApplication.FormA?.CruiseManagerId == currentUserId
-            || cruiseApplication.FormA?.DeputyManagerId == currentUserId
-        )
-        {
-            return true;
-        }
-
-        return false;
+        // One rule serves both database queries and checks on already-loaded applications.
+        return _applicationVisibility = application =>
+            (canViewOthers && application.Status != CruiseApplicationStatus.Draft)
+            || (
+                application.FormA != null
+                && (
+                    application.FormA.CruiseManagerId == currentUserId
+                    || application.FormA.DeputyManagerId == currentUserId
+                )
+            );
     }
 
     public async Task<bool> CanCurrentUserViewCruise(Cruise cruise)
