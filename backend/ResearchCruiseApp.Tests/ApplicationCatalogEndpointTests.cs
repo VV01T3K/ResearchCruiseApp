@@ -91,12 +91,127 @@ public sealed class ApplicationCatalogEndpointTests
         Assert.Empty(mismatch!.Items);
     }
 
-    private static CruiseApplication CreateApplication(Guid managerId, int number) =>
+    [Theory]
+    [InlineData(RoleName.Administrator, true)]
+    [InlineData(RoleName.Shipowner, true)]
+    [InlineData(RoleName.Guest, true)]
+    [InlineData(RoleName.ShipCrew, true)]
+    [InlineData(RoleName.CruiseManager, false)]
+    public async Task VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess(
+        string role,
+        bool canViewOthers
+    )
+    {
+        await using var factory = new AuthWebApplicationFactory();
+        await factory.SeedUserAsync();
+        Guid ownId;
+        Guid otherId;
+        List<CruiseApplication> applications;
+        await using (var scope = factory.Services.CreateAsyncScope())
+        {
+            var users = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var roles = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            Assert.True((await roles.CreateAsync(new IdentityRole(role))).Succeeded);
+            var user = (await users.FindByEmailAsync(AuthWebApplicationFactory.UserEmail))!;
+            Assert.True((await users.AddToRoleAsync(user, role)).Succeeded);
+            var other = new User
+            {
+                UserName = "other@example.com",
+                Email = "other@example.com",
+                FirstName = "Other",
+                LastName = "Manager",
+            };
+            Assert.True((await users.CreateAsync(other)).Succeeded);
+            ownId = Guid.Parse(user.Id);
+            otherId = Guid.Parse(other.Id);
+            applications =
+            [
+                CreateApplication(otherId, 1000, CruiseApplicationStatus.Draft),
+                CreateApplication(otherId, 30),
+                CreateApplication(ownId, 20),
+                CreateApplication(otherId, 10, CruiseApplicationStatus.Draft),
+            ];
+            // A deputy must retain access to their own draft even when someone else manages it.
+            applications[^1].FormA!.DeputyManagerId = ownId;
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            db.CruiseApplications.AddRange(applications);
+            await db.SaveChangesAsync();
+        }
+
+        using var client = factory.CreateSessionClient();
+        var login = await client.PostAsJsonAsync(
+            "/v2/auth/login",
+            new LoginRequest(
+                AuthWebApplicationFactory.UserEmail,
+                AuthWebApplicationFactory.UserPassword
+            )
+        );
+        login.EnsureSuccessStatusCode();
+        var token = await login.Content.ReadFromJsonAsync<TokenResponse>();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            token!.AccessToken
+        );
+        var first = await client.GetFromJsonAsync<ApplicationsPageResponse>(
+            "/v2/applications?pageSize=2",
+            JsonOptions
+        );
+        Assert.Equal(2, first!.Items.Count);
+        var visibleIds = first.Items.Select(item => item.Id).ToList();
+        if (canViewOthers)
+        {
+            Assert.NotNull(first.NextCursor);
+            var last = await client.GetFromJsonAsync<ApplicationsPageResponse>(
+                $"/v2/applications?pageSize=2&cursor={Uri.EscapeDataString(first.NextCursor)}",
+                JsonOptions
+            );
+            visibleIds.Add(Assert.Single(last!.Items).Id);
+            Assert.Null(last.NextCursor);
+        }
+        else
+        {
+            Assert.Null(first.NextCursor);
+        }
+        Assert.Equal(canViewOthers ? 3 : 2, visibleIds.Distinct().Count());
+        Assert.Contains(applications[2].Id, visibleIds);
+        Assert.Contains(applications[3].Id, visibleIds);
+        Assert.DoesNotContain(applications[0].Id, visibleIds);
+        Assert.Equal(canViewOthers, visibleIds.Contains(applications[1].Id));
+        foreach (var application in applications)
+        {
+            using var detail = await client.GetAsync($"/v2/applications/{application.Id}");
+            Assert.Equal(visibleIds.Contains(application.Id), detail.IsSuccessStatusCode);
+        }
+        var managers = await client.GetFromJsonAsync<List<ApplicationPersonResponse>>(
+            "/v2/applications/managers"
+        );
+        Assert.Equal(2, managers!.Count);
+        Assert.Contains(managers, manager => manager.Id == ownId);
+        Assert.Contains(managers, manager => manager.Id == otherId);
+
+        // With the deputy draft removed, a restricted user must not see the other manager.
+        await using (var scope = factory.Services.CreateAsyncScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            db.CruiseApplications.Remove(applications[3]);
+            await db.SaveChangesAsync();
+        }
+        managers = await client.GetFromJsonAsync<List<ApplicationPersonResponse>>(
+            "/v2/applications/managers"
+        );
+        Assert.Equal(canViewOthers ? 2 : 1, managers!.Count);
+    }
+
+    private static CruiseApplication CreateApplication(
+        Guid managerId,
+        int number,
+        CruiseApplicationStatus status = CruiseApplicationStatus.Accepted
+    ) =>
         new()
         {
             Number = number,
             Date = new DateOnly(2026, 5, 16),
-            Status = CruiseApplicationStatus.Accepted,
+            Status = status,
             FormA = new FormA
             {
                 CruiseManagerId = managerId,
