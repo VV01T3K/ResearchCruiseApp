@@ -1,5 +1,6 @@
-import { expect, type Locator, type Page } from '@playwright/test';
+import { type Locator, type Page } from '@playwright/test';
 import { API_URL, TESTED_FORM_ID } from '@tests/fixtures/consts';
+import { clonePayload, getInvalidFormState, submitForm } from '@tests/fixtures/pages/formPageUtils';
 import {
   getAdminAccountPayload,
   getCruisePayload,
@@ -103,9 +104,9 @@ export class FormCPage {
       });
     });
 
-    const formBPage = new FormCPage(page, formId);
-    await formBPage.goto();
-    return formBPage;
+    const formCPage = new FormCPage(page, formId);
+    await formCPage.goto();
+    return formCPage;
   }
 
   public async goto(mode: 'edit' | 'view' | null = 'edit') {
@@ -143,40 +144,182 @@ export class FormCPage {
     this.validationErrorMessage = this.toastMessage.getByTestId('toast-error').first();
   }
 
-  public async fillForm({ except }: { except?: (keyof FormCPage['sections'])[] } = {}) {
-    except ??= [];
-    const sections = Object.entries(this.sections);
-    for (const [key, section] of sections) {
-      if (except.includes(key as keyof FormCPage['sections'])) {
-        continue;
-      }
-      await section.defaultFill();
+  // Use after submit when the form is expected to be invalid (no navigation happens).
+  // Waits for TanStack Form validation to complete and data-valid to become "false".
+  public async getInvalidFormState(): Promise<Record<string, string[]>> {
+    return getInvalidFormState(this.page);
+  }
+
+  /**
+   * Loads the form via the mocked API.
+   * @param except sections cleared out entirely (empty arrays / empty strings)
+   * @param withInvalidRows fills every list-based section with a row of invalid data,
+   *                        so that row-level validation can be checked for all sections at once
+   */
+  public async fillForm({
+    except,
+    withInvalidRows,
+  }: { except?: (keyof FormCPage['sections'])[]; withInvalidRows?: boolean } = {}) {
+    const payload = this.buildFormCData(except ?? []);
+    if (withInvalidRows) {
+      this.applyInvalidRows(payload);
     }
+    await this.setFormCResponse(payload);
+    await this.goto('edit');
+    await this.submitButton.waitFor({ state: 'visible' });
   }
 
   public async submitForm({ expectedResult }: { expectedResult?: 'valid' | 'invalid' } = {}) {
-    await this.submitButton.click();
+    await submitForm({
+      page: this.page,
+      submitButton: this.submitButton,
+      toastMessage: this.toastMessage,
+      submissionApprovedMessage: this.submissionApprovedMessage,
+      validationErrorMessage: this.validationErrorMessage,
+      expectedResult,
+    });
+  }
 
-    // Wait for any toast to appear and log its content for debugging
-    const anyToast = this.toastMessage.locator('[data-testid^="toast-"]').first();
-    try {
-      await anyToast.waitFor({ state: 'visible', timeout: 5000 });
-      const testId = await anyToast.getAttribute('data-testid');
-      const toastType = testId?.replace('toast-', '');
-      const toastText = await anyToast.textContent();
-      console.log(`[FormC Toast] Type: ${toastType}, Text: ${toastText}`);
-    } catch {
-      console.log('[FormC Toast] No toast appeared within timeout');
+  /**
+   * Fills every list-based section with a single row of invalid data:
+   * required text fields are left empty and numeric fields are given negative values.
+   */
+  private applyInvalidRows(payload: ReturnType<FormCPage['buildFormCData']>) {
+    const ugUnitId = getFormBPayload().ugTeams[0].ugUnitId;
+
+    payload.permissions = [{ description: '', executive: '' }] as typeof payload.permissions;
+    payload.researchAreaDescriptions = [
+      { areaId: null, differentName: null, info: '' },
+    ] as unknown as typeof payload.researchAreaDescriptions;
+    payload.ugTeams = [{ ugUnitId, noOfEmployees: '-1', noOfStudents: '-1' }];
+    payload.guestTeams = [{ name: '', noOfPersons: '-1' }] as typeof payload.guestTeams;
+    // The "unfinished task with conditions met" combination cannot be used here: the section
+    // resets the condition flags during render, so blank the task's own required fields instead.
+    payload.researchTasksEffects = payload.researchTasksEffects.map((task) => ({
+      ...task,
+      author: '',
+      title: '',
+    }));
+    payload.contracts = [
+      {
+        category: 'international',
+        institutionName: '',
+        institutionUnit: '',
+        institutionLocalization: '',
+        description: '',
+        scans: [],
+      },
+    ] as typeof payload.contracts;
+    payload.spubTasks = [{ name: '', yearFrom: '', yearTo: '' }] as typeof payload.spubTasks;
+    payload.shortResearchEquipments = [
+      { name: '', startDate: '', endDate: '' },
+    ] as typeof payload.shortResearchEquipments;
+    payload.longResearchEquipments = [
+      { name: '', action: 'Put', duration: '' },
+    ] as typeof payload.longResearchEquipments;
+    payload.ports = [{ name: '', startTime: '', endTime: '' }] as typeof payload.ports;
+    payload.cruiseDaysDetails = [
+      { number: '', hours: '', taskName: '', region: '', position: '', comment: '' },
+    ] as typeof payload.cruiseDaysDetails;
+    payload.researchEquipments = [
+      { name: '', insuranceStartDate: null, insuranceEndDate: null, permission: 'true' },
+    ] as typeof payload.researchEquipments;
+    payload.collectedSamples = [
+      { type: '', amount: '-1', analysis: '', publishing: '' },
+    ] as typeof payload.collectedSamples;
+  }
+
+  private buildFormCData(except: (keyof FormCPage['sections'])[] = []) {
+    const formA = clonePayload(getFormAPayload());
+    const formB = clonePayload(getFormBPayload());
+    const payload = {
+      shipUsage: formA.shipUsage,
+      differentUsage: formA.differentUsage,
+      permissions: formB.permissions,
+      researchAreaDescriptions: formA.researchAreaDescriptions,
+      ugTeams: formB.ugTeams,
+      guestTeams: formB.guestTeams,
+      researchTasksEffects: formA.researchTasks.map((task) => ({
+        ...task,
+        done: 'false',
+        managerConditionMet: 'false',
+        deputyConditionMet: 'false',
+      })),
+      contracts: formA.contracts,
+      spubTasks: formA.spubTasks,
+      shortResearchEquipments: formB.shortResearchEquipments,
+      longResearchEquipments: formB.longResearchEquipments,
+      ports: formB.ports,
+      cruiseDaysDetails: formB.cruiseDaysDetails,
+      researchEquipments: formB.researchEquipments,
+      shipEquipmentsIds: formB.shipEquipmentsIds,
+      collectedSamples: [],
+      spubReportData: '',
+      additionalDescription: '',
+      photos: [],
+    };
+
+    if (except.includes('additionalPermissionsSection')) {
+      payload.permissions = [];
     }
 
-    switch (expectedResult) {
-      case 'valid':
-        await expect(this.submissionApprovedMessage).toBeVisible();
-        break;
-      case 'invalid':
-        await expect(this.validationErrorMessage).toBeVisible();
-        await this.toastMessage.getByLabel('Close').first().click();
-        break;
+    if (except.includes('contractsSection')) {
+      payload.contracts = [];
     }
+
+    if (except.includes('membersSection')) {
+      payload.guestTeams = [];
+    }
+
+    if (except.includes('spubTasksSection')) {
+      payload.spubTasks = [];
+    }
+
+    if (except.includes('cruiseDetailsSection')) {
+      payload.shortResearchEquipments = [];
+      payload.longResearchEquipments = [];
+      payload.ports = [];
+    }
+
+    if (except.includes('cruiseDayDetailsSection')) {
+      payload.cruiseDaysDetails = [];
+    }
+
+    if (except.includes('researchEquipmentsSection')) {
+      payload.researchEquipments = [];
+    }
+
+    if (except.includes('collectedSamplesSection')) {
+      payload.collectedSamples = [];
+    }
+
+    if (except.includes('spubReportDataSection')) {
+      payload.spubReportData = '';
+    }
+
+    if (except.includes('additionalDescriptionSection')) {
+      payload.additionalDescription = '';
+      payload.photos = [];
+    }
+
+    return payload;
+  }
+
+  private async setFormCResponse(payload: ReturnType<FormCPage['buildFormCData']>) {
+    const url = `${API_URL}/v2/applications/${this.formId}/form-c`;
+
+    await this.page.unroute(url).catch(() => undefined);
+    await this.page.route(url, (route) => {
+      if (route.request().method() === 'PUT') {
+        return route.fulfill({
+          status: 200,
+        });
+      }
+
+      route.fulfill({
+        status: 200,
+        body: JSON.stringify(payload),
+      });
+    });
   }
 }

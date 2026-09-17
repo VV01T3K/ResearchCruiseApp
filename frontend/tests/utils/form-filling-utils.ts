@@ -24,7 +24,18 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
 
   async selectOption(itemText: string) {
     await this.dropdown.evaluate((element) => element.scrollIntoView({ block: 'center' }));
-    await this.dropdown.click();
+
+    if (this.variant === 'datetime-picker') {
+      // A real click gets lost on a freshly added row: mousedown focuses the button, that
+      // re-renders the row, the button shifts out from under the cursor, and mouseup lands on
+      // the surrounding <td>. The browser then fires click on the common ancestor, so the
+      // button's own onClick never runs and the calendar never opens. Dispatching the event
+      // directly is coordinate-independent and immune to the shift. The app itself is fine --
+      // by the time a person aims at the field the layout has already settled.
+      await this.dropdown.dispatchEvent('click');
+    } else {
+      await this.dropdown.click();
+    }
     if (this.variant === 'menuitems') {
       await this.page.getByRole('option', { name: itemText }).click();
       await expect(this.page.getByRole('option').first())
@@ -70,14 +81,20 @@ export class FormDropdown<TErrors extends Record<string, Locator> = Record<strin
       }
 
       const dayButton = dayButtons.nth(indexToClick);
-      if (await dayButton.isEnabled()) {
-        await dayButton.click();
-      } else {
+      if (!(await dayButton.isEnabled())) {
         throw new Error(`Could not find enabled datetime-picker day button: ${itemText}`);
       }
+      // Dispatched for the same reason as the button above: selecting a day re-renders the
+      // calendar, so a coordinate-based click can land on whatever slides under the cursor.
+      await dayButton.dispatchEvent('click');
 
-      // Click on main content area to close the datetime picker (triggers useOutsideClickDetection)
-      await this.page.getByTestId('main-content').click({ position: { x: 1, y: 1 } });
+      // A 'date' picker closes itself on selection, but a 'datetime' one stays open for the
+      // time input, so it has to be dismissed. useOutsideClickDetection listens for mousedown
+      // on document and closes when the target sits outside the input and the calendar, so
+      // dispatching on <body> is enough. Clicking a fixed point instead is unreliable: the
+      // calendar is `fixed z-50` and, once the form is tall enough, covers it. Escape is
+      // handled by the hook but does not close this picker.
+      await this.page.evaluate(() => document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true })));
       await expect(menu).toBeHidden();
     }
   }
@@ -92,8 +109,17 @@ export class FormInput<TErrors extends Record<string, Locator> = Record<string, 
     this.errors = options?.errors ?? ({} as TErrors);
   }
 
+  /**
+   * Fills the input and blurs it.
+   *
+   * The form fields wire `onChange={field.setValue}`, which updates the value without
+   * triggering change-validation, so `field.state.meta.errors` — and therefore the rendered
+   * error message — only recomputes on blur. Filling without blurring leaves a stale error
+   * on screen even though the value is already correct.
+   */
   async fill(value: string) {
     await this.input.fill(value);
+    await this.input.blur();
   }
 }
 
