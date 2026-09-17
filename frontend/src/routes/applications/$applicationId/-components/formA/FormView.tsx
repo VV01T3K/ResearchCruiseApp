@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 
+import { FormStateProbe } from '@/components/shared/FormStateProbe';
 import { ActionsSection } from '@/routes/applications/$applicationId/-components/formA/ActionsSection';
 import { ContractsSection } from '@/routes/applications/$applicationId/-components/formA/ContractsSection';
 import { CruiseGoalSection } from '@/routes/applications/$applicationId/-components/formA/CruiseGoalSection';
@@ -32,6 +33,7 @@ export function FormView({ context }: Props) {
 
   return (
     <>
+      <FormStateProbe form={form} />
       <form
         className="space-y-8"
         onSubmit={(event) => {
