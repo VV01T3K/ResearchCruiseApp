@@ -66,8 +66,12 @@ function ApplicationsPage() {
     (_, index) => (EARLIEST_APPLICATION_YEAR + index).toString()
   );
   const cruiseManagersQuery = useCruiseApplicationManagersQuery();
-  const cruiseManagerFilterOptions = cruiseManagersQuery.data.map(
-    (manager) => `${manager.firstName} ${manager.lastName}`
+  const cruiseManagerFilterOptions = cruiseManagersQuery.data.map((manager) => manager.id);
+  const managerLabels = new Map(
+    cruiseManagersQuery.data.map((manager) => [
+      manager.id,
+      `${manager.firstName} ${manager.lastName} (${manager.email})`,
+    ])
   );
 
   const columns: ColumnDef<ApplicationResponse>[] = [
@@ -76,7 +80,7 @@ function ApplicationsPage() {
       header: 'Nr',
       accessorFn: (row) => row.number,
       sortDescFirst: true,
-      enableColumnFilter: false,
+      meta: { filterInputType: 'number' },
       size: 2,
     },
     {
@@ -84,7 +88,7 @@ function ApplicationsPage() {
       header: 'Data',
       accessorFn: (row) => row.date,
       sortDescFirst: true,
-      enableColumnFilter: false,
+      meta: { filterInputType: 'date' },
       size: 5,
     },
     {
@@ -151,7 +155,10 @@ function ApplicationsPage() {
         </div>
       ),
       enableSorting: false,
-      meta: { filterOptions: cruiseManagerFilterOptions },
+      meta: {
+        filterOptions: cruiseManagerFilterOptions,
+        getFilterOptionLabel: (value) => managerLabels.get(value) ?? value,
+      },
       size: 20,
     },
     {
@@ -272,11 +279,15 @@ function ApplicationsPage() {
           sortingState={sorting}
           setSortingState={setSorting}
           enableMultiSort={false}
+          manualSorting
+          manualFiltering
           columnFiltersState={columnFilters}
           setColumnFiltersState={setColumnFilters}
           infiniteScroll={{
             hasNextPage: applicationsQuery.hasNextPage,
             isFetchingNextPage: applicationsQuery.isFetchingNextPage,
+            isFetching: applicationsQuery.isFetching,
+            pageCount: applicationsQuery.data?.pages.length ?? 0,
             fetchNextPage: applicationsQuery.fetchNextPage,
           }}
         />

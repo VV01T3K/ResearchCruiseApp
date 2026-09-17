@@ -42,7 +42,7 @@ public static class CatalogEndpoints
         DateOnly[]? date,
         string[]? status,
         int[]? year,
-        string[]? cruiseManager,
+        Guid[]? cruiseManager,
         ApplicationReader projection,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
@@ -83,7 +83,7 @@ public static class CatalogEndpoints
             .IncludeFormAContent()
             .IncludeEffects()
             .IncludeCruise()
-            .ApplyFilter(filter, dbContext.Users);
+            .ApplyFilter(filter);
 
         query = sortBy switch
         {

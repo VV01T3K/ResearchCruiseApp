@@ -4,15 +4,23 @@ import React from 'react';
 export type InfiniteScrollProps = {
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
+  isFetching: boolean;
+  pageCount: number;
   fetchNextPage: () => void;
 };
 
-export function AppTableInfiniteScrollTrigger({ hasNextPage, isFetchingNextPage, fetchNextPage }: InfiniteScrollProps) {
+export function AppTableInfiniteScrollTrigger({
+  hasNextPage,
+  isFetchingNextPage,
+  isFetching,
+  pageCount,
+  fetchNextPage,
+}: InfiniteScrollProps) {
   const sentinelRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const sentinel = sentinelRef.current;
-    if (!sentinel || !hasNextPage || isFetchingNextPage) {
+    if (!sentinel || !hasNextPage || isFetching) {
       return;
     }
 
@@ -26,7 +34,7 @@ export function AppTableInfiniteScrollTrigger({ hasNextPage, isFetchingNextPage,
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [hasNextPage, isFetching, pageCount, fetchNextPage]);
 
   if (!hasNextPage && !isFetchingNextPage) {
     return null;
