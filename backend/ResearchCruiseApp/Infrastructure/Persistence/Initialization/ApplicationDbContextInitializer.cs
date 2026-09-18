@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
@@ -15,23 +14,19 @@ internal class ApplicationDbContextInitializer(
     ILogger<ApplicationDbContextInitializer> logger
 )
 {
-    public async Task Initialize()
-    {
-        await Migrate();
+    public Task Initialize() => applicationDbContext.Database.MigrateAsync();
 
-        if (configuration.GetValue<bool>("Database:SeedAutomatically"))
+    public async Task Seed()
+    {
+        await SeedRoleData();
+        await SeedUgUnits();
+        await SeedResearchAreas();
+        await SeedShipEquipments();
+
+        if (configuration.GetValue<bool>("Database:SeedAccountsAutomatically"))
         {
-            await SeedRoleData();
             await SeedUsersData();
-            await SeedUgUnits();
-            await SeedResearchAreas();
-            await SeedShipEquipments();
         }
-    }
-
-    private Task Migrate()
-    {
-        return applicationDbContext.Database.MigrateAsync();
     }
 
     private async Task SeedUsersData()
@@ -72,7 +67,7 @@ internal class ApplicationDbContextInitializer(
 
     private async Task SeedRoleData()
     {
-        var roleNames = InitialAdministrationData.RoleNames;
+        var roleNames = SeedAdministrationData.RoleNames;
 
         foreach (var roleName in roleNames)
         {
@@ -83,43 +78,59 @@ internal class ApplicationDbContextInitializer(
 
     private async Task SeedUgUnits()
     {
-        if (await applicationDbContext.UgUnits.AnyAsync())
+        var existingNames = (
+            await applicationDbContext.UgUnits.Select(ugUnit => ugUnit.Name).ToListAsync()
+        ).ToHashSet();
+
+        var newUgUnits = SeedUgUnitData
+            .UgUnitsNames.Where(existingNames.Add)
+            .Select(name => new UgUnit { Name = name, IsActive = true })
+            .ToList();
+
+        if (newUgUnits.Count == 0)
             return;
 
-        foreach (var ugUnitName in InitialUgUnitData.UgUnitsNames)
-        {
-            var newUgUnit = new UgUnit { Name = ugUnitName, IsActive = true };
-            await applicationDbContext.UgUnits.AddAsync(newUgUnit);
-        }
-
+        await applicationDbContext.UgUnits.AddRangeAsync(newUgUnits);
         await applicationDbContext.SaveChangesAsync();
     }
 
     private async Task SeedResearchAreas()
     {
-        if (await applicationDbContext.ResearchAreas.AnyAsync())
+        var existingNames = (
+            await applicationDbContext
+                .ResearchAreas.Select(researchArea => researchArea.Name)
+                .ToListAsync()
+        ).ToHashSet();
+
+        var newResearchAreas = SeedResearchAreaData
+            .ResearchAreaNames.Where(existingNames.Add)
+            .Select(name => new ResearchArea { Name = name, IsActive = true })
+            .ToList();
+
+        if (newResearchAreas.Count == 0)
             return;
 
-        foreach (var researchAreaName in InitialResearchAreaData.ResearchAreaNames)
-        {
-            var newResearchArea = new ResearchArea { Name = researchAreaName, IsActive = true };
-            await applicationDbContext.ResearchAreas.AddAsync(newResearchArea);
-        }
-
+        await applicationDbContext.ResearchAreas.AddRangeAsync(newResearchAreas);
         await applicationDbContext.SaveChangesAsync();
     }
 
     private async Task SeedShipEquipments()
     {
-        if (await applicationDbContext.ShipEquipments.AnyAsync())
+        var existingNames = (
+            await applicationDbContext
+                .ShipEquipments.Select(shipEquipment => shipEquipment.Name)
+                .ToListAsync()
+        ).ToHashSet();
+
+        var newShipEquipments = SeedShipEquipmentData
+            .ShipEquipmentsNames.Where(existingNames.Add)
+            .Select(name => new ShipEquipment { Name = name, IsActive = true })
+            .ToList();
+
+        if (newShipEquipments.Count == 0)
             return;
 
-        foreach (var shipEquipmentName in InitialShipEquipmentData.ShipEquipmentsNames)
-        {
-            var newShipEquipment = new ShipEquipment { Name = shipEquipmentName, IsActive = true };
-            await applicationDbContext.ShipEquipments.AddAsync(newShipEquipment);
-        }
-
+        await applicationDbContext.ShipEquipments.AddRangeAsync(newShipEquipments);
         await applicationDbContext.SaveChangesAsync();
     }
 }
