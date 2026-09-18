@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ResearchCruiseApp.Infrastructure.Email;
 using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
@@ -42,10 +43,18 @@ internal sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureServices(services =>
         {
+            var worker = services.Single(descriptor =>
+                descriptor.ImplementationType == typeof(EmailOutboxWorker)
+            );
+            services.Remove(worker);
             _connection.Open();
 
             RemoveDbContextRegistrations(services);
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(_connection));
+            using var dbContext = new ApplicationDbContext(
+                new DbContextOptionsBuilder<ApplicationDbContext>().UseSqlite(_connection).Options
+            );
+            dbContext.Database.EnsureCreated();
         });
     }
 
