@@ -1,5 +1,8 @@
-import type { CruiseApplicationSummary } from '@/api/generated/schemas';
+import type { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
 
 export type CruiseApplicationCandidate = {
-  [Key in keyof CruiseApplicationSummary]-?: Exclude<CruiseApplicationSummary[Key], null | undefined>;
+  [Key in keyof CruiseApplicationCandidateResponse]-?: Exclude<
+    CruiseApplicationCandidateResponse[Key],
+    null | undefined
+  >;
 };
