@@ -61,6 +61,11 @@ public static class LifecycleEndpoints
         CancellationToken cancellationToken
     )
     {
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(
+            System.Data.IsolationLevel.Serializable,
+            cancellationToken
+        );
+
         var cruise = await dbContext
             .Cruises.IncludeCruiseApplications()
                 .ThenInclude(application => application.FormA)
@@ -118,6 +123,7 @@ public static class LifecycleEndpoints
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 

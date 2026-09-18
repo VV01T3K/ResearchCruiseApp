@@ -87,6 +87,8 @@ internal class IdentityService(
 
     public async Task<Result> AcceptUser(Guid id)
     {
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null)
             return Error.ResourceNotFound();
@@ -99,6 +101,7 @@ internal class IdentityService(
 
         await emailSender.SendAccountAcceptedMessage(await CreateUserDto(user));
 
+        await transaction.CommitAsync();
         return Result.Empty;
     }
 
@@ -138,6 +141,8 @@ internal class IdentityService(
 
     public async Task<Result> RegisterUser(RegisterFormDto registerForm, string roleName)
     {
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
         if (!userManager.SupportsUserEmail)
             return Error.ServiceUnavailable();
 
@@ -157,6 +162,7 @@ internal class IdentityService(
             emailConfirmationCode
         );
 
+        await transaction.CommitAsync();
         return identityResult.ToApplicationResult();
     }
 
@@ -317,6 +323,46 @@ internal class IdentityService(
         string roleName
     )
     {
+        var existingTransaction = dbContext.Database.CurrentTransaction;
+        await using var transaction = existingTransaction is null
+            ? await dbContext.Database.BeginTransactionAsync()
+            : null;
+        var savepoint = Guid.NewGuid().ToString("N");
+        if (existingTransaction is not null)
+            await existingTransaction.CreateSavepointAsync(savepoint);
+
+        try
+        {
+            var result = await EnsureSeedUserCore(email, firstName, lastName, password, roleName);
+            if (!result.IsSuccess)
+            {
+                if (existingTransaction is not null)
+                    await existingTransaction.RollbackToSavepointAsync(savepoint);
+                return result;
+            }
+
+            if (transaction is not null)
+                await transaction.CommitAsync();
+            else
+                await existingTransaction!.ReleaseSavepointAsync(savepoint);
+            return result;
+        }
+        catch
+        {
+            if (existingTransaction is not null)
+                await existingTransaction.RollbackToSavepointAsync(savepoint);
+            throw;
+        }
+    }
+
+    private async Task<Result<SeedUserStatus>> EnsureSeedUserCore(
+        string email,
+        string firstName,
+        string lastName,
+        string password,
+        string roleName
+    )
+    {
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser is not null)
         {
@@ -342,7 +388,8 @@ internal class IdentityService(
         }
         catch (Exception exception)
         {
-            logger.LogWarning(exception, "Seed user notification failed: {Email}", email);
+            logger.LogWarning(exception, "Seed user notification could not be queued");
+            throw;
         }
 
         return SeedUserStatus.Created;
@@ -356,6 +403,8 @@ internal class IdentityService(
         IReadOnlyCollection<string> roleNames
     )
     {
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
         var result = await CreateUserWithRoles(email, firstName, lastName, password, roleNames);
         if (!result.IsSuccess)
             return result.Error!;
@@ -366,6 +415,7 @@ internal class IdentityService(
             password
         );
 
+        await transaction.CommitAsync();
         return Result.Empty;
     }
 
@@ -524,6 +574,8 @@ internal class IdentityService(
         string? lastName
     )
     {
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null)
             return Error.ForbiddenOperation();
@@ -547,6 +599,7 @@ internal class IdentityService(
             await ResendEmailConfirmationEmail(user.Email, userRoles.First());
         }
 
+        await transaction.CommitAsync();
         return Result.Empty;
     }
 

@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,10 +23,10 @@ public sealed class SeedUserWorkflowTests
     public async Task RepairsAnIncompleteSeedUserOnlyOnce()
     {
         var services = new ServiceCollection();
+        await using var connection = new SqliteConnection("DataSource=:memory:");
+        await connection.OpenAsync();
         services.AddLogging();
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseInMemoryDatabase(Guid.NewGuid().ToString())
-        );
+        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connection));
         services
             .AddIdentityCore<User>()
             .AddRoles<IdentityRole>()
@@ -35,6 +37,7 @@ public sealed class SeedUserWorkflowTests
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(
                 new Dictionary<string, string?>
@@ -50,9 +53,9 @@ public sealed class SeedUserWorkflowTests
             .Build();
         var emailSender = new EmailSender(
             configuration,
-            new TemplateFileReader(),
+            new TemplateFileReader(AppContext.BaseDirectory),
             new GlobalizationService(),
-            NullLogger<EmailSender>.Instance
+            new EmailOutbox(dbContext, new EphemeralDataProtectionProvider(), TimeProvider.System)
         );
         const string email = "seed@example.com";
         const string role = "Administrator";
