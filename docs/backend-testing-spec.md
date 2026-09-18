@@ -129,9 +129,9 @@ These are project choices. Select compatible stable package versions in the firs
 | Concern | Decision |
 | --- | --- |
 | .NET/C# | Stay on .NET 10 LTS and its default C# 14 language version. No `LangVersion=latest` or preview features. .NET 10 is supported through November 2028. |
-| SDK | Add `backend/global.json` with an exact serviced .NET 10 SDK, `rollForward: disable`, `allowPrerelease: false`, and MTP runner selection. Run backend commands from `backend`. Align mise, CI, devcontainer, and the Docker SDK image with this selection. |
+| SDK | Add `backend/global.json` with an exact serviced .NET 10 SDK, `rollForward: disable`, and `allowPrerelease: false`. Add MTP runner selection only at the section 9 cutover. Run backend commands from `backend`. Align mise, CI, devcontainer, and the Docker SDK image with this selection. |
 | Test framework | xUnit.net v3 with its MTP v2 package (`xunit.v3.mtp-v2`), using executable test projects. Use a stable compatible release; the framework name “v3” does not require a NuGet major version of 3. |
-| Runner | Native Microsoft Testing Platform through .NET 10 `dotnet test`. All active test projects use the same runner. Do not carry `Microsoft.NET.Test.Sdk` or the VSTest adapter into the new projects unless an explicitly supported IDE proves it needs them. |
+| Runner | Final state: native Microsoft Testing Platform through .NET 10 `dotnet test` for both trusted projects. During migration, preserve the separate legacy invocation in section 9 and defer global MTP selection until its cutover criteria are met. Do not carry `Microsoft.NET.Test.Sdk` or the VSTest adapter into new projects unless an explicitly supported IDE proves it needs them. |
 | Assertions | Built-in xUnit assertions. No additional assertion library by default. |
 | HTTP tests | `Microsoft.AspNetCore.Mvc.Testing`, aligned with the application framework packages. |
 | Database | `Testcontainers.MsSql`, SQL Server 2022 with a pinned image tag/digest, and `Respawn` for resetting test data. Record collation and compatibility level, and match deployment configuration. |
@@ -176,6 +176,10 @@ Before implementing each feature's tests, record its method/route, actors, initi
 
 P0 is the trustworthy core; P1 completes the first baseline. These are requirements to implement, not claims of current coverage.
 
+The concrete deliverable is [backend-test-scenarios.md](backend-test-scenarios.md). Give each executable scenario a stable `BE-<AREA>-NNN` ID, recorded beside its test (a comment is sufficient). Each entry must identify priority, requirement/source revision, method/route or non-HTTP operation, actor, initial state, input/action, exact observable outcomes, implementation/test location, and review evidence. Split feature-level entries before implementing them; do not mark an entire feature covered after one happy path.
+
+Track policy separately from implementation: `needs-decision` scenarios cannot become accepted regression tests until the product owner/maintainer records the expected behavior and rationale. Observations of current code and temporary characterization tests may inform the decision, but do not resolve it. A blocked scenario prevents completion of its affected coverage milestone, not unrelated foundation work. Never encode an unresolved policy as a passing/skipped placeholder. The ledger starts with explicit open decisions for repeated supervisor decisions, multi-role precedence, and concurrent numbering/writes; foundation can proceed on independently specified behavior.
+
 | Priority / area | Required scenarios | Main level |
 | --- | --- | --- |
 | P0: authentication | Accepted/confirmed login succeeds; invalid credentials and unaccepted/unconfirmed accounts fail; refresh rotates and rejects replay/expired/invalid tokens; logout revokes refresh; invalid issuer/audience/signature and expired access tokens fail; verify refresh cookie security attributes and that token storage is hashed. | HTTP + SQL |
@@ -185,6 +189,7 @@ P0 is the trustworthy core; P1 completes the first baseline. These are requireme
 | P0: cruise lifecycle | Planning/assignment, confirm/revert/end, valid and invalid status transitions, date/blockade boundaries, access rules, and persisted effects on associated applications. | Rule units + HTTP + SQL |
 | P0: atomic writes | A failure after a write has begun leaves no partial graph; a business-error result also leaves state unchanged. Verify numbering/uniqueness on representative competing writes where required. Do not promise concurrency behavior without an agreed invariant. | SQL + HTTP |
 | P0: durable email | State change and queued message commit together; queue failure rolls back; SMTP failure leaves a retryable message; claiming prevents simultaneous delivery attempts. Verify retry/lease expiry and recovery with controlled time, without implying exactly-once SMTP delivery. Sensitive payloads remain protected. | SQL + explicit dispatcher, fake transport |
+| P0: email after host replacement (`BE-EMAIL-001`) | Host A queues a protected message and is fully disposed. Independently constructed host B loads persisted Data Protection keys from the same SQL database, decrypts and delivers that message, then removes the acknowledged row. No shared provider, cached key ring, or ephemeral key store may satisfy this test. | SQL + two independent hosts, fake transport |
 | P0: migrations | Empty database migrates to current; applying again succeeds without changes; no pending model changes; a representative Identity/application/cruise graph can be written and read. | SQL |
 | P1: account workflows | Registration, acceptance/deactivation, role changes, password reset/change, email confirmation; malformed, expired, or reused action tokens where applicable. | HTTP + SQL, captured email |
 | P1: files and exports | Upload/scan size and type boundaries, invalid encoding/content, authorized retrieval/deletion, CSV escaping and Polish text/date handling. Small fixtures stored with tests. | Unit + representative HTTP |
@@ -199,6 +204,8 @@ For migration-upgrade tests, use a separate database from the shared current-sch
 The transaction filter currently commits after receiving an endpoint result. Tests must distinguish exceptions from returned error results; neither a transaction wrapper nor an HTTP error alone proves rollback.
 
 Use the current [email delivery contract](email-delivery.md) and [SMTP configuration notes](smtp-configuration.md) when specifying outbox/startup expectations. The new legacy tests covering these areas must undergo the same independent review as older tests.
+
+For `BE-EMAIL-001`, use production Data Protection registration/application name and retain the database/key rows between hosts. Remove only automatic worker polling, supply valid isolated SMTP options, and replace transport. Assert a key was persisted and the queued payload is protected before disposing host A; discard every host-owned scope/provider/protector before creating B. B must retrieve the original queued recipient/subject/body using a new provider, deliver once in this controlled scenario, and leave no acknowledged message in a fresh query. This asserts recovery, not exactly-once SMTP semantics. The fixture resets once before and once after the complete scenario, never between hosts. Demonstrate the test fails when B cannot access A's persisted key material, with no fallback to user-profile keys.
 
 ## 7. Unified local command contract
 
@@ -266,7 +273,7 @@ Run `vpr test:coverage` on a schedule and manual dispatch, separate from staging
 
 ### Performance is an acceptance requirement
 
-The earlier 10-minute backend target is replaced by these budgets. These are targets to validate, not measured claims. Record runner/machine, cache state, suite size, and phase timings so warm reruns are not confused with cold checkouts.
+The earlier 10-minute backend target is replaced by the provisional targets below. Foundation measurements must calibrate them before they become enforced suite budgets. Record runner/machine, cache state, suite size, and phase timings so warm reruns are not confused with cold checkouts. The job timeout remains an operational hang limit; it is not evidence that the performance target is realistic.
 
 | Measurement | Initial budget |
 | --- | --- |
@@ -276,7 +283,9 @@ The earlier 10-minute backend target is replaced by these budgets. These are tar
 | Complete backend CI work, including restore/build/container startup | 3 minutes target; 5 minutes with cold downloads/image pull |
 | Complete workspace CI check, excluding runner queue and deploy/image builds | 5 minutes target; 8-minute hard job timeout |
 
-Measure at least five representative warm executions and three clean hosted runs before accepting the baseline; publish median, slowest run, setup time, and slowest tests. Include frontend unit/type/generation work in the root budget. Investigate sustained breaches as implementation defects; revise budgets only with measurements and an agreed tradeoff. A timeout fails the gate, never skips tests.
+During foundation, benchmark a representative slice containing a real login/new auth host, an authorized form write/read and reset, outbox delivery across host replacement, concurrent startup seeding, and an upgrade from the previous supported schema. Also measure build/generation and frontend static/unit work. Measure at least five warm executions and three clean hosted runs; record commit, toolchain, machine/runner, test counts, median/slowest run, setup/reset/host costs, and slowest tests in the ledger's performance record. Separate fixed setup cost from per-scenario cost and estimate the remaining matrix with stated assumptions; a small slice's total cannot be presented as the full-suite benchmark.
+
+Before enforcing the numbers, the maintainer records ratified budgets and rationale in that record. Until then, timings are diagnostic and an overrun is calibration evidence, not automatically an implementation defect. After the remaining P0/P1 cases exist, repeat the measurements for the full suite and confirm the ratified budgets or explicitly revise them with evidence. Investigate sustained regressions against that measured baseline. Root timings include frontend work and temporary legacy execution; report the latter separately. A timeout always fails the gate, never skips tests. Changing a budget cannot justify silently removing coverage or accepting a slow staging loop.
 
 Keep tests fast by design: one container and migration setup per process, small resets, a shared host for stateless scenarios, fresh hosts only for process-state isolation, representative HTTP cases, and pure-rule permutations in unit tests. Keep the previous-supported-release upgrade check in the baseline; more historical paths need justification. No mandatory browser, SMTP, full Compose stack, coverage overhead, forced clean rebuild, sleeps, or retry multiplication in the everyday backend check.
 
@@ -297,8 +306,10 @@ During the spec phase, preserve all existing tests and CI. Their pass status doe
 1. Inventory each existing test against a requirement in section 6. Record `unreviewed`, `rewritten`, `retained after review`, or `retired`, with a reason and replacement location where relevant.
 2. Build new tests from that requirement, independently of existing expected values. Useful pure-rule tests may be retained after checking their assertions and demonstrating that the relevant fault makes them fail.
 3. Replace fake-provider persistence tests with SQL Server scenarios. Do not mechanically copy the current SQLite factory or production seed setup.
-4. In the MTP cutover change, move the old v2 project out of the active solution/required runner. Keep it temporarily as clearly labeled legacy reference if review is unfinished; it must not be silently included in MTP runs or counted as trusted coverage.
-5. Remove the legacy project, obsolete provider/runner dependencies, and its `InternalsVisibleTo` entry once every test has a disposition and required scenarios are covered. Git history preserves retired work.
+4. Preserve legacy execution until every removed test has a reviewed, passing replacement or an explicitly reviewed retirement reason (obsolete/incorrect assertion or duplication with identified coverage). Record this per test/theory case in the scenario ledger, with reviewer and evidence. An unfinished review is not grounds for removing a test from required execution, and “untrusted” does not mean its regression signal is disposable.
+5. Default transition: defer `global.json` MTP runner selection, run the legacy v2 project explicitly through VSTest, and run the new v3 projects directly as MTP executables with `UseMicrosoftTestingPlatformRunner=true`. Do not invoke a mixed solution through `dotnet test`. Root `check` and required CI must run both invocations, keep reports/counts separate, and fail if either fails or unexpectedly discovers/executes zero tests. Label legacy results as unreviewed, not trusted coverage. Preserve the existing legacy gate until the combined gate is proven. Direct executable support is documented in the linked xUnit guidance; verify exact commands on the pinned SDK before cutover.
+6. Switch the global runner, remove the legacy invocation/project from the solution, and update root/CI commands in the same change only after the complete legacy disposition ledger is reviewed and replacement execution is demonstrated on that revision. Include a deliberately failing legacy test before cutover and a failing replacement after cutover as evidence that both gates work. No intermediate revision may drop execution merely because replacement tests are scheduled for a later milestone.
+7. Remove obsolete provider/runner dependencies and the legacy `InternalsVisibleTo` entry after that cutover. Git history preserves retired work. The temporary runner coexistence ends when its purpose is complete; it is not a third permanent suite.
 
 A flaky test is a defect to diagnose. Any temporary quarantine needs an issue, owner, expiry, and a visible gap in the scenario ledger. Required P0 cases cannot be quarantined while claiming the baseline is complete.
 
@@ -306,13 +317,15 @@ A flaky test is a defect to diagnose. Any temporary quarantine needs an issue, o
 
 | Step | Deliverable | Exit evidence |
 | --- | --- | --- |
-| 1. Requirements | Reconciled P0 behavior/permission matrix and existing-test inventory. | Expected outcomes are explicit; unresolved business questions are identified. |
-| 2. Foundation | Solution/tooling layout, SDK/tool pins, shared settings, lock files, two MTP projects, SQL fixture, test adapter at the existing email transport seam. | One meaningful unit test and one HTTP-to-SQL test pass locally and on Linux; real migrations run and state isolation is demonstrated. |
-| 3. Commands and CI | Root check/fix/lint contract, reusable workspace gate, reports, ordered generation, image/deploy dependencies, required-check configuration. | Positive and negative evidence from sections 7–8, measured timings within budget, no duplicate suite execution or zero-test green run. |
-| 4. P0 coverage | Auth, permissions, forms, decisions, cruises, atomicity, current-schema migrations. | Every P0 scenario mapped to reviewed tests; representative failures demonstrated. |
+| 1. Requirements | Scenario ledger with stable IDs, explicit behavior, legacy inventory, and named policy decisions. | Foundation scenarios are specified; unresolved decisions block only affected scenario acceptance/milestones. |
+| 2. Foundation | Solution/tooling layout, SDK pins without global runner cutover, two MTP projects, SQL fixture, existing email transport adapter, representative benchmark slice. | Real migrations/isolation and cross-host outbox recovery pass locally/Linux; foundation timings and full-suite estimate recorded; budgets ratified before enforcement. |
+| 3. Commands and CI | Root check/fix/lint, combined legacy/new gate, reports, ordered generation, deployment dependencies, required-check configuration. | Positive/negative gate evidence; both runner invocations execute while review is incomplete; no zero-test green run. |
+| 4. P0 coverage | Auth, permissions, forms, decisions, cruises, atomicity, durable email including host replacement, current-schema migrations. | Every P0 scenario has an accepted policy and reviewed tests; representative failures demonstrated. |
 | 5. Baseline completion | P1 coverage, solution/tooling cleanup, legacy dispositions, dependency cleanup, local documentation. | All required scenarios implemented, no unexplained skips/flakes, clean checkout and repeat execution pass, root DX and timing budgets verified. |
 
 Foundation completion is not full-suite completion. Keep changes reviewable by feature. Production changes are limited to a needed seam for testing or separately explained bug fixes; do not adjust assertions to bless a defect. Keep solution/tooling changes separate from behavior changes.
+
+Runner cutover is a separate conditional checkpoint after all legacy dispositions/replacements are ready, even if some belong to P1. Do not force it into foundation or CI setup merely to finish the final tooling shape early.
 
 The baseline is complete only after both test projects run reliably from a clean checkout, the CI/deployment gate is demonstrated, all P0/P1 requirements are accounted for, and the legacy review is finished. At that point, changes to business behavior must include the appropriate new or updated tests.
 
