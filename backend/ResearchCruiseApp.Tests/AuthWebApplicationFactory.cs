@@ -37,6 +37,7 @@ internal sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
                     ["JWT:Secret"] = "TestSecretThatIsAtLeastTwoHundredFiftySixBitsLong!!",
                     ["JWT:AccessTokenLifetimeSeconds"] = "900",
                     ["JWT:RefreshTokenLifetimeSeconds"] = "7200",
+                    ["SmtpSettings:UseFakeSmtp"] = "true",
                 }
             )
         );
