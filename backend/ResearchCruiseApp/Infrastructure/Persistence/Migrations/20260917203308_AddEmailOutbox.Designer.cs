@@ -594,6 +594,9 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasFilter("[FormCId] IS NOT NULL");
 
+                    b.HasIndex("Number", "Id")
+                        .HasDatabaseName("IX_CruiseApplications_Number_Id");
+
                     b.ToTable("CruiseApplications");
                 });
 

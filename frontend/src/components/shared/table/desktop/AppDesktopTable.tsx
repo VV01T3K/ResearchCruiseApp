@@ -1,6 +1,7 @@
 import { flexRender } from '@tanstack/react-table';
 
 import { AppTableClearFiltersButton } from '@/components/shared/table/common/AppTableClearFiltersButton';
+import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
 import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppDesktopTableHeader } from '@/components/shared/table/desktop/AppDesktopTableHeader';
 
@@ -10,6 +11,7 @@ export function AppDesktopTable<T>({
   emptyTableMessage,
   showRequiredAsterisk,
   errors,
+  infiniteScroll,
   'data-testid': testId,
 }: TableProps<T>) {
   const defaultButtons: React.ReactNode[] = [<AppTableClearFiltersButton key="clearFiltersBtn" table={table} />];
@@ -79,6 +81,13 @@ export function AppDesktopTable<T>({
                     </span>
                   )}
                 </div>
+              </td>
+            </tr>
+          )}
+          {infiniteScroll && (
+            <tr>
+              <td colSpan={table.getAllColumns().length} className="p-0">
+                <AppTableInfiniteScrollTrigger {...infiniteScroll} />
               </td>
             </tr>
           )}

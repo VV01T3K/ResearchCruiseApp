@@ -106,8 +106,23 @@ public static class DependencyInjection
         IConfiguration configuration
     )
     {
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("Database"))
+        services.AddDbContext<ApplicationDbContext>(
+            (provider, options) =>
+                options
+                    .UseSqlServer(configuration.GetConnectionString("Database"))
+                    // Keep all seeding under EF's migration lock across application replicas.
+                    .UseSeeding(
+                        (_, _) =>
+                            provider
+                                .GetRequiredService<ApplicationDbContextInitializer>()
+                                .Seed()
+                                .GetAwaiter()
+                                .GetResult()
+                    )
+                    .UseAsyncSeeding(
+                        (_, _, _) =>
+                            provider.GetRequiredService<ApplicationDbContextInitializer>().Seed()
+                    )
         );
 
         services.AddScoped<ApplicationDbContextInitializer>();
