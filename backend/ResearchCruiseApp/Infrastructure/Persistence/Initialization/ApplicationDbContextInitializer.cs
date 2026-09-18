@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
@@ -15,24 +14,19 @@ internal class ApplicationDbContextInitializer(
     ILogger<ApplicationDbContextInitializer> logger
 )
 {
-    public async Task Initialize()
-    {
-        await Migrate();
+    public Task Initialize() => applicationDbContext.Database.MigrateAsync();
 
+    public async Task Seed()
+    {
         await SeedRoleData();
         await SeedUgUnits();
         await SeedResearchAreas();
         await SeedShipEquipments();
 
-        if (configuration.GetSection("Database:SeedAccountsAutomatically").Value?.ToBool() ?? false)
+        if (configuration.GetValue<bool>("Database:SeedAccountsAutomatically"))
         {
             await SeedUsersData();
         }
-    }
-
-    private Task Migrate()
-    {
-        return applicationDbContext.Database.MigrateAsync();
     }
 
     private async Task SeedUsersData()
@@ -44,9 +38,6 @@ internal class ApplicationDbContextInitializer(
 
         foreach (var user in users)
         {
-            if (await identityService.UserWithEmailExists(user.Email!))
-                continue;
-
             var password = randomGenerator.CreateSecurePassword();
             var result = await identityService.EnsureSeedUserWithRole(
                 user.Email,
@@ -92,7 +83,7 @@ internal class ApplicationDbContextInitializer(
         ).ToHashSet();
 
         var newUgUnits = SeedUgUnitData
-            .UgUnitsNames.Where(name => !existingNames.Contains(name))
+            .UgUnitsNames.Where(existingNames.Add)
             .Select(name => new UgUnit { Name = name, IsActive = true })
             .ToList();
 
@@ -112,7 +103,7 @@ internal class ApplicationDbContextInitializer(
         ).ToHashSet();
 
         var newResearchAreas = SeedResearchAreaData
-            .ResearchAreaNames.Where(name => !existingNames.Contains(name))
+            .ResearchAreaNames.Where(existingNames.Add)
             .Select(name => new ResearchArea { Name = name, IsActive = true })
             .ToList();
 
@@ -132,7 +123,7 @@ internal class ApplicationDbContextInitializer(
         ).ToHashSet();
 
         var newShipEquipments = SeedShipEquipmentData
-            .ShipEquipmentsNames.Where(name => !existingNames.Contains(name))
+            .ShipEquipmentsNames.Where(existingNames.Add)
             .Select(name => new ShipEquipment { Name = name, IsActive = true })
             .ToList();
 
