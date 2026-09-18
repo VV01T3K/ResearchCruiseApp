@@ -26,8 +26,8 @@ The application aims to streamline processes related to the booking, management,
 | `Sentry__TracesSampleRate`              | Backend trace sampling rate                    | `0.1`                                                                           | No       |
 | `SmtpSettings__SmtpServer`              | SMTP server address                            | `smtp.gmail.com`                                                                | Yes      |
 | `SmtpSettings__SmtpPort`                | SMTP server port                               | `465`                                                                           | No       |
-| `SmtpSettings__SmtpUsername`            | SMTP username                                  | `example@gmail.com`                                                             | Yes      |
-| `SmtpSettings__SmtpPassword`            | SMTP password                                  | `P@ssword1`                                                                     | Yes      |
+| `SmtpSettings__SmtpUsername`            | SMTP mailbox address                 | `example@gmail.com`                                                             | Yes      |
+| `SmtpSettings__SmtpPassword`            | Gmail app password                 |                                                                                 | Yes      |
 | `SmtpSettings__SenderName`              | Email sender name                              | `Biuro Armatora z jednostką r/v Oceanograf, Uniwersytet Gdański`                | No       |
 | `JWT__ValidAudience`                    | JWT valid audience                             | `https://rejsy.ug.edu.pl/`                                                      | No       |
 | `JWT__ValidIssuer`                      | JWT valid issuer                               | `https://rejsy.ug.edu.pl/`                                                      | No       |
@@ -50,6 +50,8 @@ The application can be run using Docker compose. Multiple configuration files ar
 - `docker-compose.prod.yml` - Production configuration
 
 See [the Sentry on-prem migration notes](docs/sentry/sentry-on-prem-migration.md) for the planned move to a self-hosted Sentry instance.
+
+SMTP credentials must not be added to `appsettings*.json` or another tracked file. Local development uses the fake SMTP sender by default, including Docker development. Staging and production Compose require `SMTP_USERNAME` and `SMTP_PASSWORD` in the deployment environment and map them to the backend's `SmtpSettings` configuration. For staging, configure these in the Komodo stack environment. Copy `docker/.env.staging.template` only for local deployment setup and keep the populated file untracked. See [SMTP configuration and rollout](docs/smtp-configuration.md) for setup, rotation, and verification.
 
 ### Kubernetes
 
