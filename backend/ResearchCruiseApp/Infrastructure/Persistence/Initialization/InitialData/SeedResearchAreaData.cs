@@ -1,6 +1,6 @@
 ﻿namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
-internal static class InitialResearchAreaData
+internal static class SeedResearchAreaData
 {
     public static string[] ResearchAreaNames =>
         new[]
