@@ -7,6 +7,8 @@ services:
       - Database__LogUserPasswordsWhenSeeding=false
       - ConnectionStrings__Database=Server=host.docker.internal,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False
       - FrontendUrl=http://localhost:8080
+      - SmtpSettings__SmtpUsername=${SMTP_USERNAME:?Set SMTP_USERNAME in the deployment environment}
+      - SmtpSettings__SmtpPassword=${SMTP_PASSWORD:?Set SMTP_PASSWORD in the deployment environment}
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
     extra_hosts:

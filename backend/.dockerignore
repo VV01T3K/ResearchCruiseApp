@@ -1,5 +1,7 @@
 ﻿**/.dockerignore
 **/.env
+**/.env.*
+**/fake-emails
 **/.git
 **/.gitignore
 **/.project
