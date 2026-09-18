@@ -201,6 +201,7 @@ node_modules/
 orleans.codegen.cs
 
 # Local environment secrets
+.env
 .env.*
 !.env.sentry.example
 
