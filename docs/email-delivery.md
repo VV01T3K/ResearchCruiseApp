@@ -59,6 +59,10 @@ version's worker; the normal application startup migration performs this step.
 No separate broker, cron job, SMTP connection at startup, or worker deployment is
 required. Preserve both tables and their contents across deployments.
 
+SMTP configuration validation runs before database initialization and worker startup.
+The application rejects missing credentials in real SMTP mode even if no messages
+are pending; fake SMTP remains usable without them. See [SMTP setup](smtp-configuration.md).
+
 The test suite defaults to isolated SQLite databases. To exercise the same outbox
 tests against SQL Server, set `RESEARCHCRUISE_TEST_SQLSERVER` to a test-server
 connection string and run `dotnet test --filter FullyQualifiedName~EmailOutboxTests`.
