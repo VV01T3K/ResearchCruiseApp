@@ -28,3 +28,10 @@ email, run `docker cp researchcruiseapp-backend:/tmp/fake-emails ./fake-emails`.
 4. Revoke exposed app passwords. Removing them from tracked settings does not
    remove them from Git history or old images. Future rotations require updating
    deployment configuration and recreating the container, without rebuilding images.
+
+## Delivery
+
+Email is queued with its related database changes and delivered by a background
+worker. SMTP failures retry; queue persistence failures roll back the related
+changes. See [email delivery](email-delivery.md) for retry limits, monitoring,
+key storage, and recovery.

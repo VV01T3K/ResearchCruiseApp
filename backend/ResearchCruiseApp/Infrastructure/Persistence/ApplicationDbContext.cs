@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity;
@@ -7,8 +8,11 @@ using ResearchCruiseApp.Infrastructure.Persistence.Configurations;
 namespace ResearchCruiseApp.Infrastructure.Persistence;
 
 internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : IdentityDbContext<User>(options)
+    : IdentityDbContext<User>(options),
+        IDataProtectionKeyContext
 {
+    public DbSet<EmailOutboxMessage> EmailOutboxMessages { get; init; } = null!;
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
     public DbSet<CruiseApplication> CruiseApplications { get; init; } = null!;
     public DbSet<Cruise> Cruises { get; init; } = null!;
 
