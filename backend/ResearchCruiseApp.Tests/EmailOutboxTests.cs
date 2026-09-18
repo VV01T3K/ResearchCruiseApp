@@ -18,6 +18,92 @@ namespace ResearchCruiseApp.Tests;
 
 public sealed class EmailOutboxTests
 {
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task SeedAccountAndEmailFollowTheExistingTransaction(bool commit)
+    {
+        await using var fixture = await OutboxFixture.Create();
+        await using (var scope = fixture.Provider.CreateAsyncScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            await using var transaction = await db.Database.BeginTransactionAsync();
+            var identity = OutboxFixture.CreateIdentity(scope.ServiceProvider);
+            var result = await identity.EnsureSeedUserWithRole(
+                "seed@example.com",
+                "Seed",
+                "User",
+                "ValidPassword1!",
+                "CruiseManager"
+            );
+            Assert.True(result.IsSuccess);
+            Assert.Same(transaction, db.Database.CurrentTransaction);
+            Assert.Single(await db.EmailOutboxMessages.ToListAsync());
+            if (commit)
+                await transaction.CommitAsync();
+            else
+                await transaction.RollbackAsync();
+        }
+        await using var verification = fixture.OpenDb();
+        Assert.Equal(commit ? 1 : 0, await verification.Users.CountAsync());
+        Assert.Equal(commit ? 1 : 0, await verification.EmailOutboxMessages.CountAsync());
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task FailedSeedRepairPreservesTheOriginalAccountInExistingTransaction(
+        bool queueFailure
+    )
+    {
+        await using var fixture = await OutboxFixture.Create();
+        string originalId;
+        await using (var scope = fixture.Provider.CreateAsyncScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var users = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var original = new User
+            {
+                UserName = "seed@example.com",
+                Email = "seed@example.com",
+                FirstName = "Seed",
+                LastName = "User",
+            };
+            Assert.True((await users.CreateAsync(original)).Succeeded);
+            originalId = original.Id;
+            await using var transaction = await db.Database.BeginTransactionAsync();
+            var identity = OutboxFixture.CreateIdentity(scope.ServiceProvider);
+            fixture.SaveFailure.FailOutboxWrites = queueFailure;
+            if (queueFailure)
+                await Assert.ThrowsAsync<DbUpdateException>(() =>
+                    identity.EnsureSeedUserWithRole(
+                        "seed@example.com",
+                        "Seed",
+                        "User",
+                        "ValidPassword1!",
+                        "CruiseManager"
+                    )
+                );
+            else
+                Assert.False(
+                    (
+                        await identity.EnsureSeedUserWithRole(
+                            "seed@example.com",
+                            "Seed",
+                            "User",
+                            "bad",
+                            "CruiseManager"
+                        )
+                    ).IsSuccess
+                );
+            Assert.Same(transaction, db.Database.CurrentTransaction);
+            await transaction.CommitAsync();
+        }
+        await using var verification = fixture.OpenDb();
+        Assert.Equal(originalId, (await verification.Users.SingleAsync()).Id);
+        Assert.Empty(await verification.EmailOutboxMessages.ToListAsync());
+    }
+
     [Fact]
     public async Task QueuedEmailAndProtectionKeysSurviveAHostRestart()
     {

@@ -2,8 +2,10 @@
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
-internal static class InitialAdministrationData
+internal static class SeedAdministrationData
 {
+    // Keep in sync with the Role enum in frontend/src/api/client/user.ts - there is no
+    // API endpoint for roles, so the frontend list is not derived from this one automatically.
     public static string[] RoleNames =>
         new[]
         {
@@ -13,9 +15,4 @@ internal static class InitialAdministrationData
             RoleName.Guest,
             RoleName.ShipCrew,
         };
-
-    public const string AdminEmail = "admin@admin.com";
-    public const string AdminFirstName = "Admin";
-    public const string AdminLastName = "Admin";
-    public const string AdminPassword = "Admin@123";
 }

@@ -18,8 +18,7 @@ The application aims to streamline processes related to the booking, management,
 
 | Environment Variable                    | Description                                    | Example                                                                         | Required |
 | --------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------- | -------- |
-| `Database__SeedAutomatically`           | Seed the database with test data               | `true`                                                                          | No       |
-| `Database__MigrateAutomatically`        | Migrate the database automatically             | `true`                                                                          | No       |
+| `Database__SeedAccountsAutomatically`   | Create or repair configured seed accounts      | `false`                                                                         | No       |
 | `Database__LogUserPasswordsWhenSeeding` | Log user passwords when seeding                | `true`                                                                          | No       |
 | `ConnectionStrings__Database`           | Database connection string                     | `db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False` | Yes      |
 | `FrontendUrl`                           | Frontend URL - for CORS and email verification | `http://localhost:3000`                                                         | Yes      |
@@ -35,6 +34,10 @@ The application aims to streamline processes related to the booking, management,
 | `JWT__AccessTokenLifetimeSeconds`       | JWT access token lifetime in seconds           | `3600`                                                                          | No       |
 | `JWT__RefreshTokenLifetimeSeconds`      | JWT refresh token lifetime in seconds          | `7200`                                                                          | No       |
 | `JWT__Secret`                           | JWT signing secret                             | `JWTp@ssw0rdTwoHundredFiftySixBitsAtLeast`                                      | Yes      |
+
+Database migrations and reference data seeding run on startup. Missing roles, UG units, research areas and ship equipment are added; existing reference rows, including inactive entries, are preserved. Seeding shares Entity Framework's migration lock so application replicas do not seed simultaneously.
+
+`Database__SeedAccountsAutomatically` controls only the accounts configured in `users.json`. It replaces `Database__SeedAutomatically`; `Database__MigrateAutomatically` has been removed. Account seeding defaults to off in the backend and production Compose, and is enabled in development and staging Compose. For staging, rename `DATABASE_SEED_AUTOMATICALLY` to `DATABASE_SEED_ACCOUNTS_AUTOMATICALLY` in the deployment environment.
 
 ## Deployment
 

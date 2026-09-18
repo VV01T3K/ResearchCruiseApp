@@ -323,8 +323,46 @@ internal class IdentityService(
         string roleName
     )
     {
-        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+        var existingTransaction = dbContext.Database.CurrentTransaction;
+        await using var transaction = existingTransaction is null
+            ? await dbContext.Database.BeginTransactionAsync()
+            : null;
+        var savepoint = Guid.NewGuid().ToString("N");
+        if (existingTransaction is not null)
+            await existingTransaction.CreateSavepointAsync(savepoint);
 
+        try
+        {
+            var result = await EnsureSeedUserCore(email, firstName, lastName, password, roleName);
+            if (!result.IsSuccess)
+            {
+                if (existingTransaction is not null)
+                    await existingTransaction.RollbackToSavepointAsync(savepoint);
+                return result;
+            }
+
+            if (transaction is not null)
+                await transaction.CommitAsync();
+            else
+                await existingTransaction!.ReleaseSavepointAsync(savepoint);
+            return result;
+        }
+        catch
+        {
+            if (existingTransaction is not null)
+                await existingTransaction.RollbackToSavepointAsync(savepoint);
+            throw;
+        }
+    }
+
+    private async Task<Result<SeedUserStatus>> EnsureSeedUserCore(
+        string email,
+        string firstName,
+        string lastName,
+        string password,
+        string roleName
+    )
+    {
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser is not null)
         {
@@ -354,7 +392,6 @@ internal class IdentityService(
             throw;
         }
 
-        await transaction.CommitAsync();
         return SeedUserStatus.Created;
     }
 
