@@ -4,6 +4,11 @@
 .idea
 .DS_Store
 
+# Runtime secrets and locally captured email must not enter build contexts.
+**/.env
+**/.env.*
+**/fake-emails
+
 node_modules
 **/node_modules
 
