@@ -1,0 +1,20 @@
+{
+  "files": [
+    {
+      "path": "README.md",
+      "description": "Runtime configuration, deployment and startup seeding behavior."
+    },
+    {
+      "path": "backend/ResearchCruiseApp/Infrastructure/Identity/Permissions/RolePermissionRules.cs",
+      "description": "Shared role and assignment rules; also inspect endpoint-specific authorization."
+    },
+    {
+      "path": "frontend/orval.config.ts",
+      "description": "Backend OpenAPI to frontend client generation, fetch customization and query invalidation."
+    },
+    {
+      "path": "backend/ResearchCruiseApp/Api/Cruises/Lifecycle/CruiseLifecycleRules.cs",
+      "description": "Cruise lifecycle transitions and their effects on linked application states."
+    }
+  ]
+}

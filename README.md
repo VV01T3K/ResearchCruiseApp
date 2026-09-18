@@ -5,6 +5,35 @@ The application aims to streamline processes related to the booking, management,
 
 ## Configuration
 
+### Greptile reviews
+
+Review settings live in [`.greptile/config.json`](.greptile/config.json), with
+repository guidance in [`.greptile/rules.md`](.greptile/rules.md) and explicit
+context files in [`.greptile/files.json`](.greptile/files.json).
+
+The configuration keeps medium strictness, automatic reviews on PR opening,
+the Renovate exclusion, summaries in PR descriptions and disabled auto-approval.
+It enables review status checks and limits comments to logic and syntax. Generated
+frontend API files and the generated route tree are excluded from direct review;
+their source contracts and generators remain in scope. Tests, migrations, OpenAPI,
+lockfiles and deployment configuration remain in scope too.
+
+Review frequency is unchanged. To also review new commits, add `"push"` to
+`autoReview`; add `"rebase"` to include rewritten history. Each review can consume
+credits. A status check does not make Greptile a required merge check; that is a
+separate GitHub branch-protection setting.
+
+Repository settings override dashboard defaults, while dashboard rules and context
+can still add to the repository guidance. Keep future review-policy changes in PRs.
+See Greptile's [configuration reference](https://www.greptile.com/docs/code-review/greptile-config-reference)
+and [precedence rules](https://www.greptile.com/docs/code-review/greptile-config).
+
+The dashboard still controls repository enrollment, billing/OSS eligibility,
+draft review preferences, TREX and account integrations. The documented file
+reference does not expose draft or TREX switches. At setup, drafts and TREX were
+disabled; this configuration does not change them. Confirm OSS coverage for TREX
+before enabling it, since its dashboard lists an additional credit charge.
+
 ### Frontend
 
 | Environment Variable                 | Description                            | Example               | Required |
