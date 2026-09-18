@@ -1,5 +1,7 @@
 import type { TokenResponse, UserResponse } from '@/api/generated/schemas';
 
+// Keep in sync with SeedAdministrationData.RoleNames in the backend - there is no API
+// endpoint for roles, so this list is not derived from the backend automatically.
 export enum Role {
   Administrator = 'Administrator',
   ShipOwner = 'Shipowner',
