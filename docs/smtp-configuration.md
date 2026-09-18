@@ -35,3 +35,15 @@ Email is queued with its related database changes and delivered by a background
 worker. SMTP failures retry; queue persistence failures roll back the related
 changes. See [email delivery](email-delivery.md) for retry limits, monitoring,
 key storage, and recovery.
+
+## Startup validation
+
+The backend checks SMTP settings before migrations, seeding, and worker startup.
+Real SMTP requires a hostname/IP, port 1-65535, a mailbox address, and a nonblank
+password. Fake SMTP only requires a valid output-directory path. Errors name the
+settings without printing credentials.
+
+Validation does not connect to Gmail or check directory write permissions.
+Implicit TLS uses port 465 for Gmail, not STARTTLS port 587. Restart the process
+(or recreate the container) after changing settings. OpenAPI generation skips
+SMTP startup validation and email delivery.
