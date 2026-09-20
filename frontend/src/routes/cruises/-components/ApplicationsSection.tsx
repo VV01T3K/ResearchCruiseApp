@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 

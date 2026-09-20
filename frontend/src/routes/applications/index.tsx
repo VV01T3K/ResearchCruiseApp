@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { ColumnDef, ColumnFiltersState, SortingState } from '@tanstack/react-table';
+import { ColumnFiltersState, SortingState } from '@tanstack/react-table';
+import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
 import { useMemo, useState } from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';

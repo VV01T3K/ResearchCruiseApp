@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/api/client/user';
-import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
+import { RowSelectionState } from '@tanstack/react-table';
+import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
 import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import React from 'react';
@@ -57,7 +58,7 @@ function MyPublicationsPage() {
           name={`selectPublication-${row.id}`}
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}
-          onChange={row.getToggleSelectedHandler()}
+          onChange={(checked) => row.toggleSelected(checked)}
           className="inline-block"
           size="md"
         />
