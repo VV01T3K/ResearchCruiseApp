@@ -1,8 +1,7 @@
 type DateFormat = 'date' | 'dateTime' | 'monthYear';
 
 export function formatDate(value: string | Date, format: DateFormat): string {
-  const date =
-    value instanceof Date ? value : new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T00:00:00` : value);
+  const date = value instanceof Date ? value : new Date(value);
   const options: Intl.DateTimeFormatOptions =
     format === 'monthYear'
       ? { month: '2-digit', year: 'numeric' }
