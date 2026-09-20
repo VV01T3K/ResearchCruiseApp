@@ -5,7 +5,7 @@ import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/
 import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppDesktopTableHeader } from '@/components/shared/table/desktop/AppDesktopTableHeader';
 
-export function AppDesktopTable<T>({
+export function AppDesktopTable<T extends object>({
   table,
   buttons,
   emptyTableMessage,

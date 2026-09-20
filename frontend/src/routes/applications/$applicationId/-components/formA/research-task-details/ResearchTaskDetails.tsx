@@ -1,4 +1,4 @@
-import { Row } from '@tanstack/react-table';
+import { Row } from '@/components/shared/table/common/tableFeatures';
 
 import { DidacticsResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/DidacticsResearchTaskDetails';
 import { OtherResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/OtherResearchTaskDetails';

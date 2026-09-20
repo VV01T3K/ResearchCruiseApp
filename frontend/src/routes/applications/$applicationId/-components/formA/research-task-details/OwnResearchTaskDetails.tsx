@@ -1,4 +1,4 @@
-import { Row } from '@tanstack/react-table';
+import { Row } from '@/components/shared/table/common/tableFeatures';
 
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
