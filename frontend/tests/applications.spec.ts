@@ -123,6 +123,13 @@ test('pagination continues through empty pages and resets for sorting and filter
   await expect.poll(() => requests.at(-1)?.get('descending')).toBe('false');
   expect(requests.at(-1)?.has('cursor')).toBe(false);
   await expect(page.getByRole('cell', { name: '100', exact: true })).toHaveCount(0);
+  await page.getByRole('menuitem', { name: 'Usuń sortowanie' }).click();
+  await expect.poll(() => requests.at(-1)?.get('descending')).toBe('true');
+  expect(requests.at(-1)?.get('sortBy')).toBe('number');
+  expect(requests.at(-1)?.has('cursor')).toBe(false);
+  await expect(page.getByRole('menuitem', { name: 'Sortuj malejąco' })).toBeDisabled();
+  await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
+  await expect.poll(() => requests.at(-1)?.get('descending')).toBe('false');
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Rok rejsu', exact: true }).click();
   await page.getByRole('menuitem', { name: '2026', exact: true }).click();

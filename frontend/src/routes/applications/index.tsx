@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { ColumnFiltersState, SortingState } from '@tanstack/react-table';
+import { ColumnFiltersState, SortingState, functionalUpdate } from '@tanstack/react-table';
 import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
 import { useMemo, useState } from 'react';
@@ -278,7 +278,12 @@ function ApplicationsPage() {
           columns={columns}
           buttons={(defaultButtons) => [...defaultButtons]}
           sortingState={sorting}
-          setSortingState={setSorting}
+          setSortingState={(updater) =>
+            setSorting((previous) => {
+              const next = functionalUpdate(updater, previous);
+              return next.length ? next : DEFAULT_SORTING_STATE;
+            })
+          }
           enableMultiSort={false}
           manualSorting
           manualFiltering
