@@ -1,69 +1,64 @@
-# ResearchCruiseApp review guidance
+# ResearchCruiseApp review rules
 
-This repository manages research cruises on Oceanograf. The frontend uses React,
-TanStack Router/Query/Form and an Orval-generated API client. The backend uses
-ASP.NET Core, Entity Framework Core and SQL Server.
+## Findings
 
-Apply the checks below when the changed behavior touches that area. Report defects
-introduced or exposed by the change, with a triggering input or user action and
-the resulting failure. Trace callers and existing safeguards before commenting;
-report a shared root cause once. Check older knowledge-base and permission docs
-against the current code and PR intent. Existing code is context, not proof that
-a behavior is correct. Avoid formatting comments and speculative refactors.
-When suggesting a regression test, name the failing scenario; do not request
-tests solely because a file changed.
+Report defects introduced or exposed by the change. Before commenting, trace the
+affected callers and safeguards until you can name a triggering input or action,
+the failing code path, and its consequence. Report each shared root cause once;
+tie any regression-test request to that same scenario.
+
+Resolve conflicts with older knowledge-base or permission docs using current code
+and PR intent. Treat existing behavior as context to evaluate, not a correctness
+requirement. Apply only the area checks relevant to the changed behavior.
 
 ## Authorization and sessions
 
-- Check backend authorization for both roles and resource ownership. A hidden UI
-  control or authenticated route does not authorize an API operation. Check list,
-  detail, export and write paths when access rules change, including filtering
-  before pagination.
-- Compare `RolePermissionRules`, endpoint checks and frontend permission helpers
-  when reviewing role changes. Trace users with multiple roles and assigned cruise
-  managers or deputies; do not assume the frontend helper matches server policy.
-- For authentication changes, trace `frontend/src/api/client/auth-session.ts` and
-  `custom-fetch.ts` together with backend session endpoints. Check refresh retries,
-  concurrent refreshes and whether an in-flight response can restore a logged-out
-  session. The refresh token is an HttpOnly cookie; access tokens live in memory.
-  A refresh conflict can return 409 and wait for a session from another tab.
-  Distinguish that path and transient network failures from a terminal 401.
+- For role or resource-access changes, compare `RolePermissionRules`, backend enforcement
+  and frontend permission helpers across list, detail, export and write paths.
+  Include multiple roles and assigned cruise managers/deputies in the comparison.
+- For session changes, trace `frontend/src/api/client/auth-session.ts`,
+  `frontend/src/api/client/custom-fetch.ts` and backend session endpoints together.
+  Distinguish cross-tab refresh conflicts with status 409 and transient failures
+  from terminal 401 responses. Check that refresh retries respect logout, in-memory
+  access tokens and HttpOnly refresh cookies.
 
 ## API and frontend behavior
 
-- Trace contract changes from backend requests/responses and the checked-in OpenAPI
-  spec through `frontend/orval.config.ts` to frontend callers. Check nullability,
-  enum values, status codes, pagination parameters and error handling. Suggest
-  fixes to the contract or generator rather than hand-editing generated output.
-- Check that affected TanStack Query views update after mutations, through cache
-  updates, invalidation or refetching. Orval already generates some invalidations;
-  inspect its configuration before requesting duplicate calls. Check query keys
-  and pagination resets when filters or sorting change.
-- For application pagination, inspect backend `Api/Applications/Catalog` and
-  `CruiseApplicationsQueryableExtensions`. Check visibility filtering before page
-  limits, stable ordering for equal sort values, and safe handling of malformed or
-  sort-incompatible cursors. The current endpoint ignores invalid cursors and
-  starts from the first page; do not require a new error response without a contract
-  change. Flag paths that let invalid values reach throwing parsers.
-- Distinguish calendar dates from timestamps. Check date-only values for timezone
-  shifts and use the existing date utilities as context.
+- For API or cache changes, trace backend contracts through OpenAPI and
+  `frontend/orval.config.ts` to callers. Account for generated invalidations before
+  requesting more; direct cache updates and refetching can also refresh affected
+  views. Check query keys and page resets when filters or sorting change. Put
+  contract fixes in their source or generator.
+- For application pagination, read backend `Api/Applications/Catalog` and
+  `CruiseApplicationsQueryableExtensions`. Check visibility before page limits,
+  stable ordering on ties, and malformed or sort-incompatible cursors. Invalid
+  cursors currently restart at page one; distinguish that fallback from values
+  reaching throwing parsers, and evaluate it against any intended contract change.
+- For date changes, trace `frontend/src/lib/dateUtils.ts` and its callers. Calendar
+  dates must retain their entered day across timezones; timestamps represent
+  instants. Exercise a negative UTC offset when checking date-only parsing.
 
 ## Cruise workflows and persistence
 
-- Trace cruise and application transitions together. Form A drafts intentionally
-  allow incomplete data but still have draft validation. Compare backend validators
-  with frontend form schemas for the specific save/submit action. Check linked
-  application states when a cruise is confirmed, completed or reverted.
-- Review EF migrations for data loss and compatibility with existing rows. Check
-  transaction boundaries when an operation changes multiple related records.
-- Startup migrations and reference-data seeding are separate from optional account
-  seeding. Check idempotence, concurrent replicas and preservation of existing or
-  inactive reference rows. Account repair must tolerate partially seeded accounts.
-- Keep deployment configuration consistent with backend option names and defaults.
-  Check changes for exposed credentials, tokens in logs and accidental real email
-  delivery in tests.
-- For notification changes, inspect `Infrastructure/Email`: `EmailSender` queues
-  protected payloads and a worker delivers them later. Check that business changes
-  and enqueueing commit together where required, and that retry, expiry and lease
-  handling remain safe across workers. Delivery can repeat after a crash between
-  SMTP acceptance and database acknowledgement; do not assume exactly-once delivery.
+- For Form A changes, compare backend `Api/Applications/FormA/Validators.cs` with
+  frontend form schemas for the specific save/submit action. Incomplete Form A
+  drafts are valid only when they satisfy draft validation. For cruise transitions,
+  trace `CruiseLifecycleRules` through the linked application state changes.
+- For startup or seeding changes, inspect `ApplicationDbContextInitializer` against
+  existing rows, partially seeded accounts and concurrent startup. Reference-data
+  seeding runs independently of optional account seeding; preserve existing and
+  inactive reference rows when repairing missing data.
+- For email changes, read `docs/email-delivery.md` and verify the affected path in
+  backend `Infrastructure/Email`. Check atomic business/outbox writes where required,
+  protected payloads, retries, expiry and worker leases. A crash after SMTP accepts
+  a message but before database acknowledgement can legitimately cause redelivery.
+- For deployment changes, compare option bindings with Docker/Kubernetes settings,
+  including SMTP validation and shared Data Protection keys used by the outbox.
+  Keep credentials out of tracked settings/logs and tests on fake email delivery.
+
+## TREX evidence
+
+When TREX runs, use a targeted reproduction for the changed behavior on the reviewed
+commit. Report the command, exit status and execution artifact for failures and
+successful checks. In the summary, state what was skipped or blocked and why;
+label conclusions from code inspection separately from runtime results.
