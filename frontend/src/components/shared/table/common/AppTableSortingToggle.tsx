@@ -1,15 +1,15 @@
-import { Header } from '@tanstack/react-table';
+import { Header } from '@/components/shared/table/common/tableFeatures';
 import SortDownIcon from 'bootstrap-icons/icons/sort-down.svg?react';
 import SortUpIcon from 'bootstrap-icons/icons/sort-up.svg?react';
 import XIcon from 'bootstrap-icons/icons/x.svg?react';
 
 import { AppTableListItem } from '@/components/shared/table/common/AppTableListItem';
 
-export function AppTableSortingToggle<TData>({
+export function AppTableSortingToggle<TData extends object, TValue>({
   header,
   expanded,
 }: {
-  header: Header<TData, unknown>;
+  header: Header<TData, TValue>;
   expanded: boolean;
 }) {
   if (!header.column.getCanSort()) {

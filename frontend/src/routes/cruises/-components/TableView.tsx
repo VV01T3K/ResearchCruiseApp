@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
 
@@ -28,7 +28,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       header: 'Numer',
       id: 'number',
       accessorFn: (row) => row.number,
-      sortingFn: (a, b) => compareCruiseNumber(a.original.number, b.original.number),
+      sortFn: (a, b) => compareCruiseNumber(a.original.number, b.original.number),
       cell: (cell) => <span className="font-bold">{cell.getValue() as string}</span>,
       size: 5,
     },

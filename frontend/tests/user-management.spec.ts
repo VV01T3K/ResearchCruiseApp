@@ -42,27 +42,51 @@ test('user management list loads from the v2 users route', async ({ page }) => {
   expect(requested).toBe(true);
 });
 
-test('shared tables retain local sorting and filtering', async ({ page }) => {
-  await seedAuthenticatedAdmin(page);
-  await page.route(`${API_URL}/v2/users`, (route) =>
-    route.fulfill({
-      json: [
-        { ...user, id: '22222222-2222-2222-2222-222222222222', email: 'zebra@example.com' },
-        { ...user, email: 'alpha@example.com' },
-      ],
-    })
-  );
-  await page.goto('/user-management');
-  await page.getByRole('button', { name: 'Email', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
-  await expect(page.locator('tbody tr').first()).toContainText('alpha@example.com');
-  await page.getByRole('menuitem', { name: 'zebra@example.com', exact: true }).click();
-  await expect(page.locator('tbody tr')).toHaveCount(1);
-  await expect(page.locator('tbody tr')).toContainText('zebra@example.com');
-  await page.keyboard.press('Escape');
-  await page.getByRole('button', { name: 'Wyczyść filtry', exact: true }).click();
-  await expect(page.locator('tbody tr')).toHaveCount(2);
-});
+for (const mobile of [false, true]) {
+  test(`shared tables retain sorting, filtering and selection on ${mobile ? 'mobile' : 'desktop'}`, async ({
+    page,
+  }) => {
+    if (mobile) await page.setViewportSize({ width: 390, height: 844 });
+    await seedAuthenticatedAdmin(page);
+    await page.route(`${API_URL}/v2/users`, (route) =>
+      route.fulfill({
+        json: [
+          { ...user, id: '22222222-2222-2222-2222-222222222222', email: 'zebra@example.com' },
+          { ...user, email: 'alpha@example.com' },
+        ],
+      })
+    );
+    await page.goto('/user-management');
+    const rows = page.locator('tbody tr');
+    const groupActions = page.getByRole('button', { name: 'Akcje Grupowe' });
+    await expect(groupActions).toBeDisabled();
+    const firstSelection = rows.first().getByRole('checkbox').last();
+    await firstSelection.check();
+    await expect(firstSelection).toBeChecked();
+    await expect(groupActions).toBeEnabled();
+    await firstSelection.uncheck();
+    await expect(groupActions).toBeDisabled();
+
+    if (mobile) {
+      await page.getByRole('button', { name: 'Filtrowanie i sortowanie' }).click();
+      const emailFilters = page.getByRole('dialog').getByText('Email', { exact: true }).locator('..');
+      await emailFilters.getByText('Rosnąco', { exact: true }).click();
+      await expect(rows.first()).toContainText('alpha@example.com');
+      await emailFilters.getByText('Pokaż filtry', { exact: true }).click();
+      await emailFilters.getByText('zebra@example.com', { exact: true }).click();
+    } else {
+      await page.getByRole('button', { name: 'Email', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
+      await expect(rows.first()).toContainText('alpha@example.com');
+      await page.getByRole('menuitem', { name: 'zebra@example.com', exact: true }).click();
+    }
+    await expect(rows).toHaveCount(1);
+    await expect(rows).toContainText('zebra@example.com');
+    if (!mobile) await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'Wyczyść filtry', exact: true }).click();
+    await expect(rows).toHaveCount(2);
+  });
+}
 
 test('role guard refreshes stale account data before allowing navigation', async ({ page }) => {
   await mockAuthenticatedSession(page);
