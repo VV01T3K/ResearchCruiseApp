@@ -1,0 +1,53 @@
+{
+  "files": [
+    {
+      "path": "backend/ResearchCruiseApp/Infrastructure/Persistence/Initialization/ApplicationDbContextInitializer.cs",
+      "description": "Startup migrations, reference data seeding and optional account repair.",
+      "scope": [
+        "backend/ResearchCruiseApp/Infrastructure/Persistence/**",
+        "backend/ResearchCruiseApp/Infrastructure/Identity/**",
+        "backend/ResearchCruiseApp/Infrastructure/DependencyInjection.cs",
+        "backend/ResearchCruiseApp/Program.cs",
+        "backend/ResearchCruiseApp/appsettings*.json",
+        "docker/**",
+        "kubernetes/**"
+      ]
+    },
+    {
+      "path": "backend/ResearchCruiseApp/Infrastructure/Identity/Permissions/RolePermissionRules.cs",
+      "description": "Existing role and assignment logic; compare endpoint-specific authorization and frontend permissions.",
+      "scope": [
+        "backend/ResearchCruiseApp/Api/**",
+        "backend/ResearchCruiseApp/Infrastructure/Identity/**",
+        "frontend/src/api/client/user.ts",
+        "frontend/src/lib/guards.ts",
+        "frontend/src/lib/user-management/**",
+        "frontend/src/integrations/tanstack/query/**",
+        "frontend/src/routes/**"
+      ]
+    },
+    {
+      "path": "frontend/orval.config.ts",
+      "description": "Backend OpenAPI to frontend client generation, fetch customization and generated query invalidation.",
+      "scope": [
+        "frontend/orval.config.ts",
+        "frontend/src/api/**",
+        "frontend/src/routes/**",
+        "frontend/src/integrations/tanstack/query/**",
+        "backend/ResearchCruiseApp/Api/**",
+        "backend/ResearchCruiseApp/openapi/**"
+      ]
+    },
+    {
+      "path": "backend/ResearchCruiseApp/Api/Cruises/Lifecycle/CruiseLifecycleRules.cs",
+      "description": "Cruise lifecycle transitions and their effects on linked application states.",
+      "scope": [
+        "backend/ResearchCruiseApp/Api/Cruises/**",
+        "backend/ResearchCruiseApp/Api/Applications/**",
+        "backend/ResearchCruiseApp/Domain/**",
+        "frontend/src/routes/cruises/**",
+        "frontend/src/routes/applications/**"
+      ]
+    }
+  ]
+}
