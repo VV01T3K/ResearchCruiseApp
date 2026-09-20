@@ -1,11 +1,11 @@
-import { Table } from '@tanstack/react-table';
+import { Table } from '@/components/shared/table/common/tableFeatures';
 
 import { AppButton } from '@/components/shared/AppButton';
 
-type Props<T> = {
+type Props<T extends object> = {
   table: Table<T>;
 };
-export function AppTableClearFiltersButton<T>({ table }: Props<T>) {
+export function AppTableClearFiltersButton<T extends object>({ table }: Props<T>) {
   function isAnyFilterActive() {
     return table.getAllColumns().some((column) => column.getIsFiltered());
   }

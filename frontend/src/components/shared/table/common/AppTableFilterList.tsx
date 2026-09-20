@@ -1,4 +1,4 @@
-import { Header } from '@tanstack/react-table';
+import { Header } from '@/components/shared/table/common/tableFeatures';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import React from 'react';
 
@@ -7,11 +7,11 @@ import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLab
 import { AppTableListItem } from '@/components/shared/table/common/AppTableListItem';
 import { getCapabilities } from '@/components/shared/table/common/utils';
 
-type Props<TData, TValue> = {
+type Props<TData extends object, TValue> = {
   header: Header<TData, TValue>;
   expanded: boolean;
 };
-export function AppTableFilterList<TData, TValue>({ header, expanded }: Props<TData, TValue>) {
+export function AppTableFilterList<TData extends object, TValue>({ header, expanded }: Props<TData, TValue>) {
   const filterValue = header.column.getFilterValue() as string[] | undefined;
   const [searchValue, setSearchValue] = React.useState<string>('');
 

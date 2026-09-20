@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role, getRoleLabel } from '@/api/client/user';
-import { ColumnDef, RowSelectionState } from '@tanstack/react-table';
+import { RowSelectionState } from '@tanstack/react-table';
+import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
 import React from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';
@@ -67,7 +68,7 @@ function UserManagementPage() {
           name={`selectUser-${row.id}`}
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}
-          onChange={row.getToggleSelectedHandler()}
+          onChange={(checked) => row.toggleSelected(checked)}
           className="inline-block"
           size="md"
         />
