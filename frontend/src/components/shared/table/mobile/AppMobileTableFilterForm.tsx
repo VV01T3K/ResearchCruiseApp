@@ -1,4 +1,5 @@
-import { flexRender, Header, Table } from '@tanstack/react-table';
+import { flexRender } from '@tanstack/react-table';
+import { Header, Table } from '@/components/shared/table/common/tableFeatures';
 import SortDownIcon from 'bootstrap-icons/icons/sort-down.svg?react';
 import SortUpIcon from 'bootstrap-icons/icons/sort-up.svg?react';
 import XIcon from 'bootstrap-icons/icons/x.svg?react';
@@ -13,10 +14,10 @@ import { getCapabilities } from '@/components/shared/table/common/utils';
 import { useOutsideClickDetection } from '@/hooks/shared/OutsideClickDetectionHook';
 import { cn } from '@/lib/utils';
 
-type Props<T> = {
+type Props<T extends object> = {
   table: Table<T>;
 };
-export function AppMobileTableFilterForm<T>({ table }: Props<T>) {
+export function AppMobileTableFilterForm<T extends object>({ table }: Props<T>) {
   return (
     <div className="flex flex-col gap-8">
       <AppTableClearFiltersButton table={table} />
@@ -33,10 +34,10 @@ export function AppMobileTableFilterForm<T>({ table }: Props<T>) {
   );
 }
 
-type FormElementProps<T> = {
+type FormElementProps<T extends object> = {
   header: Header<T, unknown>;
 };
-function FormElement<T>({ header }: FormElementProps<T>) {
+function FormElement<T extends object>({ header }: FormElementProps<T>) {
   const { supportsSort, supportsFilter } = getCapabilities(header);
   if (!supportsFilter && !supportsSort) {
     return null;
@@ -53,7 +54,7 @@ function FormElement<T>({ header }: FormElementProps<T>) {
   );
 }
 
-function SortFormElement<T>({ header }: FormElementProps<T>) {
+function SortFormElement<T extends object>({ header }: FormElementProps<T>) {
   const isSorted = header.column.getIsSorted();
 
   return (
@@ -81,7 +82,7 @@ function SortFormElement<T>({ header }: FormElementProps<T>) {
   );
 }
 
-function FilterFormElement<T>({ header }: FormElementProps<T>) {
+function FilterFormElement<T extends object>({ header }: FormElementProps<T>) {
   const [expanded, setExpanded] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
   useOutsideClickDetection({

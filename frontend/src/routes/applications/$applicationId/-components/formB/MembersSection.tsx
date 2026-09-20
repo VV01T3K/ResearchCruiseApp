@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
