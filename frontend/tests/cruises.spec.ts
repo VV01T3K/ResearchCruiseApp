@@ -105,6 +105,33 @@ test('cruise list loads from the v2 route', async ({ page }) => {
   expect(requested).toBe(true);
 });
 
+test('cruise deletion can be cancelled and reopened before confirming', async ({ page }) => {
+  await seedAuthenticatedAdmin(page);
+  const cruise = getCruise();
+  let deleted = false;
+  await page.route(`${API_URL}/v2/cruises`, (route) => route.fulfill({ json: deleted ? [] : [cruise] }));
+  await page.route(`${API_URL}/v2/cruises/${cruise.id}`, (route) => {
+    expect(route.request().method()).toBe('DELETE');
+    deleted = true;
+    return route.fulfill({ status: 204 });
+  });
+
+  await page.goto('/cruises');
+  await page.getByRole('button', { name: 'Usuń', exact: true }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toContainText(cruise.number);
+  await dialog.getByRole('button', { name: 'Anuluj' }).click();
+  await expect(dialog).not.toBeVisible();
+  expect(deleted).toBe(false);
+  await expect(page.getByText('North Sea')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Usuń', exact: true }).click();
+  await dialog.getByRole('button', { name: `Usuń rejs nr. ${cruise.number}` }).click();
+  await expect.poll(() => deleted).toBe(true);
+  await expect(dialog).not.toBeVisible();
+  await expect(page.getByText('North Sea')).toHaveCount(0);
+});
+
 test('cruise create flow uses v2 planning candidates and create route', async ({ page }) => {
   await page.clock.install({ time: new Date('2026-05-16T12:00:00.000Z') });
   await seedAuthenticatedAdmin(page);
