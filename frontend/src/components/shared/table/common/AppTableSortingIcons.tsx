@@ -1,9 +1,9 @@
-import { Header } from '@tanstack/react-table';
+import { Header } from '@/components/shared/table/common/tableFeatures';
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 import ChevronExpandIcon from 'bootstrap-icons/icons/chevron-expand.svg?react';
 import ChevronUpIcon from 'bootstrap-icons/icons/chevron-up.svg?react';
 
-export function AppTableSortingIcon<TData>({ header }: { header: Header<TData, unknown> }) {
+export function AppTableSortingIcon<TData extends object, TValue>({ header }: { header: Header<TData, TValue> }) {
   if (!header.column.getCanSort()) {
     return <div className="h-3.5 w-3.5 shrink-0" />;
   }

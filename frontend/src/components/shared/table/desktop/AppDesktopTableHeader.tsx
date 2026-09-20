@@ -1,5 +1,5 @@
 import { Popover } from '@base-ui/react/popover';
-import { Header } from '@tanstack/react-table';
+import { Header } from '@/components/shared/table/common/tableFeatures';
 import React from 'react';
 
 import { AppTableFilterIcon } from '@/components/shared/table/common/AppTableFilterIcon';
@@ -8,11 +8,11 @@ import { getCapabilities } from '@/components/shared/table/common/utils';
 import { AppDesktopTableHeaderDropdown } from '@/components/shared/table/desktop/AppDesktopTableHeaderDropdown';
 import { cn } from '@/lib/utils';
 
-type Props<TData, TValue> = {
+type Props<TData extends object, TValue> = {
   header: Header<TData, TValue>;
   children: React.ReactNode;
 };
-export function AppDesktopTableHeader<TData, TValue>({ header, children }: Props<TData, TValue>) {
+export function AppDesktopTableHeader<TData extends object, TValue>({ header, children }: Props<TData, TValue>) {
   const [expanded, setExpanded] = React.useState(false);
 
   const { supportsDropdown, supportsFilter, supportsSort } = getCapabilities(header);

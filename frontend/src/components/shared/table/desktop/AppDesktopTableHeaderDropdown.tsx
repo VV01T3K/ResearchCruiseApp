@@ -1,16 +1,20 @@
 import { Popover } from '@base-ui/react/popover';
-import { Header } from '@tanstack/react-table';
+import { Header } from '@/components/shared/table/common/tableFeatures';
 
 import { AppTableFilterList } from '@/components/shared/table/common/AppTableFilterList';
 import { AppTableSortingToggle } from '@/components/shared/table/common/AppTableSortingToggle';
 import { cn } from '@/lib/utils';
 
-type Props<TData, TValue> = {
+type Props<TData extends object, TValue> = {
   header: Header<TData, TValue>;
   capabilities: { supportsDropdown: boolean; supportsFilter: boolean; supportsSort: boolean };
   expanded: boolean;
 };
-export function AppDesktopTableHeaderDropdown<TData, TValue>({ header, capabilities, expanded }: Props<TData, TValue>) {
+export function AppDesktopTableHeaderDropdown<TData extends object, TValue>({
+  header,
+  capabilities,
+  expanded,
+}: Props<TData, TValue>) {
   const { supportsDropdown, supportsFilter, supportsSort } = capabilities;
 
   if (!supportsDropdown) {

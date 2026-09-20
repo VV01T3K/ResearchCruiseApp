@@ -1,4 +1,5 @@
-import { flexRender, Header } from '@tanstack/react-table';
+import { flexRender } from '@tanstack/react-table';
+import { Header } from '@/components/shared/table/common/tableFeatures';
 import FunnelIcon from 'bootstrap-icons/icons/funnel.svg?react';
 import React from 'react';
 
@@ -9,7 +10,7 @@ import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/components/shared/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/lib/utils';
 
-export function AppMobileTable<T>({
+export function AppMobileTable<T extends object>({
   table,
   buttons,
   emptyTableMessage,
@@ -24,6 +25,7 @@ export function AppMobileTable<T>({
   const defaultButtons: React.ReactNode[] = [
     <AppButton key="openFilterModalBtn" onClick={() => setIsFilterModalOpen(true)} variant="primary">
       <FunnelIcon className="h-8 w-8" />
+      <span className="sr-only">Filtrowanie i sortowanie</span>
     </AppButton>,
   ];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
