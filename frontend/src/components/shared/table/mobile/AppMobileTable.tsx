@@ -45,7 +45,10 @@ export function AppMobileTable<T extends object>({
             ))}
           </div>
         )}
-        <table className="w-full table-fixed" aria-rowcount={virtualized ? table.getRowModel().rows.length : undefined}>
+        <table
+          className="w-full table-fixed"
+          aria-rowcount={virtualized ? (infiniteScroll?.hasNextPage ? -1 : table.getRowModel().rows.length) : undefined}
+        >
           <AppTableBody
             table={table}
             columnCount={1}
@@ -91,8 +94,8 @@ export function AppMobileTable<T extends object>({
               </tr>
             )}
             {infiniteScroll && (
-              <tr>
-                <td colSpan={table.getAllColumns().length} className="p-0">
+              <tr role="presentation">
+                <td role="presentation" colSpan={table.getAllColumns().length} className="p-0">
                   <AppTableInfiniteScrollTrigger {...infiniteScroll} />
                 </td>
               </tr>

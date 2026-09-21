@@ -168,6 +168,7 @@ for (const viewport of [
     const firstRow = page.locator('tbody tr[data-index="0"]');
     const mountedRows = page.locator('tbody tr[data-index]');
     await expect(firstRow).toContainText('1000');
+    await expect(page.getByRole('table')).toHaveAttribute('aria-rowcount', '-1');
     expect(await mountedRows.count()).toBeLessThan(30);
     expect(cursors).toEqual([null]);
 
@@ -176,6 +177,9 @@ for (const viewport of [
       await expect(page.locator('tbody tr[data-index="500"]')).toBeInViewport();
     }).toPass({ timeout: 15_000 });
     expect(cursors).toEqual([null, 'last']);
+    const headerRowCount = viewport.width >= 768 ? 2 : 0;
+    await expect(page.getByRole('table')).toHaveAttribute('aria-rowcount', String(501 + headerRowCount));
+    await expect(page.getByRole('row')).toHaveCount((await mountedRows.count()) + headerRowCount);
     expect(await mountedRows.count()).toBeLessThan(30);
     await expect(firstRow).toHaveCount(0);
 

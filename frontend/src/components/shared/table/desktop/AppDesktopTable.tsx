@@ -25,7 +25,7 @@ export function AppDesktopTable<T extends object>({
     <div className="mt-4 w-full overflow-x-auto" data-testid={testId}>
       <table
         className="min-w-full table-fixed border-collapse"
-        aria-rowcount={virtualized ? rows.length + headerRowCount : undefined}
+        aria-rowcount={virtualized ? (infiniteScroll?.hasNextPage ? -1 : rows.length + headerRowCount) : undefined}
       >
         <colgroup>
           {table.getAllColumns().map((column) => (
@@ -96,8 +96,8 @@ export function AppDesktopTable<T extends object>({
             </tr>
           )}
           {infiniteScroll && (
-            <tr>
-              <td colSpan={table.getAllColumns().length} className="p-0">
+            <tr role="presentation">
+              <td role="presentation" colSpan={table.getAllColumns().length} className="p-0">
                 <AppTableInfiniteScrollTrigger {...infiniteScroll} />
               </td>
             </tr>
