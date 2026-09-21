@@ -275,6 +275,8 @@ function ApplicationsPage() {
       <AppLayout title="Zgłoszenia" variant="wide">
         <AppTable
           data={applications}
+          virtualized
+          getRowId={(application) => application.id}
           columns={columns}
           buttons={(defaultButtons) => [...defaultButtons]}
           sortingState={sorting}

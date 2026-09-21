@@ -9,6 +9,7 @@ import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/
 import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/components/shared/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/lib/utils';
+import { AppTableBody } from '@/components/shared/table/common/AppTableBody';
 
 export function AppMobileTable<T extends object>({
   table,
@@ -18,6 +19,7 @@ export function AppMobileTable<T extends object>({
   showRequiredAsterisk,
   errors,
   infiniteScroll,
+  virtualized,
   'data-testid': testId,
 }: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
@@ -43,28 +45,31 @@ export function AppMobileTable<T extends object>({
             ))}
           </div>
         )}
-        <table className="w-full table-fixed">
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="text-gray-800 odd:bg-gray-100">
-                <td className="flex flex-col items-center justify-center gap-2 py-3">
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <div key={cell.id} className={variants[variant ?? 'table']}>
-                        <div className="font-bold">
-                          {flexRender(cell.column.columnDef.header, {
-                            table,
-                            column: cell.column,
-                            header: { column: cell.column } as Header<T, unknown>,
-                          })}
-                        </div>
-                        <div>{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
+        <table className="w-full table-fixed" aria-rowcount={virtualized ? table.getRowModel().rows.length : undefined}>
+          <AppTableBody
+            table={table}
+            columnCount={1}
+            virtualized={virtualized}
+            estimateRowHeight={600}
+            renderCells={(row) => (
+              <td className="flex flex-col items-center justify-center gap-2 py-3">
+                {row.getVisibleCells().map((cell) => {
+                  return (
+                    <div key={cell.id} className={variants[variant ?? 'table']}>
+                      <div className="font-bold">
+                        {flexRender(cell.column.columnDef.header, {
+                          table,
+                          column: cell.column,
+                          header: { column: cell.column } as Header<T, unknown>,
+                        })}
                       </div>
-                    );
-                  })}
-                </td>
-              </tr>
-            ))}
+                      <div>{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
+                    </div>
+                  );
+                })}
+              </td>
+            )}
+          >
             {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
               <tr>
                 <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
@@ -92,7 +97,7 @@ export function AppMobileTable<T extends object>({
                 </td>
               </tr>
             )}
-          </tbody>
+          </AppTableBody>
         </table>
       </div>
       {createModalPortal(
