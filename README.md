@@ -8,6 +8,7 @@ applications; reviewers and the shipowner manage approval and cruise planning.
 - [Develop from source](frontend/README.md) to edit the frontend or backend.
 - [Deploy on a server](docs/deployment.md) with Docker Compose.
 - [Configure the application](docs/configuration.md) to set URLs, authentication, and email.
+- [Operate or take over the service](docs/operations.md) for required services, GitHub secrets, staging, and incident handling.
 
 ## Run locally
 

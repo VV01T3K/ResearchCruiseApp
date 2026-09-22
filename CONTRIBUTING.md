@@ -53,6 +53,9 @@ and conclusions from code inspection identified separately.
 
 ## Checks and deployment triggers
 
+For Actions secrets, deployment environments, service access, or staging failures,
+use [the operations guide](docs/operations.md).
+
 | Workflow | Trigger and result |
 | --- | --- |
 | [Format and lint](.github/workflows/format-and-lint.yaml) | Runs on pushes subject to its path filter. Checks frontend code and generated client output; builds and tests the backend and checks OpenAPI output. |
