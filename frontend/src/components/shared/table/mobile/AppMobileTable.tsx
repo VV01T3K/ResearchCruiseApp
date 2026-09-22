@@ -1,5 +1,5 @@
 import { flexRender } from '@tanstack/react-table';
-import { Header } from '@/components/shared/table/common/tableFeatures';
+import { Header } from '@/integrations/tanstack/table/features';
 import FunnelIcon from 'bootstrap-icons/icons/funnel.svg?react';
 import React from 'react';
 
@@ -9,7 +9,7 @@ import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/
 import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/components/shared/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/lib/utils';
-import { TableBody } from '@/components/shared/table/common/TableBody';
+import { TableBody } from '@/integrations/tanstack/table/TableBody';
 
 export function AppMobileTable<T extends object>({
   table,

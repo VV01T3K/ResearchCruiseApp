@@ -4,7 +4,7 @@ import { AppTableClearFiltersButton } from '@/components/shared/table/common/App
 import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
 import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppDesktopTableHeader } from '@/components/shared/table/desktop/AppDesktopTableHeader';
-import { TableBody } from '@/components/shared/table/common/TableBody';
+import { TableBody } from '@/integrations/tanstack/table/TableBody';
 
 export function AppDesktopTable<T extends object>({
   table,

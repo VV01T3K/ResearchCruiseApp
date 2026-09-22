@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/api/client/user';
 import { RowSelectionState } from '@tanstack/react-table';
-import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
+import { ColumnDef } from '@/integrations/tanstack/table/features';
 import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import React from 'react';

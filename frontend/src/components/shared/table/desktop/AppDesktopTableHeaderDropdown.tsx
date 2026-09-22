@@ -1,5 +1,5 @@
 import { Popover } from '@base-ui/react/popover';
-import { Header } from '@/components/shared/table/common/tableFeatures';
+import { Header } from '@/integrations/tanstack/table/features';
 
 import { AppTableFilterList } from '@/components/shared/table/common/AppTableFilterList';
 import { AppTableSortingToggle } from '@/components/shared/table/common/AppTableSortingToggle';

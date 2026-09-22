@@ -1,5 +1,5 @@
 import { ColumnFiltersState, OnChangeFn, RowSelectionState, SortingState, useTable } from '@tanstack/react-table';
-import { appTableFeatures, ColumnDef, Row } from '@/components/shared/table/common/tableFeatures';
+import { appTableFeatures, ColumnDef, Row } from '@/integrations/tanstack/table/features';
 
 import { AppDesktopTable } from '@/components/shared/table/desktop/AppDesktopTable';
 import { InfiniteScrollProps } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';

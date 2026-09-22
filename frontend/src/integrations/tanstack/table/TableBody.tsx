@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { Row, Table } from '@/components/shared/table/common/tableFeatures';
+import { Row, Table } from '@/integrations/tanstack/table/features';
 import { useVirtualTableRows } from '@/integrations/tanstack/virtual/hook';
 
 type Props<T extends object> = {

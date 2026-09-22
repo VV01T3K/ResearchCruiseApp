@@ -1,5 +1,5 @@
 import { flexRender } from '@tanstack/react-table';
-import { Header, Table } from '@/components/shared/table/common/tableFeatures';
+import { Header, Table } from '@/integrations/tanstack/table/features';
 import SortDownIcon from 'bootstrap-icons/icons/sort-down.svg?react';
 import SortUpIcon from 'bootstrap-icons/icons/sort-up.svg?react';
 import XIcon from 'bootstrap-icons/icons/x.svg?react';
