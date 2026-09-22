@@ -9,13 +9,13 @@ SQL Server, or SMTP.
 Install dependencies with the [source setup](README.md#install-tools-and-dependencies).
 Run these commands from `frontend/`:
 
-| Command | Purpose |
-| --- | --- |
-| `vp run test:unit` | Run unit tests under `src/`. |
+| Command                                           | Purpose                                              |
+| ------------------------------------------------- | ---------------------------------------------------- |
+| `vp run test:unit`                                | Run unit tests under `src/`.                         |
 | `vp exec playwright install --with-deps chromium` | Install the browser before the first Playwright run. |
-| `vp run test` | Run browser tests. |
-| `vp run test:ui` | Open the Playwright test interface. |
-| `vp run type` | Type check the application and tests. |
+| `vp run test`                                     | Run browser tests.                                   |
+| `vp run test:ui`                                  | Open the Playwright test interface.                  |
+| `vp run type`                                     | Type check the application and tests.                |
 
 [playwright.config.ts](playwright.config.ts) starts a frontend on port 5174.
 Outside CI it can reuse a server already on that port. If requests fail or tests
@@ -85,9 +85,9 @@ Test the underlying data rule in a schema test with an otherwise valid payload.
 
 ## Diagnose failures
 
-| Symptom | Check |
-| --- | --- |
+| Symptom                                            | Check                                                                                                            |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | Connection refused or unexpected page on port 5174 | Check the running server and the Playwright web server output. Stop only the process you identified as obsolete. |
-| `API call not mocked` | Add the expected response to the test fixture, or correct an unexpected request. |
-| Locator timeouts under load | Try `vp run test --workers=1` and inspect the failing interaction. |
-| Vitest attempts to load browser specs | Check the unit test include pattern in `vite.config.ts`. |
+| `API call not mocked`                              | Add the expected response to the test fixture, or correct an unexpected request.                                 |
+| Locator timeouts under load                        | Try `vp run test --workers=1` and inspect the failing interaction.                                               |
+| Vitest attempts to load browser specs              | Check the unit test include pattern in `vite.config.ts`.                                                         |

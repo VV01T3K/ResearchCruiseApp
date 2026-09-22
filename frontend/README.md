@@ -86,17 +86,17 @@ Run the checks for the component you changed. These match the scripts and
 [CI workflows](../.github/workflows/). Frontend browser tests mock the API;
 they do not prove that a real backend or SMTP server works.
 
-| Directory | Command | Purpose |
-| --- | --- | --- |
-| `frontend/` | `vp run check` | Frontend checks configured in Vite+. |
-| `frontend/` | `vp run build` | Type check and production bundle. |
-| `frontend/` | `vp run test:unit` | Schema and other unit tests. |
-| `frontend/` | `vp exec playwright install --with-deps chromium` | Install the browser needed by Playwright. |
-| `frontend/` | `vp run test` | Browser tests; starts its own frontend on port 5174. |
-| `backend/` | `dotnet restore ResearchCruiseApp.sln` | Restore application and test dependencies. |
-| `backend/` | `dotnet tool restore` | Restore the formatter and EF tooling. |
-| `backend/` | `vp run check` | Format check and build with warnings as errors. |
-| `backend/` | `vp run test` | Run backend tests after the build above. |
+| Directory   | Command                                           | Purpose                                              |
+| ----------- | ------------------------------------------------- | ---------------------------------------------------- |
+| `frontend/` | `vp run check`                                    | Frontend checks configured in Vite+.                 |
+| `frontend/` | `vp run build`                                    | Type check and production bundle.                    |
+| `frontend/` | `vp run test:unit`                                | Schema and other unit tests.                         |
+| `frontend/` | `vp exec playwright install --with-deps chromium` | Install the browser needed by Playwright.            |
+| `frontend/` | `vp run test`                                     | Browser tests; starts its own frontend on port 5174. |
+| `backend/`  | `dotnet restore ResearchCruiseApp.sln`            | Restore application and test dependencies.           |
+| `backend/`  | `dotnet tool restore`                             | Restore the formatter and EF tooling.                |
+| `backend/`  | `vp run check`                                    | Format check and build with warnings as errors.      |
+| `backend/`  | `vp run test`                                     | Run backend tests after the build above.             |
 
 The backend test script uses `--no-restore --no-build`; it needs those preceding
 steps. Its email outbox tests use isolated SQLite databases by default. See
