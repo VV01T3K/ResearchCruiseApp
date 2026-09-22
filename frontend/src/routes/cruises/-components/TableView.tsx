@@ -1,4 +1,4 @@
-import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
+import { ColumnDef } from '@/integrations/tanstack/table/features';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
 

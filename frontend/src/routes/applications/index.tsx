@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { ColumnFiltersState, SortingState, functionalUpdate } from '@tanstack/react-table';
-import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
+import { ColumnDef } from '@/integrations/tanstack/table/features';
 import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
 import { useMemo, useState } from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';
@@ -275,6 +275,8 @@ function ApplicationsPage() {
       <AppLayout title="Zgłoszenia" variant="wide">
         <AppTable
           data={applications}
+          virtualized
+          getRowId={(application) => application.id}
           columns={columns}
           buttons={(defaultButtons) => [...defaultButtons]}
           sortingState={sorting}

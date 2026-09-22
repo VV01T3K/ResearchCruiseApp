@@ -1,5 +1,5 @@
 import { ColumnFiltersState, OnChangeFn, RowSelectionState, SortingState, useTable } from '@tanstack/react-table';
-import { appTableFeatures, ColumnDef, Row } from '@/components/shared/table/common/tableFeatures';
+import { appTableFeatures, ColumnDef, Row } from '@/integrations/tanstack/table/features';
 
 import { AppDesktopTable } from '@/components/shared/table/desktop/AppDesktopTable';
 import { InfiniteScrollProps } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
@@ -27,6 +27,7 @@ type Props<T extends object> = {
   disabled?: boolean;
   errors?: string[];
   infiniteScroll?: InfiniteScrollProps;
+  virtualized?: boolean;
   'data-testid'?: string;
 };
 
@@ -51,6 +52,7 @@ export function AppTable<T extends object>({
   disabled = false,
   errors,
   infiniteScroll,
+  virtualized = false,
   'data-testid': testId,
 }: Props<T>) {
   const { width } = useWindowSize();
@@ -94,6 +96,7 @@ export function AppTable<T extends object>({
       variant={variant}
       errors={errors}
       infiniteScroll={infiniteScroll}
+      virtualized={virtualized}
       data-testid={testId}
     />
   );

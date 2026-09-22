@@ -1,4 +1,4 @@
-import { Table } from '@/components/shared/table/common/tableFeatures';
+import { Table } from '@/integrations/tanstack/table/features';
 
 import { AppButton } from '@/components/shared/AppButton';
 
