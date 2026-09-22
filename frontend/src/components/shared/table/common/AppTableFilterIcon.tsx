@@ -1,4 +1,4 @@
-import { Header } from '@/components/shared/table/common/tableFeatures';
+import { Header } from '@/integrations/tanstack/table/features';
 import FunnelIcon from 'bootstrap-icons/icons/funnel.svg?react';
 import FunnelFillIcon from 'bootstrap-icons/icons/funnel-fill.svg?react';
 
