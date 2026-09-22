@@ -65,7 +65,8 @@ are pending; fake SMTP remains usable without them. See [SMTP setup](smtp-config
 
 The test suite defaults to isolated SQLite databases. To exercise the same outbox
 tests against SQL Server, set `RESEARCHCRUISE_TEST_SQLSERVER` to a test-server
-connection string and run `dotnet test --filter FullyQualifiedName~EmailOutboxTests`.
+connection string. From `backend/`, run
+`dotnet test --filter FullyQualifiedName~EmailOutboxTests`.
 The fixture creates and deletes its own uniquely named `EmailOutboxTests_*`
 databases; use a dedicated test server with database-creation permissions.
 
