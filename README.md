@@ -104,6 +104,7 @@ Framework Core with SQL Server. Start with the task you need:
 | Add frontend tests | [Frontend test guide](frontend/TESTING.md) |
 | Configure SMTP or diagnose missing mail | [SMTP setup](docs/smtp-configuration.md) and [email delivery](docs/email-delivery.md) |
 | Follow repository conventions | [AGENTS.md](AGENTS.md) |
+| Open, review, merge, or release a PR | [GitHub contribution process](CONTRIBUTING.md) |
 
 ## License
 

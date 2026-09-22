@@ -2,6 +2,7 @@
 
 ## Task references
 
+- For PRs, Greptile review, merging, or releases, read [CONTRIBUTING.md](CONTRIBUTING.md).
 - For setup or validation commands, use [source development](frontend/README.md).
   Backend tests require a prior restore and build.
 - For API contract changes, follow [API regeneration](frontend/README.md#regenerate-the-api-client)
