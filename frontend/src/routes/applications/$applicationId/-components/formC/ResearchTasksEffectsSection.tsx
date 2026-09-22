@@ -1,4 +1,4 @@
-import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
+import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { useSelector } from '@tanstack/react-form';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';

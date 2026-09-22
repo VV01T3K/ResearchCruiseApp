@@ -29,6 +29,7 @@
     "@tanstack/react-router": "^1.159.5",
     "@tanstack/react-router-devtools": "^1.159.5",
     "@tanstack/react-table": "^9.2.4",
+    "@tanstack/react-virtual": "^3.14.13",
     "bootstrap-icons": "^1.13.1",
     "clsx": "^2.1.1",
     "motion": "^12.34.0",

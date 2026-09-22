@@ -112,10 +112,10 @@ test('pagination continues through empty pages and resets for sorting and filter
 
   await page.goto('/applications');
   await expect(page.getByRole('cell', { name: '100', exact: true })).toBeVisible();
-  await page.getByRole('cell', { name: '81', exact: true }).scrollIntoViewIfNeeded();
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await expect(page.getByRole('cell', { name: '77', exact: true })).toBeVisible();
   expect(requests.map((params) => params.get('cursor'))).toEqual([null, 'empty', 'last']);
+  await page.evaluate(() => window.scrollTo(0, 0));
   await expect(page.getByRole('cell', { name: '100', exact: true })).toHaveCount(1);
 
   await page.getByRole('button', { name: 'Nr', exact: true }).click();
@@ -137,6 +137,72 @@ test('pagination continues through empty pages and resets for sorting and filter
   await expect.poll(() => requests.at(-1)?.get('year')).toBe('2026');
   expect(requests.at(-1)?.has('cursor')).toBe(false);
 });
+
+for (const viewport of [
+  { width: 1440, height: 900 },
+  { width: 390, height: 844 },
+]) {
+  test(`application rows are virtualized with page scrolling at ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await seedAuthenticatedAdmin(page);
+    await page.route(`${API_URL}/v2/applications/managers`, (route) => route.fulfill({ json: [] }));
+    const items = Array.from({ length: 500 }, (_, index) => ({
+      ...application,
+      id: `application-${index}`,
+      number: String(1000 - index),
+      status: index % 2 ? 'draft' : application.status,
+      note: index % 2 ? 'A longer application note that wraps across several lines. '.repeat(4) : null,
+    }));
+    const cursors: (string | null)[] = [];
+    await page.route(`${API_URL}/v2/applications?*`, (route) => {
+      const cursor = new URL(route.request().url()).searchParams.get('cursor');
+      cursors.push(cursor);
+      return route.fulfill({
+        json: cursor
+          ? { items: [{ ...application, id: 'last-application', number: '500' }], nextCursor: null }
+          : { items, nextCursor: 'last' },
+      });
+    });
+
+    await page.goto('/applications');
+    const firstRow = page.locator('tbody tr[data-index="0"]');
+    const mountedRows = page.locator('tbody tr[data-index]');
+    await expect(firstRow).toContainText('1000');
+    await expect(page.getByRole('table')).toHaveAttribute('aria-rowcount', '-1');
+    expect(await mountedRows.count()).toBeLessThan(30);
+    expect(cursors).toEqual([null]);
+
+    await expect(async () => {
+      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+      await expect(page.locator('tbody tr[data-index="500"]')).toBeInViewport();
+    }).toPass({ timeout: 15_000 });
+    expect(cursors).toEqual([null, 'last']);
+    const headerRowCount = viewport.width >= 768 ? 2 : 0;
+    await expect(page.getByRole('table')).toHaveAttribute('aria-rowcount', String(501 + headerRowCount));
+    await expect(page.getByRole('row')).toHaveCount((await mountedRows.count()) + headerRowCount);
+    expect(await mountedRows.count()).toBeLessThan(30);
+    await expect(firstRow).toHaveCount(0);
+
+    // A jump into unmeasured, mixed-height rows must leave the viewport covered.
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight / 2));
+    await expect
+      .poll(() =>
+        mountedRows.evaluateAll((rows) =>
+          rows.some((row) => {
+            const rect = row.getBoundingClientRect();
+            return rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2;
+          })
+        )
+      )
+      .toBe(true);
+    expect(await mountedRows.count()).toBeLessThan(30);
+
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(firstRow).toContainText('1000');
+    await expect(firstRow).toBeInViewport();
+    expect(await mountedRows.count()).toBeLessThan(30);
+  });
+}
 
 test('number, date and same-named manager filters send exact values', async ({ page }) => {
   await seedAuthenticatedAdmin(page);

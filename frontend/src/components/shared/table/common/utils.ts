@@ -1,4 +1,4 @@
-import { Header } from '@/components/shared/table/common/tableFeatures';
+import { Header } from '@/integrations/tanstack/table/features';
 
 export function getCapabilities<TData extends object, TValue>(header: Header<TData, TValue>) {
   return {
