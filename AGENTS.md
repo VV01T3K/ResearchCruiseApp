@@ -2,6 +2,9 @@
 
 ## Task references
 
+- For infrastructure, service access, staging, or automation failures, read
+  [operations](docs/operations.md). For telemetry, read [Sentry operations](docs/sentry/operations.md).
+
 - For PRs, Greptile review, merging, or releases, read [CONTRIBUTING.md](CONTRIBUTING.md).
 - For setup or validation commands, use [source development](frontend/README.md).
   Backend tests require a prior restore and build.
