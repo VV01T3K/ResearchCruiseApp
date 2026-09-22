@@ -4,7 +4,7 @@ import { AppTableClearFiltersButton } from '@/components/shared/table/common/App
 import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
 import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppDesktopTableHeader } from '@/components/shared/table/desktop/AppDesktopTableHeader';
-import { AppTableBody } from '@/components/shared/table/common/AppTableBody';
+import { TableBody } from '@/components/shared/table/common/TableBody';
 
 export function AppDesktopTable<T extends object>({
   table,
@@ -59,7 +59,7 @@ export function AppDesktopTable<T extends object>({
             );
           })}
         </thead>
-        <AppTableBody
+        <TableBody
           table={table}
           columnCount={table.getVisibleLeafColumns().length}
           headerRowCount={headerRowCount}
@@ -102,7 +102,7 @@ export function AppDesktopTable<T extends object>({
               </td>
             </tr>
           )}
-        </AppTableBody>
+        </TableBody>
       </table>
     </div>
   );

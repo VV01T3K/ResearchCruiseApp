@@ -9,7 +9,7 @@ import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/
 import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/components/shared/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/lib/utils';
-import { AppTableBody } from '@/components/shared/table/common/AppTableBody';
+import { TableBody } from '@/components/shared/table/common/TableBody';
 
 export function AppMobileTable<T extends object>({
   table,
@@ -49,7 +49,7 @@ export function AppMobileTable<T extends object>({
           className="w-full table-fixed"
           aria-rowcount={virtualized ? (infiniteScroll?.hasNextPage ? -1 : table.getRowModel().rows.length) : undefined}
         >
-          <AppTableBody
+          <TableBody
             table={table}
             columnCount={1}
             virtualized={virtualized}
@@ -100,7 +100,7 @@ export function AppMobileTable<T extends object>({
                 </td>
               </tr>
             )}
-          </AppTableBody>
+          </TableBody>
         </table>
       </div>
       {createModalPortal(
