@@ -1,4 +1,4 @@
-import { Header } from '@/components/shared/table/common/tableFeatures';
+import { Header } from '@/integrations/tanstack/table/features';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import React from 'react';
 

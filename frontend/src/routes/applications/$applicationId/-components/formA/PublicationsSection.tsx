@@ -1,4 +1,4 @@
-import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
+import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';

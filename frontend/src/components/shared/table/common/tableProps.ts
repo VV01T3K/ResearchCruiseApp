@@ -1,5 +1,5 @@
 import { RowData, TableFeatures } from '@tanstack/react-table';
-import { Table } from '@/components/shared/table/common/tableFeatures';
+import { Table } from '@/integrations/tanstack/table/features';
 import { InfiniteScrollProps } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
 
 // Lets a column supply a known-complete filter option list instead of deriving it from loaded rows.
@@ -19,5 +19,6 @@ export type TableProps<T extends object> = {
   errors?: string[];
   showRequiredAsterisk?: boolean;
   infiniteScroll?: InfiniteScrollProps;
+  virtualized?: boolean;
   'data-testid'?: string;
 };

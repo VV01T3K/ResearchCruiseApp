@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role, getRoleLabel } from '@/api/client/user';
 import { RowSelectionState } from '@tanstack/react-table';
-import { ColumnDef } from '@/components/shared/table/common/tableFeatures';
+import { ColumnDef } from '@/integrations/tanstack/table/features';
 import React from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';
