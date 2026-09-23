@@ -7,14 +7,14 @@ import { ScoredResearchTask } from './scoredResearchTask.gen.ts';
 import { ScoredSpubTask } from './scoredSpubTask.gen.ts';
 
 export const CruiseApplicationEvaluation = zod.object({
-  "formAResearchTasks": zod.array(ScoredResearchTask).optional(),
-  "formAContracts": zod.array(ScoredContract).optional(),
-  "ugTeams": zod.array(NamedUgTeam).optional(),
-  "guestTeams": zod.array(GuestTeamFields).optional(),
-  "ugUnitsPoints": zod.string().optional(),
-  "formAPublications": zod.array(ScoredPublication).optional(),
-  "formASpubTasks": zod.array(ScoredSpubTask).optional(),
-  "effectsPoints": zod.string().optional()
+  "formAResearchTasks": zod.array(ScoredResearchTask),
+  "formAContracts": zod.array(ScoredContract),
+  "ugTeams": zod.array(NamedUgTeam),
+  "guestTeams": zod.array(GuestTeamFields),
+  "ugUnitsPoints": zod.string(),
+  "formAPublications": zod.array(ScoredPublication),
+  "formASpubTasks": zod.array(ScoredSpubTask),
+  "effectsPoints": zod.string()
 });
 
 export type CruiseApplicationEvaluation = zod.input<typeof CruiseApplicationEvaluation>;

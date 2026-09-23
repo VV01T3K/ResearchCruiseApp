@@ -10,7 +10,7 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppLoader } from '@/components/shared/layout/AppLoader';
 import { useMutation } from '@tanstack/react-query';
 import { confirmEmail } from '@/api/generated/endpoints/auth.gen';
-import { Result } from '@/api/client/user';
+import { Result } from '@/integrations/auth/types';
 
 export const Route = createFileRoute('/(auth)/confirm-email')({
   component: ConfirmEmailPage,

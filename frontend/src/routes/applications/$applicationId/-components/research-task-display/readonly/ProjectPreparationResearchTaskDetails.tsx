@@ -1,17 +1,17 @@
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import { ProjectPreparationResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { ResearchTaskDetailsData } from './ResearchTaskDetails';
 
 type Props = {
-  data: ProjectPreparationResearchTaskValues;
+  data: ResearchTaskDetailsData;
 };
 export function ProjectPreparationResearchTaskDetails({ data }: Props) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <AppInput
         name="researchTasks[].title"
-        value={data.title}
+        value={data.title ?? ''}
         label="Roboczy tytuł projektu"
         placeholder="Wprowadź tytuł"
         containerClassName="lg:col-span-2"
@@ -20,7 +20,7 @@ export function ProjectPreparationResearchTaskDetails({ data }: Props) {
 
       <AppDatePickerInput
         name="researchTasks[].date"
-        value={data.date}
+        value={data.date ?? ''}
         label="Przewidywany termin składania"
         disabled={true}
       />

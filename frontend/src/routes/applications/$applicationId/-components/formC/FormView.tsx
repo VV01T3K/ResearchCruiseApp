@@ -1,3 +1,4 @@
+import { submitApplicationForm } from '@/lib/applications/submitApplicationForm';
 import { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 
@@ -44,7 +45,7 @@ export function FormView({ context }: Props) {
         onSubmit={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          void form.handleSubmit();
+          void submitApplicationForm(form, false);
         }}
       >
         <CruiseInfoSection context={context} />
@@ -72,7 +73,9 @@ export function FormView({ context }: Props) {
           context={context}
         />
       </form>
-      <PrintTemplate ref={componentRef} context={context} />
+      <form.Subscribe selector={(state) => state.values}>
+        {(values) => <PrintTemplate ref={componentRef} context={context} values={values} />}
+      </form.Subscribe>
     </>
   );
 }

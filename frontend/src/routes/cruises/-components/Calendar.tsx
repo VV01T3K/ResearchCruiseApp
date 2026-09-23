@@ -4,10 +4,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { AppCalendar } from '@/components/shared/calendar/AppCalendar';
-import { mapRescheduledCruiseToForm } from '@/api/client/cruises';
 import { getGetCruisesQueryKey, useUpdateCruise } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
-import { UpdateCruiseFormSchema } from '@/routes/cruises/-schemas/form.schema';
+import { UpdateCruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 
 type Props = {
   cruises: CruiseResponse[];
@@ -53,7 +52,11 @@ export function Calendar({ cruises, buttons }: Props) {
     await updateCruiseByIdMutation.mutateAsync(
       {
         cruiseId: cruise.id,
-        data: UpdateCruiseFormSchema.parse(mapRescheduledCruiseToForm(cruise, payload.nextStart, payload.nextEnd)),
+        data: UpdateCruiseFormSchema.parse({
+          ...mapCruiseToValues(cruise),
+          startDate: payload.nextStart.toISOString(),
+          endDate: payload.nextEnd.toISOString(),
+        }),
       },
       {
         onSuccess: () => {

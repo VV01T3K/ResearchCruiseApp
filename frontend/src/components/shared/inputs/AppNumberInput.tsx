@@ -1,3 +1,4 @@
+import { useInputAccessibility } from '@/components/inputs/useInputAccessibility';
 import DashLgIcon from 'bootstrap-icons/icons/dash-lg.svg?react';
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
 import React from 'react';
@@ -36,11 +37,11 @@ type CommonProps = {
       precision?: number;
     }
 );
-type Props = CommonProps & {
-  nullable?: boolean;
-  value: number | null;
-  onChange?: { bivarianceHack(value: number | null): void }['bivarianceHack'];
-};
+type Props = CommonProps &
+  (
+    | { nullable?: false; value: number; onChange?: (value: number) => void }
+    | { nullable: true; value: number | null; onChange?: (value: number | null) => void }
+  );
 export function AppNumberInput({
   name,
   value,
@@ -62,6 +63,7 @@ export function AppNumberInput({
   'data-testid-input': inputTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
+  const accessibility = useInputAccessibility(errors, helper);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [stringValue, setStringValue] = React.useState(value?.toString() ?? '');
   const setCursorPosition = useInputCursorPosition({ inputRef });
@@ -70,11 +72,10 @@ export function AppNumberInput({
   React.useEffect(() => {
     // We want to round even the integer values to the precision, if such value was provided, but we don't want to add zeros at the end
     const newStringValue = value === null ? '' : roundNumber(value, type === 'float' ? precision : 0).toString();
-    if (newStringValue !== stringValue) {
-      // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-      setStringValue(newStringValue);
-    }
-  }, [precision, stringValue, type, value]);
+    // Synchronize external changes without erasing a decimal separator being typed.
+    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+    setStringValue(newStringValue);
+  }, [precision, type, value]);
 
   function handleInputChange(evt: React.ChangeEvent<HTMLInputElement>) {
     const stringInput = evt.target.value.replace(',', '.'); // float input require dot as the decimal separator
@@ -109,8 +110,8 @@ export function AppNumberInput({
 
   function updateValue(newValue: number | null) {
     if (newValue === null) {
-      (onChange as ((value: number | null) => void) | undefined)?.(null);
-      onBlur?.();
+      setStringValue('');
+      if (nullable) onChange?.(null);
       return;
     }
 
@@ -122,13 +123,13 @@ export function AppNumberInput({
       newValue = maximum;
     }
 
-    (onChange as ((value: number) => void) | undefined)?.(newValue);
-    onBlur?.();
+    setStringValue(String(newValue));
+    onChange?.(newValue);
   }
 
   return (
     <div className={cn(className, 'flex flex-col')} data-testid={testId}>
-      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+      <AppInputLabel name={accessibility.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div className="flex items-center">
         {!disabled && (
           <AppNumberInputButton
@@ -143,9 +144,12 @@ export function AppNumberInput({
             name={name}
             value={stringValue}
             onChange={handleInputChange}
-            onBlur={onBlur}
+            onBlur={() => {
+              setStringValue(value === null ? '' : String(roundNumber(value, type === 'float' ? precision : 0)));
+              onBlur?.();
+            }}
             disabled={disabled}
-            aria-invalid={!!errors?.length}
+            {...accessibility.control}
             className={cn(
               'block h-11 w-full border border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900',
               'transition duration-300 ease-in-out',
@@ -168,8 +172,8 @@ export function AppNumberInput({
         )}
       </div>
       <div className="mt-2 flex flex-col justify-between text-sm">
-        <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
+        <AppInputHelper id={accessibility.helperId} helper={helper} />
+        <AppInputErrorsList id={accessibility.errorId} errors={errors} data-testid={errorsTestId} />
       </div>
     </div>
   );

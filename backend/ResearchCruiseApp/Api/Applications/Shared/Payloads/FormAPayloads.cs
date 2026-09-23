@@ -68,66 +68,91 @@ public class FormAFields
 
 public class ScoredContract
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public Guid Id { get; init; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public ContractFields Contract { get; set; } = null!;
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string Points { get; init; } = "0";
 }
 
 public class ScoredPublication
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public Guid Id { get; init; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public PublicationFields Publication { get; init; } = null!;
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string Points { get; init; } = "0";
 }
 
 public class ScoredResearchTask
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public Guid Id { get; init; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public ResearchTaskFields ResearchTask { get; init; } = null!;
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string Points { get; init; } = "0";
 }
 
 public class ScoredSpubTask
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public Guid Id { get; init; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public SpubTaskFields SpubTask { get; init; } = null!;
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string Points { get; init; } = "0";
 }
 
 [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
 public class FormAOptions
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public List<UserOption> CruiseManagers { get; set; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<UserOption> DeputyManagers { get; set; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<string> Years { get; set; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<string> ShipUsages { get; set; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<string> StandardSpubTasks { get; set; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<ResearchAreaOption> ResearchAreas { get; set; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<string> CruiseGoals { get; set; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<ResearchTaskFields> HistoricalResearchTasks { get; set; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<ContractFields> HistoricalContracts { get; set; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<UgUnitOption> UgUnits { get; set; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<string> HistoricalGuestInstitutions { get; set; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<SpubTaskFields> HistoricalSpubTasks { get; set; } = [];
+    [System.Text.Json.Serialization.JsonRequired]
     public List<PublicationFields> HistoricalPublications { get; set; } = [];
 }
 
@@ -199,47 +224,66 @@ public class CruiseApplicationSummary
 // candidate picker (attach/detach applications on a cruise) actually renders.
 public class CruiseApplicationCandidateResponse
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public Guid Id { get; init; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string Number { get; init; } = null!;
 
     [JsonNumberHandling(JsonNumberHandling.Strict)]
+    [System.Text.Json.Serialization.JsonRequired]
     public int Year { get; init; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public Guid CruiseManagerId { get; init; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string CruiseManagerFirstName { get; set; } = null!;
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string CruiseManagerLastName { get; set; } = null!;
 
+    [System.Text.Json.Serialization.JsonRequired]
     public Guid DeputyManagerId { get; init; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public bool HasFormA { get; init; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public bool HasFormB { get; init; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public bool HasFormC { get; init; }
 
     [JsonNumberHandling(JsonNumberHandling.Strict)]
+    [System.Text.Json.Serialization.JsonRequired]
     public int Points { get; set; }
 }
 
 public class CruiseApplicationEvaluation
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public List<ScoredResearchTask> FormAResearchTasks { get; init; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<ScoredContract> FormAContracts { get; init; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<NamedUgTeam> UgTeams { get; init; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<GuestTeamFields> GuestTeams { get; init; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string UgUnitsPoints { get; init; } = null!;
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<ScoredPublication> FormAPublications { get; init; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public List<ScoredSpubTask> FormASpubTasks { get; init; } = [];
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string EffectsPoints { get; init; } = null!;
 }
 
@@ -404,8 +448,10 @@ public class SpubTaskFields
 [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
 public class ResearchAreaOption(Guid id, string name)
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public Guid Id { get; set; } = id;
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string Name { get; set; } = name;
 }
 
@@ -434,19 +480,24 @@ public class UgTeamFields
 public class NamedUgTeam
 {
     [StringLength(1024)]
+    [System.Text.Json.Serialization.JsonRequired]
     public string UgUnitName { get; init; } = null!;
 
     [StringLength(1024)]
+    [System.Text.Json.Serialization.JsonRequired]
     public string NoOfEmployees { get; init; } = null!;
 
     [StringLength(1024)]
+    [System.Text.Json.Serialization.JsonRequired]
     public string NoOfStudents { get; init; } = null!;
 }
 
 public class UgUnitOption
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public Guid Id { get; init; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string Name { get; init; } = null!;
 }
 
@@ -486,8 +537,10 @@ public class CrewMemberFields
 
 public class ShipEquipmentOption
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public Guid Id { get; init; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string Name { get; init; } = null!;
 }
 
@@ -607,11 +660,15 @@ public class FileContent
 [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
 public class UserOption
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public Guid Id { get; set; }
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string Email { get; set; } = null!;
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string FirstName { get; set; } = null!;
 
+    [System.Text.Json.Serialization.JsonRequired]
     public string LastName { get; set; } = null!;
 }

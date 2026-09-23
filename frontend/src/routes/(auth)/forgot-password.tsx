@@ -1,25 +1,28 @@
+import { RequestPasswordResetRequest } from '@/api/generated/schemas';
+import { formContract } from '@/integrations/tanstack/form/schema';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { revalidateLogic, useForm } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
-import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
-import { Result } from '@/api/client/user';
+import { Result } from '@/integrations/auth/types';
 
 export const Route = createFileRoute('/(auth)/forgot-password')({
   component: ForgotPasswordPage,
   beforeLoad: allowOnly.unauthenticated(),
 });
 
-const validationSchema = z.object({
-  email: z.email('Niepoprawny adres e-mail'),
-});
+const validationSchema = z
+  .object({
+    email: z.email('Niepoprawny adres e-mail'),
+  })
+  .pipe(formContract(RequestPasswordResetRequest));
 
 function ForgotPasswordPage() {
   const [result, setResult] = React.useState<Result | undefined>(undefined);
@@ -30,11 +33,11 @@ function ForgotPasswordPage() {
       onError: () => setResult('error'),
     },
   });
-  const form = useForm({
+  const form = useAppForm({
     defaultValues: {
       email: '',
     },
-    validationLogic: revalidateLogic({ mode: 'change', modeAfterSubmission: 'change' }),
+    validationLogic: formValidationLogic,
     validators: {
       onDynamic: validationSchema,
     },
@@ -49,7 +52,7 @@ function ForgotPasswordPage() {
             setEmail(value.email);
           },
         }
-      ).catch(() => {});
+      );
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('forgot-password', 'invalid', formApi.state);
@@ -59,7 +62,7 @@ function ForgotPasswordPage() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    form.handleSubmit();
+    void form.handleSubmit().catch(() => {});
   }
 
   if (result === 'success') {
@@ -79,20 +82,7 @@ function ForgotPasswordPage() {
     <AppLayout title="Przywracanie hasła" variant="narrow">
       <form className="px-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <form.Field
-            name="email"
-            children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="email"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                label="E-mail"
-              />
-            )}
-          />
+          <form.AppField name="email" children={(field) => <field.FloatingTextField type="email" label="E-mail" />} />
         </div>
 
         <div className="mt-8">

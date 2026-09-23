@@ -1,3 +1,4 @@
+import { applicationFormPath, formContract, submissionSchema } from '@/integrations/tanstack/form/schema';
 import { z } from 'zod';
 
 import { FormBFields, FormBWriteRequest } from '@/api/generated/schemas';
@@ -54,6 +55,7 @@ export const FORM_B_FIELD_TO_SECTION: Record<string, number> = {
 };
 
 const FormBInputSchema = z.object({
+  draft: z.boolean().optional(),
   isCruiseManagerPresent: z.boolean(),
   permissions: PermissionValuesInputSchema.array(),
   ugTeams: UgTeamValuesInputSchema.array(),
@@ -70,6 +72,7 @@ const FormBInputSchema = z.object({
 export type FormBValues = z.input<typeof FormBInputSchema>;
 
 export const formBDefaultValues: FormBValues = {
+  draft: false,
   isCruiseManagerPresent: true,
   permissions: [],
   ugTeams: [],
@@ -155,7 +158,7 @@ function buildFormBWriteSchema(inputSchema: z.ZodType<FormBValues, FormBValues>,
           draft: boolean;
         }
     )
-    .pipe(FormBWriteRequest);
+    .pipe(formContract(FormBWriteRequest, applicationFormPath));
 }
 
 export function mapFormBToValues(form: FormBFields): FormBValues {
@@ -221,4 +224,8 @@ export function mapFormBToValues(form: FormBFields): FormBValues {
 function toNumber(value: string | null | undefined): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+export function getFormBSubmissionSchema() {
+  return submissionSchema(getFormBWriteSchema(), getFormBDraftWriteSchema());
 }

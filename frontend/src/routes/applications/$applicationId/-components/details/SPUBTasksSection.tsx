@@ -5,12 +5,12 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
-import { EvaluationFormASpubTask } from '@/api/client/applications/models';
+import { ScoredSpubTask } from '@/api/generated/schemas';
 
 export function SPUBTasksSection() {
   const evaluation = useApplicationEvaluation();
 
-  const columns: ColumnDef<EvaluationFormASpubTask>[] = [
+  const columns: ColumnDef<ScoredSpubTask>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,
@@ -24,7 +24,7 @@ export function SPUBTasksSection() {
       cell: ({ row }) => (
         <AppYearPickerInput
           name={`spubTasks[${row.index}].yearFrom`}
-          value={parseInt(row.original.spubTask.yearFrom)}
+          value={Number(row.original.spubTask.yearFrom)}
           showRequiredAsterisk
           disabled
         />
@@ -39,7 +39,7 @@ export function SPUBTasksSection() {
       cell: ({ row }) => (
         <AppYearPickerInput
           name={`spubTasks[${row.index}].yearTo`}
-          value={parseInt(row.original.spubTask.yearTo)}
+          value={Number(row.original.spubTask.yearTo)}
           showRequiredAsterisk
           disabled
         />
@@ -54,7 +54,7 @@ export function SPUBTasksSection() {
       cell: ({ row }) => (
         <AppInput
           name={`spubTasks[${row.index}].name`}
-          value={row.original.spubTask.name}
+          value={row.original.spubTask.name ?? ''}
           showRequiredAsterisk
           disabled
         />

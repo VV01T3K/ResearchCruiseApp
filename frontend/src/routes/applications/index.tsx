@@ -1,3 +1,4 @@
+import { useGetApplicationManagersSuspense } from '@/api/generated/endpoints/applications.gen';
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { ColumnFiltersState, SortingState, functionalUpdate } from '@tanstack/react-table';
@@ -17,17 +18,17 @@ import { formatDate } from '@/lib/dateUtils';
 import {
   CruiseApplicationsFilter,
   CruiseApplicationsSort,
-  useCruiseApplicationManagersQuery,
   useCruiseApplicationsInfiniteQuery,
-} from '@/api/client/applications/catalog';
-import { ApplicationResponse, ApplicationStatus, getApplicationStatusLabel } from '@/api/client/applications/models';
+} from '@/routes/applications/-hooks/useApplications';
+import { ApplicationResponse, CruiseApplicationStatus } from '@/api/generated/schemas';
+import { getApplicationStatusLabel } from '@/lib/applications/status';
 
 export const Route = createFileRoute('/applications/')({
   component: ApplicationsPage,
   beforeLoad: allowOnly.authenticated(),
 });
 
-const statusFilterOptions = Object.values(ApplicationStatus);
+const statusFilterOptions = CruiseApplicationStatus.options;
 
 const EARLIEST_APPLICATION_YEAR = 2024;
 const YEAR_FILTER_OPTIONS_AHEAD = 3;
@@ -66,7 +67,7 @@ function ApplicationsPage() {
     { length: currentYear + YEAR_FILTER_OPTIONS_AHEAD - EARLIEST_APPLICATION_YEAR + 1 },
     (_, index) => (EARLIEST_APPLICATION_YEAR + index).toString()
   );
-  const cruiseManagersQuery = useCruiseApplicationManagersQuery();
+  const cruiseManagersQuery = useGetApplicationManagersSuspense();
   const cruiseManagerFilterOptions = cruiseManagersQuery.data.map((manager) => manager.id);
   const managerLabels = new Map(
     cruiseManagersQuery.data.map((manager) => [
@@ -166,7 +167,8 @@ function ApplicationsPage() {
       header: 'Formularze',
       cell: ({ row }) => {
         const isFormBReadOnly =
-          row.original.status !== ApplicationStatus.FormBFilled && row.original.status !== ApplicationStatus.Undertaken;
+          row.original.status !== CruiseApplicationStatus.enum.formBFilled &&
+          row.original.status !== CruiseApplicationStatus.enum.undertaken;
         return (
           <div className="flex flex-col gap-1">
             <AppLink disabled={!row.original.hasFormA} href={`/applications/${row.original.id}/formA`}>
@@ -201,15 +203,15 @@ function ApplicationsPage() {
       enableSorting: false,
       meta: {
         filterOptions: statusFilterOptions,
-        getFilterOptionLabel: (value) => getApplicationStatusLabel(value as ApplicationStatus),
+        getFilterOptionLabel: (value) => getApplicationStatusLabel(value as CruiseApplicationStatus),
       },
       cell: ({ row }) => (
         <>
           <p className="mb-2 text-right italic sm:text-center">
             {getApplicationStatusLabel(row.original.status)}
-            {row.original.status === ApplicationStatus.Draft ? ` (${row.original.note})` : null}
+            {row.original.status === CruiseApplicationStatus.enum.draft ? ` (${row.original.note})` : null}
           </p>
-          {row.original.status === ApplicationStatus.Draft && (
+          {row.original.status === CruiseApplicationStatus.enum.draft && (
             <AppButton
               className="ml-auto sm:mx-auto"
               size="sm"
@@ -219,7 +221,7 @@ function ApplicationsPage() {
               Kontynuuj wypełnianie
             </AppButton>
           )}
-          {row.original.status === ApplicationStatus.FormBRequired && (
+          {row.original.status === CruiseApplicationStatus.enum.formBRequired && (
             <AppGuard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
               <AppButton
                 className="ml-auto sm:mx-auto"
@@ -231,7 +233,7 @@ function ApplicationsPage() {
               </AppButton>
             </AppGuard>
           )}
-          {row.original.status === ApplicationStatus.Undertaken && (
+          {row.original.status === CruiseApplicationStatus.enum.undertaken && (
             <div className="flex flex-col items-center gap-2">
               <AppGuard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
                 <AppButton

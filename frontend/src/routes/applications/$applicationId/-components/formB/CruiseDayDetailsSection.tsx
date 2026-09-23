@@ -76,7 +76,6 @@ const cruiseDayDetailsColumns = (
           <field.TextField
             data-testid="cruise-day-task-name-input"
             data-testid-errors="cruise-day-task-name-errors"
-            onChange={field.setValue}
             disabled={isReadonly}
             placeholder="Nazwa zadania"
           />
@@ -97,7 +96,6 @@ const cruiseDayDetailsColumns = (
           <field.TextField
             data-testid="cruise-day-region-input"
             data-testid-errors="cruise-day-region-errors"
-            onChange={field.setValue}
             disabled={isReadonly}
             placeholder="Rejon zadania"
           />
@@ -118,7 +116,6 @@ const cruiseDayDetailsColumns = (
           <field.TextField
             data-testid="cruise-day-position-input"
             data-testid-errors="cruise-day-position-errors"
-            onChange={field.setValue}
             disabled={isReadonly}
             placeholder="Pozycja"
           />
@@ -139,7 +136,6 @@ const cruiseDayDetailsColumns = (
           <field.TextField
             data-testid="cruise-day-comment-input"
             data-testid-errors="cruise-day-comment-errors"
-            onChange={field.setValue}
             disabled={isReadonly}
             placeholder="Uwagi"
           />

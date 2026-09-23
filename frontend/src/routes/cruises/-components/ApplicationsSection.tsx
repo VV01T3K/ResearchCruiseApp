@@ -8,14 +8,14 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import { CruiseApplicationCandidate } from '@/api/client/applications/types/CruiseApplicationCandidate';
+import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 
 export function ApplicationsSection({
   cruiseApplications,
   isReadonly,
 }: {
-  cruiseApplications: CruiseApplicationCandidate[];
+  cruiseApplications: CruiseApplicationCandidateResponse[];
   isReadonly: boolean;
 }) {
   const form = useTypedAppFormContext({ defaultValues: cruiseFormDefaultValues });
@@ -27,7 +27,7 @@ export function ApplicationsSection({
         name="cruiseApplicationsIds"
         mode="array"
         children={(field) => {
-          const getColumns = (attached: boolean): ColumnDef<CruiseApplicationCandidate>[] => [
+          const getColumns = (attached: boolean): ColumnDef<CruiseApplicationCandidateResponse>[] => [
             { header: 'Numer', accessorFn: (row) => row.number, enableColumnFilter: !attached, size: 5 },
             { header: 'Rok rejsu', accessorFn: (row) => row.year, enableColumnFilter: !attached, size: 20 },
             {
@@ -95,7 +95,7 @@ export function ApplicationsSection({
                       </AppButton>
                     ),
                     size: 5,
-                  } satisfies ColumnDef<CruiseApplicationCandidate>,
+                  } satisfies ColumnDef<CruiseApplicationCandidateResponse>,
                 ]
               : []),
           ];

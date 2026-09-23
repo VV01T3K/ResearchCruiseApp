@@ -1,3 +1,4 @@
+import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -16,7 +17,6 @@ import {
   getEmptyTask,
   getTaskName,
   ResearchTaskValues,
-  ResearchTaskType,
   taskTypes,
 } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
@@ -101,26 +101,28 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                   </DropdownElementSelectorButton>,
                   <DropdownElementSelectorButton
                     key="historical"
-                    options={groupBy(initValues.historicalResearchTasks, (x) => x.type).flatMap(([type, tasks]) => [
-                      ...[
-                        {
-                          value: type,
-                          content: (
-                            <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
-                              {getTaskName(type as ResearchTaskType)}
-                            </div>
-                          ),
-                        },
-                      ],
-                      ...tasks.map((task) => ({
-                        value: JSON.stringify(task),
-                        content: <ResearchTaskThumbnail task={task} />,
-                        onClick: () => {
-                          field.pushValue(task);
-                          field.handleBlur();
-                        },
-                      })),
-                    ])}
+                    options={groupBy(initValues.historicalResearchTasks, (x) => x.type ?? '').flatMap(
+                      ([type, tasks]) => [
+                        ...[
+                          {
+                            value: type ?? '',
+                            content: (
+                              <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
+                                {getTaskName(type)}
+                              </div>
+                            ),
+                          },
+                        ],
+                        ...tasks.map((task) => ({
+                          value: JSON.stringify(task),
+                          content: <ResearchTaskThumbnail task={task} />,
+                          onClick: () => {
+                            field.pushValue(mapResearchTaskToValues(task));
+                            field.handleBlur();
+                          },
+                        })),
+                      ]
+                    )}
                     variant="primaryOutline"
                     disabled={isReadonly}
                     data-testid="form-a-add-historical-research-task-btn"

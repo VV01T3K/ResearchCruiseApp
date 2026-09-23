@@ -8,14 +8,15 @@ import React from 'react';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
-import { Role } from '@/api/client/user';
-import { User } from '@/api/client/user';
+import { Role } from '@/integrations/auth/types';
+import type { UserResponse } from '@/api/generated/schemas';
+
 import { useAcceptUser, useDeactivateUser, useDeleteUser } from '@/api/generated/endpoints/users.gen';
-import { getProblemDetail } from '@/api/client/custom-fetch';
+import { getProblemDetail } from '@/api/fetch';
 
 type Props = {
-  selectedUsers: User[];
-  allUsers: User[];
+  selectedUsers: UserResponse[];
+  allUsers: UserResponse[];
 
   allowToRemoveUsers: boolean;
 

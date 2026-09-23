@@ -10,7 +10,7 @@ import {
 } from '@/api/generated/endpoints/applications.gen';
 import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { ApiError } from '@/api/client/custom-fetch';
+import { ApiError } from '@/api/fetch';
 import { mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { mapFormBToValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { mapFormCToValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -18,23 +18,23 @@ import { mapFormCToValues } from '@/routes/applications/$applicationId/-schemas/
 export function useFormAQuery(applicationId: string) {
   return useSuspenseQuery({
     queryKey: getGetApplicationFormAQueryKey(applicationId),
-    queryFn: async () => {
-      return mapFormAToValues(await getApplicationFormA(applicationId));
-    },
+    queryFn: ({ signal }) => getApplicationFormA(applicationId, { signal }),
+    select: mapFormAToValues,
   });
 }
 
 export function useFormBQuery(applicationId: string) {
   return useSuspenseQuery({
     queryKey: getGetApplicationFormBQueryKey(applicationId),
-    queryFn: async (): Promise<FormBValues | null> => {
+    queryFn: async ({ signal }) => {
       try {
-        return mapFormBToValues(await getApplicationFormB(applicationId));
+        return await getApplicationFormB(applicationId, { signal });
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) return null;
         throw error;
       }
     },
+    select: (data): FormBValues | null => (data ? mapFormBToValues(data) : null),
     retry: false,
   });
 }
@@ -42,14 +42,15 @@ export function useFormBQuery(applicationId: string) {
 export function useFormCQuery(applicationId: string) {
   return useSuspenseQuery({
     queryKey: getGetApplicationFormCQueryKey(applicationId),
-    queryFn: async (): Promise<FormCValues | null> => {
+    queryFn: async ({ signal }) => {
       try {
-        return mapFormCToValues(await getApplicationFormC(applicationId));
+        return await getApplicationFormC(applicationId, { signal });
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) return null;
         throw error;
       }
     },
+    select: (data): FormCValues | null => (data ? mapFormCToValues(data) : null),
     retry: false,
   });
 }

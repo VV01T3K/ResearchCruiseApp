@@ -1,7 +1,8 @@
+import { submitApplicationForm } from '@/lib/applications/submitApplicationForm';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { revalidateLogic } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
@@ -15,20 +16,18 @@ import {
   FORM_A_FIELD_TO_SECTION,
   type FormAValues,
   formADefaultValues,
-  getFormADraftWriteSchema,
-  getFormAWriteSchema,
+  getFormASubmissionSchema,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useFormAQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
   useGetApplicationFormAContextSuspense,
   useUpdateApplicationFormA,
 } from '@/api/generated/endpoints/applications.gen';
-import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { setSchemaErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
-import { getErrorMessage } from '@/api/client/custom-fetch';
+import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
+import { getErrorMessage } from '@/api/fetch';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({
   component: FormAPage,
@@ -44,9 +43,7 @@ function FormAPage() {
 
   const navigate = useNavigate();
   const currentUser = useCurrentUser()!;
-  const initialStateQuery = useGetApplicationFormAContextSuspense({
-    query: { select: mapFormAOptions },
-  });
+  const initialStateQuery = useGetApplicationFormAContextSuspense();
   const saveMutation = useUpdateApplicationFormA();
   const formA = useFormAQuery(applicationId);
 
@@ -62,18 +59,20 @@ function FormAPage() {
   }) satisfies FormAValues;
   const [selectedYear, setSelectedYear] = useState(defaultValues.year);
   const blockadesQuery = useGetCruiseBlockades({ year: +selectedYear });
+  const schema = getFormASubmissionSchema(initialStateQuery.data, blockadesQuery.data, applicationId);
   const form = useAppForm({
+    canSubmitWhenInvalid: true,
     defaultValues,
-    validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
+    validationLogic: formValidationLogic,
     validators: {
-      onDynamic: getFormAWriteSchema(initialStateQuery.data, blockadesQuery.data, applicationId),
+      onDynamic: schema,
     },
     listeners: {
       onChange: ({ fieldApi }) => {
         if (fieldApi.name === 'year') setSelectedYear(String(fieldApi.state.value));
       },
     },
-    onSubmit: () => handleValidSubmit(),
+    onSubmit: ({ value }) => saveForm(value),
     onSubmitInvalid: () => {
       trackFormSubmit('form-a', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
@@ -91,62 +90,37 @@ function FormAPage() {
     actionsDisabled: saveMutation.isPending,
   };
 
-  function isCurrentUserManagerOrDeputy(dto: FormAValues) {
-    const userId = currentUser.id;
-    return dto.cruiseManagerId === userId || dto.deputyManagerId === userId;
-  }
-
-  async function saveForm(draft: boolean, loadingMessage: string, successMessage: string) {
-    if (!isCurrentUserManagerOrDeputy(form.state.values)) {
-      setIsSaveDraftModalOpen(false);
-      toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
-      return;
-    }
-
-    const schema = draft
-      ? getFormADraftWriteSchema(applicationId)
-      : getFormAWriteSchema(initialStateQuery.data, blockadesQuery.data, applicationId);
-    if (setSchemaErrors(form, schema)) {
-      toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-      navigateToFirstError();
-      return;
-    }
-
-    const loading = toast.loading(loadingMessage);
-    try {
-      await saveMutation.mutateAsync({
-        applicationId,
-        data: schema.parse(form.state.values),
-      });
-      navigate({ to: '/' });
-      toast.success(successMessage);
-    } catch (err) {
-      console.error(err);
-      if (setServerFormErrors(form, err)) {
-        toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-        navigateToFirstError();
-        return;
-      }
-      toast.error(getErrorMessage(err, 'Nie udało się zapisać formularza'));
-      navigateToFirstError();
-    } finally {
-      setIsSaveDraftModalOpen(false);
-      toast.dismiss(loading);
-    }
-  }
-
-  async function handleValidSubmit() {
+  async function saveForm(values: FormAValues) {
     trackFormSubmit('form-a', 'valid', form.state);
-
-    await saveForm(
-      false,
-      'Zapisywanie formularza...',
-      'Formularz został zapisany i wysłany do potwierdzenia przez przełożonego'
+    if (values.cruiseManagerId !== currentUser.id && values.deputyManagerId !== currentUser.id) {
+      setIsSaveDraftModalOpen(false);
+      const message = 'Jedynie kierownik lub jego zastępca mogą zapisać formularz';
+      toast.error(message);
+      throw new Error(message);
+    }
+    const loading = toast.loading(
+      values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
-  }
-
-  function handleSaveDraft() {
-    void saveForm(true, 'Zapisywanie wersji roboczej formularza...', 'Formularz został zapisany jako wersja robocza');
+    try {
+      await saveMutation.mutateAsync({ applicationId, data: schema.parse(values) });
+      toast.success(
+        values.draft
+          ? 'Formularz został zapisany jako wersja robocza'
+          : 'Formularz został zapisany i wysłany do potwierdzenia przez przełożonego'
+      );
+      await navigate({ to: '/' });
+    } catch (error) {
+      if (setServerFormErrors(form, error)) {
+        toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
+      } else {
+        toast.error(getErrorMessage(error, 'Nie udało się zapisać formularza'));
+      }
+      navigateToFirstError();
+      throw error;
+    } finally {
+      toast.dismiss(loading);
+      setIsSaveDraftModalOpen(false);
+    }
   }
 
   return (
@@ -175,7 +149,11 @@ function FormAPage() {
           />
 
           <div className="flex justify-center gap-4">
-            <AppButton className="gap-4" disabled={saveMutation.isPending} onClick={handleSaveDraft}>
+            <AppButton
+              className="gap-4"
+              disabled={saveMutation.isPending}
+              onClick={() => void submitApplicationForm(form, true)}
+            >
               <FloppyFillIcon className="h-4 w-4" />
               Zapisz wersję roboczą
             </AppButton>

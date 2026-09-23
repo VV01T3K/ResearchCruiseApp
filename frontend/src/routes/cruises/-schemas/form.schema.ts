@@ -1,6 +1,15 @@
+import { formContract, type FormPath } from '@/integrations/tanstack/form/schema';
 import { z } from 'zod';
 
 import { CreateRequest, UpdateRequest, type CruiseResponse } from '@/api/generated/schemas';
+
+export function cruiseFormPath(path: FormPath): FormPath {
+  const [field, ...rest] = path;
+  if (field === 'mainManagerId') return ['managersTeam', 'mainCruiseManagerId', ...rest];
+  if (field === 'deputyManagerId') return ['managersTeam', 'mainDeputyManagerId', ...rest];
+  if (field === 'cruiseApplicationIds') return ['cruiseApplicationsIds', ...rest];
+  return path;
+}
 
 const emptyGuid = '00000000-0000-0000-0000-000000000000';
 export const CruiseFormInputSchema = z
@@ -56,10 +65,10 @@ const mapCruiseRequest = (cruise: CruiseFormValues) => ({
 
 export const CreateCruiseFormSchema = CruiseFormInputSchema.transform(
   (cruise): z.input<typeof CreateRequest> => mapCruiseRequest(cruise)
-).pipe(CreateRequest);
+).pipe(formContract(CreateRequest, cruiseFormPath));
 export const UpdateCruiseFormSchema = CruiseFormInputSchema.transform(
   (cruise): z.input<typeof UpdateRequest> => mapCruiseRequest(cruise)
-).pipe(UpdateRequest);
+).pipe(formContract(UpdateRequest, cruiseFormPath));
 
 export type CruiseFormValues = z.input<typeof CruiseFormInputSchema>;
 export type CreateCruiseRequest = z.output<typeof CreateCruiseFormSchema>;

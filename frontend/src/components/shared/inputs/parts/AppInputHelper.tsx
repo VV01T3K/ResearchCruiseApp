@@ -1,8 +1,13 @@
 type Props = {
+  id?: string;
   helper: React.ReactNode | undefined;
 };
-export function AppInputHelper({ helper }: Props) {
+export function AppInputHelper({ id, helper }: Props) {
   if (!helper) return null;
 
-  return <div className="text-gray-500">{helper}</div>;
+  return (
+    <div id={id} className="text-gray-500">
+      {helper}
+    </div>
+  );
 }

@@ -30,9 +30,7 @@ const shortResearchEquipmentColumns = (
     cell: ({ row }) => (
       <form.AppField
         name={`shortResearchEquipments[${row.index}].startDate`}
-        children={(field) => (
-          <field.DateField onChange={(newValue) => field.handleChange(newValue ?? '')} disabled={isReadonly} />
-        )}
+        children={(field) => <field.DateField disabled={isReadonly} />}
       />
     ),
     size: 20,
@@ -54,7 +52,6 @@ const shortResearchEquipmentColumns = (
               }
               return (
                 <field.DateField
-                  onChange={(newValue) => field.handleChange(newValue ?? '')}
                   disabled={isReadonly}
                   selectionStartDate={state ? new Date(state) : undefined}
                   minimalDate={state ? new Date(state) : undefined}
@@ -185,13 +182,7 @@ const portColumns = (
     cell: ({ row }) => (
       <form.AppField
         name={`ports[${row.index}].startTime`}
-        children={(field) => (
-          <field.DateField
-            onChange={(newValue) => field.handleChange(newValue ?? '')}
-            disabled={isReadonly}
-            type="datetime"
-          />
-        )}
+        children={(field) => <field.DateField disabled={isReadonly} type="datetime" />}
       />
     ),
     size: 20,
@@ -213,7 +204,6 @@ const portColumns = (
               }
               return (
                 <field.DateField
-                  onChange={(newValue) => field.handleChange(newValue ?? '')}
                   disabled={isReadonly}
                   type="datetime"
                   selectionStartDate={state ? new Date(state) : undefined}

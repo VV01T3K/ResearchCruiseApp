@@ -1,12 +1,13 @@
-import { revalidateLogic, useForm } from '@tanstack/react-form';
+import { ChangePasswordRequest } from '@/api/generated/schemas';
+import { formContract } from '@/integrations/tanstack/form/schema';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
 
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useChangeCurrentUserPassword } from '@/api/generated/endpoints/users.gen';
 
 const validationSchema = z
@@ -29,7 +30,9 @@ const validationSchema = z
         path: ['repeatedNewPassword'],
       });
     }
-  });
+  })
+  .transform((value): z.input<typeof ChangePasswordRequest> => value)
+  .pipe(formContract(ChangePasswordRequest));
 
 export function ChangePasswordForm() {
   const [result, setResult] = React.useState<'success' | 'error'>();
@@ -39,13 +42,13 @@ export function ChangePasswordForm() {
       onError: () => setResult('error'),
     },
   });
-  const form = useForm({
+  const form = useAppForm({
     defaultValues: {
       password: '',
       newPassword: '',
       repeatedNewPassword: '',
     },
-    validationLogic: revalidateLogic({ mode: 'change', modeAfterSubmission: 'change' }),
+    validationLogic: formValidationLogic,
     validators: {
       onDynamic: validationSchema,
     },
@@ -53,8 +56,8 @@ export function ChangePasswordForm() {
       trackFormSubmit('change-password', 'valid', formApi.state);
 
       await mutateAsync({
-        data: { password: value.password, newPassword: value.newPassword },
-      }).catch(() => {});
+        data: validationSchema.parse(value),
+      });
 
       formApi.reset();
     },
@@ -66,56 +69,26 @@ export function ChangePasswordForm() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    form.handleSubmit();
+    void form.handleSubmit().catch(() => {});
   }
 
   return (
     <form className="grid grid-cols-2" onSubmit={handleSubmit}>
       <h2 className="text-xl font-semibold">Zmiana Hasła</h2>
       <div className="space-y-4">
-        <form.Field
+        <form.AppField
           name="password"
-          children={(field) => (
-            <AppInput
-              name={field.name}
-              value={field.state.value}
-              type="password"
-              onBlur={field.handleBlur}
-              onChange={field.handleChange}
-              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-              label="Aktualne hasło"
-            />
-          )}
+          children={(field) => <field.TextField type="password" label="Aktualne hasło" />}
         />
 
-        <form.Field
+        <form.AppField
           name="newPassword"
-          children={(field) => (
-            <AppInput
-              name={field.name}
-              value={field.state.value}
-              type="password"
-              onBlur={field.handleBlur}
-              onChange={field.handleChange}
-              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-              label="Nowe hasło"
-            />
-          )}
+          children={(field) => <field.TextField type="password" label="Nowe hasło" />}
         />
 
-        <form.Field
+        <form.AppField
           name="repeatedNewPassword"
-          children={(field) => (
-            <AppInput
-              name={field.name}
-              value={field.state.value}
-              type="password"
-              onBlur={field.handleBlur}
-              onChange={field.handleChange}
-              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-              label="Powtórz nowe hasło"
-            />
-          )}
+          children={(field) => <field.TextField type="password" label="Powtórz nowe hasło" />}
         />
 
         <div className="mt-8">

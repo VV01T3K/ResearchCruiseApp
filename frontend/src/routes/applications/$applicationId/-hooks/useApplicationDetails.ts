@@ -1,6 +1,5 @@
 import { useParams } from '@tanstack/react-router';
 
-import { mapEvaluationResponse } from '@/api/client/applications/models';
 import {
   useGetApplicationEvaluationSuspense,
   useGetApplicationSuspense,
@@ -15,7 +14,5 @@ export function useApplication() {
 }
 
 export function useApplicationEvaluation() {
-  return useGetApplicationEvaluationSuspense(useApplicationId(), {
-    query: { select: mapEvaluationResponse },
-  }).data;
+  return useGetApplicationEvaluationSuspense(useApplicationId()).data;
 }

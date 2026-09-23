@@ -1,15 +1,15 @@
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import { OtherResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { ResearchTaskDetailsData } from './ResearchTaskDetails';
 
 type Props = {
-  data: OtherResearchTaskValues;
+  data: ResearchTaskDetailsData;
 };
 export function OtherResearchTaskDetails({ data }: Props) {
   return (
     <div>
       <AppInput
         name="researchTasks[].description"
-        value={data.description}
+        value={data.description ?? ''}
         label="Opis zadania"
         placeholder="Wprowadź opis zadania"
         disabled={true}
