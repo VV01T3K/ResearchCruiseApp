@@ -83,6 +83,7 @@ export function AppMonthPickerInput({
           <input type="hidden" name={name} value={value} disabled={disabled} />
           <AppButton
             name={name}
+            disabled={disabled}
             {...accessibility.control}
             variant="plain"
             onClick={handleInputClick}

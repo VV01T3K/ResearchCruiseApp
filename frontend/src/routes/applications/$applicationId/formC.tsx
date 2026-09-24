@@ -119,7 +119,9 @@ function FormCPage() {
         data: schema.parse(values),
       });
       navigate({ to: '/applications' });
-      toast.success('Formularz został wysłany pomyślnie.');
+      toast.success(
+        values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
+      );
     } catch (err) {
       if (err instanceof ApiError && err.status === 403) {
         toast.error(

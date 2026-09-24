@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { formTest as test } from '@tests/fixtures/fixtures';
 
-import { MOCK_PDF_FILEPATH } from './fixtures/consts';
+import { API_URL, MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { touchInput } from './utils/form-filling-utils';
 
 /** Section → fields that must report an error when the section holds a row of invalid data. */
@@ -46,6 +46,17 @@ async function expectSectionsInvalid(
 test('all sections valid', async ({ formBPage }) => {
   await formBPage.fillForm();
   await formBPage.submitForm({ expectedResult: 'valid' });
+  await expect(formBPage.submissionApprovedMessage).toHaveText('Formularz został wysłany pomyślnie.');
+});
+
+test('draft save confirms a draft rather than final submission', async ({ formBPage, page }) => {
+  await formBPage.fillForm();
+  const request = page.waitForRequest(
+    (request) => request.url() === `${API_URL}/v2/applications/${formBPage.formId}/form-b` && request.method() === 'PUT'
+  );
+  await page.getByRole('button', { name: 'Zapisz wersję roboczą' }).click();
+  expect((await request).postDataJSON().draft).toBe(true);
+  await expect(formBPage.submissionApprovedMessage).toHaveText('Formularz został zapisany jako wersja robocza');
 });
 
 test('all sections filled with invalid rows', async ({ formBPage }) => {
