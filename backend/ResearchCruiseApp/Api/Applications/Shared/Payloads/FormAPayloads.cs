@@ -152,6 +152,7 @@ public class FormAOptions
 
     [System.Text.Json.Serialization.JsonRequired]
     public List<SpubTaskFields> HistoricalSpubTasks { get; set; } = [];
+
     [System.Text.Json.Serialization.JsonRequired]
     public List<PublicationFields> HistoricalPublications { get; set; } = [];
 }

@@ -1,5 +1,9 @@
 # Forms review
 
+Thread: `de19397f-c5a7-4e30-b20a-dfc3b0e3aa93`.
+
+The integrated branch is `codex/forms-redesign-staging`, based on staging commit `373812c6`. It preserves staging's Table v9 migration, React Compiler, and table virtualization. The original forms work remains on `codex/forms-redesign` as a recovery point; do not merge its superseded staging history.
+
 Run from `frontend`:
 
 ```sh
@@ -10,8 +14,8 @@ The recording is written to `artifacts/forms-review/` at the repository root. It
 
 ## Implementation
 
-- `api/generated/` supplies endpoint functions, query hooks, request schemas and response types. `api/fetch.ts` only handles HTTP transport and authentication. Response-normalization modules and the `api/client/` directory have been removed.
-- Backend response metadata marks always-returned properties as required. Regenerate with `vp run gen` after updating the OpenAPI snapshot. No database migration is involved.
+- `api/generated/` supplies endpoint functions, query hooks, request schemas and response types. `api/fetch.ts` only handles HTTP transport and authentication. Response normalization modules and the `api/client/` directory have been removed.
+- Backend response metadata marks properties returned in every response as required. Regenerate with `vp run gen` after updating the OpenAPI snapshot. No database migration is involved.
 - `integrations/tanstack/form/fields.tsx` registers `AppField` adapters. The input components take ordinary props and can render outside a form.
 - Editable schemas retain Polish business messages and transform into generated request schemas. Parse explicitly when submitting: TanStack validation does not replace the submitted values with Zod's transformed output.
 - Application draft intent lives in form state. Draft and final saves share TanStack's validation/submission lifecycle, with separate schemas. Drafts still use the existing API/storage contract.
