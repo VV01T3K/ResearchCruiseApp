@@ -9,12 +9,12 @@ Two layers, split by what they can actually prove:
 
 ## Commands
 
-| Command          | What it runs                                  |
-| ---------------- | --------------------------------------------- |
-| `pnpm test:unit` | All Vitest unit tests (no browser)            |
-| `pnpm test`      | All Playwright E2E tests                      |
-| `pnpm test:ui`   | Playwright's interactive debugger             |
-| `pnpm type`      | `tsgo` — type-checks tests along with the app |
+| Command            | What it runs                                  |
+| ------------------ | --------------------------------------------- |
+| `vp run test:unit` | All Vitest unit tests (no browser)            |
+| `vp run test`      | All Playwright E2E tests                      |
+| `vp run test:ui`   | Playwright's interactive debugger             |
+| `vp run type`      | `tsgo` — type-checks tests along with the app |
 
 First-time browser setup: `vp dlx playwright install --with-deps`.
 

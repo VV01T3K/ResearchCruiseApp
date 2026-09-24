@@ -4,6 +4,13 @@ on:
   push:
     paths-ignore:
       - docs
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -27,10 +34,15 @@ jobs:
         with:
           working-directory: frontend
           node-version-file: .node-version
+          run-install: false
           cache: true
 
       - name: Install dependencies
         run: vp install --frozen-lockfile
+
+      - name: Audit JavaScript dependencies
+        working-directory: .
+        run: bun audit --audit-level=high
 
       - name: Run checks
         run: vp check
@@ -56,12 +68,13 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: "10.0.x"
 
       - name: Setup Vite+
         uses: voidzero-dev/setup-vp@v1
         with:
           working-directory: backend
+          version: "0.1.16"
           node-version-file: ../frontend/.node-version
           cache: true
 
@@ -69,7 +82,7 @@ jobs:
         run: dotnet tool restore
 
       - name: Restore dependencies
-        run: dotnet restore ResearchCruiseApp.sln
+        run: dotnet restore ResearchCruiseApp.sln --locked-mode --force -p:CI=true
 
       - name: Run checks
         run: vp run check
