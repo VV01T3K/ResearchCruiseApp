@@ -6,7 +6,7 @@ ENV API_URL="/api" \
     APP_ENVIRONMENT=$APP_ENVIRONMENT
 
 WORKDIR /app
-RUN npm install --global vite-plus@0.1.16
+RUN npm install --global vite-plus@0.1.24
 
 ARG SENTRY_RELEASE
 ARG SENTRY_ORG="cruiseteam"

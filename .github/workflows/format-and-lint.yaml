@@ -74,7 +74,7 @@ jobs:
         uses: voidzero-dev/setup-vp@v1
         with:
           working-directory: backend
-          version: "0.1.16"
+          version-file: ../frontend/package.json
           node-version-file: ../frontend/.node-version
           cache: true
 

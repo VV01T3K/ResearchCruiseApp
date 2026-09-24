@@ -37,6 +37,13 @@ releases have a seven day cooldown and a limit of three open PRs per ecosystem
 entry. Related minor and patch updates are grouped; major updates remain separate.
 Automatic merging is not configured.
 
+Vite+ and its Vite/Vitest aliases are pinned to matching stable versions. Orval
+uses the first release fixing its reference resolution advisory, 8.22.0, to keep
+generated API files unchanged. Its YAML dependency is overridden to a patched
+4.x release; remove that override once the upstream dependency is updated.
+SheetJS uses the official 0.20.3 tarball because npm's `xlsx` release is outdated.
+Review SheetJS releases manually; Dependabot cannot update this fixed tarball URL.
+
 Commit `bun.lock` and both .NET `packages.lock.json` files with dependency changes.
 For intentional NuGet updates, edit the package references and run `dotnet restore
 backend/ResearchCruiseApp.sln --force-evaluate` locally before committing. CI and
