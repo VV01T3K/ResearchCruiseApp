@@ -296,3 +296,9 @@ gen
 
 # Fake SMTP output (local development)
 fake-emails/
+
+# Backend test diagnostics and personal IDE state
+backend/artifacts/
+**/TestResults/
+*.DotSettings.user
+.vs/

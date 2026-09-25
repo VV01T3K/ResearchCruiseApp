@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using FluentValidation;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
@@ -12,6 +12,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     public FormAWriteRequestValidator(FileInspector fileInspector)
     {
         _fileInspector = fileInspector;
+        RuleFor(request => request.Form).NotNull();
 
         AddDraftValidation();
         AddNonDraftValidation();
@@ -20,13 +21,14 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddDraftValidation()
     {
         When(
-            request => request.Draft,
+            request => request.Form is not null && request.Draft,
             () =>
             {
                 AddCruiseHoursDraftValidation();
                 AddShipUsageDraftValidation();
                 AddCruiseGoalDraftValidation();
                 AddResearchTaskDraftValidation();
+                AddResearchTasksCommonValidation();
                 AddUgTeamsDraftValidation();
                 AddGuestTeamsDraftValidation();
             }
@@ -36,7 +38,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddNonDraftValidation()
     {
         When(
-            request => !request.Draft,
+            request => request.Form is not null && !request.Draft,
             () =>
             {
                 AddManagersTeamNonDraftValidation();
@@ -559,6 +561,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private static bool IsNonNegativeDouble(string? value)
     {
         return double.TryParse(value, CultureInfo.InvariantCulture, out var valueDouble)
+            && double.IsFinite(valueDouble)
             && valueDouble >= 0;
     }
 

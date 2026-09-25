@@ -1,0 +1,17 @@
+root = false
+
+[*.cs]
+dotnet_sort_system_directives_first = true
+
+[**/Migrations/*.Designer.cs]
+generated_code = true
+
+[**/*ModelSnapshot.cs]
+generated_code = true
+
+[**/Resources/*.Designer.cs]
+generated_code = true
+
+[ResearchCruiseApp.{Unit,Integration}Tests/**/*Tests.cs]
+# Specification names tests Behavior_WhenCondition_ExpectedOutcome.
+dotnet_diagnostic.CA1707.severity = none

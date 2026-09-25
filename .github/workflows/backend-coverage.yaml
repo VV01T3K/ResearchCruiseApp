@@ -1,0 +1,35 @@
+name: Backend coverage
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 3 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: backend/global.json
+          cache: true
+          cache-dependency-path: backend/**/packages.lock.json
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          working-directory: frontend
+          node-version-file: .node-version
+          cache: true
+      - run: vp install --frozen-lockfile
+      - run: vp run test:coverage
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: backend-coverage
+          path: backend/artifacts/
+          retention-days: 14
+          if-no-files-found: error

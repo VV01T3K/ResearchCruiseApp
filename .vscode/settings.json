@@ -76,6 +76,7 @@
   "[toml]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
+  "dotnet.defaultSolution": "backend/ResearchCruiseApp.slnx",
   "dotnetAcquisitionExtension.allowInvalidPaths": true,
   "csharp.suppressDotnetInstallWarning": true,
   "oxc.enable": true,

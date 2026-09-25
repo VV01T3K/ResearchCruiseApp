@@ -4,16 +4,20 @@ on:
   push:
     branches: [staging]
     paths-ignore: ["docs/**", "**.md", ".gitignore"]
-  pull_request:
-    branches: [staging]
-    paths-ignore: ["docs/**", "**.md", ".gitignore"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  workspace:
+    name: Validate workspace
+    uses: ./.github/workflows/workspace-ci.yaml
+    permissions:
+      contents: read
+
   build:
+    needs: workspace
     name: Build ${{ matrix.component }}
     runs-on: ubuntu-latest
     permissions:

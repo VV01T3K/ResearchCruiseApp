@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="ResearchCruiseApp.IntegrationTests/ResearchCruiseApp.IntegrationTests.csproj" />
+  <Project Path="ResearchCruiseApp.Tests/ResearchCruiseApp.Tests.csproj" />
+  <Project Path="ResearchCruiseApp.UnitTests/ResearchCruiseApp.UnitTests.csproj" />
+  <Project Path="ResearchCruiseApp/ResearchCruiseApp.csproj" />
+</Solution>

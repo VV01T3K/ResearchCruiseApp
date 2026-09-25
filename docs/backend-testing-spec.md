@@ -75,7 +75,7 @@ repository/
 | `ResearchCruiseApp.sln.DotSettings` | Existing file contains a JetBrains nullable-fix preference and dictionary word. Review whether the team uses these, migrate needed settings alongside the new solution if supported, or remove the unused file. Build/format behavior belongs in portable settings, not an IDE-specific file. |
 | Dockerfiles | Current workflows use `backend/Dockerfile`; a second file exists inside the application directory. Check all callers and IDE references, consolidate on the backend-root file, and remove the duplicate only after confirming it is unused. |
 | Editor/generated files | Commit useful shared editor settings only. Ignore personal `.DotSettings.user`, `.vs`, `bin`, `obj`, and artifacts. Point editor solution discovery at the sole `.slnx`; do not require an IDE to run checks. |
-| Root commands | Keep Vite+ as the single developer entry point; backend package tasks delegate to native .NET commands. Avoid a second competing build orchestrator or bash-only scripts that break Windows. |
+| Root commands | Keep Vite+ as the single developer entry point; backend package tasks delegate to native .NET commands. Support Ubuntu WSL locally and Linux in CI; Bash scripts are acceptable. Native Windows/PowerShell support is outside the baseline. Avoid a second competing build orchestrator. |
 
 Update solution references in package scripts, CI, mise, editor settings, documentation, and any Docker/devcontainer steps together. Check `dotnet sln ... list`, restore/build, test discovery, EF commands, and root command dispatch after the change. This spec uses `.slnx` in target commands; repository findings still describe the currently checked-in `.sln`.
 
@@ -293,7 +293,7 @@ If the suite exceeds budget, profile setup versus execution, remove duplicate co
 
 CI acceptance evidence must include a successful clean PR run, a deliberately failing test blocking the gate, zero-test detection, failed container setup failing visibly, artifacts available after failure, and confirmation that image publishing/staging deployment cannot proceed after a failed gate. Test deployment gating without triggering a real deployment solely as an experiment.
 
-Also verify root `check`, `lint`, and `fix` on Windows and Linux; an API contract change must reach frontend generation/type checks in the correct order. Prove failures from either package fail the root command, `fix` converges on a second run, `check` preserves working-tree files, and Docker absence cannot produce a green complete check. These are command acceptance checks, not a permanent multi-OS CI matrix.
+Also verify root `check`, `lint`, and `fix` on Ubuntu WSL and Linux CI; an API contract change must reach frontend generation/type checks in the correct order. Prove failures from either package fail the root command, `fix` converges on a second run, `check` preserves working-tree files, and Docker absence cannot produce a green complete check. These are command acceptance checks, not a permanent multi-OS CI matrix.
 
 Workflow reference: [GitHub reusable workflows](https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows).
 
