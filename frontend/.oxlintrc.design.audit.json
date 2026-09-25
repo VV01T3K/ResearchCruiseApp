@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [],
+  "jsPlugins": ["@shadcn/lint"],
+  "categories": {
+    "correctness": "off"
+  },
+  "settings": {
+    "shadcn": {
+      "ui": "@/components/shared"
+    }
+  },
+  "rules": {
+    "shadcn/no-unknown-classes": "warn",
+    "shadcn/no-raw-colors": "warn",
+    "shadcn/no-arbitrary-values": "warn",
+    "shadcn/no-inline-styles": "warn",
+    "shadcn/no-restyle": ["warn", { "allow": ["layout"] }],
+    "shadcn/require-static-classes": "warn"
+  },
+  "ignorePatterns": ["dist", "src/routeTree.gen.ts", "src/api/generated", ".storybook"]
+}
