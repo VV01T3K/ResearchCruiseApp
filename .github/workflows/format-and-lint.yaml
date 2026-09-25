@@ -37,6 +37,11 @@ jobs:
           run-install: false
           cache: true
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
       - name: Install dependencies
         run: vp install --frozen-lockfile
 
