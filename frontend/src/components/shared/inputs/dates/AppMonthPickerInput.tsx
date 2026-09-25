@@ -1,3 +1,4 @@
+import { useInputAccessibility } from '@/components/inputs/useInputAccessibility';
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -37,7 +38,8 @@ export function AppMonthPickerInput({
   helper,
   placeholder = 'Wybierz miesiąc',
 }: Props) {
-  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(() => getDateFromValue(value));
+  const accessibility = useInputAccessibility(errors, helper);
+  const selectedDate = getDateFromValue(value);
   const [expanded, setExpanded] = React.useState(false);
 
   const inputRef = React.useRef<HTMLDivElement>(null);
@@ -45,16 +47,11 @@ export function AppMonthPickerInput({
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(null);
   const portalContainerRef = useCallback((node: HTMLDivElement | null) => setPortalContainer(node), []);
 
-  React.useEffect(() => {
-    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-    setSelectedDate(getDateFromValue(value));
-  }, [value]);
-
   useOutsideClickDetection({
     refs: [inputRef, dropdownRef],
     onOutsideClick: () => {
       setExpanded(false);
-      onBlur?.();
+      if (expanded) onBlur?.();
     },
   });
 
@@ -67,13 +64,11 @@ export function AppMonthPickerInput({
   }
 
   function handleSelectMonth(newDate: Date) {
-    setSelectedDate(newDate);
     onChange?.(getValueFromDate(newDate));
     setExpanded(false);
   }
 
   function handleResetSelection(evt: React.MouseEvent) {
-    setSelectedDate(undefined);
     onChange?.(undefined);
     setExpanded(false);
     evt.stopPropagation();
@@ -83,12 +78,13 @@ export function AppMonthPickerInput({
   return (
     <>
       <div className="flex flex-col">
-        <AppInputLabel name={name} value={label} />
+        <AppInputLabel name={accessibility.id} value={label} />
         <div className={cn()} ref={inputRef}>
           <input type="hidden" name={name} value={value} disabled={disabled} />
           <AppButton
             name={name}
-            aria-invalid={!!errors?.length}
+            disabled={disabled}
+            {...accessibility.control}
             variant="plain"
             onClick={handleInputClick}
             className={cn(
@@ -114,8 +110,8 @@ export function AppMonthPickerInput({
           />
         </div>
         <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
-          <AppInputHelper helper={helper} />
-          <AppInputErrorsList errors={errors} />
+          <AppInputHelper id={accessibility.helperId} helper={helper} />
+          <AppInputErrorsList id={accessibility.errorId} errors={errors} />
         </div>
       </div>
       <AnimatePresence>

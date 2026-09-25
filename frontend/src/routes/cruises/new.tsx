@@ -1,7 +1,9 @@
+import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
+import { cruiseFormPath } from '@/routes/cruises/-schemas/form.schema';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { revalidateLogic } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import { AppButton } from '@/components/shared/AppButton';
@@ -14,7 +16,6 @@ import { FormView } from './-components/FormView';
 import { CreateCruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
-import { mapCruiseApplicationCandidate } from '@/api/client/applications/cruise-candidates';
 
 const searchSchema = z.object({
   blockade: z.boolean().optional(),
@@ -37,10 +38,8 @@ const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
 };
 
 function NewCruisePage() {
-  const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense(undefined, {
-    query: { select: (applications) => applications.map(mapCruiseApplicationCandidate) },
-  });
-  const createCruiseMutation = useCreateCruise();
+  const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense();
+  const createCruiseMutation = useCreateCruise({ mutation: { meta: { handlesError: true } } });
   const search = Route.useSearch();
 
   const navigate = useNavigate();
@@ -50,7 +49,7 @@ function NewCruisePage() {
       ...cruiseFormDefaultValues,
       shipUnavailable: search.blockade ?? false,
     },
-    validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
+    validationLogic: formValidationLogic,
     validators: { onDynamic: CreateCruiseFormSchema },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('new-cruise', 'invalid', formApi.state);
@@ -65,8 +64,10 @@ function NewCruisePage() {
         toast.success('Rejs został utworzony pomyślnie.');
       } catch (error) {
         console.error(error);
+        setServerFormErrors(form, error, cruiseFormPath);
         toast.error('Nie udało się utworzyć rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
         navigateToFirstError();
+        throw error;
       }
     },
   });

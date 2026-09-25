@@ -19,7 +19,7 @@ import {
   createSchemaAssertions,
   override,
 } from '@/routes/applications/$applicationId/-schemas/__tests__/schemaTestUtils';
-import type { FormAOptions } from '@/api/client/applications/types/FormAOptions';
+import type { FormAOptions } from '@/api/generated/schemas';
 import type { FormAFields } from '@/api/generated/schemas';
 
 const initValues = initValuesJson as unknown as FormAOptions;

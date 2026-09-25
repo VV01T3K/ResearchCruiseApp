@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { Role } from '@/api/client/user';
+import { Role } from '@/integrations/auth/types';
 import { RowSelectionState } from '@tanstack/react-table';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
@@ -18,7 +18,7 @@ import {
   useGetCurrentUserPublicationsSuspense,
   useImportCurrentUserPublications,
 } from '@/api/generated/endpoints/users.gen';
-import { mapPublication, type Publication } from '@/api/client/publications';
+import type { PublicationResponse } from '@/api/generated/schemas';
 
 export const Route = createFileRoute('/my-publications/')({
   component: MyPublicationsPage,
@@ -28,11 +28,7 @@ export const Route = createFileRoute('/my-publications/')({
 function MyPublicationsPage() {
   const [selectedPublications, setSelectedPublications] = React.useState<RowSelectionState>({});
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = React.useState(false);
-  const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense({
-    query: {
-      select: (publications) => publications.map(mapPublication),
-    },
-  });
+  const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense();
   const deleteOwnPublicationMutation = useDeleteCurrentUserPublication();
   const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications();
   const uploadPublicationsMutation = useImportCurrentUserPublications();
@@ -42,7 +38,7 @@ function MyPublicationsPage() {
     setSelectedPublications({});
   }
 
-  const columns: ColumnDef<Publication>[] = [
+  const columns: ColumnDef<PublicationResponse>[] = [
     {
       id: 'selector',
       header: ({ table }) => (

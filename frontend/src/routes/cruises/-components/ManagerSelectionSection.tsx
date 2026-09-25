@@ -7,8 +7,8 @@ import { AppAlert } from '@/components/shared/AppAlert';
 import { AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
 import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMappers';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import { CruiseApplicationCandidate } from '@/api/client/applications/types/CruiseApplicationCandidate';
-import { UserOption } from '@/api/client/applications/types/UserOption';
+import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
+import { UserOption } from '@/api/generated/schemas';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useGetAvailableCruiseManagersSuspense } from '@/api/generated/endpoints/users.gen';
 import type { CruiseManagerResponse, CruiseResponse } from '@/api/generated/schemas';
@@ -19,7 +19,7 @@ export function ManagerSelectionSection({
   isReadonly,
 }: {
   cruise?: CruiseResponse;
-  cruiseApplications: CruiseApplicationCandidate[];
+  cruiseApplications: CruiseApplicationCandidateResponse[];
   isReadonly: boolean;
 }) {
   const form = useTypedAppFormContext({ defaultValues: cruiseFormDefaultValues });
@@ -134,7 +134,7 @@ export function ManagerSelectionSection({
 
 function checkIfCruiseManagerIsAssignedToAnyApplication(
   managerId: string,
-  cruiseApplications: CruiseApplicationCandidate[],
+  cruiseApplications: CruiseApplicationCandidateResponse[],
   selectedCruiseApplicationsIds: string[]
 ) {
   return cruiseApplications.some(
@@ -147,7 +147,7 @@ function checkIfCruiseManagerIsAssignedToAnyApplication(
 function getCruiseManagersNotAssignedToApplication(
   users: CruiseManagerResponse[],
   selectedUsersIds: string[],
-  cruiseApplications: CruiseApplicationCandidate[],
+  cruiseApplications: CruiseApplicationCandidateResponse[],
   selectedCruiseApplicationsIds: string[]
 ): CruiseManagerResponse[] {
   return selectedUsersIds
@@ -165,7 +165,7 @@ function getCruiseManagersNotAssignedToApplication(
 
 function getAllUsersForDropdown(
   users: CruiseManagerResponse[],
-  cruiseApplications: CruiseApplicationCandidate[],
+  cruiseApplications: CruiseApplicationCandidateResponse[],
   selectedCruiseApplicationsIds: string[]
 ): AppDropdownInputOption[] {
   const formUsers: UserOption[] = users.map((user) => ({

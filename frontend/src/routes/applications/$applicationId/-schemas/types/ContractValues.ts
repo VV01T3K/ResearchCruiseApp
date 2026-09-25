@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { FormFileValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/FormFileValues';
 
-export function getContractCategoryName(category: ContractValues['category']): string {
+export function getContractCategoryName(category: string | undefined): string {
   return category === 'domestic' ? 'Krajowa' : 'Międzynarodowa';
 }
 

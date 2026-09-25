@@ -1,4 +1,5 @@
 import type { AnyFieldMeta, AnyFormApi } from '@tanstack/react-form';
+import type { MapFormPath } from './schema';
 
 interface FormError {
   fieldName: string;
@@ -16,7 +17,7 @@ export function extractErrorMessage(error: unknown): string {
 }
 
 export function getErrors(meta: AnyFieldMeta, submissionAttempts = 0): string[] | undefined {
-  if ((!meta.isTouched && submissionAttempts === 0) || meta.errors.length === 0) return undefined;
+  if ((!meta.isBlurred && submissionAttempts === 0) || meta.errors.length === 0) return undefined;
   return meta.errors.map(extractErrorMessage);
 }
 
@@ -33,7 +34,15 @@ function getFirstFormError(form: AnyFormApi, sections: Record<string, number>): 
     }))
     .sort((a, b) => (a.sectionNumber ?? Infinity) - (b.sectionNumber ?? Infinity));
 
-  return allErrors[0] ?? null;
+  return (
+    allErrors[0] ??
+    (form.state.errors.length
+      ? {
+          fieldName: '',
+          errorMessage: extractErrorMessage(form.state.errors[0]),
+        }
+      : null)
+  );
 }
 
 export function getFormErrorMessage(form: AnyFormApi, sections: Record<string, number>): string {
@@ -60,16 +69,21 @@ export function navigateToFirstError(): void {
   });
 }
 
-function normalizeBackendFormPath(path: string): string {
-  return path
-    .replace(/^Form\.?/i, '')
+function normalizeBackendFormPath(path: string, mapPath: MapFormPath): string {
+  const parts = path
+    .replace(/^\$\.?/, '')
+    .replace(/^Form(?:\.|$)/i, '')
+    .replace(/\[(\d+)\]/g, '.$1')
     .split('.')
     .filter(Boolean)
-    .map((part) => part.replace(/^[A-Z]/, (letter) => letter.toLowerCase()))
-    .join('.');
+    .map((part) => (/^\d+$/.test(part) ? Number(part) : part.replace(/^[A-Z]/, (letter) => letter.toLowerCase())));
+  return mapPath(parts).reduce<string>(
+    (name, part) => (typeof part === 'number' ? `${name}[${part}]` : `${name ? `${name}.` : ''}${String(part)}`),
+    ''
+  );
 }
 
-function getServerFormErrors(error: unknown): Record<string, string[]> | null {
+function getServerFormErrors(error: unknown, mapPath: MapFormPath): Record<string, string[]> | null {
   if (typeof error !== 'object' || error === null || !('problem' in error)) return null;
   const problem = error.problem;
   if (typeof problem !== 'object' || problem === null || !('errors' in problem)) return null;
@@ -77,23 +91,24 @@ function getServerFormErrors(error: unknown): Record<string, string[]> | null {
   if (typeof errors !== 'object' || errors === null) return null;
   return Object.fromEntries(
     Object.entries(errors).flatMap(([path, messages]) =>
-      Array.isArray(messages) && messages.every((message) => typeof message === 'string')
-        ? [[normalizeBackendFormPath(path), messages]]
+      Array.isArray(messages) &&
+      messages.length > 0 &&
+      messages.every((message) => typeof message === 'string' && !!message.trim())
+        ? [[normalizeBackendFormPath(path, mapPath), messages]]
         : []
     )
   );
 }
 
-export function setServerFormErrors(form: AnyFormApi, error: unknown): boolean {
-  const fields = getServerFormErrors(error);
+export function setServerFormErrors(form: AnyFormApi, error: unknown, mapPath: MapFormPath = (path) => path): boolean {
+  const fields = getServerFormErrors(error, mapPath);
   if (!fields || Object.keys(fields).length === 0) return false;
-  form.setErrorMap({ onServer: { fields } });
-  return true;
-}
-
-export function setSchemaErrors(form: AnyFormApi, schema: Parameters<AnyFormApi['parseValuesWithSchema']>[0]): boolean {
-  const errors = form.parseValuesWithSchema(schema);
-  if (!errors) return false;
-  form.setErrorMap({ onSubmit: errors });
+  const knownFields: Record<string, string[]> = {};
+  const formErrors: string[] = [];
+  for (const [path, messages] of Object.entries(fields)) {
+    if (path && form.getFieldInfo(path).instance) knownFields[path] = messages;
+    else formErrors.push(...messages);
+  }
+  form.setErrorMap({ onServer: { fields: knownFields, form: formErrors.join('\n') || undefined } });
   return true;
 }

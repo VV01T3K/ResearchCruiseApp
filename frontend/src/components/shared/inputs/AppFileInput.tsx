@@ -1,3 +1,4 @@
+import { useInputAccessibility } from '@/components/inputs/useInputAccessibility';
 import CloudUploadIcon from 'bootstrap-icons/icons/cloud-upload.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
@@ -42,7 +43,7 @@ type Props = {
   | {
       allowMultiple?: false;
       value?: FileValue;
-      onChange?: (value: FileValue) => void;
+      onChange?: (value: FileValue | undefined) => void;
     }
 );
 
@@ -67,19 +68,17 @@ export function AppFileInput({
   'data-testid-input': inputTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
-  const [files, setFiles] = React.useState<FileValue[]>(allowMultiple ? value : value ? [value] : []);
+  const accessibility = useInputAccessibility(errors, helper);
+  const files = allowMultiple ? value : value ? [value] : [];
   const [notifications, setNotifications] = React.useState<string[]>([]);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   function updateFiles(newFiles: FileValue[]) {
-    setFiles(newFiles);
     if (allowMultiple) {
       onChange?.(newFiles);
     } else {
-      onChange?.(newFiles[0] ?? null);
+      onChange?.(newFiles[0]);
     }
-
-    onBlur?.();
   }
 
   async function handleDrop(evt: React.DragEvent<HTMLDivElement>) {
@@ -140,16 +139,29 @@ export function AppFileInput({
 
   return (
     <div data-testid={testId}>
-      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+      <AppInputLabel name={accessibility.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div
         className="flex w-full items-center justify-center"
-        onClick={() => inputRef.current?.click()}
+        onClick={() => {
+          if (!disabled) inputRef.current?.click();
+        }}
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
       >
-        <label
-          aria-invalid={!!errors?.length}
-          tabIndex={errors?.length ? 0 : undefined}
+        <div
+          {...accessibility.control}
+          role="button"
+          aria-label={typeof label === 'string' ? label : uploadMessage}
+          aria-disabled={disabled}
+          onBlur={onBlur}
+          onKeyDown={(event) => {
+            if (event.target !== event.currentTarget) return;
+            if (!disabled && (event.key === 'Enter' || event.key === ' ')) {
+              event.preventDefault();
+              inputRef.current?.click();
+            }
+          }}
+          tabIndex={disabled ? -1 : 0}
           className={cn(
             'flex w-full flex-col items-center justify-center border-2 border-gray-300 text-gray-500',
             'cursor-pointer overflow-x-auto rounded-lg border-dashed bg-gray-50 hover:bg-gray-100',
@@ -185,7 +197,7 @@ export function AppFileInput({
           </AnimatePresence>
           {<AppFileList files={files} onRemove={removeFile} disabled={disabled} className="my-1" />}
           {files.length === 0 && disabled && <div>{emptyMessage}</div>}
-        </label>
+        </div>
       </div>
 
       <input
@@ -200,8 +212,8 @@ export function AppFileInput({
         data-testid={inputTestId}
       />
       <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
-        <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
+        <AppInputHelper id={accessibility.helperId} helper={helper} />
+        <AppInputErrorsList id={accessibility.errorId} errors={errors} data-testid={errorsTestId} />
       </div>
     </div>
   );

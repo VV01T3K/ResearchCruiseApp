@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
-import { refreshSession, subscribeAuthDetails } from '@/api/client/auth-session';
+import { refreshSession, subscribeAuthDetails } from '@/integrations/auth/session';
 import { getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
 import { setSentryUser } from '@/integrations/sentry/client';
@@ -44,7 +44,7 @@ export function AuthSession() {
     if (!authDetails?.refreshTokenExpirationDate) return;
 
     const checkExpiration = () => {
-      if (new Date() >= authDetails.refreshTokenExpirationDate) void signOut();
+      if (Date.now() >= Date.parse(authDetails.refreshTokenExpirationDate)) void signOut();
     };
     checkExpiration();
     const interval = setInterval(checkExpiration, 5000);
@@ -55,7 +55,7 @@ export function AuthSession() {
 
   return (
     <SessionExpirationWarning
-      expirationDate={authDetails.refreshTokenExpirationDate}
+      expirationDate={new Date(authDetails.refreshTokenExpirationDate)}
       onRefreshSession={refresh}
       onSignOut={signOut}
     />

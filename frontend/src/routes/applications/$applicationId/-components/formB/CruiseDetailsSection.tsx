@@ -45,7 +45,6 @@ const shortResearchEquipmentColumns = (
           <field.DateField
             data-testid-button="short-equipment-from-button"
             data-testid-errors="short-equipment-from-errors"
-            onChange={(newValue) => field.handleChange(newValue ?? '')}
             disabled={isReadonly}
             minimalDate={allowPastDates ? undefined : new Date()}
           />
@@ -69,7 +68,6 @@ const shortResearchEquipmentColumns = (
               <field.DateField
                 data-testid-button="short-equipment-to-button"
                 data-testid-errors="short-equipment-to-errors"
-                onChange={(newValue) => field.handleChange(newValue ?? '')}
                 disabled={isReadonly}
                 selectionStartDate={startDate ? new Date(startDate) : undefined}
                 minimalDate={startDate ? new Date(startDate) : undefined}
@@ -223,7 +221,6 @@ const portColumns = (
           <field.DateField
             data-testid-button="port-from-button"
             data-testid-errors="port-from-errors"
-            onChange={(newValue) => field.handleChange(newValue ?? '')}
             disabled={isReadonly}
             type="datetime"
             minimalDate={allowPastDates ? undefined : new Date()}
@@ -248,7 +245,6 @@ const portColumns = (
               <field.DateField
                 data-testid-button="port-to-button"
                 data-testid-errors="port-to-errors"
-                onChange={(newValue) => field.handleChange(newValue ?? '')}
                 disabled={isReadonly}
                 type="datetime"
                 selectionStartDate={startTime ? new Date(startTime) : undefined}

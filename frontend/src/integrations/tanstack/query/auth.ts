@@ -10,20 +10,20 @@ import {
   SessionRefreshError,
   setSession,
   subscribeAuthDetails,
-  toAuthDetails,
-} from '@/api/client/auth-session';
-import { ApiError } from '@/api/client/custom-fetch';
-import type { Role, SignInResult, User } from '@/api/client/user';
+} from '@/integrations/auth/session';
+import { ApiError, getErrorMessage } from '@/api/fetch';
+import { toast } from '@/components/shared/layout/toast';
+import type { UserResponse } from '@/api/generated/schemas';
+import type { Role, SignInResult } from '@/integrations/auth/types';
 import { logout as logoutSession, useLogin, useLogout } from '@/api/generated/endpoints/auth.gen';
 import { getCurrentUser, getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
 
 export function currentUserQueryOptions() {
   return queryOptions({
     queryKey: getGetCurrentUserQueryKey(),
-    queryFn: async (): Promise<User | null> => {
+    queryFn: async (): Promise<UserResponse | null> => {
       try {
-        const user = await getCurrentUser();
-        return { ...user, roles: user.roles as Role[] };
+        return await getCurrentUser();
       } catch (error) {
         if (
           (error instanceof ApiError && error.status === 401) ||
@@ -58,7 +58,7 @@ export function useAuthDetails() {
   return authDetails;
 }
 
-export function isInRole(user: User | null, allowedRoles: Role | Role[]) {
+export function isInRole(user: UserResponse | null, allowedRoles: Role | Role[]) {
   const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
   return !!user && roles.some((role) => user.roles.includes(role));
 }
@@ -76,12 +76,13 @@ export function useSignIn() {
       return error instanceof ApiError && error.status === 401 ? 'invalid_credentials' : 'error';
     }
 
-    setSession(toAuthDetails(response));
+    setSession(response);
     try {
       const user = await queryClient.fetchQuery({ ...currentUserQueryOptions(), staleTime: 0 });
       if (!user) throw new Error('The authenticated account profile is unavailable');
       return 'success';
-    } catch {
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Nie udało się wczytać konta po zalogowaniu'));
       await prepareForLogout();
       await logoutSession().catch(() => undefined);
       clearSessionEverywhere(queryClient);

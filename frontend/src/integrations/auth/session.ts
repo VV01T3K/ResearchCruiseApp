@@ -1,11 +1,10 @@
 import type { TokenResponse } from '@/api/generated/schemas';
 import { refreshTokens } from '@/api/generated/endpoints/auth.gen';
-import type { AuthDetails } from '@/api/client/user';
 
-const subscribers = new Set<(details: AuthDetails | undefined) => void>();
-const concurrentRefreshWaiters = new Set<(details: AuthDetails) => void>();
-let refreshPromise: Promise<AuthDetails | undefined> | undefined;
-let session: AuthDetails | undefined;
+const subscribers = new Set<(details: TokenResponse | undefined) => void>();
+const concurrentRefreshWaiters = new Set<(details: TokenResponse) => void>();
+let refreshPromise: Promise<TokenResponse | undefined> | undefined;
+let session: TokenResponse | undefined;
 let sessionState: 'unknown' | 'authenticated' | 'anonymous' = 'unknown';
 let sessionRevision = 0;
 let authGeneration = 0;
@@ -26,7 +25,7 @@ authChannel?.addEventListener('message', (event: MessageEvent<AuthChannelMessage
     updateSession(undefined, false);
     return;
   }
-  if (!logoutInProgress && acceptBroadcastSessions) updateSession(toAuthDetails(event.data.session), false);
+  if (!logoutInProgress && acceptBroadcastSessions) updateSession(event.data.session, false);
 });
 
 export class SessionRefreshError extends Error {
@@ -39,15 +38,7 @@ export class SessionRefreshError extends Error {
   }
 }
 
-export function toAuthDetails(response: TokenResponse): AuthDetails {
-  return {
-    accessToken: response.accessToken,
-    accessTokenExpirationDate: new Date(response.accessTokenExpirationDate),
-    refreshTokenExpirationDate: new Date(response.refreshTokenExpirationDate),
-  };
-}
-
-function updateSession(details: AuthDetails | undefined, broadcast: boolean) {
+function updateSession(details: TokenResponse | undefined, broadcast: boolean) {
   session = details;
   sessionState = details ? 'authenticated' : 'anonymous';
   sessionRevision += 1;
@@ -56,16 +47,12 @@ function updateSession(details: AuthDetails | undefined, broadcast: boolean) {
   if (details && broadcast) {
     authChannel?.postMessage({
       type: 'session',
-      session: {
-        accessToken: details.accessToken,
-        accessTokenExpirationDate: details.accessTokenExpirationDate.toISOString(),
-        refreshTokenExpirationDate: details.refreshTokenExpirationDate.toISOString(),
-      },
+      session: details,
     } satisfies AuthChannelMessage);
   }
 }
 
-export function setSession(details: AuthDetails | undefined) {
+export function setSession(details: TokenResponse | undefined) {
   if (details) acceptBroadcastSessions = true;
   updateSession(details, true);
 }
@@ -74,20 +61,20 @@ export function getSession() {
   return session;
 }
 
-export function subscribeAuthDetails(subscriber: (details: AuthDetails | undefined) => void) {
+export function subscribeAuthDetails(subscriber: (details: TokenResponse | undefined) => void) {
   subscribers.add(subscriber);
   return () => {
     subscribers.delete(subscriber);
   };
 }
 
-async function refresh(): Promise<AuthDetails | undefined> {
+async function refresh(): Promise<TokenResponse | undefined> {
   const revisionBeforeRefresh = sessionRevision;
   const generationBeforeRefresh = authGeneration;
   try {
-    let details: AuthDetails;
+    let details: TokenResponse;
     try {
-      details = toAuthDetails(await refreshTokens());
+      details = await refreshTokens();
     } catch (error) {
       const status = typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
       if (status !== 409) throw error;
@@ -111,12 +98,12 @@ async function refresh(): Promise<AuthDetails | undefined> {
 function waitForConcurrentRefresh(revisionBeforeRefresh: number) {
   if (sessionRevision !== revisionBeforeRefresh && session) return Promise.resolve(session);
 
-  return new Promise<AuthDetails | undefined>((resolve) => {
+  return new Promise<TokenResponse | undefined>((resolve) => {
     const timeout = setTimeout(() => {
       concurrentRefreshWaiters.delete(onSession);
       resolve(undefined);
     }, 5_000);
-    const onSession = (details: AuthDetails) => {
+    const onSession = (details: TokenResponse) => {
       clearTimeout(timeout);
       concurrentRefreshWaiters.delete(onSession);
       resolve(details);
@@ -149,6 +136,6 @@ export function completeLogout() {
 
 export async function getValidAccessToken() {
   if (sessionState === 'anonymous') return undefined;
-  if (session && session.accessTokenExpirationDate.getTime() - Date.now() > 30_000) return session.accessToken;
+  if (session && Date.parse(session.accessTokenExpirationDate) - Date.now() > 30_000) return session.accessToken;
   return (await refreshSession())?.accessToken;
 }

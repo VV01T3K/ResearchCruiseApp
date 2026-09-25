@@ -1,3 +1,4 @@
+import { applicationFormPath, formContract, submissionSchema } from '@/integrations/tanstack/form/schema';
 import { z } from 'zod';
 
 import { FormCFields, FormCWriteRequest } from '@/api/generated/schemas';
@@ -54,7 +55,7 @@ import {
   UgTeamValuesInputSchema,
   UgTeamValuesSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
-import { FormAOptions } from '@/api/client/applications/types/FormAOptions';
+import { FormAOptions } from '@/api/generated/schemas';
 import {
   getResearchAreaValuesSchema,
   ResearchAreaValuesInputSchema,
@@ -84,6 +85,7 @@ export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
 };
 
 const FormCInputSchema = z.object({
+  draft: z.boolean().optional(),
   shipUsage: z.string(),
   differentUsage: z.string(),
   permissions: PermissionValuesInputSchema.array(),
@@ -108,6 +110,7 @@ const FormCInputSchema = z.object({
 export type FormCValues = z.input<typeof FormCInputSchema>;
 
 export const formCDefaultValues: FormCValues = {
+  draft: false,
   shipUsage: '',
   differentUsage: '',
   permissions: [],
@@ -244,7 +247,7 @@ function buildFormCWriteSchema(inputSchema: z.ZodType<FormCValues, FormCValues>,
           draft: boolean;
         }
     )
-    .pipe(FormCWriteRequest);
+    .pipe(formContract(FormCWriteRequest, applicationFormPath));
 }
 
 export function mapFormCToValues(form: FormCFields): FormCValues {
@@ -334,4 +337,8 @@ export function mapFormCToValues(form: FormCFields): FormCValues {
 function toNumber(value: string | null | undefined): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+export function getFormCSubmissionSchema(formAInitValues: FormAOptions) {
+  return submissionSchema(getFormCWriteSchema(formAInitValues), getFormCDraftWriteSchema());
 }

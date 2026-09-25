@@ -13,7 +13,7 @@ import {
   override,
 } from '@/routes/applications/$applicationId/-schemas/__tests__/schemaTestUtils';
 import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
-import type { FormAOptions } from '@/api/client/applications/types/FormAOptions';
+import type { FormAOptions } from '@/api/generated/schemas';
 
 const initValues = initValuesJson as unknown as FormAOptions;
 const schema = getFormCValidationSchema(initValues);

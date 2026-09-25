@@ -27,7 +27,6 @@ export function EmailConfirmationBadge({ email, emailConfirmed }: Props) {
             { data: { email } },
             {
               onSuccess: () => toast.success('Wiadomość potwierdzająca została wysłana ponownie'),
-              onError: () => toast.error('Nie udało się ponownie wysłać wiadomości potwierdzającej'),
             }
           )
         }

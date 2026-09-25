@@ -2,7 +2,7 @@ import { z as zod } from 'zod';
 import { ShipEquipmentOption } from './shipEquipmentOption.gen.ts';
 
 export const FormBOptions = zod.object({
-  "shipEquipments": zod.array(ShipEquipmentOption).optional()
+  "shipEquipments": zod.array(ShipEquipmentOption)
 });
 
 export type FormBOptions = zod.input<typeof FormBOptions>;

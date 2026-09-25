@@ -1,17 +1,17 @@
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
-import { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { ResearchTaskDetailsData } from './ResearchTaskDetails';
 
 type Props = {
-  data: ProjectResearchTaskValues;
+  data: ResearchTaskDetailsData;
 };
 export function ProjectResearchTaskDetails({ data }: Props) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <AppInput
         name="researchTasks[].title"
-        value={data.title}
+        value={data.title ?? ''}
         label="Tytuł"
         placeholder="Wprowadź tytuł"
         containerClassName="lg:col-span-2"
@@ -20,21 +20,22 @@ export function ProjectResearchTaskDetails({ data }: Props) {
 
       <AppMonthPickerInput
         name="researchTasks[].startDate"
-        value={data.startDate}
+        value={data.startDate ?? ''}
         label="Data rozpoczęcia"
         disabled={true}
       />
 
       <AppMonthPickerInput
         name="researchTasks[].endDate"
-        value={data.endDate}
+        value={data.endDate ?? ''}
         label="Data zakończenia"
         disabled={true}
       />
 
       <AppNumberInput
+        nullable
         name="researchTasks[].financingAmount"
-        value={data.financingAmount}
+        value={data.financingAmount == null ? null : Number(data.financingAmount)}
         type="float"
         minimum={0}
         label="Kwota finansowania [zł]"
@@ -42,8 +43,9 @@ export function ProjectResearchTaskDetails({ data }: Props) {
       />
 
       <AppNumberInput
+        nullable
         name="researchTasks[].securedAmount"
-        value={data.securedAmount}
+        value={data.securedAmount == null ? null : Number(data.securedAmount)}
         type="float"
         minimum={0}
         label="Środki zabezpieczone na realizację rejsu [zł]"

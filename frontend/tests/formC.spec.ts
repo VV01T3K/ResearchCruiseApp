@@ -61,6 +61,17 @@ async function expectSectionsInvalid(
 test('all sections valid', async ({ formCPage }) => {
   await formCPage.fillForm();
   await formCPage.submitForm({ expectedResult: 'valid' });
+  await expect(formCPage.submissionApprovedMessage).toHaveText('Formularz został wysłany pomyślnie.');
+});
+
+test('draft save confirms a draft rather than final submission', async ({ formCPage, page }) => {
+  await formCPage.fillForm();
+  const request = page.waitForRequest(
+    (request) => request.url() === `${API_URL}/v2/applications/${formCPage.formId}/form-c` && request.method() === 'PUT'
+  );
+  await page.getByRole('button', { name: 'Zapisz wersję roboczą' }).click();
+  expect((await request).postDataJSON().draft).toBe(true);
+  await expect(formCPage.submissionApprovedMessage).toHaveText('Formularz został zapisany jako wersja robocza');
 });
 
 test('all sections filled with invalid rows', async ({ formCPage }) => {

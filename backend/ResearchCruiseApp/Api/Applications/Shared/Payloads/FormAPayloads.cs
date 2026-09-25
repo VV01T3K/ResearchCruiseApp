@@ -128,6 +128,7 @@ public class FormAOptions
     public List<string> HistoricalGuestInstitutions { get; set; } = [];
 
     public List<SpubTaskFields> HistoricalSpubTasks { get; set; } = [];
+
     public List<PublicationFields> HistoricalPublications { get; set; } = [];
 }
 

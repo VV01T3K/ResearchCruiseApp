@@ -1,3 +1,4 @@
+import { useInputAccessibility } from '@/components/inputs/useInputAccessibility';
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
 import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
 import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
@@ -66,7 +67,8 @@ export function AppDatePickerInput({
   'data-testid-button': buttonTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
-  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(() => getDateFromValue(value));
+  const accessibility = useInputAccessibility(errors, helper);
+  const selectedDate = getDateFromValue(value);
   const [hoveredDate, setHoveredDate] = React.useState<Date | undefined>(undefined);
   const [expanded, setExpanded] = React.useState(false);
   const [visibleMonth, setVisibleMonth] = React.useState({
@@ -79,16 +81,11 @@ export function AppDatePickerInput({
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(null);
   const portalContainerRef = useCallback((node: HTMLDivElement | null) => setPortalContainer(node), []);
 
-  React.useEffect(() => {
-    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-    setSelectedDate(getDateFromValue(value));
-  }, [value]);
-
   useOutsideClickDetection({
     refs: [inputRef, dropdownRef],
     onOutsideClick: () => {
       setExpanded(false);
-      onBlur?.();
+      if (expanded) onBlur?.();
     },
   });
 
@@ -101,7 +98,6 @@ export function AppDatePickerInput({
   }
 
   function handleResetSelection(evt: React.MouseEvent) {
-    setSelectedDate(undefined);
     onChange?.(undefined);
     setExpanded(false);
     evt.stopPropagation();
@@ -134,7 +130,6 @@ export function AppDatePickerInput({
       newDate = maximalDate;
     }
 
-    setSelectedDate(newDate);
     onChange?.(getValueFromDate(newDate));
     if (type === 'date') {
       setExpanded(false);
@@ -144,12 +139,13 @@ export function AppDatePickerInput({
   return (
     <>
       <div className="flex flex-col" data-testid={testId}>
-        <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+        <AppInputLabel name={accessibility.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div ref={inputRef}>
           <input type="hidden" name={name} value={value} disabled={disabled} />
           <AppButton
             name={name}
-            aria-invalid={!!errors?.length}
+            disabled={disabled}
+            {...accessibility.control}
             variant="plain"
             onClick={handleInputClick}
             className={cn(
@@ -182,8 +178,8 @@ export function AppDatePickerInput({
           />
         </div>
         <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
-          <AppInputHelper helper={helper} />
-          <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
+          <AppInputHelper id={accessibility.helperId} helper={helper} />
+          <AppInputErrorsList id={accessibility.errorId} errors={errors} data-testid={errorsTestId} />
         </div>
       </div>
       <AnimatePresence>
@@ -246,7 +242,7 @@ export function AppDatePickerInput({
                     const newDate = new Date(selectedDate ?? new Date());
                     newDate.setHours(x?.hours ?? 0);
                     newDate.setMinutes(x?.minutes ?? 0);
-                    setSelectedDate(newDate);
+
                     onChange?.(getValueFromDate(newDate));
                   }}
                   onBlur={onBlur}

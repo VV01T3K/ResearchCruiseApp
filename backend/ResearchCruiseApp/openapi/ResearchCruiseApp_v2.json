@@ -3520,6 +3520,19 @@
         }
       },
       "CruiseApplicationCandidateResponse": {
+        "required": [
+          "id",
+          "number",
+          "year",
+          "cruiseManagerId",
+          "cruiseManagerFirstName",
+          "cruiseManagerLastName",
+          "deputyManagerId",
+          "hasFormA",
+          "hasFormB",
+          "hasFormC",
+          "points"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -3563,6 +3576,16 @@
         }
       },
       "CruiseApplicationEvaluation": {
+        "required": [
+          "formAResearchTasks",
+          "formAContracts",
+          "ugTeams",
+          "guestTeams",
+          "ugUnitsPoints",
+          "formAPublications",
+          "formASpubTasks",
+          "effectsPoints"
+        ],
         "type": "object",
         "properties": {
           "formAResearchTasks": {
@@ -4117,6 +4140,21 @@
         }
       },
       "FormAOptions": {
+        "required": [
+          "cruiseManagers",
+          "deputyManagers",
+          "years",
+          "shipUsages",
+          "standardSpubTasks",
+          "researchAreas",
+          "cruiseGoals",
+          "historicalResearchTasks",
+          "historicalContracts",
+          "ugUnits",
+          "historicalGuestInstitutions",
+          "historicalSpubTasks",
+          "historicalPublications"
+        ],
         "type": "object",
         "properties": {
           "cruiseManagers": {
@@ -4286,6 +4324,9 @@
         }
       },
       "FormBOptions": {
+        "required": [
+          "shipEquipments"
+        ],
         "type": "object",
         "properties": {
           "shipEquipments": {
@@ -4595,6 +4636,11 @@
         }
       },
       "NamedUgTeam": {
+        "required": [
+          "ugUnitName",
+          "noOfEmployees",
+          "noOfStudents"
+        ],
         "type": "object",
         "properties": {
           "ugUnitName": {
@@ -5139,6 +5185,11 @@
         }
       },
       "ScoredContract": {
+        "required": [
+          "id",
+          "contract",
+          "points"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -5154,6 +5205,11 @@
         }
       },
       "ScoredPublication": {
+        "required": [
+          "id",
+          "publication",
+          "points"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -5169,6 +5225,11 @@
         }
       },
       "ScoredResearchTask": {
+        "required": [
+          "id",
+          "researchTask",
+          "points"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -5184,6 +5245,11 @@
         }
       },
       "ScoredSpubTask": {
+        "required": [
+          "id",
+          "spubTask",
+          "points"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -5199,6 +5265,10 @@
         }
       },
       "ShipEquipmentOption": {
+        "required": [
+          "id",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -5324,6 +5394,10 @@
         }
       },
       "UgUnitOption": {
+        "required": [
+          "id",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -5403,6 +5477,12 @@
         }
       },
       "UserOption": {
+        "required": [
+          "id",
+          "email",
+          "firstName",
+          "lastName"
+        ],
         "type": "object",
         "properties": {
           "id": {

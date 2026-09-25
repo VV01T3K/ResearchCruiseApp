@@ -2,8 +2,6 @@ import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { getApplications, getGetApplicationsQueryKey } from '@/api/generated/endpoints/applications.gen';
 import type { GetApplicationsParams } from '@/api/generated/schemas';
 
-export { useGetApplicationManagersSuspense as useCruiseApplicationManagersQuery } from '@/api/generated/endpoints/applications.gen';
-
 export type CruiseApplicationsFilter = Pick<
   GetApplicationsParams,
   'number' | 'date' | 'status' | 'year' | 'cruiseManager'

@@ -2,12 +2,12 @@ import React from 'react';
 
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppGuard } from '@/components/shared/AppGuard';
-import { Role } from '@/api/client/user';
+import { Role } from '@/integrations/auth/types';
 import { AcceptButton } from './actions/AcceptButton';
 import { RejectButton } from './actions/RejectButton';
 import { RejectConfirmation } from './actions/RejectConfirmation';
 import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
-import { ApplicationStatus } from '@/api/client/applications/models';
+import { CruiseApplicationStatus } from '@/api/generated/schemas';
 
 type Props = {
   onAccept: () => void;
@@ -26,13 +26,13 @@ export function ActionsSection({ onAccept, onReject }: Props) {
   }
 
   switch (application.status) {
-    case ApplicationStatus.WaitingForSupervisor:
+    case CruiseApplicationStatus.enum.waitingForSupervisor:
       return (
         <AppActionsSection>
           <RejectButton setConfirmationMode={setConfirmationMode} />
         </AppActionsSection>
       );
-    case ApplicationStatus.AcceptedBySupervisor:
+    case CruiseApplicationStatus.enum.acceptedBySupervisor:
       return (
         <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
           <AppActionsSection>

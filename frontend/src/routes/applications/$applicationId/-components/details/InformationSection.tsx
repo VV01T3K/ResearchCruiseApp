@@ -4,12 +4,14 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
-import { ApplicationStatus, getApplicationStatusLabel } from '@/api/client/applications/models';
+import { CruiseApplicationStatus } from '@/api/generated/schemas';
+import { getApplicationStatusLabel } from '@/lib/applications/status';
 
 export function InformationSection() {
   const application = useApplication();
   const isFormBReadOnly =
-    application.status !== ApplicationStatus.FormBFilled && application.status !== ApplicationStatus.Undertaken;
+    application.status !== CruiseApplicationStatus.enum.formBFilled &&
+    application.status !== CruiseApplicationStatus.enum.undertaken;
 
   return (
     <AppAccordion title="1. Informacje o zgłoszeniu" expandedByDefault>

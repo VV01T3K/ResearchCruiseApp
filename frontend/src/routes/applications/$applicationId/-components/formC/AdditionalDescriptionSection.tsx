@@ -21,7 +21,6 @@ export function AdditionalDescriptionSection({ context }: { context: FormCViewMo
         name="additionalDescription"
         children={(field) => (
           <field.TextField
-            onChange={field.setValue}
             type="textarea"
             className="h-48"
             label="Dodatkowy opis"

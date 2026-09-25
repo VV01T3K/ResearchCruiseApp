@@ -1,17 +1,16 @@
+import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { z } from 'zod';
 import { loginValidationSchema } from '@/validation/auth';
 import { allowOnly } from '@/lib/guards';
-import { revalidateLogic, useForm } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
-import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useSignIn } from '@/integrations/tanstack/query/auth';
-import { SignInResult } from '@/api/client/user';
+import { SignInResult } from '@/integrations/auth/types';
 
 export const Route = createFileRoute('/(auth)/login')({
   component: LoginPage,
@@ -31,12 +30,12 @@ function LoginPage() {
   const { redirect } = Route.useSearch();
   const [signInResult, setSignInResult] = React.useState<SignInResult | undefined>(undefined);
 
-  const form = useForm({
+  const form = useAppForm({
     defaultValues: {
       email: '',
       password: '',
     },
-    validationLogic: revalidateLogic({ mode: 'change', modeAfterSubmission: 'change' }),
+    validationLogic: formValidationLogic,
     validators: {
       onDynamic: loginValidationSchema,
     },
@@ -44,11 +43,11 @@ function LoginPage() {
       trackFormSubmit('login', 'valid', formApi.state);
 
       setSignInResult(undefined);
-      const result = await signIn(value.email, value.password);
+      const result = await signIn(loginValidationSchema.parse(value).email, value.password);
 
       if (result !== 'success') {
         setSignInResult(result);
-        return;
+        throw new Error(errorMessages[result]);
       }
 
       await router.invalidate();
@@ -62,42 +61,24 @@ function LoginPage() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    form.handleSubmit();
+    void form.handleSubmit().catch(() => {});
   }
 
   return (
     <AppLayout title="Logowanie" variant="narrow" disableBackButton data-testid="login-page-title">
       <form onSubmit={handleSubmit} className="px-4">
         <div className="space-y-4">
-          <form.Field
+          <form.AppField
             name="email"
             children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="email"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                label="E-mail"
-                data-testid="login-email-input"
-              />
+              <field.FloatingTextField type="email" label="E-mail" data-testid="login-email-input" />
             )}
           />
 
-          <form.Field
+          <form.AppField
             name="password"
             children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="password"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                label="Hasło"
-                data-testid="login-password-input"
-              />
+              <field.FloatingTextField type="password" label="Hasło" data-testid="login-password-input" />
             )}
           />
 

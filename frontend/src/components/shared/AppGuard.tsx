@@ -1,4 +1,4 @@
-import { Role } from '@/api/client/user';
+import { Role } from '@/integrations/auth/types';
 import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
 
 type Props = {

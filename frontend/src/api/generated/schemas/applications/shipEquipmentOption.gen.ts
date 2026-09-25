@@ -4,8 +4,8 @@ export const shipEquipmentOptionIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-
 
 
 export const ShipEquipmentOption = zod.object({
-  "id": zod.string().regex(shipEquipmentOptionIdRegExp).optional(),
-  "name": zod.string().optional()
+  "id": zod.string().regex(shipEquipmentOptionIdRegExp),
+  "name": zod.string()
 });
 
 export type ShipEquipmentOption = zod.input<typeof ShipEquipmentOption>;

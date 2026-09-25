@@ -9,7 +9,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { AppTabs } from '@/components/shared/AppTabs';
 import { toast } from '@/components/shared/layout/toast';
-import { Role } from '@/api/client/user';
+import { Role } from '@/integrations/auth/types';
 import { Calendar } from './-components/Calendar';
 import { ExportForm } from './-components/ExportForm';
 import { TableView } from './-components/TableView';
@@ -33,9 +33,6 @@ function CruisesPage() {
     await autoAddCruisesMutation.mutateAsync(undefined, {
       onSuccess: () => {
         toast.success('Rejsy zostały dodane automatycznie');
-      },
-      onError: () => {
-        toast.error('Proces dodawania rejsów automatycznie zakończył się niepowodzeniem');
       },
     });
   }

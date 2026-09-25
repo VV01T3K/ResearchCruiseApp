@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { Role, getRoleLabel } from '@/api/client/user';
+import { Role, getRoleLabel } from '@/integrations/auth/types';
 import { RowSelectionState } from '@tanstack/react-table';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import React from 'react';
@@ -12,7 +12,8 @@ import { AppModal } from '@/components/shared/AppModal';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { cn } from '@/lib/utils';
-import { User } from '@/api/client/user';
+import type { UserResponse } from '@/api/generated/schemas';
+
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { GroupActionsSection } from './-components/GroupActionsSection';
 import { RoleBadge } from './-components/RoleBadge';
@@ -28,7 +29,7 @@ type ModalStates =
   | { state: 'none' }
   | { state: 'newUserModal' }
   | { state: 'groupActionsModal' }
-  | { state: 'editUserModal'; user: User };
+  | { state: 'editUserModal'; user: UserResponse };
 
 const allowedRoles: Record<Role, Role[]> = {
   [Role.Administrator]: [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.Guest, Role.ShipCrew],
@@ -52,7 +53,7 @@ function UserManagementPage() {
     await usersQuery.refetch();
   }
 
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<UserResponse>[] = [
     {
       id: 'selector',
       header: ({ table }) => (
@@ -196,7 +197,7 @@ function UserManagementPage() {
         title="Edytuj użytkownika"
       >
         <EditForm
-          user={(modalState as { state: 'editUserModal'; user: User }).user}
+          user={(modalState as { state: 'editUserModal'; user: UserResponse }).user}
           allUsers={usersQuery.data}
           allowedRoles={allowedRoles[currentUserRole]}
           close={() => handleModalClose()}

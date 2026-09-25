@@ -4,13 +4,11 @@ import { OwnResearchTaskThumbnail } from '@/routes/applications/$applicationId/-
 import { ProjectPreparationResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ProjectPreparationResearchTaskThumbnail';
 import { ProjectResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ProjectResearchTaskThumbnail';
 import { ThesisResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ThesisResearchTaskThumbnail';
-import {
-  ResearchTaskValues,
-  ResearchTaskType,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { ResearchTaskFields } from '@/api/generated/schemas';
+import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  task: ResearchTaskValues;
+  task: ResearchTaskFields;
 };
 export function ResearchTaskThumbnail({ task }: Props) {
   switch (task.type) {

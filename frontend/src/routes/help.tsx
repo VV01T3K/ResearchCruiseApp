@@ -1,7 +1,8 @@
+import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute } from '@tanstack/react-router';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { allowOnly } from '@/lib/guards';
-import { useForm } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import BuildingFillIcon from 'bootstrap-icons/icons/building-fill.svg?react';
 import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
 import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
@@ -11,7 +12,6 @@ import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
 import config from '@/config';
 
@@ -26,13 +26,14 @@ const validationSchema = z.object({
 });
 
 function HelpPage() {
-  const form = useForm({
+  const form = useAppForm({
     defaultValues: {
       title: '',
       content: '',
     },
+    validationLogic: formValidationLogic,
     validators: {
-      onChange: validationSchema,
+      onDynamic: validationSchema,
     },
     onSubmit: ({ value }) => {
       window.open(
@@ -53,7 +54,7 @@ function HelpPage() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    form.handleSubmit();
+    void form.handleSubmit().catch(() => {});
   }
 
   return (
@@ -69,33 +70,11 @@ function HelpPage() {
             <AppLink href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</AppLink>.
           </p>
           <form className="flex flex-col space-y-4 p-4" onSubmit={handleSubmit}>
-            <form.Field
-              name="title"
-              children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  type="text"
-                  onBlur={field.handleBlur}
-                  onChange={field.handleChange}
-                  label="Tytuł"
-                />
-              )}
-            />
+            <form.AppField name="title" children={(field) => <field.TextField type="text" label="Tytuł" />} />
 
-            <form.Field
+            <form.AppField
               name="content"
-              children={(field) => (
-                <AppInput
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={field.handleChange}
-                  label="Wiadomość"
-                  className="h-48"
-                  type="textarea"
-                />
-              )}
+              children={(field) => <field.TextField label="Wiadomość" className="h-48" type="textarea" />}
             />
 
             <div className="mt-8">
