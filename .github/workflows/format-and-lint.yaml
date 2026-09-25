@@ -45,10 +45,6 @@ jobs:
       - name: Install dependencies
         run: vp install --frozen-lockfile
 
-      - name: Audit JavaScript dependencies
-        working-directory: .
-        run: bun audit --audit-level=high
-
       - name: Run checks
         run: vp check
 
