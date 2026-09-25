@@ -18,6 +18,14 @@ email, run `docker cp researchcruiseapp-backend:/tmp/fake-emails ./fake-emails`.
 
 ## Rollout and rotation
 
+The team needs access to the sending Google account, its recovery methods, and
+two step verification, not just the current SMTP password. Google requires two
+step verification for app passwords and revokes app passwords when the account
+password changes. Account or organization policy can make app passwords
+unavailable; check eligibility before relying on a replacement mailbox. See
+[Google's app password instructions](https://support.google.com/accounts/answer/185833?hl=en).
+The account password itself is not the SMTP app password.
+
 1. Create a fresh [Gmail app password](https://support.google.com/accounts/answer/185833?hl=en)
    and configure it in Komodo before merging to staging, which automatically deploys.
    GitHub Actions secrets alone do not populate the Komodo stack environment.
@@ -35,6 +43,18 @@ Email is queued with its related database changes and delivered by a background
 worker. SMTP failures retry; queue persistence failures roll back the related
 changes. See [email delivery](email-delivery.md) for retry limits, monitoring,
 key storage, and recovery.
+
+For missing mail, first check whether the backend started and queued the message.
+Then inspect worker errors and outbox state, Gmail authentication, outbound port
+465 connectivity, and the controlled recipient's spam folder or rejection notice.
+A password change on the Google account is a possible cause of sudden SMTP
+authentication failures. Check sending limits/account restrictions if authentication
+works but delivery fails. Do not dump message payloads or credentials into a PR.
+
+After replacing credentials, recreate the backend and let pending eligible messages
+retry. Terminal failures need a new business action, such as requesting another
+password reset; do not reset queue columns to replay an expired message. Verify
+both arrival and the public URL in the delivered link.
 
 ## Startup validation
 
