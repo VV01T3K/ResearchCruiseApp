@@ -1,11 +1,16 @@
 {
   "name": "research-cruise-app",
   "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
     "dev": "vp run -r dev",
     "skills:install": "vp dlx skills experimental_install -y",
     "build": "vp run --cache -r build",
     "check": "vp run --cache -r check",
+    "audit": "bun audit --audit-level=high && vp run -F backend audit",
     "fix": "vp run --cache -r fix",
     "gen": "vp run -F frontend gen",
     "seed": "vp run -F backend seed",
@@ -15,12 +20,8 @@
     "ef:migration:remove": "vp run -F backend ef:migration:remove"
   },
   "devDependencies": {
+    "@socketsecurity/bun-security-scanner": "1.1.2",
     "lefthook": "^2.1.5"
   },
-  "packageManager": "pnpm@10.33.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "lefthook"
-    ]
-  }
+  "packageManager": "bun@1.3.11"
 }

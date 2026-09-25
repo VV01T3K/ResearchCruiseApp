@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>high</NuGetAuditLevel>
+    <!-- Fail CI on high/critical vulnerabilities or an unavailable audit source. -->
+    <WarningsAsErrors Condition="'$(CI)' == 'true'"
+      >$(WarningsAsErrors);NU1900;NU1903;NU1904;NU1905</WarningsAsErrors
+    >
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestoreLockedMode Condition="'$(CI)' == 'true'">true</RestoreLockedMode>
+  </PropertyGroup>
+</Project>

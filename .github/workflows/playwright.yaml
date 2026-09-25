@@ -31,6 +31,7 @@ jobs:
         with:
           working-directory: frontend
           node-version-file: .node-version
+          run-install: false
           cache: true
 
       - name: Install dependencies
