@@ -2,6 +2,12 @@
 
 Prepared 2026-09-25. This document is intentionally in the repository at the user's explicit request, overriding the handoff skill's default external location.
 
+## PR and immediate repository state
+
+Draft PR: https://github.com/VV01T3K/ResearchCruiseApp/pull/430. Implementation and original handoff were pushed in `4c644c25227b0c3539fc87058b041c20464640ac`; earlier specification commits are included in the branch. Source baseline is recorded in the scenario ledger.
+
+On 2026-09-25, GitHub reported `mergeable: CONFLICTING` against `staging` and an empty `statusCheckRollup`. This is a fresh observation after PR creation, not a diagnosed conflict list or proof that no workflow can run. Before claiming PR readiness, fetch current refs, inspect and resolve integration conflicts while preserving both sides' intended behavior, rerun the full gate, and inspect hosted checks. No conflict resolution has been attempted in this session. Keep the PR draft while acceptance work remains.
+
 ## Resume here
 
 Continue the backend testing and tooling work on branch `feature/backend-quality-baseline`, targeting `staging`. This is an incomplete implementation submitted as a draft PR, not an accepted testing baseline. Do not merge or deploy without further authorization.
@@ -29,11 +35,21 @@ Local ignored evidence: `backend/artifacts/evidence/form-a-atomic-workspace.{log
 
 Keep all 78 legacy tests in the gate until individual dispositions and replacements are reviewed. Do not invent outcomes for repeated supervisor decisions, conflicting role precedence or concurrent numbering; unresolved decisions are recorded in the ledger. Existing authorization includes tests at HTTP and real SQL seams. No additional approval is needed for routine tests or reversible fixes.
 
+## Reading the ledger correctly
+
+Several original scenario entries still say execution pending, followed later by their actual focused and combined run evidence. Read all occurrences of a scenario ID before treating it as unexecuted. Maintainer review remains pending even when later execution is green.
+
+The accepted single-role form ownership decision is documented in the ledger and implemented in `FormAccessTests`: consult it before changing shipowner or administrator permissions. It does not resolve conflicting multi-role precedence. Scoring coverage currently covers only the funding slice; its ledger entries explicitly leave other categories, completed-cruise effects and aggregate overflow open. Continue the specification-to-scenario audit rather than treating the test count as completion.
+
 ## Operational notes
 
 Windows PowerShell launches tools in Ubuntu with `wsl -d Ubuntu --cd <checkout> --exec ...`. Docker Desktop must be available to WSL for SQL Testcontainers. Ubuntu was restarted with user permission earlier after even `/bin/true` failed; it is currently working. Do not restart it routinely.
 
 For multiline shell scripts, write LF text without a BOM to a local ignored evidence file, then execute that file with WSL bash. Piping PowerShell here-strings into bash previously produced encoding problems. Run focused tests from `backend` using `dotnet run --project ResearchCruiseApp.IntegrationTests -c Release -- --filter-class '*ClassName' --report-trx --results-directory artifacts/tests/<run>`. Follow `docs/backend-development.md` for complete checks.
+
+The focused test runner is xUnit v3/Microsoft Testing Platform: use `--filter-class` or `--filter-method`, not VSTest `--filter`. Run CSharpier from `backend`, where the local tool manifest applies. In a non-login WSL shell, the session used `export PATH="$HOME/.dotnet:$HOME/.local/bin:$PATH"`; root checks were launched through `bash -lc` to load the installed tooling. Use fresh evidence paths so an earlier successful exit file cannot be mistaken for a new result.
+
+GitHub CLI was authenticated and could push the branch and create the draft PR. This WSL clone lacked a Git author identity. The implementation commit used command-scoped `user.name` and `user.email` from the preceding branch commit; global Git configuration was not changed. Recheck identity before the next commit. No credentials belong in documentation or tool output.
 
 The user expects action and frequent concise updates, and has repeatedly had to ask whether work was continuing. Report findings and continue authorized work. Avoid invented hyphenated compounds in prose. No agents should be spawned unless the user or applicable instructions explicitly authorize delegation.
 
