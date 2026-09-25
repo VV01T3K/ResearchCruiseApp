@@ -26,7 +26,9 @@ To display all known NuGet vulnerabilities, including transitive dependencies:
 dotnet package list --project backend/ResearchCruiseApp.sln --vulnerable --include-transitive
 ```
 
-CI runs audits on pushes, pull requests and every Monday. Build and test results
+CI runs audits on pushes, pull requests and every Monday. The JavaScript audit
+has its own job so audit failures do not stop frontend formatting, linting or
+generated API checks. Build and test results
 still determine whether a dependency update is usable. Audit failures must be
 investigated rather than suppressed to get a green build.
 
