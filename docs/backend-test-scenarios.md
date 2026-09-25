@@ -19,7 +19,7 @@ Each entry records:
 
 ## Remaining acceptance work (2026-09-25)
 
-- Complete the requirement-to-scenario audit and missing P0/P1 cases. The Form A final submission through first supervisor and office decisions is now exercised. Remaining gaps include Form A transaction failure boundaries, scoring categories/effects beyond the current funding slice, and remaining account/file boundaries. Passing examples do not establish coverage of an entire family.
+- Complete the requirement-to-scenario audit and missing P0/P1 cases. The Form A final submission through first supervisor and office decisions is now exercised. Form A outbox failure rollback and retry are exercised in BE-ATOMIC-002. Remaining gaps include populated Form B/C replacement and transaction boundaries, scoring categories/effects and aggregate overflow beyond the current funding slice, and remaining account/file boundaries. Passing examples do not establish coverage of an entire family.
 - Resolve repeated supervisor decisions, conflicting role precedence, and concurrent numbering outcomes with the product owner. These remain explicit needs-decision entries below.
 - Review all 78 legacy cases individually, map replacements or justified retirements, and complete the runner cutover only after dispositions are accepted. Keep legacy execution in the gate meanwhile.
 - Exercise hosted CI on the same revision, prove a failed check blocks image publication/deployment, and configure/verify required checks for main and staging. Local YAML validation is insufficient.
