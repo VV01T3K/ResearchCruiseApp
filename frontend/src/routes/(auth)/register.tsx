@@ -1,3 +1,5 @@
+import { getErrorMessage } from '@/api/errors';
+import { toast } from '@/components/shared/layout/toast';
 import { RegisterAccountRequest } from '@/api/generated/schemas';
 import { formContract } from '@/integrations/tanstack/form/schema';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
@@ -57,7 +59,10 @@ function RegisterPage() {
   const { mutateAsync } = useRegisterAccount({
     mutation: {
       onSuccess: () => setResult('success'),
-      onError: (error) => setResult(getProblemDetail(error, '').includes('taken') ? 'username-taken' : 'error'),
+      onError: (error) => {
+        setResult(getProblemDetail(error, '').includes('taken') ? 'username-taken' : 'error');
+        toast.error(getErrorMessage(error, 'Rejestracja nie powiod\u0142a si\u0119'));
+      },
     },
   });
   const form = useAppForm({

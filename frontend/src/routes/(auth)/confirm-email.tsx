@@ -1,3 +1,5 @@
+import { getErrorMessage } from '@/api/errors';
+import { toast } from '@/components/shared/layout/toast';
 import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -27,7 +29,10 @@ function ConfirmEmailPage() {
   const { mutate } = useMutation({
     mutationFn: ({ userId, code }: { userId: string; code: string }) => confirmEmail({ userId, code }),
     onSuccess: () => setResult('success'),
-    onError: () => setResult('error'),
+    onError: (error) => {
+      setResult('error');
+      toast.error(getErrorMessage(error, 'Operacja nie powiod\u0142a si\u0119'));
+    },
   });
 
   React.useEffect(() => {

@@ -34,9 +34,6 @@ function CruisesPage() {
       onSuccess: () => {
         toast.success('Rejsy zostały dodane automatycznie');
       },
-      onError: () => {
-        toast.error('Proces dodawania rejsów automatycznie zakończył się niepowodzeniem');
-      },
     });
   }
 

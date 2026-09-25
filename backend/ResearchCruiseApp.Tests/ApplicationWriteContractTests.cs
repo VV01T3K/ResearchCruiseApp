@@ -22,6 +22,52 @@ public sealed class ApplicationWriteContractTests
     }
 
     [Fact]
+    public void GuaranteedResponsePropertiesDoNotBecomeDeserializationRequirements()
+    {
+        Assert.Empty(JsonSerializer.Deserialize<FormAOptions>("{}")!.CruiseManagers);
+        var path = Path.GetFullPath(
+            "../../../../ResearchCruiseApp/openapi/ResearchCruiseApp_v2.json",
+            AppContext.BaseDirectory
+        );
+        using var document = JsonDocument.Parse(File.ReadAllText(path));
+        var schemas = document.RootElement.GetProperty("components").GetProperty("schemas");
+        var options = schemas.GetProperty("FormAOptions");
+        Assert.Equal(
+            options.GetProperty("properties").EnumerateObject().Count(),
+            options.GetProperty("required").GetArrayLength()
+        );
+        Assert.False(schemas.GetProperty("FormAFields").TryGetProperty("required", out _));
+        Assert.False(schemas.GetProperty("PermissionFields").TryGetProperty("required", out _));
+    }
+
+    [Fact]
+    public void DraftRequestsAllowPartiallyFilledNestedObjects()
+    {
+        var formA = JsonSerializer.Deserialize<FormAWriteRequest>(
+            """{"Form":{"CruiseHours":"0","Permissions":[{"Description":"started"}],"ResearchTasks":[{"Type":"0","Title":"started"}],"Contracts":[{"Category":"0"}],"Publications":[{"Title":"started"}]},"Draft":true}"""
+        )!;
+        var formB = JsonSerializer.Deserialize<FormBWriteRequest>(
+            """{"Form":{"Permissions":[{"Description":"started"}],"CrewMembers":[{"FirstName":"Anna"}],"CruiseDaysDetails":[{"TaskName":"started"}],"ResearchEquipments":[{"Name":"started"}]},"Draft":true}"""
+        )!;
+        var formC = JsonSerializer.Deserialize<FormCWriteRequest>(
+            """{"Form":{"Permissions":[{}],"CollectedSamples":[{"Type":"water"}],"CruiseDaysDetails":[{"TaskName":"started"}]},"Draft":true}"""
+        )!;
+        Assert.True(new FormAWriteRequestValidator(FileInspector).Validate(formA).IsValid);
+        Assert.True(new FormBWriteRequestValidator(FileInspector).Validate(formB).IsValid);
+        Assert.True(new FormCWriteRequestValidator(FileInspector).Validate(formC).IsValid);
+        Assert.False(
+            new FormBWriteRequestValidator(FileInspector)
+                .Validate(formB with { Draft = false })
+                .IsValid
+        );
+        Assert.False(
+            new FormCWriteRequestValidator(FileInspector)
+                .Validate(formC with { Draft = false })
+                .IsValid
+        );
+    }
+
+    [Fact]
     public void DraftRequestsAllowIncompleteValuesWhenEveryKeyIsPresent()
     {
         var formAResult = new FormAWriteRequestValidator(FileInspector).Validate(

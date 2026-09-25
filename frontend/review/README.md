@@ -15,7 +15,7 @@ The recording is written to `artifacts/forms-review/` at the repository root. It
 ## Implementation
 
 - `api/generated/` supplies endpoint functions, query hooks, request schemas and response types. `api/fetch.ts` only handles HTTP transport and authentication. Response normalization modules and the `api/client/` directory have been removed.
-- Backend response metadata marks properties returned in every response as required. Regenerate with `vp run gen` after updating the OpenAPI snapshot. No database migration is involved.
+- An OpenAPI transformer documents guaranteed properties of an explicit set of response DTOs. It does not change JSON deserialization or draft request requirements. Regenerate with `vp run gen` after updating the OpenAPI snapshot. No database migration is involved.
 - `integrations/tanstack/form/fields.tsx` registers `AppField` adapters. The input components take ordinary props and can render outside a form.
 - Editable schemas retain Polish business messages and transform into generated request schemas. Parse explicitly when submitting: TanStack validation does not replace the submitted values with Zod's transformed output.
 - Application draft intent lives in form state. Draft and final saves share TanStack's validation/submission lifecycle, with separate schemas. Drafts still use the existing API/storage contract.

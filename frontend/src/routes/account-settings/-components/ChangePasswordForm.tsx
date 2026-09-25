@@ -1,3 +1,5 @@
+import { getErrorMessage } from '@/api/errors';
+import { toast } from '@/components/shared/layout/toast';
 import { ChangePasswordRequest } from '@/api/generated/schemas';
 import { formContract } from '@/integrations/tanstack/form/schema';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
@@ -39,7 +41,10 @@ export function ChangePasswordForm() {
   const { mutateAsync } = useChangeCurrentUserPassword({
     mutation: {
       onSuccess: () => setResult('success'),
-      onError: () => setResult('error'),
+      onError: (error) => {
+        setResult('error');
+        toast.error(getErrorMessage(error, 'Operacja nie powiod\u0142a si\u0119'));
+      },
     },
   });
   const form = useAppForm({

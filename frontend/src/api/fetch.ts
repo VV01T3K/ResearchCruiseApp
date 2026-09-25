@@ -1,28 +1,10 @@
 import config from '@/config';
 import type { ProblemDetails } from '@/api/generated/schemas';
 import { getValidAccessToken, refreshSession } from '@/integrations/auth/session';
-
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    readonly status: number,
-    readonly problem?: ProblemDetails
-  ) {
-    super(message);
-    this.name = 'ApiError';
-  }
-}
+import { ApiError, responseErrorMessage } from './errors';
+export { ApiError, getProblemDetail, getErrorMessage } from './errors';
 
 export type ErrorType<_Error> = ApiError;
-
-export function getProblemDetail(error: unknown, fallback: string) {
-  return error instanceof ApiError ? (error.problem?.detail ?? fallback) : fallback;
-}
-
-export function getErrorMessage(error: unknown, context: string) {
-  const detail = error instanceof Error && error.message ? error.message : 'Nieznany błąd';
-  return `${context}: ${detail}`;
-}
 
 async function parseResponse(response: Response) {
   if (response.status === 204 || response.status === 205) return null;
@@ -54,7 +36,7 @@ export async function customFetch<T>(url: string, options: RequestInit): Promise
   const body = await parseResponse(response);
   if (!response.ok) {
     const problem = typeof body === 'object' && body !== null ? (body as ProblemDetails) : undefined;
-    throw new ApiError(problem?.detail ?? `Request failed with status ${response.status}`, response.status, problem);
+    throw new ApiError(responseErrorMessage(response.status, body), response.status, problem);
   }
 
   return body as T;

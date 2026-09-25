@@ -62,9 +62,6 @@ export function Calendar({ cruises, buttons }: Props) {
         onSuccess: () => {
           toast.success('Termin rejsu został zmieniony.');
         },
-        onError: () => {
-          toast.error('Nie udało się zmienić terminu rejsu.');
-        },
       }
     );
   }

@@ -59,6 +59,49 @@ test('draft save confirms a draft rather than final submission', async ({ formBP
   await expect(formBPage.submissionApprovedMessage).toHaveText('Formularz został zapisany jako wersja robocza');
 });
 
+test('failed draft saves explain the reason and retain partial rows for retry', async ({ formBPage, page }) => {
+  await formBPage.fillForm();
+  await formBPage.sections.cruiseDayDetailsSection.addTaskButton.click();
+  const task = page.getByTestId('cruise-day-task-name-input').first();
+  await task.fill('Niedokończone zadanie');
+  const save = page.getByRole('button', { name: 'Zapisz wersję roboczą' });
+  const failures = [
+    {
+      status: 400,
+      body: { errors: { Form: ['Nieprawidłowy stan wersji roboczej'] } },
+      reason: 'Nieprawidłowy stan wersji roboczej',
+    },
+    {
+      status: 400,
+      body: { errors: { 'Form.UnknownField': ['Nieprawidłowe powiązanie'] } },
+      reason: 'Nieprawidłowe powiązanie',
+    },
+    {
+      status: 403,
+      body: { detail: 'Obecnie nie można przesłać formularza B.' },
+      reason: 'Obecnie nie można przesłać formularza B.',
+    },
+    { status: 413, body: null, reason: 'Przesyłane dane są zbyt duże' },
+    { status: 429, body: null, reason: 'Wysłano zbyt wiele żądań' },
+    { status: 502, body: null, reason: 'Błąd serwera (502)' },
+  ];
+  let failure = failures[0];
+  await page.route(`${API_URL}/v2/applications/${formBPage.formId}/form-b`, (route) =>
+    route.request().method() === 'PUT'
+      ? route.fulfill({ status: failure.status, json: failure.body })
+      : route.fallback()
+  );
+  for (failure of failures) {
+    await save.click();
+    await expect(page.getByTestId('toast-error').filter({ hasText: failure.reason }).first()).toBeVisible();
+    await expect(task).toHaveValue('Niedokończone zadanie');
+    await expect(page).toHaveURL(/\/formB\?mode=edit$/);
+  }
+  await page.route(`${API_URL}/v2/applications/${formBPage.formId}/form-b`, (route) => route.fulfill({ status: 201 }));
+  await save.click();
+  await expect(formBPage.submissionApprovedMessage).toContainText('wersja robocza');
+});
+
 test('all sections filled with invalid rows', async ({ formBPage }) => {
   // Every list-based section gets one row with empty required fields and negative counts
   await formBPage.fillForm({ withInvalidRows: true });

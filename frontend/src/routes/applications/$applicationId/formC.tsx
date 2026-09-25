@@ -25,7 +25,7 @@ import {
   useGetApplicationFormBContextSuspense,
   useUpdateApplicationFormC,
 } from '@/api/generated/endpoints/applications.gen';
-import { ApiError, getErrorMessage } from '@/api/fetch';
+import { getErrorMessage } from '@/api/fetch';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
@@ -50,7 +50,7 @@ function FormCPage() {
   const formAInitValues = useGetApplicationFormAContextSuspense();
   const formBInitValues = useGetApplicationFormBContextSuspense();
   const cruise = useGetApplicationCruiseSuspense(applicationId);
-  const updateMutation = useUpdateApplicationFormC();
+  const updateMutation = useUpdateApplicationFormC({ mutation: { meta: { handlesError: true } } });
 
   if (!formB.data) throw notFound();
 
@@ -123,14 +123,6 @@ function FormCPage() {
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );
     } catch (err) {
-      if (err instanceof ApiError && err.status === 403) {
-        toast.error(
-          'Aplikacja nie znajduje się w odpowiednim stanie, aby przesłać formularz. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
-        );
-        navigate({ to: '/applications' });
-        throw err;
-      }
-
       console.error(err);
       if (setServerFormErrors(form, err)) {
         toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));

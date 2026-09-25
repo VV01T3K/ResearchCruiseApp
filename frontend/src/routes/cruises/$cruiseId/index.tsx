@@ -52,7 +52,7 @@ function CruiseDetailsPage() {
   const queryClient = useQueryClient();
   const cruiseQuery = useGetCruiseSuspense(cruiseId);
   const applicationQuery = useGetApplicationsForCruisePlanningSuspense({ cruiseId }, {});
-  const updateCruiseMutation = useUpdateCruise();
+  const updateCruiseMutation = useUpdateCruise({ mutation: { meta: { handlesError: true } } });
   const confirmCruiseMutation = useConfirmCruise();
   const deleteCruiseMutation = useDeleteCruise({
     skipInvalidation: true,

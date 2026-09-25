@@ -44,7 +44,7 @@ function FormAPage() {
   const navigate = useNavigate();
   const currentUser = useCurrentUser()!;
   const initialStateQuery = useGetApplicationFormAContextSuspense();
-  const saveMutation = useUpdateApplicationFormA();
+  const saveMutation = useUpdateApplicationFormA({ mutation: { meta: { handlesError: true } } });
   const formA = useFormAQuery(applicationId);
 
   const editMode = mode === 'edit';

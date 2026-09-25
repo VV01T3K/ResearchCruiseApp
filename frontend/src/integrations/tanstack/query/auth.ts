@@ -11,7 +11,8 @@ import {
   setSession,
   subscribeAuthDetails,
 } from '@/integrations/auth/session';
-import { ApiError } from '@/api/fetch';
+import { ApiError, getErrorMessage } from '@/api/fetch';
+import { toast } from '@/components/shared/layout/toast';
 import type { UserResponse } from '@/api/generated/schemas';
 import type { Role, SignInResult } from '@/integrations/auth/types';
 import { logout as logoutSession, useLogin, useLogout } from '@/api/generated/endpoints/auth.gen';
@@ -80,7 +81,8 @@ export function useSignIn() {
       const user = await queryClient.fetchQuery({ ...currentUserQueryOptions(), staleTime: 0 });
       if (!user) throw new Error('The authenticated account profile is unavailable');
       return 'success';
-    } catch {
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Nie udało się wczytać konta po zalogowaniu'));
       await prepareForLogout();
       await logoutSession().catch(() => undefined);
       clearSessionEverywhere(queryClient);

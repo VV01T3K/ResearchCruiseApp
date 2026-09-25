@@ -37,7 +37,7 @@ function NewCruiseApplicationPage() {
   const navigate = useNavigate();
   const currentUser = useCurrentUser()!;
   const initialStateQuery = useGetApplicationFormAContextSuspense();
-  const saveMutation = useCreateApplication();
+  const saveMutation = useCreateApplication({ mutation: { meta: { handlesError: true } } });
 
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
 

@@ -37,7 +37,7 @@ function SupervisorViewPage() {
       },
     }
   );
-  const answerMutation = useUpdateApplicationSupervisorReviewDecision();
+  const answerMutation = useUpdateApplicationSupervisorReviewDecision({ mutation: { meta: { handlesError: true } } });
   const formA = supervisorReview.data.form;
 
   const form = useAppForm({

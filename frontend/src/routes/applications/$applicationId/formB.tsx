@@ -22,7 +22,7 @@ import {
   useRefillApplicationFormB,
   useUpdateApplicationFormB,
 } from '@/api/generated/endpoints/applications.gen';
-import { ApiError, getErrorMessage } from '@/api/fetch';
+import { getErrorMessage } from '@/api/fetch';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 
@@ -45,7 +45,7 @@ function FormBPage() {
   const formAInitValues = useGetApplicationFormAContextSuspense();
   const formBInitValues = useGetApplicationFormBContextSuspense();
   const cruise = useGetApplicationCruiseSuspense(applicationId);
-  const updateMutation = useUpdateApplicationFormB();
+  const updateMutation = useUpdateApplicationFormB({ mutation: { meta: { handlesError: true } } });
   const revertToEditMutation = useRefillApplicationFormB();
 
   const defaultValues = (formB.data ?? {
@@ -97,14 +97,6 @@ function FormBPage() {
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );
     } catch (err) {
-      if (err instanceof ApiError && err.status === 403) {
-        toast.error(
-          'Aplikacja nie znajduje się w odpowiednim stanie, aby przesłać formularz. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
-        );
-        navigate({ to: '/applications' });
-        throw err;
-      }
-
       console.error(err);
       if (setServerFormErrors(form, err)) {
         toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));

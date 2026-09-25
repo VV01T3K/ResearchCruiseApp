@@ -39,7 +39,7 @@ const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
 
 function NewCruisePage() {
   const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense();
-  const createCruiseMutation = useCreateCruise();
+  const createCruiseMutation = useCreateCruise({ mutation: { meta: { handlesError: true } } });
   const search = Route.useSearch();
 
   const navigate = useNavigate();

@@ -34,7 +34,15 @@ function getFirstFormError(form: AnyFormApi, sections: Record<string, number>): 
     }))
     .sort((a, b) => (a.sectionNumber ?? Infinity) - (b.sectionNumber ?? Infinity));
 
-  return allErrors[0] ?? null;
+  return (
+    allErrors[0] ??
+    (form.state.errors.length
+      ? {
+          fieldName: '',
+          errorMessage: extractErrorMessage(form.state.errors[0]),
+        }
+      : null)
+  );
 }
 
 export function getFormErrorMessage(form: AnyFormApi, sections: Record<string, number>): string {
@@ -83,7 +91,9 @@ function getServerFormErrors(error: unknown, mapPath: MapFormPath): Record<strin
   if (typeof errors !== 'object' || errors === null) return null;
   return Object.fromEntries(
     Object.entries(errors).flatMap(([path, messages]) =>
-      Array.isArray(messages) && messages.every((message) => typeof message === 'string')
+      Array.isArray(messages) &&
+      messages.length > 0 &&
+      messages.every((message) => typeof message === 'string' && !!message.trim())
         ? [[normalizeBackendFormPath(path, mapPath), messages]]
         : []
     )
@@ -93,6 +103,12 @@ function getServerFormErrors(error: unknown, mapPath: MapFormPath): Record<strin
 export function setServerFormErrors(form: AnyFormApi, error: unknown, mapPath: MapFormPath = (path) => path): boolean {
   const fields = getServerFormErrors(error, mapPath);
   if (!fields || Object.keys(fields).length === 0) return false;
-  form.setErrorMap({ onServer: { fields } });
+  const knownFields: Record<string, string[]> = {};
+  const formErrors: string[] = [];
+  for (const [path, messages] of Object.entries(fields)) {
+    if (path && form.getFieldInfo(path).instance) knownFields[path] = messages;
+    else formErrors.push(...messages);
+  }
+  form.setErrorMap({ onServer: { fields: knownFields, form: formErrors.join('\n') || undefined } });
   return true;
 }

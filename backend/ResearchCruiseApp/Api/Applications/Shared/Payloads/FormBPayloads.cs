@@ -30,6 +30,5 @@ public class FormBFields
 
 public class FormBOptions
 {
-    [System.Text.Json.Serialization.JsonRequired]
     public List<ShipEquipmentOption> ShipEquipments { get; init; } = [];
 }
