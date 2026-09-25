@@ -4,10 +4,10 @@
   "scripts": {
     "dev": "dotnet watch run --project ResearchCruiseApp",
     "start": "dotnet run --project ResearchCruiseApp",
-    "build": "dotnet build ResearchCruiseApp.sln",
+    "build": "dotnet build ResearchCruiseApp.slnx -c Release",
     "fix": "dotnet csharpier format .",
-    "check": "dotnet csharpier check . && dotnet build ResearchCruiseApp.sln --no-restore --no-incremental --warnaserror",
-    "test": "dotnet test ResearchCruiseApp.sln --no-restore --no-build",
+    "check": "dotnet csharpier check . && dotnet restore ResearchCruiseApp.slnx --locked-mode -p:TreatWarningsAsErrors=true && dotnet build ResearchCruiseApp.slnx -c Release --no-restore --warnaserror && bash scripts/test.sh",
+    "test": "bash scripts/test.sh",
     "staged": "dotnet csharpier format",
     "seed": "mise run seed",
     "seed:applications": "dotnet run --project ResearchCruiseApp -- seed-applications",
@@ -15,7 +15,12 @@
     "ef:drop": "dotnet ef database drop --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext -f",
     "ef:update": "dotnet ef database update --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext",
     "ef:migration:add": "dotnet ef migrations add --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext -o Infrastructure/Persistence/Migrations",
-    "ef:migration:remove": "dotnet ef migrations remove --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext"
+    "ef:migration:remove": "dotnet ef migrations remove --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext",
+    "test:unit": "dotnet run --project ResearchCruiseApp.UnitTests -c Release -- --fail-skips on",
+    "test:integration": "dotnet run --project ResearchCruiseApp.IntegrationTests -c Release -- --fail-skips on",
+    "format:check": "dotnet csharpier check .",
+    "test:unit:built": "dotnet run --project ResearchCruiseApp.UnitTests -c Release --no-build --no-restore -- --fail-skips on",
+    "restore": "dotnet tool restore && dotnet restore ResearchCruiseApp.slnx --locked-mode -p:TreatWarningsAsErrors=true"
   },
   "packageManager": "pnpm@10.33.0"
 }

@@ -74,14 +74,16 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
                     ? EvaluationConstants.PointsForProjectPreparationWithFinancing
                     : EvaluationConstants.PointsForProjectPreparationWithoutFinancing,
 
-                ResearchTaskType.DomesticProject when researchTask.FinancingAmount is not null =>
+                ResearchTaskType.DomesticProject
+                    when !string.IsNullOrEmpty(researchTask.FinancingAmount) =>
                     EvaluationConstants.PointsPerDivisionForDomesticProject
                         * (int)(
                             double.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
                             / EvaluationConstants.DomesticProjectDivision
                         ),
 
-                ResearchTaskType.ForeignProject when researchTask.FinancingAmount is not null =>
+                ResearchTaskType.ForeignProject
+                    when !string.IsNullOrEmpty(researchTask.FinancingAmount) =>
                     EvaluationConstants.PointsPerDivisionForForeignProject
                         * (int)(
                             double.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)

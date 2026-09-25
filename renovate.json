@@ -1,11 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
-  "labels": ["dependencies"],
+  "extends": [
+    "config:recommended"
+  ],
+  "labels": [
+    "dependencies"
+  ],
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^.*\\.csproj$/"],
+      "managerFilePatterns": [
+        "/^.*\\.(csproj|props)$/"
+      ],
       "matchStrings": [
         "<TargetFramework>net(?<currentValue>.+)</TargetFramework>"
       ],
@@ -23,6 +29,19 @@
       ],
       "groupName": ".NET version",
       "groupSlug": "dotnet-version"
+    },
+    {
+      "matchManagers": [
+        "nuget"
+      ],
+      "matchPackageNames": [
+        "Microsoft.EntityFrameworkCore.*",
+        "Microsoft.AspNetCore.*",
+        "Microsoft.Extensions.ApiDescription.Server",
+        "Microsoft.OpenApi",
+        "dotnet-ef"
+      ],
+      "groupName": ".NET framework packages"
     }
   ]
 }

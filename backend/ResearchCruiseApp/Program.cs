@@ -117,7 +117,9 @@ builder.Services.AddRateLimiter(options =>
                 Status = StatusCodes.Status429TooManyRequests,
                 Title = "Too many requests.",
             },
-            cancellationToken
+            options: null,
+            contentType: "application/problem+json",
+            cancellationToken: cancellationToken
         );
     };
 });

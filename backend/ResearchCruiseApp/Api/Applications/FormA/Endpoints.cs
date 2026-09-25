@@ -151,7 +151,7 @@ public static class FormAEndpoints
         );
 
         var oldFormA = application.FormA;
-        var formAResult = await forms.Create(request.Form, cancellationToken);
+        var formAResult = await forms.Create(request.Form, cancellationToken, isUpdate: true);
         if (!formAResult.IsSuccess)
             return formAResult.Error!.ToProblemHttpResult();
 
@@ -165,6 +165,10 @@ public static class FormAEndpoints
         application.FormA = formAResult.Data!;
 
         await cruiseApplicationEvaluator.Evaluate(application, request.Draft, cancellationToken);
+
+        // Persist replacement references before cleanup counts shared child rows.
+        // The surrounding transaction still rolls back the complete submission on failure.
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         if (oldFormA is not null)
             await formsService.DeleteFormA(oldFormA, cancellationToken);

@@ -16,7 +16,8 @@
     "build-storybook": "storybook build",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
-    "test:unit": "vp test run"
+    "test:unit": "vp test run",
+    "lint": "vp check && vp run type"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",

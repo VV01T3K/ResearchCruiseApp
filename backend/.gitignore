@@ -482,3 +482,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Coverage collector configuration is source, not a generated report.
+!coverage.settings.xml

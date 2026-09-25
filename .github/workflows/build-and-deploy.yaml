@@ -5,16 +5,20 @@ on:
     branches: [main]
     tags: ["v[0-9]+.[0-9]+.[0-9]+"]
     paths-ignore: ["docs/**", "**.md", ".gitignore"]
-  pull_request:
-    branches: [main]
-    paths-ignore: ["docs/**", "**.md", ".gitignore"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  workspace:
+    name: Validate workspace
+    uses: ./.github/workflows/workspace-ci.yaml
+    permissions:
+      contents: read
+
   build:
+    needs: workspace
     name: Build ${{ matrix.component }}
     runs-on: ubuntu-latest
     permissions:

@@ -7,8 +7,9 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
 {
     public FormCWriteRequestValidator(FileInspector fileInspector)
     {
+        RuleFor(request => request.Form).NotNull();
         When(
-            request => !request.Draft,
+            request => request.Form is not null && !request.Draft,
             () =>
             {
                 RuleForEach(request => request.Form.Permissions)

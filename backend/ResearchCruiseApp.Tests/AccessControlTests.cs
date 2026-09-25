@@ -21,11 +21,11 @@ public sealed class AccessControlTests
     }
 
     [Fact]
-    public void ShipownerAndAssignedManagersCanCreateFormsBAndC()
+    public void OnlyAssignedManagersAndAdministratorsCanCreateFormsBAndC()
     {
         var userId = Guid.NewGuid();
 
-        Assert.True(
+        Assert.False(
             RolePermissionRules.CanAddApplicationForm([RoleName.Shipowner], userId, null, null)
         );
         Assert.True(

@@ -1,16 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>false</InvariantGlobalization>
+    <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
     <RootNamespace>ResearchCruiseApp</RootNamespace>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <UserSecretsId>36dfba4d-eec1-47b9-ab0e-59344a3424a8</UserSecretsId>
     <Version>2.5.1</Version>
-    <AnalysisLevel>latest-recommended</AnalysisLevel>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <!-- Accept legacy findings that require API, culture, DI, or generated-migration changes. -->
     <NoWarn>$(NoWarn);IDE0130;CA1305;CA1310;CA1711;CA1716;CA1822;CA1824;CA1825;CA1848;CA1859;CA1861</NoWarn>
   </PropertyGroup>
@@ -20,9 +15,11 @@
     <SentryUploadSources>true</SentryUploadSources>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+  <PropertyGroup Condition="'$(GenerateApiContract)' == 'true'">
     <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
-    <OpenApiDocumentsDirectory>openapi</OpenApiDocumentsDirectory>
+    <OpenApiDocumentsDirectory Condition="'$(OpenApiDocumentsDirectory)' == ''"
+      >openapi</OpenApiDocumentsDirectory
+    >
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,22 +28,22 @@
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="MailKit" Version="4.16.0" />
     <PackageReference Include="MimeKit" Version="4.16.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
     <PackageReference
       Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"
       Version="10.0.12"
     />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
     <PackageReference
       Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore"
       Version="10.0.12"
     />
     <PackageReference
       Include="Microsoft.Extensions.ApiDescription.Server"
-      Version="10.0.5"
+      Version="10.0.12"
       PrivateAssets="all"
     />
-    <PackageReference Include="Microsoft.OpenApi" Version="2.9.0" />
+    <PackageReference Include="Microsoft.OpenApi" Version="2.12.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -99,4 +96,13 @@
   <ItemGroup>
     <Folder Include="Infrastructure\Persistence\Migrations\" />
   </ItemGroup>
+  <!-- The generator tracks its file list, not a changed temporary output directory.
+       Explicit contract checks must regenerate even when compilation is incremental. -->
+  <Target
+    Name="RefreshApiContractOutput"
+    BeforeTargets="GenerateOpenApiDocuments"
+    Condition="'$(GenerateApiContract)' == 'true'"
+  >
+    <Delete Files="$(_OpenApiDocumentsCache)" />
+  </Target>
 </Project>

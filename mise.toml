@@ -1,6 +1,7 @@
 [env]
 DOTNET_CLI_TELEMETRY_OPTOUT = "1"
 DO_NOT_TRACK = "1"
+TESTINGPLATFORM_TELEMETRY_OPTOUT = "1"
 
 [settings]
 experimental = true
@@ -9,7 +10,7 @@ npm.package_manager = "bun"
 [tools]
 bun = "1.3.11"
 pnpm = "10.33.0"
-dotnet = "10.0"
+dotnet = '''{{ read_file(path=config_root ~ '/backend/global.json') | regex_replace(pattern='(?s).*"version"[[:space:]]*:[[:space:]]*"([^"]+)".*', rep='$1') | trim }}'''
 
 
 [hooks]

@@ -5,14 +5,18 @@
     "dev": "vp run -r dev",
     "skills:install": "vp dlx skills experimental_install -y",
     "build": "vp run --cache -r build",
-    "check": "vp run --cache -r check",
-    "fix": "vp run --cache -r fix",
+    "check": "bash scripts/workspace.sh check",
+    "fix": "bash scripts/workspace.sh fix",
     "gen": "vp run -F frontend gen",
     "seed": "vp run -F backend seed",
     "ef:update": "vp run -F backend ef:update",
     "ef:drop": "vp run -F backend ef:drop",
     "ef:migration:add": "vp run -F backend ef:migration:add",
-    "ef:migration:remove": "vp run -F backend ef:migration:remove"
+    "ef:migration:remove": "vp run -F backend ef:migration:remove",
+    "lint": "bash scripts/workspace.sh lint",
+    "check:quick": "bash scripts/workspace.sh quick",
+    "test:coverage": "bash scripts/workspace.sh coverage",
+    "test:e2e": "vp run -F frontend test"
   },
   "devDependencies": {
     "lefthook": "^2.1.5"

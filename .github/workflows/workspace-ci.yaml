@@ -1,0 +1,51 @@
+name: Workspace CI
+
+on:
+  pull_request:
+    branches: [main, staging]
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}-workspace
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  checks:
+    name: Workspace checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      TESTINGPLATFORM_TELEMETRY_OPTOUT: "1"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: backend/global.json
+          cache: true
+          cache-dependency-path: backend/**/packages.lock.json
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          working-directory: frontend
+          node-version-file: .node-version
+          cache: true
+      - name: Install workspace dependencies
+        run: vp install --frozen-lockfile
+      - name: Check workspace
+        run: |
+          mkdir -p backend/artifacts
+          vp run check 2>&1 | tee backend/artifacts/workspace-check.log
+      - name: Summarize suites
+        if: always()
+        run: python3 scripts/summarize-checks.py >> "$GITHUB_STEP_SUMMARY"
+      - name: Publish diagnostics
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: workspace-diagnostics
+          path: backend/artifacts/
+          retention-days: 14
+          if-no-files-found: error

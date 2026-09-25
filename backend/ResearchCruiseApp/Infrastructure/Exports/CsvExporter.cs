@@ -60,7 +60,17 @@ internal class CsvExporter(
             + $"Zastępca kierownika głównego: {deputyManager?.FirstName ?? "-"} {deputyManager?.LastName ?? ""}.";
 
         csvContentBuilder.AppendLine(
-            $"{subject},{startDate},{startHour},{endDate},{endHour},{description}"
+            string.Join(
+                ",",
+                new[] { subject, startDate, startHour, endDate, endHour, description }.Select(
+                    EscapeCsvField
+                )
+            )
         );
     }
+
+    private static string EscapeCsvField(string value) =>
+        value.IndexOfAny([',', '"', '\r', '\n']) >= 0
+            ? "\"" + value.Replace("\"", "\"\"", StringComparison.Ordinal) + "\""
+            : value;
 }
