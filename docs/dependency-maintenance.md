@@ -43,6 +43,9 @@ Vite+ and its Vite/Vitest aliases are pinned to matching stable versions. Orval
 uses the first release fixing its reference resolution advisory, 8.22.0, to keep
 generated API files unchanged. Its YAML dependency is overridden to a patched
 4.x release; remove that override once the upstream dependency is updated.
+TypeScript is only an optional peer of tooling packages, as type checking uses
+`tsgo`. It is overridden to 5.9 because `@tanstack/eslint-plugin-query` does not
+support TypeScript 6; remove the override once the plugin does.
 SheetJS uses the official 0.20.3 tarball because npm's `xlsx` release is outdated.
 Review SheetJS releases manually; Dependabot cannot update this fixed tarball URL.
 
