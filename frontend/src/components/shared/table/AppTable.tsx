@@ -1,24 +1,12 @@
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getSortedRowModel,
-  OnChangeFn,
-  Row,
-  RowSelectionState,
-  SortingState,
-  useReactTable,
-} from '@tanstack/react-table';
+import { ColumnFiltersState, OnChangeFn, RowSelectionState, SortingState, useTable } from '@tanstack/react-table';
+import { appTableFeatures, ColumnDef, Row } from '@/integrations/tanstack/table/features';
 
 import { AppDesktopTable } from '@/components/shared/table/desktop/AppDesktopTable';
 import { InfiniteScrollProps } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
 import { AppMobileTable } from '@/components/shared/table/mobile/AppMobileTable';
 import { useWindowSize } from '@/hooks/shared/WindowSizeHook';
 
-type Props<T> = {
+type Props<T extends object> = {
   data: T[];
   columns: ColumnDef<T>[];
   buttons?: (predefinedButtons: React.ReactNode[]) => React.ReactNode[];
@@ -39,10 +27,11 @@ type Props<T> = {
   disabled?: boolean;
   errors?: string[];
   infiniteScroll?: InfiniteScrollProps;
+  virtualized?: boolean;
   'data-testid'?: string;
 };
 
-export function AppTable<T>({
+export function AppTable<T extends object>({
   data,
   columns,
   buttons,
@@ -63,22 +52,17 @@ export function AppTable<T>({
   disabled = false,
   errors,
   infiniteScroll,
+  virtualized = false,
   'data-testid': testId,
 }: Props<T>) {
-  'use no memo'; // Disable React Compiler memoization for TanStack Table compatibility
   const { width } = useWindowSize();
-  // oxlint-disable-next-line react-hooks/incompatible-library
-  const table = useReactTable<T>({
+  const table = useTable({
+    features: appTableFeatures,
     columns,
     data,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
     defaultColumn: {
-      filterFn: 'arrIncludesSome',
-      sortingFn: 'alphanumeric',
+      filterFn: 'arrIncludes',
+      sortFn: 'alphanumeric',
     },
     ...(setRowSelectionState !== undefined && { onRowSelectionChange: setRowSelectionState }),
     ...(setColumnFiltersState !== undefined && { onColumnFiltersChange: setColumnFiltersState }),
@@ -95,7 +79,7 @@ export function AppTable<T>({
       },
     },
     initialState: {
-      sorting: initialSortingState,
+      sorting: initialSortingState ?? [],
     },
     getRowId: getRowId,
   });
@@ -112,6 +96,7 @@ export function AppTable<T>({
       variant={variant}
       errors={errors}
       infiniteScroll={infiniteScroll}
+      virtualized={virtualized}
       data-testid={testId}
     />
   );

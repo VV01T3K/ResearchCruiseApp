@@ -1,11 +1,10 @@
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { defineConfig } from 'vite-plus';
-// import viteReact, { reactCompilerPreset } from '@vitejs/plugin-react';
-import viteReact from '@vitejs/plugin-react';
+import viteReact, { reactCompilerPreset } from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import svgr from 'vite-plugin-svgr';
 import tailwindcss from '@tailwindcss/vite';
-// import babel from '@rolldown/plugin-babel';
+import babel from '@rolldown/plugin-babel';
 import { fmtConfig, lintConfig } from './vite.tool.config.ts';
 
 const {
@@ -52,11 +51,9 @@ export default defineConfig({
     }),
     tanstackRouter(),
     viteReact(),
+    babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),
     sentryPlugin,
-    // babel({ // Breaks tests and some forms etc FIXME: Re-enable and fix
-    //   presets: [reactCompilerPreset()],
-    // }),
   ],
   define: {
     APP_VERSION: JSON.stringify(process.env.npm_package_version),

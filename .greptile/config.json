@@ -1,0 +1,31 @@
+{
+  "strictness": 2,
+  "commentTypes": ["logic", "syntax"],
+  "autoReview": ["open"],
+  "excludeAuthors": ["renovate[bot]"],
+  "statusCheck": true,
+  "statusCommentsEnabled": true,
+  "shouldUpdateDescription": true,
+  "updateSummaryOnly": false,
+  "fixWithAI": true,
+  "autoApprove": {
+    "enabled": false
+  },
+  "summarySection": {
+    "included": true,
+    "collapsible": false,
+    "defaultOpen": false
+  },
+  "confidenceScoreSection": {
+    "included": true
+  },
+  "issuesTableSection": {
+    "included": true
+  },
+  "sequenceDiagramSection": {
+    "included": true,
+    "collapsible": true,
+    "defaultOpen": false
+  },
+  "ignorePatterns": "frontend/src/api/generated/**\nfrontend/src/routeTree.gen.ts"
+}
