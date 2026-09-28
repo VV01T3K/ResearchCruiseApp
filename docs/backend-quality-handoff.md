@@ -1,61 +1,51 @@
 # Backend quality handoff
 
-Prepared 2026-09-25. This document is intentionally in the repository at the user's explicit request, overriding the handoff skill's default external location.
-
-## PR and immediate repository state
-
-Draft PR: https://github.com/VV01T3K/ResearchCruiseApp/pull/430. Implementation and original handoff were pushed in `4c644c25227b0c3539fc87058b041c20464640ac`; earlier specification commits are included in the branch. Source baseline is recorded in the scenario ledger.
-
-On 2026-09-25, GitHub reported `mergeable: CONFLICTING` against `staging` and an empty `statusCheckRollup`. This is a fresh observation after PR creation, not a diagnosed conflict list or proof that no workflow can run. Before claiming PR readiness, fetch current refs, inspect and resolve integration conflicts while preserving both sides' intended behavior, rerun the full gate, and inspect hosted checks. No conflict resolution has been attempted in this session. Keep the PR draft while acceptance work remains.
+Updated 2026-09-29. This document stays in the repository at the user's explicit request.
 
 ## Resume here
 
-Continue the backend testing and tooling work on branch `feature/backend-quality-baseline`, targeting `staging`. This is an incomplete implementation submitted as a draft PR, not an accepted testing baseline. Do not merge or deploy without further authorization.
+Continue draft [PR 430](https://github.com/VV01T3K/ResearchCruiseApp/pull/430), branch `feature/backend-quality-baseline`, targeting `staging`. The baseline remains incomplete. Keep the PR draft; merging and deployment require further authorization.
 
-The working checkout for this session is `/home/wojtek/projects/ResearchCruiseApp-backend-quality` inside Ubuntu WSL. The Windows T3 checkout shown by the session environment is a different, older checkout. Confirm the branch and files before editing. Use the PR branch in a fresh session if this WSL checkout is unavailable.
+The continuation checkout is `/home/wojtek/.t3/worktrees/ResearchCruiseApp/t3code-5a2f0598`, local branch `t3code/pr-430-continuation`, based on PR head `25a9b589`. The previous Ubuntu WSL checkout is a different environment. Confirm refs and the working tree before editing.
 
-Start with `docs/backend-test-scenarios.md`, especially **Remaining acceptance work** and the last BE-ATOMIC-002 evidence. The next concrete task is auditing populated Form B/C replacement: `Api/Applications/FormB/Endpoints.cs` and `FormC/Endpoints.cs` call `Shared/Writing/FormDeletionService.cs` before replacement references are persisted. Form A had the same ordering and lost a reused research task when submitting a populated draft. Its fix persists replacement references within the existing transaction before cleanup. Do not blindly copy that save into B/C: inspect their transaction ownership and prove rollback and shared child preservation through HTTP and SQL first.
+The previous next task, populated Form B/C replacement, is now covered by `Applications/FormReplacementTests.cs`. All four draft/final replacement cases reproduced lost reused permissions. Both endpoints now persist replacement references before cleanup inside their existing `DbTransactionFilter` transaction. The regression checks full HTTP content, retained SQL identities, obsolete-permission cleanup, rollback after a flushed replacement, and successful retry. See BE-ATOMIC-003 in the scenario ledger for evidence and limits.
 
-All API paths above are relative to `backend/ResearchCruiseApp/`. Reuse `backend/ResearchCruiseApp.IntegrationTests/Applications/FormAAtomicityTests.cs` and existing B/C workflow fixtures. The Form A test proves rollback under an injected SQL outbox constraint, unchanged draft identity/content, and a successful retry with one invitation. It exposed the task loss during recovery; failure and passing evidence are recorded in the ledger.
+The next integration task is resolving the PR's conflicts with `staging` while preserving both sides' behavior. On 2026-09-29, GitHub still reported `CONFLICTING` with no check results. A read-only `git merge-tree --write-tree HEAD origin/staging` preview against `373812c6` found 13 conflicts: backend Docker ignores, the application csproj, email documentation, and ten frontend files around tables, application listing and browser tests. No merge was performed. Preserve commit history, rerun the workspace gate after resolution, then inspect hosted checks. A locally green PR branch is not evidence that the merged revision passes.
+
+After integration, continue the requirement-to-scenario audit in the ledger. Remaining examples include cross-application child sharing and equipment-category moves during form replacement, scoring beyond the funding slice, aggregate overflow, and account/file boundaries. The four new tests cover same-form draft replacement and finalization, not every cleanup or research-effect policy.
 
 ## Authoritative artifacts
 
-- `docs/backend-testing-spec.md`: scope, requirements, acceptance gates.
-- `docs/backend-test-scenarios.md`: scenario coverage, explicit unresolved policy, failure demonstrations, local execution evidence, remaining work. Implemented does not mean maintainer reviewed.
+- `docs/backend-testing-spec.md`: scope and acceptance requirements.
+- `docs/backend-test-scenarios.md`: scenario coverage, unresolved policy, failure evidence, performance and remaining work. Implemented does not mean reviewed.
 - `docs/backend-development.md`: commands and tooling.
-- `docs/email-delivery.md`: durable invitation/email contract.
-- `docs/permissions.md`: permission requirements.
-- The PR diff: actual implementation, infrastructure, dependency locks, workflow changes and regression fixes. Do not duplicate or replace those artifacts with a new plan.
+- `docs/email-delivery.md` and `docs/permissions.md`: domain contracts.
+- The PR diff: actual tooling, workflow and behavior changes. Continue these artifacts instead of creating a parallel plan.
 
-## Validation and limits
+Keep all 78 legacy cases in the gate until individual dispositions and replacements are reviewed. Repeated supervisor decisions, conflicting multi-role precedence and concurrent numbering remain unresolved. The accepted single-role ownership decision in `FormAccessTests` does not settle multi-role precedence.
 
-Latest root `vp run check` passed all 420 tests with zero build warnings/errors: 186 frontend, 78 retained legacy, 27 unit, 129 SQL integration. Root duration 148.96 seconds; integration setup/execution 131.068 seconds. Formatting, locked restore, generated API comparison and `git diff --check` passed. Performance remains above provisional targets; do not drop coverage to meet them.
+## Local execution
 
-Local ignored evidence: `backend/artifacts/evidence/form-a-atomic-workspace.{log,seconds,exit}`, `backend/artifacts/tests/run-dkxPCI/`, and `form-a-atomicity` / `form-a-atomicity-green` focused logs and reports. These artifacts are not in Git and will need regeneration in another checkout. Hosted CI, branch protection and deployment blocking behavior are not yet verified. Inspect draft PR checks next; do not describe local evidence as hosted acceptance.
+This continuation runs on native Omarchy Linux with rootless Podman. The Docker socket at `/var/run/docker.sock` is not accessible to this user. Use the already active user Podman socket for disposable SQL test containers:
 
-Keep all 78 legacy tests in the gate until individual dispositions and replacements are reviewed. Do not invent outcomes for repeated supervisor decisions, conflicting role precedence or concurrent numbering; unresolved decisions are recorded in the ledger. Existing authorization includes tests at HTTP and real SQL seams. No additional approval is needed for routine tests or reversible fixes.
+```sh
+export PATH="$HOME/.dotnet:$PWD/frontend/node_modules/.bin:$PATH"
+export DOTNET_ROOT="$HOME/.dotnet"
+export DOCKER_HOST="unix://$XDG_RUNTIME_DIR/podman/podman.sock"
+export TESTCONTAINERS_RYUK_DISABLED=true
+vp run check
+```
 
-## Reading the ledger correctly
+The pinned .NET SDK 10.0.401 was installed into `~/.dotnet`. Workspace packages were restored with pnpm 10.33.0 and the frozen lockfile. This run used Node 26.10.0; hosted validation still needs to exercise `frontend/.node-version`. SQL uses the fixture's pinned SQL Server 2022 image. Disabling Ryuk is local to these commands; fixtures dispose their containers. It is not a repository configuration change.
 
-Several original scenario entries still say execution pending, followed later by their actual focused and combined run evidence. Read all occurrences of a scenario ID before treating it as unexecuted. Maintainer review remains pending even when later execution is green.
+Focused tests run from `backend` with `dotnet run --project ResearchCruiseApp.IntegrationTests -c Release -- --filter-class '*FormReplacementTests' --report-trx --results-directory artifacts/tests/<fresh-run>`. This is xUnit v3/Microsoft Testing Platform; use `--filter-class` or `--filter-method`, not VSTest `--filter`. Run CSharpier from `backend` so it finds the local tool manifest.
 
-The accepted single-role form ownership decision is documented in the ledger and implemented in `FormAccessTests`: consult it before changing shipowner or administrator permissions. It does not resolve conflicting multi-role precedence. Scoring coverage currently covers only the funding slice; its ledger entries explicitly leave other categories, completed-cruise effects and aggregate overflow open. Continue the specification-to-scenario audit rather than treating the test count as completion.
+Ignored local evidence lives in `backend/artifacts/evidence/form-replacement-*` and `backend/artifacts/tests/`. It is not committed and must be regenerated in another checkout. Earlier Form A evidence is documented in the ledger but belonged to the previous machine. Use fresh paths when collecting new evidence.
 
-## Operational notes
+## Latest validation
 
-Windows PowerShell launches tools in Ubuntu with `wsl -d Ubuntu --cd <checkout> --exec ...`. Docker Desktop must be available to WSL for SQL Testcontainers. Ubuntu was restarted with user permission earlier after even `/bin/true` failed; it is currently working. Do not restart it routinely.
+Root `vp run check` passed all 424 tests: 186 frontend, 78 legacy, 27 backend unit and 133 SQL integration, with no backend skips and zero build warnings/errors. Formatting, locked restore, temporary API comparison and frontend lint/types passed. Total duration was 158.85 seconds; integration duration was 150.935 seconds. See the final BE-ATOMIC-003 workspace evidence in the ledger for machine details and report paths. Provisional performance targets remain exceeded.
 
-For multiline shell scripts, write LF text without a BOM to a local ignored evidence file, then execute that file with WSL bash. Piping PowerShell here-strings into bash previously produced encoding problems. Run focused tests from `backend` using `dotnet run --project ResearchCruiseApp.IntegrationTests -c Release -- --filter-class '*ClassName' --report-trx --results-directory artifacts/tests/<run>`. Follow `docs/backend-development.md` for complete checks.
+## Acceptance limits
 
-The focused test runner is xUnit v3/Microsoft Testing Platform: use `--filter-class` or `--filter-method`, not VSTest `--filter`. Run CSharpier from `backend`, where the local tool manifest applies. In a non-login WSL shell, the session used `export PATH="$HOME/.dotnet:$HOME/.local/bin:$PATH"`; root checks were launched through `bash -lc` to load the installed tooling. Use fresh evidence paths so an earlier successful exit file cannot be mistaken for a new result.
-
-GitHub CLI was authenticated and could push the branch and create the draft PR. This WSL clone lacked a Git author identity. The implementation commit used command-scoped `user.name` and `user.email` from the preceding branch commit; global Git configuration was not changed. Recheck identity before the next commit. No credentials belong in documentation or tool output.
-
-The user expects action and frequent concise updates, and has repeatedly had to ask whether work was continuing. Report findings and continue authorized work. Avoid invented hyphenated compounds in prose. No agents should be spawned unless the user or applicable instructions explicitly authorize delegation.
-
-## Suggested skills
-
-- `ponytail`: reuse existing fixtures and make the smallest correct fix after tracing callers.
-- `tdd`: write a failing regression at the already authorized HTTP/SQL seams before changing behavior.
-- `unslop`: keep progress updates and documentation plain and concise.
-- `handoff`: refresh this document when transferring the work again, referencing the ledger instead of duplicating it.
+Hosted CI, required-check configuration, negative deployment-gate evidence, performance calibration, IDE/devcontainer verification and legacy dispositions remain open. Do not infer hosted acceptance from local checks or reduce coverage to meet provisional performance targets. No agents should be spawned unless the user or applicable instructions authorize delegation.
