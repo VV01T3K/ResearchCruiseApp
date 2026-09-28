@@ -11,9 +11,9 @@ run during installation; they do not replace the vulnerability audits below.
 ## Audits
 
 Run `bun run audit` at the repository root. It checks JavaScript dependencies,
-then restores the .NET solution with NuGet Audit and locked dependencies. The
-command fails on high or critical vulnerabilities. A failed audit request also
-fails the check. To run the checks separately:
+then restores the .NET solution with NuGet Audit and locked dependencies. Both
+checks always run, and the command fails if either finds high or critical
+vulnerabilities. A failed audit request also fails the check. To run the checks separately:
 
 ```sh
 bun audit --audit-level=high
