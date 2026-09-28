@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppFileInput } from '@/components/shared/inputs/AppFileInput';

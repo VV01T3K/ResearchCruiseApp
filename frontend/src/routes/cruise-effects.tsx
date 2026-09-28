@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';

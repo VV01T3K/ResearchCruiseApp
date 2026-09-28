@@ -6,13 +6,15 @@ Updated 2026-09-29. This document stays in the repository at the user's explicit
 
 Continue draft [PR 430](https://github.com/VV01T3K/ResearchCruiseApp/pull/430), branch `feature/backend-quality-baseline`, targeting `staging`. The baseline remains incomplete. Keep the PR draft; merging and deployment require further authorization.
 
-The continuation checkout is `/home/wojtek/.t3/worktrees/ResearchCruiseApp/t3code-5a2f0598`, local branch `t3code/pr-430-continuation`, based on PR head `25a9b589`. The previous Ubuntu WSL checkout is a different environment. Confirm refs and the working tree before editing.
+The continuation checkout is `/home/wojtek/.t3/worktrees/ResearchCruiseApp/t3code-5a2f0598`, local branch `t3code/pr-430-continuation`, continuing PR head `6b32cf9c`. The previous Ubuntu WSL checkout is a different environment. Confirm refs and the working tree before editing.
 
 The previous next task, populated Form B/C replacement, is now covered by `Applications/FormReplacementTests.cs`. All four draft/final replacement cases reproduced lost reused permissions. Both endpoints now persist replacement references before cleanup inside their existing `DbTransactionFilter` transaction. The regression checks full HTTP content, retained SQL identities, obsolete-permission cleanup, rollback after a flushed replacement, and successful retry. See BE-ATOMIC-003 in the scenario ledger for evidence and limits.
 
-The next integration task is resolving the PR's conflicts with `staging` while preserving both sides' behavior. On 2026-09-29, GitHub still reported `CONFLICTING` with no check results. A read-only `git merge-tree --write-tree HEAD origin/staging` preview against `373812c6` found 13 conflicts: backend Docker ignores, the application csproj, email documentation, and ten frontend files around tables, application listing and browser tests. No merge was performed. Preserve commit history, rerun the workspace gate after resolution, then inspect hosted checks. A locally green PR branch is not evidence that the merged revision passes.
+The staging integration is resolved locally against `373812c6`, preserving history with a merge. The ten frontend conflicts retain staging's TanStack Table v9, React Compiler, virtualization and expanded browser scenarios. The three backend/documentation conflicts retain this PR's package pins, artifact exclusions and SQL baseline instructions. All 19 affected application, cruise and user-management browser tests passed with two workers and retries disabled, including desktop/mobile scrolling, filtering, sorting and selection.
 
-After integration, continue the requirement-to-scenario audit in the ledger. Remaining examples include cross-application child sharing and equipment-category moves during form replacement, scoring beyond the funding slice, aggregate overflow, and account/file boundaries. The four new tests cover same-form draft replacement and finalization, not every cleanup or research-effect policy.
+Continue the requirement-to-scenario audit in the ledger after hosted validation. Remaining examples include cross-application child sharing and equipment-category moves during form replacement, scoring beyond the funding slice, aggregate overflow, and account/file boundaries. The four new replacement tests cover same-form draft replacement and finalization, not every cleanup or research-effect policy.
+
+GitHub rules were inspected on 2026-09-29. The active staging ruleset only requires linear history and restricts branch creation/deletion. It has no required status checks. The main ruleset is disabled. Required workspace-check enforcement and negative deployment-gate evidence remain acceptance work; no repository rules were changed.
 
 ## Authoritative artifacts
 
@@ -36,7 +38,7 @@ export TESTCONTAINERS_RYUK_DISABLED=true
 vp run check
 ```
 
-The pinned .NET SDK 10.0.401 was installed into `~/.dotnet`. Workspace packages were restored with pnpm 10.33.0 and the frozen lockfile. This run used Node 26.10.0; hosted validation still needs to exercise `frontend/.node-version`. SQL uses the fixture's pinned SQL Server 2022 image. Disabling Ryuk is local to these commands; fixtures dispose their containers. It is not a repository configuration change.
+The pinned .NET SDK 10.0.401 was installed into `~/.dotnet`. Workspace packages were restored with pnpm 10.33.0 and the frozen lockfile. The staging integration run uses the pinned Node 25.8.2, installed through mise; put that installation on PATH before running the commands. SQL uses the fixture's pinned SQL Server 2022 image. Disabling Ryuk is local to these commands; fixtures dispose their containers. It is not a repository configuration change.
 
 Focused tests run from `backend` with `dotnet run --project ResearchCruiseApp.IntegrationTests -c Release -- --filter-class '*FormReplacementTests' --report-trx --results-directory artifacts/tests/<fresh-run>`. This is xUnit v3/Microsoft Testing Platform; use `--filter-class` or `--filter-method`, not VSTest `--filter`. Run CSharpier from `backend` so it finds the local tool manifest.
 
@@ -44,7 +46,7 @@ Ignored local evidence lives in `backend/artifacts/evidence/form-replacement-*` 
 
 ## Latest validation
 
-Root `vp run check` passed all 424 tests: 186 frontend, 78 legacy, 27 backend unit and 133 SQL integration, with no backend skips and zero build warnings/errors. Formatting, locked restore, temporary API comparison and frontend lint/types passed. Total duration was 158.85 seconds; integration duration was 150.935 seconds. See the final BE-ATOMIC-003 workspace evidence in the ledger for machine details and report paths. Provisional performance targets remain exceeded.
+Root `vp run check` passed all 424 tests: 186 frontend, 78 legacy, 27 backend unit and 133 SQL integration, with no backend skips and zero build warnings/errors. Formatting, locked restore, temporary API comparison and frontend lint/types passed. The staging integration run used pinned Node 25.8.2 and took 193.51 seconds; integration took 168.165 seconds. The 19 affected browser cases also passed in 45.6 seconds without retries. They overlapped the workspace run, so these timings are not an isolated benchmark. See the staging integration entry in the ledger for evidence paths. Provisional performance targets remain exceeded.
 
 ## Acceptance limits
 
