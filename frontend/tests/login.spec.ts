@@ -23,13 +23,19 @@ test('login redirects to the requested route', async ({ loginPage }) => {
   await expect(loginPage.page).toHaveURL('/help');
 });
 
-test('login with invalid credentials', async ({ loginPage }) => {
+test('login with invalid credentials shows one error and allows retry', async ({ loginPage }) => {
   const userEmail = 'test.email@gmail.com';
   const userPassword = 'someP@ssword';
-  loginPage.mockLoginResult('failure');
+  await loginPage.mockLoginResult('failure');
 
   await loginPage.login(userEmail, userPassword);
   await expect(loginPage.incorrectEmailOrPasswordMessage).toBeVisible();
+  await expect(loginPage.page.getByTestId('toast-error')).toHaveCount(0, { timeout: 1000 });
+
+  await loginPage.mockLoginResult('success');
+  await loginPage.login(userEmail, userPassword);
+  await expect(loginPage.page).toHaveURL('/');
+  await expect(loginPage.page.getByRole('link', { name: /Nowe zgłoszenie/ })).toBeVisible();
 });
 
 test('successful login revokes the cookie if profile hydration fails', async ({ loginPage }) => {

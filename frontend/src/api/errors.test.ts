@@ -11,6 +11,12 @@ describe('API failure reasons', () => {
     expect(responseErrorMessage(409, { detail: 'Zgłoszenie zostało już zatwierdzone' })).toContain('już zatwierdzone');
     expect(responseErrorMessage(400, 'Nieprawidłowy plik')).toBe('Nieprawidłowy plik');
     expect(responseErrorMessage(400, { message: 'Nieprawidłowy plik' })).toBe('Nieprawidłowy plik');
+    expect(responseErrorMessage(429, { title: 'Limit eksportów został przekroczony.' })).toBe(
+      'Limit eksportów został przekroczony.'
+    );
+  });
+  it.each(['Too Many Requests', 'Too many requests.'])('translates the standard title "%s"', (title) => {
+    expect(responseErrorMessage(429, { title })).toBe('Wysłano zbyt wiele żądań. Odczekaj chwilę i spróbuj ponownie.');
   });
   it.each([400, 401, 403, 404, 409, 413, 422, 429, 500, 502, 503])('explains an empty HTTP %s failure', (status) => {
     expect(responseErrorMessage(status, null)).not.toMatch(/Request failed|undefined|Unknown/);

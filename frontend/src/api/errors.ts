@@ -24,7 +24,7 @@ export function responseErrorMessage(status: number, body: unknown): string {
   if (typeof problem?.message === 'string' && problem.message.trim()) return problem.message;
   const title = typeof problem?.title === 'string' ? problem.title.trim() : '';
   const standardTitles =
-    /^(Bad Request|Unauthorized|Forbidden|Not Found|Conflict|Payload Too Large|Content Too Large|Unprocessable Entity|Too Many Requests|Internal Server Error|Bad Gateway|Service Unavailable|Gateway Timeout|One or more validation errors occurred\.?)$/i;
+    /^(Bad Request|Unauthorized|Forbidden|Not Found|Conflict|Payload Too Large|Content Too Large|Unprocessable Entity|Too Many Requests|Internal Server Error|Bad Gateway|Service Unavailable|Gateway Timeout|One or more validation errors occurred)\.?$/i;
   if (title && !standardTitles.test(title)) return title;
   if (typeof body === 'string' && body.trim() && !/<(?:!doctype|html|body|head)\b/i.test(body)) return body.trim();
   const fallback: Record<number, string> = {

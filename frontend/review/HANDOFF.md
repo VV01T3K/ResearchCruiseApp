@@ -2,6 +2,16 @@
 
 Prepared on 2026-09-25 for another model to continue review and address manual testing feedback. The user explicitly requested this handoff in the repository, overriding the handoff skill's default external location.
 
+## Continuation on 2026-09-29
+
+Addressed both findings from the September 25 Greptile review. Standard HTTP titles now accept a trailing period, so the backend's `Too many requests.` uses the Polish retry guidance. Login mutations use the existing `handlesError` flag, leaving invalid-credentials feedback to the login page without a duplicate toast. Corrected this document's table formatting, which caused the frontend CI failure.
+
+Both regressions were reproduced before their fixes. Verification passed: 20 API/query error unit tests, five login browser tests with no retries, type checking, formatting, lint and the production build. The login regression checks one error, retry and the authenticated dashboard. The build retains its existing large-chunk warning. Browser tests use mocked APIs; the real SQL instance was not exercised in this continuation.
+
+This continuation uses native Linux in `t3code/continue-pr-424-handoff`, based on PR head `fec67a64`. Push follow-up commits to `codex/forms-redesign-staging`. The Windows/WSL notes below describe the previous environment. Its ignored local-instance artifacts are absent here. Local frontend commands use `frontend/node_modules/.bin`; browser installation completed with `bun ./node_modules/@playwright/test/cli.js install chromium --only-shell` after the Node 26 installer stalled during extraction.
+
+Next: check CI and any new review feedback on the follow-up commit, then address concrete manual-testing reports. Greptile TREX runtime verification remains unconfirmed. Keep the existing restriction on merging or deploying to staging.
+
 ## Start here
 
 - Read [the implementation and recording guide](README.md) for the architecture, original thread identifier, branch history and official documentation links. Do not recreate that work from this handoff.
@@ -33,15 +43,15 @@ The previous turn finished implementation, checks, commit and push. No known fai
 
 See PR validation notes and commit `68a5d4b4` for test changes. Local ignored evidence is under `artifacts/`:
 
-| Evidence | File |
-| --- | --- |
-| Backend build, zero warnings or errors; OpenAPI snapshot unchanged | `draft-contract-backend.log` |
-| Eight backend contract tests, including partial nested drafts | `draft-errors-backend-tests.log` |
-| Frontend unit suite and focused error handling checks | `draft-errors-unit.log`, `draft-errors-focused-unit.log` |
-| Type checking, formatting, lint and production build | `draft-errors-type.log`, `draft-errors-check.log`, `draft-errors-build.log` |
-| Browser draft rejection, preserved partial row and successful retry | `draft-errors-browser.log` |
-| Auth, account, cruise and user management regression checks | `draft-errors-regression.log` |
-| Partial permission saved and reopened using real backend and SQL | `draft-errors-real-instance.log` |
+| Evidence                                                            | File                                                                        |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Backend build, zero warnings or errors; OpenAPI snapshot unchanged  | `draft-contract-backend.log`                                                |
+| Eight backend contract tests, including partial nested drafts       | `draft-errors-backend-tests.log`                                            |
+| Frontend unit suite and focused error handling checks               | `draft-errors-unit.log`, `draft-errors-focused-unit.log`                    |
+| Type checking, formatting, lint and production build                | `draft-errors-type.log`, `draft-errors-check.log`, `draft-errors-build.log` |
+| Browser draft rejection, preserved partial row and successful retry | `draft-errors-browser.log`                                                  |
+| Auth, account, cruise and user management regression checks         | `draft-errors-regression.log`                                               |
+| Partial permission saved and reopened using real backend and SQL    | `draft-errors-real-instance.log`                                            |
 
 The browser regression run had 19 immediate passes and two page load timeouts that passed on retry. These were navigation timeouts, not failed form assertions. The production build still reports a large chunk warning.
 
