@@ -7,7 +7,7 @@ interface FormError {
   sectionNumber?: number;
 }
 
-export function extractErrorMessage(error: unknown): string {
+function extractErrorMessage(error: unknown): string {
   if (error == null) return 'Błąd walidacji';
   if (typeof error === 'string') return error;
   if (Array.isArray(error) && error.length > 0) return extractErrorMessage(error[0]);

@@ -27,7 +27,7 @@ import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
-import { getErrorMessage } from '@/api/fetch';
+import { getErrorMessage } from '@/api/errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({
   component: FormAPage,

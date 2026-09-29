@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@/api/errors';
+import { getErrorMessage, getProblemDetail } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { RegisterAccountRequest } from '@/api/generated/schemas';
 import { formContract } from '@/integrations/tanstack/form/schema';
@@ -13,7 +13,6 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { useRegisterAccount } from '@/api/generated/endpoints/auth.gen';
-import { getProblemDetail } from '@/api/fetch';
 import { Result } from '@/integrations/auth/types';
 
 export const Route = createFileRoute('/(auth)/register')({
@@ -61,7 +60,7 @@ function RegisterPage() {
       onSuccess: () => setResult('success'),
       onError: (error) => {
         setResult(getProblemDetail(error, '').includes('taken') ? 'username-taken' : 'error');
-        toast.error(getErrorMessage(error, 'Rejestracja nie powiod\u0142a si\u0119'));
+        toast.error(getErrorMessage(error, 'Rejestracja nie powiodła się'));
       },
     },
   });

@@ -34,7 +34,7 @@ function ForgotPasswordPage() {
       onSuccess: () => setResult('success'),
       onError: (error) => {
         setResult('error');
-        toast.error(getErrorMessage(error, 'Operacja nie powiod\u0142a si\u0119'));
+        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
       },
     },
   });

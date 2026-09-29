@@ -22,7 +22,7 @@ import {
   useRefillApplicationFormB,
   useUpdateApplicationFormB,
 } from '@/api/generated/endpoints/applications.gen';
-import { getErrorMessage } from '@/api/fetch';
+import { getErrorMessage } from '@/api/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 

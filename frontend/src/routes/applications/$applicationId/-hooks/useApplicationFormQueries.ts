@@ -1,26 +1,21 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import {
-  getApplicationFormA,
   getApplicationFormB,
   getApplicationFormC,
-  getGetApplicationFormAQueryKey,
   getGetApplicationFormBQueryKey,
   getGetApplicationFormCQueryKey,
+  useGetApplicationFormASuspense,
 } from '@/api/generated/endpoints/applications.gen';
 import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { ApiError } from '@/api/fetch';
+import { ApiError } from '@/api/errors';
 import { mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { mapFormBToValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { mapFormCToValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 
 export function useFormAQuery(applicationId: string) {
-  return useSuspenseQuery({
-    queryKey: getGetApplicationFormAQueryKey(applicationId),
-    queryFn: ({ signal }) => getApplicationFormA(applicationId, { signal }),
-    select: mapFormAToValues,
-  });
+  return useGetApplicationFormASuspense(applicationId, { query: { select: mapFormAToValues } });
 }
 
 export function useFormBQuery(applicationId: string) {

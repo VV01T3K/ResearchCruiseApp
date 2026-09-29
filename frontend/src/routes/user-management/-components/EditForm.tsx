@@ -1,4 +1,4 @@
-import { CreateUserRequest, UpdateUserRequest } from '@/api/generated/schemas';
+import { CreateUserRequest, UpdateUserRequest, type UserResponse } from '@/api/generated/schemas';
 import { formContract } from '@/integrations/tanstack/form/schema';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
@@ -20,8 +20,6 @@ import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { getRoleLabel, Role } from '@/integrations/auth/types';
-import type { UserResponse } from '@/api/generated/schemas';
-
 import {
   useAcceptUser,
   useAddUserRole,
@@ -32,7 +30,7 @@ import {
   useUpdateUser,
 } from '@/api/generated/endpoints/users.gen';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
-import { getProblemDetail } from '@/api/fetch';
+import { getProblemDetail } from '@/api/errors';
 
 type Props = {
   user?: UserResponse;

@@ -1,6 +1,3 @@
-import type { SpubTaskFields } from '@/api/generated/schemas';
-import type { PublicationFields } from '@/api/generated/schemas';
-import type { ContractFields } from '@/api/generated/schemas';
 import { applicationFormPath, formContract, submissionSchema } from '@/integrations/tanstack/form/schema';
 import { literal, z } from 'zod';
 
@@ -14,7 +11,6 @@ import {
   CruiseGoal,
   CruisePeriodValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
-import { FormAOptions } from '@/api/generated/schemas';
 import {
   GuestTeamValuesInputSchema,
   GuestTeamValuesSchema,
@@ -42,8 +38,12 @@ import {
 import {
   FormAWriteRequest,
   type BlockadeResponse as BlockadePeriod,
+  type ContractFields,
   type FormAFields,
+  type FormAOptions,
+  type PublicationFields,
   type ResearchTaskFields,
+  type SpubTaskFields,
 } from '@/api/generated/schemas';
 import {
   getResearchAreaValuesSchema,

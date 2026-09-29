@@ -245,7 +245,6 @@ export function AppDatePickerInput({
                     const newDate = new Date(selectedDate ?? new Date());
                     newDate.setHours(x?.hours ?? 0);
                     newDate.setMinutes(x?.minutes ?? 0);
-
                     onChange?.(getValueFromDate(newDate));
                   }}
                   onBlur={onBlur}

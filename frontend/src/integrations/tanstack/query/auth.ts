@@ -11,7 +11,7 @@ import {
   setSession,
   subscribeAuthDetails,
 } from '@/integrations/auth/session';
-import { ApiError, getProblemDetail } from '@/api/fetch';
+import { ApiError, getProblemDetail } from '@/api/errors';
 import type { UserResponse } from '@/api/generated/schemas';
 import type { Role, SignInResult } from '@/integrations/auth/types';
 import { logout as logoutSession, useLogin, useLogout } from '@/api/generated/endpoints/auth.gen';

@@ -4,7 +4,7 @@ import {
   useGetApplicationSupervisorReviewSuspense,
   useUpdateApplicationSupervisorReviewDecision,
 } from '@/api/generated/endpoints/applications.gen';
-import { ApiError, getProblemDetail } from '@/api/fetch';
+import { ApiError, getProblemDetail } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';
 import { mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';

@@ -2,7 +2,6 @@ import config from '@/config';
 import type { ProblemDetails } from '@/api/generated/schemas';
 import { getValidAccessToken, refreshSession } from '@/integrations/auth/session';
 import { ApiError, responseErrorMessage } from './errors';
-export { ApiError, getProblemDetail, getErrorMessage } from './errors';
 
 export type ErrorType<_Error> = ApiError;
 
