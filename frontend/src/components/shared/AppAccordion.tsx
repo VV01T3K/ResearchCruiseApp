@@ -13,7 +13,7 @@ type Props = {
 export function AppAccordion({
   title,
   children,
-  expandedByDefault = undefined,
+  expandedByDefault,
   'data-testid': testId,
   'data-testid-toggle': toggleTestId,
   'data-testid-content': contentTestId,

@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 
 export const crewMemberFieldsTitleMin = 0;
 export const crewMemberFieldsTitleMax = 1024;
