@@ -30,7 +30,7 @@ fi
 # Browsers may not reach the Sentry instance (e.g. self-hosted on an internal
 # network), so the frontend sends envelopes to this container, which forwards
 # them to the DSN's project only.
-sentry_tunnel=""
+sentry_proxy=""
 dsn=$(sanitize "${SENTRY_DSN:-}")
 if [ -n "$dsn" ]; then
   scheme=${dsn%%://*}
@@ -49,12 +49,12 @@ if [ -n "$dsn" ]; then
   [ -n "$resolvers" ] || valid=false
 
   if [ "$valid" = true ]; then
-    sentry_tunnel=/monitoring
+    sentry_proxy=/monitoring
     cat >> "$runtime_conf" <<EOF
-location = $sentry_tunnel {
+location = $sentry_proxy {
     limit_except POST { deny all; }
     # 429 makes the Sentry SDK back off instead of retrying immediately.
-    limit_req zone=sentry_tunnel burst=50 nodelay;
+    limit_req zone=sentry_proxy burst=50 nodelay;
     limit_req_status 429;
     client_max_body_size 20m;
     # Resolve at request time so an unreachable Sentry never stops nginx from starting.
@@ -71,7 +71,7 @@ location = $sentry_tunnel {
 }
 EOF
   else
-    echo "90-runtime-config.sh: could not derive a Sentry tunnel from SENTRY_DSN; browsers will send to the DSN host directly" >&2
+    echo "90-runtime-config.sh: could not derive the Sentry proxy from SENTRY_DSN; browsers will send to the DSN host directly" >&2
   fi
 fi
 
@@ -79,5 +79,5 @@ cat > /app/runtime-config.js <<EOF
 window.__SENTRY_DSN__ = "$dsn";
 window.__SENTRY_TRACES_SAMPLE_RATE__ = "$(sanitize "${SENTRY_TRACES_SAMPLE_RATE:-}")";
 window.__SENTRY_REPLAYS_SESSION_SAMPLE_RATE__ = "$(sanitize "${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-}")";
-window.__SENTRY_TUNNEL__ = "$sentry_tunnel";
+window.__SENTRY_PROXY__ = "$sentry_proxy";
 EOF

@@ -69,10 +69,11 @@ network, or let Sentry fetch maps from the app (Project Settings → Security To
 rule serving `*.map` only with that header). Sentry has no web UI for uploading maps, and uploads
 never apply retroactively to already-captured events.
 
-## Step 3b — browser access through the frontend tunnel
+## Step 3b — browser access through the frontend Sentry proxy
 
 The backend reaches the internal instance directly, but browsers cannot. The frontend container
-therefore acts as a [Sentry tunnel](https://docs.sentry.io/platforms/javascript/troubleshooting/#using-the-tunnel-option):
+therefore proxies browser events to Sentry (Sentry's docs call this the
+[`tunnel` option](https://docs.sentry.io/platforms/javascript/troubleshooting/#using-the-tunnel-option)):
 
 - On start, `docker-entrypoint.d/90-runtime-config.sh` derives the envelope URL from
   `SENTRY_DSN` and adds `POST /monitoring` to nginx, which forwards only to that project.
@@ -81,7 +82,7 @@ therefore acts as a [Sentry tunnel](https://docs.sentry.io/platforms/javascript/
 - nginx strips cookies, `Authorization`, and `X-Forwarded-For` before forwarding, so Sentry sees
   the server's address rather than the user's.
 - The frontend container must be able to resolve and reach the Sentry hostname. If the DSN is
-  malformed the tunnel is skipped and a warning is logged at startup.
+  malformed the proxy is skipped and a warning is logged at startup.
 - nginx verifies Sentry's TLS certificate against the image's CA bundle. The instance must serve
   its full chain: as of 2026-09-29 it sends the leaf without its issuer, `GEANT TLS RSA 1`
   (HARICA), so OpenSSL-based clients (nginx, curl, .NET on Linux) reject it while Windows
