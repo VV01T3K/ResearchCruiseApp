@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 
 export const cruiseDayFieldsNumberMin = 0;
 export const cruiseDayFieldsNumberMax = 1024;
