@@ -1,91 +1,54 @@
-name: Build images & deploy to Komodo staging
-
-on:
-  push:
-    branches: [staging]
-    paths-ignore: ["docs/**", "**.md", ".gitignore"]
-
+name: 'Gate proof: deploy-komodo-staging.yaml'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
   workspace:
     name: Validate workspace
     uses: ./.github/workflows/workspace-ci.yaml
     permissions:
       contents: read
-
   build:
     needs: workspace
     name: Build ${{ matrix.component }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
-
     strategy:
       matrix:
         include:
-          - component: frontend
-            context: .
-            dockerfile: frontend/Dockerfile
-            build-args: |
-              APP_ENVIRONMENT=staging
-              SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}
-          - component: backend
-            context: backend
-            dockerfile: backend/Dockerfile
-            build-args: |
-              APP_ENVIRONMENT=staging
-              SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}
+        - component: frontend
+          context: .
+          dockerfile: frontend/Dockerfile
+          build-args: 'APP_ENVIRONMENT=staging
 
+            SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}
+
+            '
+        - component: backend
+          context: backend
+          dockerfile: backend/Dockerfile
+          build-args: 'APP_ENVIRONMENT=staging
+
+            SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}
+
+            '
     steps:
-      - uses: actions/checkout@v6
-
-      - uses: docker/setup-buildx-action@v3
-
-      - name: Login to GHCR
-        if: github.event_name == 'push'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}/${{ matrix.component }}
-          tags: type=raw,value=staging
-
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: ${{ matrix.context }}
-          file: ${{ matrix.dockerfile }}
-          push: ${{ github.event_name == 'push' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ matrix.build-args }}
-          secrets: |
-            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
-          cache-from: type=gha,scope=${{ matrix.component }}
-          cache-to: type=gha,scope=${{ matrix.component }},mode=max
-
+    - name: Publication/deployment sentinel (must be skipped)
+      run: 'echo "ERROR: downstream job ran despite failed workspace gate"; exit 1'
   trigger-komodo:
     name: Trigger Komodo webhook
     runs-on: ubuntu-latest
     needs: build
     if: github.event_name == 'push'
-
     steps:
-      - uses: actions/checkout@v6
-
-      - name: Trigger Komodo webhook
-        env:
-          KOMODO_WEBHOOK_URL: https://komodo_wb.wojtecs.com/listener/github/procedure/695bdc102652deb41b6ef3ec/__ANY__
-          KOMODO_WEBHOOK_SECRET: ${{ secrets.KOMODO_WEBHOOK_SECRET }}
-          CLOUDFLARE_WEBHOOK_SECRET: ${{ secrets.CLOUDFLARE_WEBHOOK_SECRET }}
-        run: bash scripts/trigger-komodo-webhook.sh
+    - name: Publication/deployment sentinel (must be skipped)
+      run: 'echo "ERROR: downstream job ran despite failed workspace gate"; exit 1'
+    permissions:
+      contents: read
+'on':
+  push:
+    branches:
+    - audit/pr430-failed-gate
+permissions:
+  contents: read

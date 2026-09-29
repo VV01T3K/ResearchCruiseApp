@@ -1,140 +1,44 @@
-name: Build images & deploy to staging
-
-on:
-  push:
-    branches: [main]
-    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
-    paths-ignore: ["docs/**", "**.md", ".gitignore"]
-
+name: 'Gate proof: build-and-deploy.yaml'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
   workspace:
     name: Validate workspace
     uses: ./.github/workflows/workspace-ci.yaml
     permissions:
       contents: read
-
   build:
     needs: workspace
     name: Build ${{ matrix.component }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
-
     strategy:
       matrix:
         include:
-          - component: frontend
-            context: .
-            dockerfile: frontend/Dockerfile
-            build-args: |
-              APP_ENVIRONMENT=production
-              SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}
-          - component: backend
-            context: backend
-            dockerfile: backend/Dockerfile
-            build-args: |
-              APP_ENVIRONMENT=production
-              SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}
+        - component: frontend
+          context: .
+          dockerfile: frontend/Dockerfile
+          build-args: 'APP_ENVIRONMENT=production
 
+            SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}
+
+            '
+        - component: backend
+          context: backend
+          dockerfile: backend/Dockerfile
+          build-args: 'APP_ENVIRONMENT=production
+
+            SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}
+
+            '
     steps:
-      - uses: actions/checkout@v6
-
-      - uses: docker/setup-buildx-action@v3
-
-      - name: Login to GHCR
-        if: github.event_name == 'push'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}/${{ matrix.component }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=tag
-            type=ref,event=pr
-            type=sha
-
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: ${{ matrix.context }}
-          file: ${{ matrix.dockerfile }}
-          push: ${{ github.event_name == 'push' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ matrix.build-args }}
-          secrets: |
-            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
-          # Production should upload to the on-prem instance once it
-          # exists — see docs/sentry/sentry-on-prem-migration.md.
-          cache-from: type=gha,scope=${{ matrix.component }}
-          cache-to: type=gha,scope=${{ matrix.component }},mode=max
-
-  # trigger-komodo:
-  #   name: Trigger Komodo webhook
-  #   runs-on: ubuntu-latest
-  #   needs: build-and-push-images
-  #   if: github.event_name == 'push'
-
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v6
-
-  #     - name: Trigger Komodo webhook
-  #       env:
-  #         KOMODO_WEBHOOK_URL: https://komodo_wb.wojtecs.com/listener/github/procedure/695bdc102652deb41b6ef3ec/__ANY__
-  #         KOMODO_WEBHOOK_SECRET: ${{ secrets.KOMODO_WEBHOOK_SECRET }}
-  #         CLOUDFLARE_WEBHOOK_SECRET: ${{ secrets.CLOUDFLARE_WEBHOOK_SECRET }}
-  #       run: bash scripts/trigger-komodo-webhook.sh
-
-  # deploy-to-staging:
-  #   name: Deploy to staging
-  #   runs-on: ubuntu-latest
-
-  #   needs: build-and-push-images
-  #   if: github.event_name == 'push'
-
-  #   defaults:
-  #     run:
-  #       working-directory: kubernetes/overlays/staging
-
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v6
-
-  #     - name: Set up kubectl
-  #       uses: azure/setup-kubectl@v4
-
-  #     - name: Set up kustomize
-  #       uses: imranismail/setup-kustomize@v2
-
-  #     - name: Configure Kubeconfig
-  #       uses: azure/k8s-set-context@v4
-  #       with:
-  #         method: kubeconfig
-  #         kubeconfig: ${{ secrets.KUBECONFIG }}
-
-  #     - name: Set image tags
-  #       run: |
-  #         kustomize edit set image research-cruise-app-backend=${{ needs.build-and-push-images.outputs.backend-tag }}
-  #         kustomize edit set image research-cruise-app-frontend=${{ needs.build-and-push-images.outputs.frontend-tag }}
-
-  #     - name: Configure secrets
-  #       run: |
-  #         echo "ConnectionStrings__Database=${{ secrets.DB }}" >> ../../base/backend/.env
-  #         echo "JWT__Secret=${{ secrets.JWT_SECRET }}" >> ../../base/backend/.env
-
-  #     - name: Deploy to staging
-  #       run: |
-  #         kubectl apply -k .
+    - name: Publication/deployment sentinel (must be skipped)
+      run: 'echo "ERROR: downstream job ran despite failed workspace gate"; exit 1'
+'on':
+  push:
+    branches:
+    - audit/pr430-failed-gate
+permissions:
+  contents: read
