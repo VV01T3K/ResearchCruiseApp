@@ -11,9 +11,11 @@ WORKDIR /src
 
 COPY ["./Directory.Build.props", "./"]
 COPY ["./ResearchCruiseApp/ResearchCruiseApp.csproj", "./ResearchCruiseApp/packages.lock.json", "ResearchCruiseApp/"]
-RUN dotnet restore "ResearchCruiseApp/ResearchCruiseApp.csproj" --locked-mode -p:CI=true
+RUN dotnet restore "ResearchCruiseApp/ResearchCruiseApp.csproj" --locked-mode
 
 COPY . .
+# The restore layer above may come from cache, so audit whenever the source changes.
+RUN dotnet restore "ResearchCruiseApp/ResearchCruiseApp.csproj" --force -p:CI=true
 WORKDIR "/src/ResearchCruiseApp"
 
 RUN --mount=type=secret,id=sentry_auth_token,required=false \
