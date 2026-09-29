@@ -35,6 +35,7 @@ jobs:
       - name: Install workspace dependencies
         run: vp install --frozen-lockfile
       - name: Check workspace
+        shell: bash
         run: |
           mkdir -p backend/artifacts
           vp run check 2>&1 | tee backend/artifacts/workspace-check.log
