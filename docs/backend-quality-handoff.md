@@ -6,13 +6,13 @@ Updated 2026-09-29. This document stays in the repository at the user's explicit
 
 Continue draft [PR 430](https://github.com/VV01T3K/ResearchCruiseApp/pull/430), branch `feature/backend-quality-baseline`, targeting `staging`. The baseline remains incomplete. Keep the PR draft; merging and deployment require further authorization.
 
-The continuation checkout is `/home/wojtek/.t3/worktrees/ResearchCruiseApp/t3code-5a2f0598`, local branch `t3code/pr-430-continuation`, continuing PR head `6b32cf9c`. The previous Ubuntu WSL checkout is a different environment. Confirm refs and the working tree before editing.
+The continuation checkout is `/home/wojtek/.t3/worktrees/ResearchCruiseApp/t3code-5a2f0598`, local branch `t3code/pr-430-continuation`, continuing integrated PR head `58e32d54`. The previous Ubuntu WSL checkout is a different environment. Confirm refs and the working tree before editing.
 
 The previous next task, populated Form B/C replacement, is now covered by `Applications/FormReplacementTests.cs`. All four draft/final replacement cases reproduced lost reused permissions. Both endpoints now persist replacement references before cleanup inside their existing `DbTransactionFilter` transaction. The regression checks full HTTP content, retained SQL identities, obsolete-permission cleanup, rollback after a flushed replacement, and successful retry. See BE-ATOMIC-003 in the scenario ledger for evidence and limits.
 
 The staging integration is resolved locally against `373812c6`, preserving history with a merge. The ten frontend conflicts retain staging's TanStack Table v9, React Compiler, virtualization and expanded browser scenarios. The three backend/documentation conflicts retain this PR's package pins, artifact exclusions and SQL baseline instructions. All 19 affected application, cruise and user-management browser tests passed with two workers and retries disabled, including desktop/mobile scrolling, filtering, sorting and selection.
 
-Continue the requirement-to-scenario audit in the ledger after hosted validation. Remaining examples include cross-application child sharing and equipment-category moves during form replacement, scoring beyond the funding slice, aggregate overflow, and account/file boundaries. The four new replacement tests cover same-form draft replacement and finalization, not every cleanup or research-effect policy.
+Cross-application child sharing and all six directed equipment-category moves are now covered for both Form B and C, including cleanup after the final reference disappears. Continue the requirement-to-scenario audit for scoring beyond funding, aggregate overflow, and account/file boundaries. The ledger contains a first assertion-level legacy audit; all dispositions still need review.
 
 GitHub rules were inspected on 2026-09-29. The active staging ruleset only requires linear history and restricts branch creation/deletion. It has no required status checks. The main ruleset is disabled. Required workspace-check enforcement and negative deployment-gate evidence remain acceptance work; no repository rules were changed.
 
@@ -24,7 +24,7 @@ GitHub rules were inspected on 2026-09-29. The active staging ruleset only requi
 - `docs/email-delivery.md` and `docs/permissions.md`: domain contracts.
 - The PR diff: actual tooling, workflow and behavior changes. Continue these artifacts instead of creating a parallel plan.
 
-Keep all 78 legacy cases in the gate until individual dispositions and replacements are reviewed. Repeated supervisor decisions, conflicting multi-role precedence and concurrent numbering remain unresolved. The accepted single-role ownership decision in `FormAccessTests` does not settle multi-role precedence.
+Keep all 78 legacy cases in the gate until individual dispositions and replacements are reviewed. The user confirmed final supervisor decisions with readable links and rejected repeats/reversals. The user also required other users’ drafts to be hidden and uneditable for Administrator, including Administrator + CruiseManager; the verifier now enforces ownership before administrator privileges for drafts. Concurrent cruise numbering remains undecided; applications instead use SQL identity integers. See the ledger’s maintainer policy decisions.
 
 ## Local execution
 
@@ -46,8 +46,10 @@ Ignored local evidence lives in `backend/artifacts/evidence/form-replacement-*` 
 
 ## Latest validation
 
-Root `vp run check` passed all 424 tests: 186 frontend, 78 legacy, 27 backend unit and 133 SQL integration, with no backend skips and zero build warnings/errors. Formatting, locked restore, temporary API comparison and frontend lint/types passed. The staging integration run used pinned Node 25.8.2 and took 193.51 seconds; integration took 168.165 seconds. The 19 affected browser cases also passed in 45.6 seconds without retries. They overlapped the workspace run, so these timings are not an isolated benchmark. See the staging integration entry in the ledger for evidence paths. Provisional performance targets remain exceeded.
+Root `vp run check` passed all 430 tests after the draft-access fix: 186 frontend, 78 legacy, 27 backend unit and 139 SQL integration, with no backend skips and zero build warnings/errors. Formatting, locked restore, temporary API comparison and frontend lint/types passed. Integration took 149.504 seconds. Evidence: `backend/artifacts/evidence/policy-full-check.log` and `backend/artifacts/tests/run-bft019/`. The 41 focused policy/replacement cases also passed. The earlier staging integration passed 19 affected browser cases without retries. Provisional performance targets remain exceeded. Hosted CI for this follow-up should be checked on the latest PR head.
 
 ## Acceptance limits
 
-Hosted CI, required-check configuration, negative deployment-gate evidence, performance calibration, IDE/devcontainer verification and legacy dispositions remain open. Do not infer hosted acceptance from local checks or reduce coverage to meet provisional performance targets. No agents should be spawned unless the user or applicable instructions authorize delegation.
+The hosted workspace check passed on `58e32d54`: [run 36500448656](https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/36500448656), all 424 cases with downloaded TRX counters verified.
+
+Required-check configuration, negative deployment-gate evidence, performance calibration, IDE/devcontainer verification and legacy dispositions remain open. Do not infer hosted acceptance from local checks or reduce coverage to meet provisional performance targets. No agents should be spawned unless the user or applicable instructions authorize delegation.

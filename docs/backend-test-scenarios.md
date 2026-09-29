@@ -19,8 +19,8 @@ Each entry records:
 
 ## Remaining acceptance work (2026-09-29)
 
-- Complete the requirement-to-scenario audit and missing P0/P1 cases. The Form A final submission through first supervisor and office decisions is now exercised. Form A outbox failure rollback and retry are exercised in BE-ATOMIC-002. Populated Form B/C replacement, cleanup rollback and retry are exercised in BE-ATOMIC-003. Remaining gaps include cross-application sharing and equipment-category moves during replacement, scoring categories/effects and aggregate overflow beyond the current funding slice, and remaining account/file boundaries. Passing examples do not establish coverage of an entire family.
-- Resolve repeated supervisor decisions, conflicting role precedence, and concurrent numbering outcomes with the product owner. These remain explicit needs-decision entries below.
+- Complete the requirement-to-scenario audit and missing P0/P1 cases. The Form A final submission through first supervisor and office decisions is now exercised. Form A outbox failure rollback and retry are exercised in BE-ATOMIC-002. Populated Form B/C replacement, cleanup rollback and retry are exercised in BE-ATOMIC-003. Cross-application sharing and equipment-category moves are exercised in BE-FORM-SHARING-001. Remaining gaps include scoring categories/effects and aggregate overflow beyond the current funding slice, and remaining account/file boundaries. Passing examples do not establish coverage of an entire family.
+- Resolve concurrent cruise numbering and remaining role combinations with the product owner. Sequential supervisor decisions and Administrator + CruiseManager draft access were resolved on 2026-09-29; see the policy decisions below.
 - Review all 78 legacy cases individually, map replacements or justified retirements, and complete the runner cutover only after dispositions are accepted. Keep legacy execution in the gate meanwhile.
 - Exercise hosted CI on the same revision, prove a failed check blocks image publication/deployment, and configure/verify required checks for main and staging. Local YAML validation is insufficient.
 - Measure and ratify full-suite performance budgets, including hosted runs. Recent local runs exceed the provisional 90-second root and 60-second integration targets. Do not reduce coverage to meet a provisional number.
@@ -30,8 +30,8 @@ Each entry records:
 | ID | Priority | Scenario | Policy | Implementation |
 | --- | --- | --- | --- | --- |
 | BE-EMAIL-001 | P0 | Queued email survives host replacement with persisted protection keys | specified below | implemented; review pending |
-| BE-SUPERVISOR-001 | P0 | Repeating or reversing an already recorded supervisor decision | needs-decision | not-started |
-| BE-ACCESS-001 | P0 | Conflicting role grants/restrictions for a multi-role actor | needs-decision | not-started |
+| BE-SUPERVISOR-001 | P0 | Repeating or reversing an already recorded supervisor decision | specified 2026-09-29 | implemented; review pending |
+| BE-ACCESS-001 | P0 | Conflicting role grants/restrictions for a multi-role actor | Administrator + CruiseManager draft access specified; other combinations open | draft read/write implemented |
 | BE-NUMBERING-001 | P0 | Concurrent creates contend for a year-based number | needs-decision | not-started |
 
 ### BE-EMAIL-001: host replacement
@@ -47,14 +47,12 @@ Each entry records:
 
 ### BE-SUPERVISOR-001: repeated decision
 
-- Source to reconcile: permission requirements, supervisor decision rules, and `PUT /v2/applications/{applicationId}/supervisor-review/decision` at the baseline.
-- Actor/state/action: anonymous caller with the originally valid supervisor code submits the same decision again, or the opposite decision after the first is recorded. Split these into distinct IDs once their outcomes are agreed.
-- Required decision: idempotent success versus explicit rejection; code validity after the first decision; whether reversal is allowed; exact status/body; whether state or queued notifications may change.
-- Decision owner: product owner/maintainer, not yet assigned. Resolution/rationale: pending.
-- Expected outcome/test/reviewer/evidence: blocked on that decision. Inspect current code without turning it into an accepted expected value.
+- The user confirmed final first decisions on 2026-09-29. Repeats and reversals return 403, preserve state and send no mail; the review link remains readable.
+- Both first-decision outcomes are covered by `SupervisorReviewTests.Decision_WhenAlreadyAnswered_RejectsRepeatAndReversalButAllowsReading`. See the policy regression evidence below. Concurrent conflicting decisions remain outside this scenario.
 
 ### BE-ACCESS-001: multi-role precedence
 
+- Resolved subset (2026-09-29): Administrator + CruiseManager cannot read or edit another user’s draft; both operations return concealed 404. Remaining role combinations need decisions.
 - Source to reconcile: [permission matrix](permissions.md), authorization policies, and row-visibility rules.
 - Actor/state/action: a user holds both a broad-access role and an ownership-restricted role and accesses an unrelated record. Requirements work must select exact role pairs and list/read/write routes and assign separate scenario IDs.
 - Required decision: union of grants, explicit precedence, or restriction-first semantics for each affected operation; intended 403 versus concealed 404 and list filtering; no mutation after rejection.
@@ -64,7 +62,7 @@ Each entry records:
 ### BE-NUMBERING-001: competing creates
 
 - Source to reconcile: year-based numbering requirements, generator, and database constraints.
-- Actor/state/action: two valid writers create records for the same year using independent scopes/connections with coordinated overlap. Requirements work must identify the exact entity/write operation; do not coordinate with sleeps.
+- Actor/state/action: two valid writers create cruises for the same year using independent scopes/connections with coordinated overlap. Applications use SQL identity integers; the year-based generator applies to cruises. Do not coordinate with sleeps.
 - Required decision: uniqueness only or gap-free sequence; whether both requests must succeed or one may receive a defined conflict/retry response; retry ownership; exact stored state and HTTP outcomes if tested through HTTP.
 - Decision owner: product owner/maintainer, not yet assigned. Resolution/rationale: pending.
 - Expected outcome/test/reviewer/evidence: blocked on the invariant. Do not claim that two successful sequential writes prove concurrency behavior.
@@ -139,7 +137,7 @@ Every row below remains **unreviewed** and required to execute. Source: legacy d
 | Original fully qualified method and case | Requirement family | Disposition |
 | --- | --- | --- |
 | `ResearchCruiseApp.Tests.AccessControlTests.ShipownerCannotManagePrivilegedRolesOrAccounts()` | authorization | unreviewed |
-| `ResearchCruiseApp.Tests.AccessControlTests.ShipownerAndAssignedManagersCanCreateFormsBAndC()` | authorization | unreviewed |
+| `ResearchCruiseApp.Tests.AccessControlTests.OnlyAssignedManagersAndAdministratorsCanCreateFormsBAndC()` | authorization | unreviewed |
 | `ResearchCruiseApp.Tests.AccessControlTests.UserEmailValidationCoversCreateAndOptionalUpdate()` | authorization | unreviewed |
 | `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.FiltersDistinguishSameNamedManagersAndCombineNumberWithDate()` | catalog pagination / authorization | unreviewed |
 | `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess(RoleName.Administrator, true)` | catalog pagination / authorization | unreviewed |
@@ -449,3 +447,46 @@ With pinned Node 25.8.2, SDK 10.0.401 and frozen dependencies, root `vp run chec
 The affected browser files `applications.spec.ts`, `cruises.spec.ts` and `user-management.spec.ts` passed all 19 Chromium cases in 45.6 seconds, with two workers and retries disabled. They exercise desktop/mobile virtualization, pagination, sorting/filtering, row selection and API-backed workflows. Log: `backend/artifacts/evidence/staging-integration-browser.log`. Browser coverage remains separate from the ordinary workspace gate.
 
 Read-only GitHub rule inspection found an active staging ruleset requiring linear history and restricting branch creation/deletion, but no required status checks. The main ruleset is disabled. No repository rules were modified; required-check enforcement and negative deployment-gate evidence remain open.
+
+
+## Shared form children (specified 2026-09-29)
+
+BE-FORM-SHARING-001 (P0, specification section 6 forms/persistence; policy specified): two applications owned by different managers save populated Form B/C drafts with identical shareable fields. Replacing the first draft with empty content must preserve the second application's complete GET payload and shared SQL rows. On the second application, move equipment through all directed pairs of short-term, long-term and insured categories, retaining its SQL identity and exact HTTP fields. Finally empty that draft and assert all now-unreferenced shareable rows are deleted, both applications and current forms survive, and no mail is queued or sent. Both cases passed; see execution evidence below. Maintainer review pending.
+
+
+## Maintainer policy decisions (2026-09-29)
+
+The user confirmed BE-SUPERVISOR-001: preserve current behavior. The first accept/reject decision is final; repeat and reversal return 403 without state/email changes, while the same review link remains readable. `SupervisorReviewTests.Decision_WhenAlreadyAnswered_RejectsRepeatAndReversalButAllowsReading` covers both initial decisions. This resolves sequential repeat/reversal policy, not concurrent conflicting decisions.
+
+The user changed draft-write policy for BE-ACCESS-004/005: other users' drafts remain hidden and must also be uneditable by Administrator, including Administrator + CruiseManager. Only existing manager/deputy assignment grants access. Concealed records return 404, retain original identity/content and emit no mail. This supersedes earlier ledger entries allowing unrelated administrators to replace Form A drafts. Submitted-application administrator access is unchanged. Other multi-role combinations remain outside this decision.
+
+BE-NUMBERING-001 remains undecided. Correct the entity scope: applications use SQL identity integers with possible gaps and no annual reset. The year-based generator is used for cruises and currently reads max+1 without concurrency serialization or a unique-number constraint. The user is unsure about the desired concurrency policy. No numbering behavior is changed or accepted here.
+
+BE-FORM-SHARING-001 focused execution passed both Form B/C cases in 35.897 seconds. Each case covers all six directed equipment-category transitions, preservation of another owner's payload and deletion after the final reference is removed. No production change was needed. Evidence: `backend/artifacts/evidence/shared-children.log`, `backend/artifacts/tests/shared-children/`.
+
+### Legacy assertion audit, first group (2026-09-29)
+
+Source reviewed by Codex against the current HTTP/SQL assertions. These are proposed dispositions for maintainer review, not accepted retirements. All 78 legacy cases still execute. Hosted run [36500448656](https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/36500448656) on `58e32d54` supplies passing legacy and replacement execution, with downloaded TRX counters verified. Individual replacement fault demonstrations and maintainer acceptance remain required before cutover.
+
+| Legacy method/cases | Proposed disposition and assertion comparison |
+| --- | --- |
+| `AuthSessionContractTests.BrowserTokenResponseNeverExposesTheRefreshCredential` | Partially replaced by BE-AUTH-001 `LoginTests.Login_WhenAcceptedAndConfirmed_ReturnsAccessTokenAndProtectedRefreshSession`, which verifies actual HTTP absence of the refresh credential and SQL hashing. Retain until the response's refresh-expiration property assertion is also covered. |
+| `AuthSessionContractTests.RefreshCookieIsScopedToTheSiteRootAndJavaScriptCannotReadIt` | Partially replaced by BE-AUTH-001 production HTTP cookie assertions. Development-mode Secure=false and exact expiration are not covered there; retain those cases. |
+| `AuthSessionContractTests.PasswordResetRevokesTheStoredRefreshSession` | Replacement candidate: BE-ACCOUNT-002 `PasswordRecoveryTests.ResetPassword_WhenEmailTokenIsUsed_ChangesPasswordRevokesSessionAndRejectsReplay` exercises real email-token HTTP + SQL instead of EF InMemory, verifies credentials/session revocation and replay. |
+| `AuthSessionEndpointTests.RefreshCookieIsScopedToTheSiteRoot` | Replacement candidate: BE-AUTH-001 checks root-scoped cookie from actual SQL-backed login. |
+| `AuthSessionEndpointTests.RefreshCookieHasSecureBrowserAttributes` | Replacement candidate: BE-AUTH-001 checks HttpOnly, Secure and Strict on actual HTTP response. |
+| `AuthSessionEndpointTests.ReplayingARotatedRefreshCookieIsRejected` | Replacement candidate: BE-AUTH-003 `RefreshSessionTests.Refresh_WhenUsedThenReplayed_RotatesAndPreservesTheNewSession` also proves replay leaves the replacement session usable and unchanged in SQL. |
+| `AuthSessionEndpointTests.SessionSurvivesARefreshRoundTripAndDiesOnLogout` | Partial replacement: BE-AUTH-003 rotation and BE-AUTH-005 `LogoutTests.Logout_WhenSessionExists_RevokesItAndPreservesAnotherAccount` cover server behavior and deletion-cookie attributes. Legacy CookieContainer handling and the combined round trip remain distinct assertions. |
+| `ApplicationWriteContractTests.MissingWriteRequestKeysAreRejected`, A/B/C | Replacement candidate: BE-FORM-BINDING-001 `FormBindingTests.Write_WhenRequiredEnvelopeIsInvalid_ReturnsBadRequestWithoutChangingApplication` checks missing envelope fields through HTTP and absence of SQL mutation for all three forms. |
+| `ApplicationWriteContractTests.FinalValidationRetainsIndexedPropertyPaths`, B/C | Replacement candidate: BE-FORM-VALIDATION-001 `FormValidationTests.Submit_WhenPermissionScanIsMissing_ReturnsIndexedErrorAndPreservesDraft` checks the indexed HTTP error key and preserves saved draft/permission identities in SQL. |
+| `ApplicationWriteContractTests.DraftRequestsAllowIncompleteValuesWhenEveryKeyIsPresent` | Partial replacement by BE-FORMA-001 and BE-FORM-VALIDATION-001; exact all-empty payload behavior is distinct from the populated incomplete drafts. Keep until a deliberate assertion covers that boundary. |
+| `AccessControlTests.OnlyAssignedManagersAndAdministratorsCanCreateFormsBAndC` | Inventory name corrected from the older Shipowner name. Test checks assigned manager and unrelated manager/shipowner, but its title overstates Administrator coverage. BE-ACCESS form tests provide SQL/HTTP cases; explicit assigned deputy and administrator cases for later forms still need mapping. |
+| `AccessControlTests.ShipownerCannotManagePrivilegedRolesOrAccounts` | Partial replacement by BE-ROLES-001 and BE-ACCOUNT-005. Direct `CanAccessUser` assertions need separate HTTP-read mapping; do not retire based only on grant/delete tests. |
+| `AccessControlTests.UserEmailValidationCoversCreateAndOptionalUpdate` | Retain pending equivalent invalid-create, omitted-update-email and invalid-update-email cases. Account lifecycle success tests are not substitutes. |
+| `DomainLogicTests.WorkflowStatusesExposeStableCodes`, all 13 cases | Rewrite candidate: currently calls `JsonNamingPolicy.CamelCase` on enum names, so it cannot catch incorrect production DTO mapping or serializer registration. Replace with actual application/cruise response codes for each status before retirement. |
+| `SentryTests`, all four cases | Retain pending explicit telemetry review/migration. PublicStatusTests with Sentry disabled does not replace sensitive-data scrubbing, health-transaction exclusion or role enrichment. |
+| `SmtpConfigurationTests`, all 20 cases | Retain pending migration of startup/binding checks. SmtpSettingsTests' four port-boundary cases do not replace host-before-work ordering, credential diagnostics, fake-path validation, environment binding or the real application startup probe. |
+
+Policy regression evidence (2026-09-29): the draft-write tests first reproduced HTTP 204 instead of 404 for both Administrator and Administrator + CruiseManager. `UserPermissionVerifier.CanCurrentUserAddForm` now checks draft ownership before role privileges. All 41 focused form-access, supervisor-review and form-replacement cases passed in 68.341 seconds, with no skips. Evidence: `backend/artifacts/evidence/draft-policy-red.log`, `backend/artifacts/evidence/policy-green.log` and `backend/artifacts/tests/policy-green/`.
+
+Combined policy/sharing validation (2026-09-29): root `vp run check` exited 0; all 430 cases passed (186 frontend, 78 legacy, 27 unit, 139 SQL integration), no backend skips and zero build warnings/errors. Formatting, locked restore, generated API comparison and frontend lint/types passed. Integration duration: 149.504 seconds, still above the provisional target. Evidence: `backend/artifacts/evidence/policy-full-check.log`, reports `backend/artifacts/tests/run-bft019/`.

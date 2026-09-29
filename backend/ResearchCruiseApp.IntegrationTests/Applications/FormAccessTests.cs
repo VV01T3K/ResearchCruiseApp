@@ -69,6 +69,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
     [InlineData("anonymous", HttpStatusCode.Unauthorized)]
     [InlineData(RoleName.CruiseManager, HttpStatusCode.NotFound)]
     [InlineData(RoleName.Administrator, HttpStatusCode.NotFound)]
+    [InlineData("administrator-manager", HttpStatusCode.NotFound)]
     [InlineData(RoleName.Shipowner, HttpStatusCode.NotFound)]
     [InlineData(RoleName.Guest, HttpStatusCode.NotFound)]
     [InlineData(RoleName.ShipCrew, HttpStatusCode.NotFound)]
@@ -103,11 +104,12 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-ACCESS-004/005: only manager/deputy or Administrator can replace a draft form.
+    // BE-ACCESS-004/005: only the assigned manager/deputy can replace a draft form.
     [Theory]
     [InlineData("owner", HttpStatusCode.NoContent)]
     [InlineData("deputy", HttpStatusCode.NoContent)]
-    [InlineData(RoleName.Administrator, HttpStatusCode.NoContent)]
+    [InlineData(RoleName.Administrator, HttpStatusCode.NotFound)]
+    [InlineData("administrator-manager", HttpStatusCode.NotFound)]
     [InlineData("anonymous", HttpStatusCode.Unauthorized)]
     [InlineData(RoleName.CruiseManager, HttpStatusCode.NotFound)]
     [InlineData(RoleName.Shipowner, HttpStatusCode.NotFound)]
@@ -302,7 +304,15 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         {
             var email = actor is "owner" or "deputy"
                 ? actor + "@example.invalid"
-                : (await TestUsers.Create(app, "actor@example.invalid", actor)).Email!;
+                : (
+                    await TestUsers.Create(
+                        app,
+                        "actor@example.invalid",
+                        actor == "administrator-manager"
+                            ? [RoleName.Administrator, RoleName.CruiseManager]
+                            : [actor]
+                    )
+                ).Email!;
             var session = await RefreshSessionTests.Login(client, email);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 "Bearer",
