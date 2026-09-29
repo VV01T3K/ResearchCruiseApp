@@ -9,6 +9,29 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
     {
         RuleFor(request => request.Form).NotNull();
         When(
+            request => request.Form is not null,
+            () =>
+            {
+                RuleForEach(request => request.Form.ResearchTasksEffects)
+                    .Must(effect =>
+                        string.IsNullOrEmpty(effect.PublicationMinisterialPoints)
+                        || (
+                            int.TryParse(effect.PublicationMinisterialPoints, out var points)
+                            && points >= 0
+                        )
+                    )
+                    .WithMessage("Punkty publikacji muszą być nieujemną liczbą całkowitą.");
+
+                RuleForEach(request => request.Form.ResearchTasksEffects)
+                    .Must(effect =>
+                        IsBooleanOrEmpty(effect.Done)
+                        && IsBooleanOrEmpty(effect.ManagerConditionMet)
+                        && IsBooleanOrEmpty(effect.DeputyConditionMet)
+                    )
+                    .WithMessage("Warunki efektu muszą mieć wartość true, false lub pusty ciąg.");
+            }
+        );
+        When(
             request => request.Form is not null && !request.Draft,
             () =>
             {
@@ -37,4 +60,9 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
             }
         );
     }
+
+    private static bool IsBooleanOrEmpty(string? value) =>
+        value == ""
+        || string.Equals(value, "true", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(value, "false", StringComparison.OrdinalIgnoreCase);
 }
