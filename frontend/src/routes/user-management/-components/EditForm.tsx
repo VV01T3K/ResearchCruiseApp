@@ -205,7 +205,6 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
       toast.dismiss(loading);
       console.error(err);
       toast.error('Nie udało się usunąć użytkownika');
-      throw err;
     }
   }
 
@@ -225,7 +224,6 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         toast.dismiss(loading);
         console.error(err);
         toast.error('Nie udało się zaakceptować konta użytkownika');
-        throw err;
       }
     } else {
       const loading = toast.loading('Cofanie akceptacji konta użytkownika...');
@@ -238,7 +236,6 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         toast.dismiss(loading);
         console.error(err);
         toast.error('Nie udało się cofnąć akceptacji konta użytkownika');
-        throw err;
       }
     }
   }

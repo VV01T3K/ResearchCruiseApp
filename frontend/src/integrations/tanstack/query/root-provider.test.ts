@@ -34,7 +34,7 @@ it('leaves form errors to the form without a duplicate notification', async () =
 it('reports failed data loading', async () => {
   const showError = vi.spyOn(toast, 'error').mockReturnValue('test');
   await expect(
-    queryClient.fetchQuery({
+    queryClient.query({
       queryKey: ['failure'],
       retry: false,
       queryFn: async () => {

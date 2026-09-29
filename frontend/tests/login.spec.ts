@@ -69,3 +69,21 @@ test('rate-limited login shows retry guidance without a toast and allows retry',
   await loginPage.login('test.email@gmail.com', 'someP@ssword');
   await expect(loginPage.page.getByRole('link', { name: /Nowe zgłoszenie/ })).toBeVisible();
 });
+
+test('failed profile loading reports the server reason once and allows login retry', async ({ loginPage, page }) => {
+  let profileUnavailable = true;
+  await page.route(`${API_URL}/v2/users/me`, (route) =>
+    profileUnavailable
+      ? route.fulfill({ status: 503, json: { detail: 'Profil chwilowo niedostępny' } })
+      : route.fallback()
+  );
+  await page.route(`${API_URL}/v2/auth/logout`, (route) => route.fulfill({ status: 204 }));
+  await loginPage.login('test.email@gmail.com', 'someP@ssword');
+  await expect(page.getByText('Wystąpił błąd podczas logowania. Sprawdź połączenie z internetem.')).toBeVisible();
+  await expect(page.getByTestId('toast-error')).toHaveCount(1);
+  await expect(page.getByTestId('toast-error')).toContainText('Profil chwilowo niedostępny');
+
+  profileUnavailable = false;
+  await loginPage.login('test.email@gmail.com', 'someP@ssword');
+  await expect(page).toHaveURL('/');
+});

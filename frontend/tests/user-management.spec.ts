@@ -204,3 +204,37 @@ test('cruise manager options load from the v2 users route', async ({ page }) => 
   await expect(page.getByText('3. Kierownik główny i zastępca kierownika głównego')).toBeVisible();
   expect(requested).toBe(true);
 });
+
+for (const action of ['accept', 'deactivate', 'delete'] as const) {
+  test(`failed user ${action} stays handled and allows retry`, async ({ page }) => {
+    await seedAuthenticatedAdmin(page);
+    await page.route(`${API_URL}/v2/users`, (route) =>
+      route.fulfill({ json: [{ ...user, accepted: action === 'deactivate' }] })
+    );
+    let rejected = true;
+    const endpoint = `${API_URL}/v2/users/${user.id}${action === 'delete' ? '' : '/acceptance'}`;
+    await page.route(endpoint, (route) =>
+      rejected
+        ? route.fulfill({ status: 503, json: { detail: 'Spróbuj ponownie później' } })
+        : route.fulfill({ status: 204 })
+    );
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    await page.goto('/user-management');
+    await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+    const name =
+      action === 'accept'
+        ? 'Zaakceptuj konto użytkownika'
+        : action === 'deactivate'
+          ? 'Cofnij akceptację konta'
+          : 'Czy na pewno?';
+    if (action === 'delete') await page.getByRole('button', { name: 'Usuń', exact: true }).click();
+    await page.getByRole('button', { name, exact: true }).click();
+    await expect(page.getByRole('alert')).toContainText('Spróbuj ponownie później');
+    await page.getByRole('alert').getByRole('button', { name: 'Close' }).click();
+    rejected = false;
+    await page.getByRole('button', { name, exact: true }).click();
+    await expect(page.getByRole('button', { name, exact: true })).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
+}

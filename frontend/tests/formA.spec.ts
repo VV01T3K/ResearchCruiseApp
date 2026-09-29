@@ -1,7 +1,8 @@
 import { expect } from '@playwright/test';
 
 import { MOCK_PDF_FILEPATH } from './fixtures/consts';
-import { formTest as test } from './fixtures/fixtures';
+import { getFormAPayload } from './fixtures/mockPayloads';
+import { API_URL, formTest as test } from './fixtures/fixtures';
 import { type FormAPage } from './fixtures/pages/formA/formAPage';
 import { touchInput } from './utils/form-filling-utils';
 
@@ -260,3 +261,43 @@ test.describe('adding rows through the UI', () => {
     await formAPage.submitForm({ expectedResult: 'valid' });
   });
 });
+
+for (const picker of [
+  {
+    task: { type: '3', title: 'Project', date: '2026-09-01', financingApproved: 'false' },
+    field: 'date',
+    message: 'Data nie może być pusta',
+  },
+  {
+    task: {
+      type: '4',
+      title: 'Project',
+      startDate: '2026-09-01',
+      endDate: '2026-10-01',
+      financingAmount: '100',
+      securedAmount: '100',
+    },
+    field: 'startDate',
+    message: 'Data rozpoczęcia nie może być pusta',
+  },
+]) {
+  test(`cleared research ${picker.field} validates before submission and allows correction`, async ({
+    formAPage,
+    page,
+  }) => {
+    await page.route(`${API_URL}/v2/applications/${formAPage.formId}/form-a`, (route) =>
+      route.fulfill({ json: { ...getFormAPayload(), researchTasks: [picker.task] } })
+    );
+    await formAPage.goto();
+    const control = page.locator(`button[name="researchTasks[0].${picker.field}"]`);
+    await control.getByRole('button').click();
+    await page.locator('input[name="researchTasks[0].title"]').click();
+    await expect(page.getByText(picker.message, { exact: true })).toBeVisible();
+    await control.click();
+    await page
+      .getByRole('menu')
+      .getByRole('button', { name: picker.field === 'date' ? '15' : 'Wrzesień', exact: true })
+      .click();
+    await expect(page.getByText(picker.message, { exact: true })).toHaveCount(0);
+  });
+}

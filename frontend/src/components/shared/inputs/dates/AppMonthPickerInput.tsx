@@ -61,16 +61,19 @@ export function AppMonthPickerInput({
     }
 
     setExpanded(!expanded);
+    if (expanded) onBlur?.();
   }
 
   function handleSelectMonth(newDate: Date) {
     onChange?.(getValueFromDate(newDate));
     setExpanded(false);
+    onBlur?.();
   }
 
   function handleResetSelection(evt: React.MouseEvent) {
     onChange?.(undefined);
     setExpanded(false);
+    onBlur?.();
     evt.stopPropagation();
     evt.preventDefault();
   }

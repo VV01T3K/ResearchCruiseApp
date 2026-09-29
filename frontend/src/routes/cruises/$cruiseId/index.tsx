@@ -1,3 +1,4 @@
+import { getErrorMessage } from '@/api/errors';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { cruiseFormPath } from '@/routes/cruises/-schemas/form.schema';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
@@ -90,7 +91,7 @@ function CruiseDetailsPage() {
       } catch (error) {
         console.error(error);
         setServerFormErrors(form, error, cruiseFormPath);
-        toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        toast.error(getErrorMessage(error, 'Nie udało się zaktualizować rejsu'));
         navigateToFirstError();
         throw error;
       }

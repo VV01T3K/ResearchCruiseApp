@@ -306,3 +306,28 @@ test('cruise list actions use v2 auto-plan, export, and blockade routes', async 
   await page.goto('/applications/new');
   await expect.poll(() => requests).toContain('blockades');
 });
+
+test('failed cruise saves show server details and retain edits for retry', async ({ page }) => {
+  await seedAuthenticatedAdmin(page);
+  const cruise = getCruise('confirmed');
+  await mockCruiseDetailDependencies(page, cruise);
+  let rejected = true;
+  let submitted: unknown;
+  await page.route(`${API_URL}/v2/cruises/${cruise.id}`, (route) => {
+    if (route.request().method() === 'GET') return route.fulfill({ json: cruise });
+    submitted = route.request().postDataJSON();
+    return rejected
+      ? route.fulfill({ status: 409, json: { errors: { '': ['Stan rejsu zmienił się. Spróbuj ponownie.'] } } })
+      : route.fulfill({ status: 204 });
+  });
+  await page.goto(`/cruises/${cruise.id}`);
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await page.locator('input[name="title"]').fill('Updated cruise');
+  await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+  await expect(page.getByTestId('toast-error')).toContainText('Stan rejsu zmienił się. Spróbuj ponownie.');
+  await expect(page.locator('input[name="title"]')).toHaveValue('Updated cruise');
+  rejected = false;
+  await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+  await expect(page.getByRole('button', { name: 'Edytuj', exact: true })).toBeVisible();
+  expect(submitted).toMatchObject({ title: 'Updated cruise' });
+});

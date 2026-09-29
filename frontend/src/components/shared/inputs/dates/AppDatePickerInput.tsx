@@ -95,11 +95,13 @@ export function AppDatePickerInput({
     }
 
     setExpanded(!expanded);
+    if (expanded) onBlur?.();
   }
 
   function handleResetSelection(evt: React.MouseEvent) {
     onChange?.(undefined);
     setExpanded(false);
+    onBlur?.();
     evt.stopPropagation();
     evt.preventDefault();
   }
@@ -133,6 +135,7 @@ export function AppDatePickerInput({
     onChange?.(getValueFromDate(newDate));
     if (type === 'date') {
       setExpanded(false);
+      onBlur?.();
     }
   }
 
