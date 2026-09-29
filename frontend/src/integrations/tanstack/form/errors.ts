@@ -17,7 +17,8 @@ function extractErrorMessage(error: unknown): string {
 
 export function getErrors(meta: AnyFieldMeta, submissionAttempts = 0): string[] | undefined {
   if ((!meta.isBlurred && submissionAttempts === 0) || meta.errors.length === 0) return undefined;
-  return meta.errors.map(extractErrorMessage);
+  // Server and client validators can report the same message for one field.
+  return [...new Set(meta.errors.map(extractErrorMessage))];
 }
 
 function getSectionNumber(fieldName: string, sections: Record<string, number>): number | undefined {

@@ -18,7 +18,7 @@ export function AppInputErrorsList({ id, errors, 'data-testid': testId }: Props)
 
   return (
     <ul id={id} className="list-disc ps-4 text-danger" data-testid={testId}>
-      {[...new Set(errors)].map((error) => (
+      {errors.map((error) => (
         <li key={error} data-error="true">
           {error}
         </li>

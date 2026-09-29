@@ -1,6 +1,7 @@
 import { FormApi, FieldApi } from '@tanstack/react-form';
+import { z } from 'zod';
 import { expect, it } from 'vitest';
-import { getFormErrorMessage, setServerFormErrors } from './errors';
+import { getErrors, getFormErrorMessage, setServerFormErrors } from './errors';
 import { ApiError, getErrorMessage, responseErrorMessage } from '@/api/errors';
 
 it('shows root and unmounted server errors instead of losing their reason', () => {
@@ -53,6 +54,25 @@ it('keeps every reason from a mixed response while annotating mounted fields', (
     expect(getErrorMessage(error, 'Nie zapisano')).toBe(
       'Nie zapisano: Zgłoszenie jest zablokowane\nOpis jest za długi\nNieprawidłowy stan wersji roboczej\nNieprawidłowe powiązanie'
     );
+  } finally {
+    unmountField();
+    unmount();
+  }
+});
+
+it('lists a message once when server and client validation both report it', async () => {
+  const form = new FormApi({
+    defaultValues: { email: '' },
+    validators: { onSubmit: z.object({ email: z.string().min(1, 'Adres jest wymagany') }) },
+    onSubmitMeta: undefined,
+  });
+  const unmount = form.mount();
+  const field = new FieldApi({ form, name: 'email' });
+  const unmountField = field.mount();
+  try {
+    await form.handleSubmit();
+    setServerFormErrors(form, { problem: { errors: { Email: ['Adres jest wymagany', 'Adres jest zajęty'] } } });
+    expect(getErrors(field.state.meta, 1)).toEqual(['Adres jest wymagany', 'Adres jest zajęty']);
   } finally {
     unmountField();
     unmount();
