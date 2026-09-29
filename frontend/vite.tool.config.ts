@@ -66,7 +66,7 @@ export const fmtConfig = {
     stylesheet: './src/styles/index.css',
   },
   sortPackageJson: true,
-  ignorePatterns: ['dist', 'src/routeTree.gen.ts', 'src/api/generated', 'pnpm-lock.yaml'],
+  ignorePatterns: ['dist', 'src/routeTree.gen.ts', 'src/api/generated'],
 } satisfies NonNullable<UserConfig['fmt']>;
 
 export default defineConfig({
