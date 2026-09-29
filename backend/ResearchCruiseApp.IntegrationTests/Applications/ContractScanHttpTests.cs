@@ -243,7 +243,7 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NoContent, removedFirst.StatusCode);
         var retained = await AssertFiles(app, client, second, files, false);
         Assert.Equal(contractId, retained.Contract);
-        Assert.Equal(fileIds, retained.Files);
+        Assert.Equal(fileIds.Order(), retained.Files);
         var firstRead = await client.GetFromJsonAsync<FormAFields>(
             $"/v2/applications/{first}/form-a",
             ct
