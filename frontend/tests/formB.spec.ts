@@ -60,6 +60,8 @@ test('draft save confirms a draft rather than final submission', async ({ formBP
 });
 
 test('failed draft saves explain the reason and retain partial rows for retry', async ({ formBPage, page }) => {
+  const pageErrors: Error[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error));
   await formBPage.fillForm();
   await formBPage.sections.cruiseDayDetailsSection.addTaskButton.click();
   const task = page.getByTestId('cruise-day-task-name-input').first();
@@ -109,6 +111,7 @@ test('failed draft saves explain the reason and retain partial rows for retry', 
   await page.route(`${API_URL}/v2/applications/${formBPage.formId}/form-b`, (route) => route.fulfill({ status: 201 }));
   await save.click();
   await expect(formBPage.submissionApprovedMessage).toContainText('wersja robocza');
+  expect(pageErrors).toEqual([]);
 });
 
 test('all sections filled with invalid rows', async ({ formBPage }) => {

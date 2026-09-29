@@ -4,7 +4,7 @@ import { FieldApi, FormApi } from '@tanstack/react-form';
 import { z } from 'zod';
 
 import { applicationFormPath, formContract, submissionSchema } from './schema';
-import { submitApplicationForm } from '@/lib/applications/submitApplicationForm';
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { getErrors } from './errors';
 import {
   formBDefaultValues,
@@ -44,14 +44,19 @@ describe('form submission contracts', () => {
   it('prevents duplicate saves and preserves input after a failed request', async () => {
     let rejectRequest!: (error: Error) => void;
     let requests = 0;
+    const reported: unknown[] = [];
     const form = new FormApi({
       defaultValues: { draft: false, name: 'Unfinished research' },
       canSubmitWhenInvalid: true,
       onSubmit: async () => {
         requests++;
-        await new Promise<void>((_, reject) => {
-          rejectRequest = reject;
-        });
+        try {
+          await new Promise<void>((_, reject) => {
+            rejectRequest = reject;
+          });
+        } catch (error) {
+          reported.push(error);
+        }
       },
     });
     const unmount = form.mount();
@@ -64,7 +69,7 @@ describe('form submission contracts', () => {
       await vi.waitFor(() => expect(requests).toBe(1));
       rejectRequest(new Error('Request failed'));
       await save;
-      expect(form.state.isSubmitSuccessful).toBe(false);
+      expect(reported).toHaveLength(1);
       expect(form.state.isSubmitting).toBe(false);
       expect(form.state.values.name).toBe('Unfinished research');
     } finally {

@@ -29,15 +29,7 @@ const validationSchema = z
 function ForgotPasswordPage() {
   const [result, setResult] = React.useState<Result | undefined>(undefined);
   const [email, setEmail] = React.useState<string | undefined>(undefined);
-  const { mutateAsync } = useRequestPasswordReset({
-    mutation: {
-      onSuccess: () => setResult('success'),
-      onError: (error) => {
-        setResult('error');
-        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
-      },
-    },
-  });
+  const { mutateAsync } = useRequestPasswordReset({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
       email: '',
@@ -50,14 +42,14 @@ function ForgotPasswordPage() {
       trackFormSubmit('forgot-password', 'valid', formApi.state);
 
       setResult(undefined);
-      await mutateAsync(
-        { data: { email: value.email } },
-        {
-          onSuccess: async () => {
-            setEmail(value.email);
-          },
-        }
-      );
+      try {
+        await mutateAsync({ data: { email: value.email } });
+        setEmail(value.email);
+        setResult('success');
+      } catch (error) {
+        setResult('error');
+        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
+      }
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('forgot-password', 'invalid', formApi.state);
@@ -67,7 +59,7 @@ function ForgotPasswordPage() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    void form.handleSubmit().catch(() => {});
+    void form.handleSubmit();
   }
 
   if (result === 'success') {

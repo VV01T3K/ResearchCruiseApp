@@ -1,4 +1,4 @@
-import { submitApplicationForm } from '@/lib/applications/submitApplicationForm';
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -127,7 +127,6 @@ function FormCPage() {
       setServerFormErrors(form, err);
       toast.error(getErrorMessage(err, 'Nie udało się zapisać formularza'));
       navigateToFirstError();
-      throw err;
     } finally {
       toast.dismiss(loading);
     }

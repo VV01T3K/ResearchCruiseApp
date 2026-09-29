@@ -93,7 +93,6 @@ function CruiseDetailsPage() {
         setServerFormErrors(form, error, cruiseFormPath);
         toast.error(getErrorMessage(error, 'Nie udało się zaktualizować rejsu'));
         navigateToFirstError();
-        throw error;
       }
     },
   });
@@ -121,7 +120,7 @@ function CruiseDetailsPage() {
             <ArrowClockwiseIcon className="h-4 w-4" />
             Cofnij zmiany
           </AppButton>
-          <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={() => form.handleSubmit().catch(() => {})}>
+          <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={() => form.handleSubmit()}>
             <FloppyFillIcon className="h-4 w-4" />
             Zapisz rejs
           </AppButton>

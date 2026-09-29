@@ -68,7 +68,6 @@ function NewCruisePage() {
         setServerFormErrors(form, error, cruiseFormPath);
         toast.error(getErrorMessage(error, 'Nie udało się utworzyć rejsu'));
         navigateToFirstError();
-        throw error;
       }
     },
   });

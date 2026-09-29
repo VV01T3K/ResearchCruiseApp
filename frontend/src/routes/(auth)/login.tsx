@@ -40,7 +40,7 @@ function LoginPage() {
 
       if (result !== 'success') {
         setSignInError(result.error);
-        throw new Error(result.error);
+        return;
       }
 
       await router.invalidate();
@@ -54,7 +54,7 @@ function LoginPage() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    void form.handleSubmit().catch(() => {});
+    void form.handleSubmit();
   }
 
   return (

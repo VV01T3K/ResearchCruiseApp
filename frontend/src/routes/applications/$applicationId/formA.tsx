@@ -1,4 +1,4 @@
-import { submitApplicationForm } from '@/lib/applications/submitApplicationForm';
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -94,9 +94,8 @@ function FormAPage() {
     trackFormSubmit('form-a', 'valid', form.state);
     if (values.cruiseManagerId !== currentUser.id && values.deputyManagerId !== currentUser.id) {
       setIsSaveDraftModalOpen(false);
-      const message = 'Jedynie kierownik lub jego zastępca mogą zapisać formularz';
-      toast.error(message);
-      throw new Error(message);
+      toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
+      return;
     }
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
@@ -113,7 +112,6 @@ function FormAPage() {
       setServerFormErrors(form, error);
       toast.error(getErrorMessage(error, 'Nie udało się zapisać formularza'));
       navigateToFirstError();
-      throw error;
     } finally {
       toast.dismiss(loading);
       setIsSaveDraftModalOpen(false);

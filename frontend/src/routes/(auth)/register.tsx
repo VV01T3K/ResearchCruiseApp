@@ -55,15 +55,7 @@ const errorMessages: Record<Result | 'username-taken', string> = {
 function RegisterPage() {
   const navigate = useNavigate();
   const [result, setResult] = React.useState<(Result | 'username-taken') | undefined>(undefined);
-  const { mutateAsync } = useRegisterAccount({
-    mutation: {
-      onSuccess: () => setResult('success'),
-      onError: (error) => {
-        setResult(getProblemDetail(error, '').includes('taken') ? 'username-taken' : 'error');
-        toast.error(getErrorMessage(error, 'Rejestracja nie powiodła się'));
-      },
-    },
-  });
+  const { mutateAsync } = useRegisterAccount({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
       email: '',
@@ -79,14 +71,15 @@ function RegisterPage() {
     onSubmit: async ({ value }) => {
       trackFormSubmit('register', 'valid', form.state);
 
-      await mutateAsync(
-        { data: validationSchema.parse(value) },
-        {
-          onSuccess: async () => {
-            await navigate({ to: '/login' });
-          },
-        }
-      );
+      try {
+        await mutateAsync({ data: validationSchema.parse(value) });
+      } catch (error) {
+        setResult(getProblemDetail(error, '').includes('taken') ? 'username-taken' : 'error');
+        toast.error(getErrorMessage(error, 'Rejestracja nie powiodła się'));
+        return;
+      }
+      setResult('success');
+      await navigate({ to: '/login' });
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('register', 'invalid', formApi.state);
@@ -96,7 +89,7 @@ function RegisterPage() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    void form.handleSubmit().catch(() => {});
+    void form.handleSubmit();
   }
 
   return (

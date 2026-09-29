@@ -144,7 +144,6 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
           toast.dismiss(loading);
           console.error(err);
           toast.error('Nie udało się edytować użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          throw err;
         }
       } else {
         const loading = toast.loading('Dodawanie użytkownika...');
@@ -159,7 +158,6 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
           toast.dismiss(loading);
           console.error(err);
           toast.error('Nie udało się dodać użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          throw err;
         }
       }
     },
@@ -171,7 +169,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    void form.handleSubmit().catch(() => {});
+    void form.handleSubmit();
   }
 
   async function handleUserDeletion() {

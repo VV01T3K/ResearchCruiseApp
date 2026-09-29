@@ -1,4 +1,4 @@
-import { submitApplicationForm } from '@/lib/applications/submitApplicationForm';
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
@@ -83,9 +83,8 @@ function NewCruiseApplicationPage() {
     trackFormSubmit('new-application', 'valid', form.state);
     if (values.cruiseManagerId !== currentUser.id && values.deputyManagerId !== currentUser.id) {
       setIsSaveDraftModalOpen(false);
-      const message = 'Jedynie kierownik lub jego zastępca mogą zapisać formularz';
-      toast.error(message);
-      throw new Error(message);
+      toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
+      return;
     }
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
@@ -102,7 +101,6 @@ function NewCruiseApplicationPage() {
       setServerFormErrors(form, error);
       toast.error(getErrorMessage(error, 'Nie udało się zapisać formularza'));
       navigateToFirstError();
-      throw error;
     } finally {
       toast.dismiss(loading);
       setIsSaveDraftModalOpen(false);
