@@ -11,7 +11,7 @@ WORKDIR /src
 
 COPY ["./Directory.Build.props", "./"]
 COPY ["./ResearchCruiseApp/ResearchCruiseApp.csproj", "./ResearchCruiseApp/packages.lock.json", "ResearchCruiseApp/"]
-RUN dotnet restore "ResearchCruiseApp/ResearchCruiseApp.csproj" --locked-mode
+RUN dotnet restore "ResearchCruiseApp/ResearchCruiseApp.csproj" --locked-mode -p:CI=true
 
 COPY . .
 WORKDIR "/src/ResearchCruiseApp"
