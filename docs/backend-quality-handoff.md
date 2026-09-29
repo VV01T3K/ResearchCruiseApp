@@ -6,7 +6,7 @@ Updated 2026-09-29. This document stays in the repository at the user's explicit
 
 Continue draft [PR 430](https://github.com/VV01T3K/ResearchCruiseApp/pull/430), branch `feature/backend-quality-baseline`, targeting `staging`. The baseline remains incomplete. Keep the PR draft; merging and deployment require further authorization.
 
-The continuation checkout is `/home/wojtek/.t3/worktrees/ResearchCruiseApp/t3code-5a2f0598`, local branch `t3code/pr-430-continuation`, continuing PR head `32d90493`. The previous Ubuntu WSL checkout is a different environment. Confirm refs and the working tree before editing.
+The continuation checkout is `/home/wojtek/.t3/worktrees/ResearchCruiseApp/t3code-5a2f0598`, local branch `t3code/pr-430-continuation`, continuing PR head `01d8a927` before the latest staging merge. The previous Ubuntu WSL checkout is a different environment. Confirm refs and the working tree before editing.
 
 The previous next task, populated Form B/C replacement, is now covered by `Applications/FormReplacementTests.cs`. All four draft/final replacement cases reproduced lost reused permissions. Both endpoints now persist replacement references before cleanup inside their existing `DbTransactionFilter` transaction. The regression checks full HTTP content, retained SQL identities, obsolete-permission cleanup, rollback after a flushed replacement, and successful retry. See BE-ATOMIC-003 in the scenario ledger for evidence and limits.
 
@@ -45,6 +45,10 @@ Focused tests run from `backend` with `dotnet run --project ResearchCruiseApp.In
 Ignored local evidence lives in `backend/artifacts/evidence/form-replacement-*` and `backend/artifacts/tests/`. It is not committed and must be regenerated in another checkout. Earlier Form A evidence is documented in the ledger but belonged to the previous machine. Use fresh paths when collecting new evidence.
 
 ## Latest validation
+
+The latest staging integration incorporates `8d9c84e7` (dependency/TanStack Query updates and source-dependent NuGet image auditing) on top of seed-account coverage commit `01d8a927`. Four conflicts retained the PR’s compiler, API-generation and audit settings with staging’s updated package versions; all four NuGet lockfiles were restored consistently. Local `vp run check` passed 442 cases: 189 frontend, 78 legacy, 27 unit and 148 SQL integration, with no backend skips and zero build warnings/errors. Frontend lint is now warning-free. SQL integration took 181.659 seconds. Frozen Bun install, JavaScript/NuGet audits, formatting, locked restore and generated API comparison passed. All 19 affected Chromium application, cruise and user-management cases passed without retries in 40.6 seconds. Evidence: `backend/artifacts/evidence/dependency-integration-{install,restore,js-audit,first-check,browser}.log` and `backend/artifacts/tests/run-5ineyS/`. Hosted validation of this revision is pending.
+
+Previous validation:
 
 Root `vp run check` after the Bun/security merge passed all 436 tests: 189 frontend, 78 legacy, 27 backend unit and 142 SQL integration, with no backend skips and zero .NET build warnings/errors. Frozen Bun install with Socket scanning, JavaScript/NuGet audits, formatting, locked restore, temporary API comparison and frontend types passed. One non-blocking frontend lint warning remains in existing `AppAccordion.tsx`. Root took 185.926 seconds; integration took 171.673 seconds. Evidence: `backend/artifacts/evidence/bun-merge-{install,audit,workspace}.log` and `backend/artifacts/tests/run-HwCYyy/`. The earlier table staging integration passed 19 browser cases without retries. Provisional performance targets remain exceeded. Hosted CI on `32d90493` passed all 436 cases; downloaded TRX and frontend JUnit counters verified. Run: [36581757188](https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/36581757188).
 

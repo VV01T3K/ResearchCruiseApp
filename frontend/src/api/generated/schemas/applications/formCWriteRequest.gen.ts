@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 import { FormCFields } from './formCFields.gen.ts';
 
 export const FormCWriteRequest = zod.object({

@@ -1,4 +1,5 @@
 import {
+  queryOptions as queryOptionsBuilder,
   useMutation,
   useQueryClient,
   useSuspenseQuery
@@ -68,7 +69,7 @@ export const getGetCurrentUserUrl = () => {
 /**
  * @summary Get the current account.
  */
-export const getCurrentUser = async ( options?: RequestInit): Promise<CurrentUserResponse> => {
+export const getCurrentUser = async ( options?: Parameters<typeof customFetch>[1]): Promise<CurrentUserResponse> => {
 
   return customFetch<CurrentUserResponse>(getGetCurrentUserUrl(),
   {
@@ -105,7 +106,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  queryOptionsBuilder({ queryKey, ...queryOptions, queryFn: queryOptions?.queryFn ?? queryFn}) as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> } & { throwOnError?: ((this: never, error: TError) => boolean) & { readonly __inferenceOnly: never } }
 }
 
 export type GetCurrentUserSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getCurrentUser>>>
@@ -156,13 +157,27 @@ export const getChangeCurrentUserPasswordUrl = () => {
 /**
  * @summary Change the current account password.
  */
-export const changeCurrentUserPassword = async (changePasswordRequest: ChangePasswordRequest, options?: RequestInit): Promise<void> => {
+export const changeCurrentUserPassword = async (changePasswordRequest: ChangePasswordRequest, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
-  return customFetch<void>(getChangeCurrentUserPasswordUrl(),
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<void>(getChangeCurrentUserPasswordUrl(),
   {
     ...options,
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
     body: JSON.stringify(changePasswordRequest)
   }
 );}
@@ -171,11 +186,13 @@ export const changeCurrentUserPassword = async (changePasswordRequest: ChangePas
 
 
 
-export const getChangeCurrentUserPasswordMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof changeCurrentUserPassword>>, TError,{data: ChangePasswordRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof changeCurrentUserPassword>>, TError,{data: ChangePasswordRequest}, TContext> => {
+export const getChangeCurrentUserPasswordMutationKey = () => ['changeCurrentUserPassword'] as const;
 
-const mutationKey = ['changeCurrentUserPassword'];
+export const getChangeCurrentUserPasswordMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof changeCurrentUserPassword>>, TError,ChangeCurrentUserPasswordMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof changeCurrentUserPassword>>, TError,ChangeCurrentUserPasswordMutationVariables, TContext> => {
+
+const mutationKey = getChangeCurrentUserPasswordMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -185,7 +202,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof changeCurrentUserPassword>>, {data: ChangePasswordRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof changeCurrentUserPassword>>, ChangeCurrentUserPasswordMutationVariables> = (props) => {
           const {data} = props ?? {};
 
           return  changeCurrentUserPassword(data,requestOptions)
@@ -201,16 +218,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ChangeCurrentUserPasswordMutationResult = NonNullable<Awaited<ReturnType<typeof changeCurrentUserPassword>>>
     export type ChangeCurrentUserPasswordMutationBody = ChangePasswordRequest
     export type ChangeCurrentUserPasswordMutationError = ErrorType<ProblemDetails>
+    export type ChangeCurrentUserPasswordMutationVariables = {data: ChangePasswordRequest}
 
     /**
  * @summary Change the current account password.
  */
 export const useChangeCurrentUserPassword = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof changeCurrentUserPassword>>, TError,{data: ChangePasswordRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof changeCurrentUserPassword>>, TError,ChangeCurrentUserPasswordMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof changeCurrentUserPassword>>,
         TError,
-        {data: ChangePasswordRequest},
+        ChangeCurrentUserPasswordMutationVariables,
         TContext
       > => {
       return useMutation(getChangeCurrentUserPasswordMutationOptions(options), queryClient);
@@ -226,7 +244,7 @@ export const useChangeCurrentUserPassword = <TError = ErrorType<ProblemDetails>,
 /**
  * @summary Get cruise effects for the current user.
  */
-export const getCurrentUserCruiseEffects = async ( options?: RequestInit): Promise<CruiseEffectResponse[]> => {
+export const getCurrentUserCruiseEffects = async ( options?: Parameters<typeof customFetch>[1]): Promise<CruiseEffectResponse[]> => {
 
   return customFetch<CruiseEffectResponse[]>(getGetCurrentUserCruiseEffectsUrl(),
   {
@@ -263,7 +281,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  queryOptionsBuilder({ queryKey, ...queryOptions, queryFn: queryOptions?.queryFn ?? queryFn}) as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> } & { throwOnError?: ((this: never, error: TError) => boolean) & { readonly __inferenceOnly: never } }
 }
 
 export type GetCurrentUserCruiseEffectsSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getCurrentUserCruiseEffects>>>
@@ -314,7 +332,7 @@ export const getGetCurrentUserPublicationsUrl = () => {
 /**
  * @summary Get the current user's publications.
  */
-export const getCurrentUserPublications = async ( options?: RequestInit): Promise<PublicationResponse[]> => {
+export const getCurrentUserPublications = async ( options?: Parameters<typeof customFetch>[1]): Promise<PublicationResponse[]> => {
 
   return customFetch<PublicationResponse[]>(getGetCurrentUserPublicationsUrl(),
   {
@@ -351,7 +369,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserPublications>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  queryOptionsBuilder({ queryKey, ...queryOptions, queryFn: queryOptions?.queryFn ?? queryFn}) as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getCurrentUserPublications>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> } & { throwOnError?: ((this: never, error: TError) => boolean) & { readonly __inferenceOnly: never } }
 }
 
 export type GetCurrentUserPublicationsSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getCurrentUserPublications>>>
@@ -402,7 +420,7 @@ export const getDeleteAllCurrentUserPublicationsUrl = () => {
 /**
  * @summary Delete all publications from the current user.
  */
-export const deleteAllCurrentUserPublications = async ( options?: RequestInit): Promise<void> => {
+export const deleteAllCurrentUserPublications = async ( options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
   return customFetch<void>(getDeleteAllCurrentUserPublicationsUrl(),
   {
@@ -417,11 +435,13 @@ export const deleteAllCurrentUserPublications = async ( options?: RequestInit): 
 
 
 
+export const getDeleteAllCurrentUserPublicationsMutationKey = () => ['deleteAllCurrentUserPublications'] as const;
+
 export const getDeleteAllCurrentUserPublicationsMutationOptions = <TError = ErrorType<ProblemDetails>,
     TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>, TError,void, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteAllCurrentUserPublications>>, TError,void, TContext> => {
 
-const mutationKey = ['deleteAllCurrentUserPublications'];
+const mutationKey = getDeleteAllCurrentUserPublicationsMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -453,6 +473,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteAllCurrentUserPublicationsMutationError = ErrorType<ProblemDetails>
 
+
     /**
  * @summary Delete all publications from the current user.
  */
@@ -478,13 +499,27 @@ export const useDeleteAllCurrentUserPublications = <TError = ErrorType<ProblemDe
 /**
  * @summary Import publications for the current user.
  */
-export const importCurrentUserPublications = async (importPublicationRequest: ImportPublicationRequest[], options?: RequestInit): Promise<void> => {
+export const importCurrentUserPublications = async (importPublicationRequest: ImportPublicationRequest[], options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
-  return customFetch<void>(getImportCurrentUserPublicationsUrl(),
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<void>(getImportCurrentUserPublicationsUrl(),
   {
     ...options,
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
     body: JSON.stringify(importPublicationRequest)
   }
 );}
@@ -493,11 +528,13 @@ export const importCurrentUserPublications = async (importPublicationRequest: Im
 
 
 
-export const getImportCurrentUserPublicationsMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,{data: ImportPublicationRequest[]}, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,{data: ImportPublicationRequest[]}, TContext> => {
+export const getImportCurrentUserPublicationsMutationKey = () => ['importCurrentUserPublications'] as const;
 
-const mutationKey = ['importCurrentUserPublications'];
+export const getImportCurrentUserPublicationsMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,ImportCurrentUserPublicationsMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,ImportCurrentUserPublicationsMutationVariables, TContext> => {
+
+const mutationKey = getImportCurrentUserPublicationsMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -507,13 +544,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof importCurrentUserPublications>>, {data: ImportPublicationRequest[]}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof importCurrentUserPublications>>, ImportCurrentUserPublicationsMutationVariables> = (props) => {
           const {data} = props ?? {};
 
           return  importCurrentUserPublications(data,requestOptions)
         }
 
-  const onSuccess = (data: Awaited<ReturnType<typeof importCurrentUserPublications>>, variables: {data: ImportPublicationRequest[]}, onMutateResult: TContext, context: MutationFunctionContext) => {
+  const onSuccess = (data: Awaited<ReturnType<typeof importCurrentUserPublications>>, variables: ImportCurrentUserPublicationsMutationVariables, onMutateResult: TContext, context: MutationFunctionContext) => {
         if (!options?.skipInvalidation) {
         queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsQueryKey() });
         }
@@ -528,16 +565,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ImportCurrentUserPublicationsMutationResult = NonNullable<Awaited<ReturnType<typeof importCurrentUserPublications>>>
     export type ImportCurrentUserPublicationsMutationBody = ImportPublicationRequest[]
     export type ImportCurrentUserPublicationsMutationError = ErrorType<ProblemDetails>
+    export type ImportCurrentUserPublicationsMutationVariables = {data: ImportPublicationRequest[]}
 
     /**
  * @summary Import publications for the current user.
  */
 export const useImportCurrentUserPublications = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,{data: ImportPublicationRequest[]}, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof importCurrentUserPublications>>, TError,ImportCurrentUserPublicationsMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof importCurrentUserPublications>>,
         TError,
-        {data: ImportPublicationRequest[]},
+        ImportCurrentUserPublicationsMutationVariables,
         TContext
       > => {
       const backupQueryClient = useQueryClient();
@@ -554,7 +592,7 @@ export const useImportCurrentUserPublications = <TError = ErrorType<ProblemDetai
 /**
  * @summary Delete one publication from the current user.
  */
-export const deleteCurrentUserPublication = async (publicationId: string, options?: RequestInit): Promise<void> => {
+export const deleteCurrentUserPublication = async (publicationId: string, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
   return customFetch<void>(getDeleteCurrentUserPublicationUrl(publicationId),
   {
@@ -569,11 +607,13 @@ export const deleteCurrentUserPublication = async (publicationId: string, option
 
 
 
-export const getDeleteCurrentUserPublicationMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,{publicationId: string}, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,{publicationId: string}, TContext> => {
+export const getDeleteCurrentUserPublicationMutationKey = () => ['deleteCurrentUserPublication'] as const;
 
-const mutationKey = ['deleteCurrentUserPublication'];
+export const getDeleteCurrentUserPublicationMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,DeleteCurrentUserPublicationMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,DeleteCurrentUserPublicationMutationVariables, TContext> => {
+
+const mutationKey = getDeleteCurrentUserPublicationMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -583,13 +623,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, {publicationId: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, DeleteCurrentUserPublicationMutationVariables> = (props) => {
           const {publicationId} = props ?? {};
 
           return  deleteCurrentUserPublication(publicationId,requestOptions)
         }
 
-  const onSuccess = (data: Awaited<ReturnType<typeof deleteCurrentUserPublication>>, variables: {publicationId: string}, onMutateResult: TContext, context: MutationFunctionContext) => {
+  const onSuccess = (data: Awaited<ReturnType<typeof deleteCurrentUserPublication>>, variables: DeleteCurrentUserPublicationMutationVariables, onMutateResult: TContext, context: MutationFunctionContext) => {
         if (!options?.skipInvalidation) {
         queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsQueryKey() });
         }
@@ -604,16 +644,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteCurrentUserPublicationMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCurrentUserPublication>>>
 
     export type DeleteCurrentUserPublicationMutationError = ErrorType<ProblemDetails>
+    export type DeleteCurrentUserPublicationMutationVariables = {publicationId: string}
 
     /**
  * @summary Delete one publication from the current user.
  */
 export const useDeleteCurrentUserPublication = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,{publicationId: string}, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCurrentUserPublication>>, TError,DeleteCurrentUserPublicationMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteCurrentUserPublication>>,
         TError,
-        {publicationId: string},
+        DeleteCurrentUserPublicationMutationVariables,
         TContext
       > => {
       const backupQueryClient = useQueryClient();
@@ -630,7 +671,7 @@ export const useDeleteCurrentUserPublication = <TError = ErrorType<ProblemDetail
 /**
  * @summary Get manageable users.
  */
-export const getUsers = async ( options?: RequestInit): Promise<UserResponse[]> => {
+export const getUsers = async ( options?: Parameters<typeof customFetch>[1]): Promise<UserResponse[]> => {
 
   return customFetch<UserResponse[]>(getGetUsersUrl(),
   {
@@ -667,7 +708,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  queryOptionsBuilder({ queryKey, ...queryOptions, queryFn: queryOptions?.queryFn ?? queryFn}) as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> } & { throwOnError?: ((this: never, error: TError) => boolean) & { readonly __inferenceOnly: never } }
 }
 
 export type GetUsersSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getUsers>>>
@@ -718,13 +759,27 @@ export const getCreateUserUrl = () => {
 /**
  * @summary Create a user account.
  */
-export const createUser = async (createUserRequest: CreateUserRequest, options?: RequestInit): Promise<void> => {
+export const createUser = async (createUserRequest: CreateUserRequest, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
-  return customFetch<void>(getCreateUserUrl(),
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<void>(getCreateUserUrl(),
   {
     ...options,
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
     body: JSON.stringify(createUserRequest)
   }
 );}
@@ -733,11 +788,13 @@ export const createUser = async (createUserRequest: CreateUserRequest, options?:
 
 
 
-export const getCreateUserMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: CreateUserRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: CreateUserRequest}, TContext> => {
+export const getCreateUserMutationKey = () => ['createUser'] as const;
 
-const mutationKey = ['createUser'];
+export const getCreateUserMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,CreateUserMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,CreateUserMutationVariables, TContext> => {
+
+const mutationKey = getCreateUserMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -747,7 +804,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createUser>>, {data: CreateUserRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createUser>>, CreateUserMutationVariables> = (props) => {
           const {data} = props ?? {};
 
           return  createUser(data,requestOptions)
@@ -763,16 +820,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type CreateUserMutationResult = NonNullable<Awaited<ReturnType<typeof createUser>>>
     export type CreateUserMutationBody = CreateUserRequest
     export type CreateUserMutationError = ErrorType<ProblemDetails>
+    export type CreateUserMutationVariables = {data: CreateUserRequest}
 
     /**
  * @summary Create a user account.
  */
 export const useCreateUser = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: CreateUserRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,CreateUserMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createUser>>,
         TError,
-        {data: CreateUserRequest},
+        CreateUserMutationVariables,
         TContext
       > => {
       return useMutation(getCreateUserMutationOptions(options), queryClient);
@@ -788,7 +846,7 @@ export const useCreateUser = <TError = ErrorType<ProblemDetails>,
 /**
  * @summary Get users available as cruise managers.
  */
-export const getAvailableCruiseManagers = async ( options?: RequestInit): Promise<CruiseManagerResponse[]> => {
+export const getAvailableCruiseManagers = async ( options?: Parameters<typeof customFetch>[1]): Promise<CruiseManagerResponse[]> => {
 
   return customFetch<CruiseManagerResponse[]>(getGetAvailableCruiseManagersUrl(),
   {
@@ -825,7 +883,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  queryOptionsBuilder({ queryKey, ...queryOptions, queryFn: queryOptions?.queryFn ?? queryFn}) as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getAvailableCruiseManagers>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> } & { throwOnError?: ((this: never, error: TError) => boolean) & { readonly __inferenceOnly: never } }
 }
 
 export type GetAvailableCruiseManagersSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getAvailableCruiseManagers>>>
@@ -877,13 +935,27 @@ export const getUpdateUserUrl = (userId: string,) => {
  * @summary Update a managed user.
  */
 export const updateUser = async (userId: string,
-    updateUserRequest: UpdateUserRequest, options?: RequestInit): Promise<void> => {
+    updateUserRequest: UpdateUserRequest, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
-  return customFetch<void>(getUpdateUserUrl(userId),
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<void>(getUpdateUserUrl(userId),
   {
     ...options,
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
     body: JSON.stringify(updateUserRequest)
   }
 );}
@@ -892,11 +964,13 @@ export const updateUser = async (userId: string,
 
 
 
-export const getUpdateUserMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{userId: string;data: UpdateUserRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{userId: string;data: UpdateUserRequest}, TContext> => {
+export const getUpdateUserMutationKey = () => ['updateUser'] as const;
 
-const mutationKey = ['updateUser'];
+export const getUpdateUserMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,UpdateUserMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,UpdateUserMutationVariables, TContext> => {
+
+const mutationKey = getUpdateUserMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -906,7 +980,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateUser>>, {userId: string;data: UpdateUserRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateUser>>, UpdateUserMutationVariables> = (props) => {
           const {userId,data} = props ?? {};
 
           return  updateUser(userId,data,requestOptions)
@@ -922,16 +996,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type UpdateUserMutationResult = NonNullable<Awaited<ReturnType<typeof updateUser>>>
     export type UpdateUserMutationBody = UpdateUserRequest
     export type UpdateUserMutationError = ErrorType<ProblemDetails>
+    export type UpdateUserMutationVariables = {userId: string;data: UpdateUserRequest}
 
     /**
  * @summary Update a managed user.
  */
 export const useUpdateUser = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,{userId: string;data: UpdateUserRequest}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateUser>>, TError,UpdateUserMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateUser>>,
         TError,
-        {userId: string;data: UpdateUserRequest},
+        UpdateUserMutationVariables,
         TContext
       > => {
       return useMutation(getUpdateUserMutationOptions(options), queryClient);
@@ -947,7 +1022,7 @@ export const useUpdateUser = <TError = ErrorType<ProblemDetails>,
 /**
  * @summary Delete a managed user.
  */
-export const deleteUser = async (userId: string, options?: RequestInit): Promise<void> => {
+export const deleteUser = async (userId: string, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
   return customFetch<void>(getDeleteUserUrl(userId),
   {
@@ -962,11 +1037,13 @@ export const deleteUser = async (userId: string, options?: RequestInit): Promise
 
 
 
-export const getDeleteUserMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{userId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{userId: string}, TContext> => {
+export const getDeleteUserMutationKey = () => ['deleteUser'] as const;
 
-const mutationKey = ['deleteUser'];
+export const getDeleteUserMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,DeleteUserMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,DeleteUserMutationVariables, TContext> => {
+
+const mutationKey = getDeleteUserMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -976,7 +1053,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteUser>>, {userId: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteUser>>, DeleteUserMutationVariables> = (props) => {
           const {userId} = props ?? {};
 
           return  deleteUser(userId,requestOptions)
@@ -992,16 +1069,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteUserMutationResult = NonNullable<Awaited<ReturnType<typeof deleteUser>>>
 
     export type DeleteUserMutationError = ErrorType<ProblemDetails>
+    export type DeleteUserMutationVariables = {userId: string}
 
     /**
  * @summary Delete a managed user.
  */
 export const useDeleteUser = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{userId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,DeleteUserMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteUser>>,
         TError,
-        {userId: string},
+        DeleteUserMutationVariables,
         TContext
       > => {
       return useMutation(getDeleteUserMutationOptions(options), queryClient);
@@ -1017,7 +1095,7 @@ export const useDeleteUser = <TError = ErrorType<ProblemDetails>,
 /**
  * @summary Accept a managed user.
  */
-export const acceptUser = async (userId: string, options?: RequestInit): Promise<void> => {
+export const acceptUser = async (userId: string, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
   return customFetch<void>(getAcceptUserUrl(userId),
   {
@@ -1032,11 +1110,13 @@ export const acceptUser = async (userId: string, options?: RequestInit): Promise
 
 
 
-export const getAcceptUserMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof acceptUser>>, TError,{userId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof acceptUser>>, TError,{userId: string}, TContext> => {
+export const getAcceptUserMutationKey = () => ['acceptUser'] as const;
 
-const mutationKey = ['acceptUser'];
+export const getAcceptUserMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof acceptUser>>, TError,AcceptUserMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof acceptUser>>, TError,AcceptUserMutationVariables, TContext> => {
+
+const mutationKey = getAcceptUserMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1046,7 +1126,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof acceptUser>>, {userId: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof acceptUser>>, AcceptUserMutationVariables> = (props) => {
           const {userId} = props ?? {};
 
           return  acceptUser(userId,requestOptions)
@@ -1062,16 +1142,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type AcceptUserMutationResult = NonNullable<Awaited<ReturnType<typeof acceptUser>>>
 
     export type AcceptUserMutationError = ErrorType<ProblemDetails>
+    export type AcceptUserMutationVariables = {userId: string}
 
     /**
  * @summary Accept a managed user.
  */
 export const useAcceptUser = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof acceptUser>>, TError,{userId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof acceptUser>>, TError,AcceptUserMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof acceptUser>>,
         TError,
-        {userId: string},
+        AcceptUserMutationVariables,
         TContext
       > => {
       return useMutation(getAcceptUserMutationOptions(options), queryClient);
@@ -1087,7 +1168,7 @@ export const useAcceptUser = <TError = ErrorType<ProblemDetails>,
 /**
  * @summary Deactivate a managed user.
  */
-export const deactivateUser = async (userId: string, options?: RequestInit): Promise<void> => {
+export const deactivateUser = async (userId: string, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
   return customFetch<void>(getDeactivateUserUrl(userId),
   {
@@ -1102,11 +1183,13 @@ export const deactivateUser = async (userId: string, options?: RequestInit): Pro
 
 
 
-export const getDeactivateUserMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deactivateUser>>, TError,{userId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof deactivateUser>>, TError,{userId: string}, TContext> => {
+export const getDeactivateUserMutationKey = () => ['deactivateUser'] as const;
 
-const mutationKey = ['deactivateUser'];
+export const getDeactivateUserMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deactivateUser>>, TError,DeactivateUserMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deactivateUser>>, TError,DeactivateUserMutationVariables, TContext> => {
+
+const mutationKey = getDeactivateUserMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1116,7 +1199,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deactivateUser>>, {userId: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deactivateUser>>, DeactivateUserMutationVariables> = (props) => {
           const {userId} = props ?? {};
 
           return  deactivateUser(userId,requestOptions)
@@ -1132,16 +1215,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeactivateUserMutationResult = NonNullable<Awaited<ReturnType<typeof deactivateUser>>>
 
     export type DeactivateUserMutationError = ErrorType<ProblemDetails>
+    export type DeactivateUserMutationVariables = {userId: string}
 
     /**
  * @summary Deactivate a managed user.
  */
 export const useDeactivateUser = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deactivateUser>>, TError,{userId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deactivateUser>>, TError,DeactivateUserMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deactivateUser>>,
         TError,
-        {userId: string},
+        DeactivateUserMutationVariables,
         TContext
       > => {
       return useMutation(getDeactivateUserMutationOptions(options), queryClient);
@@ -1159,7 +1243,7 @@ export const useDeactivateUser = <TError = ErrorType<ProblemDetails>,
  * @summary Add a role to a managed user.
  */
 export const addUserRole = async (userId: string,
-    roleName: string, options?: RequestInit): Promise<void> => {
+    roleName: string, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
   return customFetch<void>(getAddUserRoleUrl(userId,roleName),
   {
@@ -1174,11 +1258,13 @@ export const addUserRole = async (userId: string,
 
 
 
-export const getAddUserRoleMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addUserRole>>, TError,{userId: string;roleName: string}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof addUserRole>>, TError,{userId: string;roleName: string}, TContext> => {
+export const getAddUserRoleMutationKey = () => ['addUserRole'] as const;
 
-const mutationKey = ['addUserRole'];
+export const getAddUserRoleMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addUserRole>>, TError,AddUserRoleMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof addUserRole>>, TError,AddUserRoleMutationVariables, TContext> => {
+
+const mutationKey = getAddUserRoleMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1188,7 +1274,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addUserRole>>, {userId: string;roleName: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addUserRole>>, AddUserRoleMutationVariables> = (props) => {
           const {userId,roleName} = props ?? {};
 
           return  addUserRole(userId,roleName,requestOptions)
@@ -1204,16 +1290,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type AddUserRoleMutationResult = NonNullable<Awaited<ReturnType<typeof addUserRole>>>
 
     export type AddUserRoleMutationError = ErrorType<ProblemDetails>
+    export type AddUserRoleMutationVariables = {userId: string;roleName: string}
 
     /**
  * @summary Add a role to a managed user.
  */
 export const useAddUserRole = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addUserRole>>, TError,{userId: string;roleName: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addUserRole>>, TError,AddUserRoleMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof addUserRole>>,
         TError,
-        {userId: string;roleName: string},
+        AddUserRoleMutationVariables,
         TContext
       > => {
       return useMutation(getAddUserRoleMutationOptions(options), queryClient);
@@ -1231,7 +1318,7 @@ export const useAddUserRole = <TError = ErrorType<ProblemDetails>,
  * @summary Remove a role from a managed user.
  */
 export const removeUserRole = async (userId: string,
-    roleName: string, options?: RequestInit): Promise<void> => {
+    roleName: string, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
   return customFetch<void>(getRemoveUserRoleUrl(userId,roleName),
   {
@@ -1246,11 +1333,13 @@ export const removeUserRole = async (userId: string,
 
 
 
-export const getRemoveUserRoleMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeUserRole>>, TError,{userId: string;roleName: string}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof removeUserRole>>, TError,{userId: string;roleName: string}, TContext> => {
+export const getRemoveUserRoleMutationKey = () => ['removeUserRole'] as const;
 
-const mutationKey = ['removeUserRole'];
+export const getRemoveUserRoleMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeUserRole>>, TError,RemoveUserRoleMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof removeUserRole>>, TError,RemoveUserRoleMutationVariables, TContext> => {
+
+const mutationKey = getRemoveUserRoleMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1260,7 +1349,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeUserRole>>, {userId: string;roleName: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeUserRole>>, RemoveUserRoleMutationVariables> = (props) => {
           const {userId,roleName} = props ?? {};
 
           return  removeUserRole(userId,roleName,requestOptions)
@@ -1276,16 +1365,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type RemoveUserRoleMutationResult = NonNullable<Awaited<ReturnType<typeof removeUserRole>>>
 
     export type RemoveUserRoleMutationError = ErrorType<ProblemDetails>
+    export type RemoveUserRoleMutationVariables = {userId: string;roleName: string}
 
     /**
  * @summary Remove a role from a managed user.
  */
 export const useRemoveUserRole = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeUserRole>>, TError,{userId: string;roleName: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeUserRole>>, TError,RemoveUserRoleMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removeUserRole>>,
         TError,
-        {userId: string;roleName: string},
+        RemoveUserRoleMutationVariables,
         TContext
       > => {
       return useMutation(getRemoveUserRoleMutationOptions(options), queryClient);

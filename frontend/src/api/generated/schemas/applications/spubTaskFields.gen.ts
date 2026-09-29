@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 
 export const SpubTaskFields = zod.object({
   "name": zod.string().nullish(),

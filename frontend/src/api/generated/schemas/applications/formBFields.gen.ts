@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 import { CrewMemberFields } from './crewMemberFields.gen.ts';
 import { CruiseDayFields } from './cruiseDayFields.gen.ts';
 import { GuestTeamFields } from './guestTeamFields.gen.ts';
