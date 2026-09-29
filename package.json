@@ -1,11 +1,16 @@
 {
   "name": "research-cruise-app",
   "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
     "dev": "vp run -r dev",
     "skills:install": "vp dlx skills experimental_install -y",
     "build": "vp run --cache -r build",
     "check": "bash scripts/workspace.sh check",
+    "audit": "bun audit --audit-level=high && vp run -F backend audit",
     "fix": "bash scripts/workspace.sh fix",
     "gen": "vp run -F frontend gen",
     "seed": "vp run -F backend seed",
@@ -19,12 +24,14 @@
     "test:e2e": "vp run -F frontend test"
   },
   "devDependencies": {
+    "@socketsecurity/bun-security-scanner": "1.1.2",
     "lefthook": "^2.1.5"
   },
-  "packageManager": "pnpm@10.33.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "lefthook"
-    ]
-  }
+  "overrides": {
+    "js-yaml": "^4.3.2",
+    "typescript": "~5.9.3",
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.1.24",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@0.1.24"
+  },
+  "packageManager": "bun@1.3.11"
 }
