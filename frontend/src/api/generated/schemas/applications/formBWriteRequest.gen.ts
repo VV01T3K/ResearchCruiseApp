@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 import { FormBFields } from './formBFields.gen.ts';
 
 export const FormBWriteRequest = zod.object({
