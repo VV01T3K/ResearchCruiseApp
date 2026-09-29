@@ -27,6 +27,8 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                 AddCruiseHoursDraftValidation();
                 AddShipUsageDraftValidation();
                 AddCruiseGoalDraftValidation();
+                AddPermissionsCommonValidation();
+                AddContractScansCommonValidation();
                 AddResearchTaskDraftValidation();
                 AddResearchTasksCommonValidation();
                 AddPublicationPointsDraftValidation();
@@ -442,6 +444,11 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             )
             .WithMessage("Należy podać poprawną kategorię umowy.");
 
+        AddContractScansCommonValidation();
+    }
+
+    private void AddContractScansCommonValidation()
+    {
         RuleForEach(request => request.Form.Contracts)
             .Must(contractFields =>
                 contractFields.Scans.All(scan => scan.Content == "" || scan.Name != "")
