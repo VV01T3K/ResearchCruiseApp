@@ -132,88 +132,88 @@ Source: specification sections 5?6 at `dc8b815a`, plus `smtp-configuration.md` a
 
 ## Per-case legacy inventory
 
-Every row below remains **unreviewed** and required to execute. Source: legacy declarations at `dc8b815a`; 78 cases matched the successful bootstrap run. Requirement families reference specification section 6, not approved expected values. Replacement, reviewing maintainer, and replacement/fault evidence are pending for every row; no retirement or cutover is authorized by this inventory.
+Every row below remains **unreviewed** and required to execute. Source: legacy declarations at `dc8b815a`; 78 cases matched the successful bootstrap run. Requirement families reference specification section 6, not approved expected values. Each case now has a proposed replacement or a specific remaining assertion gap, detailed in the audit sections below. Codex source review is recorded on 2026-09-29; reviewing maintainer and individual replacement/fault acceptance remain pending; no retirement or cutover is authorized by this inventory.
 
 | Original fully qualified method and case | Requirement family | Disposition |
 | --- | --- | --- |
-| `ResearchCruiseApp.Tests.AccessControlTests.ShipownerCannotManagePrivilegedRolesOrAccounts()` | authorization | unreviewed |
-| `ResearchCruiseApp.Tests.AccessControlTests.OnlyAssignedManagersAndAdministratorsCanCreateFormsBAndC()` | authorization | unreviewed |
-| `ResearchCruiseApp.Tests.AccessControlTests.UserEmailValidationCoversCreateAndOptionalUpdate()` | authorization | unreviewed |
-| `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.FiltersDistinguishSameNamedManagersAndCombineNumberWithDate()` | catalog pagination / authorization | unreviewed |
-| `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess(RoleName.Administrator, true)` | catalog pagination / authorization | unreviewed |
-| `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess(RoleName.Shipowner, true)` | catalog pagination / authorization | unreviewed |
-| `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess(RoleName.Guest, true)` | catalog pagination / authorization | unreviewed |
-| `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess(RoleName.ShipCrew, true)` | catalog pagination / authorization | unreviewed |
-| `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess(RoleName.CruiseManager, false)` | catalog pagination / authorization | unreviewed |
-| `ResearchCruiseApp.Tests.ApplicationWriteContractTests.MissingWriteRequestKeysAreRejected(typeof(FormAWriteRequest))` | application forms | unreviewed |
-| `ResearchCruiseApp.Tests.ApplicationWriteContractTests.MissingWriteRequestKeysAreRejected(typeof(FormBWriteRequest))` | application forms | unreviewed |
-| `ResearchCruiseApp.Tests.ApplicationWriteContractTests.MissingWriteRequestKeysAreRejected(typeof(FormCWriteRequest))` | application forms | unreviewed |
-| `ResearchCruiseApp.Tests.ApplicationWriteContractTests.DraftRequestsAllowIncompleteValuesWhenEveryKeyIsPresent()` | application forms | unreviewed |
-| `ResearchCruiseApp.Tests.ApplicationWriteContractTests.FinalValidationRetainsIndexedPropertyPaths("B")` | application forms | unreviewed |
-| `ResearchCruiseApp.Tests.ApplicationWriteContractTests.FinalValidationRetainsIndexedPropertyPaths("C")` | application forms | unreviewed |
-| `ResearchCruiseApp.Tests.AuthSessionContractTests.BrowserTokenResponseNeverExposesTheRefreshCredential()` | authentication / account workflows | unreviewed |
-| `ResearchCruiseApp.Tests.AuthSessionContractTests.RefreshCookieIsScopedToTheSiteRootAndJavaScriptCannotReadIt()` | authentication / account workflows | unreviewed |
-| `ResearchCruiseApp.Tests.AuthSessionContractTests.PasswordResetRevokesTheStoredRefreshSession()` | authentication / account workflows | unreviewed |
-| `ResearchCruiseApp.Tests.AuthSessionEndpointTests.RefreshCookieIsScopedToTheSiteRoot()` | authentication | unreviewed |
-| `ResearchCruiseApp.Tests.AuthSessionEndpointTests.SessionSurvivesARefreshRoundTripAndDiesOnLogout()` | authentication | unreviewed |
-| `ResearchCruiseApp.Tests.AuthSessionEndpointTests.ReplayingARotatedRefreshCookieIsRejected()` | authentication | unreviewed |
-| `ResearchCruiseApp.Tests.AuthSessionEndpointTests.RefreshCookieHasSecureBrowserAttributes()` | authentication | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseStatus.New, "new")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseStatus.Confirmed, "confirmed")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseStatus.Ended, "ended")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.Draft, "draft")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.WaitingForSupervisor, "waitingForSupervisor")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.AcceptedBySupervisor, "acceptedBySupervisor")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.DeniedBySupervisor, "deniedBySupervisor")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.Accepted, "accepted")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.Denied, "denied")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.FormBRequired, "formBRequired")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.FormBFilled, "formBFilled")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.Undertaken, "undertaken")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.Reported, "reported")` | cruise/application lifecycle codes | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.SeedAccountAndEmailFollowTheExistingTransaction(true)` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.SeedAccountAndEmailFollowTheExistingTransaction(false)` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.FailedSeedRepairPreservesTheOriginalAccountInExistingTransaction(true)` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.FailedSeedRepairPreservesTheOriginalAccountInExistingTransaction(false)` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.QueuedEmailAndProtectionKeysSurviveAHostRestart()` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.FailureIsDurableAndRetriesOnlyWhenDueUsingTheSameMessageId()` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.AnotherWorkerCannotDeliverAnActivelyLeasedMessage()` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.ExpiredLeaseIsRecoveredAfterACrash()` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.ExpiredOrExhaustedMessagesAreNotSentAndSensitivePayloadIsCleared(true)` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.ExpiredOrExhaustedMessagesAreNotSentAndSensitivePayloadIsCleared(false)` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.ShutdownLeavesTheMessageRecoverable()` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.RegistrationSucceedsDuringSmtpOutageAndCreatesOneAccountAndOnePendingEmail()` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.RegistrationRollsBackTheAccountWhenQueuePersistenceFails()` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.QueueWriteRollsBackWithItsCallerTransaction()` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.FakeDeliveryIsIdempotentForTheSameMessageId()` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.EmailOutboxTests.AFinalFailedAttemptClearsPayloadAndDoesNotBlockTheNextMessage()` | durable email | unreviewed |
-| `ResearchCruiseApp.Tests.SeedUserWorkflowTests.RepairsAnIncompleteSeedUserOnlyOnce()` | startup and seeding | unreviewed |
-| `ResearchCruiseApp.Tests.SeedUserWorkflowTests.FillsPartialReferenceDataWithoutChangingExistingRows(false)` | startup and seeding | unreviewed |
-| `ResearchCruiseApp.Tests.SeedUserWorkflowTests.FillsPartialReferenceDataWithoutChangingExistingRows(true)` | startup and seeding | unreviewed |
-| `ResearchCruiseApp.Tests.SentryTests.ScrubsSensitiveRequestDataAndClientIp()` | infrastructure telemetry | unreviewed |
-| `ResearchCruiseApp.Tests.SentryTests.FiltersHealthTransactions("GET /health")` | infrastructure telemetry | unreviewed |
-| `ResearchCruiseApp.Tests.SentryTests.FiltersHealthTransactions("GET /HEALTH")` | infrastructure telemetry | unreviewed |
-| `ResearchCruiseApp.Tests.SentryTests.EnrichesUserAndRoleDiagnostics()` | infrastructure telemetry | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpServer", "")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpServer", "https://smtp.gmail.com")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpServer", "smtp.gmail.com:465")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpPort", "0")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpPort", "65536")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpUsername", "")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpUsername", "not-a-mailbox")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpUsername", "Display <sender@example.com>")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpPassword", "")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpPassword", "   ")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.ValidRealSmtpConfigurationDoesNotNeedAWorkingMailServer("smtp.gmail.com", "465")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.ValidRealSmtpConfigurationDoesNotNeedAWorkingMailServer("127.0.0.1", "2465")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.ValidRealSmtpConfigurationDoesNotNeedAWorkingMailServer("::1", "465")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.FakeSmtpStartsWithoutAnyRealSmtpSettings()` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.FakeSmtpRejectsInvalidOutputPaths("")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.FakeSmtpRejectsInvalidOutputPaths("   ")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.FakeSmtpRejectsInvalidOutputPaths("invalid\0path")` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.NonNumericPortFailsAtStartup()` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.ActualApplicationRejectsMissingCredentialsBeforeDatabaseInitialization()` | startup SMTP | unreviewed |
-| `ResearchCruiseApp.Tests.SmtpConfigurationTests.EnvironmentProviderUsesDoubleUnderscoreBackendKeys()` | startup SMTP | unreviewed |
+| `ResearchCruiseApp.Tests.AccessControlTests.ShipownerCannotManagePrivilegedRolesOrAccounts()` | authorization | unreviewed; partial BE-ROLES-001/BE-ACCOUNT-005; account read mapping missing |
+| `ResearchCruiseApp.Tests.AccessControlTests.OnlyAssignedManagersAndAdministratorsCanCreateFormsBAndC()` | authorization | unreviewed; partial BE-ACCESS; later-form deputy/admin mapping missing |
+| `ResearchCruiseApp.Tests.AccessControlTests.UserEmailValidationCoversCreateAndOptionalUpdate()` | authorization | unreviewed; retain; invalid-create and optional-update email boundaries missing |
+| `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.FiltersDistinguishSameNamedManagersAndCombineNumberWithDate()` | catalog pagination / authorization | unreviewed; candidate BE-CATALOG-005 |
+| `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess(RoleName.Administrator, true)` | catalog pagination / authorization | unreviewed; partial BE-CATALOG-002; deputy draft/manager-list change missing |
+| `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess(RoleName.Shipowner, true)` | catalog pagination / authorization | unreviewed; partial BE-CATALOG-002; deputy draft/manager-list change missing |
+| `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess(RoleName.Guest, true)` | catalog pagination / authorization | unreviewed; partial BE-CATALOG-002; deputy draft/manager-list change missing |
+| `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess(RoleName.ShipCrew, true)` | catalog pagination / authorization | unreviewed; partial BE-CATALOG-002; deputy draft/manager-list change missing |
+| `ResearchCruiseApp.Tests.ApplicationCatalogEndpointTests.VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess(RoleName.CruiseManager, false)` | catalog pagination / authorization | unreviewed; partial BE-CATALOG-002; deputy draft/manager-list change missing |
+| `ResearchCruiseApp.Tests.ApplicationWriteContractTests.MissingWriteRequestKeysAreRejected(typeof(FormAWriteRequest))` | application forms | unreviewed; candidate BE-FORM-BINDING-001 |
+| `ResearchCruiseApp.Tests.ApplicationWriteContractTests.MissingWriteRequestKeysAreRejected(typeof(FormBWriteRequest))` | application forms | unreviewed; candidate BE-FORM-BINDING-001 |
+| `ResearchCruiseApp.Tests.ApplicationWriteContractTests.MissingWriteRequestKeysAreRejected(typeof(FormCWriteRequest))` | application forms | unreviewed; candidate BE-FORM-BINDING-001 |
+| `ResearchCruiseApp.Tests.ApplicationWriteContractTests.DraftRequestsAllowIncompleteValuesWhenEveryKeyIsPresent()` | application forms | unreviewed; partial BE-FORMA-001; exact empty payload missing |
+| `ResearchCruiseApp.Tests.ApplicationWriteContractTests.FinalValidationRetainsIndexedPropertyPaths("B")` | application forms | unreviewed; candidate BE-FORM-VALIDATION-001 |
+| `ResearchCruiseApp.Tests.ApplicationWriteContractTests.FinalValidationRetainsIndexedPropertyPaths("C")` | application forms | unreviewed; candidate BE-FORM-VALIDATION-001 |
+| `ResearchCruiseApp.Tests.AuthSessionContractTests.BrowserTokenResponseNeverExposesTheRefreshCredential()` | authentication / account workflows | unreviewed; partial BE-AUTH-001; expiration property missing |
+| `ResearchCruiseApp.Tests.AuthSessionContractTests.RefreshCookieIsScopedToTheSiteRootAndJavaScriptCannotReadIt()` | authentication / account workflows | unreviewed; partial BE-AUTH-001; development cookie/expiry missing |
+| `ResearchCruiseApp.Tests.AuthSessionContractTests.PasswordResetRevokesTheStoredRefreshSession()` | authentication / account workflows | unreviewed; candidate BE-ACCOUNT-002 |
+| `ResearchCruiseApp.Tests.AuthSessionEndpointTests.RefreshCookieIsScopedToTheSiteRoot()` | authentication | unreviewed; candidate BE-AUTH-001 |
+| `ResearchCruiseApp.Tests.AuthSessionEndpointTests.SessionSurvivesARefreshRoundTripAndDiesOnLogout()` | authentication | unreviewed; partial BE-AUTH-003/005; CookieContainer round trip missing |
+| `ResearchCruiseApp.Tests.AuthSessionEndpointTests.ReplayingARotatedRefreshCookieIsRejected()` | authentication | unreviewed; candidate BE-AUTH-003 |
+| `ResearchCruiseApp.Tests.AuthSessionEndpointTests.RefreshCookieHasSecureBrowserAttributes()` | authentication | unreviewed; candidate BE-AUTH-001 |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseStatus.New, "new")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseStatus.Confirmed, "confirmed")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseStatus.Ended, "ended")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.Draft, "draft")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.WaitingForSupervisor, "waitingForSupervisor")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.AcceptedBySupervisor, "acceptedBySupervisor")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.DeniedBySupervisor, "deniedBySupervisor")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.Accepted, "accepted")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.Denied, "denied")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.FormBRequired, "formBRequired")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.FormBFilled, "formBFilled")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.Undertaken, "undertaken")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.DomainLogicTests.WorkflowStatusesExposeStableCodes(CruiseApplicationStatus.Reported, "reported")` | cruise/application lifecycle codes | unreviewed; rewrite against HTTP serialization; current test only calls naming policy |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.SeedAccountAndEmailFollowTheExistingTransaction(true)` | durable email | unreviewed; retain; seed transaction ownership missing |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.SeedAccountAndEmailFollowTheExistingTransaction(false)` | durable email | unreviewed; retain; seed transaction ownership missing |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.FailedSeedRepairPreservesTheOriginalAccountInExistingTransaction(true)` | durable email | unreviewed; retain; SQL seed-repair failure missing |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.FailedSeedRepairPreservesTheOriginalAccountInExistingTransaction(false)` | durable email | unreviewed; retain; SQL seed-repair failure missing |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.QueuedEmailAndProtectionKeysSurviveAHostRestart()` | durable email | unreviewed; candidate BE-EMAIL-001 |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.FailureIsDurableAndRetriesOnlyWhenDueUsingTheSameMessageId()` | durable email | unreviewed; candidate BE-EMAIL-002 |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.AnotherWorkerCannotDeliverAnActivelyLeasedMessage()` | durable email | unreviewed; candidate BE-EMAIL-003 |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.ExpiredLeaseIsRecoveredAfterACrash()` | durable email | unreviewed; candidate BE-EMAIL-004 |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.ExpiredOrExhaustedMessagesAreNotSentAndSensitivePayloadIsCleared(true)` | durable email | unreviewed; candidate BE-EMAIL-005 |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.ExpiredOrExhaustedMessagesAreNotSentAndSensitivePayloadIsCleared(false)` | durable email | unreviewed; candidate BE-EMAIL-005 |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.ShutdownLeavesTheMessageRecoverable()` | durable email | unreviewed; candidate BE-EMAIL-004 |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.RegistrationSucceedsDuringSmtpOutageAndCreatesOneAccountAndOnePendingEmail()` | durable email | unreviewed; candidate BE-ACCOUNT-001 |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.RegistrationRollsBackTheAccountWhenQueuePersistenceFails()` | durable email | unreviewed; candidate BE-ATOMIC-001 |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.QueueWriteRollsBackWithItsCallerTransaction()` | durable email | unreviewed; retain; explicit caller-owned enqueue rollback missing |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.FakeDeliveryIsIdempotentForTheSameMessageId()` | durable email | unreviewed; retain; production fake transport filesystem behavior missing |
+| `ResearchCruiseApp.Tests.EmailOutboxTests.AFinalFailedAttemptClearsPayloadAndDoesNotBlockTheNextMessage()` | durable email | unreviewed; candidate BE-EMAIL-005 |
+| `ResearchCruiseApp.Tests.SeedUserWorkflowTests.RepairsAnIncompleteSeedUserOnlyOnce()` | startup and seeding | unreviewed; retain; SQL incomplete-account repair/reseed missing |
+| `ResearchCruiseApp.Tests.SeedUserWorkflowTests.FillsPartialReferenceDataWithoutChangingExistingRows(false)` | startup and seeding | unreviewed; candidate BE-STARTUP-002 |
+| `ResearchCruiseApp.Tests.SeedUserWorkflowTests.FillsPartialReferenceDataWithoutChangingExistingRows(true)` | startup and seeding | unreviewed; candidate BE-STARTUP-002 |
+| `ResearchCruiseApp.Tests.SentryTests.ScrubsSensitiveRequestDataAndClientIp()` | infrastructure telemetry | unreviewed; retain; sensitive header/cookie/IP scrubbing missing |
+| `ResearchCruiseApp.Tests.SentryTests.FiltersHealthTransactions("GET /health")` | infrastructure telemetry | unreviewed; retain; case-insensitive health exclusion missing |
+| `ResearchCruiseApp.Tests.SentryTests.FiltersHealthTransactions("GET /HEALTH")` | infrastructure telemetry | unreviewed; retain; case-insensitive health exclusion missing |
+| `ResearchCruiseApp.Tests.SentryTests.EnrichesUserAndRoleDiagnostics()` | infrastructure telemetry | unreviewed; retain; user ID and multiple-role diagnostics missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpServer", "")` | startup SMTP | unreviewed; retain; startup ordering/key diagnostic/password redaction missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpServer", "https://smtp.gmail.com")` | startup SMTP | unreviewed; retain; startup ordering/key diagnostic/password redaction missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpServer", "smtp.gmail.com:465")` | startup SMTP | unreviewed; retain; startup ordering/key diagnostic/password redaction missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpPort", "0")` | startup SMTP | unreviewed; retain; startup ordering/key diagnostic/password redaction missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpPort", "65536")` | startup SMTP | unreviewed; retain; startup ordering/key diagnostic/password redaction missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpUsername", "")` | startup SMTP | unreviewed; retain; startup ordering/key diagnostic/password redaction missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpUsername", "not-a-mailbox")` | startup SMTP | unreviewed; retain; startup ordering/key diagnostic/password redaction missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpUsername", "Display <sender@example.com>")` | startup SMTP | unreviewed; retain; startup ordering/key diagnostic/password redaction missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpPassword", "")` | startup SMTP | unreviewed; retain; startup ordering/key diagnostic/password redaction missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.InvalidRealSmtpSettingsStopTheHostBeforeHostedWorkStarts("SmtpPassword", "   ")` | startup SMTP | unreviewed; retain; startup ordering/key diagnostic/password redaction missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.ValidRealSmtpConfigurationDoesNotNeedAWorkingMailServer("smtp.gmail.com", "465")` | startup SMTP | unreviewed; retain; host startup without live SMTP missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.ValidRealSmtpConfigurationDoesNotNeedAWorkingMailServer("127.0.0.1", "2465")` | startup SMTP | unreviewed; retain; host startup without live SMTP missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.ValidRealSmtpConfigurationDoesNotNeedAWorkingMailServer("::1", "465")` | startup SMTP | unreviewed; retain; host startup without live SMTP missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.FakeSmtpStartsWithoutAnyRealSmtpSettings()` | startup SMTP | unreviewed; retain; fake mode startup without credentials missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.FakeSmtpRejectsInvalidOutputPaths("")` | startup SMTP | unreviewed; retain; invalid path prevents hosted work missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.FakeSmtpRejectsInvalidOutputPaths("   ")` | startup SMTP | unreviewed; retain; invalid path prevents hosted work missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.FakeSmtpRejectsInvalidOutputPaths("invalid\0path")` | startup SMTP | unreviewed; retain; invalid path prevents hosted work missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.NonNumericPortFailsAtStartup()` | startup SMTP | unreviewed; retain; binding failure before hosted work missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.ActualApplicationRejectsMissingCredentialsBeforeDatabaseInitialization()` | startup SMTP | unreviewed; retain; production startup SMTP-before-database ordering missing |
+| `ResearchCruiseApp.Tests.SmtpConfigurationTests.EnvironmentProviderUsesDoubleUnderscoreBackendKeys()` | startup SMTP | unreviewed; retain; environment binding missing |
 
 ### BE-FORMA-001: authorized draft round trip
 
@@ -490,3 +490,35 @@ Source reviewed by Codex against the current HTTP/SQL assertions. These are prop
 Policy regression evidence (2026-09-29): the draft-write tests first reproduced HTTP 204 instead of 404 for both Administrator and Administrator + CruiseManager. `UserPermissionVerifier.CanCurrentUserAddForm` now checks draft ownership before role privileges. All 41 focused form-access, supervisor-review and form-replacement cases passed in 68.341 seconds, with no skips. Evidence: `backend/artifacts/evidence/draft-policy-red.log`, `backend/artifacts/evidence/policy-green.log` and `backend/artifacts/tests/policy-green/`.
 
 Combined policy/sharing validation (2026-09-29): root `vp run check` exited 0; all 430 cases passed (186 frontend, 78 legacy, 27 unit, 139 SQL integration), no backend skips and zero build warnings/errors. Formatting, locked restore, generated API comparison and frontend lint/types passed. Integration duration: 149.504 seconds, still above the provisional target. Evidence: `backend/artifacts/evidence/policy-full-check.log`, reports `backend/artifacts/tests/run-bft019/`.
+
+### Legacy assertion audit, remaining feature groups (2026-09-29)
+
+These proposed mappings extend the first group above. They do not authorize removing legacy execution. Reviewer: Codex source comparison; maintainer acceptance and individual fault demonstrations remain pending. Hosted [run 36502579494](https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/36502579494) on `df350a20` passed; downloaded TRX reports confirm 78 legacy, 27 unit and 139 integration cases, all executed with no skips.
+
+| Legacy method/cases | Proposed disposition and assertion comparison |
+| --- | --- |
+| `SeedUserWorkflowTests.RepairsAnIncompleteSeedUserOnlyOnce` | Retain. Concurrent reference initialization does not test incomplete account replacement, stable repaired identity/password hash on reseed, or assigned role. Needs a SQL account-repair scenario. |
+| `SeedUserWorkflowTests.FillsPartialReferenceDataWithoutChangingExistingRows`, seedAccounts false/true | Replacement candidate BE-STARTUP-002 below. Verify inactive unit/area/equipment identities and custom data survive both initial repair and repeated initialization; disabled configured accounts produce no users/mail. |
+| `EmailOutboxTests.SeedAccountAndEmailFollowTheExistingTransaction`, commit false/true | Retain both cases. Registration atomicity is not proof that seed account creation joins an existing caller transaction without taking ownership of it. Needs commit/rollback SQL scenarios. |
+| `EmailOutboxTests.FailedSeedRepairPreservesTheOriginalAccountInExistingTransaction`, queueFailure false/true | Retain both cases. Invalid-password result and queue-save exception must preserve the original account even if the caller commits afterward. No equivalent SQL seed-repair failure assertion exists. |
+| `EmailOutboxTests.QueuedEmailAndProtectionKeysSurviveAHostRestart` | Replacement candidate BE-EMAIL-001 `EmailRecoveryTests.Dispatch_WhenHostIsReplaced_RecoversProtectedMessageFromSql`. Verifies ciphertext, persisted keys, separate disposed host/provider, full recovered payload, acknowledgment and no duplicate dispatch. |
+| `EmailOutboxTests.FailureIsDurableAndRetriesOnlyWhenDueUsingTheSameMessageId` | Replacement candidate BE-EMAIL-002 `EmailRetryTests.Dispatch_WhenTransportFails_RetriesOnlyWhenDueWithTheSameMessageId`. SQL assertions add exact retry boundaries, stable payload/message identity, lease release and successful acknowledgment. |
+| `EmailOutboxTests.AnotherWorkerCannotDeliverAnActivelyLeasedMessage` | Replacement candidate BE-EMAIL-003 `EmailLeaseTests.Dispatch_WhenAnotherWorkerIsDelivering_DoesNotTakeItsLease`. Two independent hosts with coordinated delivery verify lease identity, attempt count and single acknowledgment. |
+| `EmailOutboxTests.ExpiredLeaseIsRecoveredAfterACrash` | Replacement candidate BE-EMAIL-004 `EmailLeaseTests.Dispatch_WhenCancelledDuringDelivery_RecoversAfterLeaseExpiry`. A real cancelled dispatch persists the lease; a new host verifies no delivery just before expiry and recovery exactly at expiry. |
+| `EmailOutboxTests.ExpiredOrExhaustedMessagesAreNotSentAndSensitivePayloadIsCleared`, expired false/true | Replacement candidate BE-EMAIL-005 `EmailRetryTests.Dispatch_WhenMessageIsTerminal_ClearsPayloadAndContinuesWithHealthyMessage`, exhausted/expired cases. Verifies no terminal transport attempt, payload erasure, failed timestamp, healthy delivery and retention cleanup. |
+| `EmailOutboxTests.ShutdownLeavesTheMessageRecoverable` | Replacement candidate BE-EMAIL-004 above. Cancellation exception, retained payload/lease and recovery are checked against SQL across host replacement. |
+| `EmailOutboxTests.RegistrationSucceedsDuringSmtpOutageAndCreatesOneAccountAndOnePendingEmail` | Replacement candidate BE-ACCOUNT-001 `RegistrationTests.Register_WhenSmtpIsUnavailable_CommitsAccountAndRetryableConfirmation`. HTTP registration and duplicate rejection plus SQL account/role/outbox state and transport failure/recovery. |
+| `EmailOutboxTests.RegistrationRollsBackTheAccountWhenQueuePersistenceFails` | Replacement candidate BE-ATOMIC-001 `RegistrationTests.Register_WhenQueuePersistenceFails_RollsBackAccountAndMembership`. Actual SQL constraint failure through HTTP preserves zero user/membership/outbox rows. |
+| `EmailOutboxTests.QueueWriteRollsBackWithItsCallerTransaction` | Retain until explicit caller-owned enqueue rollback is exercised on SQL. Form/registration rollback uses different transaction ownership and is not an exact replacement. |
+| `EmailOutboxTests.FakeDeliveryIsIdempotentForTheSameMessageId` | Retain. Capturing test transport does not exercise the production fake transport's single-file behavior on repeated delivery. Move this filesystem check only after fault evidence. |
+| `EmailOutboxTests.AFinalFailedAttemptClearsPayloadAndDoesNotBlockTheNextMessage` | Replacement candidate BE-EMAIL-005 last-attempt-fails case. Verifies terminal erasure and successful delivery of the healthy message in the same batch, followed by retention cleanup. |
+| `ApplicationCatalogEndpointTests.FiltersDistinguishSameNamedManagersAndCombineNumberWithDate` | Replacement candidate BE-CATALOG-005 below now checks distinct manager IDs with identical names, manager+number+date conjunction, and mismatched date/manager exclusion against SQL. |
+| `ApplicationCatalogEndpointTests.VisibilityIsAppliedBeforePagingAndMatchesDetailAndManagerAccess`, Administrator/Shipowner/Guest/ShipCrew/CruiseManager | Partial replacement BE-CATALOG-002 `CatalogPaginationTests.Pages_WhenApplicationsAreRestricted_FilterBeforePagingAndHideOtherDrafts`. All five roles are covered, including filtering before paging and detail/manager visibility. Legacy additionally proves deputy-owned draft visibility and manager-list changes after removing that assignment; retain all five until those assertions are mapped. |
+
+BE-STARTUP-002 (P0, reference initialization, SQL Server): start with inactive built-in unit, area and equipment plus an active custom unit. Run the production initializer’s seed operation twice using fresh scopes and isolated account configuration. Migration-triggered composition is separately covered by BE-STARTUP-001. After each invocation, expect exactly the distinct configured reference names plus the custom unit, all role names, retained IDs/inactive flags and custom active flag, with no users or mail. Cover account seeding enabled with no configured accounts and disabled with a configured account. Test: `StartupTests.Seed_WhenReferenceDataIsPartial_PreservesExistingRows`. Initial test authoring exposed duplicate source seed names; expected membership must use distinct names, matching the specified idempotent seeding behavior. No production defect is claimed from that fixture correction.
+
+BE-CATALOG-005 (P1, catalog filters, HTTP + SQL): distinct managers with identical names remain individually selectable by ID. Manager+number+date must all match the same application; mismatched date or manager returns an empty page. Manager options retain both IDs; reads preserve application count and emit no mail. Test: `CatalogPaginationTests.Pages_WhenManagersShareNames_CombinesManagerNumberAndDateFilters`. This supplies the missing same-named-manager legacy replacement candidate; execution pending.
+
+Focused legacy replacement validation (2026-09-29): all 18 startup/catalog cases passed, no skips, in 47.228 seconds. Evidence: `backend/artifacts/evidence/legacy-replacements-final.log` and `backend/artifacts/tests/legacy-replacements-final/`. The earlier authoring runs exposed test assumptions about duplicate seed names, culture-dependent sorting and inherited account configuration; the final reference test uses distinct names, ordinal ordering and isolated seed-account settings. No production code changed.
+
+Combined legacy-audit validation (2026-09-29): root `vp run check` passed all 433 cases (186 frontend, 78 legacy, 27 unit, 142 SQL integration), with no backend skips and zero build warnings/errors. Root duration 167.376 seconds; integration 157.473 seconds. Formatting, locked restore, generated API comparison and frontend lint/types passed. Evidence: `backend/artifacts/evidence/legacy-audit-workspace.{log,seconds,exit}`, reports `backend/artifacts/tests/run-jnH9V6/`.
