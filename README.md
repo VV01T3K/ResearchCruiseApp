@@ -5,6 +5,9 @@ The application aims to streamline processes related to the booking, management,
 
 ## Configuration
 
+See [dependency maintenance](docs/dependency-maintenance.md) for installs, audits
+and Dependabot.
+
 ### Frontend
 
 | Environment Variable                 | Description                            | Example               | Required |

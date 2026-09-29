@@ -9,8 +9,9 @@ ENV SENTRY_ORG=$SENTRY_ORG \
 
 WORKDIR /src
 
-COPY ["./ResearchCruiseApp/ResearchCruiseApp.csproj", "ResearchCruiseApp/"]
-RUN dotnet restore "ResearchCruiseApp/ResearchCruiseApp.csproj"
+COPY ["./Directory.Build.props", "./"]
+COPY ["./ResearchCruiseApp/ResearchCruiseApp.csproj", "./ResearchCruiseApp/packages.lock.json", "ResearchCruiseApp/"]
+RUN dotnet restore "ResearchCruiseApp/ResearchCruiseApp.csproj" --locked-mode
 
 COPY . .
 WORKDIR "/src/ResearchCruiseApp"
