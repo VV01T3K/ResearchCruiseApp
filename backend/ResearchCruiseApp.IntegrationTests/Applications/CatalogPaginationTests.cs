@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
@@ -138,6 +139,65 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(canViewOthers ? 2 : 1, managers!.Count);
         Assert.Contains(managers, manager => manager.Id == Guid.Parse(actor.Id));
         Assert.DoesNotContain(managers, manager => manager.Id == Guid.Parse(hiddenOwner.Id));
+        Assert.Empty(app.Transport.Messages);
+    }
+
+    // BE-CATALOG-005: manager IDs disambiguate names; all supplied filters must match.
+    [Fact]
+    public async Task Pages_WhenManagersShareNames_CombinesManagerNumberAndDateFilters()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var first = await TestUsers.Create(app, "first@example.invalid", RoleName.Administrator);
+        var second = await TestUsers.Create(app, "second@example.invalid", RoleName.CruiseManager);
+        Assert.Equal(first.FirstName, second.FirstName);
+        Assert.Equal(first.LastName, second.LastName);
+        var firstApplication = Create(Guid.NewGuid(), Guid.Parse(first.Id));
+        var secondApplication = Create(Guid.NewGuid(), Guid.Parse(second.Id));
+        await app.InDatabase(async db =>
+        {
+            db.CruiseApplications.AddRange(firstApplication, secondApplication);
+            await db.SaveChangesAsync(ct);
+        });
+        using var client = await TestApplications.Login(app, first.Email!);
+        var managers = await client.GetFromJsonAsync<List<ApplicationPersonResponse>>(
+            "/v2/applications/managers",
+            ct
+        );
+        Assert.Equal(2, managers!.Count);
+        Assert.Contains(managers, row => row.Id == Guid.Parse(first.Id));
+        Assert.Contains(managers, row => row.Id == Guid.Parse(second.Id));
+        var selected = await client.GetFromJsonAsync<ApplicationsPageResponse>(
+            $"/v2/applications?cruiseManager={second.Id}",
+            JsonOptions,
+            ct
+        );
+        Assert.Equal(secondApplication.Id, Assert.Single(selected!.Items).Id);
+        var route = $"/v2/applications?cruiseManager={first.Id}&number={firstApplication.Number}";
+        var matching = await client.GetFromJsonAsync<ApplicationsPageResponse>(
+            route + "&date=2030-01-15",
+            JsonOptions,
+            ct
+        );
+        Assert.Equal(firstApplication.Id, Assert.Single(matching!.Items).Id);
+        Assert.Null(matching.NextCursor);
+        var differentDate = await client.GetFromJsonAsync<ApplicationsPageResponse>(
+            route + "&date=2030-01-16",
+            JsonOptions,
+            ct
+        );
+        Assert.Empty(differentDate!.Items);
+        var differentManager = await client.GetFromJsonAsync<ApplicationsPageResponse>(
+            $"/v2/applications?cruiseManager={second.Id}&number={firstApplication.Number}&date=2030-01-15",
+            JsonOptions,
+            ct
+        );
+        Assert.Empty(differentManager!.Items);
+        await app.InDatabase(async db =>
+        {
+            Assert.Equal(2, await db.CruiseApplications.CountAsync(ct));
+            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
+        });
         Assert.Empty(app.Transport.Messages);
     }
 
