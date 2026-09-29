@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 
 export const researchEquipmentFieldsNameMin = 0;
 export const researchEquipmentFieldsNameMax = 1024;

@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 import { FileContent } from './fileContent.gen.ts';
 
 export const ContractFields = zod.object({

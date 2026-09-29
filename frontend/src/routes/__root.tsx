@@ -92,7 +92,7 @@ function AppErrorHandler({ error }: ErrorComponentProps) {
           </div>
           <div className="flex items-center justify-center gap-2 text-lg">
             <div>Opis błędu: </div>
-            <div className="font-semibold">{error.message}</div>
+            <div className="font-semibold">{error instanceof Error ? error.message : String(error)}</div>
           </div>
           <div className="text-center">
             Prosimy o maila na adres <AppLink href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</AppLink>.

@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 import { ApplicationResponse } from './applicationResponse.gen.ts';
 
 export const ApplicationsPageResponse = zod.object({

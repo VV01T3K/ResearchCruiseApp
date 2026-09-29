@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 import { ContractFields } from './contractFields.gen.ts';
 import { PublicationFields } from './publicationFields.gen.ts';
 import { ResearchAreaOption } from './researchAreaOption.gen.ts';
