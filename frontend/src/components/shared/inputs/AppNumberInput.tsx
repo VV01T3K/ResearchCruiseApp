@@ -37,6 +37,15 @@ type CommonProps = {
       precision?: number;
     }
 );
+function roundToType(value: number, type: 'integer' | 'float', precision: number) {
+  // Round integers too, without adding trailing zeros.
+  return roundNumber(value, type === 'float' ? precision : 0);
+}
+
+function formatValue(value: number | null, type: 'integer' | 'float', precision: number) {
+  return value === null ? '' : String(roundToType(value, type, precision));
+}
+
 type Props = CommonProps &
   (
     | { nullable?: false; value: number; onChange?: (value: number) => void }
@@ -68,13 +77,10 @@ export function AppNumberInput({
   const [stringValue, setStringValue] = React.useState(value?.toString() ?? '');
   const setCursorPosition = useInputCursorPosition({ inputRef });
 
-  // Update the string value when the value changes
   React.useEffect(() => {
-    // We want to round even the integer values to the precision, if such value was provided, but we don't want to add zeros at the end
-    const newStringValue = value === null ? '' : roundNumber(value, type === 'float' ? precision : 0).toString();
     // Synchronize external changes without erasing a decimal separator being typed.
     // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-    setStringValue(newStringValue);
+    setStringValue(formatValue(value, type, precision));
   }, [precision, type, value]);
 
   function handleInputChange(evt: React.ChangeEvent<HTMLInputElement>) {
@@ -115,7 +121,7 @@ export function AppNumberInput({
       return;
     }
 
-    newValue = roundNumber(newValue, type === 'float' ? precision! : 0);
+    newValue = roundToType(newValue, type, precision);
 
     if (minimum !== undefined && newValue < minimum) {
       newValue = minimum;
@@ -145,7 +151,7 @@ export function AppNumberInput({
             value={stringValue}
             onChange={handleInputChange}
             onBlur={() => {
-              setStringValue(value === null ? '' : String(roundNumber(value, type === 'float' ? precision : 0)));
+              setStringValue(formatValue(value, type, precision));
               onBlur?.();
             }}
             disabled={disabled}

@@ -262,6 +262,60 @@ test.describe('adding rows through the UI', () => {
   });
 });
 
+test('number inputs keep precision, transient decimals, clearing, sync and stepping', async ({ formAPage, page }) => {
+  const task = {
+    type: '4',
+    title: 'Projekt',
+    startDate: '2026-09',
+    endDate: '2026-10',
+    financingAmount: '100',
+    securedAmount: '5',
+  };
+  await page.route(`${API_URL}/v2/applications/${formAPage.formId}/form-a`, (route) =>
+    route.fulfill({ json: { ...getFormAPayload(), cruiseHours: '48', researchTasks: [task] } })
+  );
+  await formAPage.goto();
+  const section = formAPage.sections.cruiseLengthSection;
+  const days = section.cruiseDaysInput;
+  const hours = section.cruiseHoursInput;
+  const amount = page.locator('input[name="researchTasks[0].financingAmount"]');
+  await expect(days).toHaveValue('2');
+  await expect(hours).toHaveValue('48');
+
+  await days.fill('1,');
+  await expect(days).toHaveValue('1.');
+  await days.press('5');
+  await expect(days).toHaveValue('1.5');
+  await expect(hours).toHaveValue('36');
+  await days.blur();
+  await expect(days).toHaveValue('1.5');
+
+  await days.fill('1.257');
+  await expect(hours).toHaveValue('30');
+  await expect(days).toHaveValue('1.25');
+
+  await hours.fill('7.9');
+  await expect(hours).toHaveValue('7');
+  await expect(days).toHaveValue('0.29');
+
+  await section.cruiseDaysIncreaseButton.click();
+  await expect(hours).toHaveValue('31');
+  await expect(days).toHaveValue('1.29');
+  await section.cruiseHoursDecreaseButton.click();
+  await expect(hours).toHaveValue('30');
+
+  await hours.fill('');
+  await expect(hours).toHaveValue('0');
+  await expect(days).toHaveValue('0');
+
+  await amount.fill('');
+  await amount.blur();
+  await expect(amount).toHaveValue('');
+  await amount.fill('12,345');
+  await amount.blur();
+  await expect(amount).toHaveValue('12.35');
+});
+
 for (const picker of [
   {
     task: { type: '3', title: 'Project', date: '2026-09-01', financingApproved: 'false' },
