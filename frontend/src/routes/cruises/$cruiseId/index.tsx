@@ -1,6 +1,5 @@
 import { getErrorMessage } from '@/api/errors';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
-import { cruiseFormPath } from '@/routes/cruises/-schemas/form.schema';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
@@ -20,7 +19,7 @@ import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tansta
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 import { FormView } from '../-components/FormView';
-import { UpdateCruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
+import { CruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 import {
   getGetCruiseQueryKey,
   getGetCruisesQueryKey,
@@ -42,9 +41,9 @@ const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
   shipUnavailable: 1,
   startDate: 2,
   endDate: 2,
-  'managersTeam.mainCruiseManagerId': 3,
-  'managersTeam.mainDeputyManagerId': 3,
-  cruiseApplicationsIds: 4,
+  mainManagerId: 3,
+  deputyManagerId: 3,
+  cruiseApplicationIds: 4,
 };
 
 function CruiseDetailsPage() {
@@ -78,19 +77,19 @@ function CruiseDetailsPage() {
   const form = useAppForm({
     defaultValues: mapCruiseToValues(cruiseQuery.data),
     validationLogic: formValidationLogic,
-    validators: { onDynamic: UpdateCruiseFormSchema },
+    validators: { onDynamic: CruiseFormSchema },
     onSubmitInvalid: ({ formApi }) => {
       toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
       navigateToFirstError();
     },
     onSubmit: async ({ value }) => {
       try {
-        await updateCruiseMutation.mutateAsync({ cruiseId, data: UpdateCruiseFormSchema.parse(value) });
+        await updateCruiseMutation.mutateAsync({ cruiseId, data: CruiseFormSchema.parse(value) });
         setEditMode(false);
         toast.success('Rejs został zaktualizowany pomyślnie.');
       } catch (error) {
         console.error(error);
-        setServerFormErrors(form, error, cruiseFormPath);
+        setServerFormErrors(form, error);
         toast.error(getErrorMessage(error, 'Nie udało się zaktualizować rejsu'));
         navigateToFirstError();
       }

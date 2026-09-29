@@ -101,7 +101,10 @@ function FormAPage() {
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
     try {
-      await saveMutation.mutateAsync({ applicationId, data: schema.parse(values) });
+      await saveMutation.mutateAsync({
+        applicationId,
+        data: { form: schema.parse(values), draft: values.draft ?? false },
+      });
       toast.success(
         values.draft
           ? 'Formularz został zapisany jako wersja robocza'

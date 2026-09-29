@@ -1,5 +1,4 @@
 import type { AnyFieldMeta, AnyFormApi } from '@tanstack/react-form';
-import type { MapFormPath } from './schema';
 
 interface FormError {
   fieldName: string;
@@ -69,21 +68,21 @@ export function navigateToFirstError(): void {
   });
 }
 
-function normalizeBackendFormPath(path: string, mapPath: MapFormPath): string {
-  const parts = path
+function normalizeBackendFormPath(path: string): string {
+  return path
     .replace(/^\$\.?/, '')
     .replace(/^Form(?:\.|$)/i, '')
     .replace(/\[(\d+)\]/g, '.$1')
     .split('.')
     .filter(Boolean)
-    .map((part) => (/^\d+$/.test(part) ? Number(part) : part.replace(/^[A-Z]/, (letter) => letter.toLowerCase())));
-  return mapPath(parts).reduce<string>(
-    (name, part) => (typeof part === 'number' ? `${name}[${part}]` : `${name ? `${name}.` : ''}${String(part)}`),
-    ''
-  );
+    .map((part) => (/^\d+$/.test(part) ? Number(part) : part.replace(/^[A-Z]/, (letter) => letter.toLowerCase())))
+    .reduce<string>(
+      (name, part) => (typeof part === 'number' ? `${name}[${part}]` : `${name ? `${name}.` : ''}${String(part)}`),
+      ''
+    );
 }
 
-function getServerFormErrors(error: unknown, mapPath: MapFormPath): Record<string, string[]> | null {
+function getServerFormErrors(error: unknown): Record<string, string[]> | null {
   if (typeof error !== 'object' || error === null || !('problem' in error)) return null;
   const problem = error.problem;
   if (typeof problem !== 'object' || problem === null || !('errors' in problem)) return null;
@@ -94,14 +93,14 @@ function getServerFormErrors(error: unknown, mapPath: MapFormPath): Record<strin
       Array.isArray(messages) &&
       messages.length > 0 &&
       messages.every((message) => typeof message === 'string' && !!message.trim())
-        ? [[normalizeBackendFormPath(path, mapPath), messages]]
+        ? [[normalizeBackendFormPath(path), messages]]
         : []
     )
   );
 }
 
-export function setServerFormErrors(form: AnyFormApi, error: unknown, mapPath: MapFormPath = (path) => path): boolean {
-  const fields = getServerFormErrors(error, mapPath);
+export function setServerFormErrors(form: AnyFormApi, error: unknown): boolean {
+  const fields = getServerFormErrors(error);
   if (!fields || Object.keys(fields).length === 0) return false;
   const knownFields: Record<string, string[]> = {};
   const formErrors: string[] = [];

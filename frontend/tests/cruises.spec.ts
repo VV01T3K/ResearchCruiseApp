@@ -2,7 +2,7 @@ import { expect, Page } from '@playwright/test';
 
 import { API_URL, test } from './fixtures/fixtures';
 import { getAdminAccountPayload, getInitValuesAPayload, mockAuthenticatedSession } from './fixtures/mockPayloads';
-import { CreateCruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
+import { CruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 
 const manager = {
   id: '11111111-1111-1111-1111-111111111111',
@@ -18,19 +18,17 @@ const deputy = {
 };
 
 test('cruise submission schema validates the generated request boundary', () => {
-  const result = CreateCruiseFormSchema.safeParse({
+  const result = CruiseFormSchema.safeParse({
     ...cruiseFormDefaultValues,
     startDate: '2026-06-01T08:00:00.000Z',
     endDate: '2026-06-02T08:00:00.000Z',
-    managersTeam: {
-      mainCruiseManagerId: 'not-a-guid',
-      mainDeputyManagerId: deputy.id,
-    },
+    mainManagerId: 'not-a-guid',
+    deputyManagerId: deputy.id,
   });
 
   expect(result.success).toBe(false);
   if (!result.success) {
-    expect(result.error.issues[0]?.path).toEqual(['managersTeam', 'mainCruiseManagerId']);
+    expect(result.error.issues[0]?.path).toEqual(['mainManagerId']);
   }
 });
 
@@ -179,10 +177,13 @@ test('cruise create flow uses v2 planning candidates and create route', async ({
   expect(planningRequested).toBe(true);
   await expect
     .poll(() => createBody)
-    .toMatchObject({
+    .toEqual({
+      startDate: expect.any(String),
+      endDate: expect.any(String),
       mainManagerId: manager.id,
       deputyManagerId: deputy.id,
       cruiseApplicationIds: [],
+      title: null,
       shipUnavailable: false,
     });
   const submittedDates = createBody as { startDate: string; endDate: string };
@@ -238,10 +239,14 @@ test('cruise detail update and lifecycle actions use v2 routes', async ({ page }
   await page.getByRole('button', { name: 'Edytuj' }).click();
   await page.getByRole('button', { name: 'Zapisz rejs' }).click();
   await expect.poll(() => requests).toContain('update');
-  expect(updateBody).toMatchObject({
+  expect(updateBody).toEqual({
+    startDate: cruise.startDate,
+    endDate: cruise.endDate,
     mainManagerId: manager.id,
     deputyManagerId: cruise.deputyManager.id,
     cruiseApplicationIds: [],
+    title: cruise.title,
+    shipUnavailable: false,
   });
 
   await page.getByRole('button', { name: 'Zakończ rejs' }).click();
@@ -329,5 +334,40 @@ test('failed cruise saves show server details and retain edits for retry', async
   rejected = false;
   await page.getByRole('button', { name: 'Zapisz rejs' }).click();
   await expect(page.getByRole('button', { name: 'Edytuj', exact: true })).toBeVisible();
-  expect(submitted).toMatchObject({ title: 'Updated cruise' });
+  expect(submitted).toEqual({
+    startDate: cruise.startDate,
+    endDate: cruise.endDate,
+    mainManagerId: manager.id,
+    deputyManagerId: deputy.id,
+    cruiseApplicationIds: [],
+    title: 'Updated cruise',
+    shipUnavailable: false,
+  });
+});
+
+test('backend cruise field paths annotate the matching inputs', async ({ page }) => {
+  await seedAuthenticatedAdmin(page);
+  const cruise = getCruise('confirmed');
+  await mockCruiseDetailDependencies(page, cruise);
+  await page.route(`${API_URL}/v2/cruises/${cruise.id}`, (route) =>
+    route.request().method() === 'GET'
+      ? route.fulfill({ json: cruise })
+      : route.fulfill({
+          status: 400,
+          json: {
+            errors: {
+              DeputyManagerId: ['Zastępca jest niedostępny w tym terminie'],
+              'CruiseApplicationIds[0]': ['Zgłoszenie jest już przypisane'],
+            },
+          },
+        })
+  );
+  await page.goto(`/cruises/${cruise.id}`);
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+
+  await expect(page.getByRole('combobox', { name: 'Zastępca kierownika głównego' })).toHaveAccessibleDescription(
+    'Zastępca jest niedostępny w tym terminie'
+  );
+  await expect(page.getByTestId('toast-error')).toContainText('Zgłoszenie jest już przypisane');
 });

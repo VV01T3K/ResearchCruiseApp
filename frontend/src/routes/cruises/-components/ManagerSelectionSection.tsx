@@ -24,12 +24,12 @@ export function ManagerSelectionSection({
 }) {
   const form = useTypedAppFormContext({ defaultValues: cruiseFormDefaultValues });
   const usersQuery = useGetAvailableCruiseManagersSuspense();
-  const cruiseApplicationsIds = useSelector(form.store, (state) => state.values.cruiseApplicationsIds);
-  const selectedCruiseManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
-  const selectedDeputyManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
+  const cruiseApplicationIds = useSelector(form.store, (state) => state.values.cruiseApplicationIds);
+  const selectedCruiseManagerId = useSelector(form.store, (state) => state.values.mainManagerId);
+  const selectedDeputyManagerId = useSelector(form.store, (state) => state.values.deputyManagerId);
 
   const users = React.useMemo(() => {
-    if (!isReadonly) return getAllUsersForDropdown(usersQuery.data ?? [], cruiseApplications, cruiseApplicationsIds);
+    if (!isReadonly) return getAllUsersForDropdown(usersQuery.data ?? [], cruiseApplications, cruiseApplicationIds);
     const options: AppDropdownInputOption[] = [];
     if (cruise && selectedCruiseManagerId) {
       options.push(
@@ -55,7 +55,7 @@ export function ManagerSelectionSection({
   }, [
     cruise,
     cruiseApplications,
-    cruiseApplicationsIds,
+    cruiseApplicationIds,
     isReadonly,
     selectedCruiseManagerId,
     selectedDeputyManagerId,
@@ -70,11 +70,11 @@ export function ManagerSelectionSection({
             usersQuery.data ?? [],
             [selectedCruiseManagerId, selectedDeputyManagerId],
             cruiseApplications,
-            cruiseApplicationsIds
+            cruiseApplicationIds
           ),
     [
       cruiseApplications,
-      cruiseApplicationsIds,
+      cruiseApplicationIds,
       isReadonly,
       selectedCruiseManagerId,
       selectedDeputyManagerId,
@@ -85,7 +85,7 @@ export function ManagerSelectionSection({
   return (
     <AppAccordion title="3. Kierownik główny i zastępca kierownika głównego" expandedByDefault>
       {!isReadonly && (
-        <AnimatePresence initial={cruiseApplicationsIds.length !== 0}>
+        <AnimatePresence initial={cruiseApplicationIds.length !== 0}>
           {cruiseManagersNotAssignedToApplication.length > 0 && (
             <motion.div
               className="mt-2"
@@ -105,7 +105,7 @@ export function ManagerSelectionSection({
 
       <div className="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <form.AppField
-          name="managersTeam.mainCruiseManagerId"
+          name="mainManagerId"
           children={(field) => (
             <field.SelectField
               allOptions={users}
@@ -117,7 +117,7 @@ export function ManagerSelectionSection({
         />
 
         <form.AppField
-          name="managersTeam.mainDeputyManagerId"
+          name="deputyManagerId"
           children={(field) => (
             <field.SelectField
               allOptions={users}

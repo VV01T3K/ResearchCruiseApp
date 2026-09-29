@@ -24,7 +24,7 @@ export function ApplicationsSection({
   return (
     <AppAccordion title="4. Zgłoszenia przypisane do rejsu" expandedByDefault>
       <form.AppField
-        name="cruiseApplicationsIds"
+        name="cruiseApplicationIds"
         mode="array"
         children={(field) => {
           const getColumns = (attached: boolean): ColumnDef<CruiseApplicationCandidateResponse>[] => [

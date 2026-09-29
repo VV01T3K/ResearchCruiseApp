@@ -1,7 +1,7 @@
-import { applicationFormPath, formContract, submissionSchema } from '@/integrations/tanstack/form/schema';
+import { submissionSchema } from '@/integrations/tanstack/form/schema';
 import { z } from 'zod';
 
-import { FormCFields, FormCWriteRequest } from '@/api/generated/schemas';
+import { FormCFields } from '@/api/generated/schemas';
 import { groupBy } from '@/lib/utils';
 import {
   CollectedSampleValuesInputSchema,
@@ -181,73 +181,67 @@ export function getFormCValidationSchema(formAInitValues: FormAOptions) {
   });
 }
 
-export function getFormCWriteSchema(formAInitValues: FormAOptions) {
-  return buildFormCWriteSchema(getFormCValidationSchema(formAInitValues), false);
+export function getFormCFieldsSchema(formAInitValues: FormAOptions) {
+  return buildFormCFieldsSchema(getFormCValidationSchema(formAInitValues));
 }
 
-export function getFormCDraftWriteSchema() {
-  return buildFormCWriteSchema(FormCInputSchema, true);
+export function getFormCDraftFieldsSchema() {
+  return buildFormCFieldsSchema(FormCInputSchema);
 }
 
-function buildFormCWriteSchema(inputSchema: z.ZodType<FormCValues, FormCValues>, draft: boolean) {
+function buildFormCFieldsSchema(inputSchema: z.ZodType<FormCValues, FormCValues>) {
   return inputSchema
     .transform(
-      (form): z.input<typeof FormCWriteRequest> =>
+      (form): z.input<typeof FormCFields> =>
         ({
-          form: {
-            ...form,
-            permissions: form.permissions.map((permission) => ({
-              description: permission.description || null,
-              executive: permission.executive || null,
-              scan: permission.scan ?? null,
-            })),
-            ugTeams: form.ugTeams.map((team) => ({
-              ...team,
-              noOfEmployees: String(team.noOfEmployees),
-              noOfStudents: String(team.noOfStudents),
-            })),
-            guestTeams: form.guestTeams.map((team) => ({ ...team, noOfPersons: String(team.noOfPersons) })),
-            cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
-              ...day,
-              number: String(day.number),
-              hours: String(day.hours),
-            })),
-            collectedSamples: form.collectedSamples.map((sample) => ({ ...sample, amount: String(sample.amount) })),
-            researchEquipments: form.researchEquipments.map((equipment) => ({
-              ...equipment,
-              permission: String(equipment.permission),
-            })),
-            researchTasksEffects: form.researchTasksEffects.map((task) => ({
-              type: task.type,
-              title: 'title' in task ? task.title : null,
-              magazine: 'magazine' in task ? task.magazine : null,
-              author: 'author' in task ? task.author : null,
-              institution: null,
-              date: 'date' in task ? task.date : null,
-              startDate: 'startDate' in task ? task.startDate : null,
-              endDate: 'endDate' in task ? task.endDate : null,
-              financingAmount:
-                'financingAmount' in task && task.financingAmount !== null ? String(task.financingAmount) : null,
-              financingApproved: 'financingApproved' in task ? String(task.financingApproved) : null,
-              description: 'description' in task ? task.description : null,
-              securedAmount: 'securedAmount' in task && task.securedAmount !== null ? String(task.securedAmount) : null,
-              ministerialPoints:
-                'ministerialPoints' in task && task.ministerialPoints !== null ? String(task.ministerialPoints) : null,
-              publicationMinisterialPoints: null,
-              done: String(task.done),
-              managerConditionMet: String(task.managerConditionMet),
-              deputyConditionMet: String(task.deputyConditionMet),
-            })),
-            spubReportData: form.spubReportData || null,
-            additionalDescription: form.additionalDescription || null,
-          },
-          draft,
-        }) satisfies {
-          form: Required<z.input<typeof FormCWriteRequest>['form']>;
-          draft: boolean;
-        }
+          ...form,
+          permissions: form.permissions.map((permission) => ({
+            description: permission.description || null,
+            executive: permission.executive || null,
+            scan: permission.scan ?? null,
+          })),
+          ugTeams: form.ugTeams.map((team) => ({
+            ...team,
+            noOfEmployees: String(team.noOfEmployees),
+            noOfStudents: String(team.noOfStudents),
+          })),
+          guestTeams: form.guestTeams.map((team) => ({ ...team, noOfPersons: String(team.noOfPersons) })),
+          cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
+            ...day,
+            number: String(day.number),
+            hours: String(day.hours),
+          })),
+          collectedSamples: form.collectedSamples.map((sample) => ({ ...sample, amount: String(sample.amount) })),
+          researchEquipments: form.researchEquipments.map((equipment) => ({
+            ...equipment,
+            permission: String(equipment.permission),
+          })),
+          researchTasksEffects: form.researchTasksEffects.map((task) => ({
+            type: task.type,
+            title: 'title' in task ? task.title : null,
+            magazine: 'magazine' in task ? task.magazine : null,
+            author: 'author' in task ? task.author : null,
+            institution: null,
+            date: 'date' in task ? task.date : null,
+            startDate: 'startDate' in task ? task.startDate : null,
+            endDate: 'endDate' in task ? task.endDate : null,
+            financingAmount:
+              'financingAmount' in task && task.financingAmount !== null ? String(task.financingAmount) : null,
+            financingApproved: 'financingApproved' in task ? String(task.financingApproved) : null,
+            description: 'description' in task ? task.description : null,
+            securedAmount: 'securedAmount' in task && task.securedAmount !== null ? String(task.securedAmount) : null,
+            ministerialPoints:
+              'ministerialPoints' in task && task.ministerialPoints !== null ? String(task.ministerialPoints) : null,
+            publicationMinisterialPoints: null,
+            done: String(task.done),
+            managerConditionMet: String(task.managerConditionMet),
+            deputyConditionMet: String(task.deputyConditionMet),
+          })),
+          spubReportData: form.spubReportData || null,
+          additionalDescription: form.additionalDescription || null,
+        }) satisfies Required<z.input<typeof FormCFields>>
     )
-    .pipe(formContract(FormCWriteRequest, applicationFormPath));
+    .pipe(FormCFields);
 }
 
 export function mapFormCToValues(form: FormCFields): FormCValues {
@@ -340,5 +334,5 @@ function toNumber(value: string | null | undefined): number {
 }
 
 export function getFormCSubmissionSchema(formAInitValues: FormAOptions) {
-  return submissionSchema(getFormCWriteSchema(formAInitValues), getFormCDraftWriteSchema());
+  return submissionSchema(getFormCFieldsSchema(formAInitValues), getFormCDraftFieldsSchema());
 }

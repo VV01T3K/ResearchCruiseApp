@@ -116,7 +116,7 @@ function FormCPage() {
     try {
       await updateMutation.mutateAsync({
         applicationId,
-        data: schema.parse(values),
+        data: { form: schema.parse(values), draft: values.draft ?? false },
       });
       navigate({ to: '/applications' });
       toast.success(

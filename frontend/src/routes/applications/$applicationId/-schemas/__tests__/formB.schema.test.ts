@@ -5,7 +5,7 @@ import formBBase from '@tests/assets/api-mocks/api_CruiseApplications_id_formB.j
 import {
   formBDefaultValues,
   type FormBValues,
-  getFormBDraftWriteSchema,
+  getFormBDraftFieldsSchema,
   getFormBValidationSchema,
   mapFormBToValues,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -259,10 +259,10 @@ describe('formB schema – draft requests', () => {
       ...formBDefaultValues,
       permissions: [{ description: '', executive: '', scan: undefined }],
     };
-    expect(getFormBDraftWriteSchema().safeParse(draft).success).toBe(true);
+    expect(getFormBDraftFieldsSchema().safeParse(draft).success).toBe(true);
 
     const { shipEquipmentsIds: _omitted, ...missingKey } = draft;
-    expect(getFormBDraftWriteSchema().safeParse(missingKey).success).toBe(false);
+    expect(getFormBDraftFieldsSchema().safeParse(missingKey).success).toBe(false);
   });
 
   it('draft still enforces the cruise day comment length limit', () => {
@@ -270,6 +270,6 @@ describe('formB schema – draft requests', () => {
       ...formBDefaultValues,
       cruiseDaysDetails: [{ number: 0, hours: 0, taskName: '', region: '', position: '', comment: 'x'.repeat(1025) }],
     };
-    expect(getFormBDraftWriteSchema().safeParse(draft).success).toBe(false);
+    expect(getFormBDraftFieldsSchema().safeParse(draft).success).toBe(false);
   });
 });

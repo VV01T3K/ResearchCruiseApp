@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { FieldApi, FormApi } from '@tanstack/react-form';
 import { z } from 'zod';
 
-import { applicationFormPath, formContract, submissionSchema } from './schema';
+import { submissionSchema } from './schema';
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { getErrors } from './errors';
 import {
@@ -88,11 +88,10 @@ describe('form submission contracts', () => {
     expect(result.error.issues[0].message).not.toMatch(/Too big|Invalid input/);
   });
 
-  it('preserves the existing draft request and strips UI submission state from form fields', () => {
-    const request = getFormBSubmissionSchema().parse({ ...formBDefaultValues, draft: true });
-    expect(request.draft).toBe(true);
-    expect(request.form.isCruiseManagerPresent).toBe('true');
-    expect(request.form).not.toHaveProperty('draft');
+  it('converts draft values to API fields and strips UI submission state', () => {
+    const fields = getFormBSubmissionSchema().parse({ ...formBDefaultValues, draft: true });
+    expect(fields.isCruiseManagerPresent).toBe('true');
+    expect(fields).not.toHaveProperty('draft');
     expect(getFormBSubmissionSchema().safeParse({ ...formBDefaultValues, draft: false }).success).toBe(false);
   });
 
@@ -130,13 +129,5 @@ describe('form submission contracts', () => {
       unmountField();
       unmount();
     }
-  });
-
-  it('preserves API transformations while mapping issue paths', () => {
-    const schema = formContract(
-      z.object({ form: z.object({ count: z.string().transform(Number) }) }),
-      applicationFormPath
-    );
-    expect(schema.parse({ form: { count: '12' } })).toEqual({ form: { count: 12 } });
   });
 });
