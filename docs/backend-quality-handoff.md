@@ -52,6 +52,10 @@ Ignored local evidence lives in `backend/artifacts/evidence/form-replacement-*` 
 
 ## Latest validation
 
+After normalizing the shared-file identity comparison, all 503 cases pass again (189 frontend, 78 legacy, 27 unit, 209 SQL integration), with no backend skips, zero .NET build warnings/errors and no frontend lint warnings. Root took 239.872 seconds; integration took 226.013 seconds. Evidence: `backend/artifacts/evidence/tokens-effects-guid-workspace.{log,seconds}` and `backend/artifacts/tests/run-EyBR3r/`. Hosted attempt `d19b1564` executed all cases and passed the twenty additions but failed one earlier shared-file test because SQL Server and .NET sort GUIDs differently. The assertion now compares the same IDs using one ordering; no production file behavior changed. Failed hosted diagnostics: `backend/artifacts/evidence/hosted-d19b1564/`. Look up the corrected latest head's hosted result in the PR description/checks and require these exact counts before accepting it.
+
+Previous validation:
+
 The account-token/Form C input batch passes all 503 cases (189 frontend, 78 legacy, 27 unit, 209 SQL integration), with no backend skips, zero .NET build warnings/errors and no frontend lint warnings. Root took 245.829 seconds; integration took 236.223 seconds. Formatting, locked restore, generated API comparison and JavaScript/NuGet audits passed. Evidence: `backend/artifacts/evidence/tokens-effects-workspace.{log,seconds}` and `backend/artifacts/tests/run-LEwbKW/`. This executes the final corrected fixtures and all production changes. The first full attempt stopped at CA1305 in two test numeric conversions, corrected with invariant formatting; its log is retained as `tokens-effects-workspace-analyzer.log`. Look up hosted validation of the latest PR head in the PR description/checks and require these exact suite counts. Replacement review, remaining authorization/nested-input scenarios and performance calibration remain open.
 
 Previous validation:
