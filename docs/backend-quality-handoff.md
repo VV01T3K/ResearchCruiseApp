@@ -6,11 +6,11 @@ Updated 2026-09-29. This document stays in the repository at the user's explicit
 
 Continue draft [PR 430](https://github.com/VV01T3K/ResearchCruiseApp/pull/430), branch `feature/backend-quality-baseline`, targeting `staging`. The baseline remains incomplete. Keep the PR draft; merging and deployment require further authorization.
 
-The continuation checkout is `/home/wojtek/.t3/worktrees/ResearchCruiseApp/t3code-5a2f0598`, local branch `t3code/pr-430-continuation`, continuing integrated PR head `df350a20`. The previous Ubuntu WSL checkout is a different environment. Confirm refs and the working tree before editing.
+The continuation checkout is `/home/wojtek/.t3/worktrees/ResearchCruiseApp/t3code-5a2f0598`, local branch `t3code/pr-430-continuation`, continuing PR head `290fffad`. The previous Ubuntu WSL checkout is a different environment. Confirm refs and the working tree before editing.
 
 The previous next task, populated Form B/C replacement, is now covered by `Applications/FormReplacementTests.cs`. All four draft/final replacement cases reproduced lost reused permissions. Both endpoints now persist replacement references before cleanup inside their existing `DbTransactionFilter` transaction. The regression checks full HTTP content, retained SQL identities, obsolete-permission cleanup, rollback after a flushed replacement, and successful retry. See BE-ATOMIC-003 in the scenario ledger for evidence and limits.
 
-The staging integration is resolved locally against `373812c6`, preserving history with a merge. The ten frontend conflicts retain staging's TanStack Table v9, React Compiler, virtualization and expanded browser scenarios. The three backend/documentation conflicts retain this PR's package pins, artifact exclusions and SQL baseline instructions. All 19 affected application, cruise and user-management browser tests passed with two workers and retries disabled, including desktop/mobile scrolling, filtering, sorting and selection.
+The first staging integration resolved `373812c6`, preserving history with a merge. A second integration now incorporates `4b740c20`, including Bun and dependency security checks. Its nine conflicts retain Bun workspace metadata, SDK/compiler/test settings, pinned Docker images and the PR’s matching NuGet lockfiles. JavaScript push auditing is retained; the shared gate also audits before running checks. Frontend/backend validation stays in the reusable workflow. The ten frontend conflicts retain staging's TanStack Table v9, React Compiler, virtualization and expanded browser scenarios. The three backend/documentation conflicts retain this PR's package pins, artifact exclusions and SQL baseline instructions. All 19 affected application, cruise and user-management browser tests passed with two workers and retries disabled, including desktop/mobile scrolling, filtering, sorting and selection.
 
 Cross-application child sharing and all six directed equipment-category moves are now covered for both Form B and C, including cleanup after the final reference disappears. Continue the requirement-to-scenario audit for scoring beyond funding, aggregate overflow, and account/file boundaries. All 78 legacy cases now have individual proposed replacements or explicit remaining assertion gaps, with method-level comparisons in the ledger. All dispositions still need maintainer review. Added SQL reference-data repair tests and same-named-manager/combined-filter coverage; 18 focused startup/catalog cases pass.
 
@@ -31,14 +31,14 @@ Keep all 78 legacy cases in the gate until individual dispositions and replaceme
 This continuation runs on native Omarchy Linux with rootless Podman. The Docker socket at `/var/run/docker.sock` is not accessible to this user. Use the already active user Podman socket for disposable SQL test containers:
 
 ```sh
-export PATH="$HOME/.dotnet:$PWD/frontend/node_modules/.bin:$PATH"
+export PATH="$HOME/.dotnet:$PWD/node_modules/.bin:$PWD/frontend/node_modules/.bin:$PATH"
 export DOTNET_ROOT="$HOME/.dotnet"
 export DOCKER_HOST="unix://$XDG_RUNTIME_DIR/podman/podman.sock"
 export TESTCONTAINERS_RYUK_DISABLED=true
 vp run check
 ```
 
-The pinned .NET SDK 10.0.401 was installed into `~/.dotnet`. Workspace packages were restored with pnpm 10.33.0 and the frozen lockfile. The staging integration run uses the pinned Node 25.8.2, installed through mise; put that installation on PATH before running the commands. SQL uses the fixture's pinned SQL Server 2022 image. Disabling Ryuk is local to these commands; fixtures dispose their containers. It is not a repository configuration change.
+The pinned .NET SDK 10.0.401 was installed into `~/.dotnet`. The latest staging integration uses Bun 1.3.11 and its frozen lockfile, including Socket installation scanning; pnpm is no longer the workspace package manager. The staging integration run uses the pinned Node 25.8.2, installed through mise; put that installation on PATH before running the commands. SQL uses the fixture's pinned SQL Server 2022 image. Disabling Ryuk is local to these commands; fixtures dispose their containers. It is not a repository configuration change.
 
 Focused tests run from `backend` with `dotnet run --project ResearchCruiseApp.IntegrationTests -c Release -- --filter-class '*FormReplacementTests' --report-trx --results-directory artifacts/tests/<fresh-run>`. This is xUnit v3/Microsoft Testing Platform; use `--filter-class` or `--filter-method`, not VSTest `--filter`. Run CSharpier from `backend` so it finds the local tool manifest.
 
@@ -46,7 +46,7 @@ Ignored local evidence lives in `backend/artifacts/evidence/form-replacement-*` 
 
 ## Latest validation
 
-Root `vp run check` passed all 433 tests after the legacy-audit coverage additions: 186 frontend, 78 legacy, 27 backend unit and 142 SQL integration, with no backend skips and zero build warnings/errors. Formatting, locked restore, temporary API comparison and frontend lint/types passed. Root took 167.376 seconds; integration took 157.473 seconds. Evidence: `backend/artifacts/evidence/legacy-audit-workspace.log` and `backend/artifacts/tests/run-jnH9V6/`. The 41 focused policy/replacement cases also passed. The earlier staging integration passed 19 affected browser cases without retries. Provisional performance targets remain exceeded. Hosted CI for this follow-up should be checked on the latest PR head.
+Root `vp run check` after the Bun/security merge passed all 436 tests: 189 frontend, 78 legacy, 27 backend unit and 142 SQL integration, with no backend skips and zero .NET build warnings/errors. Frozen Bun install with Socket scanning, JavaScript/NuGet audits, formatting, locked restore, temporary API comparison and frontend types passed. One non-blocking frontend lint warning remains in existing `AppAccordion.tsx`. Root took 185.926 seconds; integration took 171.673 seconds. Evidence: `backend/artifacts/evidence/bun-merge-{install,audit,workspace}.log` and `backend/artifacts/tests/run-HwCYyy/`. The earlier table staging integration passed 19 browser cases without retries. Provisional performance targets remain exceeded. Verify hosted CI on the latest merged PR head.
 
 ## Acceptance limits
 

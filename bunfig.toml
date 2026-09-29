@@ -1,0 +1,6 @@
+[install]
+# Seconds. A version published less than 7 days ago is not installed.
+minimumReleaseAge = 604800
+
+[install.security]
+scanner = "@socketsecurity/bun-security-scanner"

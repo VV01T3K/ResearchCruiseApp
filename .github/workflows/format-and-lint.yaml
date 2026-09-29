@@ -1,0 +1,27 @@
+name: Dependency audit
+
+on:
+  push:
+    paths-ignore:
+      - docs
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  javascript-audit:
+    name: JavaScript dependency audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - name: Audit JavaScript dependencies
+        run: bun audit --audit-level=high

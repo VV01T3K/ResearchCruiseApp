@@ -9,6 +9,9 @@ See the [backend testing and .NET tooling specification](docs/backend-testing-sp
 
 ## Configuration
 
+See [dependency maintenance](docs/dependency-maintenance.md) for installs, audits
+and Dependabot.
+
 ### Frontend
 
 | Environment Variable                 | Description                            | Example               | Required |

@@ -20,12 +20,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
 
       - name: Setup Vite+
         uses: voidzero-dev/setup-vp@v1
         with:
           working-directory: frontend
           node-version-file: .node-version
+          run-install: false
           cache: true
 
       - name: Install dependencies
