@@ -7,58 +7,107 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
 {
     public FormCWriteRequestValidator(FileInspector fileInspector)
     {
-        RuleFor(request => request.Form).NotNull();
-        When(
-            request => request.Form is not null,
-            () =>
+        var collections = new InlineValidator<FormCFields>();
+        collections.RuleFor(fields => fields.Permissions).NotNull().ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.ResearchAreaDescriptions)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections.RuleFor(fields => fields.UgTeams).NotNull().ForEach(item => item.NotNull());
+        collections.RuleFor(fields => fields.GuestTeams).NotNull().ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.ResearchTasksEffects)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections.RuleFor(fields => fields.Contracts).NotNull().ForEach(item => item.NotNull());
+        collections.RuleFor(fields => fields.SpubTasks).NotNull().ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.ShortResearchEquipments)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.LongResearchEquipments)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections.RuleFor(fields => fields.Ports).NotNull().ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.CruiseDaysDetails)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.ResearchEquipments)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections.RuleFor(fields => fields.ShipEquipmentsIds).NotNull();
+        collections
+            .RuleFor(fields => fields.CollectedSamples)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections.RuleFor(fields => fields.Photos).NotNull().ForEach(item => item.NotNull());
+
+        // Validate structure before rules that dereference collection entries.
+        RuleFor(request => request.Form)
+            .NotNull()
+            .SetValidator(collections)
+            .DependentRules(() =>
             {
-                RuleForEach(request => request.Form.ResearchTasksEffects)
-                    .Must(effect =>
-                        string.IsNullOrEmpty(effect.PublicationMinisterialPoints)
-                        || (
-                            int.TryParse(effect.PublicationMinisterialPoints, out var points)
-                            && points >= 0
-                        )
-                    )
-                    .WithMessage("Punkty publikacji muszą być nieujemną liczbą całkowitą.");
+                When(
+                    request => request.Form is not null,
+                    () =>
+                    {
+                        RuleForEach(request => request.Form.ResearchTasksEffects)
+                            .Must(effect =>
+                                string.IsNullOrEmpty(effect.PublicationMinisterialPoints)
+                                || (
+                                    int.TryParse(
+                                        effect.PublicationMinisterialPoints,
+                                        out var points
+                                    )
+                                    && points >= 0
+                                )
+                            )
+                            .WithMessage("Punkty publikacji muszą być nieujemną liczbą całkowitą.");
 
-                RuleForEach(request => request.Form.ResearchTasksEffects)
-                    .Must(effect =>
-                        IsBooleanOrEmpty(effect.Done)
-                        && IsBooleanOrEmpty(effect.ManagerConditionMet)
-                        && IsBooleanOrEmpty(effect.DeputyConditionMet)
-                    )
-                    .WithMessage("Warunki efektu muszą mieć wartość true, false lub pusty ciąg.");
-            }
-        );
-        When(
-            request => request.Form is not null && !request.Draft,
-            () =>
-            {
-                RuleForEach(request => request.Form.Permissions)
-                    .Must(permissionFields => permissionFields.Scan is not null)
-                    .WithMessage(
-                        "Na etapie Formularza C wymagane jest przesłanie skanów pozwoleń."
-                    );
+                        RuleForEach(request => request.Form.ResearchTasksEffects)
+                            .Must(effect =>
+                                IsBooleanOrEmpty(effect.Done)
+                                && IsBooleanOrEmpty(effect.ManagerConditionMet)
+                                && IsBooleanOrEmpty(effect.DeputyConditionMet)
+                            )
+                            .WithMessage(
+                                "Warunki efektu muszą mieć wartość true, false lub pusty ciąg."
+                            );
+                    }
+                );
+                When(
+                    request => request.Form is not null && !request.Draft,
+                    () =>
+                    {
+                        RuleForEach(request => request.Form.Permissions)
+                            .Must(permissionFields => permissionFields.Scan is not null)
+                            .WithMessage(
+                                "Na etapie Formularza C wymagane jest przesłanie skanów pozwoleń."
+                            );
 
-                RuleForEach(request => request.Form.Permissions)
-                    .Must(permissionFields =>
-                        permissionFields.Scan is not null
-                        && fileInspector.IsFilePdf(permissionFields.Scan.Content)
-                    )
-                    .WithMessage("Skan pozwolenia musi być plikiem PDF.");
+                        RuleForEach(request => request.Form.Permissions)
+                            .Must(permissionFields =>
+                                permissionFields.Scan is not null
+                                && fileInspector.IsFilePdf(permissionFields.Scan.Content)
+                            )
+                            .WithMessage("Skan pozwolenia musi być plikiem PDF.");
 
-                RuleForEach(request => request.Form.Permissions)
-                    .Must(permissionFields =>
-                        permissionFields.Scan is not null
-                        && fileInspector.IsFileSizeValid(
-                            permissionFields.Scan.Content,
-                            PermissionScanLimits.MaxFileSize
-                        )
-                    )
-                    .WithMessage("Rozmiar skanu pozwolenia nie może przekraczać 2 MiB.");
-            }
-        );
+                        RuleForEach(request => request.Form.Permissions)
+                            .Must(permissionFields =>
+                                permissionFields.Scan is not null
+                                && fileInspector.IsFileSizeValid(
+                                    permissionFields.Scan.Content,
+                                    PermissionScanLimits.MaxFileSize
+                                )
+                            )
+                            .WithMessage("Rozmiar skanu pozwolenia nie może przekraczać 2 MiB.");
+                    }
+                );
+            });
     }
 
     private static bool IsBooleanOrEmpty(string? value) =>
