@@ -14,7 +14,7 @@ The staging integration is resolved locally against `373812c6`, preserving histo
 
 Cross-application child sharing and all six directed equipment-category moves are now covered for both Form B and C, including cleanup after the final reference disappears. Continue the requirement-to-scenario audit for scoring beyond funding, aggregate overflow, and account/file boundaries. All 78 legacy cases now have individual proposed replacements or explicit remaining assertion gaps, with method-level comparisons in the ledger. All dispositions still need maintainer review. Added SQL reference-data repair tests and same-named-manager/combined-filter coverage; 18 focused startup/catalog cases pass.
 
-GitHub rules were inspected on 2026-09-29. The active staging ruleset only requires linear history and restricts branch creation/deletion. It has no required status checks. The main ruleset is disabled. Required workspace-check enforcement and negative deployment-gate evidence remain acceptance work; no repository rules were changed.
+GitHub rules were inspected on 2026-09-29. The active staging ruleset only requires linear history and restricts branch creation/deletion. It has no required status checks. The main ruleset is disabled. Required workspace-check enforcement remains rollout work; the workflow must first be present on each protected branch. Hosted negative deployment-gate evidence is now recorded in the ledger; no repository rules were changed.
 
 ## Authoritative artifacts
 
@@ -50,6 +50,6 @@ Root `vp run check` passed all 433 tests after the legacy-audit coverage additio
 
 ## Acceptance limits
 
-The hosted workspace check passed on `df350a20`: [run 36502579494](https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/36502579494), all 430 cases with downloaded TRX counters verified. Duration: 4m19s. A subsequent isolated failure probe exposed masked pipeline exit status in the workflow; follow-up correction and hosted negative validation are in progress.
+The hosted workspace check passed on `df350a20`: [run 36502579494](https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/36502579494), all 430 cases with downloaded TRX counters verified. Duration: 4m19s. An isolated failure probe exposed masked pipeline exit status in the workflow. Explicit Bash now preserves the failure. Hosted probes 36580107873 and 36580107654 verified intentional test failure, skipped image/webhook jobs, artifact upload and continued execution of the other suites. The audit branch contains intentional failures and must not be merged.
 
-Required-check configuration, negative deployment-gate evidence, performance calibration, IDE/devcontainer verification and legacy dispositions remain open. Do not infer hosted acceptance from local checks or reduce coverage to meet provisional performance targets. No agents should be spawned unless the user or applicable instructions authorize delegation.
+Required-check activation after workflow rollout, performance calibration, IDE/devcontainer verification and legacy dispositions remain open. Do not infer hosted acceptance from local checks or reduce coverage to meet provisional performance targets. No agents should be spawned unless the user or applicable instructions authorize delegation.
