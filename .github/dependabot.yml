@@ -2,6 +2,7 @@ version: 2
 updates:
   - package-ecosystem: bun
     directory: /
+    target-branch: staging
     schedule:
       interval: weekly
     open-pull-requests-limit: 3
@@ -23,6 +24,7 @@ updates:
 
   - package-ecosystem: nuget
     directory: /backend
+    target-branch: staging
     schedule:
       interval: weekly
     open-pull-requests-limit: 3
@@ -41,6 +43,7 @@ updates:
 
   - package-ecosystem: github-actions
     directory: /
+    target-branch: staging
     schedule:
       interval: weekly
     open-pull-requests-limit: 3
@@ -61,6 +64,7 @@ updates:
       - /backend/ResearchCruiseApp
       - /.devcontainer
       - /kubernetes/**
+    target-branch: staging
     schedule:
       interval: weekly
     open-pull-requests-limit: 3
@@ -72,6 +76,7 @@ updates:
 
   - package-ecosystem: docker-compose
     directory: /docker
+    target-branch: staging
     schedule:
       interval: weekly
     open-pull-requests-limit: 3

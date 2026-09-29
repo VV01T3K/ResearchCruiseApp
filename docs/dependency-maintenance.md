@@ -57,7 +57,9 @@ target framework upgrades still need manual maintenance.
 
 ## GitHub settings
 
-The Dependabot configuration takes effect on the default branch. Enable the
+The Dependabot configuration takes effect once it reaches the default branch,
+`main`. Version update PRs target `staging`; security update PRs always target
+`main`, as Dependabot ignores `target-branch` for them. Enable the
 dependency graph, Dependabot alerts and Dependabot security updates in repository
 settings. Security updates are not held by Dependabot's routine update cooldown;
 Bun's separate release delay may still require reviewing a fresh security fix.
