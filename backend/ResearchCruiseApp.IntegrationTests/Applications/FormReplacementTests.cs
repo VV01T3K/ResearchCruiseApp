@@ -179,6 +179,146 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
         }
     }
 
+    // BE-FORM-SHARING-001: cleanup honors other applications and every equipment category.
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(
+        bool formC
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var status = formC
+            ? CruiseApplicationStatus.Undertaken
+            : CruiseApplicationStatus.FormBRequired;
+        var first = await TestApplications.Create(app, status);
+        var second = await TestApplications.Create(app, status, "second-owner@example.invalid");
+        var unit = new UgUnit { Name = "Shared faculty", IsActive = true };
+        var shipEquipment = new ShipEquipment { Name = "Shared ship equipment" };
+        await app.InDatabase(async db =>
+        {
+            db.UgUnits.Add(unit);
+            db.ShipEquipments.Add(shipEquipment);
+            await db.SaveChangesAsync(ct);
+        });
+        using var firstClient = await TestApplications.Login(app, first.OwnerEmail);
+        using var secondClient = await TestApplications.Login(app, second.OwnerEmail);
+        var firstRoute = $"/v2/applications/{first.Id}/form-{(formC ? "c" : "b")}";
+        var secondRoute = $"/v2/applications/{second.Id}/form-{(formC ? "c" : "b")}";
+        var fields = Fields(formC, unit.Id, shipEquipment.Id);
+        object empty = formC
+            ? new FormCFields { ShipUsage = "0", DifferentUsage = "" }
+            : new FormBFields { IsCruiseManagerPresent = "false" };
+        await Save(firstClient, firstRoute, fields);
+        await Save(secondClient, secondRoute, fields);
+        Guid equipmentId = default;
+        await app.InDatabase(async db =>
+        {
+            Assert.Single(await db.Permissions.ToListAsync(ct));
+            Assert.Single(await db.GuestUnits.ToListAsync(ct));
+            Assert.Single(await db.Ports.ToListAsync(ct));
+            Assert.Equal(3, await db.ResearchEquipments.CountAsync(ct));
+            equipmentId = (
+                await db.ResearchEquipments.SingleAsync(e => e.Name == "Short equipment", ct)
+            ).Id;
+        });
+        await Save(firstClient, firstRoute, empty);
+        await AssertFields(secondClient, secondRoute, fields, ct);
+
+        // These moves cover all six directed category changes without creating six hosts.
+        foreach (var category in new[] { "long", "insured", "long", "short", "insured", "short" })
+        {
+            var replacement = Fields(formC, unit.Id, shipEquipment.Id);
+            var (shortEquipment, longEquipment, insuredEquipment) = replacement is FormBFields b
+                ? (b.ShortResearchEquipments, b.LongResearchEquipments, b.ResearchEquipments)
+                : (
+                    ((FormCFields)replacement).ShortResearchEquipments,
+                    ((FormCFields)replacement).LongResearchEquipments,
+                    ((FormCFields)replacement).ResearchEquipments
+                );
+            shortEquipment.Clear();
+            longEquipment.Clear();
+            insuredEquipment.Clear();
+            switch (category)
+            {
+                case "short":
+                    shortEquipment.Add(
+                        new ShortTermResearchEquipmentFields
+                        {
+                            Name = "Short equipment",
+                            StartDate = "2030-01-15",
+                            EndDate = "2030-01-16",
+                        }
+                    );
+                    break;
+                case "long":
+                    longEquipment.Add(
+                        new LongTermResearchEquipmentFields
+                        {
+                            Name = "Short equipment",
+                            Action = "Put",
+                            Duration = "2",
+                        }
+                    );
+                    break;
+                case "insured":
+                    insuredEquipment.Add(
+                        new ResearchEquipmentFields
+                        {
+                            Name = "Short equipment",
+                            Permission = "Granted",
+                            InsuranceStartDate = "2030-01-15",
+                            InsuranceEndDate = "2030-01-16",
+                        }
+                    );
+                    break;
+            }
+            await Save(secondClient, secondRoute, replacement);
+            await app.InDatabase(async db =>
+                Assert.Equal(equipmentId, (await db.ResearchEquipments.SingleAsync(ct)).Id)
+            );
+        }
+        await AssertFields(firstClient, firstRoute, empty, ct);
+        await Save(secondClient, secondRoute, empty);
+        await app.InDatabase(async db =>
+        {
+            Assert.Equal(2, await db.CruiseApplications.CountAsync(ct));
+            Assert.Equal(
+                2,
+                formC ? await db.FormsC.CountAsync(ct) : await db.FormsB.CountAsync(ct)
+            );
+            Assert.Empty(await db.Permissions.ToListAsync(ct));
+            Assert.Empty(await db.GuestUnits.ToListAsync(ct));
+            Assert.Empty(await db.Ports.ToListAsync(ct));
+            Assert.Empty(await db.ResearchEquipments.ToListAsync(ct));
+            Assert.Empty(await db.CruiseDaysDetails.ToListAsync(ct));
+            Assert.Empty(await db.CrewMembers.ToListAsync(ct));
+            Assert.Empty(await db.ResearchTasks.ToListAsync(ct));
+            Assert.Empty(await db.ResearchTaskEffects.ToListAsync(ct));
+            Assert.Empty(await db.Contracts.ToListAsync(ct));
+            Assert.Empty(await db.SpubTasks.ToListAsync(ct));
+            Assert.Empty(await db.ResearchAreaDescriptions.ToListAsync(ct));
+            Assert.Empty(await db.CollectedSamples.ToListAsync(ct));
+            Assert.Empty(await db.Photos.ToListAsync(ct));
+            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
+            Assert.Single(await db.UgUnits.ToListAsync(ct));
+            Assert.Single(await db.ShipEquipments.ToListAsync(ct));
+        });
+        Assert.Empty(app.Transport.Messages);
+
+        async Task Save(HttpClient client, string route, object form)
+        {
+            using var response = await client.PutAsJsonAsync(
+                route,
+                new { Form = form, Draft = true },
+                ct
+            );
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            await AssertFields(client, route, form, ct);
+        }
+    }
+
     private static async Task AssertFields(
         HttpClient client,
         string route,

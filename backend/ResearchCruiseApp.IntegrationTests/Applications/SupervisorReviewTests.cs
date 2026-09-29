@@ -61,6 +61,52 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
+    // BE-SUPERVISOR-001: the first decision is final, but the review link stays readable.
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Decision_WhenAlreadyAnswered_RejectsRepeatAndReversalButAllowsReading(
+        bool accept
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var (target, _) = await Seed(app);
+        using var client = app.CreateApiClient();
+        var code = WebEncoders.Base64UrlEncode(target.SupervisorCode);
+        var route = $"/v2/applications/{target.Id}/supervisor-review";
+        using var first = await client.PutAsJsonAsync(
+            route + "/decision",
+            new SupervisorDecisionRequest(accept, code),
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NoContent, first.StatusCode);
+        var original = await client.GetStringAsync(route + $"?code={code}", ct);
+        foreach (var nextDecision in new[] { accept, !accept })
+        {
+            using var repeated = await client.PutAsJsonAsync(
+                route + "/decision",
+                new SupervisorDecisionRequest(nextDecision, code),
+                ct
+            );
+            Assert.Equal(HttpStatusCode.Forbidden, repeated.StatusCode);
+            Assert.Equal(original, await client.GetStringAsync(route + $"?code={code}", ct));
+            await app.InDatabase(async db =>
+            {
+                var stored = await db.CruiseApplications.SingleAsync(a => a.Id == target.Id, ct);
+                Assert.Equal(
+                    accept
+                        ? CruiseApplicationStatus.AcceptedBySupervisor
+                        : CruiseApplicationStatus.DeniedBySupervisor,
+                    stored.Status
+                );
+                Assert.Equal(target.SupervisorCode, stored.SupervisorCode);
+                Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
+            });
+        }
+        Assert.Empty(app.Transport.Messages);
+    }
+
     // BE-SUPERVISOR-003: missing decision data must never become an implicit rejection.
     [Theory]
     [InlineData("{\"code\":\"{code}\"}")]

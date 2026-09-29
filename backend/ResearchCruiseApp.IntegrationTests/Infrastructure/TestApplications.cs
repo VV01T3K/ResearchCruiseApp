@@ -9,14 +9,11 @@ internal static class TestApplications
 {
     internal static async Task<(Guid Id, string OwnerEmail)> Create(
         TestApplication app,
-        CruiseApplicationStatus status
+        CruiseApplicationStatus status,
+        string ownerEmail = "workflow-owner@example.invalid"
     )
     {
-        var owner = await TestUsers.Create(
-            app,
-            "workflow-owner@example.invalid",
-            RoleName.CruiseManager
-        );
+        var owner = await TestUsers.Create(app, ownerEmail, RoleName.CruiseManager);
         var application = new CruiseApplication
         {
             Date = new DateOnly(2030, 1, 15),
