@@ -74,7 +74,7 @@ function FormAPage() {
     },
     onSubmit: ({ value }) => saveForm(value),
     onSubmitInvalid: () => {
-      trackFormSubmit('form-a', 'invalid', form.state);
+      if (!form.state.values.draft) trackFormSubmit('form-a', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
       toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
       navigateToFirstError();
@@ -91,7 +91,7 @@ function FormAPage() {
   };
 
   async function saveForm(values: FormAValues) {
-    trackFormSubmit('form-a', 'valid', form.state);
+    if (!values.draft) trackFormSubmit('form-a', 'valid', form.state);
     if (values.cruiseManagerId !== currentUser.id && values.deputyManagerId !== currentUser.id) {
       setIsSaveDraftModalOpen(false);
       toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');

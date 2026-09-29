@@ -90,7 +90,7 @@ function FormCPage() {
     },
     onSubmit: async ({ value }) => handleValidSubmit(value),
     onSubmitInvalid: () => {
-      trackFormSubmit('form-c', 'invalid', form.state);
+      if (!form.state.values.draft) trackFormSubmit('form-c', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
       navigateToFirstError();
     },
@@ -108,7 +108,7 @@ function FormCPage() {
   };
 
   async function handleValidSubmit(values: FormCValues) {
-    trackFormSubmit('form-c', 'valid', form.state);
+    if (!values.draft) trackFormSubmit('form-c', 'valid', form.state);
 
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'

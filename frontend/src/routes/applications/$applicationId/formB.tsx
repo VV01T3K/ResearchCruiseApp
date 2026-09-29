@@ -64,7 +64,7 @@ function FormBPage() {
     },
     onSubmit: async ({ value }) => handleValidSubmit(value),
     onSubmitInvalid: () => {
-      trackFormSubmit('form-b', 'invalid', form.state);
+      if (!form.state.values.draft) trackFormSubmit('form-b', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
       navigateToFirstError();
     },
@@ -82,7 +82,7 @@ function FormBPage() {
   };
 
   async function handleValidSubmit(values: FormBValues) {
-    trackFormSubmit('form-b', 'valid', form.state);
+    if (!values.draft) trackFormSubmit('form-b', 'valid', form.state);
 
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
