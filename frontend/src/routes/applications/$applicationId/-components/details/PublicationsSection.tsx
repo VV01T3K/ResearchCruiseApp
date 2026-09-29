@@ -5,14 +5,16 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
-import { ScoredPublication } from '@/api/generated/schemas';
+import {
+  type ApplicationEvaluation,
+  useApplicationEvaluation,
+} from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
 export function PublicationsSection() {
   const evaluation = useApplicationEvaluation();
 
-  const columns: ColumnDef<ScoredPublication>[] = [
+  const columns: ColumnDef<ApplicationEvaluation['formAPublications'][number]>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,
@@ -36,28 +38,28 @@ export function PublicationsSection() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <AppInput
             name={`publications[${row.index}].publication.doi`}
-            value={row.original.publication.doi ?? ''}
+            value={row.original.publication.doi}
             label="DOI"
             showRequiredAsterisk
             disabled
           />
           <AppInput
             name={`publications[${row.index}].publication.authors`}
-            value={row.original.publication.authors ?? ''}
+            value={row.original.publication.authors}
             label="Autorzy"
             showRequiredAsterisk
             disabled
           />
           <AppInput
             name={`publications[${row.index}].publication.title`}
-            value={row.original.publication.title ?? ''}
+            value={row.original.publication.title}
             label="Tytuł"
             showRequiredAsterisk
             disabled
           />
           <AppInput
             name={`publications[${row.index}].publication.magazine`}
-            value={row.original.publication.magazine ?? ''}
+            value={row.original.publication.magazine}
             label="Czasopismo"
             showRequiredAsterisk
             disabled
@@ -74,7 +76,7 @@ export function PublicationsSection() {
       cell: ({ row }) => (
         <AppYearPickerInput
           name={`publications[${row.index}].publication.year`}
-          value={row.original.publication.year == null ? undefined : Number(row.original.publication.year)}
+          value={row.original.publication.year ?? undefined}
           showRequiredAsterisk
           disabled
         />
@@ -89,7 +91,7 @@ export function PublicationsSection() {
       cell: ({ row }) => (
         <AppNumberInput
           name={`publications[${row.index}].publication.ministerialPoints`}
-          value={Number(row.original.publication.ministerialPoints)}
+          value={row.original.publication.ministerialPoints}
           minimum={0}
           showRequiredAsterisk
           disabled

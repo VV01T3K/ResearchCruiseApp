@@ -60,7 +60,11 @@ import {
   getResearchAreaValuesSchema,
   ResearchAreaValuesInputSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
-import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import {
+  mapContractToValues,
+  mapResearchTaskToValues,
+  mapSpubTaskToValues,
+} from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
   shipUsage: 3,
@@ -267,19 +271,8 @@ export function mapFormCToValues(form: FormCFields): FormCValues {
       name: team.name ?? '',
       noOfPersons: toNumber(team.noOfPersons),
     })),
-    contracts: (form.contracts ?? []).map((contract) => ({
-      category: contract.category === 'international' ? 'international' : 'domestic',
-      institutionName: contract.institutionName ?? '',
-      institutionUnit: contract.institutionUnit ?? '',
-      institutionLocalization: contract.institutionLocalization ?? '',
-      description: contract.description ?? '',
-      scans: (contract.scans ?? []).map((scan) => ({ name: scan.name ?? '', content: scan.content ?? '' })),
-    })),
-    spubTasks: (form.spubTasks ?? []).map((task) => ({
-      name: task.name ?? '',
-      yearFrom: task.yearFrom ?? '',
-      yearTo: task.yearTo ?? '',
-    })),
+    contracts: (form.contracts ?? []).map(mapContractToValues),
+    spubTasks: (form.spubTasks ?? []).map(mapSpubTaskToValues),
     shortResearchEquipments: (form.shortResearchEquipments ?? []).map((equipment) => ({
       name: equipment.name ?? '',
       startDate: equipment.startDate ?? '',

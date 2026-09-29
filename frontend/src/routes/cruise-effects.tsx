@@ -9,16 +9,21 @@ import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-compo
 import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/generated/endpoints/users.gen';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 import type { CruiseEffectResponse } from '@/api/generated/schemas';
+import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 export const Route = createFileRoute('/cruise-effects')({
   component: CruiseEffectsPage,
   beforeLoad: allowOnly.authenticated(),
 });
 
-function CruiseEffectsPage() {
-  const effectsQuery = useGetCurrentUserCruiseEffectsSuspense();
+function mapEffectsToValues(effects: CruiseEffectResponse[]) {
+  return effects.map(({ effect, ...response }) => ({ ...response, effect: mapResearchTaskToValues(effect) }));
+}
 
-  const columns: ColumnDef<CruiseEffectResponse>[] = [
+function CruiseEffectsPage() {
+  const effectsQuery = useGetCurrentUserCruiseEffectsSuspense({ query: { select: mapEffectsToValues } });
+
+  const columns: ColumnDef<ReturnType<typeof mapEffectsToValues>[number]>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}`,

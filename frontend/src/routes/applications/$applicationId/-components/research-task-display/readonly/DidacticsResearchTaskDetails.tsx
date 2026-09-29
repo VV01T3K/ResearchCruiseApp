@@ -1,15 +1,15 @@
 import { AppInput } from '@/components/shared/inputs/AppInput';
-import type { ResearchTaskDetailsData } from './ResearchTaskDetails';
+import type { DidacticsResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  data: ResearchTaskDetailsData;
+  data: DidacticsResearchTaskValues;
 };
 export function DidacticsResearchTaskDetails({ data }: Props) {
   return (
     <div>
       <AppInput
         name="researchTasks[].description"
-        value={data.description ?? ''}
+        value={data.description}
         label="Opis zajęcia dydaktycznego"
         placeholder="Wprowadź opis zajęcia dydaktycznego"
         disabled={true}
