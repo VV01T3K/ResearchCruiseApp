@@ -10,4 +10,5 @@ export default {
   sentryTracesSampleRate: window.__SENTRY_TRACES_SAMPLE_RATE__ || SENTRY_TRACES_SAMPLE_RATE || '',
   sentryReplaysSessionSampleRate:
     window.__SENTRY_REPLAYS_SESSION_SAMPLE_RATE__ || SENTRY_REPLAYS_SESSION_SAMPLE_RATE || '',
+  sentryTunnel: window.__SENTRY_TUNNEL__ || '',
 };

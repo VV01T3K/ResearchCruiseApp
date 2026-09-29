@@ -11,6 +11,7 @@ export function initializeSentry(router: unknown): void {
 
   Sentry.init({
     dsn: config.sentryDsn,
+    tunnel: config.sentryTunnel || undefined,
     environment: config.environment,
     release: config.sentryRelease || `research-cruise-app-frontend@${config.version}`,
     integrations: [

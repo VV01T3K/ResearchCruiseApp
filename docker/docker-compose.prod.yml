@@ -22,5 +22,7 @@ services:
       - SENTRY_DSN=${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
       - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
       - SENTRY_REPLAYS_SESSION_SAMPLE_RATE=${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-0.1}
+      # Set to the reverse proxy's address(es) if one sits in front of port 8080.
+      - TRUSTED_PROXIES=${TRUSTED_PROXIES:-}
     ports:
       - 8080:8080
