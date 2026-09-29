@@ -29,6 +29,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                 AddCruiseGoalDraftValidation();
                 AddResearchTaskDraftValidation();
                 AddResearchTasksCommonValidation();
+                AddPublicationPointsDraftValidation();
                 AddUgTeamsDraftValidation();
                 AddGuestTeamsDraftValidation();
             }
@@ -534,7 +535,19 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             .WithMessage("Należy podać poprawną kategorię publikacji");
 
         RuleForEach(request => request.Form.Publications)
-            .Must(publicationFields => uint.TryParse(publicationFields.MinisterialPoints, out _))
+            .Must(publicationFields => IsNonNegativeInt(publicationFields.MinisterialPoints))
+            .WithMessage(
+                "Podano liczbę punktów ministerialnych publikacji w niepoprawnym formacie."
+            );
+    }
+
+    private void AddPublicationPointsDraftValidation()
+    {
+        RuleForEach(request => request.Form.Publications)
+            .Must(publicationFields =>
+                publicationFields.MinisterialPoints == ""
+                || IsNonNegativeInt(publicationFields.MinisterialPoints)
+            )
             .WithMessage(
                 "Podano liczbę punktów ministerialnych publikacji w niepoprawnym formacie."
             );
@@ -564,6 +577,9 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             && double.IsFinite(valueDouble)
             && valueDouble >= 0;
     }
+
+    private static bool IsNonNegativeInt(string? value) =>
+        int.TryParse(value, out var points) && points >= 0;
 
     private static bool IsValidShipUsage(string? shipUsage)
     {

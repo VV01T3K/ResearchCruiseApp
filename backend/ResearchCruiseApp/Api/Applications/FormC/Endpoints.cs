@@ -81,6 +81,8 @@ public static class FormCEndpoints
     {
         var application = await dbContext
             .CruiseApplications.IncludeFormA()
+            .Include(application => application.FormA!.FormAResearchTasks)
+                .ThenInclude(task => task.ResearchTask)
             .IncludeFormC()
             .IncludeFormCContent()
             .AsSplitQuery()
