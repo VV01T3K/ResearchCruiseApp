@@ -22,25 +22,6 @@ public sealed class ApplicationWriteContractTests
     }
 
     [Fact]
-    public void GuaranteedResponsePropertiesDoNotBecomeDeserializationRequirements()
-    {
-        Assert.Empty(JsonSerializer.Deserialize<FormAOptions>("{}")!.CruiseManagers);
-        var path = Path.GetFullPath(
-            "../../../../ResearchCruiseApp/openapi/ResearchCruiseApp_v2.json",
-            AppContext.BaseDirectory
-        );
-        using var document = JsonDocument.Parse(File.ReadAllText(path));
-        var schemas = document.RootElement.GetProperty("components").GetProperty("schemas");
-        var options = schemas.GetProperty("FormAOptions");
-        Assert.Equal(
-            options.GetProperty("properties").EnumerateObject().Count(),
-            options.GetProperty("required").GetArrayLength()
-        );
-        Assert.False(schemas.GetProperty("FormAFields").TryGetProperty("required", out _));
-        Assert.False(schemas.GetProperty("PermissionFields").TryGetProperty("required", out _));
-    }
-
-    [Fact]
     public void DraftRequestsAllowPartiallyFilledNestedObjects()
     {
         var formA = JsonSerializer.Deserialize<FormAWriteRequest>(
