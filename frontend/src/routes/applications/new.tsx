@@ -99,11 +99,8 @@ function NewCruiseApplicationPage() {
       );
       await navigate({ to: '/' });
     } catch (error) {
-      if (setServerFormErrors(form, error)) {
-        toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-      } else {
-        toast.error(getErrorMessage(error, 'Nie udało się zapisać formularza'));
-      }
+      setServerFormErrors(form, error);
+      toast.error(getErrorMessage(error, 'Nie udało się zapisać formularza'));
       navigateToFirstError();
       throw error;
     } finally {

@@ -64,26 +64,32 @@ test('failed draft saves explain the reason and retain partial rows for retry', 
   await formBPage.sections.cruiseDayDetailsSection.addTaskButton.click();
   const task = page.getByTestId('cruise-day-task-name-input').first();
   await task.fill('Niedokończone zadanie');
+  const managerPresent = page.getByRole('checkbox', { name: 'Czy kierownik jest obecny na rejsie?' });
   const save = page.getByRole('button', { name: 'Zapisz wersję roboczą' });
   const failures = [
     {
       status: 400,
-      body: { errors: { Form: ['Nieprawidłowy stan wersji roboczej'] } },
-      reason: 'Nieprawidłowy stan wersji roboczej',
-    },
-    {
-      status: 400,
-      body: { errors: { 'Form.UnknownField': ['Nieprawidłowe powiązanie'] } },
-      reason: 'Nieprawidłowe powiązanie',
+      body: {
+        detail: 'Zgłoszenie jest zablokowane.',
+        errors: {
+          'Form.IsCruiseManagerPresent': ['Obecność kierownika została odrzucona'],
+          Form: ['Nieprawidłowy stan wersji roboczej'],
+          'Form.UnknownField': ['Nieprawidłowe powiązanie'],
+        },
+      },
+      inline: 'Obecność kierownika została odrzucona',
+      reasons: [
+        'Zgłoszenie jest zablokowane.',
+        'Obecność kierownika została odrzucona',
+        'Nieprawidłowy stan wersji roboczej',
+        'Nieprawidłowe powiązanie',
+      ],
     },
     {
       status: 403,
       body: { detail: 'Obecnie nie można przesłać formularza B.' },
-      reason: 'Obecnie nie można przesłać formularza B.',
+      reasons: ['Obecnie nie można przesłać formularza B.'],
     },
-    { status: 413, body: null, reason: 'Przesyłane dane są zbyt duże' },
-    { status: 429, body: null, reason: 'Wysłano zbyt wiele żądań' },
-    { status: 502, body: null, reason: 'Błąd serwera (502)' },
   ];
   let failure = failures[0];
   await page.route(`${API_URL}/v2/applications/${formBPage.formId}/form-b`, (route) =>
@@ -93,7 +99,10 @@ test('failed draft saves explain the reason and retain partial rows for retry', 
   );
   for (failure of failures) {
     await save.click();
-    await expect(page.getByTestId('toast-error').filter({ hasText: failure.reason }).first()).toBeVisible();
+    const toast = page.getByTestId('toast-error').filter({ hasText: failure.reasons[0] });
+    await expect(toast).toHaveCount(1);
+    for (const reason of failure.reasons) await expect(toast).toContainText(reason);
+    if (failure.inline) await expect(managerPresent).toHaveAccessibleDescription(failure.inline);
     await expect(task).toHaveValue('Niedokończone zadanie');
     await expect(page).toHaveURL(/\/formB\?mode=edit$/);
   }

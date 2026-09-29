@@ -124,11 +124,7 @@ function FormCPage() {
       );
     } catch (err) {
       console.error(err);
-      if (setServerFormErrors(form, err)) {
-        toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
-        navigateToFirstError();
-        throw err;
-      }
+      setServerFormErrors(form, err);
       toast.error(getErrorMessage(err, 'Nie udało się zapisać formularza'));
       navigateToFirstError();
       throw err;

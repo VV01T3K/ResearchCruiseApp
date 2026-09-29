@@ -1,6 +1,7 @@
 import { FormApi, FieldApi } from '@tanstack/react-form';
 import { expect, it } from 'vitest';
 import { getFormErrorMessage, setServerFormErrors } from './errors';
+import { ApiError, getErrorMessage, responseErrorMessage } from '@/api/errors';
 
 it('shows root and unmounted server errors instead of losing their reason', () => {
   const form = new FormApi({ defaultValues: { name: '' }, onSubmitMeta: undefined });
@@ -26,6 +27,32 @@ it('keeps mounted field errors next to the input', () => {
     setServerFormErrors(form, { problem: { errors: { 'Form.Name': ['Ta nazwa jest zajęta'] } } });
     expect(field.state.meta.errors.flat()).toContain('Ta nazwa jest zajęta');
     expect(getFormErrorMessage(form, {})).toContain('Ta nazwa jest zajęta');
+  } finally {
+    unmountField();
+    unmount();
+  }
+});
+
+it('keeps every reason from a mixed response while annotating mounted fields', () => {
+  const form = new FormApi({ defaultValues: { permissions: [{ description: '' }] }, onSubmitMeta: undefined });
+  const unmount = form.mount();
+  const field = new FieldApi({ form, name: 'permissions[0].description' });
+  const unmountField = field.mount();
+  const problem = {
+    detail: 'Zgłoszenie jest zablokowane',
+    errors: {
+      'Form.Permissions[0].Description': ['Opis jest za długi'],
+      Form: ['Nieprawidłowy stan wersji roboczej'],
+      'Form.Missing': ['Nieprawidłowe powiązanie'],
+    },
+  };
+  const error = new ApiError(responseErrorMessage(400, problem), 400, problem);
+  try {
+    setServerFormErrors(form, error);
+    expect(field.state.meta.errors.flat()).toContain('Opis jest za długi');
+    expect(getErrorMessage(error, 'Nie zapisano')).toBe(
+      'Nie zapisano: Zgłoszenie jest zablokowane\nOpis jest za długi\nNieprawidłowy stan wersji roboczej\nNieprawidłowe powiązanie'
+    );
   } finally {
     unmountField();
     unmount();

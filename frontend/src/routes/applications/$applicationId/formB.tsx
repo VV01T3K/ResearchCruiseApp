@@ -98,11 +98,7 @@ function FormBPage() {
       );
     } catch (err) {
       console.error(err);
-      if (setServerFormErrors(form, err)) {
-        toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
-        navigateToFirstError();
-        throw err;
-      }
+      setServerFormErrors(form, err);
       toast.error(getErrorMessage(err, 'Nie udało się wysłać formularza'));
       navigateToFirstError();
       throw err;
