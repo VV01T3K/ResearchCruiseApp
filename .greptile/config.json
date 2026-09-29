@@ -2,7 +2,7 @@
   "strictness": 2,
   "commentTypes": ["logic", "syntax"],
   "autoReview": ["open"],
-  "excludeAuthors": ["renovate[bot]"],
+  "excludeAuthors": ["dependabot[bot]"],
   "statusCheck": true,
   "statusCommentsEnabled": true,
   "shouldUpdateDescription": true,
