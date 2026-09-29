@@ -118,10 +118,12 @@ test('role guard refreshes stale account data before allowing navigation', async
 test('user management create, update, delete, accept, and deactivate use v2 routes', async ({ page }) => {
   await seedAuthenticatedAdmin(page);
   const requests: string[] = [];
+  const bodies: Record<string, unknown> = {};
   let currentUser = { ...user };
   await page.route(`${API_URL}/v2/users`, async (route) => {
     if (route.request().method() === 'POST') {
       requests.push('create');
+      bodies.create = route.request().postDataJSON();
       return route.fulfill({ status: 201 });
     }
 
@@ -137,6 +139,7 @@ test('user management create, update, delete, accept, and deactivate use v2 rout
       const request = route.request().postDataJSON() as {
         firstName: string;
       };
+      bodies.update = request;
       currentUser = { ...currentUser, firstName: request.firstName };
     }
     await route.fulfill({ status: 204 });
@@ -160,11 +163,18 @@ test('user management create, update, delete, accept, and deactivate use v2 rout
   await page.getByRole('option', { name: 'Kierownik' }).click();
   await page.getByRole('button', { name: 'Dodaj' }).click();
   await expect.poll(() => requests).toContain('create');
+  expect(bodies.create).toEqual({
+    email: 'new@example.com',
+    firstName: 'New',
+    lastName: 'User',
+    roles: ['CruiseManager'],
+  });
 
   await page.getByRole('button', { name: 'Edytuj' }).click();
   await page.locator('input[name="firstName"]').fill('Updated');
   await page.getByRole('button', { name: 'Zapisz' }).click();
   await expect.poll(() => requests).toContain('update');
+  expect(bodies.update).toEqual({ email: user.email, firstName: 'Updated', lastName: user.lastName });
 
   await page.getByRole('button', { name: 'Edytuj' }).click();
   await page.getByRole('button', { name: 'Zaakceptuj konto użytkownika' }).click();

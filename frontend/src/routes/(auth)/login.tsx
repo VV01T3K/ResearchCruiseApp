@@ -36,7 +36,7 @@ function LoginPage() {
       trackFormSubmit('login', 'valid', formApi.state);
 
       setSignInError(undefined);
-      const result = await signIn(loginValidationSchema.parse(value).email, value.password);
+      const result = await signIn(value.email, value.password);
 
       if (result !== 'success') {
         setSignInError(result.error);

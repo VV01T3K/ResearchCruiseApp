@@ -1,7 +1,6 @@
 import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { ResetPasswordRequest } from '@/api/generated/schemas';
-import { formContract } from '@/integrations/tanstack/form/schema';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { z } from 'zod';
@@ -46,7 +45,7 @@ const validationSchema = z
       });
     }
   })
-  .pipe(formContract(ResetPasswordRequest.pick({ password: true, passwordConfirm: true })));
+  .pipe(ResetPasswordRequest.pick({ password: true, passwordConfirm: true }));
 
 function ResetPasswordPage() {
   const { emailBase64, resetCode } = Route.useSearch();
@@ -70,7 +69,7 @@ function ResetPasswordPage() {
 
       try {
         await mutateAsync({
-          data: ResetPasswordRequest.parse({ emailBase64, resetCode, ...validationSchema.parse(value) }),
+          data: { emailBase64, resetCode, password: value.password, passwordConfirm: value.passwordConfirm },
         });
         setResult('success');
       } catch (error) {

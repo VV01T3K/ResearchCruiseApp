@@ -1,7 +1,6 @@
 import { getErrorMessage, getProblemDetail } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
-import { RegisterAccountRequest } from '@/api/generated/schemas';
-import { formContract } from '@/integrations/tanstack/form/schema';
+import type { RegisterAccountRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
@@ -42,9 +41,7 @@ const validationSchema = z
         path: ['confirmPassword'],
       });
     }
-  })
-  .transform((value): z.input<typeof RegisterAccountRequest> => value)
-  .pipe(formContract(RegisterAccountRequest));
+  });
 
 const errorMessages: Record<Result | 'username-taken', string> = {
   success: '',
@@ -72,7 +69,8 @@ function RegisterPage() {
       trackFormSubmit('register', 'valid', form.state);
 
       try {
-        await mutateAsync({ data: validationSchema.parse(value) });
+        const { email, firstName, lastName, password } = value;
+        await mutateAsync({ data: { email, firstName, lastName, password } satisfies RegisterAccountRequest });
       } catch (error) {
         setResult(getProblemDetail(error, '').includes('taken') ? 'username-taken' : 'error');
         toast.error(getErrorMessage(error, 'Rejestracja nie powiodła się'));

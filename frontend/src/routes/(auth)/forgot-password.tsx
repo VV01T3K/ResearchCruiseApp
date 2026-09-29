@@ -1,7 +1,6 @@
 import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { RequestPasswordResetRequest } from '@/api/generated/schemas';
-import { formContract } from '@/integrations/tanstack/form/schema';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
@@ -24,7 +23,7 @@ const validationSchema = z
   .object({
     email: z.email('Niepoprawny adres e-mail'),
   })
-  .pipe(formContract(RequestPasswordResetRequest));
+  .pipe(RequestPasswordResetRequest);
 
 function ForgotPasswordPage() {
   const [result, setResult] = React.useState<Result | undefined>(undefined);

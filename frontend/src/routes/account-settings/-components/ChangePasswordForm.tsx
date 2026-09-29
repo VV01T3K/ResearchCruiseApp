@@ -1,7 +1,6 @@
 import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
-import { ChangePasswordRequest } from '@/api/generated/schemas';
-import { formContract } from '@/integrations/tanstack/form/schema';
+import type { ChangePasswordRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
@@ -32,9 +31,7 @@ const validationSchema = z
         path: ['repeatedNewPassword'],
       });
     }
-  })
-  .transform((value): z.input<typeof ChangePasswordRequest> => value)
-  .pipe(formContract(ChangePasswordRequest));
+  });
 
 export function ChangePasswordForm() {
   const [result, setResult] = React.useState<'success' | 'error'>();
@@ -54,7 +51,7 @@ export function ChangePasswordForm() {
 
       try {
         await mutateAsync({
-          data: validationSchema.parse(value),
+          data: { password: value.password, newPassword: value.newPassword } satisfies ChangePasswordRequest,
         });
       } catch (error) {
         setResult('error');
