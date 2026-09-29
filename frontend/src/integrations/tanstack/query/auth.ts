@@ -11,7 +11,7 @@ import {
   setSession,
   subscribeAuthDetails,
 } from '@/integrations/auth/session';
-import { ApiError, getErrorMessage } from '@/api/fetch';
+import { ApiError, getErrorMessage, getProblemDetail } from '@/api/fetch';
 import { toast } from '@/components/shared/layout/toast';
 import type { UserResponse } from '@/api/generated/schemas';
 import type { Role, SignInResult } from '@/integrations/auth/types';
@@ -73,7 +73,12 @@ export function useSignIn() {
       response = await login({ data: { email, password } });
     } catch (error) {
       clearSession(queryClient);
-      return error instanceof ApiError && error.status === 401 ? 'invalid_credentials' : 'error';
+      return {
+        error:
+          error instanceof ApiError && error.status === 401
+            ? 'Podano błędne hasło lub użytkownik nie istnieje.'
+            : getProblemDetail(error, 'Wystąpił błąd podczas logowania. Spróbuj ponownie.'),
+      };
     }
 
     setSession(response);
@@ -86,7 +91,7 @@ export function useSignIn() {
       await prepareForLogout();
       await logoutSession().catch(() => undefined);
       clearSessionEverywhere(queryClient);
-      return 'error';
+      return { error: 'Wystąpił błąd podczas logowania. Sprawdź połączenie z internetem.' };
     }
   };
 }

@@ -10,7 +10,6 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { useSignIn } from '@/integrations/tanstack/query/auth';
-import { SignInResult } from '@/integrations/auth/types';
 
 export const Route = createFileRoute('/(auth)/login')({
   component: LoginPage,
@@ -18,17 +17,11 @@ export const Route = createFileRoute('/(auth)/login')({
   validateSearch: z.object({ redirect: z.string().optional() }),
 });
 
-const errorMessages = {
-  success: '',
-  error: 'Wystąpił błąd podczas logowania. Sprawdź połączenie z internetem.',
-  invalid_credentials: 'Podano błędne hasło lub użytkownik nie istnieje.',
-};
-
 function LoginPage() {
   const signIn = useSignIn();
   const router = useRouter();
   const { redirect } = Route.useSearch();
-  const [signInResult, setSignInResult] = React.useState<SignInResult | undefined>(undefined);
+  const [signInError, setSignInError] = React.useState<string | undefined>(undefined);
 
   const form = useAppForm({
     defaultValues: {
@@ -42,12 +35,12 @@ function LoginPage() {
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('login', 'valid', formApi.state);
 
-      setSignInResult(undefined);
+      setSignInError(undefined);
       const result = await signIn(loginValidationSchema.parse(value).email, value.password);
 
       if (result !== 'success') {
-        setSignInResult(result);
-        throw new Error(errorMessages[result]);
+        setSignInError(result.error);
+        throw new Error(result.error);
       }
 
       await router.invalidate();
@@ -101,9 +94,7 @@ function LoginPage() {
               )}
             />
 
-            {signInResult && (
-              <p className="mt-2 text-center text-sm font-semibold text-danger">{errorMessages[signInResult]}</p>
-            )}
+            {signInError && <p className="mt-2 text-center text-sm font-semibold text-danger">{signInError}</p>}
           </div>
 
           <p className="!mt-8">

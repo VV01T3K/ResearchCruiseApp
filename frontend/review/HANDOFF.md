@@ -10,13 +10,15 @@ Both regressions were reproduced before their fixes. Verification passed: 20 API
 
 This continuation uses native Linux in `t3code/continue-pr-424-handoff`, based on PR head `fec67a64`. Push follow-up commits to `codex/forms-redesign-staging`. The Windows/WSL notes below describe the previous environment. Its ignored local-instance artifacts are absent here. Local frontend commands use `frontend/node_modules/.bin`; browser installation completed with `bun ./node_modules/@playwright/test/cli.js install chromium --only-shell` after the Node 26 installer stalled during extraction.
 
-Next: check CI and any new review feedback on the follow-up commit, then address concrete manual-testing reports. Greptile TREX runtime verification remains unconfirmed. Keep the existing restriction on merging or deploying to staging.
+Greptile's subsequent [HTTP 429 login finding](https://github.com/VV01T3K/ResearchCruiseApp/pull/424#discussion_r4128273949) was valid: suppressing the duplicate toast left the login page showing generic connection advice. Reproduced independently with a failing browser test, then changed login results to carry the API failure message into the inline error. Six login browser tests now pass without retries, including rate-limit guidance, no duplicate toast and successful retry. The 20 API/query error unit tests and type checking also pass.
+
+TREX runtime evidence is present in both the September 25 review and the subsequent HTTP 429 review. The earlier statement that TREX was unconfirmed was incorrect. Next: check CI and new feedback on the follow-up commit, then address concrete manual-testing reports. Keep the existing restriction on merging or deploying to staging.
 
 ## Start here
 
 - Read [the implementation and recording guide](README.md) for the architecture, original thread identifier, branch history and official documentation links. Do not recreate that work from this handoff.
 - [PR #424](https://github.com/VV01T3K/ResearchCruiseApp/pull/424) is open against `staging`. Work on `codex/forms-redesign-staging`.
-- The latest implementation commit is `68a5d4b4`, `fix(forms): preserve partial drafts and explain API failures`. Read that commit for the latest backend contract and frontend error handling changes.
+- The draft-contract implementation commit is `68a5d4b4`, `fix(forms): preserve partial drafts and explain API failures`. Read that commit for the backend contract changes and the continuation section above for later frontend fixes.
 - Follow the root [AGENTS.md](../../AGENTS.md). Preserve existing commits and check upstream history before integrating changes. Staging previously required force pushes; the recording guide explains the safe base and recovery branch.
 
 ## User decisions that still apply
@@ -33,7 +35,7 @@ The main application, cruise, auth, password, account and admin data entry forms
 
 ## Next actions
 
-1. Check new PR comments and the latest Greptile review. A [rereview request with TREX runtime verification](https://github.com/VV01T3K/ResearchCruiseApp/pull/424#issuecomment-5833792280) was posted after `68a5d4b4`. Runtime verification by Greptile is not yet confirmed.
+1. Check new PR comments and the latest Greptile review. Assess each finding against the reviewed commit and reproduce reported failures before changing code. See the continuation section above for findings already handled.
 2. Support the user's manual testing on the local instance. Address concrete regressions and useful review findings, especially partial draft preservation and visible failure reasons.
 3. Keep the PR updated. Do not merge or deploy to staging without the user's instruction.
 

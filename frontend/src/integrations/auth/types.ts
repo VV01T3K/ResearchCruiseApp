@@ -9,7 +9,7 @@ export enum Role {
 }
 
 export type Result = 'success' | 'error';
-export type SignInResult = Result | 'invalid_credentials';
+export type SignInResult = 'success' | { error: string };
 
 export function getRoleLabel(role: string): string {
   switch (role) {
