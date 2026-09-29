@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 
 export const CruiseApplicationStatus = zod.enum(['draft', 'waitingForSupervisor', 'acceptedBySupervisor', 'deniedBySupervisor', 'accepted', 'denied', 'formBRequired', 'formBFilled', 'undertaken', 'reported']);
 

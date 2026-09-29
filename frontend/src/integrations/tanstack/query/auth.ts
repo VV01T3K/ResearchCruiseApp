@@ -83,7 +83,7 @@ export function useSignIn() {
 
     setSession(response);
     try {
-      const user = await queryClient.fetchQuery({ ...currentUserQueryOptions(), staleTime: 0 });
+      const user = await queryClient.query({ ...currentUserQueryOptions(), staleTime: 0 });
       if (!user) throw new Error('The authenticated account profile is unavailable');
       return 'success';
     } catch (error) {

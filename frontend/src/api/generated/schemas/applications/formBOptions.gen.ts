@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 import { ShipEquipmentOption } from './shipEquipmentOption.gen.ts';
 
 export const FormBOptions = zod.object({

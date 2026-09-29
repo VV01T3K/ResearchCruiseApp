@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 
 export const cruiseApplicationCandidateResponseIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
 export const cruiseApplicationCandidateResponseCruiseManagerIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
@@ -8,7 +8,7 @@ export const cruiseApplicationCandidateResponseDeputyManagerIdRegExp = new RegEx
 export const CruiseApplicationCandidateResponse = zod.object({
   "id": zod.string().regex(cruiseApplicationCandidateResponseIdRegExp),
   "number": zod.string(),
-  "year": zod.number(),
+  "year": zod.int(),
   "cruiseManagerId": zod.string().regex(cruiseApplicationCandidateResponseCruiseManagerIdRegExp),
   "cruiseManagerFirstName": zod.string(),
   "cruiseManagerLastName": zod.string(),
@@ -16,7 +16,7 @@ export const CruiseApplicationCandidateResponse = zod.object({
   "hasFormA": zod.boolean(),
   "hasFormB": zod.boolean(),
   "hasFormC": zod.boolean(),
-  "points": zod.number()
+  "points": zod.int()
 });
 
 export type CruiseApplicationCandidateResponse = zod.input<typeof CruiseApplicationCandidateResponse>;

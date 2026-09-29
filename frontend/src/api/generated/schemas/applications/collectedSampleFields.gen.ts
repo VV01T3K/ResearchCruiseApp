@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 
 export const collectedSampleFieldsTypeMin = 0;
 export const collectedSampleFieldsTypeMax = 10240;

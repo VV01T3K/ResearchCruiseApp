@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 import { ApplicationPersonResponse } from './applicationPersonResponse.gen.ts';
 import { CruiseApplicationStatus } from './cruiseApplicationStatus.gen.ts';
 
@@ -9,13 +9,13 @@ export const ApplicationResponse = zod.object({
   "id": zod.string().regex(applicationResponseIdRegExp),
   "number": zod.string(),
   "date": zod.iso.date(),
-  "year": zod.number(),
+  "year": zod.int(),
   "mainManager": ApplicationPersonResponse,
   "deputyManager": ApplicationPersonResponse,
   "hasFormA": zod.boolean(),
   "hasFormB": zod.boolean(),
   "hasFormC": zod.boolean(),
-  "points": zod.number(),
+  "points": zod.int(),
   "status": CruiseApplicationStatus,
   "effectsDoneRate": zod.string(),
   "note": zod.string().nullable(),
