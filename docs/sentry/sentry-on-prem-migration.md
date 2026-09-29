@@ -33,8 +33,8 @@ never mix cloud and on-prem DSNs within an environment.
   Postgres and ClickHouse volumes. Decide event retention (`SENTRY_EVENT_RETENTION_DAYS`,
   default 90).
 - Feature notes: errors, tracing, session replay and dashboards all work self-hosted. Seer (AI),
-  spike protection, and the hosted MCP integration are cloud-only — production debugging via MCP
-  would need the self-hosted MCP server or plain API access.
+  spike protection, and the hosted MCP integration are cloud-only — see
+  [MCP access](#mcp-access) for the self-hosted MCP server.
 
 ## Step 2 — create org and projects on the on-prem instance
 
@@ -43,31 +43,66 @@ never mix cloud and on-prem DSNs within an environment.
    - `frontend-production` — platform **React**
    - `backend-production` — platform **ASP.NET Core**
 3. Note both DSNs.
-4. Create an **organization auth token** (Settings → Auth Tokens) for CI uploads. This token is
-   specific to the on-prem instance — cloud tokens do not work there.
+4. Create a **user auth token** (User Settings → Personal Tokens) for the MCP server. This token is specific to the on-prem instance — cloud tokens do not work
+   there.
 
-## Step 3 — wire CI uploads to the on-prem instance (small repo change)
+Before creating the real projects, rehearse on throwaway ones (e.g. `tmp-frontend` /
+`tmp-backend`): mirror the staging projects' settings (inbound filters, allowed domains, client
+key rate limits, data scrubbing, alert rules, ownership) through the MCP server or the UI, point a local
+`docker/docker-compose.dev.yml` run at their DSNs, and walk the Step 5 checklist. Delete them
+once the production projects are configured the same way.
 
-sentry-cli, `@sentry/vite-plugin`, and the Sentry MSBuild tasks all honor the `SENTRY_URL`
-env var but default to `https://sentry.io`. This is the **only missing plumbing** in the repo:
+## Step 3 — no source maps in production (for now)
 
-- `frontend/Dockerfile` and `backend/Dockerfile`: add `ARG SENTRY_URL=""` + export it as env in
-  the build stage (empty default keeps current cloud behavior).
-- `frontend/vite.config.ts`: pass `url: process.env.SENTRY_URL || undefined` to
-  `sentryVitePlugin` (optional — the env var alone is honored — but explicit is clearer).
-- `backend/ResearchCruiseApp/ResearchCruiseApp.csproj`: add
-  `<SentryUrl Condition="'$(SENTRY_URL)' != ''">$(SENTRY_URL)</SentryUrl>` next to `SentryOrg`.
-- `.github/workflows/build-and-deploy.yaml` (production pipeline): in the frontend/backend build
-  args, override the slug defaults and add the URL: `SENTRY_URL=https://sentry.<our-domain>` and
-  `SENTRY_PROJECT=frontend-production` for the frontend build, and
-  `SENTRY_PROJECT=backend-production` for the backend build (plus `SENTRY_ORG` if the on-prem slug
-  differs).
-  Add a second GitHub secret (e.g. `SENTRY_AUTH_TOKEN_PROD`) holding the on-prem token and pass
-  it as the `sentry_auth_token` build secret in that workflow.
-  The staging workflow (`deploy-komodo-staging.yaml`) stays untouched — it keeps uploading to
-  cloud with the existing `SENTRY_AUTH_TOKEN`.
-- The GitHub runner must be able to reach `SENTRY_URL`; if the instance is not public, use a
-  self-hosted runner or expose the upload endpoint.
+GitHub-hosted runners cannot reach the on-prem instance, so the production pipeline
+(`build-and-deploy.yaml`) uploads nothing to Sentry and builds no source maps. Staging keeps
+uploading to cloud.
+
+- **Backend:** little is lost. The published image ships `ResearchCruiseApp.pdb`, so the SDK
+  resolves file names and line numbers on its own; only the inline source-context snippets
+  (from `SentryUploadSources`) are missing.
+- **Frontend:** production stack traces stay minified. Reproduce on staging, where the same
+  code is source-mapped, when a production trace is unreadable.
+
+Restoring them is tracked in [#433](https://github.com/VV01T3K/ResearchCruiseApp/issues/433). Options: run the upload from a self-hosted GitHub runner inside the
+network, or let Sentry fetch maps from the app (Project Settings → Security Token plus an nginx
+rule serving `*.map` only with that header). Sentry has no web UI for uploading maps, and uploads
+never apply retroactively to already-captured events.
+
+## Step 3b — browser access through the frontend tunnel
+
+The backend reaches the internal instance directly, but browsers cannot. The frontend container
+therefore acts as a [Sentry tunnel](https://docs.sentry.io/platforms/javascript/troubleshooting/#using-the-tunnel-option):
+
+- On start, `docker-entrypoint.d/90-runtime-config.sh` derives the envelope URL from
+  `SENTRY_DSN` and adds `POST /monitoring` to nginx, which forwards only to that project.
+  The SDK sends to `/monitoring` instead of the DSN host. Staging uses the same path to cloud,
+  which also keeps ad blockers from dropping events.
+- nginx strips cookies, `Authorization`, and `X-Forwarded-For` before forwarding, so Sentry sees
+  the server's address rather than the user's.
+- The frontend container must be able to resolve and reach the Sentry hostname. If the DSN is
+  malformed the tunnel is skipped and a warning is logged at startup.
+- nginx verifies Sentry's TLS certificate against the image's CA bundle. The instance must serve
+  its full chain: as of 2026-09-29 it sends the leaf without its issuer, `GEANT TLS RSA 1`
+  (HARICA), so OpenSSL-based clients (nginx, curl, .NET on Linux) reject it while Windows
+  succeeds by fetching the issuer itself. Fix the chain on the server rather than disabling
+  verification; the backend needs the same fix.
+
+The endpoint is public, like any browser DSN: anyone can post events to that one project, but
+nothing can be read through it. It is deliberately not behind login, since errors on the login,
+registration and password-reset pages matter most. Abuse is contained instead:
+
+- nginx allows `POST` only, 20 MB per request, and 10 requests/s per client (burst 50), answering
+  `429` so the SDK backs off. The limit is generous because campus NAT can put many users behind
+  one address.
+- Behind a reverse proxy, set `TRUSTED_PROXIES` (space-separated CIDRs) on the frontend container
+  so nginx rate-limits by the real client from `X-Forwarded-For`; otherwise every user shares the
+  proxy's limit. Staging trusts the private ranges, since only Caddy can reach the container;
+  production leaves it empty while port 8080 is exposed directly. Never trust addresses that
+  clients can connect from, or they can spoof their way past the limit.
+- On the Sentry side, set a rate limit on the project's client key (Project Settings → Client
+  Keys) to cap total intake, and restrict Allowed Domains (Project Settings → Security & Privacy)
+  to the app's domain.
 
 ## Step 4 — connect production at deploy time
 
@@ -80,19 +115,35 @@ SENTRY_TRACES_SAMPLE_RATE=0.1
 ```
 
 then restart the containers. Both application environments are already set by their production
-builds. No image rebuild is needed for event reporting — only readable stack traces depend on Step
-3 having run for the deployed release.
+builds. No image rebuild is needed.
 
 ## Step 5 — verification checklist (mirror of how staging was verified)
 
-- [ ] Frontend error appears in `frontend-production` with `environment: production` and a
-      readable (source-mapped) stack trace.
+- [ ] Frontend error appears in `frontend-production` with `environment: production`, sent via
+      `/monitoring` (browser network tab). Stack traces are minified (see Step 3).
 - [ ] Backend warning/error appears in `backend-production` with resolved .NET frames.
 - [ ] A login attempt produces one trace containing browser spans **and** the backend
       `http.server` + EF Core spans (proves `sentry-trace`/`baggage` propagation).
 - [ ] A session replay exists and links to that trace.
 - [ ] `/health` transactions are absent (filter works).
 - [ ] No `Seed User Created` events (scrubbing works; seeding should be off in production anyway).
+
+## MCP access
+
+Claude Code can query both instances side by side:
+
+- **Cloud (staging):** the hosted server at `https://mcp.sentry.dev/mcp`, authorized with OAuth.
+- **On-prem (production):** the stdio server, registered per user so the token stays local:
+
+  ```sh
+  claude mcp add sentry-onprem -s user -e SENTRY_ACCESS_TOKEN=<on-prem user token> \
+    -- npx @sentry/mcp-server@latest --host=sentry.<our-domain>
+  ```
+
+  The token needs `org:read`, `project:read`, `project:write`, `team:read`, `team:write`, and
+  `event:write`. Seer is unavailable, and the natural-language search tools only work when an
+  LLM provider is configured (e.g. `EMBEDDED_AGENT_PROVIDER=anthropic` plus `ANTHROPIC_API_KEY`).
+  The machine running Claude Code must reach the instance (VPN).
 
 ## Ongoing operations
 
