@@ -16,7 +16,9 @@
     <!--
       Keep the single v2 OpenAPI document instead of Asp.Versioning.OpenApi: its transformer turns
       string parameter defaults into single-value enums and titles build-time documents
-      "GetDocument.Insider".
+      "GetDocument.Insider" (both unfixed as of Asp.Versioning 10.2.3). When updating
+      Asp.Versioning, check whether these are fixed; if so, adopt Asp.Versioning.OpenApi and remove
+      this suppression.
     -->
     <NoWarn>$(NoWarn);AV0029;AV0030</NoWarn>
   </PropertyGroup>
