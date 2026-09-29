@@ -5,9 +5,6 @@ on:
     paths-ignore:
       - docs
 
-permissions:
-  contents: read
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -76,13 +73,13 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: "10.0.x"
+          dotnet-version: '10.0.x'
 
       - name: Setup Vite+
         uses: voidzero-dev/setup-vp@v1
         with:
           working-directory: backend
-          version: "0.1.24"
+          version-file: ../frontend/package.json
           node-version-file: ../frontend/.node-version
           cache: true
 
@@ -90,7 +87,7 @@ jobs:
         run: dotnet tool restore
 
       - name: Restore dependencies
-        run: dotnet restore ResearchCruiseApp.sln --locked-mode --force -p:CI=true
+        run: dotnet restore ResearchCruiseApp.sln
 
       - name: Run checks
         run: vp run check

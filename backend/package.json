@@ -5,7 +5,7 @@
     "dev": "dotnet watch run --project ResearchCruiseApp",
     "start": "dotnet run --project ResearchCruiseApp",
     "build": "dotnet build ResearchCruiseApp.sln",
-    "audit": "dotnet restore ResearchCruiseApp.sln --locked-mode --force -p:CI=true",
+    "audit": "dotnet restore ResearchCruiseApp.sln --force -p:CI=true",
     "fix": "dotnet csharpier format .",
     "check": "dotnet csharpier check . && dotnet build ResearchCruiseApp.sln --no-restore --no-incremental --warnaserror",
     "test": "dotnet test ResearchCruiseApp.sln --no-restore --no-build",

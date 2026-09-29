@@ -25,15 +25,7 @@ updates:
     directories:
       - /frontend
       - /backend
-      - /backend/ResearchCruiseApp
       - /.devcontainer
-      - /kubernetes/**
-    target-branch: staging
-    schedule:
-      interval: weekly
-
-  - package-ecosystem: docker-compose
-    directory: /docker
     target-branch: staging
     schedule:
       interval: weekly

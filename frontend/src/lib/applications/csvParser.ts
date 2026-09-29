@@ -212,11 +212,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
     throw new Error('Plik XLSX musi zawierać wiersz nagłówka i przynajmniej jeden wiersz danych');
   }
 
-  let headers = data[0].map((h) =>
-    String(h ?? '')
-      .toLowerCase()
-      .trim()
-  );
+  let headers = data[0].map((h) => String(h).toLowerCase().trim());
   let headerRowIndex = 0;
 
   // Helper function to find column index by multiple possible names
@@ -237,11 +233,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
   let lonHeaderIndex = -1;
 
   do {
-    headers = data[headerRowIndex].map((h) =>
-      String(h ?? '')
-        .toLowerCase()
-        .trim()
-    );
+    headers = data[headerRowIndex].map((h) => String(h).toLowerCase().trim());
 
     latHeaderIndex = findColumnIndex(['lat', 'latitude']);
     lonHeaderIndex = findColumnIndex(['long', 'longitude']);

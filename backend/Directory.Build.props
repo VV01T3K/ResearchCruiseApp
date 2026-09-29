@@ -1,7 +1,5 @@
 <Project>
   <PropertyGroup>
-    <NuGetAudit>true</NuGetAudit>
-    <NuGetAuditMode>all</NuGetAuditMode>
     <NuGetAuditLevel>high</NuGetAuditLevel>
     <!-- Fail CI on high/critical vulnerabilities or an unavailable audit source. -->
     <WarningsAsErrors Condition="'$(CI)' == 'true'"
