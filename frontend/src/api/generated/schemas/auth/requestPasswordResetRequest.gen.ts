@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 
 export const RequestPasswordResetRequest = zod.object({
   "email": zod.string()

@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 
 export const BlockadeResponse = zod.object({
   "startDate": zod.iso.datetime({"offset":true}),

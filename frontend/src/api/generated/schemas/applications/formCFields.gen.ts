@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 import { CollectedSampleFields } from './collectedSampleFields.gen.ts';
 import { ContractFields } from './contractFields.gen.ts';
 import { CruiseDayFields } from './cruiseDayFields.gen.ts';

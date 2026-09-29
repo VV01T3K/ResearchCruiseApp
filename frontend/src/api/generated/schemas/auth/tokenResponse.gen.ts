@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 
 export const TokenResponse = zod.object({
   "accessToken": zod.string(),

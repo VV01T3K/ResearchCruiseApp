@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 import { ApplicationSummaryResponse } from './applicationSummaryResponse.gen.ts';
 import { CruiseStatus } from '../cruiseStatus.gen.ts';
 import { PersonResponse } from './personResponse.gen.ts';

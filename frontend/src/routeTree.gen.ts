@@ -9,45 +9,35 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as PriorityInformationRouteImport } from './routes/priority-information'
-import { Route as HelpRouteImport } from './routes/help'
-import { Route as CruiseEffectsRouteImport } from './routes/cruise-effects'
-import { Route as CruiseApprovalRouteImport } from './routes/cruise-approval'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as UserManagementIndexRouteImport } from './routes/user-management/index'
-import { Route as MyPublicationsIndexRouteImport } from './routes/my-publications/index'
-import { Route as CruisesIndexRouteImport } from './routes/cruises/index'
-import { Route as ApplicationsIndexRouteImport } from './routes/applications/index'
-import { Route as AccountSettingsIndexRouteImport } from './routes/account-settings/index'
-import { Route as CruisesNewRouteImport } from './routes/cruises/new'
-import { Route as ApplicationsNewRouteImport } from './routes/applications/new'
-import { Route as legacyResetPasswordRouteImport } from './routes/(legacy)/resetPassword'
-import { Route as legacyCruiseapprovalRouteImport } from './routes/(legacy)/cruiseapproval'
-import { Route as legacyConfirmEmailRouteImport } from './routes/(legacy)/confirmEmail'
-import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
-import { Route as authRegisterRouteImport } from './routes/(auth)/register'
-import { Route as authLoginRouteImport } from './routes/(auth)/login'
-import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
+import { Route as CruiseApprovalRouteImport } from './routes/cruise-approval'
+import { Route as CruiseEffectsRouteImport } from './routes/cruise-effects'
+import { Route as HelpRouteImport } from './routes/help'
+import { Route as PriorityInformationRouteImport } from './routes/priority-information'
 import { Route as authConfirmEmailRouteImport } from './routes/(auth)/confirm-email'
-import { Route as CruisesCruiseIdIndexRouteImport } from './routes/cruises/$cruiseId/index'
-import { Route as ApplicationsApplicationIdFormCRouteImport } from './routes/applications/$applicationId/formC'
-import { Route as ApplicationsApplicationIdFormBRouteImport } from './routes/applications/$applicationId/formB'
-import { Route as ApplicationsApplicationIdFormARouteImport } from './routes/applications/$applicationId/formA'
+import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
+import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as authRegisterRouteImport } from './routes/(auth)/register'
+import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
+import { Route as legacyConfirmEmailRouteImport } from './routes/(legacy)/confirmEmail'
+import { Route as legacyCruiseapprovalRouteImport } from './routes/(legacy)/cruiseapproval'
+import { Route as legacyResetPasswordRouteImport } from './routes/(legacy)/resetPassword'
+import { Route as AccountSettingsIndexRouteImport } from './routes/account-settings/index'
+import { Route as ApplicationsIndexRouteImport } from './routes/applications/index'
+import { Route as ApplicationsNewRouteImport } from './routes/applications/new'
+import { Route as CruisesIndexRouteImport } from './routes/cruises/index'
+import { Route as CruisesNewRouteImport } from './routes/cruises/new'
+import { Route as MyPublicationsIndexRouteImport } from './routes/my-publications/index'
+import { Route as UserManagementIndexRouteImport } from './routes/user-management/index'
 import { Route as ApplicationsApplicationIdDetailsRouteImport } from './routes/applications/$applicationId/details'
+import { Route as ApplicationsApplicationIdFormARouteImport } from './routes/applications/$applicationId/formA'
+import { Route as ApplicationsApplicationIdFormBRouteImport } from './routes/applications/$applicationId/formB'
+import { Route as ApplicationsApplicationIdFormCRouteImport } from './routes/applications/$applicationId/formC'
+import { Route as CruisesCruiseIdIndexRouteImport } from './routes/cruises/$cruiseId/index'
 
-const PriorityInformationRoute = PriorityInformationRouteImport.update({
-  id: '/priority-information',
-  path: '/priority-information',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HelpRoute = HelpRouteImport.update({
-  id: '/help',
-  path: '/help',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CruiseEffectsRoute = CruiseEffectsRouteImport.update({
-  id: '/cruise-effects',
-  path: '/cruise-effects',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CruiseApprovalRoute = CruiseApprovalRouteImport.update({
@@ -55,79 +45,19 @@ const CruiseApprovalRoute = CruiseApprovalRouteImport.update({
   path: '/cruise-approval',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CruiseEffectsRoute = CruiseEffectsRouteImport.update({
+  id: '/cruise-effects',
+  path: '/cruise-effects',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UserManagementIndexRoute = UserManagementIndexRouteImport.update({
-  id: '/user-management/',
-  path: '/user-management/',
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MyPublicationsIndexRoute = MyPublicationsIndexRouteImport.update({
-  id: '/my-publications/',
-  path: '/my-publications/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CruisesIndexRoute = CruisesIndexRouteImport.update({
-  id: '/cruises/',
-  path: '/cruises/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApplicationsIndexRoute = ApplicationsIndexRouteImport.update({
-  id: '/applications/',
-  path: '/applications/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AccountSettingsIndexRoute = AccountSettingsIndexRouteImport.update({
-  id: '/account-settings/',
-  path: '/account-settings/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CruisesNewRoute = CruisesNewRouteImport.update({
-  id: '/cruises/new',
-  path: '/cruises/new',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApplicationsNewRoute = ApplicationsNewRouteImport.update({
-  id: '/applications/new',
-  path: '/applications/new',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const legacyResetPasswordRoute = legacyResetPasswordRouteImport.update({
-  id: '/(legacy)/resetPassword',
-  path: '/resetPassword',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const legacyCruiseapprovalRoute = legacyCruiseapprovalRouteImport.update({
-  id: '/(legacy)/cruiseapproval',
-  path: '/cruiseapproval',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const legacyConfirmEmailRoute = legacyConfirmEmailRouteImport.update({
-  id: '/(legacy)/confirmEmail',
-  path: '/confirmEmail',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const authResetPasswordRoute = authResetPasswordRouteImport.update({
-  id: '/(auth)/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const authRegisterRoute = authRegisterRouteImport.update({
-  id: '/(auth)/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const authLoginRoute = authLoginRouteImport.update({
-  id: '/(auth)/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
-  id: '/(auth)/forgot-password',
-  path: '/forgot-password',
+const PriorityInformationRoute = PriorityInformationRouteImport.update({
+  id: '/priority-information',
+  path: '/priority-information',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authConfirmEmailRoute = authConfirmEmailRouteImport.update({
@@ -135,21 +65,80 @@ const authConfirmEmailRoute = authConfirmEmailRouteImport.update({
   path: '/confirm-email',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CruisesCruiseIdIndexRoute = CruisesCruiseIdIndexRouteImport.update({
-  id: '/cruises/$cruiseId/',
-  path: '/cruises/$cruiseId/',
+const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
+  id: '/(auth)/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApplicationsApplicationIdFormCRoute =
-  ApplicationsApplicationIdFormCRouteImport.update({
-    id: '/applications/$applicationId/formC',
-    path: '/applications/$applicationId/formC',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApplicationsApplicationIdFormBRoute =
-  ApplicationsApplicationIdFormBRouteImport.update({
-    id: '/applications/$applicationId/formB',
-    path: '/applications/$applicationId/formB',
+const authLoginRoute = authLoginRouteImport.update({
+  id: '/(auth)/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authRegisterRoute = authRegisterRouteImport.update({
+  id: '/(auth)/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authResetPasswordRoute = authResetPasswordRouteImport.update({
+  id: '/(auth)/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const legacyConfirmEmailRoute = legacyConfirmEmailRouteImport.update({
+  id: '/(legacy)/confirmEmail',
+  path: '/confirmEmail',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const legacyCruiseapprovalRoute = legacyCruiseapprovalRouteImport.update({
+  id: '/(legacy)/cruiseapproval',
+  path: '/cruiseapproval',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const legacyResetPasswordRoute = legacyResetPasswordRouteImport.update({
+  id: '/(legacy)/resetPassword',
+  path: '/resetPassword',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountSettingsIndexRoute = AccountSettingsIndexRouteImport.update({
+  id: '/account-settings/',
+  path: '/account-settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplicationsIndexRoute = ApplicationsIndexRouteImport.update({
+  id: '/applications/',
+  path: '/applications/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplicationsNewRoute = ApplicationsNewRouteImport.update({
+  id: '/applications/new',
+  path: '/applications/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CruisesIndexRoute = CruisesIndexRouteImport.update({
+  id: '/cruises/',
+  path: '/cruises/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CruisesNewRoute = CruisesNewRouteImport.update({
+  id: '/cruises/new',
+  path: '/cruises/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyPublicationsIndexRoute = MyPublicationsIndexRouteImport.update({
+  id: '/my-publications/',
+  path: '/my-publications/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UserManagementIndexRoute = UserManagementIndexRouteImport.update({
+  id: '/user-management/',
+  path: '/user-management/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplicationsApplicationIdDetailsRoute =
+  ApplicationsApplicationIdDetailsRouteImport.update({
+    id: '/applications/$applicationId/details',
+    path: '/applications/$applicationId/details',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApplicationsApplicationIdFormARoute =
@@ -158,12 +147,23 @@ const ApplicationsApplicationIdFormARoute =
     path: '/applications/$applicationId/formA',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApplicationsApplicationIdDetailsRoute =
-  ApplicationsApplicationIdDetailsRouteImport.update({
-    id: '/applications/$applicationId/details',
-    path: '/applications/$applicationId/details',
+const ApplicationsApplicationIdFormBRoute =
+  ApplicationsApplicationIdFormBRouteImport.update({
+    id: '/applications/$applicationId/formB',
+    path: '/applications/$applicationId/formB',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApplicationsApplicationIdFormCRoute =
+  ApplicationsApplicationIdFormCRouteImport.update({
+    id: '/applications/$applicationId/formC',
+    path: '/applications/$applicationId/formC',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CruisesCruiseIdIndexRoute = CruisesCruiseIdIndexRouteImport.update({
+  id: '/cruises/$cruiseId/',
+  path: '/cruises/$cruiseId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -361,25 +361,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/priority-information': {
-      id: '/priority-information'
-      path: '/priority-information'
-      fullPath: '/priority-information'
-      preLoaderRoute: typeof PriorityInformationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/help': {
-      id: '/help'
-      path: '/help'
-      fullPath: '/help'
-      preLoaderRoute: typeof HelpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cruise-effects': {
-      id: '/cruise-effects'
-      path: '/cruise-effects'
-      fullPath: '/cruise-effects'
-      preLoaderRoute: typeof CruiseEffectsRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cruise-approval': {
@@ -389,109 +375,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CruiseApprovalRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/cruise-effects': {
+      id: '/cruise-effects'
+      path: '/cruise-effects'
+      fullPath: '/cruise-effects'
+      preLoaderRoute: typeof CruiseEffectsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/user-management/': {
-      id: '/user-management/'
-      path: '/user-management'
-      fullPath: '/user-management/'
-      preLoaderRoute: typeof UserManagementIndexRouteImport
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/my-publications/': {
-      id: '/my-publications/'
-      path: '/my-publications'
-      fullPath: '/my-publications/'
-      preLoaderRoute: typeof MyPublicationsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cruises/': {
-      id: '/cruises/'
-      path: '/cruises'
-      fullPath: '/cruises/'
-      preLoaderRoute: typeof CruisesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/applications/': {
-      id: '/applications/'
-      path: '/applications'
-      fullPath: '/applications/'
-      preLoaderRoute: typeof ApplicationsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/account-settings/': {
-      id: '/account-settings/'
-      path: '/account-settings'
-      fullPath: '/account-settings/'
-      preLoaderRoute: typeof AccountSettingsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cruises/new': {
-      id: '/cruises/new'
-      path: '/cruises/new'
-      fullPath: '/cruises/new'
-      preLoaderRoute: typeof CruisesNewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/applications/new': {
-      id: '/applications/new'
-      path: '/applications/new'
-      fullPath: '/applications/new'
-      preLoaderRoute: typeof ApplicationsNewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(legacy)/resetPassword': {
-      id: '/(legacy)/resetPassword'
-      path: '/resetPassword'
-      fullPath: '/resetPassword'
-      preLoaderRoute: typeof legacyResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(legacy)/cruiseapproval': {
-      id: '/(legacy)/cruiseapproval'
-      path: '/cruiseapproval'
-      fullPath: '/cruiseapproval'
-      preLoaderRoute: typeof legacyCruiseapprovalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(legacy)/confirmEmail': {
-      id: '/(legacy)/confirmEmail'
-      path: '/confirmEmail'
-      fullPath: '/confirmEmail'
-      preLoaderRoute: typeof legacyConfirmEmailRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/reset-password': {
-      id: '/(auth)/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof authResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/register': {
-      id: '/(auth)/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof authRegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/login': {
-      id: '/(auth)/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof authLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/forgot-password': {
-      id: '/(auth)/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof authForgotPasswordRouteImport
+    '/priority-information': {
+      id: '/priority-information'
+      path: '/priority-information'
+      fullPath: '/priority-information'
+      preLoaderRoute: typeof PriorityInformationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/confirm-email': {
@@ -501,25 +403,109 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authConfirmEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cruises/$cruiseId/': {
-      id: '/cruises/$cruiseId/'
-      path: '/cruises/$cruiseId'
-      fullPath: '/cruises/$cruiseId/'
-      preLoaderRoute: typeof CruisesCruiseIdIndexRouteImport
+    '/(auth)/forgot-password': {
+      id: '/(auth)/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof authForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/applications/$applicationId/formC': {
-      id: '/applications/$applicationId/formC'
-      path: '/applications/$applicationId/formC'
-      fullPath: '/applications/$applicationId/formC'
-      preLoaderRoute: typeof ApplicationsApplicationIdFormCRouteImport
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/applications/$applicationId/formB': {
-      id: '/applications/$applicationId/formB'
-      path: '/applications/$applicationId/formB'
-      fullPath: '/applications/$applicationId/formB'
-      preLoaderRoute: typeof ApplicationsApplicationIdFormBRouteImport
+    '/(auth)/register': {
+      id: '/(auth)/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/reset-password': {
+      id: '/(auth)/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof authResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(legacy)/confirmEmail': {
+      id: '/(legacy)/confirmEmail'
+      path: '/confirmEmail'
+      fullPath: '/confirmEmail'
+      preLoaderRoute: typeof legacyConfirmEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(legacy)/cruiseapproval': {
+      id: '/(legacy)/cruiseapproval'
+      path: '/cruiseapproval'
+      fullPath: '/cruiseapproval'
+      preLoaderRoute: typeof legacyCruiseapprovalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(legacy)/resetPassword': {
+      id: '/(legacy)/resetPassword'
+      path: '/resetPassword'
+      fullPath: '/resetPassword'
+      preLoaderRoute: typeof legacyResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account-settings/': {
+      id: '/account-settings/'
+      path: '/account-settings'
+      fullPath: '/account-settings/'
+      preLoaderRoute: typeof AccountSettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/applications/': {
+      id: '/applications/'
+      path: '/applications'
+      fullPath: '/applications/'
+      preLoaderRoute: typeof ApplicationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/applications/new': {
+      id: '/applications/new'
+      path: '/applications/new'
+      fullPath: '/applications/new'
+      preLoaderRoute: typeof ApplicationsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cruises/': {
+      id: '/cruises/'
+      path: '/cruises'
+      fullPath: '/cruises/'
+      preLoaderRoute: typeof CruisesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cruises/new': {
+      id: '/cruises/new'
+      path: '/cruises/new'
+      fullPath: '/cruises/new'
+      preLoaderRoute: typeof CruisesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-publications/': {
+      id: '/my-publications/'
+      path: '/my-publications'
+      fullPath: '/my-publications/'
+      preLoaderRoute: typeof MyPublicationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user-management/': {
+      id: '/user-management/'
+      path: '/user-management'
+      fullPath: '/user-management/'
+      preLoaderRoute: typeof UserManagementIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/applications/$applicationId/details': {
+      id: '/applications/$applicationId/details'
+      path: '/applications/$applicationId/details'
+      fullPath: '/applications/$applicationId/details'
+      preLoaderRoute: typeof ApplicationsApplicationIdDetailsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/applications/$applicationId/formA': {
@@ -529,11 +515,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApplicationsApplicationIdFormARouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/applications/$applicationId/details': {
-      id: '/applications/$applicationId/details'
-      path: '/applications/$applicationId/details'
-      fullPath: '/applications/$applicationId/details'
-      preLoaderRoute: typeof ApplicationsApplicationIdDetailsRouteImport
+    '/applications/$applicationId/formB': {
+      id: '/applications/$applicationId/formB'
+      path: '/applications/$applicationId/formB'
+      fullPath: '/applications/$applicationId/formB'
+      preLoaderRoute: typeof ApplicationsApplicationIdFormBRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/applications/$applicationId/formC': {
+      id: '/applications/$applicationId/formC'
+      path: '/applications/$applicationId/formC'
+      fullPath: '/applications/$applicationId/formC'
+      preLoaderRoute: typeof ApplicationsApplicationIdFormCRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cruises/$cruiseId/': {
+      id: '/cruises/$cruiseId/'
+      path: '/cruises/$cruiseId'
+      fullPath: '/cruises/$cruiseId/'
+      preLoaderRoute: typeof CruisesCruiseIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

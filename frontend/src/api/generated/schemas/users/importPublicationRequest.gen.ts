@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 
 export const ImportPublicationRequest = zod.object({
   "category": zod.string(),

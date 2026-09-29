@@ -12,8 +12,14 @@ export const Route = createFileRoute('/applications/$applicationId/details')({
   beforeLoad: allowOnly.authenticated(),
   loader: ({ context, params }) =>
     Promise.all([
-      context.queryClient.ensureQueryData(getGetApplicationSuspenseQueryOptions(params.applicationId)),
-      context.queryClient.ensureQueryData(getGetApplicationEvaluationSuspenseQueryOptions(params.applicationId)),
+      context.queryClient.query({
+        ...getGetApplicationSuspenseQueryOptions(params.applicationId),
+        staleTime: 'static',
+      }),
+      context.queryClient.query({
+        ...getGetApplicationEvaluationSuspenseQueryOptions(params.applicationId),
+        staleTime: 'static',
+      }),
     ]),
 });
 

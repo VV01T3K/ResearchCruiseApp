@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 
 export const ResearchTaskFields = zod.object({
   "type": zod.string().optional(),

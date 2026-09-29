@@ -1,4 +1,4 @@
-import { z as zod } from 'zod';
+import * as zod from 'zod';
 import { FormAFields } from './formAFields.gen.ts';
 import { FormAOptions } from './formAOptions.gen.ts';
 
