@@ -10,7 +10,7 @@
     "skills:install": "vp dlx skills experimental_install -y",
     "build": "vp run --cache -r build",
     "check": "vp run --cache -r check",
-    "audit": "s=0; bun audit --audit-level=high || s=1; vp run -F backend audit || s=1; exit $s",
+    "audit": "bun audit --audit-level=high && vp run -F backend audit",
     "fix": "vp run --cache -r fix",
     "gen": "vp run -F frontend gen",
     "seed": "vp run -F backend seed",
