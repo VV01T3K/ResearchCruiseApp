@@ -10,6 +10,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  javascript-audit:
+    name: JavaScript dependency audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - name: Audit JavaScript dependencies
+        run: bun audit --audit-level=high
+
   frontend-checks:
     name: Frontend checks
     runs-on: ubuntu-latest
@@ -27,6 +43,7 @@ jobs:
         with:
           working-directory: frontend
           node-version-file: .node-version
+          run-install: false
           cache: true
 
       - name: Install dependencies
@@ -62,6 +79,7 @@ jobs:
         uses: voidzero-dev/setup-vp@v1
         with:
           working-directory: backend
+          version-file: ../frontend/package.json
           node-version-file: ../frontend/.node-version
           cache: true
 

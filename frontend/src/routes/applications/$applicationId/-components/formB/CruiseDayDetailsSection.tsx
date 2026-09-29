@@ -172,7 +172,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const isXlsx = file.name.toLowerCase().endsWith('.xlsx') || file.name.toLowerCase().endsWith('.xls');
+    const isXlsx = file.name.toLowerCase().endsWith('.xlsx');
     const toastId = toast.loading(isXlsx ? 'Wczytywanie pliku XLSX...' : 'Wczytywanie pliku CSV...');
 
     try {
@@ -217,7 +217,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
           <>
             <input
               type="file"
-              accept=".csv,.txt,.xlsx,.xls"
+              accept=".csv,.txt,.xlsx"
               onChange={handleFileImport}
               ref={fileInputRef}
               disabled={isReadonly}
@@ -275,7 +275,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
                       onClick={() => {
                         const data = field.state.value;
                         if (data && data.length > 0) {
-                          exportCruiseDayDetailsToXlsx(data, 'pozycje.xlsx');
+                          void exportCruiseDayDetailsToXlsx(data, 'pozycje.xlsx');
                         } else {
                           toast.error('Brak danych do pobrania');
                         }
