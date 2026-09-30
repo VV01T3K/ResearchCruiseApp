@@ -19,7 +19,19 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
             .RuleFor(fields => fields.ResearchTasksEffects)
             .NotNull()
             .ForEach(item => item.NotNull());
-        collections.RuleFor(fields => fields.Contracts).NotNull().ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.Contracts)
+            .NotNull()
+            .ForEach(item =>
+                item.NotNull()
+                    .ChildRules(contract =>
+                    {
+                        contract
+                            .RuleFor(fields => fields.Scans)
+                            .NotNull()
+                            .ForEach(scan => scan.NotNull());
+                    })
+            );
         collections.RuleFor(fields => fields.SpubTasks).NotNull().ForEach(item => item.NotNull());
         collections
             .RuleFor(fields => fields.ShortResearchEquipments)
