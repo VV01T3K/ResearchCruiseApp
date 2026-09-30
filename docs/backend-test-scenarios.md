@@ -94,15 +94,15 @@ Foundation evidence must include real login/fresh host, authorized form write/re
 
 | Record | Value |
 | --- | --- |
-| Commit, SDK/packages, SQL image, machine/runner | pending |
-| Exact command, configuration, scenario IDs and executed counts | pending |
-| Cache/image state and legacy/new execution times separately | pending |
-| Fixed restore/build/container/migration/host cost | pending |
-| Reset/per-case costs, median/slowest run and slowest tests | pending |
-| Remaining scenario estimate, assumptions and headroom | pending |
+| Commit, SDK/packages, SQL image, machine/runner | Local optimized runtime: `bba863fc` plus the RDG/catalog patch below, diff SHA256 `291fe3bfe35e90ebdef78cac31d5ad54e44bbc0dd6ee4ed3bffd3e60b7b666e9`. SDK 10.0.401/runtime 10.0.12, Bun 1.3.11/Node 25.8.2; unchanged lockfiles and fixture SQL image digest. Native Omarchy Linux 7.2.5, i5-13500H, 16 logical CPUs, rootless Podman. Hosted optimized head/runner measurements pending below. |
+| Exact command, configuration, scenario IDs and executed counts | `vp run check`, Release; full current gate: 189 frontend, 78 retained legacy, 27 unit, 311 SQL integration, total 605. Includes real login/form workflows, cross-host email recovery, startup/concurrency and v2.5.1 upgrade; no focused subset or skipped cases. |
+| Cache/image state and legacy/new execution times separately | Five warm measurements (iterations 2–6): restored packages/SQL image and existing build outputs; fresh container/database and uncached test execution each time. Root median 170.470s/max 170.978s; legacy TRX median 7.363s/max 8.295s, unit 0.692s/max 0.953s, SQL 163.537s/max 165.270s. Suites overlap, so do not sum them. Iteration 1 is retained as warm-up because its build recompiles the change: root 180.668s. Three clean hosted measurements pending. |
+| Fixed restore/build/container/migration/host cost | Warm .NET build: 1.25–2.01s. Median SQL startup 14.668s, migration 4.610s, reset planning 0.145s. All 313 fresh host startups total a median 15.960s per run, compared with 106.823s in the earlier local 605-case baseline. Generated contracts are regenerated and compared on every run. Hosted build/restore/setup costs pending. |
+| Reset/per-case costs, median/slowest run and slowest tests | Median reset aggregate 6.378s; SQL case-duration aggregate 132.404s across 311 cases. These include host/reset work and overlap phase totals. Slowest warm-run-1 cases: v2.5.1 upgrade 2.579s, shared Form C replacement 2.283s, denied shipowner role grant 1.731s. Individual raw results and slowest-ten lists: `backend/artifacts/evidence/perf-warm-metrics.json`. |
+| Remaining scenario estimate, assumptions and headroom | Current local mix averages about 0.426s per SQL case, including setup inside each case. Fifty additional cases with the same mix suggest roughly 21s more SQL wall time in the serialized collection; different actor counts, large uploads, startup/upgrade scenarios or cold caches may cost more. This is a marginal estimate, not a count or estimate of all remaining P0/P1 work. Hosted headroom pending. |
 | Proposed full-suite/root/CI budgets | specification targets pending calibration |
 | Ratifying maintainer, date, rationale | pending |
-| Completed-suite rerun and confirmation/revision | pending |
+| Completed-suite rerun and confirmation/revision | Five fully warm complete runs pass at the current 605-case scope. Three clean hosted runs are next; remaining P0/P1 coverage and completed-baseline recalibration still required. |
 
 Before ratification, an overrun prompts investigation/calibration rather than an automatic performance-defect label. After ratification, compare measured regressions with the accepted baseline. Job timeouts and correctness failures remain blocking throughout; neither a timing target nor a pending policy decision authorizes skipping required tests.
 
@@ -710,3 +710,22 @@ Baseline evidence: unchanged production code fails all 24 rejection cases, with 
 Corrected focused validation passes all thirty cases in 57.938 seconds with no skips. Evidence: `backend/artifacts/evidence/task-types-green.log` and `backend/artifacts/tests/task-types-green/`. A/C structural validation checks Type through nonthrowing Enum.TryParse plus Enum.IsDefined before mapping/value rules. This replaces A’s redundant draft-only type check while retaining final detail completeness, supported enum formats, existing numeric/file/scoring policies and email behavior. Full workspace/latest-head hosted validation remains required.
 
 The research-task type continuation passes all 605 workspace cases (189 frontend, 78 legacy, 27 unit, 311 SQL integration), with no skips, zero .NET build warnings/errors and no frontend lint warnings. Root took 354.224 seconds; SQL integration took 340.464 seconds. Formatting, locked restore/NuGet auditing, generated API comparison and frontend types passed; the separate JavaScript audit found no vulnerabilities. Evidence: `backend/artifacts/evidence/task-types-workspace.{log,seconds}`, `task-types-js-audit.log` and `backend/artifacts/tests/run-WlmaOF/`. All thirty additions pass, following 24 rejection failures and six passing controls against unchanged production code. Latest-head hosted validation is linked from the PR description/checks; require these exact counts before accepting this head. Remaining nested field/enum and authorization coverage, unresolved policies, performance calibration and maintainer acceptance remain open. All 78 legacy cases stay enabled.
+
+## Request-delegate generation and runtime calibration (2026-09-30)
+
+BE-PERF-001 (specification performance calibration; existing full gate): compile Minimal API delegates at build time through the SDK's `EnableRequestDelegateGenerator` option. No Native AOT/trimming or dependency changes. The current application-list route retains runtime generation because RDG 10 changes its optional query-array metadata, marking arrays required and describing status as a body. A deliberate dynamic delegate and a narrow, explained RDG002 suppression preserve that one route's original contract. Every other eligible route uses generated delegates. The original contract comparison fails with RDG applied to that catalog route; the corrected mapping produces byte-identical OpenAPI and frontend generated files. All tests retain fresh hosts, real Identity settings, real SQL migrations/resets and existing assertions.
+
+Before/after evidence: starting hosted `bba863fc` executes all 605 cases but takes 7m56s against the unchanged eight-minute hang limit. Its 313 hosts total 118.780s; resets total only 2.643s. The largest individual case takes 2.872s, so removing a single slow scenario cannot solve the repeated-startup cost. The matching 30-case probe drops host median from 256ms to 48.5ms with RDG and passes every case; logs/reports: `perf-host-baseline`, `perf-rdg-probe`. A separate 15-case catalog probe passes but exposes the metadata drift; `perf-rdg-contract-failure.log` and `perf-rdg-review/` retain the contract-failure evidence. The SDK probe builds with zero warnings/errors before the deliberate catalog fallback; its RDG002 diagnostic is captured as `perf-rdg-fallback-build.log`, then suppressed only at that mapping.
+
+Local full-gate calibration: retain iteration 1 as warm-up, then collect five consecutive fully warm `vp run check` executions on unchanged runtime sources. All six runs pass 605 cases without skips; no test cache, cutoff changes, reduced password work, shared host state or reduced coverage. Raw root timings, source diff digest and report paths: `backend/artifacts/evidence/perf-warm-runs.json`; phase/test metrics: `perf-warm-metrics.json`; environment: `perf-environment.json`; per-run logs and archived frontend reports: `perf-warm-*`. All 78 legacy cases remain required and unreviewed.
+
+| Iteration | Cache state | Root seconds | SQL TRX seconds | Reports |
+| --- | --- | ---: | ---: | --- |
+| 1 | warmup | 180.668 | 165.038 | `run-DpRHag` |
+| 2 | warm | 169.916 | 163.314 | `run-Qg82Nf` |
+| 3 | warm | 164.328 | 158.204 | `run-6IzL6B` |
+| 4 | warm | 170.470 | 165.270 | `run-qSKtBU` |
+| 5 | warm | 170.978 | 164.911 | `run-hPCSyG` |
+| 6 | warm | 170.699 | 163.537 | `run-sEKuLS` |
+
+The separate JavaScript audit found no vulnerabilities. Builds/analyzers, formatting, locked restore/NuGet auditing, generated contracts and frontend lint/types pass. Hosted runner details will be retained in `runner-environment.txt` diagnostics. Three clean hosted runs and budget ratification remain pending. The provisional 90s local-root/60s integration targets are still exceeded; this is measured improvement, not ratification or completed-baseline acceptance.

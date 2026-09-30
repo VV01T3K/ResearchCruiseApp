@@ -13,12 +13,17 @@ public static class CatalogEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {
+        // RDG 10 misdescribes these optional query arrays (including a status body).
+        // Keep this route on runtime generation until its contract matches again.
+        Delegate getAll = GetAll;
+#pragma warning disable RDG002
         group
-            .MapGet("", GetAll)
+            .MapGet("", getAll)
             .WithName("GetApplications")
             .WithSummary("Get visible applications.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
+#pragma warning restore RDG002
 
         group
             .MapGet("/managers", GetManagers)
