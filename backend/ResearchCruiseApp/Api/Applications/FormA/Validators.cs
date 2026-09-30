@@ -12,10 +12,47 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     public FormAWriteRequestValidator(FileInspector fileInspector)
     {
         _fileInspector = fileInspector;
-        RuleFor(request => request.Form).NotNull();
+        var collections = new InlineValidator<FormAFields>();
+        collections.RuleFor(fields => fields.Permissions).NotNull().ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.ResearchAreaDescriptions)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.ResearchTasks)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.Contracts)
+            .NotNull()
+            .ForEach(item =>
+                item.NotNull()
+                    .ChildRules(contract =>
+                    {
+                        contract
+                            .RuleFor(fields => fields.Scans)
+                            .NotNull()
+                            .ForEach(scan => scan.NotNull());
+                    })
+            );
+        collections.RuleFor(fields => fields.UgTeams).NotNull().ForEach(item => item.NotNull());
+        collections.RuleFor(fields => fields.GuestTeams).NotNull().ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.Publications)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections.RuleFor(fields => fields.SpubTasks).NotNull().ForEach(item => item.NotNull());
 
-        AddDraftValidation();
-        AddNonDraftValidation();
+        // Nullable period selections retain their draft/precise-period semantics.
+        // Validate object structure before value rules dereference entries.
+        RuleFor(request => request.Form)
+            .NotNull()
+            .SetValidator(collections)
+            .DependentRules(() =>
+            {
+                AddDraftValidation();
+                AddNonDraftValidation();
+            });
     }
 
     private void AddDraftValidation()
