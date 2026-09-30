@@ -32,7 +32,9 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                         contract
                             .RuleFor(fields => fields.Scans)
                             .NotNull()
-                            .ForEach(scan => scan.NotNull());
+                            .ForEach(scan =>
+                                scan.NotNull().SetValidator(new UploadFieldsValidator())
+                            );
                     })
             );
         collections.RuleFor(fields => fields.UgTeams).NotNull().ForEach(item => item.NotNull());

@@ -8,7 +8,19 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
     public FormCWriteRequestValidator(FileInspector fileInspector)
     {
         var collections = new InlineValidator<FormCFields>();
-        collections.RuleFor(fields => fields.Permissions).NotNull().ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.Permissions)
+            .NotNull()
+            .ForEach(item =>
+                item.NotNull()
+                    .ChildRules(permission =>
+                    {
+                        // A null scan remains an incomplete draft; validate fields when an upload exists.
+                        permission
+                            .RuleFor(fields => fields.Scan!)
+                            .SetValidator(new UploadFieldsValidator());
+                    })
+            );
         collections
             .RuleFor(fields => fields.ResearchAreaDescriptions)
             .NotNull()
@@ -29,7 +41,9 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
                         contract
                             .RuleFor(fields => fields.Scans)
                             .NotNull()
-                            .ForEach(scan => scan.NotNull());
+                            .ForEach(scan =>
+                                scan.NotNull().SetValidator(new UploadFieldsValidator())
+                            );
                     })
             );
         collections.RuleFor(fields => fields.SpubTasks).NotNull().ForEach(item => item.NotNull());
@@ -55,7 +69,10 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
             .RuleFor(fields => fields.CollectedSamples)
             .NotNull()
             .ForEach(item => item.NotNull());
-        collections.RuleFor(fields => fields.Photos).NotNull().ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.Photos)
+            .NotNull()
+            .ForEach(item => item.NotNull().SetValidator(new UploadFieldsValidator()));
 
         // Validate structure before rules that dereference collection entries.
         RuleFor(request => request.Form)
