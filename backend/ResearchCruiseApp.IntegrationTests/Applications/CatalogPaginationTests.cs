@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications;
+using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
@@ -71,7 +72,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-CATALOG-002: visibility and filters apply before paging, including manager choices.
+    // BE-CATALOG-002/006: visibility, deputy changes and filters apply before paging/manager choices.
     [Theory]
     [InlineData(RoleName.CruiseManager, false)]
     [InlineData(RoleName.Administrator, true)]
@@ -94,11 +95,16 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         );
         var own = Create(Guid.NewGuid(), Guid.Parse(actor.Id));
         var visibleOther = Create(Guid.NewGuid(), Guid.Parse(other.Id));
+        var deputyDraft = Create(Guid.NewGuid(), Guid.Parse(other.Id));
+        deputyDraft.Status = CruiseApplicationStatus.Draft;
+        deputyDraft.FormA!.DeputyManagerId = Guid.Parse(actor.Id);
         var hidden = Create(Guid.NewGuid(), Guid.Parse(hiddenOwner.Id));
         hidden.Status = CruiseApplicationStatus.Draft;
         var excludedByYear = Create(Guid.NewGuid(), Guid.Parse(actor.Id), "2029");
         // Newest rows are excluded: taking a page before filtering would lose valid results.
-        foreach (var application in new[] { own, visibleOther, hidden, excludedByYear })
+        foreach (
+            var application in new[] { own, visibleOther, deputyDraft, hidden, excludedByYear }
+        )
         {
             await app.InDatabase(async db =>
             {
@@ -108,23 +114,23 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         }
         using var client = await TestApplications.Login(app, actor.Email!);
         const string route = "/v2/applications?pageSize=1&year=2030&date=2030-01-15";
-        var first = await client.GetFromJsonAsync<ApplicationsPageResponse>(route, JsonOptions, ct);
-        Assert.Equal(canViewOthers ? visibleOther.Id : own.Id, Assert.Single(first!.Items).Id);
-        if (canViewOthers)
+        var expected = canViewOthers
+            ? new[] { deputyDraft.Id, visibleOther.Id, own.Id }
+            : [deputyDraft.Id, own.Id];
+        string? cursor = null;
+        foreach (var id in expected)
         {
-            Assert.NotNull(first.NextCursor);
-            var last = await client.GetFromJsonAsync<ApplicationsPageResponse>(
-                route + $"&cursor={Uri.EscapeDataString(first.NextCursor)}",
+            var page = await client.GetFromJsonAsync<ApplicationsPageResponse>(
+                route + (cursor is null ? "" : $"&cursor={Uri.EscapeDataString(cursor)}"),
                 JsonOptions,
                 ct
             );
-            Assert.Equal(own.Id, Assert.Single(last!.Items).Id);
-            Assert.Null(last.NextCursor);
+            Assert.Equal(id, Assert.Single(page!.Items).Id);
+            cursor = page.NextCursor;
+            if (id != expected[^1])
+                Assert.False(string.IsNullOrEmpty(cursor));
         }
-        else
-        {
-            Assert.Null(first.NextCursor);
-        }
+        Assert.Null(cursor);
         using var hiddenDetail = await client.GetAsync($"/v2/applications/{hidden.Id}", ct);
         Assert.Equal(System.Net.HttpStatusCode.NotFound, hiddenDetail.StatusCode);
         using var otherDetail = await client.GetAsync($"/v2/applications/{visibleOther.Id}", ct);
@@ -132,13 +138,77 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
             canViewOthers ? System.Net.HttpStatusCode.OK : System.Net.HttpStatusCode.NotFound,
             otherDetail.StatusCode
         );
+        using var deputyDetail = await client.GetAsync($"/v2/applications/{deputyDraft.Id}", ct);
+        Assert.Equal(System.Net.HttpStatusCode.OK, deputyDetail.StatusCode);
+        var deputyForm = await client.GetFromJsonAsync<FormAFields>(
+            $"/v2/applications/{deputyDraft.Id}/form-a",
+            ct
+        );
+        Assert.Equal(Guid.Parse(other.Id), deputyForm!.CruiseManagerId);
+        Assert.Equal(Guid.Parse(actor.Id), deputyForm.DeputyManagerId);
         var managers = await client.GetFromJsonAsync<List<ApplicationPersonResponse>>(
+            "/v2/applications/managers",
+            ct
+        );
+        Assert.Equal(2, managers!.Count);
+        Assert.Contains(managers, manager => manager.Id == Guid.Parse(actor.Id));
+        Assert.Contains(managers, manager => manager.Id == Guid.Parse(other.Id));
+        Assert.DoesNotContain(managers, manager => manager.Id == Guid.Parse(hiddenOwner.Id));
+
+        // An owner removes the deputy through HTTP; the existing actor session loses access immediately.
+        using var owner = await TestApplications.Login(app, other.Email!);
+        using var removed = await owner.PutAsJsonAsync(
+            $"/v2/applications/{deputyDraft.Id}/form-a",
+            new FormAWriteRequest
+            {
+                Form = FormAccessTests.Draft(Guid.Parse(other.Id)),
+                Draft = true,
+            },
+            ct
+        );
+        Assert.Equal(System.Net.HttpStatusCode.NoContent, removed.StatusCode);
+        foreach (var suffix in new[] { "", "/form-a" })
+        {
+            using var concealed = await client.GetAsync(
+                $"/v2/applications/{deputyDraft.Id}{suffix}",
+                ct
+            );
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, concealed.StatusCode);
+        }
+        var afterRemoval = await client.GetFromJsonAsync<ApplicationsPageResponse>(
+            "/v2/applications?year=2030&date=2030-01-15",
+            JsonOptions,
+            ct
+        );
+        Assert.Equal(
+            canViewOthers ? new[] { visibleOther.Id, own.Id } : [own.Id],
+            afterRemoval!.Items.Select(item => item.Id)
+        );
+        Assert.Null(afterRemoval.NextCursor);
+        managers = await client.GetFromJsonAsync<List<ApplicationPersonResponse>>(
             "/v2/applications/managers",
             ct
         );
         Assert.Equal(canViewOthers ? 2 : 1, managers!.Count);
         Assert.Contains(managers, manager => manager.Id == Guid.Parse(actor.Id));
+        Assert.Equal(canViewOthers, managers.Any(manager => manager.Id == Guid.Parse(other.Id)));
         Assert.DoesNotContain(managers, manager => manager.Id == Guid.Parse(hiddenOwner.Id));
+        await app.InDatabase(async db =>
+        {
+            Assert.Equal(5, await db.CruiseApplications.CountAsync(ct));
+            Assert.Equal(5, await db.FormsA.CountAsync(ct));
+            var row = await db
+                .CruiseApplications.Include(row => row.FormA)
+                .SingleAsync(row => row.Id == deputyDraft.Id, ct);
+            Assert.Equal(CruiseApplicationStatus.Draft, row.Status);
+            Assert.Equal(deputyDraft.Number, row.Number);
+            Assert.Equal(deputyDraft.Date, row.Date);
+            Assert.Equal(Guid.Parse(other.Id), row.FormA!.CruiseManagerId);
+            Assert.Equal(Guid.Empty, row.FormA.DeputyManagerId);
+            Assert.NotEqual(deputyDraft.FormA.Id, row.FormA.Id);
+            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
+        });
+        await app.Dispatch(ct);
         Assert.Empty(app.Transport.Messages);
     }
 
