@@ -84,10 +84,11 @@ therefore proxies browser events to Sentry (Sentry's docs call this the
 - The frontend container must be able to resolve and reach the Sentry hostname. If the DSN is
   malformed the proxy is skipped and a warning is logged at startup.
 - nginx verifies Sentry's TLS certificate against the image's CA bundle. The instance must serve
-  its full chain: as of 2026-09-29 it sends the leaf without its issuer, `GEANT TLS RSA 1`
-  (HARICA), so OpenSSL-based clients (nginx, curl, .NET on Linux) reject it while Windows
-  succeeds by fetching the issuer itself. Fix the chain on the server rather than disabling
-  verification; the backend needs the same fix.
+  its full chain: as of 2026-09-30 it sends the leaf without its issuer, `GEANT TLS RSA 1`
+  (HARICA). Browsers, Windows and .NET (also on Linux) download the missing issuer themselves,
+  so the backend is unaffected, but nginx, curl and Node do not: the proxy answers `502` with
+  `upstream SSL certificate verify error: (21:unable to verify the first certificate)`. Fix the
+  chain on the server rather than disabling verification.
 
 The endpoint is public, like any browser DSN: anyone can post events to that one project, but
 nothing can be read through it. It is deliberately not behind login, since errors on the login,
