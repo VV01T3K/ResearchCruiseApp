@@ -26,6 +26,12 @@ public sealed class SentryTests
                     ["x-api-key"] = "secret",
                     ["Accept"] = "application/json",
                 },
+                Env =
+                {
+                    ["REMOTE_ADDR"] = "192.0.2.1",
+                    ["SERVER_NAME"] = "backend-container",
+                    ["SERVER_PORT"] = "8080",
+                },
             },
         };
 
@@ -39,6 +45,9 @@ public sealed class SentryTests
         Assert.DoesNotContain("Set-Cookie", @event.Request.Headers.Keys);
         Assert.DoesNotContain("x-api-key", @event.Request.Headers.Keys);
         Assert.Equal("application/json", @event.Request.Headers["Accept"]);
+        Assert.DoesNotContain("REMOTE_ADDR", @event.Request.Env.Keys);
+        Assert.DoesNotContain("SERVER_NAME", @event.Request.Env.Keys);
+        Assert.Equal("8080", @event.Request.Env["SERVER_PORT"]);
     }
 
     [Theory]

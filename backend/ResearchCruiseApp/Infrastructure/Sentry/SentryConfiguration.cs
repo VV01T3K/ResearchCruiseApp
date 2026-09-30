@@ -48,6 +48,11 @@ public static class SentryConfiguration
 
         var request = @event.Request;
 
+        // Sentry fills a missing user IP from REMOTE_ADDR, and SERVER_NAME repeats the
+        // host name that is already removed from the event.
+        request.Env.Remove("REMOTE_ADDR");
+        request.Env.Remove("SERVER_NAME");
+
         if (request.Headers is not null)
         {
             var sensitiveKeys = request.Headers.Keys.Where(key =>
