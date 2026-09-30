@@ -1,0 +1,522 @@
+{
+  "runtime_commit": "2e46492ed6ace2a7b821aa232563412a5a193bb5",
+  "local_starting_commit": "bba863fce8b73fd7352df8e4a1f24d11f68302bb",
+  "local_runtime_patch_sha256": "291fe3bfe35e90ebdef78cac31d5ad54e44bbc0dd6ee4ed3bffd3e60b7b666e9",
+  "command": "vp run check",
+  "verified_passed_each_run": {
+    "frontend": 189,
+    "legacy_unreviewed": 78,
+    "unit": 27,
+    "sql_integration": 311,
+    "total": 605,
+    "skipped": 0
+  },
+  "local_environment": {
+    "baseline_head": "bba863fce8b73fd7352df8e4a1f24d11f68302bb",
+    "model": "13th Gen Intel(R) Core(TM) i5-13500H",
+    "logical_cpus": "16",
+    "architecture": "x86_64",
+    "kernel": "7.2.5-3-omarchy",
+    "command": "vp run check",
+    "sdk": "10.0.401",
+    "runtime": "10.0.12",
+    "node": "25.8.2",
+    "bun": "1.3.11",
+    "sql_image": "mcr.microsoft.com/mssql/server:2022-latest@sha256:4402d880dd4c34bfa7d8705e56a86cd6c88da80a1f6bbbe741f999e76264a090",
+    "cache_state": "restored packages and SQL image present; existing build outputs; fresh SQL container/database per run; actual tests uncached; generated contract regenerated"
+  },
+  "notes": [
+    "Iteration 1 is warm-up with recompilation; iterations 2\u20136 are the five fully warm measurements.",
+    "Suite timings overlap; host/reset costs are included in case durations and are not additional root time.",
+    "Hosted durations exclude runner queue; each checkout/build and SQL database/container is fresh. Dependency/action caches may restore.",
+    "All original downloaded reports remain in ignored local evidence directories. Workflow logs are linked per attempt; artifact availability follows GitHub rerun/retention behavior.",
+    "Budgets are proposed for review and not ratified. Remaining P0/P1 coverage still requires completed-baseline recalibration."
+  ],
+  "local": [
+    {
+      "iteration": 1,
+      "cache_state": "warmup",
+      "root_seconds": 180.668,
+      "job_seconds": null,
+      "build_seconds": [
+        10.83
+      ],
+      "suite_seconds": {
+        "legacy-unreviewed": 8.532,
+        "Unit": 1.218,
+        "Integration": 165.038
+      },
+      "sql_case_seconds_sum": 132.896,
+      "phases": {
+        "Application host": {
+          "count": 313,
+          "sum_seconds": 16.226,
+          "median_ms": 49,
+          "max_ms": 683
+        },
+        "SQL reset": {
+          "count": 620,
+          "sum_seconds": 6.412,
+          "median_ms": 12.0,
+          "max_ms": 119
+        },
+        "SQL startup": {
+          "count": 1,
+          "sum_seconds": 15.079,
+          "median_ms": 15079,
+          "max_ms": 15079
+        },
+        "SQL migrations": {
+          "count": 1,
+          "sum_seconds": 4.757,
+          "median_ms": 4757,
+          "max_ms": 4757
+        },
+        "SQL reset planning": {
+          "count": 1,
+          "sum_seconds": 0.137,
+          "median_ms": 137,
+          "max_ms": 137
+        }
+      },
+      "slowest_sql_case": {
+        "seconds": 2.579,
+        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+      }
+    },
+    {
+      "iteration": 2,
+      "cache_state": "warm",
+      "root_seconds": 169.916,
+      "job_seconds": null,
+      "build_seconds": [
+        1.6
+      ],
+      "suite_seconds": {
+        "legacy-unreviewed": 7.516,
+        "Unit": 0.628,
+        "Integration": 163.314
+      },
+      "sql_case_seconds_sum": 132.226,
+      "phases": {
+        "Application host": {
+          "count": 313,
+          "sum_seconds": 16.064,
+          "median_ms": 49,
+          "max_ms": 669
+        },
+        "SQL reset": {
+          "count": 620,
+          "sum_seconds": 6.378,
+          "median_ms": 12.0,
+          "max_ms": 111
+        },
+        "SQL startup": {
+          "count": 1,
+          "sum_seconds": 14.451,
+          "median_ms": 14451,
+          "max_ms": 14451
+        },
+        "SQL migrations": {
+          "count": 1,
+          "sum_seconds": 4.62,
+          "median_ms": 4620,
+          "max_ms": 4620
+        },
+        "SQL reset planning": {
+          "count": 1,
+          "sum_seconds": 0.137,
+          "median_ms": 137,
+          "max_ms": 137
+        }
+      },
+      "slowest_sql_case": {
+        "seconds": 2.558,
+        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+      }
+    },
+    {
+      "iteration": 3,
+      "cache_state": "warm",
+      "root_seconds": 164.328,
+      "job_seconds": null,
+      "build_seconds": [
+        1.4
+      ],
+      "suite_seconds": {
+        "legacy-unreviewed": 7.214,
+        "Unit": 0.953,
+        "Integration": 158.204
+      },
+      "sql_case_seconds_sum": 126.97,
+      "phases": {
+        "Application host": {
+          "count": 313,
+          "sum_seconds": 15.007,
+          "median_ms": 43,
+          "max_ms": 670
+        },
+        "SQL reset": {
+          "count": 620,
+          "sum_seconds": 6.995,
+          "median_ms": 10.5,
+          "max_ms": 798
+        },
+        "SQL startup": {
+          "count": 1,
+          "sum_seconds": 14.732,
+          "median_ms": 14732,
+          "max_ms": 14732
+        },
+        "SQL migrations": {
+          "count": 1,
+          "sum_seconds": 4.382,
+          "median_ms": 4382,
+          "max_ms": 4382
+        },
+        "SQL reset planning": {
+          "count": 1,
+          "sum_seconds": 0.138,
+          "median_ms": 138,
+          "max_ms": 138
+        }
+      },
+      "slowest_sql_case": {
+        "seconds": 2.436,
+        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+      }
+    },
+    {
+      "iteration": 4,
+      "cache_state": "warm",
+      "root_seconds": 170.47,
+      "job_seconds": null,
+      "build_seconds": [
+        1.25
+      ],
+      "suite_seconds": {
+        "legacy-unreviewed": 8.295,
+        "Unit": 0.692,
+        "Integration": 165.27
+      },
+      "sql_case_seconds_sum": 132.647,
+      "phases": {
+        "Application host": {
+          "count": 313,
+          "sum_seconds": 15.924,
+          "median_ms": 47,
+          "max_ms": 708
+        },
+        "SQL reset": {
+          "count": 620,
+          "sum_seconds": 7.086,
+          "median_ms": 12.0,
+          "max_ms": 773
+        },
+        "SQL startup": {
+          "count": 1,
+          "sum_seconds": 15.992,
+          "median_ms": 15992,
+          "max_ms": 15992
+        },
+        "SQL migrations": {
+          "count": 1,
+          "sum_seconds": 4.57,
+          "median_ms": 4570,
+          "max_ms": 4570
+        },
+        "SQL reset planning": {
+          "count": 1,
+          "sum_seconds": 0.147,
+          "median_ms": 147,
+          "max_ms": 147
+        }
+      },
+      "slowest_sql_case": {
+        "seconds": 2.658,
+        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+      }
+    },
+    {
+      "iteration": 5,
+      "cache_state": "warm",
+      "root_seconds": 170.978,
+      "job_seconds": null,
+      "build_seconds": [
+        1.34
+      ],
+      "suite_seconds": {
+        "legacy-unreviewed": 7.363,
+        "Unit": 0.805,
+        "Integration": 164.911
+      },
+      "sql_case_seconds_sum": 133.412,
+      "phases": {
+        "Application host": {
+          "count": 313,
+          "sum_seconds": 16.183,
+          "median_ms": 49,
+          "max_ms": 706
+        },
+        "SQL reset": {
+          "count": 620,
+          "sum_seconds": 6.362,
+          "median_ms": 12.5,
+          "max_ms": 112
+        },
+        "SQL startup": {
+          "count": 1,
+          "sum_seconds": 14.668,
+          "median_ms": 14668,
+          "max_ms": 14668
+        },
+        "SQL migrations": {
+          "count": 1,
+          "sum_seconds": 4.621,
+          "median_ms": 4621,
+          "max_ms": 4621
+        },
+        "SQL reset planning": {
+          "count": 1,
+          "sum_seconds": 0.15,
+          "median_ms": 150,
+          "max_ms": 150
+        }
+      },
+      "slowest_sql_case": {
+        "seconds": 2.683,
+        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+      }
+    },
+    {
+      "iteration": 6,
+      "cache_state": "warm",
+      "root_seconds": 170.699,
+      "job_seconds": null,
+      "build_seconds": [
+        2.01
+      ],
+      "suite_seconds": {
+        "legacy-unreviewed": 7.125,
+        "Unit": 0.606,
+        "Integration": 163.537
+      },
+      "sql_case_seconds_sum": 132.404,
+      "phases": {
+        "Application host": {
+          "count": 313,
+          "sum_seconds": 15.96,
+          "median_ms": 48,
+          "max_ms": 707
+        },
+        "SQL reset": {
+          "count": 620,
+          "sum_seconds": 6.282,
+          "median_ms": 12.0,
+          "max_ms": 113
+        },
+        "SQL startup": {
+          "count": 1,
+          "sum_seconds": 14.442,
+          "median_ms": 14442,
+          "max_ms": 14442
+        },
+        "SQL migrations": {
+          "count": 1,
+          "sum_seconds": 4.61,
+          "median_ms": 4610,
+          "max_ms": 4610
+        },
+        "SQL reset planning": {
+          "count": 1,
+          "sum_seconds": 0.145,
+          "median_ms": 145,
+          "max_ms": 145
+        }
+      },
+      "slowest_sql_case": {
+        "seconds": 2.605,
+        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+      }
+    }
+  ],
+  "hosted": [
+    {
+      "iteration": 1,
+      "cache_state": "fresh hosted checkout/build; dependency caches may restore",
+      "root_seconds": 234.0,
+      "job_seconds": 273.0,
+      "build_seconds": [
+        31.53
+      ],
+      "suite_seconds": {
+        "legacy-unreviewed": 23.471,
+        "Unit": 1.578,
+        "Integration": 190.624
+      },
+      "sql_case_seconds_sum": 154.192,
+      "phases": {
+        "Application host": {
+          "count": 313,
+          "sum_seconds": 18.777,
+          "median_ms": 44,
+          "max_ms": 816
+        },
+        "SQL reset": {
+          "count": 620,
+          "sum_seconds": 8.543,
+          "median_ms": 4.0,
+          "max_ms": 1042
+        },
+        "SQL startup": {
+          "count": 1,
+          "sum_seconds": 30.809,
+          "median_ms": 30809,
+          "max_ms": 30809
+        },
+        "SQL migrations": {
+          "count": 1,
+          "sum_seconds": 3.654,
+          "median_ms": 3654,
+          "max_ms": 3654
+        },
+        "SQL reset planning": {
+          "count": 1,
+          "sum_seconds": 0.307,
+          "median_ms": 307,
+          "max_ms": 307
+        }
+      },
+      "slowest_sql_case": {
+        "seconds": 2.496,
+        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+      },
+      "url": "https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/36779592547/attempts/1",
+      "started_at": "2026-09-30T21:28:01Z",
+      "completed_at": "2026-09-30T21:32:34Z",
+      "environment_lines": [
+        "CPU(s):                                  4",
+        "Model name:                              AMD EPYC 9V74 80-Core Processor",
+        "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\""
+      ]
+    },
+    {
+      "iteration": 2,
+      "cache_state": "fresh hosted checkout/build; dependency caches may restore",
+      "root_seconds": 172.0,
+      "job_seconds": 215.0,
+      "build_seconds": [
+        30.63
+      ],
+      "suite_seconds": {
+        "legacy-unreviewed": 19.411,
+        "Unit": 0.799,
+        "Integration": 126.125
+      },
+      "sql_case_seconds_sum": 96.239,
+      "phases": {
+        "Application host": {
+          "count": 313,
+          "sum_seconds": 13.345,
+          "median_ms": 38,
+          "max_ms": 661
+        },
+        "SQL reset": {
+          "count": 620,
+          "sum_seconds": 2.45,
+          "median_ms": 4.0,
+          "max_ms": 95
+        },
+        "SQL startup": {
+          "count": 1,
+          "sum_seconds": 25.825,
+          "median_ms": 25825,
+          "max_ms": 25825
+        },
+        "SQL migrations": {
+          "count": 1,
+          "sum_seconds": 2.646,
+          "median_ms": 2646,
+          "max_ms": 2646
+        },
+        "SQL reset planning": {
+          "count": 1,
+          "sum_seconds": 0.081,
+          "median_ms": 81,
+          "max_ms": 81
+        }
+      },
+      "slowest_sql_case": {
+        "seconds": 1.65,
+        "test": "ResearchCruiseApp.IntegrationTests.Applications.CruiseEffectScoringTests.Effects_WhenSubmittedThenReplaced_ScoreBothManagersAndFeedNextApplication"
+      },
+      "url": "https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/36779592547/attempts/2",
+      "started_at": "2026-09-30T21:32:54Z",
+      "completed_at": "2026-09-30T21:36:29Z",
+      "environment_lines": [
+        "CPU(s):                                  4",
+        "Model name:                              AMD EPYC 9V45 96-Core Processor",
+        "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\""
+      ]
+    },
+    {
+      "iteration": 3,
+      "cache_state": "fresh hosted checkout/build; dependency caches may restore",
+      "root_seconds": 219.0,
+      "job_seconds": 250.0,
+      "build_seconds": [
+        31.15
+      ],
+      "suite_seconds": {
+        "legacy-unreviewed": 23.525,
+        "Unit": 1.501,
+        "Integration": 175.492
+      },
+      "sql_case_seconds_sum": 138.023,
+      "phases": {
+        "Application host": {
+          "count": 313,
+          "sum_seconds": 16.746,
+          "median_ms": 46,
+          "max_ms": 1016
+        },
+        "SQL reset": {
+          "count": 620,
+          "sum_seconds": 2.842,
+          "median_ms": 4.0,
+          "max_ms": 132
+        },
+        "SQL startup": {
+          "count": 1,
+          "sum_seconds": 30.901,
+          "median_ms": 30901,
+          "max_ms": 30901
+        },
+        "SQL migrations": {
+          "count": 1,
+          "sum_seconds": 4.775,
+          "median_ms": 4775,
+          "max_ms": 4775
+        },
+        "SQL reset planning": {
+          "count": 1,
+          "sum_seconds": 0.119,
+          "median_ms": 119,
+          "max_ms": 119
+        }
+      },
+      "slowest_sql_case": {
+        "seconds": 2.35,
+        "test": "ResearchCruiseApp.IntegrationTests.Applications.CruiseEffectScoringTests.Effects_WhenSubmittedThenReplaced_ScoreBothManagersAndFeedNextApplication"
+      },
+      "url": "https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/36779592547/attempts/3",
+      "started_at": "2026-09-30T21:36:53Z",
+      "completed_at": "2026-09-30T21:41:03Z",
+      "environment_lines": [
+        "CPU(s):                                  4",
+        "Model name:                              AMD EPYC 9V74 80-Core Processor",
+        "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\""
+      ]
+    }
+  ]
+}
