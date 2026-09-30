@@ -8,7 +8,19 @@ public sealed class FormBWriteRequestValidator : AbstractValidator<FormBWriteReq
     public FormBWriteRequestValidator(FileInspector fileInspector)
     {
         var collections = new InlineValidator<FormBFields>();
-        collections.RuleFor(fields => fields.Permissions).NotNull().ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.Permissions)
+            .NotNull()
+            .ForEach(item =>
+                item.NotNull()
+                    .ChildRules(permission =>
+                    {
+                        // A null scan remains an incomplete draft; validate fields when an upload exists.
+                        permission
+                            .RuleFor(fields => fields.Scan!)
+                            .SetValidator(new UploadFieldsValidator());
+                    })
+            );
         collections.RuleFor(fields => fields.UgTeams).NotNull().ForEach(item => item.NotNull());
         collections.RuleFor(fields => fields.GuestTeams).NotNull().ForEach(item => item.NotNull());
         collections.RuleFor(fields => fields.CrewMembers).NotNull().ForEach(item => item.NotNull());
