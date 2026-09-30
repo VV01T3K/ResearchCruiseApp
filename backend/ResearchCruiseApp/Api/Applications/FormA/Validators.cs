@@ -21,7 +21,17 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
         collections
             .RuleFor(fields => fields.ResearchTasks)
             .NotNull()
-            .ForEach(item => item.NotNull());
+            .ForEach(item =>
+                item.NotNull()
+                    .ChildRules(task =>
+                        task.RuleFor(fields => fields.Type)
+                            .Must(value =>
+                                Enum.TryParse<ResearchTaskType>(value, out var type)
+                                && Enum.IsDefined(type)
+                            )
+                            .WithMessage("Podany typ zadania jest nieprawidłowy.")
+                    )
+            );
         collections
             .RuleFor(fields => fields.Contracts)
             .NotNull()
@@ -68,7 +78,6 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                 AddCruiseGoalDraftValidation();
                 AddPermissionsCommonValidation();
                 AddContractScansCommonValidation();
-                AddResearchTaskDraftValidation();
                 AddResearchTasksCommonValidation();
                 AddPublicationPointsDraftValidation();
                 AddUgTeamsDraftValidation();
@@ -343,37 +352,6 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
         RuleFor(request => request.Form.CruiseGoalDescription)
             .Must(description => !string.IsNullOrEmpty(description))
             .WithMessage("Opisanie celu rejsu jest wymagane.");
-    }
-
-    private void AddResearchTaskDraftValidation()
-    {
-        RuleForEach(request => request.Form.ResearchTasks)
-            .Must(researchTaskFields =>
-            {
-                try
-                {
-                    var type = researchTaskFields.Type.ToEnum<ResearchTaskType>();
-
-                    return type
-                        is ResearchTaskType.BachelorThesis
-                            or ResearchTaskType.MasterThesis
-                            or ResearchTaskType.DoctoralThesis
-                            or ResearchTaskType.ProjectPreparation
-                            or ResearchTaskType.DomesticProject
-                            or ResearchTaskType.ForeignProject
-                            or ResearchTaskType.InternalUgProject
-                            or ResearchTaskType.OtherProject
-                            or ResearchTaskType.CommercialProject
-                            or ResearchTaskType.Didactics
-                            or ResearchTaskType.OwnResearchTask
-                            or ResearchTaskType.OtherResearchTask;
-                }
-                catch (ArgumentException)
-                {
-                    return false;
-                }
-            })
-            .WithMessage("Podany typ zadania jest nieprawidłowy.");
     }
 
     private void AddResearchTasksNonDraftValidation()
