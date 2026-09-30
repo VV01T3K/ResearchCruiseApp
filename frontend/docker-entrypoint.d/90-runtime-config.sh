@@ -57,6 +57,8 @@ location = $sentry_proxy {
     limit_req zone=sentry_proxy burst=50 nodelay;
     limit_req_status 429;
     client_max_body_size 20m;
+    # Keep typical envelopes (replay segments are ~20 KB) in memory instead of temp files.
+    client_body_buffer_size 1m;
     # Resolve at request time so an unreachable Sentry never stops nginx from starting.
     resolver $resolvers valid=300s;
     set \$sentry_envelope_url "$scheme://$base/api/$project_id/envelope/";
