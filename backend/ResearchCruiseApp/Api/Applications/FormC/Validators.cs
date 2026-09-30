@@ -1,5 +1,6 @@
 using FluentValidation;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -30,7 +31,17 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
         collections
             .RuleFor(fields => fields.ResearchTasksEffects)
             .NotNull()
-            .ForEach(item => item.NotNull());
+            .ForEach(item =>
+                item.NotNull()
+                    .ChildRules(task =>
+                        task.RuleFor(fields => fields.Type)
+                            .Must(value =>
+                                Enum.TryParse<ResearchTaskType>(value, out var type)
+                                && Enum.IsDefined(type)
+                            )
+                            .WithMessage("Podany typ zadania jest nieprawidłowy.")
+                    )
+            );
         collections
             .RuleFor(fields => fields.Contracts)
             .NotNull()
