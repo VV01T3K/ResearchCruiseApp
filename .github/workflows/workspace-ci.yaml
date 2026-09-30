@@ -41,6 +41,15 @@ jobs:
         run: vp install --frozen-lockfile
       - name: Audit JavaScript dependencies
         run: bun audit --audit-level=high
+      - name: Record runner environment
+        run: |
+          mkdir -p backend/artifacts
+          uname -a > backend/artifacts/runner-environment.txt
+          lscpu >> backend/artifacts/runner-environment.txt
+          cat /etc/os-release >> backend/artifacts/runner-environment.txt
+          dotnet --info >> backend/artifacts/runner-environment.txt
+          node --version >> backend/artifacts/runner-environment.txt
+          bun --version >> backend/artifacts/runner-environment.txt
       - name: Check workspace
         shell: bash
         run: |
