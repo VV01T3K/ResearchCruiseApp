@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
@@ -232,7 +233,7 @@ internal class CruiseEffectService(
             .SingleOrDefault();
     }
 
-    private Task AddEvaluationForUser(
+    private Task<EntityEntry<UserEffect>> AddEvaluationForUser(
         ResearchTaskEffect effect,
         Guid userId,
         int points,

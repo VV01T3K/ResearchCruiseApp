@@ -8,8 +8,6 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <UserSecretsId>36dfba4d-eec1-47b9-ab0e-59344a3424a8</UserSecretsId>
     <Version>2.5.1</Version>
-    <!-- Accept legacy findings that require API, culture, DI, or generated-migration changes. -->
-    <NoWarn>$(NoWarn);IDE0130;CA1305;CA1310;CA1711;CA1716;CA1822;CA1824;CA1825;CA1848;CA1859;CA1861</NoWarn>
     <!--
       Keep the single v2 OpenAPI document instead of Asp.Versioning.OpenApi: its transformer turns
       string parameter defaults into single-value enums and titles build-time documents
