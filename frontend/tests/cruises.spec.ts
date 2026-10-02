@@ -345,29 +345,35 @@ test('failed cruise saves show server details and retain edits for retry', async
   });
 });
 
-test('backend cruise field paths annotate the matching inputs', async ({ page }) => {
+test('backend cruise field errors annotate inputs and clear on retry', async ({ page }) => {
   await seedAuthenticatedAdmin(page);
   const cruise = getCruise('confirmed');
   await mockCruiseDetailDependencies(page, cruise);
+  let rejected = true;
   await page.route(`${API_URL}/v2/cruises/${cruise.id}`, (route) =>
     route.request().method() === 'GET'
       ? route.fulfill({ json: cruise })
-      : route.fulfill({
-          status: 400,
-          json: {
-            errors: {
-              deputyManagerId: ['Zastępca jest niedostępny w tym terminie'],
-              'cruiseApplicationIds[0]': ['Zgłoszenie jest już przypisane'],
+      : rejected
+        ? route.fulfill({
+            status: 400,
+            json: {
+              errors: {
+                deputyManagerId: ['Zastępca jest niedostępny w tym terminie'],
+                'cruiseApplicationIds[0]': ['Zgłoszenie jest już przypisane'],
+              },
             },
-          },
-        })
+          })
+        : route.fulfill({ status: 204 })
   );
   await page.goto(`/cruises/${cruise.id}`);
   await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
   await page.getByRole('button', { name: 'Zapisz rejs' }).click();
 
-  await expect(page.getByRole('combobox', { name: 'Zastępca kierownika głównego' })).toHaveAccessibleDescription(
-    'Zastępca jest niedostępny w tym terminie'
-  );
+  const deputy = page.getByRole('combobox', { name: 'Zastępca kierownika głównego' });
+  await expect(deputy).toHaveAccessibleDescription('Zastępca jest niedostępny w tym terminie');
   await expect(page.getByTestId('toast-error')).toContainText('Zgłoszenie jest już przypisane');
+
+  rejected = false;
+  await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+  await expect(page.getByRole('button', { name: 'Edytuj', exact: true })).toBeVisible();
 });

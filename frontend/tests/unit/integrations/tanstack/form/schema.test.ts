@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { submissionSchema } from '@/integrations/tanstack/form/schema';
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
-import { getErrors } from '@/integrations/tanstack/form/errors';
+import { getErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import {
   formBDefaultValues,
   getFormBSubmissionSchema,
@@ -36,6 +36,32 @@ describe('form submission contracts', () => {
       expect(form.state.submissionAttempts).toBe(0);
     } finally {
       unmountOther();
+      unmountField();
+      unmount();
+    }
+  });
+
+  it('lets the next submit retry after the server rejects a field without client validators', async () => {
+    let saves = 0;
+    const form = new FormApi({
+      defaultValues: { deputy: 'a' },
+      validationLogic: formValidationLogic,
+      validators: { onDynamic: z.object({ deputy: z.string() }) },
+      onSubmit: () => {
+        if (++saves === 1) setServerFormErrors(form, { problem: { errors: { deputy: ['Zastępca niedostępny'] } } });
+      },
+      onSubmitMeta: undefined,
+    });
+    const unmount = form.mount();
+    const field = new FieldApi({ form, name: 'deputy' });
+    const unmountField = field.mount();
+    try {
+      await form.handleSubmit();
+      expect(field.state.meta.errors).toEqual(['Zastępca niedostępny']);
+      await form.handleSubmit();
+      expect(saves).toBe(2);
+      expect(field.state.meta.errors).toEqual([]);
+    } finally {
       unmountField();
       unmount();
     }
