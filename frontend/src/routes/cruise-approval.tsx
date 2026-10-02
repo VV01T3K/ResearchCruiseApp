@@ -4,7 +4,7 @@ import {
   useGetApplicationSupervisorReviewSuspense,
   useUpdateApplicationSupervisorReviewDecision,
 } from '@/api/generated/endpoints/applications.gen';
-import { ApiError, getProblemDetail } from '@/api/errors';
+import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';
 import { mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -55,11 +55,7 @@ function SupervisorViewPage() {
         },
         onError: (err) => {
           console.error(err);
-          if (err instanceof ApiError && err.status === 403) {
-            toast.error('Niedozwolona operacja: ' + getProblemDetail(err, ''));
-          } else {
-            toast.error('Wystąpił błąd: Nie udało się zaakceptować zgłoszenia');
-          }
+          toast.error(getErrorMessage(err, 'Nie udało się zaakceptować zgłoszenia'));
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -79,11 +75,7 @@ function SupervisorViewPage() {
         },
         onError: (err) => {
           console.error(err);
-          if (err instanceof ApiError && err.status === 403) {
-            toast.error('Niedozwolona operacja: ' + getProblemDetail(err, ''));
-          } else {
-            toast.error('Wystąpił błąd: Nie udało się odrzucić zgłoszenia');
-          }
+          toast.error(getErrorMessage(err, 'Nie udało się odrzucić zgłoszenia'));
         },
         onSettled: () => {
           toast.dismiss(loading);

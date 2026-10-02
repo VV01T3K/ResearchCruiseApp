@@ -6,7 +6,7 @@ public sealed class ChangePasswordValidator : AbstractValidator<ChangePasswordRe
 {
     public ChangePasswordValidator()
     {
-        RuleFor(request => request.Password).NotEmpty();
-        RuleFor(request => request.NewPassword).NotEmpty();
+        RuleFor(request => request.Password).NotEmpty().WithName("Hasło");
+        RuleFor(request => request.NewPassword).NotEmpty().WithName("Nowe hasło");
     }
 }

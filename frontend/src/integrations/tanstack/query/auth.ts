@@ -72,12 +72,7 @@ export function useSignIn() {
       response = await login({ data: { email, password } });
     } catch (error) {
       clearSession(queryClient);
-      return {
-        error:
-          error instanceof ApiError && error.status === 401
-            ? 'Podano błędne hasło lub użytkownik nie istnieje.'
-            : getProblemDetail(error, 'Wystąpił błąd podczas logowania. Spróbuj ponownie.'),
-      };
+      return { error: getProblemDetail(error, 'Wystąpił błąd podczas logowania. Spróbuj ponownie.') };
     }
 
     setSession(response);

@@ -15,16 +15,33 @@ public sealed class ImportPublicationsValidator : AbstractValidator<ImportPublic
                 publication
                     .RuleFor(request => request.Category)
                     .NotEmpty()
+                    .WithName("Kategoria")
                     .MaximumLength(MaxLength);
                 publication
                     .RuleFor(request => request.MinisterialPoints)
                     .NotEmpty()
+                    .WithName("Punkty ministerialne")
                     .MaximumLength(MaxLength);
-                publication.RuleFor(request => request.Doi).MaximumLength(MaxLength);
-                publication.RuleFor(request => request.Authors).MaximumLength(MaxLength);
-                publication.RuleFor(request => request.Title).MaximumLength(MaxLength);
-                publication.RuleFor(request => request.Magazine).MaximumLength(MaxLength);
-                publication.RuleFor(request => request.Year).MaximumLength(MaxLength);
+                publication
+                    .RuleFor(request => request.Doi)
+                    .MaximumLength(MaxLength)
+                    .WithName("DOI");
+                publication
+                    .RuleFor(request => request.Authors)
+                    .MaximumLength(MaxLength)
+                    .WithName("Autorzy");
+                publication
+                    .RuleFor(request => request.Title)
+                    .MaximumLength(MaxLength)
+                    .WithName("Tytuł");
+                publication
+                    .RuleFor(request => request.Magazine)
+                    .MaximumLength(MaxLength)
+                    .WithName("Czasopismo");
+                publication
+                    .RuleFor(request => request.Year)
+                    .MaximumLength(MaxLength)
+                    .WithName("Rok");
             });
     }
 }

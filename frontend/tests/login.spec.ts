@@ -53,7 +53,10 @@ test('successful login revokes the cookie if profile hydration fails', async ({ 
 
 test('rate-limited login shows retry guidance without a toast and allows retry', async ({ loginPage }) => {
   await loginPage.page.route(`${API_URL}/v2/auth/login`, (route) =>
-    route.fulfill({ status: 429, json: { title: 'Too many requests.' } })
+    route.fulfill({
+      status: 429,
+      json: { title: 'Too Many Requests', detail: 'Wysłano zbyt wiele żądań. Odczekaj chwilę i spróbuj ponownie.' },
+    })
   );
 
   await loginPage.login('test.email@gmail.com', 'someP@ssword');

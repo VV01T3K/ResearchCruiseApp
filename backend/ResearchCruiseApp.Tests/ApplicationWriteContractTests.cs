@@ -104,7 +104,7 @@ public sealed class ApplicationWriteContractTests
     }
 
     [Fact]
-    public void ValidationErrorsUseJsonPathsAndReadableMessages()
+    public void ValidationErrorsUseJsonPathsAndPolishMessages()
     {
         var errors = new RegisterAccountValidator()
             .Validate(new RegisterAccountRequest("anna@example.com", "secret", "", "Nowak"))
@@ -112,7 +112,7 @@ public sealed class ApplicationWriteContractTests
 
         var error = Assert.Single(errors);
         Assert.Equal("firstName", error.PropertyName);
-        Assert.Equal("'First Name' must not be empty.", error.ErrorMessage);
+        Assert.Equal("Pole 'Imię' nie może być puste.", error.ErrorMessage);
     }
 
     private static FormAFields CreateEmptyFormA() =>

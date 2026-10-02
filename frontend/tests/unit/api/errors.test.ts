@@ -21,29 +21,21 @@ describe('API failure reasons', () => {
     );
   });
   it.each([
-    [400, 'Serwer odrzucił dane żądania. Sprawdź wpisane wartości.'],
-    [401, 'Sesja wygasła lub dane logowania są nieprawidłowe. Zaloguj się ponownie.'],
-    [403, 'Nie masz uprawnień do tej operacji lub stan zgłoszenia na nią nie pozwala.'],
-    [404, 'Nie znaleziono żądanego zasobu. Mógł zostać usunięty.'],
-    [409, 'Dane lub stan zgłoszenia zmieniły się. Spróbuj ponownie.'],
-    [413, 'Przesyłane dane są zbyt duże. Zmniejsz rozmiar załączników.'],
-    [422, 'Serwer nie może zaakceptować podanych danych.'],
-    [429, 'Wysłano zbyt wiele żądań. Odczekaj chwilę i spróbuj ponownie.'],
+    [400, 'Żądanie nie powiodło się (HTTP 400).'],
+    [404, 'Żądanie nie powiodło się (HTTP 404).'],
+    [429, 'Żądanie nie powiodło się (HTTP 429).'],
     [500, 'Błąd serwera (500). Spróbuj ponownie później.'],
     [502, 'Błąd serwera (502). Spróbuj ponownie później.'],
-    [503, 'Błąd serwera (503). Spróbuj ponownie później.'],
-    [418, 'Żądanie nie powiodło się (HTTP 418).'],
-  ])('explains an empty HTTP %s failure', (status, message) => {
+  ])('falls back to a generic message for an HTTP %s failure without a detail', (status, message) => {
     expect(responseErrorMessage(status, null)).toBe(message);
   });
   it.each([
-    ['the rate limiter title', { title: 'Too many requests.' }],
-    ['a custom title', { title: 'Limit eksportów został przekroczony.' }],
+    ['a title only', { title: 'Too many requests.' }],
     ['a message property', { message: 'Nieprawidłowy plik' }],
     ['plain text', 'Nieprawidłowy plik'],
-    ['an HTML proxy error page', '<html><body>Too many requests</body></html>'],
-  ])('uses the status fallback for %s', (_, body) => {
-    expect(responseErrorMessage(429, body)).toBe('Wysłano zbyt wiele żądań. Odczekaj chwilę i spróbuj ponownie.');
+    ['an HTML proxy error page', '<html><body>Bad gateway</body></html>'],
+  ])('ignores %s from a response that is not API ProblemDetails', (_, body) => {
+    expect(responseErrorMessage(502, body)).toBe('Błąd serwera (502). Spróbuj ponownie później.');
   });
   it('retains the underlying reason when session refresh fails', () => {
     const error = new Error('Session refresh failed', { cause: new ApiError('Serwer jest niedostępny', 503) });
