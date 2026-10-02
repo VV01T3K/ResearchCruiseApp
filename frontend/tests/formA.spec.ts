@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 
 import { MOCK_PDF_FILEPATH } from './fixtures/consts';
-import { getFormAPayload } from './fixtures/mockPayloads';
+import { getFormAPayload, getInitValuesAPayload } from './fixtures/mockPayloads';
 import { API_URL, formTest as test } from './fixtures/fixtures';
 import { type FormAPage } from './fixtures/pages/formA/formAPage';
 import { touchInput } from './utils/form-filling-utils';
@@ -314,6 +314,26 @@ test('number inputs keep precision, transient decimals, clearing, sync and stepp
   await amount.fill('12,345');
   await amount.blur();
   await expect(amount).toHaveValue('12.35');
+});
+
+test('historical research tasks of an unknown type can be previewed and added as other tasks', async ({
+  formAPage,
+  page,
+}) => {
+  await page.route(`${API_URL}/v2/applications/form-a/context`, (route) =>
+    route.fulfill({
+      json: {
+        ...getInitValuesAPayload(),
+        historicalResearchTasks: [{ type: '99', description: 'Zadanie archiwalne' }],
+      },
+    })
+  );
+  await formAPage.goto();
+  const section = page.getByTestId('form-a-research-tasks-table');
+  await page.getByTestId('form-a-add-historical-research-task-btn').click();
+  await page.getByText('Opis: Zadanie archiwalne').click();
+  await expect(section.getByText('Inne zadanie')).toBeVisible();
+  await expect(section.locator('input[value="Zadanie archiwalne"], textarea').first()).toBeAttached();
 });
 
 for (const picker of [
