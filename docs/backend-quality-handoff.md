@@ -6,9 +6,11 @@ Updated 2026-10-03. Kept in the repository at the user's request.
 
 Continue draft [PR 430](https://github.com/VV01T3K/ResearchCruiseApp/pull/430), remote branch `feature/backend-quality-baseline`, base `staging`. Local branch `t3code/pr-430-continuation` is in `/home/wojtek/.t3/worktrees/ResearchCruiseApp/t3code-5a2f0598`. Verify refs and the working tree. The PR is linked to this T3 thread. Do not merge or deploy without authorization. The user explicitly requires terminal/CI-only continuation: do not launch, control or use their VS Code session, and do not repeat IDE automation.
 
-The last pushed head is `bcfc2dfdf4d28fe44e76a26ac92bd16d5dd78a66`. Its hosted [workspace run 37033970581](https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/37033970581) passes 682 cases: 189 frontend, 78 legacy, 27 unit, 388 SQL integration, no skips. Downloaded reports are verified under `backend/artifacts/evidence/hosted-bcfc2dfd/`. This is evidence for that head only.
+The last pushed head is `659e6cc57a7a4d00eb439ebd5a08ebe54f6385ad`. Its hosted [workspace run 37073428444](https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/37073428444) passes all 745 pre-cutover cases: 189 frontend, 78 legacy, 46 unit and 432 SQL integration, no skips. Downloaded reports and exact SHA/timestamp checks are verified under `backend/artifacts/evidence/hosted-659e6cc5/`. Job duration is 311 seconds; SQL TRX 231.799 seconds.
 
-The continuation adds eighteen infrastructure/telemetry/email/startup cases, twenty-six account/cruise storage-boundary cases and nineteen native SMTP retention candidates. All 745 combined cases pass: 189 frontend, 78 legacy, 46 unit, 432 integration, no skips. The full gate takes 535.971s, SQL TRX 484.468s; fresh reports are in artifacts/tests/run-ZphkHS, with final-matrix-workspace.{log,json} and final-matrix-frontend.xml. Strengthened native SMTP bound-value assertions then pass all 46 unit cases independently; Release/Debug strict builds have zero warnings/errors. Commit/push and exact-head hosted verification are still required. All 78 legacy cases remain enabled until maintainer review accepts their individual dispositions.
+On 2026-10-03 the maintainer replied "Accept the dispositions and proceed with cutover" to the complete per-case review packet. All 78 dispositions are accepted individually: 59 rewritten, nineteen retained after review in native MTP. The working tree now removes legacy execution and selects the native .NET 10 runner; expected total is 667. Strict build and native negative/positive cutover verification pass. Final root gate passes all 667 cases in 203.794 seconds, SQL TRX 197.011 seconds; reports are in artifacts/tests/run-fxrtwc. Native commands reject four failing replacements, the report guard fails, restored source passes all 46 unit cases and a coverage smoke emits Cobertura. Setup/reset/host timings are preserved in each fresh Integration/timings.log. Commit/push, hosted verification and final calibration remain. Do not ask for legacy acceptance again.
+
+The pre-cutover local gate passes 745 cases in 535.971 seconds, SQL TRX 484.468 seconds; fresh reports are in artifacts/tests/run-ZphkHS. A subsequent clean-source warm-up at `659e6cc5` passes in 512.796 seconds, SQL TRX 489.756 seconds, and stops after that complete run for the approved cutover. These 745-case measurements are historical, not final 667-case calibration.
 
 ## Confirmed scope
 
@@ -35,10 +37,10 @@ The complete devcontainer image builds, including its Docker-in-Docker feature. 
 
 ## Finish the authorized work
 
-1. Native SMTP paired proof and the finite requirement/legacy mapping audit are complete. Keep every legacy case required. docs/backend-quality-review.md is the concrete acceptance packet; individual dispositions still need maintainer acceptance.
-2. The complete 745-case gate and fresh-report verification pass. Finish separately reviewable infrastructure/storage/docs commits, push with hooks and update PR description. Verify the exact pushed SHA's hosted reports and timestamps.
-3. Recalibrate the completed matrix with five warm local runs and three clean hosted jobs. The 605-case figures in `backend-performance-calibration.json` are historical. Record counts, source SHA, environment, cache/setup/reset/host costs, median/max and slowest tests. Propose budgets for review; do not reduce coverage to hit provisional targets.
-4. Prepare the concrete legacy/cutover and performance acceptance packet. Required-check activation remains rollout work: the reusable workflow must reach protected branches first. Rules inspection found staging with no required checks and main's rule disabled; no repository rule was changed. Merge/deploy/rules changes are not authorized.
+1. All legacy dispositions and replacement assertions are maintainer accepted. The atomic runner/project/dependency cutover passes the deliberately failing native replacement proof and the complete 667-case local gate. Evidence is in cutover-native-proof.json and cutover-final-workspace/metrics files.
+2. Commit and push with hooks; update PR 430 description and verify the exact cutover SHA's hosted reports and timestamps.
+3. Recalibrate the final 667-case matrix with five warm local runs and three clean hosted jobs. The 605/745-case figures are historical. Record source SHA, environment/cache/setup/reset/host costs, median/max and slowest tests. Propose budgets for review; do not reduce coverage to meet targets.
+4. Complete the concrete performance acceptance packet. Required-check activation remains rollout work: the workflow must reach protected branches first. No repository rule was changed. Merge/deploy/rules changes are not authorized.
 
 The implementation baseline can be ready for review while maintainer acceptance remains open. Do not call the testing specification fully complete before those acceptance requirements are met.
 
@@ -55,7 +57,7 @@ export TESTINGPLATFORM_TELEMETRY_OPTOUT=1
 vp run check
 ```
 
-From backend, focused MTP tests use `dotnet run --project ResearchCruiseApp.IntegrationTests -c Release --no-build --no-restore -- --filter-class '*ClassName' --report-trx --results-directory artifacts/tests/<fresh>`. Use --filter-class/--filter-method, not VSTest --filter. Run CSharpier from backend. Avoid simultaneous builds/fault probes/IDE discovery. SQL fixtures clean up their own containers.
+From backend, focused MTP tests use `dotnet test --project ResearchCruiseApp.IntegrationTests/ResearchCruiseApp.IntegrationTests.csproj -c Release --no-build --no-restore --filter-class '*ClassName' --report-trx --results-directory artifacts/tests/<fresh>`. Use --filter-class/--filter-method, not VSTest --filter. Run CSharpier from backend. Avoid simultaneous builds/fault probes/IDE discovery. SQL fixtures clean up their own containers.
 
 Push through gh credentials with hooks enabled: `git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push origin HEAD:feature/backend-quality-baseline`. Conventional Commits; preserve history. No subagents unless the user or applicable instructions authorize delegation.
 

@@ -6,7 +6,7 @@ root = Path(__file__).resolve().parent.parent / "backend/artifacts"
 ns = {"t": "http://microsoft.com/schemas/VisualStudio/TeamTest/2010"}
 print("| Suite | Execution |")
 print("| --- | --- |")
-for label, folder in [("Legacy backend (unreviewed)", "legacy-unreviewed"), ("Backend unit", "Unit"), ("Backend integration", "Integration")]:
+for label, folder in [("Backend unit", "Unit"), ("Backend integration", "Integration")]:
     reports = sorted(root.glob(f"tests/run-*/{folder}/*.trx"), key=lambda p: p.stat().st_mtime)
     if not reports:
         result = "No report; not verified"

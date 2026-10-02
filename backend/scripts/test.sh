@@ -16,17 +16,14 @@ fi
 
 # Each suite is a separate process with independent providers and report directories.
 # Start all suites after the successful build, then wait for every exit status.
-dotnet test ResearchCruiseApp.Tests/ResearchCruiseApp.Tests.csproj \
-    -c Release --no-build --no-restore --logger trx \
-    --results-directory "$results/legacy-unreviewed" &
-legacy_pid=$!
-dotnet run --project ResearchCruiseApp.UnitTests -c Release --no-build --no-restore -- \
+dotnet test --project ResearchCruiseApp.UnitTests/ResearchCruiseApp.UnitTests.csproj -c Release --no-build --no-restore \
     --report-trx --results-directory "$results/Unit" --fail-skips on "${coverage[@]}" &
 unit_pid=$!
-dotnet run --project ResearchCruiseApp.IntegrationTests -c Release --no-build --no-restore -- \
+mkdir -p "$results/Integration"
+RCA_TEST_TIMING_LOG="$results/Integration/timings.log" \
+dotnet test --project ResearchCruiseApp.IntegrationTests/ResearchCruiseApp.IntegrationTests.csproj -c Release --no-build --no-restore \
     --report-trx --results-directory "$results/Integration" --fail-skips on "${coverage[@]}" || status=1
-wait "$legacy_pid" || status=1
 wait "$unit_pid" || status=1
-python3 scripts/verify-test-reports.py "$results/legacy-unreviewed" "$results/Unit" "$results/Integration" || status=1
+python3 scripts/verify-test-reports.py "$results/Unit" "$results/Integration" || status=1
 echo "Backend reports: $results"
 exit "$status"
