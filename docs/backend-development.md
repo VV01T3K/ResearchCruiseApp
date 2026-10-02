@@ -21,4 +21,4 @@ The local `Workspace checks` workflow is shared with image build/deploy workflow
 
 The complete devcontainer image builds with its Docker-in-Docker feature. Its tool smoke reports SDK 10.0.401, Node 25.8.2, Bun 1.3.11 and Vite+ 1.0.0. C# Dev Kit is included for test discovery. Full onCreate/browser dependency installation and nested Docker runtime are not covered by that image smoke.
 
-See [the scenario ledger](backend-test-scenarios.md) for measured evidence and open policies. The foundation is implemented; the full behavior matrix and legacy review are incomplete. The user confirmed production runs v2.5.1; it is the supported previous-release upgrade test baseline. The test uses a separate synthetic database.
+See [the scenario ledger](backend-test-scenarios.md) for measured evidence and open policies. Every required behavior family has executable candidates; maintainer legacy/assertion review, completed-matrix performance acceptance and required-check rollout remain open. The user confirmed production runs v2.5.1; it is the supported previous-release upgrade test baseline. The test uses a separate synthetic database.
