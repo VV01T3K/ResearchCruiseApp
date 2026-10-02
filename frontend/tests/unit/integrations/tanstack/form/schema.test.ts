@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { submissionSchema } from '@/integrations/tanstack/form/schema';
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { getErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
+import { ApiError } from '@/api/errors';
 import {
   formBDefaultValues,
   getFormBSubmissionSchema,
@@ -48,7 +49,10 @@ describe('form submission contracts', () => {
       validationLogic: formValidationLogic,
       validators: { onDynamic: z.object({ deputy: z.string() }) },
       onSubmit: () => {
-        if (++saves === 1) setServerFormErrors(form, { problem: { errors: { deputy: ['Zastępca niedostępny'] } } });
+        if (++saves === 1) {
+          const problem = { errors: { deputy: ['Zastępca niedostępny'] } };
+          setServerFormErrors(form, new ApiError('Zastępca niedostępny', 400, problem));
+        }
       },
       onSubmitMeta: undefined,
     });

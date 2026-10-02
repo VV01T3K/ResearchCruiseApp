@@ -15,7 +15,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
-import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
+import { INVALID_FORM_MESSAGE, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 import { FormView } from '../-components/FormView';
@@ -35,16 +35,6 @@ export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,
   beforeLoad: allowOnly.authenticated(),
 });
-
-const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
-  title: 1,
-  shipUnavailable: 1,
-  startDate: 2,
-  endDate: 2,
-  mainManagerId: 3,
-  deputyManagerId: 3,
-  cruiseApplicationIds: 4,
-};
 
 function CruiseDetailsPage() {
   const { cruiseId } = Route.useParams();
@@ -78,8 +68,8 @@ function CruiseDetailsPage() {
     defaultValues: mapCruiseToValues(cruiseQuery.data),
     validationLogic: formValidationLogic,
     validators: { onDynamic: CruiseFormSchema },
-    onSubmitInvalid: ({ formApi }) => {
-      toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
+    onSubmitInvalid: () => {
+      toast.error(INVALID_FORM_MESSAGE);
       navigateToFirstError();
     },
     onSubmit: async ({ value }) => {

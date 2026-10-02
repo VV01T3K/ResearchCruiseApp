@@ -66,28 +66,6 @@ import {
   mapSpubTaskToValues,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
-export const FORM_C_FIELD_TO_SECTION: Record<string, number> = {
-  shipUsage: 3,
-  differentUsage: 3,
-  permissions: 4,
-  researchAreaDescriptions: 5,
-  researchTasksEffects: 7,
-  contracts: 8,
-  ugTeams: 9,
-  guestTeams: 9,
-  spubTasks: 11,
-  shortResearchEquipments: 12,
-  longResearchEquipments: 12,
-  ports: 12,
-  cruiseDaysDetails: 13,
-  researchEquipments: 14,
-  shipEquipmentsIds: 15,
-  collectedSamples: 16,
-  spubReportData: 17,
-  photos: 18,
-  additionalDescription: 18,
-};
-
 const FormCInputSchema = z.object({
   draft: z.boolean().optional(),
   shipUsage: z.string(),

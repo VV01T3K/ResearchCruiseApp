@@ -80,6 +80,7 @@ test('failed draft saves explain the reason and retain partial rows for retry', 
         },
       },
       inline: 'Obecność kierownika została odrzucona',
+      formReasons: ['Zgłoszenie jest zablokowane.', 'Nieprawidłowy stan wersji roboczej', 'Nieprawidłowe powiązanie'],
       reasons: [
         'Zgłoszenie jest zablokowane.',
         'Obecność kierownika została odrzucona',
@@ -91,6 +92,7 @@ test('failed draft saves explain the reason and retain partial rows for retry', 
       status: 403,
       body: { detail: 'Obecnie nie można przesłać formularza B.' },
       reasons: ['Obecnie nie można przesłać formularza B.'],
+      formReasons: ['Obecnie nie można przesłać formularza B.'],
     },
   ];
   let failure = failures[0];
@@ -105,6 +107,9 @@ test('failed draft saves explain the reason and retain partial rows for retry', 
     await expect(toast).toHaveCount(1);
     for (const reason of failure.reasons) await expect(toast).toContainText(reason);
     if (failure.inline) await expect(managerPresent).toHaveAccessibleDescription(failure.inline);
+    const formErrors = page.getByTestId('form-errors');
+    for (const reason of failure.formReasons) await expect(formErrors).toContainText(reason);
+    if (failure.inline) await expect(formErrors).not.toContainText(failure.inline);
     await expect(task).toHaveValue('Niedokończone zadanie');
     await expect(page).toHaveURL(/\/formB\?mode=edit$/);
   }

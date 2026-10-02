@@ -1,26 +1,21 @@
-import type { ProblemDetails } from '@/api/generated/schemas';
+import type { HttpValidationProblemDetails } from '@/api/generated/schemas';
 
 export class ApiError extends Error {
   constructor(
     message: string,
     readonly status: number,
-    readonly problem?: ProblemDetails
+    readonly problem?: HttpValidationProblemDetails
   ) {
     super(message);
     this.name = 'ApiError';
   }
 }
 
-export function responseErrorMessage(status: number, body: unknown): string {
-  const problem = typeof body === 'object' && body !== null ? (body as Record<string, unknown>) : undefined;
-  const messages =
-    problem?.errors && typeof problem.errors === 'object'
-      ? Object.values(problem.errors)
-          .flat()
-          .filter((message): message is string => typeof message === 'string' && !!message.trim())
-      : [];
-  const detail = typeof problem?.detail === 'string' ? problem.detail.trim() : '';
-  if (detail || messages.length) return [...new Set([detail, ...messages].filter(Boolean))].join('\n');
+export function responseErrorMessage(status: number, problem?: HttpValidationProblemDetails): string {
+  const messages = [problem?.detail, ...Object.values(problem?.errors ?? {}).flat()]
+    .map((message) => message?.trim())
+    .filter((message): message is string => !!message);
+  if (messages.length) return [...new Set(messages)].join('\n');
   // The API explains every failure in `detail`; this covers proxies and other non-API responses.
   return status >= 500
     ? `Błąd serwera (${status}). Spróbuj ponownie później.`

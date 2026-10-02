@@ -61,6 +61,7 @@ export function FormView({ context }: Props) {
         <CruiseDayDetailsSection context={context} />
         <ResearchEquipmentsSection context={context} />
         <ShipEquipmentsSection context={context} />
+        <form.FormErrors />
         <ActionsSection
           onSaveDraft={context.onSaveDraft}
           onRevertToEdit={context.onRevertToEdit}
