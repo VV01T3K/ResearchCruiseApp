@@ -1,522 +1,863 @@
 {
-  "runtime_commit": "2e46492ed6ace2a7b821aa232563412a5a193bb5",
-  "local_starting_commit": "bba863fce8b73fd7352df8e4a1f24d11f68302bb",
-  "local_runtime_patch_sha256": "291fe3bfe35e90ebdef78cac31d5ad54e44bbc0dd6ee4ed3bffd3e60b7b666e9",
+  "runtime_commit": "c57958ff444493875e58831e776529aa1def4084",
   "command": "vp run check",
   "verified_passed_each_run": {
     "frontend": 189,
-    "legacy_unreviewed": 78,
-    "unit": 27,
-    "sql_integration": 311,
-    "total": 605,
-    "skipped": 0
+    "unit": 46,
+    "sql_integration": 432,
+    "total": 667,
+    "skipped": 0,
+    "legacy_execution": false
   },
   "local_environment": {
-    "baseline_head": "bba863fce8b73fd7352df8e4a1f24d11f68302bb",
-    "model": "13th Gen Intel(R) Core(TM) i5-13500H",
-    "logical_cpus": "16",
-    "architecture": "x86_64",
     "kernel": "7.2.5-3-omarchy",
+    "node": "v25.8.2",
+    "dotnet": "10.0.401",
+    "scaling_driver": [
+      "intel_pstate"
+    ],
+    "scaling_governor": [
+      "powersave"
+    ],
+    "scaling_min_freq": [
+      "400000"
+    ],
+    "scaling_max_freq": [
+      "3500000",
+      "4700000"
+    ],
+    "cpuinfo_max_freq": [
+      "3500000",
+      "4700000"
+    ],
+    "energy_performance_preference": [
+      "performance"
+    ],
+    "notes": "Read-only power-state observation. No system settings changed. Actual sampled frequencies may be lower than configured maximum.",
+    "head": "c57958ff444493875e58831e776529aa1def4084",
+    "no_turbo": "0",
+    "max_perf_pct": "100",
+    "cache_state": "Restored packages and pinned SQL image present; incremental build outputs from passing final gate; fresh SQL container/database and uncached tests/contract regeneration each run.",
     "command": "vp run check",
-    "sdk": "10.0.401",
-    "runtime": "10.0.12",
-    "node": "25.8.2",
-    "bun": "1.3.11",
-    "sql_image": "mcr.microsoft.com/mssql/server:2022-latest@sha256:4402d880dd4c34bfa7d8705e56a86cd6c88da80a1f6bbbe741f999e76264a090",
-    "cache_state": "restored packages and SQL image present; existing build outputs; fresh SQL container/database per run; actual tests uncached; generated contract regenerated"
+    "warmup_evidence": "cutover-final-workspace.json; completed gate immediately before commit with identical tested runtime source"
+  },
+  "acceptance": {
+    "legacy_dispositions": "Maintainer accepted all 78 individual dispositions on 2026-10-03 in this task conversation.",
+    "performance_budgets": "proposed for maintainer review, not ratified or enforced",
+    "operational_ci_timeout_seconds": 480
   },
   "notes": [
-    "Iteration 1 is warm-up with recompilation; iterations 2\u20136 are the five fully warm measurements.",
-    "Suite timings overlap; host/reset costs are included in case durations and are not additional root time.",
-    "Hosted durations exclude runner queue; each checkout/build and SQL database/container is fresh. Dependency/action caches may restore.",
-    "All original downloaded reports remain in ignored local evidence directories. Workflow logs are linked per attempt; artifact availability follows GitHub rerun/retention behavior.",
-    "Budgets are proposed for review and not ratified. Remaining P0/P1 coverage still requires completed-baseline recalibration."
+    "Five fully warm local runs follow the successful full-gate warm-up with identical tested runtime source. Each run keeps the committed source and tracked working tree unchanged.",
+    "Hosted jobs each have a fresh checkout/build and fresh SQL container/database. Action/NuGet caches may restore; Vite+ reports no dependency cache because the workspace lock file is at the root, and frozen workspace installation still runs.",
+    "Suite timings overlap. Host/reset costs are included in test case durations and are not added to root time. Phase measurements come from the process-owned Integration/timings.log file.",
+    "All original TRX/JUnit, logs and sampled frequency records are retained in ignored local evidence; hosted diagnostic retention is fourteen days. Historical 605/745-case measurements remain in Git history and the scenario ledger.",
+    "These measurements do not establish that prior 90-second root and 60-second SQL targets were met. No coverage was removed to meet performance targets."
   ],
   "local": [
     {
       "iteration": 1,
-      "cache_state": "warmup",
-      "root_seconds": 180.668,
-      "job_seconds": null,
-      "build_seconds": [
-        10.83
-      ],
+      "root_seconds": 209.799,
       "suite_seconds": {
-        "legacy-unreviewed": 8.532,
-        "Unit": 1.218,
-        "Integration": 165.038
+        "Unit": 0.839,
+        "Integration": 202.033
       },
-      "sql_case_seconds_sum": 132.896,
+      "build_seconds": [
+        3.52
+      ],
       "phases": {
         "Application host": {
-          "count": 313,
-          "sum_seconds": 16.226,
-          "median_ms": 49,
-          "max_ms": 683
+          "count": 433,
+          "sum_seconds": 20.988,
+          "median_ms": 46,
+          "max_ms": 539
         },
         "SQL reset": {
-          "count": 620,
-          "sum_seconds": 6.412,
-          "median_ms": 12.0,
-          "max_ms": 119
+          "count": 858,
+          "sum_seconds": 9.25,
+          "median_ms": 11.0,
+          "max_ms": 782
         },
         "SQL startup": {
           "count": 1,
-          "sum_seconds": 15.079,
-          "median_ms": 15079,
-          "max_ms": 15079
+          "sum_seconds": 14.154,
+          "median_ms": 14154,
+          "max_ms": 14154
         },
         "SQL migrations": {
           "count": 1,
-          "sum_seconds": 4.757,
-          "median_ms": 4757,
-          "max_ms": 4757
+          "sum_seconds": 4.154,
+          "median_ms": 4154,
+          "max_ms": 4154
         },
         "SQL reset planning": {
           "count": 1,
-          "sum_seconds": 0.137,
-          "median_ms": 137,
-          "max_ms": 137
+          "sum_seconds": 0.133,
+          "median_ms": 133,
+          "max_ms": 133
         }
       },
-      "slowest_sql_case": {
-        "seconds": 2.579,
-        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+      "sql_case_seconds_sum": 171.964,
+      "slowest_sql_cases": [
+        {
+          "seconds": 3.015,
+          "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+        },
+        {
+          "seconds": 1.918,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: True)"
+        },
+        {
+          "seconds": 1.472,
+          "test": "ResearchCruiseApp.IntegrationTests.Auth.RoleManagementTests.Grant_WhenActorIsNotAllowed_DeniesWithoutChangingMembership(actorRole: \"Shipowner\", requestedRole: \"Administrator\", expected: Forbidden)"
+        },
+        {
+          "seconds": 1.441,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: False)"
+        },
+        {
+          "seconds": 1.208,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: False)"
+        },
+        {
+          "seconds": 1.155,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.UploadFieldInputTests.Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles(target: 5, draft: True, name: True)"
+        },
+        {
+          "seconds": 1.133,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CruiseEffectScoringTests.Effects_WhenSubmittedThenReplaced_ScoreBothManagersAndFeedNextApplication"
+        },
+        {
+          "seconds": 1.035,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.UploadFieldInputTests.Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles(target: 1, draft: True, name: False)"
+        },
+        {
+          "seconds": 1.008,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: True)"
+        },
+        {
+          "seconds": 0.99,
+          "test": "ResearchCruiseApp.IntegrationTests.Cruises.CruiseWriteTests.MutateCruise_WhenActorHasNoOfficeRole_DeniesAllOperationsWithoutChanges(role: \"anonymous\", expected: Unauthorized)"
+        }
+      ],
+      "sampled_median_frequency_khz": {
+        "median": 1596527.5,
+        "min": 400315.5,
+        "max": 3303975.5
+      },
+      "evidence": {
+        "reports": "backend/artifacts/tests/run-bk13jL",
+        "log": "backend/artifacts/evidence/cutover-perf-warm-1.log",
+        "frontend": "backend/artifacts/evidence/cutover-perf-warm-1-frontend.xml"
       }
     },
     {
       "iteration": 2,
-      "cache_state": "warm",
-      "root_seconds": 169.916,
-      "job_seconds": null,
-      "build_seconds": [
-        1.6
-      ],
+      "root_seconds": 217.032,
       "suite_seconds": {
-        "legacy-unreviewed": 7.516,
-        "Unit": 0.628,
-        "Integration": 163.314
+        "Unit": 1.25,
+        "Integration": 211.707
       },
-      "sql_case_seconds_sum": 132.226,
+      "build_seconds": [
+        1.11
+      ],
       "phases": {
         "Application host": {
-          "count": 313,
-          "sum_seconds": 16.064,
-          "median_ms": 49,
-          "max_ms": 669
+          "count": 433,
+          "sum_seconds": 22.06,
+          "median_ms": 48,
+          "max_ms": 626
         },
         "SQL reset": {
-          "count": 620,
-          "sum_seconds": 6.378,
-          "median_ms": 12.0,
-          "max_ms": 111
+          "count": 858,
+          "sum_seconds": 8.539,
+          "median_ms": 9.5,
+          "max_ms": 124
         },
         "SQL startup": {
           "count": 1,
-          "sum_seconds": 14.451,
-          "median_ms": 14451,
-          "max_ms": 14451
+          "sum_seconds": 16.026,
+          "median_ms": 16026,
+          "max_ms": 16026
         },
         "SQL migrations": {
           "count": 1,
-          "sum_seconds": 4.62,
-          "median_ms": 4620,
-          "max_ms": 4620
+          "sum_seconds": 4.466,
+          "median_ms": 4466,
+          "max_ms": 4466
         },
         "SQL reset planning": {
           "count": 1,
-          "sum_seconds": 0.137,
-          "median_ms": 137,
-          "max_ms": 137
+          "sum_seconds": 0.154,
+          "median_ms": 154,
+          "max_ms": 154
         }
       },
-      "slowest_sql_case": {
-        "seconds": 2.558,
-        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+      "sql_case_seconds_sum": 178.788,
+      "slowest_sql_cases": [
+        {
+          "seconds": 3.028,
+          "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+        },
+        {
+          "seconds": 2.827,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: True)"
+        },
+        {
+          "seconds": 1.923,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: False)"
+        },
+        {
+          "seconds": 1.612,
+          "test": "ResearchCruiseApp.IntegrationTests.Auth.RoleManagementTests.Grant_WhenActorIsNotAllowed_DeniesWithoutChangingMembership(actorRole: \"Shipowner\", requestedRole: \"Administrator\", expected: Forbidden)"
+        },
+        {
+          "seconds": 1.444,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.UploadFieldInputTests.Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles(target: 5, draft: True, name: True)"
+        },
+        {
+          "seconds": 1.204,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.UploadFieldInputTests.Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles(target: 1, draft: True, name: False)"
+        },
+        {
+          "seconds": 1.183,
+          "test": "ResearchCruiseApp.IntegrationTests.Cruises.CruiseWriteTests.MutateCruise_WhenActorHasNoOfficeRole_DeniesAllOperationsWithoutChanges(role: \"Guest\", expected: Forbidden)"
+        },
+        {
+          "seconds": 1.032,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: False)"
+        },
+        {
+          "seconds": 1.003,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.PermissionScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsAndCanBeReplacedThenRemoved(formC: True, dataUri: True)"
+        },
+        {
+          "seconds": 1.002,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CatalogPaginationTests.Pages_WhenApplicationsAreRestricted_FilterBeforePagingAndHideOtherDrafts(role: \"CruiseManager\", canViewOthers: False)"
+        }
+      ],
+      "sampled_median_frequency_khz": {
+        "median": 2939869.0,
+        "min": 648376.0,
+        "max": 3300661.0
+      },
+      "evidence": {
+        "reports": "backend/artifacts/tests/run-N4pgx6",
+        "log": "backend/artifacts/evidence/cutover-perf-warm-2.log",
+        "frontend": "backend/artifacts/evidence/cutover-perf-warm-2-frontend.xml"
       }
     },
     {
       "iteration": 3,
-      "cache_state": "warm",
-      "root_seconds": 164.328,
-      "job_seconds": null,
-      "build_seconds": [
-        1.4
-      ],
+      "root_seconds": 205.726,
       "suite_seconds": {
-        "legacy-unreviewed": 7.214,
-        "Unit": 0.953,
-        "Integration": 158.204
+        "Unit": 0.939,
+        "Integration": 200.632
       },
-      "sql_case_seconds_sum": 126.97,
+      "build_seconds": [
+        1.26
+      ],
       "phases": {
         "Application host": {
-          "count": 313,
-          "sum_seconds": 15.007,
-          "median_ms": 43,
-          "max_ms": 670
+          "count": 433,
+          "sum_seconds": 21.565,
+          "median_ms": 45,
+          "max_ms": 768
         },
         "SQL reset": {
-          "count": 620,
-          "sum_seconds": 6.995,
-          "median_ms": 10.5,
-          "max_ms": 798
+          "count": 858,
+          "sum_seconds": 8.26,
+          "median_ms": 11.0,
+          "max_ms": 114
         },
         "SQL startup": {
           "count": 1,
-          "sum_seconds": 14.732,
-          "median_ms": 14732,
-          "max_ms": 14732
+          "sum_seconds": 14.159,
+          "median_ms": 14159,
+          "max_ms": 14159
         },
         "SQL migrations": {
           "count": 1,
-          "sum_seconds": 4.382,
-          "median_ms": 4382,
-          "max_ms": 4382
+          "sum_seconds": 4.608,
+          "median_ms": 4608,
+          "max_ms": 4608
         },
         "SQL reset planning": {
           "count": 1,
-          "sum_seconds": 0.138,
-          "median_ms": 138,
-          "max_ms": 138
+          "sum_seconds": 0.163,
+          "median_ms": 163,
+          "max_ms": 163
         }
       },
-      "slowest_sql_case": {
-        "seconds": 2.436,
-        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+      "sql_case_seconds_sum": 169.778,
+      "slowest_sql_cases": [
+        {
+          "seconds": 2.477,
+          "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+        },
+        {
+          "seconds": 1.965,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: True)"
+        },
+        {
+          "seconds": 1.49,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: False)"
+        },
+        {
+          "seconds": 1.448,
+          "test": "ResearchCruiseApp.IntegrationTests.Auth.RoleManagementTests.Grant_WhenActorIsNotAllowed_DeniesWithoutChangingMembership(actorRole: \"Shipowner\", requestedRole: \"Administrator\", expected: Forbidden)"
+        },
+        {
+          "seconds": 1.23,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenCleanupFails_PreservesOriginalAndAllowsRetry(formC: True, draft: True)"
+        },
+        {
+          "seconds": 1.157,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.UploadFieldInputTests.Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles(target: 5, draft: True, name: True)"
+        },
+        {
+          "seconds": 1.108,
+          "test": "ResearchCruiseApp.IntegrationTests.Cruises.CruiseWriteTests.MutateCruise_WhenActorHasNoOfficeRole_DeniesAllOperationsWithoutChanges(role: \"Guest\", expected: Forbidden)"
+        },
+        {
+          "seconds": 1.095,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: False)"
+        },
+        {
+          "seconds": 1.057,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CatalogPaginationTests.Pages_WhenApplicationsAreRestricted_FilterBeforePagingAndHideOtherDrafts(role: \"CruiseManager\", canViewOthers: False)"
+        },
+        {
+          "seconds": 1.028,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.UploadFieldInputTests.Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles(target: 1, draft: True, name: False)"
+        }
+      ],
+      "sampled_median_frequency_khz": {
+        "median": 2063617.5,
+        "min": 439986.5,
+        "max": 3300251.0
+      },
+      "evidence": {
+        "reports": "backend/artifacts/tests/run-bOAFcL",
+        "log": "backend/artifacts/evidence/cutover-perf-warm-3.log",
+        "frontend": "backend/artifacts/evidence/cutover-perf-warm-3-frontend.xml"
       }
     },
     {
       "iteration": 4,
-      "cache_state": "warm",
-      "root_seconds": 170.47,
-      "job_seconds": null,
-      "build_seconds": [
-        1.25
-      ],
+      "root_seconds": 224.833,
       "suite_seconds": {
-        "legacy-unreviewed": 8.295,
-        "Unit": 0.692,
-        "Integration": 165.27
+        "Unit": 0.807,
+        "Integration": 219.953
       },
-      "sql_case_seconds_sum": 132.647,
+      "build_seconds": [
+        1.18
+      ],
       "phases": {
         "Application host": {
-          "count": 313,
-          "sum_seconds": 15.924,
-          "median_ms": 47,
-          "max_ms": 708
+          "count": 433,
+          "sum_seconds": 23.185,
+          "median_ms": 48,
+          "max_ms": 793
         },
         "SQL reset": {
-          "count": 620,
-          "sum_seconds": 7.086,
-          "median_ms": 12.0,
-          "max_ms": 773
+          "count": 858,
+          "sum_seconds": 9.797,
+          "median_ms": 11.5,
+          "max_ms": 931
         },
         "SQL startup": {
           "count": 1,
-          "sum_seconds": 15.992,
-          "median_ms": 15992,
-          "max_ms": 15992
+          "sum_seconds": 15.302,
+          "median_ms": 15302,
+          "max_ms": 15302
         },
         "SQL migrations": {
           "count": 1,
-          "sum_seconds": 4.57,
-          "median_ms": 4570,
-          "max_ms": 4570
+          "sum_seconds": 4.877,
+          "median_ms": 4877,
+          "max_ms": 4877
         },
         "SQL reset planning": {
           "count": 1,
-          "sum_seconds": 0.147,
-          "median_ms": 147,
-          "max_ms": 147
+          "sum_seconds": 0.164,
+          "median_ms": 164,
+          "max_ms": 164
         }
       },
-      "slowest_sql_case": {
-        "seconds": 2.658,
-        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+      "sql_case_seconds_sum": 187.553,
+      "slowest_sql_cases": [
+        {
+          "seconds": 3.5,
+          "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+        },
+        {
+          "seconds": 2.307,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: True)"
+        },
+        {
+          "seconds": 2.032,
+          "test": "ResearchCruiseApp.IntegrationTests.Auth.RoleManagementTests.Grant_WhenActorIsNotAllowed_DeniesWithoutChangingMembership(actorRole: \"Shipowner\", requestedRole: \"Administrator\", expected: Forbidden)"
+        },
+        {
+          "seconds": 1.632,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: False)"
+        },
+        {
+          "seconds": 1.517,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.UploadFieldInputTests.Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles(target: 5, draft: True, name: True)"
+        },
+        {
+          "seconds": 1.355,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: False)"
+        },
+        {
+          "seconds": 1.344,
+          "test": "ResearchCruiseApp.IntegrationTests.Cruises.CruiseWriteTests.MutateCruise_WhenActorHasNoOfficeRole_DeniesAllOperationsWithoutChanges(role: \"CruiseManager\", expected: Forbidden)"
+        },
+        {
+          "seconds": 1.179,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CruiseEffectScoringTests.Effects_WhenSubmittedThenReplaced_ScoreBothManagersAndFeedNextApplication"
+        },
+        {
+          "seconds": 1.138,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: True)"
+        },
+        {
+          "seconds": 1.119,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.UploadFieldInputTests.Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles(target: 1, draft: True, name: False)"
+        }
+      ],
+      "sampled_median_frequency_khz": {
+        "median": 2876170.0,
+        "min": 1379943.0,
+        "max": 3560509.5
+      },
+      "evidence": {
+        "reports": "backend/artifacts/tests/run-hbEIDG",
+        "log": "backend/artifacts/evidence/cutover-perf-warm-4.log",
+        "frontend": "backend/artifacts/evidence/cutover-perf-warm-4-frontend.xml"
       }
     },
     {
       "iteration": 5,
-      "cache_state": "warm",
-      "root_seconds": 170.978,
-      "job_seconds": null,
-      "build_seconds": [
-        1.34
-      ],
+      "root_seconds": 215.536,
       "suite_seconds": {
-        "legacy-unreviewed": 7.363,
-        "Unit": 0.805,
-        "Integration": 164.911
+        "Unit": 1.126,
+        "Integration": 209.688
       },
-      "sql_case_seconds_sum": 133.412,
+      "build_seconds": [
+        1.28
+      ],
       "phases": {
         "Application host": {
-          "count": 313,
-          "sum_seconds": 16.183,
-          "median_ms": 49,
-          "max_ms": 706
+          "count": 433,
+          "sum_seconds": 20.829,
+          "median_ms": 44,
+          "max_ms": 623
         },
         "SQL reset": {
-          "count": 620,
-          "sum_seconds": 6.362,
-          "median_ms": 12.5,
-          "max_ms": 112
+          "count": 858,
+          "sum_seconds": 8.488,
+          "median_ms": 11.5,
+          "max_ms": 127
         },
         "SQL startup": {
           "count": 1,
-          "sum_seconds": 14.668,
-          "median_ms": 14668,
-          "max_ms": 14668
+          "sum_seconds": 19.751,
+          "median_ms": 19751,
+          "max_ms": 19751
         },
         "SQL migrations": {
           "count": 1,
-          "sum_seconds": 4.621,
-          "median_ms": 4621,
-          "max_ms": 4621
+          "sum_seconds": 4.72,
+          "median_ms": 4720,
+          "max_ms": 4720
         },
         "SQL reset planning": {
           "count": 1,
-          "sum_seconds": 0.15,
-          "median_ms": 150,
-          "max_ms": 150
+          "sum_seconds": 0.176,
+          "median_ms": 176,
+          "max_ms": 176
         }
       },
-      "slowest_sql_case": {
-        "seconds": 2.683,
-        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
-      }
-    },
-    {
-      "iteration": 6,
-      "cache_state": "warm",
-      "root_seconds": 170.699,
-      "job_seconds": null,
-      "build_seconds": [
-        2.01
+      "sql_case_seconds_sum": 173.534,
+      "slowest_sql_cases": [
+        {
+          "seconds": 2.488,
+          "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+        },
+        {
+          "seconds": 2.008,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: True)"
+        },
+        {
+          "seconds": 1.657,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: False)"
+        },
+        {
+          "seconds": 1.621,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CruiseEffectScoringTests.Effects_WhenSubmittedThenReplaced_ScoreBothManagersAndFeedNextApplication"
+        },
+        {
+          "seconds": 1.568,
+          "test": "ResearchCruiseApp.IntegrationTests.Auth.RoleManagementTests.Grant_WhenActorIsNotAllowed_DeniesWithoutChangingMembership(actorRole: \"Shipowner\", requestedRole: \"Administrator\", expected: Forbidden)"
+        },
+        {
+          "seconds": 1.403,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormFieldInputTests.Final_WhenStoredFieldsAreValid_SubmitsNormally(target: 1)"
+        },
+        {
+          "seconds": 1.368,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.UploadFieldInputTests.Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles(target: 1, draft: True, name: False)"
+        },
+        {
+          "seconds": 1.172,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.UploadFieldInputTests.Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles(target: 5, draft: True, name: True)"
+        },
+        {
+          "seconds": 1.167,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: True)"
+        },
+        {
+          "seconds": 1.123,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: False)"
+        }
       ],
-      "suite_seconds": {
-        "legacy-unreviewed": 7.125,
-        "Unit": 0.606,
-        "Integration": 163.537
+      "sampled_median_frequency_khz": {
+        "median": 2607847.5,
+        "min": 400000.0,
+        "max": 3482388.0
       },
-      "sql_case_seconds_sum": 132.404,
-      "phases": {
-        "Application host": {
-          "count": 313,
-          "sum_seconds": 15.96,
-          "median_ms": 48,
-          "max_ms": 707
-        },
-        "SQL reset": {
-          "count": 620,
-          "sum_seconds": 6.282,
-          "median_ms": 12.0,
-          "max_ms": 113
-        },
-        "SQL startup": {
-          "count": 1,
-          "sum_seconds": 14.442,
-          "median_ms": 14442,
-          "max_ms": 14442
-        },
-        "SQL migrations": {
-          "count": 1,
-          "sum_seconds": 4.61,
-          "median_ms": 4610,
-          "max_ms": 4610
-        },
-        "SQL reset planning": {
-          "count": 1,
-          "sum_seconds": 0.145,
-          "median_ms": 145,
-          "max_ms": 145
-        }
-      },
-      "slowest_sql_case": {
-        "seconds": 2.605,
-        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+      "evidence": {
+        "reports": "backend/artifacts/tests/run-EuSr7M",
+        "log": "backend/artifacts/evidence/cutover-perf-warm-5.log",
+        "frontend": "backend/artifacts/evidence/cutover-perf-warm-5-frontend.xml"
       }
     }
   ],
   "hosted": [
     {
       "iteration": 1,
-      "cache_state": "fresh hosted checkout/build; dependency caches may restore",
-      "root_seconds": 234.0,
-      "job_seconds": 273.0,
-      "build_seconds": [
-        31.53
-      ],
+      "root_seconds": 254.0,
+      "job_seconds": 280.0,
       "suite_seconds": {
-        "legacy-unreviewed": 23.471,
-        "Unit": 1.578,
-        "Integration": 190.624
+        "Unit": 1.439,
+        "Integration": 207.121
       },
-      "sql_case_seconds_sum": 154.192,
+      "build_seconds": [
+        27.09
+      ],
       "phases": {
         "Application host": {
-          "count": 313,
-          "sum_seconds": 18.777,
-          "median_ms": 44,
-          "max_ms": 816
+          "count": 433,
+          "sum_seconds": 20.479,
+          "median_ms": 38,
+          "max_ms": 678
         },
         "SQL reset": {
-          "count": 620,
-          "sum_seconds": 8.543,
+          "count": 858,
+          "sum_seconds": 5.758,
           "median_ms": 4.0,
-          "max_ms": 1042
+          "max_ms": 345
         },
         "SQL startup": {
           "count": 1,
-          "sum_seconds": 30.809,
-          "median_ms": 30809,
-          "max_ms": 30809
+          "sum_seconds": 27.396,
+          "median_ms": 27396,
+          "max_ms": 27396
         },
         "SQL migrations": {
           "count": 1,
-          "sum_seconds": 3.654,
-          "median_ms": 3654,
-          "max_ms": 3654
+          "sum_seconds": 3.805,
+          "median_ms": 3805,
+          "max_ms": 3805
         },
         "SQL reset planning": {
           "count": 1,
-          "sum_seconds": 0.307,
-          "median_ms": 307,
-          "max_ms": 307
+          "sum_seconds": 0.098,
+          "median_ms": 98,
+          "max_ms": 98
         }
       },
-      "slowest_sql_case": {
-        "seconds": 2.496,
-        "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
-      },
-      "url": "https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/36779592547/attempts/1",
-      "started_at": "2026-09-30T21:28:01Z",
-      "completed_at": "2026-09-30T21:32:34Z",
+      "sql_case_seconds_sum": 174.02,
+      "slowest_sql_cases": [
+        {
+          "seconds": 1.913,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CruiseEffectScoringTests.Effects_WhenSubmittedThenReplaced_ScoreBothManagersAndFeedNextApplication"
+        },
+        {
+          "seconds": 1.813,
+          "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+        },
+        {
+          "seconds": 1.333,
+          "test": "ResearchCruiseApp.IntegrationTests.Auth.LoginTests.Login_WhenAcceptedAndConfirmed_ReturnsAccessTokenAndProtectedRefreshSession(environment: \"Testing\", secure: True)"
+        },
+        {
+          "seconds": 1.251,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: False)"
+        },
+        {
+          "seconds": 1.233,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Write_WhenContractScanIsInvalid_PreservesDraftAndOriginalFiles(draft: False)"
+        },
+        {
+          "seconds": 1.107,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: True)"
+        },
+        {
+          "seconds": 1.009,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: True)"
+        },
+        {
+          "seconds": 1.007,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CatalogPaginationTests.Pages_WhenSortValuesTie_ReturnEveryApplicationOnceInOrder(sortBy: \"date\", descending: True)"
+        },
+        {
+          "seconds": 0.945,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormBWorkflowTests.FormB_WhenSavedReplacedSubmittedAndReopened_PersistsExpectedStateAndChildren"
+        },
+        {
+          "seconds": 0.904,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CatalogPaginationTests.Pages_WhenApplicationsAreRestricted_FilterBeforePagingAndHideOtherDrafts(role: \"Administrator\", canViewOthers: True)"
+        }
+      ],
+      "url": "https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/37076802831/attempts/1",
       "environment_lines": [
         "CPU(s):                                  4",
         "Model name:                              AMD EPYC 9V74 80-Core Processor",
+        "NUMA node0 CPU(s):                       0-3",
         "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\""
       ]
     },
     {
       "iteration": 2,
-      "cache_state": "fresh hosted checkout/build; dependency caches may restore",
-      "root_seconds": 172.0,
-      "job_seconds": 215.0,
-      "build_seconds": [
-        30.63
-      ],
+      "root_seconds": 270.0,
+      "job_seconds": 294.0,
       "suite_seconds": {
-        "legacy-unreviewed": 19.411,
-        "Unit": 0.799,
-        "Integration": 126.125
+        "Unit": 1.683,
+        "Integration": 227.05
       },
-      "sql_case_seconds_sum": 96.239,
+      "build_seconds": [
+        31.85
+      ],
       "phases": {
         "Application host": {
-          "count": 313,
-          "sum_seconds": 13.345,
-          "median_ms": 38,
-          "max_ms": 661
+          "count": 433,
+          "sum_seconds": 22.405,
+          "median_ms": 45,
+          "max_ms": 887
         },
         "SQL reset": {
-          "count": 620,
-          "sum_seconds": 2.45,
+          "count": 858,
+          "sum_seconds": 3.806,
           "median_ms": 4.0,
-          "max_ms": 95
+          "max_ms": 124
         },
         "SQL startup": {
           "count": 1,
-          "sum_seconds": 25.825,
-          "median_ms": 25825,
-          "max_ms": 25825
+          "sum_seconds": 29.009,
+          "median_ms": 29009,
+          "max_ms": 29009
         },
         "SQL migrations": {
           "count": 1,
-          "sum_seconds": 2.646,
-          "median_ms": 2646,
-          "max_ms": 2646
+          "sum_seconds": 4.159,
+          "median_ms": 4159,
+          "max_ms": 4159
         },
         "SQL reset planning": {
           "count": 1,
-          "sum_seconds": 0.081,
-          "median_ms": 81,
-          "max_ms": 81
+          "sum_seconds": 0.121,
+          "median_ms": 121,
+          "max_ms": 121
         }
       },
-      "slowest_sql_case": {
-        "seconds": 1.65,
-        "test": "ResearchCruiseApp.IntegrationTests.Applications.CruiseEffectScoringTests.Effects_WhenSubmittedThenReplaced_ScoreBothManagersAndFeedNextApplication"
-      },
-      "url": "https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/36779592547/attempts/2",
-      "started_at": "2026-09-30T21:32:54Z",
-      "completed_at": "2026-09-30T21:36:29Z",
+      "sql_case_seconds_sum": 191.921,
+      "slowest_sql_cases": [
+        {
+          "seconds": 2.533,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CruiseEffectScoringTests.Effects_WhenSubmittedThenReplaced_ScoreBothManagersAndFeedNextApplication"
+        },
+        {
+          "seconds": 1.843,
+          "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+        },
+        {
+          "seconds": 1.688,
+          "test": "ResearchCruiseApp.IntegrationTests.Auth.LoginTests.Login_WhenAcceptedAndConfirmed_ReturnsAccessTokenAndProtectedRefreshSession(environment: \"Testing\", secure: True)"
+        },
+        {
+          "seconds": 1.465,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: False)"
+        },
+        {
+          "seconds": 1.446,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Write_WhenContractScanIsInvalid_PreservesDraftAndOriginalFiles(draft: False)"
+        },
+        {
+          "seconds": 1.433,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: True)"
+        },
+        {
+          "seconds": 1.29,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: True)"
+        },
+        {
+          "seconds": 1.185,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormBWorkflowTests.FormB_WhenSavedReplacedSubmittedAndReopened_PersistsExpectedStateAndChildren"
+        },
+        {
+          "seconds": 1.11,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CatalogPaginationTests.Pages_WhenApplicationsAreRestricted_FilterBeforePagingAndHideOtherDrafts(role: \"Administrator\", canViewOthers: True)"
+        },
+        {
+          "seconds": 1.078,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CatalogPaginationTests.Pages_WhenApplicationsAreRestricted_FilterBeforePagingAndHideOtherDrafts(role: \"CruiseManager\", canViewOthers: False)"
+        }
+      ],
+      "url": "https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/37076802831/attempts/2",
       "environment_lines": [
         "CPU(s):                                  4",
-        "Model name:                              AMD EPYC 9V45 96-Core Processor",
+        "Model name:                              AMD EPYC 7763 64-Core Processor",
+        "NUMA node0 CPU(s):                       0-3",
         "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\""
       ]
     },
     {
       "iteration": 3,
-      "cache_state": "fresh hosted checkout/build; dependency caches may restore",
-      "root_seconds": 219.0,
-      "job_seconds": 250.0,
-      "build_seconds": [
-        31.15
-      ],
+      "root_seconds": 197.0,
+      "job_seconds": 228.0,
       "suite_seconds": {
-        "legacy-unreviewed": 23.525,
-        "Unit": 1.501,
-        "Integration": 175.492
+        "Unit": 0.934,
+        "Integration": 156.368
       },
-      "sql_case_seconds_sum": 138.023,
+      "build_seconds": [
+        30.2
+      ],
       "phases": {
         "Application host": {
-          "count": 313,
-          "sum_seconds": 16.746,
-          "median_ms": 46,
-          "max_ms": 1016
+          "count": 433,
+          "sum_seconds": 17.09,
+          "median_ms": 34,
+          "max_ms": 614
         },
         "SQL reset": {
-          "count": 620,
-          "sum_seconds": 2.842,
+          "count": 858,
+          "sum_seconds": 3.292,
           "median_ms": 4.0,
-          "max_ms": 132
+          "max_ms": 92
         },
         "SQL startup": {
           "count": 1,
-          "sum_seconds": 30.901,
-          "median_ms": 30901,
-          "max_ms": 30901
+          "sum_seconds": 24.869,
+          "median_ms": 24869,
+          "max_ms": 24869
         },
         "SQL migrations": {
           "count": 1,
-          "sum_seconds": 4.775,
-          "median_ms": 4775,
-          "max_ms": 4775
+          "sum_seconds": 3.192,
+          "median_ms": 3192,
+          "max_ms": 3192
         },
         "SQL reset planning": {
           "count": 1,
-          "sum_seconds": 0.119,
-          "median_ms": 119,
-          "max_ms": 119
+          "sum_seconds": 0.091,
+          "median_ms": 91,
+          "max_ms": 91
         }
       },
-      "slowest_sql_case": {
-        "seconds": 2.35,
-        "test": "ResearchCruiseApp.IntegrationTests.Applications.CruiseEffectScoringTests.Effects_WhenSubmittedThenReplaced_ScoreBothManagersAndFeedNextApplication"
-      },
-      "url": "https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/36779592547/attempts/3",
-      "started_at": "2026-09-30T21:36:53Z",
-      "completed_at": "2026-09-30T21:41:03Z",
+      "sql_case_seconds_sum": 126.506,
+      "slowest_sql_cases": [
+        {
+          "seconds": 1.695,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CruiseEffectScoringTests.Effects_WhenSubmittedThenReplaced_ScoreBothManagersAndFeedNextApplication"
+        },
+        {
+          "seconds": 1.284,
+          "test": "ResearchCruiseApp.IntegrationTests.Persistence.UpgradeTests.Migrate_WhenUpgradingFromV251_PreservesIdentityApplicationCruiseAndFile"
+        },
+        {
+          "seconds": 1.276,
+          "test": "ResearchCruiseApp.IntegrationTests.Auth.LoginTests.Login_WhenAcceptedAndConfirmed_ReturnsAccessTokenAndProtectedRefreshSession(environment: \"Testing\", secure: True)"
+        },
+        {
+          "seconds": 1.007,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Write_WhenContractScanIsInvalid_PreservesDraftAndOriginalFiles(draft: False)"
+        },
+        {
+          "seconds": 1.006,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: False)"
+        },
+        {
+          "seconds": 0.872,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormReplacementTests.Replace_WhenChildrenAreShared_PreservesOtherApplicationAndEquipmentMoves(formC: True)"
+        },
+        {
+          "seconds": 0.839,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.ContractScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsReplacementAndFinalSubmission(dataUri: True)"
+        },
+        {
+          "seconds": 0.802,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.FormBWorkflowTests.FormB_WhenSavedReplacedSubmittedAndReopened_PersistsExpectedStateAndChildren"
+        },
+        {
+          "seconds": 0.751,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.PermissionScanHttpTests.Scan_WhenAtSizeBoundary_RoundTripsAndCanBeReplacedThenRemoved(formC: False, dataUri: True)"
+        },
+        {
+          "seconds": 0.701,
+          "test": "ResearchCruiseApp.IntegrationTests.Applications.CatalogPaginationTests.Pages_WhenApplicationsAreRestricted_FilterBeforePagingAndHideOtherDrafts(role: \"Administrator\", canViewOthers: True)"
+        }
+      ],
+      "url": "https://github.com/VV01T3K/ResearchCruiseApp/actions/runs/37076802831/attempts/3",
       "environment_lines": [
         "CPU(s):                                  4",
-        "Model name:                              AMD EPYC 9V74 80-Core Processor",
+        "Model name:                              AMD EPYC 9V45 96-Core Processor",
+        "NUMA node0 CPU(s):                       0-3",
         "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\""
       ]
     }
-  ]
+  ],
+  "summary": {
+    "local_root": {
+      "runs": 5,
+      "median_seconds": 215.536,
+      "max_seconds": 224.833,
+      "min_seconds": 205.726
+    },
+    "local_sql": {
+      "runs": 5,
+      "median_seconds": 209.688,
+      "max_seconds": 219.953,
+      "min_seconds": 200.632
+    },
+    "hosted_root": {
+      "runs": 3,
+      "median_seconds": 254.0,
+      "max_seconds": 270.0,
+      "min_seconds": 197.0
+    },
+    "hosted_job": {
+      "runs": 3,
+      "median_seconds": 280.0,
+      "max_seconds": 294.0,
+      "min_seconds": 228.0
+    },
+    "hosted_sql": {
+      "runs": 3,
+      "median_seconds": 207.121,
+      "max_seconds": 227.05,
+      "min_seconds": 156.368
+    }
+  },
+  "proposed_budgets_seconds": {
+    "local_root_warm": 270,
+    "local_sql_warm": 240,
+    "local_unit": 5,
+    "hosted_workspace": 330,
+    "hosted_job": 360,
+    "hosted_sql": 300,
+    "hosted_unit": 5
+  }
 }
