@@ -31,7 +31,7 @@ it('leaves form errors to the form without a duplicate notification', async () =
   expect(showError).not.toHaveBeenCalled();
 });
 
-it('reports failed data loading', async () => {
+it('leaves failed first loads to the page that needs the data', async () => {
   const showError = vi.spyOn(toast, 'error').mockReturnValue('test');
   await expect(
     queryClient.query({
@@ -42,5 +42,21 @@ it('reports failed data loading', async () => {
       },
     })
   ).rejects.toThrow('Serwer niedostępny');
-  expect(showError).toHaveBeenCalledExactlyOnceWith('Nie udało się wczytać danych: Serwer niedostępny');
+  expect(showError).not.toHaveBeenCalled();
+});
+
+it('reports a failed background refresh once', async () => {
+  const showError = vi.spyOn(toast, 'error').mockReturnValue('test');
+  queryClient.setQueryData(['stale'], 'stare dane');
+  await expect(
+    queryClient.query({
+      queryKey: ['stale'],
+      staleTime: 0,
+      retry: false,
+      queryFn: async () => {
+        throw new ApiError('Serwer niedostępny', 503);
+      },
+    })
+  ).rejects.toThrow('Serwer niedostępny');
+  expect(showError).toHaveBeenCalledExactlyOnceWith('Nie udało się odświeżyć danych: Serwer niedostępny');
 });

@@ -66,6 +66,7 @@ export function FormView({ context }: Props) {
         <CollectedSamplesSection context={context} />
         <SPUBReportDataSection context={context} />
         <AdditionalDescriptionSection context={context} />
+        <form.FormErrors />
         <ActionsSection
           onSaveDraft={context.onSaveDraft}
           onPrint={handlePrint}

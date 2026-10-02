@@ -144,7 +144,7 @@ export function AppDatePickerInput({
       <div className="flex flex-col" data-testid={testId}>
         <AppInputLabel name={accessibility.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div ref={inputRef}>
-          <input type="hidden" name={name} value={value} disabled={disabled} />
+          <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
           <AppButton
             name={name}
             disabled={disabled}

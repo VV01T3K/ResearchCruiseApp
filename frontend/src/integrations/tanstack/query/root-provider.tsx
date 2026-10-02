@@ -4,7 +4,11 @@ import { toast } from '@/components/shared/layout/toast';
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
-    onError: (error) => toast.error(getErrorMessage(error, 'Nie udało się wczytać danych')),
+    // Failed first loads are shown by the page that needs the data; a failed background refresh
+    // leaves stale data on screen, so it gets a notification.
+    onError: (error, query) => {
+      if (query.state.data !== undefined) toast.error(getErrorMessage(error, 'Nie udało się odświeżyć danych'));
+    },
   }),
   mutationCache: new MutationCache({
     onError: (error, _variables, _context, mutation) => {

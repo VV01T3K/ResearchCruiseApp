@@ -6,10 +6,9 @@ import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
+import { INVALID_FORM_MESSAGE, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { FormView } from './-components/formB/FormView';
 import {
-  FORM_B_FIELD_TO_SECTION,
   type FormBValues,
   formBDefaultValues,
   getFormBSubmissionSchema,
@@ -65,7 +64,7 @@ function FormBPage() {
     onSubmit: async ({ value }) => handleValidSubmit(value),
     onSubmitInvalid: () => {
       if (!form.state.values.draft) trackFormSubmit('form-b', 'invalid', form.state);
-      toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
+      toast.error(INVALID_FORM_MESSAGE);
       navigateToFirstError();
     },
   });

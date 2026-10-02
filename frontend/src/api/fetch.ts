@@ -1,5 +1,5 @@
 import config from '@/config';
-import type { ProblemDetails } from '@/api/generated/schemas';
+import type { HttpValidationProblemDetails } from '@/api/generated/schemas';
 import { getValidAccessToken, refreshSession } from '@/integrations/auth/session';
 import { ApiError, responseErrorMessage } from './errors';
 
@@ -34,8 +34,8 @@ export async function customFetch<T>(url: string, options: RequestInit): Promise
 
   const body = await parseResponse(response);
   if (!response.ok) {
-    const problem = typeof body === 'object' && body !== null ? (body as ProblemDetails) : undefined;
-    throw new ApiError(responseErrorMessage(response.status, body), response.status, problem);
+    const problem = typeof body === 'object' && body !== null ? (body as HttpValidationProblemDetails) : undefined;
+    throw new ApiError(responseErrorMessage(response.status, problem), response.status, problem);
   }
 
   return body as T;

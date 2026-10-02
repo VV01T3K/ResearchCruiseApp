@@ -40,20 +40,6 @@ import {
   UgTeamValuesSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
 
-export const FORM_B_FIELD_TO_SECTION: Record<string, number> = {
-  isCruiseManagerPresent: 2,
-  permissions: 4,
-  ugTeams: 9,
-  guestTeams: 9,
-  crewMembers: 9,
-  shortResearchEquipments: 12,
-  longResearchEquipments: 12,
-  ports: 12,
-  cruiseDaysDetails: 13,
-  researchEquipments: 14,
-  shipEquipmentsIds: 15,
-};
-
 const FormBInputSchema = z.object({
   draft: z.boolean().optional(),
   isCruiseManagerPresent: z.boolean(),
