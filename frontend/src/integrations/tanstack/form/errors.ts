@@ -17,11 +17,12 @@ export function getErrors(meta: AnyFieldMeta, submissionAttempts = 0): string[] 
 export function getFormLevelErrors(form: AnyFormApi, errorMap = form.state.errorMap): string[] {
   return Object.values(errorMap).flatMap((error): string[] => {
     if (!error) return [];
+    // Server form errors are message lists.
     if (Array.isArray(error)) return error.map(getMessage);
     if (typeof error !== 'object') return [getMessage(error)];
-    // Schema validators report every issue keyed by field path; mounted fields show their own.
+    // Schema validators key issue lists by field path; mounted fields show their own.
     return Object.entries(error).flatMap(([path, issues]) =>
-      path && form.getFieldInfo(path).instance ? [] : (issues as unknown[]).map(getMessage)
+      Array.isArray(issues) && !(path && form.getFieldInfo(path).instance) ? issues.map(getMessage) : []
     );
   });
 }
@@ -45,7 +46,10 @@ export function navigateToFirstError(): void {
 /** Shows a failed save's reasons: field errors under mounted fields, everything else at form level. */
 export function setServerFormErrors(form: AnyFormApi, error: unknown): void {
   if (!(error instanceof ApiError) || !error.problem?.errors) {
-    form.setErrorMap({ onServer: { form: [getProblemDetail(error, 'Nieznany błąd. Spróbuj ponownie.')] } });
+    // `fields` makes TanStack treat this as a form validation error and store only the form messages.
+    form.setErrorMap({
+      onServer: { fields: {}, form: [getProblemDetail(error, 'Nieznany błąd. Spróbuj ponownie.')] },
+    });
     return;
   }
   const fields: Record<string, string[]> = {};

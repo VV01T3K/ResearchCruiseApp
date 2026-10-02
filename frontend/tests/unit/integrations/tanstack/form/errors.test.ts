@@ -38,6 +38,7 @@ it('keeps the reason of failures without field errors at form level', () => {
   const unmount = form.mount();
   try {
     setServerFormErrors(form, apiError(403, { detail: 'Obecnie nie można przesłać formularza.' }));
+    expect(form.state.errorMap.onServer).toEqual(['Obecnie nie można przesłać formularza.']);
     expect(getFormLevelErrors(form)).toEqual(['Obecnie nie można przesłać formularza.']);
     setServerFormErrors(form, new TypeError('Failed to fetch'));
     expect(getFormLevelErrors(form)).toEqual([
@@ -67,4 +68,11 @@ it('reports root-level and unmounted client issues, but not issues shown by moun
     unmountField();
     unmount();
   }
+});
+
+it('ignores form-level values that are not issue lists', () => {
+  const form = new FormApi({ defaultValues: { name: '' }, onSubmitMeta: undefined });
+  expect(
+    getFormLevelErrors(form, { onServer: ['Serwer'], onDynamic: { name: 'nie lista', '': [{ message: 'Formularz' }] } })
+  ).toEqual(['Serwer', 'Formularz']);
 });
