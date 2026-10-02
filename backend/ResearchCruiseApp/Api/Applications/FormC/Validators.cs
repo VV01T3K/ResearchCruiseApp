@@ -65,7 +65,18 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
         collections
             .RuleFor(fields => fields.LongResearchEquipments)
             .NotNull()
-            .ForEach(item => item.NotNull());
+            .ForEach(item =>
+                item.NotNull()
+                    .ChildRules(equipment =>
+                        equipment
+                            .RuleFor(fields => fields.Action)
+                            .Must(value =>
+                                Enum.TryParse<ResearchEquipmentAction>(value, out var action)
+                                && Enum.IsDefined(action)
+                            )
+                            .WithMessage("Podany rodzaj operacji sprzętu jest nieprawidłowy.")
+                    )
+            );
         collections.RuleFor(fields => fields.Ports).NotNull().ForEach(item => item.NotNull());
         collections
             .RuleFor(fields => fields.CruiseDaysDetails)
