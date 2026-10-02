@@ -8,7 +8,8 @@ using Testcontainers.MsSql;
 
 namespace ResearchCruiseApp.IntegrationTests.Infrastructure;
 
-[CollectionDefinition(Name)]
+// Telemetry hosts initialize a process-wide SDK; keep other host collections separate.
+[CollectionDefinition(Name, DisableParallelization = true)]
 public sealed class SqlTestCollectionDefinition : ICollectionFixture<SqlFixture>
 {
     public const string Name = "SQL Server";
