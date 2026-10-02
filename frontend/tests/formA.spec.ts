@@ -123,7 +123,7 @@ test('centers the first invalid field after submit', async ({ formAPage }) => {
 test('shows server validation errors on their fields', async ({ formAPage }) => {
   await formAPage.fillForm();
   await formAPage.failSaveWith(400, {
-    errors: { 'Form.SupervisorEmail': ['Adres przełożonego został odrzucony'] },
+    errors: { 'form.supervisorEmail': ['Adres przełożonego został odrzucony'] },
   });
 
   await formAPage.submitButton.click();

@@ -8,11 +8,11 @@ it('shows root and unmounted server errors instead of losing their reason', () =
   const form = new FormApi({ defaultValues: { name: '' }, onSubmitMeta: undefined });
   const unmount = form.mount();
   try {
-    expect(setServerFormErrors(form, { problem: { errors: { Form: ['Nie można zapisać wersji roboczej'] } } })).toBe(
+    expect(setServerFormErrors(form, { problem: { errors: { form: ['Nie można zapisać wersji roboczej'] } } })).toBe(
       true
     );
     expect(getFormErrorMessage(form, {})).toContain('Nie można zapisać wersji roboczej');
-    setServerFormErrors(form, { problem: { errors: { 'Form.MissingProperty': ['Nieprawidłowy stan zgłoszenia'] } } });
+    setServerFormErrors(form, { problem: { errors: { 'form.missingProperty': ['Nieprawidłowy stan zgłoszenia'] } } });
     expect(getFormErrorMessage(form, {})).toContain('Nieprawidłowy stan zgłoszenia');
   } finally {
     unmount();
@@ -25,7 +25,7 @@ it('keeps mounted field errors next to the input', () => {
   const field = new FieldApi({ form, name: 'name' });
   const unmountField = field.mount();
   try {
-    setServerFormErrors(form, { problem: { errors: { 'Form.Name': ['Ta nazwa jest zajęta'] } } });
+    setServerFormErrors(form, { problem: { errors: { 'form.name': ['Ta nazwa jest zajęta'] } } });
     expect(field.state.meta.errors.flat()).toContain('Ta nazwa jest zajęta');
     expect(getFormErrorMessage(form, {})).toContain('Ta nazwa jest zajęta');
   } finally {
@@ -42,9 +42,9 @@ it('keeps every reason from a mixed response while annotating mounted fields', (
   const problem = {
     detail: 'Zgłoszenie jest zablokowane',
     errors: {
-      'Form.Permissions[0].Description': ['Opis jest za długi'],
-      Form: ['Nieprawidłowy stan wersji roboczej'],
-      'Form.Missing': ['Nieprawidłowe powiązanie'],
+      'form.permissions[0].description': ['Opis jest za długi'],
+      form: ['Nieprawidłowy stan wersji roboczej'],
+      'form.missing': ['Nieprawidłowe powiązanie'],
     },
   };
   const error = new ApiError(responseErrorMessage(400, problem), 400, problem);
@@ -71,7 +71,7 @@ it('lists a message once when server and client validation both report it', asyn
   const unmountField = field.mount();
   try {
     await form.handleSubmit();
-    setServerFormErrors(form, { problem: { errors: { Email: ['Adres jest wymagany', 'Adres jest zajęty'] } } });
+    setServerFormErrors(form, { problem: { errors: { email: ['Adres jest wymagany', 'Adres jest zajęty'] } } });
     expect(getErrors(field.state.meta, 1)).toEqual(['Adres jest wymagany', 'Adres jest zajęty']);
   } finally {
     unmountField();

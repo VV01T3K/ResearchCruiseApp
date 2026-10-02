@@ -74,9 +74,9 @@ test('failed draft saves explain the reason and retain partial rows for retry', 
       body: {
         detail: 'Zgłoszenie jest zablokowane.',
         errors: {
-          'Form.IsCruiseManagerPresent': ['Obecność kierownika została odrzucona'],
-          Form: ['Nieprawidłowy stan wersji roboczej'],
-          'Form.UnknownField': ['Nieprawidłowe powiązanie'],
+          'form.isCruiseManagerPresent': ['Obecność kierownika została odrzucona'],
+          form: ['Nieprawidłowy stan wersji roboczej'],
+          'form.unknownField': ['Nieprawidłowe powiązanie'],
         },
       },
       inline: 'Obecność kierownika została odrzucona',

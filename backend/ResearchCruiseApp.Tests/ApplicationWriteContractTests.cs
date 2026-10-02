@@ -2,6 +2,7 @@ using System.Text.Json;
 using FluentValidation;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.Infrastructure.Files;
 using Xunit;
 
@@ -99,7 +100,19 @@ public sealed class ApplicationWriteContractTests
                     )
                     .Errors;
 
-        Assert.Contains(errors, error => error.PropertyName == "Form.Permissions[0]");
+        Assert.Contains(errors, error => error.PropertyName == "form.permissions[0]");
+    }
+
+    [Fact]
+    public void ValidationErrorsUseJsonPathsAndReadableMessages()
+    {
+        var errors = new RegisterAccountValidator()
+            .Validate(new RegisterAccountRequest("anna@example.com", "secret", "", "Nowak"))
+            .Errors;
+
+        var error = Assert.Single(errors);
+        Assert.Equal("firstName", error.PropertyName);
+        Assert.Equal("'First Name' must not be empty.", error.ErrorMessage);
     }
 
     private static FormAFields CreateEmptyFormA() =>

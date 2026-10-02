@@ -356,8 +356,8 @@ test('backend cruise field paths annotate the matching inputs', async ({ page })
           status: 400,
           json: {
             errors: {
-              DeputyManagerId: ['Zastępca jest niedostępny w tym terminie'],
-              'CruiseApplicationIds[0]': ['Zgłoszenie jest już przypisane'],
+              deputyManagerId: ['Zastępca jest niedostępny w tym terminie'],
+              'cruiseApplicationIds[0]': ['Zgłoszenie jest już przypisane'],
             },
           },
         })

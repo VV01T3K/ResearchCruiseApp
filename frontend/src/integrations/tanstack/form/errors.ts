@@ -69,20 +69,7 @@ export function navigateToFirstError(): void {
   });
 }
 
-function normalizeBackendFormPath(path: string): string {
-  return path
-    .replace(/^\$\.?/, '')
-    .replace(/^Form(?:\.|$)/i, '')
-    .replace(/\[(\d+)\]/g, '.$1')
-    .split('.')
-    .filter(Boolean)
-    .map((part) => (/^\d+$/.test(part) ? Number(part) : part.replace(/^[A-Z]/, (letter) => letter.toLowerCase())))
-    .reduce<string>(
-      (name, part) => (typeof part === 'number' ? `${name}[${part}]` : `${name ? `${name}.` : ''}${String(part)}`),
-      ''
-    );
-}
-
+// The backend keys errors by request JSON path; application saves wrap form values in `form`.
 function getServerFormErrors(error: unknown): Record<string, string[]> | null {
   if (typeof error !== 'object' || error === null || !('problem' in error)) return null;
   const problem = error.problem;
@@ -94,7 +81,7 @@ function getServerFormErrors(error: unknown): Record<string, string[]> | null {
       Array.isArray(messages) &&
       messages.length > 0 &&
       messages.every((message) => typeof message === 'string' && !!message.trim())
-        ? [[normalizeBackendFormPath(path), messages]]
+        ? [[path.replace(/^form(?:\.|$)/, ''), messages]]
         : []
     )
   );
