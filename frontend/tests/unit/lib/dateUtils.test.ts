@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test';
-import { formatDate, parseBackendDateTime } from './dateUtils';
+import { formatDate, parseBackendDateTime } from '@/lib/dateUtils';
 
 describe('dateUtils', () => {
   it('preserves dayjs formatting behavior for incomplete form dates', () => {

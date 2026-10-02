@@ -12,7 +12,7 @@ import {
 import {
   createSchemaAssertions,
   override,
-} from '@/routes/applications/$applicationId/-schemas/__tests__/schemaTestUtils';
+} from '@tests/unit/routes/applications/$applicationId/-schemas/schemaTestUtils';
 import type { FormBFields } from '@/api/generated/schemas';
 
 const schema = getFormBValidationSchema();

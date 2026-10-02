@@ -1,7 +1,7 @@
 import { FormApi, FieldApi } from '@tanstack/react-form';
 import { z } from 'zod';
 import { expect, it } from 'vitest';
-import { getErrors, getFormErrorMessage, setServerFormErrors } from './errors';
+import { getErrors, getFormErrorMessage, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { ApiError, getErrorMessage, responseErrorMessage } from '@/api/errors';
 
 it('shows root and unmounted server errors instead of losing their reason', () => {

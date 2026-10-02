@@ -18,7 +18,7 @@ import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/
 import {
   createSchemaAssertions,
   override,
-} from '@/routes/applications/$applicationId/-schemas/__tests__/schemaTestUtils';
+} from '@tests/unit/routes/applications/$applicationId/-schemas/schemaTestUtils';
 import type { FormAOptions } from '@/api/generated/schemas';
 import type { FormAFields } from '@/api/generated/schemas';
 

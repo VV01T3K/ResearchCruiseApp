@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ApiError, getErrorMessage, responseErrorMessage } from './errors';
+import { ApiError, getErrorMessage, responseErrorMessage } from '@/api/errors';
 
 describe('API failure reasons', () => {
   it('joins the detail with distinct validation messages', () => {

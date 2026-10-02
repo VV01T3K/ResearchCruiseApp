@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import writeXlsxFile from 'write-excel-file/node';
 
-import { parseCruiseDayDetailsFromXlsx } from './csvParser';
+import { parseCruiseDayDetailsFromXlsx } from '@/lib/applications/csvParser';
 
 async function xlsxFile(rows: (string | number | null)[][]): Promise<File> {
   const buffer = await writeXlsxFile(rows).toBuffer();

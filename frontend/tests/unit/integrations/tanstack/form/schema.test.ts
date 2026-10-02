@@ -1,11 +1,11 @@
-import { formValidationLogic } from './validation';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { describe, expect, it, vi } from 'vitest';
 import { FieldApi, FormApi } from '@tanstack/react-form';
 import { z } from 'zod';
 
-import { submissionSchema } from './schema';
+import { submissionSchema } from '@/integrations/tanstack/form/schema';
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
-import { getErrors } from './errors';
+import { getErrors } from '@/integrations/tanstack/form/errors';
 import {
   formBDefaultValues,
   getFormBSubmissionSchema,

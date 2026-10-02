@@ -1,7 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { ApiError } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
-import { queryClient } from './root-provider';
+import { queryClient } from '@/integrations/tanstack/query/root-provider';
 
 afterEach(() => {
   queryClient.clear();
