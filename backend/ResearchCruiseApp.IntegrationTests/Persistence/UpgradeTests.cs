@@ -50,7 +50,7 @@ public sealed class UpgradeTests(SqlFixture fixture)
                 UserName = "upgrade@example.invalid",
                 Email = "upgrade@example.invalid",
                 FirstName = "Anna",
-                LastName = "????",
+                LastName = "Łącka",
                 Accepted = true,
                 EmailConfirmed = true,
             };
@@ -78,7 +78,7 @@ public sealed class UpgradeTests(SqlFixture fixture)
                 CruiseHours = "24",
                 PeriodNotes = "Existing notes",
                 DifferentUsage = "",
-                CruiseGoalDescription = "Ba?tyk",
+                CruiseGoalDescription = "Bałtyk",
                 SupervisorEmail = "supervisor@example.invalid",
                 FormAContracts = [new FormAContract { Contract = contract }],
             };
@@ -122,7 +122,7 @@ public sealed class UpgradeTests(SqlFixture fixture)
             Assert.Equal("Preserve this graph", stored.Note);
             Assert.Equal(new byte[] { 1, 2, 3, 4 }, stored.SupervisorCode);
             Assert.Equal(managerId, stored.FormA!.CruiseManagerId);
-            Assert.Equal("Ba?tyk", stored.FormA.CruiseGoalDescription);
+            Assert.Equal("Bałtyk", stored.FormA.CruiseGoalDescription);
             Assert.Equal("Existing cruise", stored.Cruise!.Title);
             Assert.Equal(CruiseStatus.Confirmed, stored.Cruise.Status);
             var storedContract = Assert.Single(stored.FormA.FormAContracts).Contract;
@@ -131,7 +131,7 @@ public sealed class UpgradeTests(SqlFixture fixture)
             Assert.Equal("umowa.txt", file.FileName);
             Assert.Equal(new byte[] { 0, 1, 127, 255 }, file.FileContent);
             Assert.Equal(
-                "????",
+                "Łącka",
                 (
                     await verification.Users.SingleAsync(
                         row => row.Id == user.Id,
