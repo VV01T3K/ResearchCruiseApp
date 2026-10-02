@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import writeXlsxFile from 'write-excel-file/node';
 
-import { parseCruiseDayDetailsFromXlsx } from '@/lib/applications/csvParser';
+import { parseCruiseDayDetailsFromFile, parseCruiseDayDetailsFromXlsx } from '@/lib/applications/csvParser';
 
 async function xlsxFile(rows: (string | number | null)[][]): Promise<File> {
   const buffer = await writeXlsxFile(rows).toBuffer();
@@ -38,5 +38,21 @@ describe('parseCruiseDayDetailsFromXlsx', () => {
     const file = new File(['not a spreadsheet'], 'broken.xlsx');
 
     await expect(parseCruiseDayDetailsFromXlsx(file)).rejects.toThrow('Nie udało się przeanalizować pliku XLSX');
+  });
+});
+
+describe('parseCruiseDayDetailsFromFile', () => {
+  it.each(['dni.csv', 'dni.txt'])('reads %s as CSV text', async (name) => {
+    const file = new File(['Dzien;Godziny;Zadanie\n1;12;Pomiary CTD'], name);
+
+    await expect(parseCruiseDayDetailsFromFile(file)).resolves.toMatchObject([
+      { number: 1, hours: 12, taskName: 'Pomiary CTD' },
+    ]);
+  });
+
+  it('rejects other formats instead of reading them as CSV', async () => {
+    const file = new File(['binary'], 'dni.xls');
+
+    await expect(parseCruiseDayDetailsFromFile(file)).rejects.toThrow('Nieobsługiwany format pliku');
   });
 });

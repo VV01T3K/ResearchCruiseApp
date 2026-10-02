@@ -138,6 +138,18 @@ test('server errors stay under fields inside table rows', async ({ formBPage, pa
   await expect(page.getByTestId('form-errors')).toHaveCount(0);
 });
 
+test('cruise day import rejects unsupported spreadsheet formats', async ({ formBPage, page }) => {
+  await formBPage.fillForm();
+  await page.locator('input[type="file"][accept=".csv,.txt,.xlsx"]').setInputFiles({
+    name: 'dni.xls',
+    mimeType: 'application/vnd.ms-excel',
+    buffer: Buffer.from('binary'),
+  });
+
+  await expect(page.getByTestId('toast-error')).toContainText('Nieobsługiwany format pliku');
+  await expect(page.getByTestId('cruise-day-task-name-input')).toHaveCount(0);
+});
+
 test('all sections filled with invalid rows', async ({ formBPage }) => {
   // Every list-based section gets one row with empty required fields and negative counts
   await formBPage.fillForm({ withInvalidRows: true });

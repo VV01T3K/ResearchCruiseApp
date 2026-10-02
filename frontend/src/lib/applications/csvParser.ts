@@ -176,23 +176,6 @@ function parseCSVLine(line: string, delimiter: string): string[] {
   return result;
 }
 
-export async function readFileAsText(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target?.result;
-      if (typeof content === 'string') {
-        resolve(content);
-      } else {
-        reject(new Error('Nie udało się odczytać pliku jako tekst'));
-      }
-    };
-    reader.onerror = () => {
-      reject(new Error('Nie udało się odczytać pliku'));
-    };
-    reader.readAsText(file);
-  });
-}
 /**
  * Parses an XLSX file and converts it to an array of CruiseDayValues objects
  * Supports the same columns as CSV: number/day/dzien, hours/godziny/liczba godzin, taskName/task name/nazwa zadania/zadanie, region/rejon, position/pozycja, comment/uwagi
@@ -345,9 +328,8 @@ export async function parseCruiseDayDetailsFromFile(file: File): Promise<CruiseD
     return parseCruiseDayDetailsFromXlsx(file);
   }
 
-  if (fileName.endsWith('.csv')) {
-    const csvContent = await readFileAsText(file);
-    return parseCruiseDayDetailsFromCsv(csvContent);
+  if (fileName.endsWith('.csv') || fileName.endsWith('.txt')) {
+    return parseCruiseDayDetailsFromCsv(await file.text());
   }
 
   throw new Error('Nieobsługiwany format pliku. Użyj plików CSV lub XLSX.');
