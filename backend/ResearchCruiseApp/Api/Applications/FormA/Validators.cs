@@ -13,6 +13,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     {
         _fileInspector = fileInspector;
         var collections = new InlineValidator<FormAFields>();
+        collections.Include(new FormAStorageValidator());
         collections.RuleFor(fields => fields.Permissions).NotNull().ForEach(item => item.NotNull());
         collections
             .RuleFor(fields => fields.ResearchAreaDescriptions)
@@ -54,6 +55,31 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             .NotNull()
             .ForEach(item => item.NotNull());
         collections.RuleFor(fields => fields.SpubTasks).NotNull().ForEach(item => item.NotNull());
+
+        collections
+            .RuleForEach(fields => fields.Permissions)
+            .SetValidator(new PermissionStorageValidator());
+        collections
+            .RuleForEach(fields => fields.UgTeams)
+            .SetValidator(new UgTeamStorageValidator());
+        collections
+            .RuleForEach(fields => fields.GuestTeams)
+            .SetValidator(new GuestTeamStorageValidator());
+        collections
+            .RuleForEach(fields => fields.ResearchAreaDescriptions)
+            .SetValidator(new ResearchAreaSelectionStorageValidator());
+        collections
+            .RuleForEach(fields => fields.ResearchTasks)
+            .SetValidator(new ResearchTaskStorageValidator());
+        collections
+            .RuleForEach(fields => fields.Contracts)
+            .SetValidator(new ContractStorageValidator());
+        collections
+            .RuleForEach(fields => fields.SpubTasks)
+            .SetValidator(new SpubTaskStorageValidator());
+        collections
+            .RuleForEach(fields => fields.Publications)
+            .SetValidator(new PublicationStorageValidator());
 
         // Nullable period selections retain their draft/precise-period semantics.
         // Validate object structure before value rules dereference entries.

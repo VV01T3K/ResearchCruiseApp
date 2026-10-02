@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
@@ -17,20 +18,27 @@ public sealed class LoginTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     // BE-AUTH-001: real login in a fresh host, real Identity and SQL persistence.
-    [Fact]
-    public async Task Login_WhenAcceptedAndConfirmed_ReturnsAccessTokenAndProtectedRefreshSession()
+    [Theory]
+    [InlineData("Testing", true)]
+    [InlineData("Development", false)]
+    public async Task Login_WhenAcceptedAndConfirmed_ReturnsAccessTokenAndProtectedRefreshSession(
+        string environment,
+        bool secure
+    )
     {
         var cancellationToken = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
+        await using var app = new TestApplication(fixture.ConnectionString, environment);
         var user = await TestUsers.Create(app, "login@example.invalid");
         using var client = app.CreateApiClient();
 
+        var before = DateTime.UtcNow;
         using var response = await client.PostAsJsonAsync(
             "/v2/auth/login",
             new { Email = user.Email, Password = TestUsers.Password },
             cancellationToken
         );
 
+        var after = DateTime.UtcNow;
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var body = await JsonDocument.ParseAsync(
             await response.Content.ReadAsStreamAsync(cancellationToken),
@@ -42,10 +50,33 @@ public sealed class LoginTests(SqlFixture fixture) : IAsyncLifetime
             SetCookieHeaderValue.ParseList(response.Headers.GetValues("Set-Cookie").ToList()),
             header => header.Name == "rca_refresh_token"
         );
-        Assert.True(cookie.Secure);
+        Assert.Equal(secure, cookie.Secure);
         Assert.True(cookie.HttpOnly);
         Assert.Equal(SameSiteMode.Strict, cookie.SameSite);
         Assert.Equal("/", cookie.Path.Value);
+        // BE-AUTH-009: HTTP expiry agrees with the actual JWT, cookie and SQL session.
+        var accessExpiry = body.RootElement.GetProperty("accessTokenExpirationDate").GetDateTime();
+        var refreshExpiry = body
+            .RootElement.GetProperty("refreshTokenExpirationDate")
+            .GetDateTime();
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(
+            body.RootElement.GetProperty("accessToken").GetString()
+        );
+        Assert.Equal(
+            new DateTimeOffset(accessExpiry).ToUnixTimeSeconds(),
+            new DateTimeOffset(jwt.ValidTo).ToUnixTimeSeconds()
+        );
+        Assert.InRange(
+            new DateTimeOffset(accessExpiry).ToUnixTimeSeconds(),
+            new DateTimeOffset(before.AddSeconds(900)).ToUnixTimeSeconds(),
+            new DateTimeOffset(after.AddSeconds(900)).ToUnixTimeSeconds()
+        );
+        Assert.InRange(refreshExpiry, before.AddSeconds(7200), after.AddSeconds(7200));
+        Assert.NotNull(cookie.Expires);
+        Assert.Equal(
+            new DateTimeOffset(refreshExpiry).ToUnixTimeSeconds(),
+            cookie.Expires.Value.ToUnixTimeSeconds()
+        );
         await app.InDatabase(async db =>
         {
             var stored = await db.Users.SingleAsync(row => row.Id == user.Id, cancellationToken);
@@ -59,7 +90,7 @@ public sealed class LoginTests(SqlFixture fixture) : IAsyncLifetime
                 ),
                 stored.RefreshToken
             );
-            Assert.NotNull(stored.RefreshTokenExpiry);
+            Assert.Equal(refreshExpiry, stored.RefreshTokenExpiry);
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(cancellationToken));
         });
         Assert.Empty(app.Transport.Messages);

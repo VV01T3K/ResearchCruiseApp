@@ -81,7 +81,11 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             Assert.NotEmpty(
                 problem
                     .RootElement.GetProperty("errors")
-                    .GetProperty("Form.Publications[0]")
+                    .GetProperty(
+                        amount is null
+                            ? "Form.Publications[0].MinisterialPoints"
+                            : "Form.Publications[0]"
+                    )
                     .EnumerateArray()
             );
             await app.InDatabase(async db =>
