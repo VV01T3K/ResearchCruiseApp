@@ -21,7 +21,7 @@ internal sealed class TestApplication(string connectionString, string environmen
     {
         var elapsed = Stopwatch.StartNew();
         var host = base.CreateHost(builder);
-        Console.WriteLine($"Application host: {elapsed.Elapsed.TotalMilliseconds:F0} ms");
+        TestTiming.Record("Application host", elapsed.Elapsed);
         return host;
     }
 

@@ -16,10 +16,10 @@
     "ef:update": "dotnet ef database update --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext",
     "ef:migration:add": "dotnet ef migrations add --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext -o Infrastructure/Persistence/Migrations",
     "ef:migration:remove": "dotnet ef migrations remove --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext",
-    "test:unit": "dotnet run --project ResearchCruiseApp.UnitTests -c Release -- --fail-skips on",
-    "test:integration": "dotnet run --project ResearchCruiseApp.IntegrationTests -c Release -- --fail-skips on",
+    "test:unit": "dotnet test --project ResearchCruiseApp.UnitTests/ResearchCruiseApp.UnitTests.csproj -c Release --fail-skips on",
+    "test:integration": "dotnet test --project ResearchCruiseApp.IntegrationTests/ResearchCruiseApp.IntegrationTests.csproj -c Release --fail-skips on",
     "format:check": "dotnet csharpier check .",
-    "test:unit:built": "dotnet run --project ResearchCruiseApp.UnitTests -c Release --no-build --no-restore -- --fail-skips on",
+    "test:unit:built": "dotnet test --project ResearchCruiseApp.UnitTests/ResearchCruiseApp.UnitTests.csproj -c Release --no-build --no-restore --fail-skips on",
     "restore": "dotnet tool restore && dotnet restore ResearchCruiseApp.slnx --locked-mode -p:TreatWarningsAsErrors=true",
     "audit": "dotnet restore ResearchCruiseApp.slnx --force -p:CI=true"
   },
