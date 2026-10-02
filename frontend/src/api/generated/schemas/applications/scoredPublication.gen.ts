@@ -5,9 +5,9 @@ export const scoredPublicationIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]
 
 
 export const ScoredPublication = zod.object({
-  "id": zod.string().regex(scoredPublicationIdRegExp).optional(),
-  "publication": PublicationFields.optional(),
-  "points": zod.string().optional()
+  "id": zod.string().regex(scoredPublicationIdRegExp),
+  "publication": PublicationFields,
+  "points": zod.string()
 });
 
 export type ScoredPublication = zod.input<typeof ScoredPublication>;

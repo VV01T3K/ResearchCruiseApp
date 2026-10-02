@@ -1,7 +1,8 @@
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { revalidateLogic } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
@@ -11,8 +12,7 @@ import {
   FORM_C_FIELD_TO_SECTION,
   type FormCValues,
   formCDefaultValues,
-  getFormCDraftWriteSchema,
-  getFormCWriteSchema,
+  getFormCSubmissionSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
 import {
@@ -25,12 +25,10 @@ import {
   useGetApplicationFormBContextSuspense,
   useUpdateApplicationFormC,
 } from '@/api/generated/endpoints/applications.gen';
-import { mapFormAOptions } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { mapFormBOptions } from '@/api/client/applications/types/FormBOptions';
-import { ApiError, getErrorMessage } from '@/api/client/custom-fetch';
+import { getErrorMessage } from '@/api/errors';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { setSchemaErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
+import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formC')({
   component: FormCPage,
@@ -49,14 +47,10 @@ function FormCPage() {
   const formA = useFormAQuery(applicationId);
   const formB = useFormBQuery(applicationId);
   const formC = useFormCQuery(applicationId);
-  const formAInitValues = useGetApplicationFormAContextSuspense({
-    query: { select: mapFormAOptions },
-  });
-  const formBInitValues = useGetApplicationFormBContextSuspense({
-    query: { select: mapFormBOptions },
-  });
+  const formAInitValues = useGetApplicationFormAContextSuspense();
+  const formBInitValues = useGetApplicationFormBContextSuspense();
   const cruise = useGetApplicationCruiseSuspense(applicationId);
-  const updateMutation = useUpdateApplicationFormC();
+  const updateMutation = useUpdateApplicationFormC({ mutation: { meta: { handlesError: true } } });
 
   if (!formB.data) throw notFound();
 
@@ -86,15 +80,17 @@ function FormCPage() {
     researchEquipments: formB.data.researchEquipments,
     shipEquipmentsIds: formB.data.shipEquipmentsIds,
   }) satisfies FormCValues;
+  const schema = getFormCSubmissionSchema(formAInitValues.data);
   const form = useAppForm({
+    canSubmitWhenInvalid: true,
     defaultValues,
-    validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
+    validationLogic: formValidationLogic,
     validators: {
-      onDynamic: getFormCWriteSchema(formAInitValues.data),
+      onDynamic: schema,
     },
     onSubmit: async ({ value }) => handleValidSubmit(value),
     onSubmitInvalid: () => {
-      trackFormSubmit('form-c', 'invalid', form.state);
+      if (!form.state.values.draft) trackFormSubmit('form-c', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
       navigateToFirstError();
     },
@@ -112,31 +108,23 @@ function FormCPage() {
   };
 
   async function handleValidSubmit(values: FormCValues) {
-    trackFormSubmit('form-c', 'valid', form.state);
+    if (!values.draft) trackFormSubmit('form-c', 'valid', form.state);
 
-    const loading = toast.loading('Zapisywanie formularza...');
+    const loading = toast.loading(
+      values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
+    );
     try {
       await updateMutation.mutateAsync({
         applicationId,
-        data: getFormCWriteSchema(formAInitValues.data).parse(values),
+        data: { form: schema.parse(values), draft: values.draft ?? false },
       });
       navigate({ to: '/applications' });
-      toast.success('Formularz został wysłany pomyślnie.');
+      toast.success(
+        values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
+      );
     } catch (err) {
-      if (err instanceof ApiError && err.status === 403) {
-        toast.error(
-          'Aplikacja nie znajduje się w odpowiednim stanie, aby przesłać formularz. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
-        );
-        navigate({ to: '/applications' });
-        return;
-      }
-
       console.error(err);
-      if (setServerFormErrors(form, err)) {
-        toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
-        navigateToFirstError();
-        return;
-      }
+      setServerFormErrors(form, err);
       toast.error(getErrorMessage(err, 'Nie udało się zapisać formularza'));
       navigateToFirstError();
     } finally {
@@ -144,42 +132,8 @@ function FormCPage() {
     }
   }
 
-  async function handleDraftSave() {
-    const schema = getFormCDraftWriteSchema();
-    if (setSchemaErrors(form, schema)) {
-      toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
-      navigateToFirstError();
-      return;
-    }
-
-    const loading = toast.loading('Zapisywanie wersji roboczej formularza...');
-    try {
-      await updateMutation.mutateAsync({
-        applicationId,
-        data: schema.parse(form.state.values),
-      });
-      navigate({ to: '/applications' });
-      toast.success('Wersja robocza formularza została zapisana pomyślnie.');
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 403) {
-        toast.error(
-          'Aplikacja nie znajduje się w odpowiednim stanie, aby zapisać wersję roboczą formularza. Spróbuj cofnąć się do listy aplikacji i ponownie wybrać aplikację.'
-        );
-        navigate({ to: '/applications' });
-        return;
-      }
-
-      console.error(err);
-      if (setServerFormErrors(form, err)) {
-        toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
-        navigateToFirstError();
-        return;
-      }
-      toast.error(getErrorMessage(err, 'Nie udało się zapisać wersji roboczej formularza'));
-      navigateToFirstError();
-    } finally {
-      toast.dismiss(loading);
-    }
+  function handleDraftSave() {
+    void submitApplicationForm(form, true);
   }
 
   return (

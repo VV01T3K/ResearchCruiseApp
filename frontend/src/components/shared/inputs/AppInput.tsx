@@ -1,3 +1,4 @@
+import { useInputAccessibility } from '@/components/inputs/useInputAccessibility';
 import React from 'react';
 
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
@@ -43,6 +44,7 @@ export function AppInput({
   'data-testid': testId,
   'data-testid-errors': errorsTestId,
 }: Props) {
+  const accessibility = useInputAccessibility(errors, helper);
   const InputElement = type === 'textarea' ? 'textarea' : 'input';
   const elementRef = React.useRef<HTMLInputElement & HTMLTextAreaElement>(null);
 
@@ -56,7 +58,7 @@ export function AppInput({
 
   return (
     <div className={cn('flex flex-col', containerClassName)}>
-      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+      <AppInputLabel name={accessibility.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
 
       <div className="relative flex">
         <InputElement
@@ -67,7 +69,7 @@ export function AppInput({
           onBlur={onBlur}
           onChange={(evt) => onChange?.(evt.target.value)}
           disabled={disabled}
-          aria-invalid={!!errors?.length}
+          {...accessibility.control}
           className={cn(
             className,
             'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
@@ -83,8 +85,8 @@ export function AppInput({
       </div>
 
       <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
-        <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
+        <AppInputHelper id={accessibility.helperId} helper={helper} />
+        <AppInputErrorsList id={accessibility.errorId} errors={errors} data-testid={errorsTestId} />
       </div>
     </div>
   );

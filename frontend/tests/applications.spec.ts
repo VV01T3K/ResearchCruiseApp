@@ -296,3 +296,114 @@ test('application decisions use the v2 decision route', async ({ page }) => {
 
   await expect.poll(() => requests).toEqual(['true', 'false']);
 });
+
+test('application evaluation renders scored rows for every section and task variant', async ({ page }) => {
+  await seedAuthenticatedAdmin(page);
+  const scoredEvaluation = {
+    ...evaluation,
+    formAResearchTasks: [
+      { id: 't0', points: '11', researchTask: { type: '0', author: 'Anna Nowak', title: 'Praca o fokach' } },
+      {
+        id: 't3',
+        points: '12',
+        researchTask: { type: '3', title: 'Wniosek NCN', date: '2026-03-01', financingApproved: 'true' },
+      },
+      {
+        id: 't4',
+        points: '13',
+        researchTask: {
+          type: '4',
+          title: 'Projekt krajowy',
+          startDate: '2026-01',
+          endDate: '2026-12',
+          financingAmount: '1500',
+          securedAmount: null,
+        },
+      },
+      { id: 't9', points: '14', researchTask: { type: '9', description: 'Zajęcia terenowe' } },
+      {
+        id: 't10',
+        points: '15',
+        researchTask: {
+          type: '10',
+          title: 'Własne badania',
+          date: '2026-05-01',
+          magazine: 'Oceanologia',
+          ministerialPoints: '70',
+        },
+      },
+      { id: 't11', points: '16', researchTask: { type: '11', description: 'Inne badania' } },
+    ],
+    formAContracts: [
+      {
+        id: 'c1',
+        points: '21',
+        contract: {
+          category: 'international',
+          institutionName: 'Instytut Morski',
+          institutionUnit: 'Zakład Biologii',
+          institutionLocalization: 'Gdynia',
+          description: 'Umowa ramowa',
+          scans: [],
+        },
+      },
+    ],
+    formAPublications: [
+      {
+        id: 'p1',
+        points: '31',
+        publication: {
+          id: '55555555-5555-5555-5555-555555555555',
+          category: 'subject',
+          doi: '10.1000/abc',
+          authors: 'Kowalski J.',
+          title: 'Bałtyk',
+          magazine: 'Oceanologia',
+          year: '2024',
+          ministerialPoints: '100',
+        },
+      },
+    ],
+    formASpubTasks: [{ id: 's1', points: '41', spubTask: { name: 'Monitoring', yearFrom: '2020', yearTo: '2025' } }],
+  };
+  await page.route(`${API_URL}/v2/applications/${application.id}`, (route) => route.fulfill({ json: application }));
+  await page.route(`${API_URL}/v2/applications/${application.id}/evaluation`, (route) =>
+    route.fulfill({ json: scoredEvaluation })
+  );
+
+  await page.goto(`/applications/${application.id}/details`);
+
+  const values = [
+    'Anna Nowak',
+    'Praca o fokach',
+    'Wniosek NCN',
+    'Projekt krajowy',
+    'Zajęcia terenowe',
+    'Własne badania',
+    'Oceanologia',
+    'Inne badania',
+    'Instytut Morski',
+    'Zakład Biologii',
+    'Gdynia',
+    'Umowa ramowa',
+    '10.1000/abc',
+    'Kowalski J.',
+    'Bałtyk',
+    'Monitoring',
+  ];
+  for (const value of values) await expect(page.locator(`input[value="${value}"]`).first()).toBeAttached();
+  for (const name of ['Praca licencjacka', 'Przygotowanie projektu naukowego', 'Dydaktyka', 'Inne zadanie']) {
+    await expect(page.getByRole('cell', { name, exact: true })).toBeVisible();
+  }
+  await expect(page.getByText('Międzynarodowa', { exact: true })).toBeVisible();
+  await expect(page.getByText('Tak', { exact: true })).toBeVisible();
+  for (const year of ['2024', '2020', '2025'])
+    await expect(page.getByText(year, { exact: true }).first()).toBeVisible();
+  for (const points of ['11', '13', '16', '21', '31', '41']) {
+    await expect(page.getByRole('cell', { name: points, exact: true })).toBeVisible();
+  }
+  await expect(page.locator('input[name="researchTasks[].financingAmount"]')).toHaveValue('1500');
+  await expect(page.locator('input[name="researchTasks[].securedAmount"]')).toHaveValue('');
+  await expect(page.locator('input[name="researchTasks[].ministerialPoints"]')).toHaveValue('70');
+  await expect(page.locator('input[name="publications[0].publication.ministerialPoints"]')).toHaveValue('100');
+});

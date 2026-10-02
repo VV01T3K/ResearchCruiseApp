@@ -5,9 +5,9 @@ export const scoredContractIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}
 
 
 export const ScoredContract = zod.object({
-  "id": zod.string().regex(scoredContractIdRegExp).optional(),
-  "contract": ContractFields.optional(),
-  "points": zod.string().optional()
+  "id": zod.string().regex(scoredContractIdRegExp),
+  "contract": ContractFields,
+  "points": zod.string()
 });
 
 export type ScoredContract = zod.input<typeof ScoredContract>;

@@ -2,6 +2,7 @@ using System.Text.Json;
 using FluentValidation;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.Infrastructure.Files;
 using Xunit;
 
@@ -19,6 +20,33 @@ public sealed class ApplicationWriteContractTests
     public void MissingWriteRequestKeysAreRejected(Type contractType)
     {
         Assert.Throws<JsonException>(() => JsonSerializer.Deserialize("{}", contractType));
+    }
+
+    [Fact]
+    public void DraftRequestsAllowPartiallyFilledNestedObjects()
+    {
+        var formA = JsonSerializer.Deserialize<FormAWriteRequest>(
+            """{"Form":{"CruiseHours":"0","Permissions":[{"Description":"started"}],"ResearchTasks":[{"Type":"0","Title":"started"}],"Contracts":[{"Category":"0"}],"Publications":[{"Title":"started"}]},"Draft":true}"""
+        )!;
+        var formB = JsonSerializer.Deserialize<FormBWriteRequest>(
+            """{"Form":{"Permissions":[{"Description":"started"}],"CrewMembers":[{"FirstName":"Anna"}],"CruiseDaysDetails":[{"TaskName":"started"}],"ResearchEquipments":[{"Name":"started"}]},"Draft":true}"""
+        )!;
+        var formC = JsonSerializer.Deserialize<FormCWriteRequest>(
+            """{"Form":{"Permissions":[{}],"CollectedSamples":[{"Type":"water"}],"CruiseDaysDetails":[{"TaskName":"started"}]},"Draft":true}"""
+        )!;
+        Assert.True(new FormAWriteRequestValidator(FileInspector).Validate(formA).IsValid);
+        Assert.True(new FormBWriteRequestValidator(FileInspector).Validate(formB).IsValid);
+        Assert.True(new FormCWriteRequestValidator(FileInspector).Validate(formC).IsValid);
+        Assert.False(
+            new FormBWriteRequestValidator(FileInspector)
+                .Validate(formB with { Draft = false })
+                .IsValid
+        );
+        Assert.False(
+            new FormCWriteRequestValidator(FileInspector)
+                .Validate(formC with { Draft = false })
+                .IsValid
+        );
     }
 
     [Fact]
@@ -72,7 +100,19 @@ public sealed class ApplicationWriteContractTests
                     )
                     .Errors;
 
-        Assert.Contains(errors, error => error.PropertyName == "Form.Permissions[0]");
+        Assert.Contains(errors, error => error.PropertyName == "form.permissions[0]");
+    }
+
+    [Fact]
+    public void ValidationErrorsUseJsonPathsAndReadableMessages()
+    {
+        var errors = new RegisterAccountValidator()
+            .Validate(new RegisterAccountRequest("anna@example.com", "secret", "", "Nowak"))
+            .Errors;
+
+        var error = Assert.Single(errors);
+        Assert.Equal("firstName", error.PropertyName);
+        Assert.Equal("'First Name' must not be empty.", error.ErrorMessage);
     }
 
     private static FormAFields CreateEmptyFormA() =>

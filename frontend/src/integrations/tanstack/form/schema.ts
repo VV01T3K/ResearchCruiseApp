@@ -1,0 +1,18 @@
+import { z } from 'zod';
+import { pl } from 'zod/locales';
+
+// Schemas are also used by Storybook and tests, outside the application's entry point.
+z.config(pl());
+
+/** Submission intent lives in form state, so editing and submitting use the same rules. */
+export function submissionSchema<Values extends { draft?: boolean }, Request>(
+  finalSchema: z.ZodType<Request, Values>,
+  draftSchema: z.ZodType<Request, Values>
+) {
+  return z.transform((values: Values, ctx) => {
+    const result = (values.draft ? draftSchema : finalSchema).safeParse(values);
+    if (result.success) return result.data;
+    for (const issue of result.error.issues) ctx.issues.push({ ...issue, input: undefined });
+    return z.NEVER;
+  });
+}

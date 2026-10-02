@@ -1,6 +1,8 @@
+import { getErrorMessage } from '@/api/errors';
+import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { revalidateLogic } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { useQueryClient } from '@tanstack/react-query';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
@@ -16,9 +18,8 @@ import { toast } from '@/components/shared/layout/toast';
 import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
-import { mapCruiseApplicationCandidate } from '@/api/client/applications/cruise-candidates';
 import { FormView } from '../-components/FormView';
-import { UpdateCruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
+import { CruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 import {
   getGetCruiseQueryKey,
   getGetCruisesQueryKey,
@@ -40,9 +41,9 @@ const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
   shipUnavailable: 1,
   startDate: 2,
   endDate: 2,
-  'managersTeam.mainCruiseManagerId': 3,
-  'managersTeam.mainDeputyManagerId': 3,
-  cruiseApplicationsIds: 4,
+  mainManagerId: 3,
+  deputyManagerId: 3,
+  cruiseApplicationIds: 4,
 };
 
 function CruiseDetailsPage() {
@@ -50,11 +51,8 @@ function CruiseDetailsPage() {
 
   const queryClient = useQueryClient();
   const cruiseQuery = useGetCruiseSuspense(cruiseId);
-  const applicationQuery = useGetApplicationsForCruisePlanningSuspense(
-    { cruiseId },
-    { query: { select: (applications) => applications.map(mapCruiseApplicationCandidate) } }
-  );
-  const updateCruiseMutation = useUpdateCruise();
+  const applicationQuery = useGetApplicationsForCruisePlanningSuspense({ cruiseId });
+  const updateCruiseMutation = useUpdateCruise({ mutation: { meta: { handlesError: true } } });
   const confirmCruiseMutation = useConfirmCruise();
   const deleteCruiseMutation = useDeleteCruise({
     skipInvalidation: true,
@@ -78,20 +76,21 @@ function CruiseDetailsPage() {
 
   const form = useAppForm({
     defaultValues: mapCruiseToValues(cruiseQuery.data),
-    validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
-    validators: { onDynamic: UpdateCruiseFormSchema },
+    validationLogic: formValidationLogic,
+    validators: { onDynamic: CruiseFormSchema },
     onSubmitInvalid: ({ formApi }) => {
       toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
       navigateToFirstError();
     },
     onSubmit: async ({ value }) => {
       try {
-        await updateCruiseMutation.mutateAsync({ cruiseId, data: UpdateCruiseFormSchema.parse(value) });
+        await updateCruiseMutation.mutateAsync({ cruiseId, data: CruiseFormSchema.parse(value) });
         setEditMode(false);
         toast.success('Rejs został zaktualizowany pomyślnie.');
       } catch (error) {
         console.error(error);
-        toast.error('Nie udało się zaktualizować rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        setServerFormErrors(form, error);
+        toast.error(getErrorMessage(error, 'Nie udało się zaktualizować rejsu'));
         navigateToFirstError();
       }
     },

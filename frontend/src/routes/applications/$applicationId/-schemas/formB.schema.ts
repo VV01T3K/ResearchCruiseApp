@@ -1,6 +1,7 @@
+import { submissionSchema } from '@/integrations/tanstack/form/schema';
 import { z } from 'zod';
 
-import { FormBFields, FormBWriteRequest } from '@/api/generated/schemas';
+import { FormBFields } from '@/api/generated/schemas';
 import { groupBy } from '@/lib/utils';
 import {
   CrewMemberValuesInputSchema,
@@ -54,6 +55,7 @@ export const FORM_B_FIELD_TO_SECTION: Record<string, number> = {
 };
 
 const FormBInputSchema = z.object({
+  draft: z.boolean().optional(),
   isCruiseManagerPresent: z.boolean(),
   permissions: PermissionValuesInputSchema.array(),
   ugTeams: UgTeamValuesInputSchema.array(),
@@ -70,6 +72,7 @@ const FormBInputSchema = z.object({
 export type FormBValues = z.input<typeof FormBInputSchema>;
 
 export const formBDefaultValues: FormBValues = {
+  draft: false,
   isCruiseManagerPresent: true,
   permissions: [],
   ugTeams: [],
@@ -112,50 +115,44 @@ export function getFormBValidationSchema() {
   });
 }
 
-export function getFormBWriteSchema() {
-  return buildFormBWriteSchema(getFormBValidationSchema(), false);
+export function getFormBFieldsSchema() {
+  return buildFormBFieldsSchema(getFormBValidationSchema());
 }
 
-export function getFormBDraftWriteSchema() {
-  return buildFormBWriteSchema(FormBInputSchema, true);
+export function getFormBDraftFieldsSchema() {
+  return buildFormBFieldsSchema(FormBInputSchema);
 }
 
-function buildFormBWriteSchema(inputSchema: z.ZodType<FormBValues, FormBValues>, draft: boolean) {
+function buildFormBFieldsSchema(inputSchema: z.ZodType<FormBValues, FormBValues>) {
   return inputSchema
     .transform(
-      (form): z.input<typeof FormBWriteRequest> =>
+      (form): z.input<typeof FormBFields> =>
         ({
-          form: {
-            ...form,
-            isCruiseManagerPresent: String(form.isCruiseManagerPresent),
-            permissions: form.permissions.map((permission) => ({
-              description: permission.description || null,
-              executive: permission.executive || null,
-              scan: permission.scan ?? null,
-            })),
-            ugTeams: form.ugTeams.map((team) => ({
-              ...team,
-              noOfEmployees: String(team.noOfEmployees),
-              noOfStudents: String(team.noOfStudents),
-            })),
-            guestTeams: form.guestTeams.map((team) => ({ ...team, noOfPersons: String(team.noOfPersons) })),
-            cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
-              ...day,
-              number: String(day.number),
-              hours: String(day.hours),
-            })),
-            researchEquipments: form.researchEquipments.map((equipment) => ({
-              ...equipment,
-              permission: String(equipment.permission),
-            })),
-          },
-          draft,
-        }) satisfies {
-          form: Required<z.input<typeof FormBWriteRequest>['form']>;
-          draft: boolean;
-        }
+          ...form,
+          isCruiseManagerPresent: String(form.isCruiseManagerPresent),
+          permissions: form.permissions.map((permission) => ({
+            description: permission.description || null,
+            executive: permission.executive || null,
+            scan: permission.scan ?? null,
+          })),
+          ugTeams: form.ugTeams.map((team) => ({
+            ...team,
+            noOfEmployees: String(team.noOfEmployees),
+            noOfStudents: String(team.noOfStudents),
+          })),
+          guestTeams: form.guestTeams.map((team) => ({ ...team, noOfPersons: String(team.noOfPersons) })),
+          cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
+            ...day,
+            number: String(day.number),
+            hours: String(day.hours),
+          })),
+          researchEquipments: form.researchEquipments.map((equipment) => ({
+            ...equipment,
+            permission: String(equipment.permission),
+          })),
+        }) satisfies Required<z.input<typeof FormBFields>>
     )
-    .pipe(FormBWriteRequest);
+    .pipe(FormBFields);
 }
 
 export function mapFormBToValues(form: FormBFields): FormBValues {
@@ -221,4 +218,8 @@ export function mapFormBToValues(form: FormBFields): FormBValues {
 function toNumber(value: string | null | undefined): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+export function getFormBSubmissionSchema() {
+  return submissionSchema(getFormBFieldsSchema(), getFormBDraftFieldsSchema());
 }
