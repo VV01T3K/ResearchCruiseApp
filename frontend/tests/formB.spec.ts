@@ -119,6 +119,25 @@ test('failed draft saves explain the reason and retain partial rows for retry', 
   expect(pageErrors).toEqual([]);
 });
 
+test('server errors stay under fields inside table rows', async ({ formBPage, page }) => {
+  await formBPage.fillForm();
+  await page.route(`${API_URL}/v2/applications/${formBPage.formId}/form-b`, (route) =>
+    route.request().method() === 'PUT'
+      ? route.fulfill({
+          status: 400,
+          json: { errors: { 'form.cruiseDaysDetails[0].taskName': ['Nazwa zadania została odrzucona'] } },
+        })
+      : route.fallback()
+  );
+  await formBPage.sections.cruiseDayDetailsSection.addTaskButton.click();
+  const task = page.getByTestId('cruise-day-task-name-input').first();
+  await task.fill('Zadanie');
+  await page.getByRole('button', { name: 'Zapisz wersję roboczą' }).click();
+
+  await expect(task).toHaveAccessibleDescription('Nazwa zadania została odrzucona');
+  await expect(page.getByTestId('form-errors')).toHaveCount(0);
+});
+
 test('all sections filled with invalid rows', async ({ formBPage }) => {
   // Every list-based section gets one row with empty required fields and negative counts
   await formBPage.fillForm({ withInvalidRows: true });
