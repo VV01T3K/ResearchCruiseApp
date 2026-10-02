@@ -11,7 +11,8 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.IntegrationTests.Infrastructure;
 
-internal sealed class TestApplication(string connectionString) : WebApplicationFactory<Program>
+internal sealed class TestApplication(string connectionString, string environment = "Testing")
+    : WebApplicationFactory<Program>
 {
     internal CapturingEmailTransport Transport { get; } = new();
     internal ControlledClock Clock { get; } = new();
@@ -26,7 +27,7 @@ internal sealed class TestApplication(string connectionString) : WebApplicationF
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Testing");
+        builder.UseEnvironment(environment);
         var settings = new Dictionary<string, string>
         {
             ["ConnectionStrings:Database"] = connectionString,

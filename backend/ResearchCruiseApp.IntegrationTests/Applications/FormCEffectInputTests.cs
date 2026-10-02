@@ -87,7 +87,11 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
                 Assert.NotEmpty(
                     problem
                         .RootElement.GetProperty("errors")
-                        .GetProperty("Form.ResearchTasksEffects[0]")
+                        .GetProperty(
+                            value is null
+                                ? $"Form.ResearchTasksEffects[0].{(field == "done" ? "Done" : field == "manager" ? "ManagerConditionMet" : "DeputyConditionMet")}"
+                                : "Form.ResearchTasksEffects[0]"
+                        )
                         .EnumerateArray()
                 );
                 using var read = await client.GetAsync(route, ct);

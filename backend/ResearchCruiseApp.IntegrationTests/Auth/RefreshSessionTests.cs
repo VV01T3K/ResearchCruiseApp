@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using ResearchCruiseApp.Domain;
@@ -63,6 +64,46 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
         using var next = await SendCookie(client, "/v2/auth/refresh", replacement);
         Assert.Equal(HttpStatusCode.OK, next.StatusCode);
         Assert.NotEqual(replacement, ReadCookie(next));
+        Assert.Empty(app.Transport.Messages);
+    }
+
+    // BE-AUTH-010: the actual browser cookie jar performs the complete session round trip.
+    [Fact]
+    public async Task Session_WhenCookieContainerHandlesRotationAndLogout_RejectsRefreshAfterLogout()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var user = await TestUsers.Create(app, "cookie-jar@example.invalid", RoleName.Guest);
+        using var client = app.CreateClient(
+            new WebApplicationFactoryClientOptions
+            {
+                BaseAddress = new Uri("https://localhost"),
+                HandleCookies = true,
+                AllowAutoRedirect = false,
+            }
+        );
+        var session = await Login(client, user.Email!);
+        using var refresh = await client.PostAsync("/v2/auth/refresh", null, ct);
+        Assert.Equal(HttpStatusCode.OK, refresh.StatusCode);
+        Assert.NotEqual(session.Cookie, ReadCookie(refresh));
+        using var logout = await client.PostAsync("/v2/auth/logout", null, ct);
+        Assert.Equal(HttpStatusCode.NoContent, logout.StatusCode);
+        var deletion = Assert.Single(
+            SetCookieHeaderValue.ParseList(logout.Headers.GetValues("Set-Cookie").ToList())
+        );
+        Assert.Equal("/", deletion.Path.Value);
+        Assert.True(deletion.Expires < DateTimeOffset.UtcNow);
+        using var rejected = await client.PostAsync("/v2/auth/refresh", null, ct);
+        Assert.Equal(HttpStatusCode.Unauthorized, rejected.StatusCode);
+        Assert.False(rejected.Headers.Contains("Set-Cookie"));
+        await app.InDatabase(async db =>
+        {
+            var stored = await db.Users.SingleAsync(ct);
+            Assert.Null(stored.RefreshToken);
+            Assert.Null(stored.RefreshTokenExpiry);
+            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
+        });
+        await app.Dispatch(ct);
         Assert.Empty(app.Transport.Messages);
     }
 

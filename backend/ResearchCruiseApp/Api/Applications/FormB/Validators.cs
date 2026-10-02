@@ -9,6 +9,7 @@ public sealed class FormBWriteRequestValidator : AbstractValidator<FormBWriteReq
     public FormBWriteRequestValidator(FileInspector fileInspector)
     {
         var collections = new InlineValidator<FormBFields>();
+        collections.Include(new FormBStorageValidator());
         collections
             .RuleFor(fields => fields.Permissions)
             .NotNull()
@@ -54,6 +55,34 @@ public sealed class FormBWriteRequestValidator : AbstractValidator<FormBWriteReq
             .NotNull()
             .ForEach(item => item.NotNull());
         collections.RuleFor(fields => fields.ShipEquipmentsIds).NotNull();
+
+        collections
+            .RuleForEach(fields => fields.Permissions)
+            .SetValidator(new PermissionStorageValidator());
+        collections
+            .RuleForEach(fields => fields.UgTeams)
+            .SetValidator(new UgTeamStorageValidator());
+        collections
+            .RuleForEach(fields => fields.GuestTeams)
+            .SetValidator(new GuestTeamStorageValidator());
+        collections
+            .RuleForEach(fields => fields.ShortResearchEquipments)
+            .SetValidator(new ShortTermResearchEquipmentStorageValidator());
+        collections
+            .RuleForEach(fields => fields.LongResearchEquipments)
+            .SetValidator(new LongTermResearchEquipmentStorageValidator());
+        collections
+            .RuleForEach(fields => fields.Ports)
+            .SetValidator(new PortCallStorageValidator());
+        collections
+            .RuleForEach(fields => fields.CruiseDaysDetails)
+            .SetValidator(new CruiseDayStorageValidator());
+        collections
+            .RuleForEach(fields => fields.ResearchEquipments)
+            .SetValidator(new ResearchEquipmentStorageValidator());
+        collections
+            .RuleForEach(fields => fields.CrewMembers)
+            .SetValidator(new CrewMemberStorageValidator());
 
         // Validate structure before rules that dereference collection entries.
         RuleFor(request => request.Form)
