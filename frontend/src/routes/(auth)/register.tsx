@@ -1,7 +1,6 @@
-import { getErrorMessage } from '@/api/errors';
+import { getErrorMessage, getProblemDetail } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
-import { RegisterAccountRequest } from '@/api/generated/schemas';
-import { formContract } from '@/integrations/tanstack/form/schema';
+import type { RegisterAccountRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
@@ -13,7 +12,6 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { useRegisterAccount } from '@/api/generated/endpoints/auth.gen';
-import { getProblemDetail } from '@/api/fetch';
 import { Result } from '@/integrations/auth/types';
 
 export const Route = createFileRoute('/(auth)/register')({
@@ -43,9 +41,7 @@ const validationSchema = z
         path: ['confirmPassword'],
       });
     }
-  })
-  .transform((value): z.input<typeof RegisterAccountRequest> => value)
-  .pipe(formContract(RegisterAccountRequest));
+  });
 
 const errorMessages: Record<Result | 'username-taken', string> = {
   success: '',
@@ -56,15 +52,7 @@ const errorMessages: Record<Result | 'username-taken', string> = {
 function RegisterPage() {
   const navigate = useNavigate();
   const [result, setResult] = React.useState<(Result | 'username-taken') | undefined>(undefined);
-  const { mutateAsync } = useRegisterAccount({
-    mutation: {
-      onSuccess: () => setResult('success'),
-      onError: (error) => {
-        setResult(getProblemDetail(error, '').includes('taken') ? 'username-taken' : 'error');
-        toast.error(getErrorMessage(error, 'Rejestracja nie powiod\u0142a si\u0119'));
-      },
-    },
-  });
+  const { mutateAsync } = useRegisterAccount({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
       email: '',
@@ -80,14 +68,16 @@ function RegisterPage() {
     onSubmit: async ({ value }) => {
       trackFormSubmit('register', 'valid', form.state);
 
-      await mutateAsync(
-        { data: validationSchema.parse(value) },
-        {
-          onSuccess: async () => {
-            await navigate({ to: '/login' });
-          },
-        }
-      );
+      try {
+        const { email, firstName, lastName, password } = value;
+        await mutateAsync({ data: { email, firstName, lastName, password } satisfies RegisterAccountRequest });
+      } catch (error) {
+        setResult(getProblemDetail(error, '').includes('taken') ? 'username-taken' : 'error');
+        toast.error(getErrorMessage(error, 'Rejestracja nie powiodła się'));
+        return;
+      }
+      setResult('success');
+      await navigate({ to: '/login' });
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('register', 'invalid', formApi.state);
@@ -97,7 +87,7 @@ function RegisterPage() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    void form.handleSubmit().catch(() => {});
+    void form.handleSubmit();
   }
 
   return (

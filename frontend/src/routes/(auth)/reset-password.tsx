@@ -1,7 +1,6 @@
 import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { ResetPasswordRequest } from '@/api/generated/schemas';
-import { formContract } from '@/integrations/tanstack/form/schema';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { z } from 'zod';
@@ -46,20 +45,12 @@ const validationSchema = z
       });
     }
   })
-  .pipe(formContract(ResetPasswordRequest.pick({ password: true, passwordConfirm: true })));
+  .pipe(ResetPasswordRequest.pick({ password: true, passwordConfirm: true }));
 
 function ResetPasswordPage() {
   const { emailBase64, resetCode } = Route.useSearch();
   const [result, setResult] = React.useState<Result | undefined>(undefined);
-  const { mutateAsync } = useResetPassword({
-    mutation: {
-      onSuccess: () => setResult('success'),
-      onError: (error) => {
-        setResult('error');
-        toast.error(getErrorMessage(error, 'Operacja nie powiod\u0142a si\u0119'));
-      },
-    },
-  });
+  const { mutateAsync } = useResetPassword({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
       password: '',
@@ -76,9 +67,15 @@ function ResetPasswordPage() {
         throw new Error('Not all fields are filled despite validation');
       }
 
-      await mutateAsync({
-        data: ResetPasswordRequest.parse({ emailBase64, resetCode, ...validationSchema.parse(value) }),
-      });
+      try {
+        await mutateAsync({
+          data: { emailBase64, resetCode, password: value.password, passwordConfirm: value.passwordConfirm },
+        });
+        setResult('success');
+      } catch (error) {
+        setResult('error');
+        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
+      }
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('reset-password', 'invalid', formApi.state);
@@ -121,7 +118,7 @@ function ResetPasswordPage() {
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          void form.handleSubmit().catch(() => {});
+          void form.handleSubmit();
         }}
       >
         <form.AppField

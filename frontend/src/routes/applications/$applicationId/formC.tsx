@@ -1,4 +1,4 @@
-import { submitApplicationForm } from '@/lib/applications/submitApplicationForm';
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -25,7 +25,7 @@ import {
   useGetApplicationFormBContextSuspense,
   useUpdateApplicationFormC,
 } from '@/api/generated/endpoints/applications.gen';
-import { getErrorMessage } from '@/api/fetch';
+import { getErrorMessage } from '@/api/errors';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
@@ -90,7 +90,7 @@ function FormCPage() {
     },
     onSubmit: async ({ value }) => handleValidSubmit(value),
     onSubmitInvalid: () => {
-      trackFormSubmit('form-c', 'invalid', form.state);
+      if (!form.state.values.draft) trackFormSubmit('form-c', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
       navigateToFirstError();
     },
@@ -108,7 +108,7 @@ function FormCPage() {
   };
 
   async function handleValidSubmit(values: FormCValues) {
-    trackFormSubmit('form-c', 'valid', form.state);
+    if (!values.draft) trackFormSubmit('form-c', 'valid', form.state);
 
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
@@ -116,7 +116,7 @@ function FormCPage() {
     try {
       await updateMutation.mutateAsync({
         applicationId,
-        data: schema.parse(values),
+        data: { form: schema.parse(values), draft: values.draft ?? false },
       });
       navigate({ to: '/applications' });
       toast.success(
@@ -124,14 +124,9 @@ function FormCPage() {
       );
     } catch (err) {
       console.error(err);
-      if (setServerFormErrors(form, err)) {
-        toast.error(getFormErrorMessage(form, FORM_C_FIELD_TO_SECTION));
-        navigateToFirstError();
-        throw err;
-      }
+      setServerFormErrors(form, err);
       toast.error(getErrorMessage(err, 'Nie udało się zapisać formularza'));
       navigateToFirstError();
-      throw err;
     } finally {
       toast.dismiss(loading);
     }

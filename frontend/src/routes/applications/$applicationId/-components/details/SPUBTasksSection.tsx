@@ -4,13 +4,15 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
-import { ScoredSpubTask } from '@/api/generated/schemas';
+import {
+  type ApplicationEvaluation,
+  useApplicationEvaluation,
+} from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 
 export function SPUBTasksSection() {
   const evaluation = useApplicationEvaluation();
 
-  const columns: ColumnDef<ScoredSpubTask>[] = [
+  const columns: ColumnDef<ApplicationEvaluation['formASpubTasks'][number]>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,
@@ -54,7 +56,7 @@ export function SPUBTasksSection() {
       cell: ({ row }) => (
         <AppInput
           name={`spubTasks[${row.index}].name`}
-          value={row.original.spubTask.name ?? ''}
+          value={row.original.spubTask.name}
           showRequiredAsterisk
           disabled
         />

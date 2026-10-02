@@ -1,4 +1,4 @@
-import { submitApplicationForm } from '@/lib/applications/submitApplicationForm';
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -22,7 +22,7 @@ import {
   useRefillApplicationFormB,
   useUpdateApplicationFormB,
 } from '@/api/generated/endpoints/applications.gen';
-import { getErrorMessage } from '@/api/fetch';
+import { getErrorMessage } from '@/api/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 
@@ -64,7 +64,7 @@ function FormBPage() {
     },
     onSubmit: async ({ value }) => handleValidSubmit(value),
     onSubmitInvalid: () => {
-      trackFormSubmit('form-b', 'invalid', form.state);
+      if (!form.state.values.draft) trackFormSubmit('form-b', 'invalid', form.state);
       toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
       navigateToFirstError();
     },
@@ -82,7 +82,7 @@ function FormBPage() {
   };
 
   async function handleValidSubmit(values: FormBValues) {
-    trackFormSubmit('form-b', 'valid', form.state);
+    if (!values.draft) trackFormSubmit('form-b', 'valid', form.state);
 
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
@@ -90,7 +90,7 @@ function FormBPage() {
     try {
       await updateMutation.mutateAsync({
         applicationId,
-        data: schema.parse(values),
+        data: { form: schema.parse(values), draft: values.draft ?? false },
       });
       navigate({ to: '/applications' });
       toast.success(
@@ -98,14 +98,9 @@ function FormBPage() {
       );
     } catch (err) {
       console.error(err);
-      if (setServerFormErrors(form, err)) {
-        toast.error(getFormErrorMessage(form, FORM_B_FIELD_TO_SECTION));
-        navigateToFirstError();
-        throw err;
-      }
+      setServerFormErrors(form, err);
       toast.error(getErrorMessage(err, 'Nie udało się wysłać formularza'));
       navigateToFirstError();
-      throw err;
     } finally {
       toast.dismiss(loading);
     }

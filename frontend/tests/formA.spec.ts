@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 
 import { MOCK_PDF_FILEPATH } from './fixtures/consts';
-import { getFormAPayload } from './fixtures/mockPayloads';
+import { getFormAPayload, getInitValuesAPayload } from './fixtures/mockPayloads';
 import { API_URL, formTest as test } from './fixtures/fixtures';
 import { type FormAPage } from './fixtures/pages/formA/formAPage';
 import { touchInput } from './utils/form-filling-utils';
@@ -123,7 +123,7 @@ test('centers the first invalid field after submit', async ({ formAPage }) => {
 test('shows server validation errors on their fields', async ({ formAPage }) => {
   await formAPage.fillForm();
   await formAPage.failSaveWith(400, {
-    errors: { 'Form.SupervisorEmail': ['Adres przełożonego został odrzucony'] },
+    errors: { 'form.supervisorEmail': ['Adres przełożonego został odrzucony'] },
   });
 
   await formAPage.submitButton.click();
@@ -260,6 +260,80 @@ test.describe('adding rows through the UI', () => {
 
     await formAPage.submitForm({ expectedResult: 'valid' });
   });
+});
+
+test('number inputs keep precision, transient decimals, clearing, sync and stepping', async ({ formAPage, page }) => {
+  const task = {
+    type: '4',
+    title: 'Projekt',
+    startDate: '2026-09',
+    endDate: '2026-10',
+    financingAmount: '100',
+    securedAmount: '5',
+  };
+  await page.route(`${API_URL}/v2/applications/${formAPage.formId}/form-a`, (route) =>
+    route.fulfill({ json: { ...getFormAPayload(), cruiseHours: '48', researchTasks: [task] } })
+  );
+  await formAPage.goto();
+  const section = formAPage.sections.cruiseLengthSection;
+  const days = section.cruiseDaysInput;
+  const hours = section.cruiseHoursInput;
+  const amount = page.locator('input[name="researchTasks[0].financingAmount"]');
+  await expect(days).toHaveValue('2');
+  await expect(hours).toHaveValue('48');
+
+  await days.fill('1,');
+  await expect(days).toHaveValue('1.');
+  await days.press('5');
+  await expect(days).toHaveValue('1.5');
+  await expect(hours).toHaveValue('36');
+  await days.blur();
+  await expect(days).toHaveValue('1.5');
+
+  await days.fill('1.257');
+  await expect(hours).toHaveValue('30');
+  await expect(days).toHaveValue('1.25');
+
+  await hours.fill('7.9');
+  await expect(hours).toHaveValue('7');
+  await expect(days).toHaveValue('0.29');
+
+  await section.cruiseDaysIncreaseButton.click();
+  await expect(hours).toHaveValue('31');
+  await expect(days).toHaveValue('1.29');
+  await section.cruiseHoursDecreaseButton.click();
+  await expect(hours).toHaveValue('30');
+
+  await hours.fill('');
+  await expect(hours).toHaveValue('0');
+  await expect(days).toHaveValue('0');
+
+  await amount.fill('');
+  await amount.blur();
+  await expect(amount).toHaveValue('');
+  await amount.fill('12,345');
+  await amount.blur();
+  await expect(amount).toHaveValue('12.35');
+});
+
+test('historical research tasks of an unknown type can be previewed and added as other tasks', async ({
+  formAPage,
+  page,
+}) => {
+  await page.route(`${API_URL}/v2/applications/form-a/context`, (route) =>
+    route.fulfill({
+      json: {
+        ...getInitValuesAPayload(),
+        historicalResearchTasks: [{ type: '99', description: 'Zadanie archiwalne' }],
+      },
+    })
+  );
+  await formAPage.goto();
+  const section = page.getByTestId('form-a-research-tasks-table');
+  await page.getByTestId('form-a-add-historical-research-task-btn').click();
+  await page.getByText('Opis: Zadanie archiwalne').click();
+  await expect(section.getByText('Inne zadanie')).toBeVisible();
+  await expect(section.locator('input[value="Zadanie archiwalne"], textarea').first()).toBeAttached();
 });
 
 for (const picker of [

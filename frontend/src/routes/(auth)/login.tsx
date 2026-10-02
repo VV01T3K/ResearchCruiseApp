@@ -36,11 +36,11 @@ function LoginPage() {
       trackFormSubmit('login', 'valid', formApi.state);
 
       setSignInError(undefined);
-      const result = await signIn(loginValidationSchema.parse(value).email, value.password);
+      const result = await signIn(value.email, value.password);
 
       if (result !== 'success') {
         setSignInError(result.error);
-        throw new Error(result.error);
+        return;
       }
 
       await router.invalidate();
@@ -54,7 +54,7 @@ function LoginPage() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    void form.handleSubmit().catch(() => {});
+    void form.handleSubmit();
   }
 
   return (

@@ -1,5 +1,4 @@
 import type { AnyFieldMeta, AnyFormApi } from '@tanstack/react-form';
-import type { MapFormPath } from './schema';
 
 interface FormError {
   fieldName: string;
@@ -7,7 +6,7 @@ interface FormError {
   sectionNumber?: number;
 }
 
-export function extractErrorMessage(error: unknown): string {
+function extractErrorMessage(error: unknown): string {
   if (error == null) return 'Błąd walidacji';
   if (typeof error === 'string') return error;
   if (Array.isArray(error) && error.length > 0) return extractErrorMessage(error[0]);
@@ -18,7 +17,8 @@ export function extractErrorMessage(error: unknown): string {
 
 export function getErrors(meta: AnyFieldMeta, submissionAttempts = 0): string[] | undefined {
   if ((!meta.isBlurred && submissionAttempts === 0) || meta.errors.length === 0) return undefined;
-  return meta.errors.map(extractErrorMessage);
+  // Server and client validators can report the same message for one field.
+  return [...new Set(meta.errors.map(extractErrorMessage))];
 }
 
 function getSectionNumber(fieldName: string, sections: Record<string, number>): number | undefined {
@@ -69,21 +69,8 @@ export function navigateToFirstError(): void {
   });
 }
 
-function normalizeBackendFormPath(path: string, mapPath: MapFormPath): string {
-  const parts = path
-    .replace(/^\$\.?/, '')
-    .replace(/^Form(?:\.|$)/i, '')
-    .replace(/\[(\d+)\]/g, '.$1')
-    .split('.')
-    .filter(Boolean)
-    .map((part) => (/^\d+$/.test(part) ? Number(part) : part.replace(/^[A-Z]/, (letter) => letter.toLowerCase())));
-  return mapPath(parts).reduce<string>(
-    (name, part) => (typeof part === 'number' ? `${name}[${part}]` : `${name ? `${name}.` : ''}${String(part)}`),
-    ''
-  );
-}
-
-function getServerFormErrors(error: unknown, mapPath: MapFormPath): Record<string, string[]> | null {
+// The backend keys errors by request JSON path; application saves wrap form values in `form`.
+function getServerFormErrors(error: unknown): Record<string, string[]> | null {
   if (typeof error !== 'object' || error === null || !('problem' in error)) return null;
   const problem = error.problem;
   if (typeof problem !== 'object' || problem === null || !('errors' in problem)) return null;
@@ -94,14 +81,14 @@ function getServerFormErrors(error: unknown, mapPath: MapFormPath): Record<strin
       Array.isArray(messages) &&
       messages.length > 0 &&
       messages.every((message) => typeof message === 'string' && !!message.trim())
-        ? [[normalizeBackendFormPath(path, mapPath), messages]]
+        ? [[path.replace(/^form(?:\.|$)/, ''), messages]]
         : []
     )
   );
 }
 
-export function setServerFormErrors(form: AnyFormApi, error: unknown, mapPath: MapFormPath = (path) => path): boolean {
-  const fields = getServerFormErrors(error, mapPath);
+export function setServerFormErrors(form: AnyFormApi, error: unknown): boolean {
+  const fields = getServerFormErrors(error);
   if (!fields || Object.keys(fields).length === 0) return false;
   const knownFields: Record<string, string[]> = {};
   const formErrors: string[] = [];

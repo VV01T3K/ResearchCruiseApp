@@ -25,7 +25,7 @@ export function FormView({ cruise, cruiseApplications, isReadonly, buttons }: Pr
       onSubmit={(evt) => {
         evt.preventDefault();
         evt.stopPropagation();
-        void form.handleSubmit().catch(() => {});
+        void form.handleSubmit();
       }}
     >
       <BasicInformationSection cruise={cruise} isReadonly={isReadonly} />

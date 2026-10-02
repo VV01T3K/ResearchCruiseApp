@@ -1,7 +1,6 @@
 import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
-import { ChangePasswordRequest } from '@/api/generated/schemas';
-import { formContract } from '@/integrations/tanstack/form/schema';
+import type { ChangePasswordRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
@@ -32,21 +31,11 @@ const validationSchema = z
         path: ['repeatedNewPassword'],
       });
     }
-  })
-  .transform((value): z.input<typeof ChangePasswordRequest> => value)
-  .pipe(formContract(ChangePasswordRequest));
+  });
 
 export function ChangePasswordForm() {
   const [result, setResult] = React.useState<'success' | 'error'>();
-  const { mutateAsync } = useChangeCurrentUserPassword({
-    mutation: {
-      onSuccess: () => setResult('success'),
-      onError: (error) => {
-        setResult('error');
-        toast.error(getErrorMessage(error, 'Operacja nie powiod\u0142a si\u0119'));
-      },
-    },
-  });
+  const { mutateAsync } = useChangeCurrentUserPassword({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
       password: '',
@@ -60,10 +49,16 @@ export function ChangePasswordForm() {
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('change-password', 'valid', formApi.state);
 
-      await mutateAsync({
-        data: validationSchema.parse(value),
-      });
-
+      try {
+        await mutateAsync({
+          data: { password: value.password, newPassword: value.newPassword } satisfies ChangePasswordRequest,
+        });
+      } catch (error) {
+        setResult('error');
+        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
+        return;
+      }
+      setResult('success');
       formApi.reset();
     },
     onSubmitInvalid: ({ formApi }) => {
@@ -74,7 +69,7 @@ export function ChangePasswordForm() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    void form.handleSubmit().catch(() => {});
+    void form.handleSubmit();
   }
 
   return (

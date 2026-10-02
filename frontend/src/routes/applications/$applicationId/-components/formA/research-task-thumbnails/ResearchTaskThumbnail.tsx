@@ -28,9 +28,8 @@ export function ResearchTaskThumbnail({ task }: Props) {
       return <DidacticsResearchTaskThumbnail task={task} />;
     case ResearchTaskType.OwnResearchTask:
       return <OwnResearchTaskThumbnail task={task} />;
-    case ResearchTaskType.OtherResearchTask:
-      return <OtherResearchTaskThumbnail task={task} />;
     default:
-      throw new Error(`Unknown research task type`);
+      // Matches mapResearchTaskToValues, which adds unknown historical types as other tasks.
+      return <OtherResearchTaskThumbnail task={task} />;
   }
 }

@@ -2,6 +2,7 @@ using System.Text.Json;
 using FluentValidation;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.Infrastructure.Files;
 using Xunit;
 
@@ -19,25 +20,6 @@ public sealed class ApplicationWriteContractTests
     public void MissingWriteRequestKeysAreRejected(Type contractType)
     {
         Assert.Throws<JsonException>(() => JsonSerializer.Deserialize("{}", contractType));
-    }
-
-    [Fact]
-    public void GuaranteedResponsePropertiesDoNotBecomeDeserializationRequirements()
-    {
-        Assert.Empty(JsonSerializer.Deserialize<FormAOptions>("{}")!.CruiseManagers);
-        var path = Path.GetFullPath(
-            "../../../../ResearchCruiseApp/openapi/ResearchCruiseApp_v2.json",
-            AppContext.BaseDirectory
-        );
-        using var document = JsonDocument.Parse(File.ReadAllText(path));
-        var schemas = document.RootElement.GetProperty("components").GetProperty("schemas");
-        var options = schemas.GetProperty("FormAOptions");
-        Assert.Equal(
-            options.GetProperty("properties").EnumerateObject().Count(),
-            options.GetProperty("required").GetArrayLength()
-        );
-        Assert.False(schemas.GetProperty("FormAFields").TryGetProperty("required", out _));
-        Assert.False(schemas.GetProperty("PermissionFields").TryGetProperty("required", out _));
     }
 
     [Fact]
@@ -118,7 +100,19 @@ public sealed class ApplicationWriteContractTests
                     )
                     .Errors;
 
-        Assert.Contains(errors, error => error.PropertyName == "Form.Permissions[0]");
+        Assert.Contains(errors, error => error.PropertyName == "form.permissions[0]");
+    }
+
+    [Fact]
+    public void ValidationErrorsUseJsonPathsAndReadableMessages()
+    {
+        var errors = new RegisterAccountValidator()
+            .Validate(new RegisterAccountRequest("anna@example.com", "secret", "", "Nowak"))
+            .Errors;
+
+        var error = Assert.Single(errors);
+        Assert.Equal("firstName", error.PropertyName);
+        Assert.Equal("'First Name' must not be empty.", error.ErrorMessage);
     }
 
     private static FormAFields CreateEmptyFormA() =>

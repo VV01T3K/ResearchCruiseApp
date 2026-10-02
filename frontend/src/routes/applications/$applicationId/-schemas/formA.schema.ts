@@ -1,7 +1,4 @@
-import type { SpubTaskFields } from '@/api/generated/schemas';
-import type { PublicationFields } from '@/api/generated/schemas';
-import type { ContractFields } from '@/api/generated/schemas';
-import { applicationFormPath, formContract, submissionSchema } from '@/integrations/tanstack/form/schema';
+import { submissionSchema } from '@/integrations/tanstack/form/schema';
 import { literal, z } from 'zod';
 
 import { groupBy } from '@/lib/utils';
@@ -14,7 +11,6 @@ import {
   CruiseGoal,
   CruisePeriodValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
-import { FormAOptions } from '@/api/generated/schemas';
 import {
   GuestTeamValuesInputSchema,
   GuestTeamValuesSchema,
@@ -40,10 +36,13 @@ import {
   UgTeamValuesSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
 import {
-  FormAWriteRequest,
+  FormAFields,
   type BlockadeResponse as BlockadePeriod,
-  type FormAFields,
+  type ContractFields,
+  type FormAOptions,
+  type PublicationFields,
   type ResearchTaskFields,
+  type SpubTaskFields,
 } from '@/api/generated/schemas';
 import {
   getResearchAreaValuesSchema,
@@ -564,95 +563,84 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
       BlockadeCollisionValidationSchema(blockades)(val, ctx);
     });
 
-export function getFormAWriteSchema(initValues: FormAOptions, blockades?: BlockadePeriod[], applicationId?: string) {
-  return buildFormAWriteSchema(getFormAValidationSchema(initValues, blockades), false, applicationId);
+export function getFormAFieldsSchema(initValues: FormAOptions, blockades?: BlockadePeriod[], applicationId?: string) {
+  return buildFormAFieldsSchema(getFormAValidationSchema(initValues, blockades), applicationId);
 }
 
-export function getFormADraftWriteSchema(applicationId?: string) {
-  return buildFormAWriteSchema(FormAInputSchema, true, applicationId);
+export function getFormADraftFieldsSchema(applicationId?: string) {
+  return buildFormAFieldsSchema(FormAInputSchema, applicationId);
 }
 
-function buildFormAWriteSchema(
-  inputSchema: z.ZodType<FormAValues, FormAValues>,
-  draft: boolean,
-  applicationId?: string
-) {
+function buildFormAFieldsSchema(inputSchema: z.ZodType<FormAValues, FormAValues>, applicationId?: string) {
   return inputSchema
-    .transform((form): z.input<typeof FormAWriteRequest> => mapFormAWriteRequest(form, draft, applicationId))
-    .pipe(formContract(FormAWriteRequest, applicationFormPath));
+    .transform((form): z.input<typeof FormAFields> => mapFormAFields(form, applicationId))
+    .pipe(FormAFields);
 }
 
-function mapFormAWriteRequest(form: FormAValues, draft: boolean, applicationId?: string) {
+function mapFormAFields(form: FormAValues, applicationId?: string) {
   return {
-    form: {
-      id: applicationId ?? form.id ?? null,
-      cruiseManagerId: form.cruiseManagerId,
-      deputyManagerId: form.deputyManagerId || null,
-      year: form.year,
-      acceptablePeriod: form.acceptablePeriod || null,
-      optimalPeriod: form.optimalPeriod || null,
-      periodSelectionType: form.periodSelectionType ?? null,
-      precisePeriodStart: toApiDateTime(form.precisePeriodStart),
-      precisePeriodEnd: toApiDateTime(form.precisePeriodEnd),
-      cruiseHours: String(form.cruiseDays * 24 + form.cruiseHours),
-      periodNotes: form.periodNotes,
-      shipUsage: form.shipUsage || null,
-      differentUsage: form.differentUsage,
-      permissions: form.permissions.map((permission) => ({
-        description: permission.description || null,
-        executive: permission.executive || null,
-        scan: permission.scan ?? null,
-      })),
-      researchAreaDescriptions: form.researchAreaDescriptions,
-      cruiseGoal: form.cruiseGoal || null,
-      cruiseGoalDescription: form.cruiseGoalDescription,
-      researchTasks: form.researchTasks.map((task) => ({
-        type: task.type,
-        title: 'title' in task ? task.title : null,
-        magazine: 'magazine' in task ? task.magazine : null,
-        author: 'author' in task ? task.author : null,
-        institution: null,
-        date: 'date' in task ? task.date : null,
-        startDate: 'startDate' in task ? task.startDate : null,
-        endDate: 'endDate' in task ? task.endDate : null,
-        financingAmount:
-          'financingAmount' in task && task.financingAmount !== null ? String(task.financingAmount) : null,
-        financingApproved: 'financingApproved' in task ? String(task.financingApproved) : null,
-        description: 'description' in task ? task.description : null,
-        securedAmount: 'securedAmount' in task && task.securedAmount !== null ? String(task.securedAmount) : null,
-        ministerialPoints:
-          'ministerialPoints' in task && task.ministerialPoints !== null ? String(task.ministerialPoints) : null,
-      })),
-      contracts: form.contracts,
-      ugTeams: form.ugTeams.map((team) => ({
-        ...team,
-        noOfEmployees: String(team.noOfEmployees),
-        noOfStudents: String(team.noOfStudents),
-      })),
-      guestTeams: form.guestTeams.map((team) => ({ name: team.name || null, noOfPersons: String(team.noOfPersons) })),
-      publications: form.publications.map((publication) => ({
-        ...publication,
-        id: publication.id || '00000000-0000-0000-0000-000000000000',
-        doi: publication.doi || null,
-        authors: publication.authors || null,
-        title: publication.title || null,
-        magazine: publication.magazine || null,
-        year: publication.year === null ? null : String(publication.year),
-        ministerialPoints: String(publication.ministerialPoints),
-      })),
-      spubTasks: form.spubTasks.map((task) => ({
-        name: task.name || null,
-        yearFrom: task.yearFrom || null,
-        yearTo: task.yearTo || null,
-      })),
-      supervisorEmail: form.supervisorEmail,
-      note: form.note || null,
-    },
-    draft,
-  } satisfies {
-    form: Required<z.input<typeof FormAWriteRequest>['form']>;
-    draft: boolean;
-  };
+    id: applicationId ?? form.id ?? null,
+    cruiseManagerId: form.cruiseManagerId,
+    deputyManagerId: form.deputyManagerId || null,
+    year: form.year,
+    acceptablePeriod: form.acceptablePeriod || null,
+    optimalPeriod: form.optimalPeriod || null,
+    periodSelectionType: form.periodSelectionType ?? null,
+    precisePeriodStart: toApiDateTime(form.precisePeriodStart),
+    precisePeriodEnd: toApiDateTime(form.precisePeriodEnd),
+    cruiseHours: String(form.cruiseDays * 24 + form.cruiseHours),
+    periodNotes: form.periodNotes,
+    shipUsage: form.shipUsage || null,
+    differentUsage: form.differentUsage,
+    permissions: form.permissions.map((permission) => ({
+      description: permission.description || null,
+      executive: permission.executive || null,
+      scan: permission.scan ?? null,
+    })),
+    researchAreaDescriptions: form.researchAreaDescriptions,
+    cruiseGoal: form.cruiseGoal || null,
+    cruiseGoalDescription: form.cruiseGoalDescription,
+    researchTasks: form.researchTasks.map((task) => ({
+      type: task.type,
+      title: 'title' in task ? task.title : null,
+      magazine: 'magazine' in task ? task.magazine : null,
+      author: 'author' in task ? task.author : null,
+      institution: null,
+      date: 'date' in task ? task.date : null,
+      startDate: 'startDate' in task ? task.startDate : null,
+      endDate: 'endDate' in task ? task.endDate : null,
+      financingAmount: 'financingAmount' in task && task.financingAmount !== null ? String(task.financingAmount) : null,
+      financingApproved: 'financingApproved' in task ? String(task.financingApproved) : null,
+      description: 'description' in task ? task.description : null,
+      securedAmount: 'securedAmount' in task && task.securedAmount !== null ? String(task.securedAmount) : null,
+      ministerialPoints:
+        'ministerialPoints' in task && task.ministerialPoints !== null ? String(task.ministerialPoints) : null,
+    })),
+    contracts: form.contracts,
+    ugTeams: form.ugTeams.map((team) => ({
+      ...team,
+      noOfEmployees: String(team.noOfEmployees),
+      noOfStudents: String(team.noOfStudents),
+    })),
+    guestTeams: form.guestTeams.map((team) => ({ name: team.name || null, noOfPersons: String(team.noOfPersons) })),
+    publications: form.publications.map((publication) => ({
+      ...publication,
+      id: publication.id || '00000000-0000-0000-0000-000000000000',
+      doi: publication.doi || null,
+      authors: publication.authors || null,
+      title: publication.title || null,
+      magazine: publication.magazine || null,
+      year: publication.year === null ? null : String(publication.year),
+      ministerialPoints: String(publication.ministerialPoints),
+    })),
+    spubTasks: form.spubTasks.map((task) => ({
+      name: task.name || null,
+      yearFrom: task.yearFrom || null,
+      yearTo: task.yearTo || null,
+    })),
+    supervisorEmail: form.supervisorEmail,
+    note: form.note || null,
+  } satisfies Required<z.input<typeof FormAFields>>;
 }
 
 function toApiDateTime(value: string): string | null {
@@ -779,8 +767,8 @@ export function getFormASubmissionSchema(
   applicationId?: string
 ) {
   return submissionSchema(
-    getFormAWriteSchema(initValues, blockades, applicationId),
-    getFormADraftWriteSchema(applicationId)
+    getFormAFieldsSchema(initValues, blockades, applicationId),
+    getFormADraftFieldsSchema(applicationId)
   );
 }
 

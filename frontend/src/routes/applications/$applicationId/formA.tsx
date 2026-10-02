@@ -1,4 +1,4 @@
-import { submitApplicationForm } from '@/lib/applications/submitApplicationForm';
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -27,7 +27,7 @@ import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
-import { getErrorMessage } from '@/api/fetch';
+import { getErrorMessage } from '@/api/errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({
   component: FormAPage,
@@ -74,7 +74,7 @@ function FormAPage() {
     },
     onSubmit: ({ value }) => saveForm(value),
     onSubmitInvalid: () => {
-      trackFormSubmit('form-a', 'invalid', form.state);
+      if (!form.state.values.draft) trackFormSubmit('form-a', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
       toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
       navigateToFirstError();
@@ -91,18 +91,20 @@ function FormAPage() {
   };
 
   async function saveForm(values: FormAValues) {
-    trackFormSubmit('form-a', 'valid', form.state);
+    if (!values.draft) trackFormSubmit('form-a', 'valid', form.state);
     if (values.cruiseManagerId !== currentUser.id && values.deputyManagerId !== currentUser.id) {
       setIsSaveDraftModalOpen(false);
-      const message = 'Jedynie kierownik lub jego zastępca mogą zapisać formularz';
-      toast.error(message);
-      throw new Error(message);
+      toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
+      return;
     }
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
     try {
-      await saveMutation.mutateAsync({ applicationId, data: schema.parse(values) });
+      await saveMutation.mutateAsync({
+        applicationId,
+        data: { form: schema.parse(values), draft: values.draft ?? false },
+      });
       toast.success(
         values.draft
           ? 'Formularz został zapisany jako wersja robocza'
@@ -110,13 +112,9 @@ function FormAPage() {
       );
       await navigate({ to: '/' });
     } catch (error) {
-      if (setServerFormErrors(form, error)) {
-        toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
-      } else {
-        toast.error(getErrorMessage(error, 'Nie udało się zapisać formularza'));
-      }
+      setServerFormErrors(form, error);
+      toast.error(getErrorMessage(error, 'Nie udało się zapisać formularza'));
       navigateToFirstError();
-      throw error;
     } finally {
       toast.dismiss(loading);
       setIsSaveDraftModalOpen(false);

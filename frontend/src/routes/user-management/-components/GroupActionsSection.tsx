@@ -10,9 +10,8 @@ import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { Role } from '@/integrations/auth/types';
 import type { UserResponse } from '@/api/generated/schemas';
-
 import { useAcceptUser, useDeactivateUser, useDeleteUser } from '@/api/generated/endpoints/users.gen';
-import { getProblemDetail } from '@/api/fetch';
+import { getProblemDetail } from '@/api/errors';
 
 type Props = {
   selectedUsers: UserResponse[];

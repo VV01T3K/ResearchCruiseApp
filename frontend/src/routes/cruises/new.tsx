@@ -1,6 +1,5 @@
 import { getErrorMessage } from '@/api/errors';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
-import { cruiseFormPath } from '@/routes/cruises/-schemas/form.schema';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -14,7 +13,7 @@ import { trackFormSubmit } from '@/integrations/sentry/client';
 import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { FormView } from './-components/FormView';
-import { CreateCruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
+import { CruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 
@@ -33,9 +32,9 @@ const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
   shipUnavailable: 1,
   startDate: 2,
   endDate: 2,
-  'managersTeam.mainCruiseManagerId': 3,
-  'managersTeam.mainDeputyManagerId': 3,
-  cruiseApplicationsIds: 4,
+  mainManagerId: 3,
+  deputyManagerId: 3,
+  cruiseApplicationIds: 4,
 };
 
 function NewCruisePage() {
@@ -51,7 +50,7 @@ function NewCruisePage() {
       shipUnavailable: search.blockade ?? false,
     },
     validationLogic: formValidationLogic,
-    validators: { onDynamic: CreateCruiseFormSchema },
+    validators: { onDynamic: CruiseFormSchema },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('new-cruise', 'invalid', formApi.state);
       toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
@@ -60,15 +59,14 @@ function NewCruisePage() {
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('new-cruise', 'valid', formApi.state);
       try {
-        await createCruiseMutation.mutateAsync({ data: CreateCruiseFormSchema.parse(value) });
+        await createCruiseMutation.mutateAsync({ data: CruiseFormSchema.parse(value) });
         navigate({ to: '/cruises' });
         toast.success('Rejs został utworzony pomyślnie.');
       } catch (error) {
         console.error(error);
-        setServerFormErrors(form, error, cruiseFormPath);
+        setServerFormErrors(form, error);
         toast.error(getErrorMessage(error, 'Nie udało się utworzyć rejsu'));
         navigateToFirstError();
-        throw error;
       }
     },
   });

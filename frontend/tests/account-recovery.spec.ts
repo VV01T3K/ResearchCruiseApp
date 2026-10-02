@@ -29,6 +29,51 @@ test('resend confirmation uses the v2 auth route', async ({ page }) => {
   expect(requestBody).toEqual({ email: getAdminAccountPayload().email });
 });
 
+async function fillRegistration(page: Page) {
+  await page.goto('/register');
+  await page.getByLabel('E-mail').fill('person@example.com');
+  await page.getByLabel('Imię').fill('Ada');
+  await page.getByLabel('Nazwisko').fill('Lovelace');
+  await page.getByLabel('Hasło', { exact: true }).fill('Password1');
+  await page.getByLabel('Potwierdź hasło').fill('Password1');
+}
+
+test('registration sends only the account fields', async ({ page }) => {
+  let requestBody: unknown;
+  await page.route(`${API_URL}/v2/auth/register`, async (route) => {
+    requestBody = route.request().postDataJSON();
+    await route.fulfill({ status: 204 });
+  });
+
+  await fillRegistration(page);
+  await page.getByRole('button', { name: 'Zarejestruj się' }).click();
+
+  await expect(page).toHaveURL(/\/login$/);
+  expect(requestBody).toEqual({
+    email: 'person@example.com',
+    firstName: 'Ada',
+    lastName: 'Lovelace',
+    password: 'Password1',
+  });
+});
+
+test('failed registration reports the reason once and allows retry', async ({ page }) => {
+  const pageErrors: Error[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error));
+  await page.route(`${API_URL}/v2/auth/register`, (route) =>
+    route.fulfill({ status: 409, json: { detail: 'Username is already taken.' } })
+  );
+
+  await fillRegistration(page);
+  await page.getByRole('button', { name: 'Zarejestruj się' }).click();
+
+  await expect(page.getByTestId('toast-error')).toHaveCount(1);
+  await expect(page.getByTestId('toast-error')).toContainText('Username is already taken.');
+  await expect(page.getByText('Podany adres e-mail jest już zajęty.')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Zarejestruj się' })).toBeEnabled();
+  expect(pageErrors).toEqual([]);
+});
+
 test('forgot password uses the v2 reset-request route', async ({ page }) => {
   let requestBody: unknown;
   await page.route(`${API_URL}/v2/auth/password-reset-request`, async (route) => {

@@ -6,9 +6,9 @@ import initValuesJson from '@tests/assets/api-mocks/api_forms_InitValues_A.json'
 import {
   formADefaultValues,
   type FormAValues,
-  getFormADraftWriteSchema,
+  getFormADraftFieldsSchema,
   getFormAValidationSchema,
-  getFormAWriteSchema,
+  getFormAFieldsSchema,
   mapFormAToValues,
   mapResearchTaskToValues,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -18,7 +18,7 @@ import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/
 import {
   createSchemaAssertions,
   override,
-} from '@/routes/applications/$applicationId/-schemas/__tests__/schemaTestUtils';
+} from '@tests/unit/routes/applications/$applicationId/-schemas/schemaTestUtils';
 import type { FormAOptions } from '@/api/generated/schemas';
 import type { FormAFields } from '@/api/generated/schemas';
 
@@ -373,7 +373,7 @@ describe('formA schema – year', () => {
   });
 });
 
-describe('formA schema – write and draft requests', () => {
+describe('formA schema – API fields and drafts', () => {
   it('draft accepts empty values but still requires the complete input shape', () => {
     const draft = {
       ...formADefaultValues,
@@ -381,7 +381,7 @@ describe('formA schema – write and draft requests', () => {
       year: initValues.years[0],
       permissions: [{ description: '', executive: '', scan: undefined }],
     };
-    const schema = getFormADraftWriteSchema();
+    const schema = getFormADraftFieldsSchema();
     expect(schema.safeParse(draft).success).toBe(true);
 
     const { note: _omitted, ...missingKey } = draft;
@@ -419,9 +419,9 @@ describe('formA schema – write and draft requests', () => {
       ministerialPoints: null,
     });
 
-    const request = getFormADraftWriteSchema().parse(draft);
-    expect(request.form.researchTasks![0]).toMatchObject({ financingAmount: null, securedAmount: null });
-    expect(request.form.researchTasks![1]).toMatchObject({ ministerialPoints: null });
+    const fields = getFormADraftFieldsSchema().parse(draft);
+    expect(fields.researchTasks![0]).toMatchObject({ financingAmount: null, securedAmount: null });
+    expect(fields.researchTasks![1]).toMatchObject({ ministerialPoints: null });
   });
 
   it('normalizes backend precise-period datetimes at the API boundary', () => {
@@ -440,11 +440,11 @@ describe('formA schema – write and draft requests', () => {
       note: '',
     };
 
-    const request = getFormAWriteSchema(initValues).parse(form);
+    const fields = getFormAFieldsSchema(initValues).parse(form);
 
-    expect(request.form.precisePeriodStart).toBe('2026-07-20T00:00:00Z');
-    expect(request.form.precisePeriodEnd).toBe('2026-07-23T00:00:00Z');
-    expect(request.form.cruiseHours).toBe(String(form.cruiseDays * 24 + form.cruiseHours));
-    expect(request.form).not.toHaveProperty('cruiseDays');
+    expect(fields.precisePeriodStart).toBe('2026-07-20T00:00:00Z');
+    expect(fields.precisePeriodEnd).toBe('2026-07-23T00:00:00Z');
+    expect(fields.cruiseHours).toBe(String(form.cruiseDays * 24 + form.cruiseHours));
+    expect(fields).not.toHaveProperty('cruiseDays');
   });
 });

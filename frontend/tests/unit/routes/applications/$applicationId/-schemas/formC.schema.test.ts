@@ -5,13 +5,13 @@ import initValuesJson from '@tests/assets/api-mocks/api_forms_InitValues_A.json'
 import {
   formCDefaultValues,
   type FormCValues,
-  getFormCDraftWriteSchema,
+  getFormCDraftFieldsSchema,
   getFormCValidationSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import {
   createSchemaAssertions,
   override,
-} from '@/routes/applications/$applicationId/-schemas/__tests__/schemaTestUtils';
+} from '@tests/unit/routes/applications/$applicationId/-schemas/schemaTestUtils';
 import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 import type { FormAOptions } from '@/api/generated/schemas';
 
@@ -207,7 +207,7 @@ describe('formC schema – draft requests', () => {
       ...formCDefaultValues,
       permissions: [{ description: '', executive: '', scan: undefined }],
     };
-    const draftSchema = getFormCDraftWriteSchema();
+    const draftSchema = getFormCDraftFieldsSchema();
     expect(draftSchema.safeParse(draft).success).toBe(true);
 
     const { photos: _omitted, ...missingKey } = draft;

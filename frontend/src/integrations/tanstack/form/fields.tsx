@@ -11,15 +11,13 @@ import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePick
 import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import type { FileValue } from '@/components/shared/inputs/AppFileInput';
-import { extractErrorMessage } from '@/integrations/tanstack/form/errors';
+import { getErrors } from '@/integrations/tanstack/form/errors';
 
 function useErrors() {
   const field = useFieldContext<unknown>();
   const submissionAttempts = useSelector(field.form.store, (state) => state.submissionAttempts);
   const meta = useSelector(field.store, (state) => state.meta);
-  const errors = meta.errors;
-  if ((!meta.isBlurred && submissionAttempts === 0) || errors.length === 0) return undefined;
-  return errors.map(extractErrorMessage);
+  return getErrors(meta, submissionAttempts);
 }
 
 type TextProps = Omit<React.ComponentProps<typeof AppInput>, 'name' | 'value' | 'onBlur' | 'onChange' | 'errors'> & {
@@ -39,21 +37,6 @@ function TextField({ value, onChange, ...props }: TextProps) {
       value={value ?? field.state.value}
       onBlur={field.handleBlur}
       onChange={onChange ?? field.handleChange}
-      errors={useErrors()}
-    />
-  );
-}
-
-function TextareaField(props: TextProps) {
-  const field = useFieldContext<string>();
-  return (
-    <AppInput
-      {...props}
-      type="textarea"
-      name={field.name}
-      value={field.state.value}
-      onBlur={field.handleBlur}
-      onChange={field.handleChange}
       errors={useErrors()}
     />
   );
@@ -236,27 +219,6 @@ function FilesField(props: FilesProps) {
   );
 }
 
-function FieldErrors() {
-  return <AppInputErrorsList errors={useErrors()} />;
-}
-
-export const fieldComponents = {
-  FloatingTextField,
-  TextField,
-  TextareaField,
-  NumberField,
-  NullableNumberField,
-  SelectField,
-  BooleanSelectField,
-  CheckboxField,
-  ArrayCheckboxField,
-  DateField,
-  MonthField,
-  FileField,
-  FilesField,
-  FieldErrors,
-};
-
 function FloatingTextField(props: WithoutFieldProps<React.ComponentProps<typeof AppFloatingLabelInput>>) {
   const field = useFieldContext<string>();
   return (
@@ -270,3 +232,23 @@ function FloatingTextField(props: WithoutFieldProps<React.ComponentProps<typeof 
     />
   );
 }
+
+function FieldErrors() {
+  return <AppInputErrorsList errors={useErrors()} />;
+}
+
+export const fieldComponents = {
+  FloatingTextField,
+  TextField,
+  NumberField,
+  NullableNumberField,
+  SelectField,
+  BooleanSelectField,
+  CheckboxField,
+  ArrayCheckboxField,
+  DateField,
+  MonthField,
+  FileField,
+  FilesField,
+  FieldErrors,
+};

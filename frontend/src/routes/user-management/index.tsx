@@ -13,7 +13,6 @@ import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { cn } from '@/lib/utils';
 import type { UserResponse } from '@/api/generated/schemas';
-
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { GroupActionsSection } from './-components/GroupActionsSection';
 import { RoleBadge } from './-components/RoleBadge';

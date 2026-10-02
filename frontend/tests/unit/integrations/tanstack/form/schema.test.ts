@@ -1,11 +1,11 @@
-import { formValidationLogic } from './validation';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { describe, expect, it, vi } from 'vitest';
 import { FieldApi, FormApi } from '@tanstack/react-form';
 import { z } from 'zod';
 
-import { applicationFormPath, formContract, submissionSchema } from './schema';
-import { submitApplicationForm } from '@/lib/applications/submitApplicationForm';
-import { getErrors } from './errors';
+import { submissionSchema } from '@/integrations/tanstack/form/schema';
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
+import { getErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import {
   formBDefaultValues,
   getFormBSubmissionSchema,
@@ -41,17 +41,48 @@ describe('form submission contracts', () => {
     }
   });
 
+  it('lets the next submit retry after the server rejects a field without client validators', async () => {
+    let saves = 0;
+    const form = new FormApi({
+      defaultValues: { deputy: 'a' },
+      validationLogic: formValidationLogic,
+      validators: { onDynamic: z.object({ deputy: z.string() }) },
+      onSubmit: () => {
+        if (++saves === 1) setServerFormErrors(form, { problem: { errors: { deputy: ['Zastępca niedostępny'] } } });
+      },
+      onSubmitMeta: undefined,
+    });
+    const unmount = form.mount();
+    const field = new FieldApi({ form, name: 'deputy' });
+    const unmountField = field.mount();
+    try {
+      await form.handleSubmit();
+      expect(field.state.meta.errors).toEqual(['Zastępca niedostępny']);
+      await form.handleSubmit();
+      expect(saves).toBe(2);
+      expect(field.state.meta.errors).toEqual([]);
+    } finally {
+      unmountField();
+      unmount();
+    }
+  });
+
   it('prevents duplicate saves and preserves input after a failed request', async () => {
     let rejectRequest!: (error: Error) => void;
     let requests = 0;
+    const reported: unknown[] = [];
     const form = new FormApi({
       defaultValues: { draft: false, name: 'Unfinished research' },
       canSubmitWhenInvalid: true,
       onSubmit: async () => {
         requests++;
-        await new Promise<void>((_, reject) => {
-          rejectRequest = reject;
-        });
+        try {
+          await new Promise<void>((_, reject) => {
+            rejectRequest = reject;
+          });
+        } catch (error) {
+          reported.push(error);
+        }
       },
     });
     const unmount = form.mount();
@@ -64,7 +95,7 @@ describe('form submission contracts', () => {
       await vi.waitFor(() => expect(requests).toBe(1));
       rejectRequest(new Error('Request failed'));
       await save;
-      expect(form.state.isSubmitSuccessful).toBe(false);
+      expect(reported).toHaveLength(1);
       expect(form.state.isSubmitting).toBe(false);
       expect(form.state.values.name).toBe('Unfinished research');
     } finally {
@@ -83,11 +114,10 @@ describe('form submission contracts', () => {
     expect(result.error.issues[0].message).not.toMatch(/Too big|Invalid input/);
   });
 
-  it('preserves the existing draft request and strips UI submission state from form fields', () => {
-    const request = getFormBSubmissionSchema().parse({ ...formBDefaultValues, draft: true });
-    expect(request.draft).toBe(true);
-    expect(request.form.isCruiseManagerPresent).toBe('true');
-    expect(request.form).not.toHaveProperty('draft');
+  it('converts draft values to API fields and strips UI submission state', () => {
+    const fields = getFormBSubmissionSchema().parse({ ...formBDefaultValues, draft: true });
+    expect(fields.isCruiseManagerPresent).toBe('true');
+    expect(fields).not.toHaveProperty('draft');
     expect(getFormBSubmissionSchema().safeParse({ ...formBDefaultValues, draft: false }).success).toBe(false);
   });
 
@@ -125,13 +155,5 @@ describe('form submission contracts', () => {
       unmountField();
       unmount();
     }
-  });
-
-  it('preserves API transformations while mapping issue paths', () => {
-    const schema = formContract(
-      z.object({ form: z.object({ count: z.string().transform(Number) }) }),
-      applicationFormPath
-    );
-    expect(schema.parse({ form: { count: '12' } })).toEqual({ form: { count: 12 } });
   });
 });

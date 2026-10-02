@@ -1,4 +1,4 @@
-import { submitApplicationForm } from '@/lib/applications/submitApplicationForm';
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 

@@ -1,5 +1,4 @@
-import { CreateUserRequest, UpdateUserRequest } from '@/api/generated/schemas';
-import { formContract } from '@/integrations/tanstack/form/schema';
+import type { CreateUserRequest, UpdateUserRequest, UserResponse } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
@@ -20,8 +19,6 @@ import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { getRoleLabel, Role } from '@/integrations/auth/types';
-import type { UserResponse } from '@/api/generated/schemas';
-
 import {
   useAcceptUser,
   useAddUserRole,
@@ -32,7 +29,7 @@ import {
   useUpdateUser,
 } from '@/api/generated/endpoints/users.gen';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
-import { getProblemDetail } from '@/api/fetch';
+import { getProblemDetail } from '@/api/errors';
 
 type Props = {
   user?: UserResponse;
@@ -72,9 +69,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
           path: ['role'],
         });
       }
-    })
-    .transform(({ role, ...user }): z.input<typeof CreateUserRequest> => ({ ...user, roles: [role] }))
-    .pipe(formContract(CreateUserRequest, (path) => (path[0] === 'roles' ? ['role'] : path)));
+    });
 
   const [passwordResetSent, setPasswordResetSent] = React.useState(false);
 
@@ -125,14 +120,14 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit(editMode ? 'edit-user' : 'add-user', 'valid', formApi.state);
-      const request = validationSchema.parse(value);
+      const profile = { email: value.email, firstName: value.firstName, lastName: value.lastName };
 
       if (editMode) {
         const loading = toast.loading('Zapisywanie zmian...');
         try {
           await updateUserMutation.mutateAsync({
             userId: user.id,
-            data: UpdateUserRequest.parse(request),
+            data: profile satisfies UpdateUserRequest,
           });
           const currentRole = user.roles[0];
           if (currentRole && currentRole !== value.role) {
@@ -146,13 +141,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
           toast.dismiss(loading);
           console.error(err);
           toast.error('Nie udało się edytować użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          throw err;
         }
       } else {
         const loading = toast.loading('Dodawanie użytkownika...');
         try {
           await addNewUserMutation.mutateAsync({
-            data: request,
+            data: { ...profile, roles: [value.role] } satisfies CreateUserRequest,
           });
           toast.dismiss(loading);
           close();
@@ -161,7 +155,6 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
           toast.dismiss(loading);
           console.error(err);
           toast.error('Nie udało się dodać użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
-          throw err;
         }
       }
     },
@@ -173,7 +166,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    void form.handleSubmit().catch(() => {});
+    void form.handleSubmit();
   }
 
   async function handleUserDeletion() {

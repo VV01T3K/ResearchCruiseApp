@@ -40,7 +40,6 @@ builder.Services.AddOpenApi(
     "v2",
     options =>
     {
-        options.AddSchemaTransformer<ResearchCruiseApp.Infrastructure.Api.ApplicationResponseSchemaTransformer>();
         options.ShouldInclude = description =>
             description.GroupName == "v2"
             && (
