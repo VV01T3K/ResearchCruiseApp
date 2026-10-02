@@ -79,6 +79,8 @@ export function AppFileInput({
     } else {
       onChange?.(newFiles[0]);
     }
+    // Drops and removals can change the files without the upload control losing focus.
+    onBlur?.();
   }
 
   async function handleDrop(evt: React.DragEvent<HTMLDivElement>) {
@@ -149,54 +151,58 @@ export function AppFileInput({
         onDragOver={(e) => e.preventDefault()}
       >
         <div
-          {...accessibility.control}
-          role="button"
-          aria-label={typeof label === 'string' ? label : uploadMessage}
-          aria-disabled={disabled}
-          onBlur={onBlur}
-          onKeyDown={(event) => {
-            if (event.target !== event.currentTarget) return;
-            if (!disabled && (event.key === 'Enter' || event.key === ' ')) {
-              event.preventDefault();
-              inputRef.current?.click();
-            }
-          }}
-          tabIndex={disabled ? -1 : 0}
           className={cn(
             'flex w-full flex-col items-center justify-center border-2 border-gray-300 text-gray-500',
             'cursor-pointer overflow-x-auto rounded-lg border-dashed bg-gray-50 hover:bg-gray-100',
             'min-h-10 transition-all duration-200 ease-in-out',
             disabled ? 'cursor-pointer bg-gray-200 hover:bg-gray-200' : '',
-            errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : '',
+            errors ? 'border-danger ring-danger text-danger focus-within:text-gray-900' : '',
             className
           )}
-          data-testid={buttonTestId}
         >
-          <AnimatePresence>
-            {!disabled && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-              >
-                <div className="flex flex-col items-center justify-center pt-5 pb-4 text-sm">
-                  <CloudUploadIcon className="mb-4 h-8 w-8" />
-                  {uploadMessage}
-                  {notifications && notifications.length > 0 && (
-                    <div className="mx-2 mt-1 rounded bg-danger-100 p-1 text-danger-900">
-                      <ul className="list-inside list-disc">
-                        {notifications.map((notification) => (
-                          <li key={notification}>{notification}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          {<AppFileList files={files} onRemove={removeFile} disabled={disabled} className="my-1" />}
-          {files.length === 0 && disabled && <div>{emptyMessage}</div>}
+          {/* The file list has its own buttons, so it stays outside this button. */}
+          <div
+            {...accessibility.control}
+            role="button"
+            aria-label={typeof label === 'string' ? label : uploadMessage}
+            aria-disabled={disabled}
+            onBlur={onBlur}
+            onKeyDown={(event) => {
+              if (!disabled && (event.key === 'Enter' || event.key === ' ')) {
+                event.preventDefault();
+                inputRef.current?.click();
+              }
+            }}
+            tabIndex={disabled ? -1 : 0}
+            className="w-full rounded-lg"
+            data-testid={buttonTestId}
+          >
+            <AnimatePresence>
+              {!disabled && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <div className="flex flex-col items-center justify-center pt-5 pb-4 text-sm">
+                    <CloudUploadIcon className="mb-4 h-8 w-8" />
+                    {uploadMessage}
+                    {notifications && notifications.length > 0 && (
+                      <div className="mx-2 mt-1 rounded bg-danger-100 p-1 text-danger-900">
+                        <ul className="list-inside list-disc">
+                          {notifications.map((notification) => (
+                            <li key={notification}>{notification}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {files.length === 0 && disabled && <div className="text-center">{emptyMessage}</div>}
+          </div>
+          <AppFileList files={files} onRemove={removeFile} disabled={disabled} className="my-1" />
         </div>
       </div>
 

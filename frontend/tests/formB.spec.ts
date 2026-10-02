@@ -126,6 +126,32 @@ test('all sections filled with invalid rows', async ({ formBPage }) => {
   await expectSectionsInvalid(errors, INVALID_ROW_SECTION_FIELDS);
 });
 
+test('scan fields report dropped files immediately and keep file controls outside the upload button', async ({
+  formBPage,
+  page,
+}) => {
+  await formBPage.fillForm();
+  const section = formBPage.sections.additionalPermissionsSection;
+  await section.addPermissionButton.click();
+  const dataTransfer = await page.evaluateHandle(() => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File(['tekst'], 'skan.txt', { type: 'text/plain' }));
+    return transfer;
+  });
+  await section
+    .permissionRowLocator('last')
+    .getByTestId('permission-scan-button')
+    .dispatchEvent('drop', { dataTransfer });
+  await expect(section.permissionRowLocator('last').getByTestId('permission-scan-errors')).toContainText(
+    'Plik musi być w formacie PDF'
+  );
+
+  await section.permissionRow('last').scanFileInput.send(MOCK_PDF_FILEPATH);
+  const upload = section.permissionRowLocator('last').getByTestId('permission-scan-button');
+  await expect(section.permissionRowLocator('last').getByRole('button', { name: /^Usuń plik/ })).toBeVisible();
+  await expect(upload.locator('button, a, [role="button"]')).toHaveCount(0);
+});
+
 test.describe('additional permissions section tests', () => {
   test.beforeEach(async ({ formBPage }) => {
     await formBPage.fillForm({ except: ['additionalPermissionsSection'] });
