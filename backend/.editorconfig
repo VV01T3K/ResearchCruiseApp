@@ -1,0 +1,152 @@
+root = false
+
+[*.cs]
+dotnet_sort_system_directives_first = true
+
+[**/Migrations/*.Designer.cs]
+generated_code = true
+
+[**/*ModelSnapshot.cs]
+generated_code = true
+
+[**/Resources/*.Designer.cs]
+generated_code = true
+
+[ResearchCruiseApp.{Unit,Integration}Tests/**/*Tests.cs]
+# Specification names tests Behavior_WhenCondition_ExpectedOutcome.
+dotnet_diagnostic.CA1707.severity = none
+
+# Feature namespaces intentionally do not mirror every directory in the existing application.
+[ResearchCruiseApp/**/*.cs]
+dotnet_diagnostic.IDE0130.severity = none
+
+# Preserve existing persisted/wire numeric and date formats pending an explicit culture contract.
+# Restrict this exception to the audited legacy parser/formatter files, not new code.
+[ResearchCruiseApp/Api/Applications/ApplicationCruise/Contracts.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Applications/Catalog/ApplicationReader.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Applications/Catalog/Endpoints.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Applications/FormA/ApplicationMappings.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Applications/FormA/Endpoints.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Applications/FormA/Validators.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Applications/FormC/CruiseEffectService.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Applications/Shared/CruiseApplicationsQueryableExtensions.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Applications/Shared/Mapping/ApplicationMappings.Shared.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Applications/Shared/Reading/ContractReader.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Applications/Shared/Reading/FormInitValuesReader.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Applications/Shared/Writing/ApplicationScoringService.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Cruises/Lists/Contracts.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Cruises/Planning/Contracts.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Cruises/Planning/Endpoints.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Api/Users/Me/CruiseEffects/Contracts.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Infrastructure/Identity/IdentityService.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Infrastructure/Localization/GlobalizationService.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Infrastructure/Persistence/Initialization/DevData/CruiseApplicationsTestDataSeeder.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+[ResearchCruiseApp/Infrastructure/Persistence/YearBasedKeyGenerator.cs]
+dotnet_diagnostic.CA1305.severity = none
+
+
+# These prefix predicates execute in SQL. Adding StringComparison prevents EF translation;
+# retain database-collation semantics rather than moving filtering to memory.
+[ResearchCruiseApp/Api/Applications/FormA/Endpoints.cs]
+dotnet_diagnostic.CA1310.severity = none
+
+[ResearchCruiseApp/Api/Cruises/Planning/Endpoints.cs]
+dotnet_diagnostic.CA1310.severity = none
+
+[ResearchCruiseApp/Infrastructure/Persistence/YearBasedKeyGenerator.cs]
+dotnet_diagnostic.CA1310.severity = none
+
+
+# Permission is the established domain term, not a flags enum. Keep its public name.
+[ResearchCruiseApp/Domain/Entities/Applications/Shared/Permission.cs]
+dotnet_diagnostic.CA1711.severity = none
+
+
+# Preserve established public Error/type and Shared namespace names; this app is not a cross-language library.
+[ResearchCruiseApp/Api/Applications/FormA/ApplicationMappings.cs]
+dotnet_diagnostic.CA1716.severity = none
+
+[ResearchCruiseApp/Api/Applications/Shared/Payloads/FormAPayloads.cs]
+dotnet_diagnostic.CA1716.severity = none
+
+[ResearchCruiseApp/Domain/Error.cs]
+dotnet_diagnostic.CA1716.severity = none
+
+
+# These helpers are resolved through DI. Preserve their existing service interfaces.
+[ResearchCruiseApp/Api/Applications/Shared/Writing/ApplicationScoringService.cs]
+dotnet_diagnostic.CA1822.severity = none
+
+[ResearchCruiseApp/Api/Applications/Shared/Writing/SupervisorInvitationService.cs]
+dotnet_diagnostic.CA1822.severity = none
+
+[ResearchCruiseApp/Infrastructure/Files/Compressor.cs]
+dotnet_diagnostic.CA1822.severity = none
+
+[ResearchCruiseApp/Infrastructure/Persistence/YearBasedKeyGenerator.cs]
+dotnet_diagnostic.CA1822.severity = none
+
+[ResearchCruiseApp/Infrastructure/Security/RandomGenerator.cs]
+dotnet_diagnostic.CA1822.severity = none
+
+
+# This generated historical migration executes once; preserve its generated array initializer.
+[ResearchCruiseApp/Infrastructure/Persistence/Migrations/20250911190418_IncreaseDescriptionFieldLimits.cs]
+dotnet_diagnostic.CA1825.severity = none
+
+
+# These logs cover startup and exceptional outbox paths. LoggerMessage migration is outside this tooling change.
+[ResearchCruiseApp/Infrastructure/Email/EmailOutboxDispatcher.cs]
+dotnet_diagnostic.CA1848.severity = none
+
+[ResearchCruiseApp/Infrastructure/Email/EmailOutboxWorker.cs]
+dotnet_diagnostic.CA1848.severity = none
+
+[ResearchCruiseApp/Infrastructure/Identity/IdentityService.cs]
+dotnet_diagnostic.CA1848.severity = none
+
+[ResearchCruiseApp/Infrastructure/Persistence/Initialization/ApplicationDbContextInitializer.cs]
+dotnet_diagnostic.CA1848.severity = none
+
+
+# This historical migration executes once; caching its index-column argument adds no useful lifetime benefit.
+[ResearchCruiseApp/Infrastructure/Persistence/Migrations/20260727190333_AddCruiseApplicationsNumberIdIndex.cs]
+dotnet_diagnostic.CA1861.severity = none

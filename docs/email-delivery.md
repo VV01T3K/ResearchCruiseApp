@@ -63,11 +63,11 @@ SMTP configuration validation runs before database initialization and worker sta
 The application rejects missing credentials in real SMTP mode even if no messages
 are pending; fake SMTP remains usable without them. See [SMTP setup](smtp-configuration.md).
 
-The test suite defaults to isolated SQLite databases. To exercise the same outbox
-tests against SQL Server, set `RESEARCHCRUISE_TEST_SQLSERVER` to a test-server
-connection string and run `dotnet test --filter FullyQualifiedName~EmailOutboxTests`.
-The fixture creates and deletes its own uniquely named `EmailOutboxTests_*`
-databases; use a dedicated test server with database-creation permissions.
+The new baseline tests use a disposable SQL Server container through the root
+`vp run check` command. Run them in Ubuntu WSL or Linux with Docker available;
+no shared server connection string is needed. The legacy suite still runs during
+review and uses its existing providers. See [backend development](backend-development.md)
+and [the scenario ledger](backend-test-scenarios.md) for commands and coverage status.
 
 Monitor `EmailOutboxMessages` for old pending rows, rising `Attempts`, and non-null
 `FailedAt`. Delivery failure logs identify the message ID, attempt, exception type,
