@@ -3,13 +3,15 @@ FROM mcr.microsoft.com/devcontainers/base:trixie
 RUN apt-get update && apt-get install -y --no-install-recommends xdg-utils
 USER vscode
 
-RUN curl -fsSL https://vite.plus | bash && test -x ~/.vite-plus/bin/vp
+RUN curl -fsSL https://vite.plus | bash \
+    && echo '[ -f "$HOME/.config/vite-plus/env" ] && . "$HOME/.config/vite-plus/env"' >> ~/.bashrc \
+    && echo '[ -f "$HOME/.config/vite-plus/env" ] && . "$HOME/.config/vite-plus/env"' >> "${ZDOTDIR-$HOME}/.zshrc"
 RUN curl -fsSL https://mise.run | sh \
     && echo 'eval "$(mise activate bash)"' >> ~/.bashrc \
     && echo 'eval "$(mise activate zsh)"' >> "${ZDOTDIR-$HOME}/.zshrc"
-ENV PATH="/home/vscode/.vite-plus/bin:/home/vscode/.local/bin:${PATH}"
+ENV PATH="/home/vscode/.local/share/vite-plus/bin:/home/vscode/.vite-plus/bin:/home/vscode/.local/bin:${PATH}"
 COPY frontend/.node-version /tmp/.node-version
-RUN cd /tmp && vp env install
+RUN cd /tmp && { [ -f "$HOME/.config/vite-plus/env" ] && . "$HOME/.config/vite-plus/env" || true; } && vp env install
 # RUN vp dlx playwright@1.59.1 install --with-deps chromium
 RUN mise use -g claude@latest codex@latest opencode@latest
 COPY mise.toml /tmp/mise.toml
