@@ -85,6 +85,7 @@ function FormAPage() {
     initValues: initialStateQuery.data,
     isReadonly: !editMode,
     blockades: blockadesQuery.data,
+    blockadesError: blockadesQuery.error,
     onSaveDraft: () => setIsSaveDraftModalOpen(true),
     actionsDisabled: saveMutation.isPending,
   };

@@ -46,9 +46,7 @@ test('successful login revokes the cookie if profile hydration fails', async ({ 
   await loginPage.login('test.email@gmail.com', 'someP@ssword');
 
   expect((await logoutRequest).method()).toBe('POST');
-  await expect(
-    loginPage.page.getByText('Wystąpił błąd podczas logowania. Sprawdź połączenie z internetem.')
-  ).toBeVisible();
+  await expect(loginPage.page.getByText('Nie udało się wczytać profilu konta.')).toBeVisible();
 });
 
 test('rate-limited login shows retry guidance without a toast and allows retry', async ({ loginPage }) => {
@@ -73,7 +71,7 @@ test('rate-limited login shows retry guidance without a toast and allows retry',
   await expect(loginPage.page.getByRole('link', { name: /Nowe zgłoszenie/ })).toBeVisible();
 });
 
-test('failed profile loading reports the server reason once and allows login retry', async ({ loginPage, page }) => {
+test('failed profile loading shows the server reason and allows login retry', async ({ loginPage, page }) => {
   let profileUnavailable = true;
   await page.route(`${API_URL}/v2/users/me`, (route) =>
     profileUnavailable
@@ -82,9 +80,8 @@ test('failed profile loading reports the server reason once and allows login ret
   );
   await page.route(`${API_URL}/v2/auth/logout`, (route) => route.fulfill({ status: 204 }));
   await loginPage.login('test.email@gmail.com', 'someP@ssword');
-  await expect(page.getByText('Wystąpił błąd podczas logowania. Sprawdź połączenie z internetem.')).toBeVisible();
-  await expect(page.getByTestId('toast-error')).toHaveCount(1);
-  await expect(page.getByTestId('toast-error')).toContainText('Profil chwilowo niedostępny');
+  await expect(page.getByText('Profil chwilowo niedostępny', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('toast-error')).toHaveCount(0);
 
   profileUnavailable = false;
   await loginPage.login('test.email@gmail.com', 'someP@ssword');

@@ -74,6 +74,7 @@ function NewCruiseApplicationPage() {
     initValues: initialStateQuery.data,
     isReadonly: false,
     blockades: blockadesQuery.data,
+    blockadesError: blockadesQuery.error,
     onSaveDraft: () => setIsSaveDraftModalOpen(true),
     actionsDisabled: saveMutation.isPending,
   };
