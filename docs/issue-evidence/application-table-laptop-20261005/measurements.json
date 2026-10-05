@@ -1,0 +1,82 @@
+[
+  {
+    "scenario": "current-1280",
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "tableWidth": 1261.625,
+    "containerWidth": 1024,
+    "horizontalOverflow": 238,
+    "badge": {
+      "textContent": "100 pkt.",
+      "hasNewline": false,
+      "lineCount": 2,
+      "whiteSpace": "normal"
+    },
+    "renderedRows": 11,
+    "rowHeight": 104,
+    "actionsFullyVisible": false,
+    "tableBottom": 12256
+  },
+  {
+    "scenario": "current-1366",
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "tableWidth": 1261.625,
+    "containerWidth": 1110,
+    "horizontalOverflow": 152,
+    "badge": {
+      "textContent": "100 pkt.",
+      "hasNewline": false,
+      "lineCount": 2,
+      "whiteSpace": "normal"
+    },
+    "renderedRows": 11,
+    "rowHeight": 104,
+    "actionsFullyVisible": false,
+    "tableBottom": 12256
+  },
+  {
+    "scenario": "current-1920",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "tableWidth": 1664,
+    "containerWidth": 1664,
+    "horizontalOverflow": 0,
+    "badge": {
+      "textContent": "100 pkt.",
+      "hasNewline": false,
+      "lineCount": 2,
+      "whiteSpace": "normal"
+    },
+    "renderedRows": 14,
+    "rowHeight": 104,
+    "actionsFullyVisible": true,
+    "tableBottom": 12184
+  },
+  {
+    "scenario": "old-renderer-1280",
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "tableWidth": 1261.625,
+    "containerWidth": 1024,
+    "horizontalOverflow": 238,
+    "badge": {
+      "textContent": "100 pkt.",
+      "hasNewline": false,
+      "lineCount": 2,
+      "whiteSpace": "normal"
+    },
+    "renderedRows": 101,
+    "rowHeight": 104,
+    "actionsFullyVisible": false,
+    "tableBottom": 10800
+  }
+]
