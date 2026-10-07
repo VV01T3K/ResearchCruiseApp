@@ -1,0 +1,67 @@
+# Arcane owns the deployment. Restore the external database volume before startup.
+# Image digests are set during migration; application releases update these defaults.
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-CU23-ubuntu-22.04
+    container_name: researchcruiseapp-db
+    restart: unless-stopped
+    mem_limit: 3g
+    environment:
+      ACCEPT_EULA: 'Y'
+      MSSQL_SA_PASSWORD: ${DB_PASSWORD:?Preserve the deployed SQL Server password}
+      MSSQL_MEMORY_LIMIT_MB: '2048'
+    volumes:
+      - researchcruiseapp-db:/var/opt/mssql
+    healthcheck:
+      test: [CMD-SHELL, '/opt/mssql-tools18/bin/sqlcmd -S 127.0.0.1 -U sa -P "$$MSSQL_SA_PASSWORD" -C -b -Q "SELECT 1" >/dev/null']
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    networks: [database]
+  backend:
+    image: ghcr.io/vv01t3k/researchcruiseapp/backend@sha256:b418ddd6fad726d13a89fb9a698483c7619a3ea15d168e9525aaa2a12d2e5d57
+    container_name: researchcruiseapp-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__Database: ${DB_CONNECTION_STRING:?Preserve the deployed connection string}
+      Database__SeedAccountsAutomatically: 'false'
+      Database__LogUserPasswordsWhenSeeding: 'false'
+      FrontendUrl: https://cruise.wsiwiec.com
+      SmtpSettings__SmtpUsername: ${SMTP_USERNAME:?Preserve the deployed SMTP username}
+      SmtpSettings__SmtpPassword: ${SMTP_PASSWORD:?Preserve the deployed SMTP password}
+      JWT__Secret: ${JWT_SECRET:?Preserve the deployed token signing secret}
+      Sentry__Dsn: ${SENTRY_DSN_BACKEND:-}
+      Sentry__TracesSampleRate: ${SENTRY_TRACES_SAMPLE_RATE:-1}
+    networks: [database, application]
+  frontend:
+    image: ghcr.io/vv01t3k/researchcruiseapp/frontend@sha256:bd4e25efdb855db13b31c43f9a6e935ebee18aee503158ebb341f6b77c8f23d8
+    container_name: researchcruiseapp-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      API_URL: http://backend:8080/
+      SENTRY_DSN: ${SENTRY_DSN_FRONTEND:-}
+      SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-1}
+      SENTRY_REPLAYS_SESSION_SAMPLE_RATE: ${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-1}
+    networks: [application, caddy]
+    labels:
+      caddy: https://cruise.wsiwiec.com
+      caddy.import: protected
+      caddy.reverse_proxy: '{{upstreams 8080}}'
+
+volumes:
+  researchcruiseapp-db:
+    external: true
+networks:
+  database:
+    name: researchcruiseapp-network
+    internal: true
+  application: {}
+  caddy:
+    external: true

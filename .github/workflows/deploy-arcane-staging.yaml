@@ -1,12 +1,13 @@
-name: Build images & deploy to Komodo staging
+name: Build images & publish Arcane staging
 
 on:
+  workflow_dispatch:
   push:
     branches: [staging]
-    paths-ignore: ["docs/**", "**.md", ".gitignore"]
+    paths-ignore: ["docs/**", "**.md", ".gitignore", "docker/arcane/**"]
   pull_request:
     branches: [staging]
-    paths-ignore: ["docs/**", "**.md", ".gitignore"]
+    paths-ignore: ["docs/**", "**.md", ".gitignore", "docker/arcane/**"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -42,7 +43,7 @@ jobs:
       - uses: docker/setup-buildx-action@v3
 
       - name: Login to GHCR
-        if: github.event_name == 'push'
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -57,11 +58,12 @@ jobs:
           tags: type=raw,value=staging
 
       - name: Build and push
+        id: image
         uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
-          push: ${{ github.event_name == 'push' }}
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ matrix.build-args }}
@@ -70,18 +72,43 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.component }}
           cache-to: type=gha,scope=${{ matrix.component }},mode=max
 
-  trigger-komodo:
-    name: Trigger Komodo webhook
+      - name: Record the published digest
+        if: github.event_name != 'pull_request'
+        env:
+          IMAGE_DIGEST: ${{ steps.image.outputs.digest }}
+          COMPONENT: ${{ matrix.component }}
+        run: printf '%s\n' "$IMAGE_DIGEST" > "$COMPONENT.digest"
+
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          name: digest-${{ matrix.component }}
+          path: ${{ matrix.component }}.digest
+
+  publish-deployment:
+    name: Publish verified images for Arcane
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push'
-
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/staging' && vars.ARCANE_STAGING_READY == 'true'
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v6
-
-      - name: Trigger Komodo webhook
-        env:
-          KOMODO_WEBHOOK_URL: https://komodo_wb.wojtecs.com/listener/github/procedure/695bdc102652deb41b6ef3ec/__ANY__
-          KOMODO_WEBHOOK_SECRET: ${{ secrets.KOMODO_WEBHOOK_SECRET }}
-          CLOUDFLARE_WEBHOOK_SECRET: ${{ secrets.CLOUDFLARE_WEBHOOK_SECRET }}
-        run: bash scripts/trigger-komodo-webhook.sh
+        with:
+          ref: staging
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: digest-*
+          path: image-digests
+          merge-multiple: true
+      - name: Update pinned staging images
+        run: python scripts/publish-arcane-images.py image-digests
+      - name: Commit deployment for Arcane polling
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docker/arcane/compose.yaml
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(deploy): publish staging image digests"
+            git push origin HEAD:staging
+          fi
