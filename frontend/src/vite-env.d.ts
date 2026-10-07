@@ -13,4 +13,5 @@ interface Window {
   __SENTRY_DSN__?: string;
   __SENTRY_TRACES_SAMPLE_RATE__?: string;
   __SENTRY_REPLAYS_SESSION_SAMPLE_RATE__?: string;
+  __SENTRY_PROXY__?: string;
 }
