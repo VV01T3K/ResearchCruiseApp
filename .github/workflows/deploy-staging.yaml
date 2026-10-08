@@ -1,4 +1,4 @@
-name: Build images & deploy to Arcane staging
+name: Build images & deploy to staging
 
 on:
   push:
@@ -74,26 +74,22 @@ jobs:
     name: Update staging application services
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/staging' && vars.ARCANE_STAGING_READY == 'true'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/staging' && vars.STAGING_DEPLOY_ENABLED == 'true'
     permissions:
       contents: read
     timeout-minutes: 20
     steps:
       - name: Pull and update backend and frontend
         env:
-          ARCANE_URL: ${{ vars.ARCANE_URL }}
-          ARCANE_ENVIRONMENT_ID: ${{ vars.ARCANE_ENVIRONMENT_ID }}
-          ARCANE_PROJECT_ID: ${{ vars.ARCANE_PROJECT_ID }}
-          ARCANE_API_KEY: ${{ secrets.ARCANE_API_KEY }}
+          STAGING_DEPLOY_URL: ${{ vars.STAGING_DEPLOY_URL }}
+          STAGING_DEPLOY_API_KEY: ${{ secrets.STAGING_DEPLOY_API_KEY }}
         run: |
-          : "${ARCANE_URL:?Set the HTTPS Arcane base URL}"
-          : "${ARCANE_ENVIRONMENT_ID:?Set the Arcane environment ID}"
-          : "${ARCANE_PROJECT_ID:?Set the Research Cruise project ID}"
-          : "${ARCANE_API_KEY:?Set the deployment API key}"
+          : "${STAGING_DEPLOY_URL:?Set the staging service-update URL}"
+          : "${STAGING_DEPLOY_API_KEY:?Set the deployment API key}"
           curl --fail --silent --show-error --proto '=https' \
             --connect-timeout 15 --max-time 1100 \
-            --header "X-Api-Key: $ARCANE_API_KEY" \
+            --header "X-Api-Key: $STAGING_DEPLOY_API_KEY" \
             --header 'Content-Type: application/json' \
             --data '{"services":["backend","frontend"]}' \
-            "${ARCANE_URL%/}/api/environments/${ARCANE_ENVIRONMENT_ID}/projects/${ARCANE_PROJECT_ID}/update-services" \
+            "$STAGING_DEPLOY_URL" \
             | jq --exit-status '.success == true'

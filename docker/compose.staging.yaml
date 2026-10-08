@@ -1,15 +1,11 @@
-# Arcane owns the deployment. Restore the external database volume before startup.
-# Application releases pull staging tags; SQL upgrades are separate operations.
 services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-CU23-ubuntu-22.04
     container_name: researchcruiseapp-db
     restart: unless-stopped
-    mem_limit: 3g
     environment:
       ACCEPT_EULA: 'Y'
       MSSQL_SA_PASSWORD: ${DB_PASSWORD:?Preserve the deployed SQL Server password}
-      MSSQL_MEMORY_LIMIT_MB: '2048'
     volumes:
       - researchcruiseapp-db:/var/opt/mssql
     healthcheck:
@@ -28,15 +24,15 @@ services:
         condition: service_healthy
     environment:
       ConnectionStrings__Database: ${DB_CONNECTION_STRING:?Preserve the deployed connection string}
-      Database__SeedAccountsAutomatically: 'false'
-      Database__LogUserPasswordsWhenSeeding: 'false'
-      FrontendUrl: https://cruise.wsiwiec.com
+      Database__SeedAccountsAutomatically: ${DATABASE_SEED_ACCOUNTS_AUTOMATICALLY:-false}
+      Database__LogUserPasswordsWhenSeeding: ${DATABASE_LOG_USER_PASSWORDS_WHEN_SEEDING:-false}
+      FrontendUrl: ${FRONTEND_URL:-https://cruise.wsiwiec.com}
       SmtpSettings__SmtpUsername: ${SMTP_USERNAME:?Preserve the deployed SMTP username}
       SmtpSettings__SmtpPassword: ${SMTP_PASSWORD:?Preserve the deployed SMTP password}
       JWT__Secret: ${JWT_SECRET:?Preserve the deployed token signing secret}
-      Sentry__Dsn: ${SENTRY_DSN_BACKEND:-}
+      Sentry__Dsn: ${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       Sentry__TracesSampleRate: ${SENTRY_TRACES_SAMPLE_RATE:-1}
-    networks: [database, application]
+    networks: [database]
   frontend:
     image: ghcr.io/vv01t3k/researchcruiseapp/frontend:staging
     container_name: researchcruiseapp-frontend
@@ -46,12 +42,12 @@ services:
         condition: service_healthy
     environment:
       API_URL: http://backend:8080/
-      SENTRY_DSN: ${SENTRY_DSN_FRONTEND:-}
+      SENTRY_DSN: ${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-1}
       SENTRY_REPLAYS_SESSION_SAMPLE_RATE: ${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-1}
-    networks: [application, caddy]
+    networks: [database, caddy]
     labels:
-      caddy: https://cruise.wsiwiec.com
+      caddy: ${FRONTEND_URL:-https://cruise.wsiwiec.com}
       caddy.import: protected
       caddy.reverse_proxy: '{{upstreams 8080}}'
 
@@ -61,7 +57,5 @@ volumes:
 networks:
   database:
     name: researchcruiseapp-network
-    internal: true
-  application: {}
   caddy:
     external: true
