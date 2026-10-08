@@ -1,0 +1,19 @@
+{
+  "name": "research-cruise-app-perf",
+  "private": true,
+  "description": "Standalone performance measurements of the cruise applications list (old vs new). Not part of the app build or CI.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "seed": "node seed.mjs",
+    "ui": "node measure-ui.mjs",
+    "api": "node measure-api.mjs",
+    "aggregate": "node aggregate.mjs"
+  },
+  "dependencies": {
+    "mssql": "12.7.2",
+    "playwright": "1.63.0"
+  }
+}

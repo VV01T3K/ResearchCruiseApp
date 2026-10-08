@@ -1,0 +1,2 @@
+variant,n,network,cpu,scenario,run,timestamp,status,timed_out,note,duration_ms,first_row_ms,list_ready_ms,fcp_ms,lcp_ms,tbt_ms,long_tasks,js_heap_used_bytes,js_heap_used_after_gc_bytes,dom_nodes,dom_elements,api_requests,api_transfer_bytes,api_body_bytes,api_items,total_requests,total_transfer_bytes,rows_rendered,rows_reached
+old,5000,none,1,initial_load,1,2026-10-03T19:48:43.974Z,ok,0,,13494.1,11143.1,13494.1,152,452,2549,9,409767836,257156512,229087,144860,2,7591008,7579622,9202,19,10653734,4601,

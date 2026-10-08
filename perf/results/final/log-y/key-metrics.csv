@@ -1,0 +1,151 @@
+n,metric,unit,variant,median,p95,count
+100,Wejście: pierwszy wiersz,s,old,0.486,0.496,30
+100,Wejście: pierwszy wiersz,s,new,0.572,0.584,30
+1000,Wejście: pierwszy wiersz,s,old,2.407,2.428,30
+1000,Wejście: pierwszy wiersz,s,new,0.578,0.593,30
+3000,Wejście: pierwszy wiersz,s,old,6.816,6.878,30
+3000,Wejście: pierwszy wiersz,s,new,0.567,0.582,30
+5000,Wejście: pierwszy wiersz,s,old,11.141,11.217,30
+5000,Wejście: pierwszy wiersz,s,new,0.566,0.575,30
+10000,Wejście: pierwszy wiersz,s,old,,,0
+10000,Wejście: pierwszy wiersz,s,new,0.568,0.575,30
+100,Wejście: lista gotowa,s,old,0.486,0.496,30
+100,Wejście: lista gotowa,s,new,0.572,0.584,30
+1000,Wejście: lista gotowa,s,old,2.407,2.428,30
+1000,Wejście: lista gotowa,s,new,0.578,0.593,30
+3000,Wejście: lista gotowa,s,old,8.142,8.234,30
+3000,Wejście: lista gotowa,s,new,0.567,0.582,30
+5000,Wejście: lista gotowa,s,old,13.56,13.677,30
+5000,Wejście: lista gotowa,s,new,0.566,0.575,30
+10000,Wejście: lista gotowa,s,old,,,0
+10000,Wejście: lista gotowa,s,new,0.568,0.575,30
+100,Wejście: Total Blocking Time,ms,old,18,23.55,30
+100,Wejście: Total Blocking Time,ms,new,17,22.1,30
+1000,Wejście: Total Blocking Time,ms,old,147,172.2,30
+1000,Wejście: Total Blocking Time,ms,new,19,29.65,30
+3000,Wejście: Total Blocking Time,ms,old,1430.5,2181.8,30
+3000,Wejście: Total Blocking Time,ms,new,14.5,21.55,30
+5000,Wejście: Total Blocking Time,ms,old,2717,2792.15,30
+5000,Wejście: Total Blocking Time,ms,new,15,24.1,30
+10000,Wejście: Total Blocking Time,ms,old,,,0
+10000,Wejście: Total Blocking Time,ms,new,16,19,30
+100,Wejście: sterta JS,MB,old,17.131,17.177,30
+100,Wejście: sterta JS,MB,new,11.527,11.575,30
+1000,Wejście: sterta JS,MB,old,49.951,66.226,30
+1000,Wejście: sterta JS,MB,new,11.563,11.606,30
+3000,Wejście: sterta JS,MB,old,229.524,251.959,30
+3000,Wejście: sterta JS,MB,new,11.547,11.581,30
+5000,Wejście: sterta JS,MB,old,498.615,523.844,30
+5000,Wejście: sterta JS,MB,new,11.55,11.575,30
+10000,Wejście: sterta JS,MB,old,,,0
+10000,Wejście: sterta JS,MB,new,11.561,11.587,30
+100,Wejście: węzły DOM,szt.,old,4859,4859,30
+100,Wejście: węzły DOM,szt.,new,786,786,30
+1000,Wejście: węzły DOM,szt.,old,45652,45652,30
+1000,Wejście: węzły DOM,szt.,new,801,801,30
+3000,Wejście: węzły DOM,szt.,old,137204,137204,30
+3000,Wejście: węzły DOM,szt.,new,791,791,30
+5000,Wejście: węzły DOM,szt.,old,229087,229087,30
+5000,Wejście: węzły DOM,szt.,new,796,796,30
+10000,Wejście: węzły DOM,szt.,old,,,0
+10000,Wejście: węzły DOM,szt.,new,796,796,30
+100,Wejście: transfer API,kB,old,77.458,77.458,30
+100,Wejście: transfer API,kB,new,15.384,15.384,30
+1000,Wejście: transfer API,kB,old,754.936,754.94,30
+1000,Wejście: transfer API,kB,new,15.289,15.289,30
+3000,Wejście: transfer API,kB,old,4541.468,4541.482,30
+3000,Wejście: transfer API,kB,new,15.366,15.366,30
+5000,Wejście: transfer API,kB,old,7591.004,7591.008,30
+5000,Wejście: transfer API,kB,new,15.303,15.303,30
+10000,Wejście: transfer API,kB,old,,,0
+10000,Wejście: transfer API,kB,new,15.331,15.331,30
+100,Zmiana filtra,ms,old,18.2,20.065,30
+100,Zmiana filtra,ms,new,80.35,84.55,30
+1000,Zmiana filtra,ms,old,68.6,75.685,30
+1000,Zmiana filtra,ms,new,79.6,83.4,30
+3000,Zmiana filtra,ms,old,222.85,246.405,30
+3000,Zmiana filtra,ms,new,77.05,80.365,30
+5000,Zmiana filtra,ms,old,352.05,374.42,30
+5000,Zmiana filtra,ms,new,73.85,77.63,30
+10000,Zmiana filtra,ms,old,,,0
+10000,Zmiana filtra,ms,new,72,75.665,30
+100,Zmiana sortowania,ms,old,30.7,33.675,30
+100,Zmiana sortowania,ms,new,79.55,84.375,30
+1000,Zmiana sortowania,ms,old,391.35,405.15,30
+1000,Zmiana sortowania,ms,new,80.9,85.82,30
+3000,Zmiana sortowania,ms,old,1770.35,1811.475,30
+3000,Zmiana sortowania,ms,new,82.75,86.005,30
+5000,Zmiana sortowania,ms,old,4848.75,5073,30
+5000,Zmiana sortowania,ms,new,84.9,90.82,30
+10000,Zmiana sortowania,ms,old,,,0
+10000,Zmiana sortowania,ms,new,87.15,89.555,30
+100,Przewinięcie do 60. wiersza,s,old,0.79,0.804,30
+100,Przewinięcie do 60. wiersza,s,new,0.924,1.066,30
+1000,Przewinięcie do 60. wiersza,s,old,0.774,0.863,30
+1000,Przewinięcie do 60. wiersza,s,new,0.908,0.974,30
+3000,Przewinięcie do 60. wiersza,s,old,0.768,0.809,30
+3000,Przewinięcie do 60. wiersza,s,new,0.901,0.972,30
+5000,Przewinięcie do 60. wiersza,s,old,0.817,0.853,30
+5000,Przewinięcie do 60. wiersza,s,new,0.927,0.993,30
+10000,Przewinięcie do 60. wiersza,s,old,,,0
+10000,Przewinięcie do 60. wiersza,s,new,0.988,1.019,30
+100,Przewinięcie do końca listy,s,old,0.334,0.359,30
+100,Przewinięcie do końca listy,s,new,0.782,0.871,30
+1000,Przewinięcie do końca listy,s,old,3.432,3.516,30
+1000,Przewinięcie do końca listy,s,new,8.929,9.881,30
+3000,Przewinięcie do końca listy,s,old,10.084,10.131,30
+3000,Przewinięcie do końca listy,s,new,26.964,27.348,30
+5000,Przewinięcie do końca listy,s,old,17.555,18.004,30
+5000,Przewinięcie do końca listy,s,new,44.211,45.183,29
+10000,Przewinięcie do końca listy,s,old,,,0
+10000,Przewinięcie do końca listy,s,new,91.148,92.07,27
+100,Do końca listy: transfer API,MB,old,0,0,30
+100,Do końca listy: transfer API,MB,new,0.056,0.056,30
+1000,Do końca listy: transfer API,MB,old,0,0,30
+1000,Do końca listy: transfer API,MB,new,0.685,0.685,30
+3000,Do końca listy: transfer API,MB,old,0,0,30
+3000,Do końca listy: transfer API,MB,new,2.092,2.092,30
+5000,Do końca listy: transfer API,MB,old,0,0,30
+5000,Do końca listy: transfer API,MB,new,3.508,3.508,29
+10000,Do końca listy: transfer API,MB,old,,,0
+10000,Do końca listy: transfer API,MB,new,7.021,7.021,27
+100,Do końca listy: żądania API,szt.,old,0,0,30
+100,Do końca listy: żądania API,szt.,new,4,4,30
+1000,Do końca listy: żądania API,szt.,old,0,0,30
+1000,Do końca listy: żądania API,szt.,new,45,45,30
+3000,Do końca listy: żądania API,szt.,old,0,0,30
+3000,Do końca listy: żądania API,szt.,new,137,137,30
+5000,Do końca listy: żądania API,szt.,old,0,0,30
+5000,Do końca listy: żądania API,szt.,new,230,230,29
+10000,Do końca listy: żądania API,szt.,old,,,0
+10000,Do końca listy: żądania API,szt.,new,459,459,27
+100,API: cała lista (old),ms,old,219.604,224.203,30
+1000,API: cała lista (old),ms,old,1943.723,1994.534,30
+3000,API: cała lista (old),ms,old,5794.746,5903.755,30
+5000,API: cała lista (old),ms,old,9717.959,9816.587,30
+10000,API: cała lista (old),ms,old,18963.132,19230.424,30
+100,API: 1. strona (new),ms,new,47.938,49.74,30
+1000,API: 1. strona (new),ms,new,48.03,50.387,30
+3000,API: 1. strona (new),ms,new,45.484,47.289,30
+5000,API: 1. strona (new),ms,new,45.504,46.496,30
+10000,API: 1. strona (new),ms,new,43.512,45.74,30
+100,API: ostatnia pełna strona (new),ms,new,45.851,47.768,30
+1000,API: ostatnia pełna strona (new),ms,new,45.948,47.974,30
+3000,API: ostatnia pełna strona (new),ms,new,43.17,47.107,30
+5000,API: ostatnia pełna strona (new),ms,new,46.941,49.053,30
+10000,API: ostatnia pełna strona (new),ms,new,44.327,46.988,30
+100,API: wszystkie strony (new),ms,new,230.949,235.871,5
+1000,API: wszystkie strony (new),ms,new,2157.814,2176.608,5
+3000,API: wszystkie strony (new),ms,new,6395.4,6484.831,5
+5000,API: wszystkie strony (new),ms,new,10440.612,10588.415,5
+10000,API: wszystkie strony (new),ms,new,20829.435,21137.266,5
+100,API: rozmiar całej listy (old),kB,old,77.127,77.127,30
+1000,API: rozmiar całej listy (old),kB,old,753.629,753.629,30
+3000,API: rozmiar całej listy (old),kB,old,2267.259,2267.259,30
+5000,API: rozmiar całej listy (old),kB,old,3789.811,3789.811,30
+10000,API: rozmiar całej listy (old),kB,old,7568.841,7568.841,30
+100,API: rozmiar strony (new),kB,new,15.075,15.075,30
+1000,API: rozmiar strony (new),kB,new,14.981,14.981,30
+3000,API: rozmiar strony (new),kB,new,15.057,15.057,30
+5000,API: rozmiar strony (new),kB,new,14.995,14.995,30
+10000,API: rozmiar strony (new),kB,new,15.022,15.022,30
