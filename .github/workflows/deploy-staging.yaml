@@ -71,28 +71,19 @@ jobs:
           cache-to: type=gha,scope=${{ matrix.component }},mode=max
 
   deploy:
-    name: Update staging application services
+    name: Deploy staging
     runs-on: ubuntu-latest
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/staging' && vars.STAGING_DEPLOY_ENABLED == 'true'
     permissions:
       contents: read
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
-      - name: Pull and update backend and frontend
+      - uses: actions/checkout@v6
+      - name: Sync configuration and deploy
         env:
+          STAGING_SYNC_URL: ${{ vars.STAGING_SYNC_URL }}
           STAGING_DEPLOY_URL: ${{ vars.STAGING_DEPLOY_URL }}
           STAGING_DEPLOY_API_KEY: ${{ secrets.STAGING_DEPLOY_API_KEY }}
           CLOUDFLARE_WEBHOOK_SECRET: ${{ secrets.CLOUDFLARE_WEBHOOK_SECRET }}
-        run: |
-          : "${STAGING_DEPLOY_URL:?Set the staging service-update URL}"
-          : "${STAGING_DEPLOY_API_KEY:?Set the deployment API key}"
-          : "${CLOUDFLARE_WEBHOOK_SECRET:?Set the Cloudflare webhook secret}"
-          curl --fail --silent --show-error --proto '=https' \
-            --connect-timeout 15 --max-time 1100 \
-            --header "X-Api-Key: $STAGING_DEPLOY_API_KEY" \
-            --header "X-Cloudflare-Secret: $CLOUDFLARE_WEBHOOK_SECRET" \
-            --header 'Content-Type: application/json' \
-            --data '{"services":["backend","frontend"]}' \
-            "$STAGING_DEPLOY_URL" \
-            | jq --exit-status '.success == true'
+        run: bash scripts/deploy-staging.sh
