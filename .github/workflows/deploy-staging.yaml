@@ -83,12 +83,15 @@ jobs:
         env:
           STAGING_DEPLOY_URL: ${{ vars.STAGING_DEPLOY_URL }}
           STAGING_DEPLOY_API_KEY: ${{ secrets.STAGING_DEPLOY_API_KEY }}
+          CLOUDFLARE_WEBHOOK_SECRET: ${{ secrets.CLOUDFLARE_WEBHOOK_SECRET }}
         run: |
           : "${STAGING_DEPLOY_URL:?Set the staging service-update URL}"
           : "${STAGING_DEPLOY_API_KEY:?Set the deployment API key}"
+          : "${CLOUDFLARE_WEBHOOK_SECRET:?Set the Cloudflare webhook secret}"
           curl --fail --silent --show-error --proto '=https' \
             --connect-timeout 15 --max-time 1100 \
             --header "X-Api-Key: $STAGING_DEPLOY_API_KEY" \
+            --header "X-Cloudflare-Secret: $CLOUDFLARE_WEBHOOK_SECRET" \
             --header 'Content-Type: application/json' \
             --data '{"services":["backend","frontend"]}' \
             "$STAGING_DEPLOY_URL" \
