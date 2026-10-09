@@ -16,7 +16,7 @@ services:
       timeout: 5s
       retries: 30
       start_period: 30s
-    networks: [database]
+    networks: [application]
   backend:
     image: ghcr.io/vv01t3k/researchcruiseapp/backend:staging
     container_name: researchcruiseapp-backend
@@ -34,7 +34,7 @@ services:
       JWT__Secret: ${JWT_SECRET:?Preserve the deployed token signing secret}
       Sentry__Dsn: ${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       Sentry__TracesSampleRate: ${SENTRY_TRACES_SAMPLE_RATE:-1}
-    networks: [database, application]
+    networks: [application]
   frontend:
     image: ghcr.io/vv01t3k/researchcruiseapp/frontend:staging
     container_name: researchcruiseapp-frontend
@@ -57,9 +57,6 @@ volumes:
   researchcruiseapp-db:
     external: true
 networks:
-  database:
-    name: researchcruiseapp-network
-    internal: true
   application: {}
   caddy:
     external: true
