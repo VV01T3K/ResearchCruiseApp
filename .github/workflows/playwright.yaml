@@ -1,9 +1,14 @@
 name: Playwright Tests
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 4 * * 1"
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - main
+      - staging
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,10 +25,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: package.json
 
       - name: Setup Vite+
         uses: voidzero-dev/setup-vp@v1

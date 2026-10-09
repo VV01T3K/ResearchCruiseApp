@@ -10,14 +10,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  workspace:
-    name: Validate workspace
-    uses: ./.github/workflows/workspace-ci.yaml
+  checks:
+    name: Checks
+    uses: ./.github/workflows/format-and-lint.yaml
     permissions:
       contents: read
 
   build:
-    needs: workspace
+    needs: checks
     name: Build ${{ matrix.component }}
     runs-on: ubuntu-latest
     permissions:
