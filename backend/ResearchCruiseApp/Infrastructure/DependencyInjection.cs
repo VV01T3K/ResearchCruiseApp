@@ -70,6 +70,7 @@ public static class DependencyInjection
                 options.SignIn.RequireConfirmedAccount = true
             )
             .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddErrorDescriber<PolishIdentityErrorDescriber>()
             .AddDefaultTokenProviders();
 
         services

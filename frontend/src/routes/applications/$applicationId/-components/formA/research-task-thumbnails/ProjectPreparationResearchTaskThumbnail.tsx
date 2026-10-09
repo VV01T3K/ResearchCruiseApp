@@ -1,14 +1,14 @@
 import { formatDate } from '@/lib/dateUtils';
 
-import { ProjectPreparationResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { ResearchTaskFields } from '@/api/generated/schemas';
 
 type Props = {
-  task: ProjectPreparationResearchTaskValues;
+  task: ResearchTaskFields;
 };
 export function ProjectPreparationResearchTaskThumbnail({ task }: Props) {
   return (
     <div className="flex justify-center gap-2">
-      <span>Tytuł: {task.title}</span>•<span>Data: {formatDate(task.date, 'date')}</span>
+      <span>Tytuł: {task.title}</span>•<span>Data: {formatDate(task.date ?? '', 'date')}</span>
     </div>
   );
 }

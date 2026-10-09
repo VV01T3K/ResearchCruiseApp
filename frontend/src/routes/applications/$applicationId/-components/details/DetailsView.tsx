@@ -22,10 +22,6 @@ export function DetailsView() {
         onSuccess: () => {
           toast.success('Formularz został zaakceptowany');
         },
-        onError: (err) => {
-          console.error(err);
-          toast.error('Nie udało się zaakceptować formularza');
-        },
       }
     );
   }
@@ -36,10 +32,6 @@ export function DetailsView() {
       {
         onSuccess: () => {
           toast.success('Formularz został odrzucony');
-        },
-        onError: (err) => {
-          console.error(err);
-          toast.error('Nie udało się odrzucić formularza');
         },
       }
     );

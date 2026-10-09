@@ -1,47 +1,34 @@
 import type { AnyFieldMeta, AnyFormApi } from '@tanstack/react-form';
+import { ApiError, getProblemDetail } from '@/api/errors';
 
-interface FormError {
-  fieldName: string;
-  errorMessage: string;
-  sectionNumber?: number;
+export const INVALID_FORM_MESSAGE = 'Formularz zawiera błędy. Popraw zaznaczone pola.';
+
+export function saveFailedMessage(draft: boolean | undefined): string {
+  return draft ? 'Nie udało się zapisać wersji roboczej formularza' : 'Nie udało się wysłać formularza';
 }
 
-export function extractErrorMessage(error: unknown): string {
-  if (error == null) return 'Błąd walidacji';
-  if (typeof error === 'string') return error;
-  if (Array.isArray(error) && error.length > 0) return extractErrorMessage(error[0]);
-  if (typeof error === 'object' && 'message' in error && typeof error.message === 'string') return error.message;
-  const stringified = String(error);
-  return stringified === '[object Object]' ? 'Błąd walidacji' : stringified;
+// Errors are Zod issues from client validation or messages from the server.
+function getMessage(error: unknown): string {
+  return typeof error === 'object' && error !== null && 'message' in error ? String(error.message) : String(error);
 }
 
 export function getErrors(meta: AnyFieldMeta, submissionAttempts = 0): string[] | undefined {
-  if ((!meta.isTouched && submissionAttempts === 0) || meta.errors.length === 0) return undefined;
-  return meta.errors.map(extractErrorMessage);
+  if ((!meta.isBlurred && submissionAttempts === 0) || meta.errors.length === 0) return undefined;
+  return meta.errors.map(getMessage);
 }
 
-function getSectionNumber(fieldName: string, sections: Record<string, number>): number | undefined {
-  return sections[fieldName] ?? sections[fieldName.split(/[.[]/)[0]];
-}
-
-function getFirstFormError(form: AnyFormApi, sections: Record<string, number>): FormError | null {
-  const allErrors = Object.entries(form.getAllErrors().fields)
-    .map(([fieldName, meta]) => ({
-      fieldName,
-      errorMessage: extractErrorMessage(meta.errors[0]),
-      sectionNumber: getSectionNumber(fieldName, sections),
-    }))
-    .sort((a, b) => (a.sectionNumber ?? Infinity) - (b.sectionNumber ?? Infinity));
-
-  return allErrors[0] ?? null;
-}
-
-export function getFormErrorMessage(form: AnyFormApi, sections: Record<string, number>): string {
-  const firstError = getFirstFormError(form, sections);
-  if (!firstError) return 'Formularz zawiera błędy. Sprawdź, czy wszystkie pola są wypełnione poprawnie.';
-  return firstError.sectionNumber
-    ? `Formularz błędny w sekcji nr ${firstError.sectionNumber}:\n${firstError.errorMessage}`
-    : `Formularz zawiera błędy:\n ${firstError.errorMessage}`;
+/** Errors that no mounted field shows: root-level or unmounted-path issues and server form errors. */
+export function getFormLevelErrors(form: AnyFormApi, errorMap = form.state.errorMap): string[] {
+  return Object.values(errorMap).flatMap((error): string[] => {
+    if (!error) return [];
+    // Server form errors are message lists.
+    if (Array.isArray(error)) return error.map(getMessage);
+    if (typeof error !== 'object') return [getMessage(error)];
+    // Schema validators key issue lists by field path; mounted fields show their own.
+    return Object.entries(error).flatMap(([path, issues]) =>
+      Array.isArray(issues) && !(path && form.getFieldInfo(path).instance) ? issues.map(getMessage) : []
+    );
+  });
 }
 
 export function navigateToFirstError(): void {
@@ -60,40 +47,22 @@ export function navigateToFirstError(): void {
   });
 }
 
-function normalizeBackendFormPath(path: string): string {
-  return path
-    .replace(/^Form\.?/i, '')
-    .split('.')
-    .filter(Boolean)
-    .map((part) => part.replace(/^[A-Z]/, (letter) => letter.toLowerCase()))
-    .join('.');
-}
-
-function getServerFormErrors(error: unknown): Record<string, string[]> | null {
-  if (typeof error !== 'object' || error === null || !('problem' in error)) return null;
-  const problem = error.problem;
-  if (typeof problem !== 'object' || problem === null || !('errors' in problem)) return null;
-  const errors = problem.errors;
-  if (typeof errors !== 'object' || errors === null) return null;
-  return Object.fromEntries(
-    Object.entries(errors).flatMap(([path, messages]) =>
-      Array.isArray(messages) && messages.every((message) => typeof message === 'string')
-        ? [[normalizeBackendFormPath(path), messages]]
-        : []
-    )
-  );
-}
-
-export function setServerFormErrors(form: AnyFormApi, error: unknown): boolean {
-  const fields = getServerFormErrors(error);
-  if (!fields || Object.keys(fields).length === 0) return false;
-  form.setErrorMap({ onServer: { fields } });
-  return true;
-}
-
-export function setSchemaErrors(form: AnyFormApi, schema: Parameters<AnyFormApi['parseValuesWithSchema']>[0]): boolean {
-  const errors = form.parseValuesWithSchema(schema);
-  if (!errors) return false;
-  form.setErrorMap({ onSubmit: errors });
-  return true;
+/** Shows a failed save's reasons: field errors under mounted fields, everything else at form level. */
+export function setServerFormErrors(form: AnyFormApi, error: unknown): void {
+  if (!(error instanceof ApiError) || !error.problem?.errors) {
+    // `fields` makes TanStack treat this as a form validation error and store only the form messages.
+    form.setErrorMap({
+      onServer: { fields: {}, form: [getProblemDetail(error, 'Nieznany błąd. Spróbuj ponownie.')] },
+    });
+    return;
+  }
+  const fields: Record<string, string[]> = {};
+  const formErrors = error.problem.detail ? [error.problem.detail] : [];
+  // The backend keys errors by request JSON path; application saves wrap form values in `form`.
+  for (const [path, messages] of Object.entries(error.problem.errors)) {
+    const name = path.replace(/^form(?:\.|$)/, '');
+    if (name && form.getFieldInfo(name).instance) fields[name] = messages;
+    else formErrors.push(...messages);
+  }
+  form.setErrorMap({ onServer: { fields, form: formErrors.length ? formErrors : undefined } });
 }

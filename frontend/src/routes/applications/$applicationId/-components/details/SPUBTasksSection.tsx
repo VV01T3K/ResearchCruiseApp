@@ -4,13 +4,15 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
-import { EvaluationFormASpubTask } from '@/api/client/applications/models';
+import {
+  type ApplicationEvaluation,
+  useApplicationEvaluation,
+} from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 
 export function SPUBTasksSection() {
   const evaluation = useApplicationEvaluation();
 
-  const columns: ColumnDef<EvaluationFormASpubTask>[] = [
+  const columns: ColumnDef<ApplicationEvaluation['formASpubTasks'][number]>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,
@@ -24,7 +26,7 @@ export function SPUBTasksSection() {
       cell: ({ row }) => (
         <AppYearPickerInput
           name={`spubTasks[${row.index}].yearFrom`}
-          value={parseInt(row.original.spubTask.yearFrom)}
+          value={Number(row.original.spubTask.yearFrom)}
           showRequiredAsterisk
           disabled
         />
@@ -39,7 +41,7 @@ export function SPUBTasksSection() {
       cell: ({ row }) => (
         <AppYearPickerInput
           name={`spubTasks[${row.index}].yearTo`}
-          value={parseInt(row.original.spubTask.yearTo)}
+          value={Number(row.original.spubTask.yearTo)}
           showRequiredAsterisk
           disabled
         />

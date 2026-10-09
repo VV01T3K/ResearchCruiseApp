@@ -30,7 +30,7 @@ export default defineConfig({
       override: {
         header: false,
         mutator: {
-          path: 'src/api/client/custom-fetch.ts',
+          path: 'src/api/fetch.ts',
           name: 'customFetch',
         },
         requestOptions: true,

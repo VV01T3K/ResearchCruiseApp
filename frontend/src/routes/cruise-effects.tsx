@@ -8,7 +8,7 @@ import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/generated/endpoints/users.gen';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
-import { CruiseEffectView } from '@/api/client/applications/types/CruiseEffectView';
+import type { CruiseEffectResponse } from '@/api/generated/schemas';
 import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 export const Route = createFileRoute('/cruise-effects')({
@@ -16,23 +16,14 @@ export const Route = createFileRoute('/cruise-effects')({
   beforeLoad: allowOnly.authenticated(),
 });
 
-function CruiseEffectsPage() {
-  const effectsQuery = useGetCurrentUserCruiseEffectsSuspense({
-    query: {
-      select: (effects): CruiseEffectView[] =>
-        effects.map(({ effect, ...cruiseEffect }) => ({
-          ...cruiseEffect,
-          effect: {
-            ...mapResearchTaskToValues(effect),
-            done: effect.done === 'true',
-            managerConditionMet: effect.managerConditionMet === 'true',
-            deputyConditionMet: effect.deputyConditionMet === 'true',
-          },
-        })),
-    },
-  });
+function mapEffectsToValues(effects: CruiseEffectResponse[]) {
+  return effects.map(({ effect, ...response }) => ({ ...response, effect: mapResearchTaskToValues(effect) }));
+}
 
-  const columns: ColumnDef<CruiseEffectView>[] = [
+function CruiseEffectsPage() {
+  const effectsQuery = useGetCurrentUserCruiseEffectsSuspense({ query: { select: mapEffectsToValues } });
+
+  const columns: ColumnDef<ReturnType<typeof mapEffectsToValues>[number]>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}`,
