@@ -1,20 +1,21 @@
+import { getErrorMessage } from '@/api/errors';
+import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { revalidateLogic } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
+import { INVALID_FORM_MESSAGE, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { FormView } from './-components/FormView';
-import { CreateCruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
+import { CruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
-import { mapCruiseApplicationCandidate } from '@/api/client/applications/cruise-candidates';
 
 const searchSchema = z.object({
   blockade: z.boolean().optional(),
@@ -26,21 +27,9 @@ export const Route = createFileRoute('/cruises/new')({
   validateSearch: searchSchema,
 });
 
-const CRUISE_FIELD_TO_SECTION: Record<string, number> = {
-  title: 1,
-  shipUnavailable: 1,
-  startDate: 2,
-  endDate: 2,
-  'managersTeam.mainCruiseManagerId': 3,
-  'managersTeam.mainDeputyManagerId': 3,
-  cruiseApplicationsIds: 4,
-};
-
 function NewCruisePage() {
-  const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense(undefined, {
-    query: { select: (applications) => applications.map(mapCruiseApplicationCandidate) },
-  });
-  const createCruiseMutation = useCreateCruise();
+  const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense();
+  const createCruiseMutation = useCreateCruise({ mutation: { meta: { handlesError: true } } });
   const search = Route.useSearch();
 
   const navigate = useNavigate();
@@ -50,22 +39,23 @@ function NewCruisePage() {
       ...cruiseFormDefaultValues,
       shipUnavailable: search.blockade ?? false,
     },
-    validationLogic: revalidateLogic({ mode: 'blur', modeAfterSubmission: 'change' }),
-    validators: { onDynamic: CreateCruiseFormSchema },
+    validationLogic: formValidationLogic,
+    validators: { onDynamic: CruiseFormSchema },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('new-cruise', 'invalid', formApi.state);
-      toast.error(getFormErrorMessage(formApi, CRUISE_FIELD_TO_SECTION));
+      toast.error(INVALID_FORM_MESSAGE);
       navigateToFirstError();
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('new-cruise', 'valid', formApi.state);
       try {
-        await createCruiseMutation.mutateAsync({ data: CreateCruiseFormSchema.parse(value) });
+        await createCruiseMutation.mutateAsync({ data: CruiseFormSchema.parse(value) });
         navigate({ to: '/cruises' });
         toast.success('Rejs został utworzony pomyślnie.');
       } catch (error) {
         console.error(error);
-        toast.error('Nie udało się utworzyć rejsu. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
+        setServerFormErrors(form, error);
+        toast.error(getErrorMessage(error, 'Nie udało się utworzyć rejsu'));
         navigateToFirstError();
       }
     },

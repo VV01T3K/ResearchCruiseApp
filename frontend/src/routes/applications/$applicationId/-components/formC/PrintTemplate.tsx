@@ -1,19 +1,17 @@
 /* eslint-disable @eslint-react/no-array-index-key */
 import { formatDate } from '@/lib/dateUtils';
 import { Fragment, RefObject } from 'react';
-import { useSelector } from '@tanstack/react-form';
 
 import { cn } from '@/lib/utils';
 import { PrintableResearchTaskDetails } from '@/components/print/research-task-details/PrintableResearchTaskDetails';
 import { PrintingPage } from '@/components/print/layout/PrintingPage';
 import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';
-import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
-import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
 import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
-import { getResearchAreaName } from '@/api/client/applications/types/ResearchAreaOption';
+import { getResearchAreaName } from '@/lib/applications/researchArea';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 function getAction(action: 'Put' | 'Collect'): string {
@@ -29,13 +27,12 @@ function getAction(action: 'Put' | 'Collect'): string {
 }
 
 type Props = {
+  values: FormCValues;
   ref: RefObject<HTMLDivElement | null>;
   context: FormCViewModel;
 };
-export function PrintTemplate({ ref, context }: Props) {
-  const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
+export function PrintTemplate({ ref, context, values }: Props) {
   const { formAInitValues, formBInitValues, formA, formB, cruise } = context;
-  const values = useSelector(form.store, (state) => state.values);
 
   return (
     <PrintingPage ref={ref} title="Formularz C">

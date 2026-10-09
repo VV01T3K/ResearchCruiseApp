@@ -30,5 +30,5 @@ public class FormBFields
 
 public class FormBOptions
 {
-    public List<ShipEquipmentOption> ShipEquipments { get; init; } = [];
+    public required List<ShipEquipmentOption> ShipEquipments { get; init; }
 }

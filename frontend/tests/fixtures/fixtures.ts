@@ -11,22 +11,22 @@ export const test = base.extend<{ forEachTest: void }>({
   forEachTest: [
     async ({ page }, use) => {
       // By default raise an error if the API is not mocked
-      page.route(`${API_URL}/**`, (route) => {
+      await page.route(`${API_URL}/**`, (route) => {
         throw new Error(`API call not mocked: ${route.request().url()}`);
       });
 
       // Health check api mock
-      page.route(`${API_URL}/health`, (route) => {
+      await page.route(`${API_URL}/health`, (route) => {
         route.fulfill({
           status: 200,
           body: JSON.stringify({ status: 'ok' }),
           contentType: 'application/json',
         });
       });
-      page.route(`${API_URL}/version`, (route) => route.fulfill({ status: 200, body: JSON.stringify('2.5.0') }));
+      await page.route(`${API_URL}/version`, (route) => route.fulfill({ status: 200, body: JSON.stringify('2.5.0') }));
 
-      page.route(`${API_URL}/v2/auth/refresh`, (route) => route.fulfill({ status: 401 }));
-      page.route(`${API_URL}/v2/users/me`, (route) => route.fulfill({ status: 401 }));
+      await page.route(`${API_URL}/v2/auth/refresh`, (route) => route.fulfill({ status: 401 }));
+      await page.route(`${API_URL}/v2/users/me`, (route) => route.fulfill({ status: 401 }));
 
       await use();
     },

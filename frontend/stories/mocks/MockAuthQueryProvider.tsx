@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { Role } from '@/api/client/user';
+import { Role } from '@/integrations/auth/types';
 import { getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
 
 type Props = {

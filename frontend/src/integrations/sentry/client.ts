@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react';
 
 import config from '@/config';
 import { createFormBreadcrumb, parseSampleRate } from '@/integrations/sentry/utils';
-import { User } from '@/api/client/user';
+import type { UserResponse } from '@/api/generated/schemas';
 
 type FieldMeta = { errors: Array<unknown> };
 
@@ -28,7 +28,7 @@ export function initializeSentry(router: unknown): void {
   });
 }
 
-export function setSentryUser(user: User | undefined): void {
+export function setSentryUser(user: UserResponse | undefined): void {
   if (!user) {
     Sentry.setUser(null);
     Sentry.setTag('user.roles', undefined);

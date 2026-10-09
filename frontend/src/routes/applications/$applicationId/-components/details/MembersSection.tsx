@@ -4,13 +4,13 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
-import { EvaluationUgTeamResponse } from '@/api/client/applications/models';
-import { GuestTeamValues } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+import { NamedUgTeam } from '@/api/generated/schemas';
+import type { GuestTeamFields } from '@/api/generated/schemas';
 
 export function MembersSection() {
   const evaluation = useApplicationEvaluation();
 
-  const ugTeamsColumns: ColumnDef<EvaluationUgTeamResponse>[] = [
+  const ugTeamsColumns: ColumnDef<NamedUgTeam>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,
@@ -64,7 +64,7 @@ export function MembersSection() {
     },
   ];
 
-  const guestTeamsColumns: ColumnDef<GuestTeamValues>[] = [
+  const guestTeamsColumns: ColumnDef<GuestTeamFields>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,
@@ -84,7 +84,7 @@ export function MembersSection() {
       cell: ({ row }) => (
         <AppNumberInput
           name={`guestTeams[${row.index}].noOfPersons`}
-          value={row.original.noOfPersons}
+          value={Number(row.original.noOfPersons)}
           minimum={0}
           className="mx-4"
           showRequiredAsterisk
