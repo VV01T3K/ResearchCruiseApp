@@ -15,13 +15,12 @@ internal class FormAFactory(
 {
     public async Task<Result<FormA>> Create(
         FormAFields formAFields,
-        CancellationToken cancellationToken,
-        bool isUpdate = false
+        CancellationToken cancellationToken
     )
     {
         var formA = ApplicationMappings.ToFormA(formAFields);
 
-        var result = await AddManagersTeam(formA, formAFields, isUpdate);
+        var result = await AddManagersTeam(formA, formAFields);
         if (!result.IsSuccess)
             return result.Error!;
 
@@ -40,18 +39,14 @@ internal class FormAFactory(
         return formA;
     }
 
-    private async Task<Result> AddManagersTeam(FormA formA, FormAFields formAFields, bool isUpdate)
+    private async Task<Result> AddManagersTeam(FormA formA, FormAFields formAFields)
     {
         var currentUserId = currentUserService.GetId();
         if (currentUserId is null)
             return Error.UnknownIdentity();
 
-        var administratorEdit =
-            isUpdate
-            && (await identityService.GetCurrentUserRoleNames()).Contains(RoleName.Administrator);
         if (
-            !administratorEdit
-            && formAFields.CruiseManagerId != currentUserId
+            formAFields.CruiseManagerId != currentUserId
             && formAFields.DeputyManagerId != currentUserId
         )
             return Error.InvalidArgument(
