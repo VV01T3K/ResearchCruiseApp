@@ -1,4 +1,4 @@
-import { useInputAccessibility } from '@/components/inputs/useInputAccessibility';
+import { useInputAria } from '@/components/inputs/useInputAria';
 import CloudUploadIcon from 'bootstrap-icons/icons/cloud-upload.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
@@ -68,7 +68,7 @@ export function AppFileInput({
   'data-testid-input': inputTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
-  const accessibility = useInputAccessibility(errors, helper);
+  const aria = useInputAria(errors, helper);
   const files = allowMultiple ? value : value ? [value] : [];
   const [notifications, setNotifications] = React.useState<string[]>([]);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -141,7 +141,7 @@ export function AppFileInput({
 
   return (
     <div data-testid={testId}>
-      <AppInputLabel name={accessibility.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+      <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div
         className="flex w-full items-center justify-center"
         onClick={() => {
@@ -162,7 +162,7 @@ export function AppFileInput({
         >
           {/* The file list has its own buttons, so it stays outside this button. */}
           <div
-            {...accessibility.control}
+            {...aria.inputProps}
             role="button"
             aria-label={typeof label === 'string' ? label : uploadMessage}
             aria-disabled={disabled}
@@ -218,8 +218,8 @@ export function AppFileInput({
         data-testid={inputTestId}
       />
       <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
-        <AppInputHelper id={accessibility.helperId} helper={helper} />
-        <AppInputErrorsList id={accessibility.errorId} errors={errors} data-testid={errorsTestId} />
+        <AppInputHelper id={aria.helperId} helper={helper} />
+        <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
       </div>
     </div>
   );

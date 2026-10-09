@@ -1,4 +1,4 @@
-import { useInputAccessibility } from '@/components/inputs/useInputAccessibility';
+import { useInputAria } from '@/components/inputs/useInputAria';
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
 import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
 import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
@@ -67,7 +67,7 @@ export function AppDatePickerInput({
   'data-testid-button': buttonTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
-  const accessibility = useInputAccessibility(errors, helper);
+  const aria = useInputAria(errors, helper);
   const selectedDate = getDateFromValue(value);
   const [hoveredDate, setHoveredDate] = React.useState<Date | undefined>(undefined);
   const [expanded, setExpanded] = React.useState(false);
@@ -142,13 +142,13 @@ export function AppDatePickerInput({
   return (
     <>
       <div className="flex flex-col" data-testid={testId}>
-        <AppInputLabel name={accessibility.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+        <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div ref={inputRef}>
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
           <AppButton
             name={name}
             disabled={disabled}
-            {...accessibility.control}
+            {...aria.inputProps}
             variant="plain"
             onClick={handleInputClick}
             className={cn(
@@ -181,8 +181,8 @@ export function AppDatePickerInput({
           />
         </div>
         <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
-          <AppInputHelper id={accessibility.helperId} helper={helper} />
-          <AppInputErrorsList id={accessibility.errorId} errors={errors} data-testid={errorsTestId} />
+          <AppInputHelper id={aria.helperId} helper={helper} />
+          <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
         </div>
       </div>
       <AnimatePresence>

@@ -1,4 +1,4 @@
-import { useInputAccessibility } from '@/components/inputs/useInputAccessibility';
+import { useInputAria } from '@/components/inputs/useInputAria';
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -38,7 +38,7 @@ export function AppMonthPickerInput({
   helper,
   placeholder = 'Wybierz miesiąc',
 }: Props) {
-  const accessibility = useInputAccessibility(errors, helper);
+  const aria = useInputAria(errors, helper);
   const selectedDate = getDateFromValue(value);
   const [expanded, setExpanded] = React.useState(false);
 
@@ -81,13 +81,13 @@ export function AppMonthPickerInput({
   return (
     <>
       <div className="flex flex-col">
-        <AppInputLabel name={accessibility.id} value={label} />
+        <AppInputLabel name={aria.id} value={label} />
         <div className={cn()} ref={inputRef}>
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
           <AppButton
             name={name}
             disabled={disabled}
-            {...accessibility.control}
+            {...aria.inputProps}
             variant="plain"
             onClick={handleInputClick}
             className={cn(
@@ -113,8 +113,8 @@ export function AppMonthPickerInput({
           />
         </div>
         <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
-          <AppInputHelper id={accessibility.helperId} helper={helper} />
-          <AppInputErrorsList id={accessibility.errorId} errors={errors} />
+          <AppInputHelper id={aria.helperId} helper={helper} />
+          <AppInputErrorsList id={aria.errorId} errors={errors} />
         </div>
       </div>
       <AnimatePresence>

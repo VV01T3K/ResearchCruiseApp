@@ -1,4 +1,4 @@
-import { useInputAccessibility } from '@/components/inputs/useInputAccessibility';
+import { useInputAria } from '@/components/inputs/useInputAria';
 import DashLgIcon from 'bootstrap-icons/icons/dash-lg.svg?react';
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
 import React from 'react';
@@ -72,7 +72,7 @@ export function AppNumberInput({
   'data-testid-input': inputTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
-  const accessibility = useInputAccessibility(errors, helper);
+  const aria = useInputAria(errors, helper);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [stringValue, setStringValue] = React.useState(value?.toString() ?? '');
   const setCursorPosition = useInputCursorPosition({ inputRef });
@@ -135,7 +135,7 @@ export function AppNumberInput({
 
   return (
     <div className={cn(className, 'flex flex-col')} data-testid={testId}>
-      <AppInputLabel name={accessibility.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+      <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div className="flex items-center">
         {!disabled && (
           <AppNumberInputButton
@@ -155,7 +155,7 @@ export function AppNumberInput({
               onBlur?.();
             }}
             disabled={disabled}
-            {...accessibility.control}
+            {...aria.inputProps}
             className={cn(
               'block h-11 w-full border border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900',
               'transition duration-300 ease-in-out',
@@ -178,8 +178,8 @@ export function AppNumberInput({
         )}
       </div>
       <div className="mt-2 flex flex-col justify-between text-sm">
-        <AppInputHelper id={accessibility.helperId} helper={helper} />
-        <AppInputErrorsList id={accessibility.errorId} errors={errors} data-testid={errorsTestId} />
+        <AppInputHelper id={aria.helperId} helper={helper} />
+        <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useId, type ReactNode } from 'react';
 
-export function useInputAccessibility(errors: string[] | undefined, helper: ReactNode) {
+export function useInputAria(errors: string[] | undefined, helper: ReactNode) {
   const id = useId();
   const errorId = `${id}-errors`;
   const helperId = `${id}-helper`;
@@ -8,7 +8,7 @@ export function useInputAccessibility(errors: string[] | undefined, helper: Reac
     id,
     errorId,
     helperId,
-    control: {
+    inputProps: {
       id,
       'aria-invalid': Boolean(errors?.length),
       'aria-describedby':
