@@ -5,7 +5,7 @@ The application aims to streamline processes related to the booking, management,
 
 ## Backend testing and tooling
 
-See the [backend testing and .NET tooling specification](docs/backend-testing-spec.md) for the proposed tooling layout, unified workspace commands, fast test baseline, and CI requirements.
+See [backend development and checks](docs/backend-development.md) for setup, workspace commands and the test suites.
 
 ## Configuration
 

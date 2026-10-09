@@ -63,11 +63,9 @@ SMTP configuration validation runs before database initialization and worker sta
 The application rejects missing credentials in real SMTP mode even if no messages
 are pending; fake SMTP remains usable without them. See [SMTP setup](smtp-configuration.md).
 
-The new baseline tests use a disposable SQL Server container through the root
-`vp run check` command. Run them in Ubuntu WSL or Linux with Docker available;
-no shared server connection string is needed. The legacy suite still runs during
-review and uses its existing providers. See [backend development](backend-development.md)
-and [the scenario ledger](backend-test-scenarios.md) for commands and coverage status.
+Outbox tests run against a disposable SQL Server container through the root
+`vp run check` command; no shared server connection string is needed. See
+[backend development](backend-development.md) for commands.
 
 Monitor `EmailOutboxMessages` for old pending rows, rising `Attempts`, and non-null
 `FailedAt`. Delivery failure logs identify the message ID, attempt, exception type,

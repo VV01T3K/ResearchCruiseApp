@@ -1,24 +1,22 @@
 # Backend development and checks
 
-Use Linux or Ubuntu WSL with the repository on the Linux filesystem. Enable Ubuntu integration in Docker Desktop and verify `docker info`. Install the SDK pinned in `backend/global.json` (10.0.401), Vite+, Python 3 and the platform ICU runtime. Run `vp install --frozen-lockfile` at the repository root. With rootless Podman instead of Docker, export `DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock` and `TESTCONTAINERS_RYUK_DISABLED=true`. If SQL fixture startup times out after two minutes, the pinned SQL Server image is probably missing; pull the image named in `SqlFixture.Image` first. NuGet dependencies and local tools are restored by the root checks; SQL Server is pulled at its pinned digest by Testcontainers.
+Install the .NET SDK pinned in `backend/global.json`, Vite+, Python 3 and Docker (or rootless Podman), then run `vp install --frozen-lockfile` at the repository root. With rootless Podman, export `DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock` and `TESTCONTAINERS_RYUK_DISABLED=true`.
 
 | Root command | Behavior |
 | --- | --- |
-| `vp run check` | Locked restore, format verification, Release build, temporary OpenAPI/client regeneration and comparison, frontend checks and units, both native backend suites |
-| `vp run fix` | Applies formatting and generated-client changes, then runs the full checks |
-| `vp run lint` | Format/build/frontend checks without test containers |
-| `vp run check:quick` | Partial checks with new backend unit tests; excludes SQL integration and contract regeneration |
-| `vp run test:coverage` | Separate backend coverage reports alongside test validation |
-| `vp run test:e2e` | Browser suite, outside the ordinary root check |
+| `vp run check` | Locked restore, format check, Release build, OpenAPI/client contract comparison, frontend checks and unit tests, backend unit and SQL integration tests |
+| `vp run fix` | Applies formatting and generated-client changes, then runs the full check |
+| `vp run lint` | Format, build and frontend checks without test containers |
+| `vp run check:quick` | Backend unit tests only; skips SQL integration and contract comparison |
+| `vp run test:coverage` | Backend tests with coverage reports |
+| `vp run test:e2e` | Browser suite, outside the root check |
 
-From `backend`, `dotnet build ResearchCruiseApp.slnx -c Release` builds the three projects. Both executable test projects use xUnit v3 with Microsoft Testing Platform, selected globally in backend/global.json. Use `bash scripts/test.sh` after a Release build to run both native suites and validate their reports. Focused execution uses `dotnet test --project ResearchCruiseApp.UnitTests/ResearchCruiseApp.UnitTests.csproj -c Release --filter-class '*ClassName' --fail-skips on`, or the integration project path. Tests use synthetic accounts, a capturing email transport and a disposable SQL Server container; no developer database or real SMTP is required.
+Backend tests use xUnit v3 on Microsoft Testing Platform. `ResearchCruiseApp.UnitTests` covers pure rules. `ResearchCruiseApp.IntegrationTests` runs real HTTP, Identity and SQL Server in a disposable container with synthetic accounts and a capturing email transport; no developer database or real SMTP is needed. Run a single class from `backend` after a Release build:
 
-After the build and contract comparison, frontend checks run alongside the backend suites. Unit and SQL integration suites run in separate processes with separate report directories; SQL scenarios still run sequentially with database resets and fresh application hosts. The command waits for every suite and returns failure if any suite fails.
+```sh
+dotnet test --project ResearchCruiseApp.IntegrationTests/ResearchCruiseApp.IntegrationTests.csproj -c Release --no-build --filter-class '*ClassName'
+```
 
-Reports are written to fresh directories under `backend/artifacts/tests/`; container diagnostics are retained under artifacts/sql and phase timings in each fresh Integration/timings.log. Native SDK output hides console messages outside individual test results, so the owned timing file preserves setup/reset/host measurements independently of terminal verbosity. Missing, empty, skipped or failed backend reports fail the gate. Temporary contract output is contained under `backend/artifacts/contracts/` and removed after comparison. `check` compares the current working tree, including untracked generated files, without rewriting it.
+Reports go to fresh directories under `backend/artifacts/tests/`. Missing, empty, skipped or failed backend reports fail the check. If SQL startup times out after two minutes, pull the image named in `SqlFixture.Image` first.
 
-The local `Workspace checks` workflow is shared with image build/deploy workflows; image builds depend on it. Coverage and browser workflows run separately. Hosted PR execution passed on `df350a20` with the check context `Workspace checks` from GitHub Actions. Required-check configuration remains pending. The reusable deployment invocation emits `Validate workspace / Workspace checks`; use the direct PR context for branch requirements. Activate the requirement after `workspace-ci.yaml` reaches each protected branch, so other PRs can produce the required status. On 2026-09-29, the workflow is still absent from `staging`; its active ruleset has no required checks, and the main ruleset is disabled. Hosted failure probes now verify that failed workspace tests skip image/webhook jobs while preserving diagnostics; see the scenario ledger for evidence. The logging pipeline explicitly uses Bash to preserve the check command’s failure status. VS Code 1.139.1 with C# Dev Kit 3.40.210 loads the sole .slnx and discovers both new test projects. The workspace uses the classic test explorer because the experimental Next Test experience did not associate the pinned MTP cases with source files during verification. Run `dotnet build ResearchCruiseApp.slnx` to build Debug assemblies before refreshing IDE discovery. Required root/CI checks still use Release.
-
-The complete devcontainer image builds with its Docker-in-Docker feature. Its tool smoke reports SDK 10.0.401, Node 25.8.2, Bun 1.3.11 and Vite+ 1.0.0. C# Dev Kit is included for test discovery. Full onCreate/browser dependency installation and nested Docker runtime are not covered by that image smoke.
-
-See [the scenario ledger](backend-test-scenarios.md) for the scenario catalog, settled policies and the accepted legacy mapping. The gate runs 643 cases: 220 frontend, 47 unit and 376 SQL integration. No CI time budget is enforced; five minutes for the hosted job is a goal, and the job timeout is 10 minutes. Required-check rollout remains open.
+Hosted CI runs the same `vp run check` as the `Workspace checks` job, with a 10-minute timeout as a hang guard; image builds and deployment depend on it.
