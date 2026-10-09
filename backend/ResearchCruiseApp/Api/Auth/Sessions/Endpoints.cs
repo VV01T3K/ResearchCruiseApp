@@ -62,7 +62,9 @@ public static class SessionsEndpoints
     {
         if (!await identityService.CanUserLogin(request.Email, request.Password))
         {
-            return Error.UnknownIdentity().ToProblemHttpResult();
+            return Error
+                .UnknownIdentity("Podano błędne hasło lub użytkownik nie istnieje.")
+                .ToProblemHttpResult();
         }
 
         var result = await identityService.LoginUser(request.Email);

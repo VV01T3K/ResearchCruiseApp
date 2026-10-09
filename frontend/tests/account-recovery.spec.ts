@@ -57,19 +57,18 @@ test('registration sends only the account fields', async ({ page }) => {
   });
 });
 
-test('failed registration reports the reason once and allows retry', async ({ page }) => {
+test('failed registration shows the server reason and allows retry', async ({ page }) => {
   const pageErrors: Error[] = [];
   page.on('pageerror', (error) => pageErrors.push(error));
   await page.route(`${API_URL}/v2/auth/register`, (route) =>
-    route.fulfill({ status: 409, json: { detail: 'Username is already taken.' } })
+    route.fulfill({ status: 400, json: { detail: "Adres e-mail 'person@example.com' jest już zajęty." } })
   );
 
   await fillRegistration(page);
   await page.getByRole('button', { name: 'Zarejestruj się' }).click();
 
-  await expect(page.getByTestId('toast-error')).toHaveCount(1);
-  await expect(page.getByTestId('toast-error')).toContainText('Username is already taken.');
-  await expect(page.getByText('Podany adres e-mail jest już zajęty.')).toBeVisible();
+  await expect(page.getByText("Adres e-mail 'person@example.com' jest już zajęty.")).toBeVisible();
+  await expect(page.getByTestId('toast-error')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Zarejestruj się' })).toBeEnabled();
   expect(pageErrors).toEqual([]);
 });

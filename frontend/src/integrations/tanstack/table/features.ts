@@ -36,5 +36,6 @@ export type ColumnDef<T extends TableTypes.RowData, TValue = unknown> = TableTyp
   TValue
 >;
 export type Row<T extends TableTypes.RowData> = TableTypes.Row<typeof appTableFeatures, T>;
+export type Cell<T extends TableTypes.RowData, TValue = unknown> = TableTypes.Cell<typeof appTableFeatures, T, TValue>;
 export type Header<T extends TableTypes.RowData, TValue> = TableTypes.Header<typeof appTableFeatures, T, TValue>;
 export type Table<T extends TableTypes.RowData> = TableTypes.Table<typeof appTableFeatures, T>;

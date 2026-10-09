@@ -134,6 +134,20 @@ test('shows server validation errors on their fields', async ({ formAPage }) => 
   await expect(formAPage.sections.supervisorInfoSection.supervisorEmailInput).toBeFocused();
 });
 
+test('explains when ship blockades cannot be loaded', async ({ formAPage, page }) => {
+  await page.route(`${API_URL}/v2/cruises/blockades?*`, (route) =>
+    route.fulfill({ status: 503, json: { detail: 'Usługa jest chwilowo niedostępna. Spróbuj ponownie później.' } })
+  );
+  await formAPage.goto();
+
+  // The query retries three times with backoff before reporting the failure.
+  await expect(page.getByTestId('form-a-blockades-error')).toContainText(
+    'Usługa jest chwilowo niedostępna. Spróbuj ponownie później.',
+    { timeout: 15_000 }
+  );
+  await expect(page.getByTestId('toast-error')).toHaveCount(0);
+});
+
 test('shows a support code when saving fails', async ({ formAPage }) => {
   await formAPage.fillForm();
   await formAPage.failSaveWith(503, { detail: 'Wystąpił nieoczekiwany błąd. Kod błędu: 0HNC7ABC123' });

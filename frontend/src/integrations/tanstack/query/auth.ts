@@ -17,21 +17,23 @@ import type { Role, SignInResult } from '@/integrations/auth/types';
 import { logout as logoutSession, useLogin, useLogout } from '@/api/generated/endpoints/auth.gen';
 import { getCurrentUser, getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
 
+async function fetchCurrentUser(): Promise<UserResponse | null> {
+  try {
+    return await getCurrentUser();
+  } catch (error) {
+    if (
+      (error instanceof ApiError && error.status === 401) ||
+      (error instanceof SessionRefreshError && error.unauthorized)
+    )
+      return null;
+    throw error;
+  }
+}
+
 export function currentUserQueryOptions() {
   return queryOptions({
     queryKey: getGetCurrentUserQueryKey(),
-    queryFn: async (): Promise<UserResponse | null> => {
-      try {
-        return await getCurrentUser();
-      } catch (error) {
-        if (
-          (error instanceof ApiError && error.status === 401) ||
-          (error instanceof SessionRefreshError && error.unauthorized)
-        )
-          return null;
-        throw error;
-      }
-    },
+    queryFn: fetchCurrentUser,
     refetchOnWindowFocus: true,
     staleTime: 60_000,
   });
@@ -72,24 +74,21 @@ export function useSignIn() {
       response = await login({ data: { email, password } });
     } catch (error) {
       clearSession(queryClient);
-      return {
-        error:
-          error instanceof ApiError && error.status === 401
-            ? 'Podano błędne hasło lub użytkownik nie istnieje.'
-            : getProblemDetail(error, 'Wystąpił błąd podczas logowania. Spróbuj ponownie.'),
-      };
+      return { error: getProblemDetail(error, 'Wystąpił błąd podczas logowania. Spróbuj ponownie.') };
     }
 
     setSession(response);
     try {
-      const user = await queryClient.query({ ...currentUserQueryOptions(), staleTime: 0 });
-      if (!user) throw new Error('The authenticated account profile is unavailable');
+      // Fetched outside the query cache: sign-in reports this failure itself.
+      const user = await fetchCurrentUser();
+      if (!user) throw new Error('Nie udało się wczytać profilu konta.');
+      queryClient.setQueryData(getGetCurrentUserQueryKey(), user);
       return 'success';
-    } catch {
+    } catch (error) {
       await prepareForLogout();
       await logoutSession().catch(() => undefined);
       clearSessionEverywhere(queryClient);
-      return { error: 'Wystąpił błąd podczas logowania. Sprawdź połączenie z internetem.' };
+      return { error: getProblemDetail(error, 'Nie udało się wczytać profilu. Spróbuj ponownie.') };
     }
   };
 }

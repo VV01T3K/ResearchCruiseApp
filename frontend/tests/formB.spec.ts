@@ -80,6 +80,7 @@ test('failed draft saves explain the reason and retain partial rows for retry', 
         },
       },
       inline: 'Obecność kierownika została odrzucona',
+      formReasons: ['Zgłoszenie jest zablokowane.', 'Nieprawidłowy stan wersji roboczej', 'Nieprawidłowe powiązanie'],
       reasons: [
         'Zgłoszenie jest zablokowane.',
         'Obecność kierownika została odrzucona',
@@ -91,6 +92,7 @@ test('failed draft saves explain the reason and retain partial rows for retry', 
       status: 403,
       body: { detail: 'Obecnie nie można przesłać formularza B.' },
       reasons: ['Obecnie nie można przesłać formularza B.'],
+      formReasons: ['Obecnie nie można przesłać formularza B.'],
     },
   ];
   let failure = failures[0];
@@ -105,6 +107,9 @@ test('failed draft saves explain the reason and retain partial rows for retry', 
     await expect(toast).toHaveCount(1);
     for (const reason of failure.reasons) await expect(toast).toContainText(reason);
     if (failure.inline) await expect(managerPresent).toHaveAccessibleDescription(failure.inline);
+    const formErrors = page.getByTestId('form-errors');
+    for (const reason of failure.formReasons) await expect(formErrors).toContainText(reason);
+    if (failure.inline) await expect(formErrors).not.toContainText(failure.inline);
     await expect(task).toHaveValue('Niedokończone zadanie');
     await expect(page).toHaveURL(/\/formB\?mode=edit$/);
   }
@@ -112,6 +117,37 @@ test('failed draft saves explain the reason and retain partial rows for retry', 
   await save.click();
   await expect(formBPage.submissionApprovedMessage).toContainText('wersja robocza');
   expect(pageErrors).toEqual([]);
+});
+
+test('server errors stay under fields inside table rows', async ({ formBPage, page }) => {
+  await formBPage.fillForm();
+  await page.route(`${API_URL}/v2/applications/${formBPage.formId}/form-b`, (route) =>
+    route.request().method() === 'PUT'
+      ? route.fulfill({
+          status: 400,
+          json: { errors: { 'form.cruiseDaysDetails[0].taskName': ['Nazwa zadania została odrzucona'] } },
+        })
+      : route.fallback()
+  );
+  await formBPage.sections.cruiseDayDetailsSection.addTaskButton.click();
+  const task = page.getByTestId('cruise-day-task-name-input').first();
+  await task.fill('Zadanie');
+  await page.getByRole('button', { name: 'Zapisz wersję roboczą' }).click();
+
+  await expect(task).toHaveAccessibleDescription('Nazwa zadania została odrzucona');
+  await expect(page.getByTestId('form-errors')).toHaveCount(0);
+});
+
+test('cruise day import rejects unsupported spreadsheet formats', async ({ formBPage, page }) => {
+  await formBPage.fillForm();
+  await page.locator('input[type="file"][accept=".csv,.txt,.xlsx"]').setInputFiles({
+    name: 'dni.xls',
+    mimeType: 'application/vnd.ms-excel',
+    buffer: Buffer.from('binary'),
+  });
+
+  await expect(page.getByTestId('toast-error')).toContainText('Nieobsługiwany format pliku');
+  await expect(page.getByTestId('cruise-day-task-name-input')).toHaveCount(0);
 });
 
 test('all sections filled with invalid rows', async ({ formBPage }) => {

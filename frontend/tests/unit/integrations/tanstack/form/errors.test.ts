@@ -1,58 +1,31 @@
-import { FormApi, FieldApi } from '@tanstack/react-form';
+import { FieldApi, FormApi } from '@tanstack/react-form';
 import { z } from 'zod';
 import { expect, it } from 'vitest';
-import { getErrors, getFormErrorMessage, setServerFormErrors } from '@/integrations/tanstack/form/errors';
+import { getFormLevelErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { ApiError, getErrorMessage, responseErrorMessage } from '@/api/errors';
 
-it('shows root and unmounted server errors instead of losing their reason', () => {
-  const form = new FormApi({ defaultValues: { name: '' }, onSubmitMeta: undefined });
-  const unmount = form.mount();
-  try {
-    expect(setServerFormErrors(form, { problem: { errors: { form: ['Nie można zapisać wersji roboczej'] } } })).toBe(
-      true
-    );
-    expect(getFormErrorMessage(form, {})).toContain('Nie można zapisać wersji roboczej');
-    setServerFormErrors(form, { problem: { errors: { 'form.missingProperty': ['Nieprawidłowy stan zgłoszenia'] } } });
-    expect(getFormErrorMessage(form, {})).toContain('Nieprawidłowy stan zgłoszenia');
-  } finally {
-    unmount();
-  }
-});
+function apiError(status: number, problem: ConstructorParameters<typeof ApiError>[2]) {
+  return new ApiError(responseErrorMessage(status, problem), status, problem);
+}
 
-it('keeps mounted field errors next to the input', () => {
-  const form = new FormApi({ defaultValues: { name: '' }, onSubmitMeta: undefined });
-  const unmount = form.mount();
-  const field = new FieldApi({ form, name: 'name' });
-  const unmountField = field.mount();
-  try {
-    setServerFormErrors(form, { problem: { errors: { 'form.name': ['Ta nazwa jest zajęta'] } } });
-    expect(field.state.meta.errors.flat()).toContain('Ta nazwa jest zajęta');
-    expect(getFormErrorMessage(form, {})).toContain('Ta nazwa jest zajęta');
-  } finally {
-    unmountField();
-    unmount();
-  }
-});
-
-it('keeps every reason from a mixed response while annotating mounted fields', () => {
+it('places server errors on mounted fields and keeps the rest at form level', () => {
   const form = new FormApi({ defaultValues: { permissions: [{ description: '' }] }, onSubmitMeta: undefined });
   const unmount = form.mount();
   const field = new FieldApi({ form, name: 'permissions[0].description' });
   const unmountField = field.mount();
-  const problem = {
-    detail: 'Zgłoszenie jest zablokowane',
+  const error = apiError(400, {
     errors: {
       'form.permissions[0].description': ['Opis jest za długi'],
       form: ['Nieprawidłowy stan wersji roboczej'],
       'form.missing': ['Nieprawidłowe powiązanie'],
     },
-  };
-  const error = new ApiError(responseErrorMessage(400, problem), 400, problem);
+  });
   try {
     setServerFormErrors(form, error);
-    expect(field.state.meta.errors.flat()).toContain('Opis jest za długi');
+    expect(field.state.meta.errors).toEqual(['Opis jest za długi']);
+    expect(getFormLevelErrors(form)).toEqual(['Nieprawidłowy stan wersji roboczej', 'Nieprawidłowe powiązanie']);
     expect(getErrorMessage(error, 'Nie zapisano')).toBe(
-      'Nie zapisano: Zgłoszenie jest zablokowane\nOpis jest za długi\nNieprawidłowy stan wersji roboczej\nNieprawidłowe powiązanie'
+      'Nie zapisano: Opis jest za długi\nNieprawidłowy stan wersji roboczej\nNieprawidłowe powiązanie'
     );
   } finally {
     unmountField();
@@ -60,21 +33,46 @@ it('keeps every reason from a mixed response while annotating mounted fields', (
   }
 });
 
-it('lists a message once when server and client validation both report it', async () => {
+it('keeps the reason of failures without field errors at form level', () => {
+  const form = new FormApi({ defaultValues: { name: '' }, onSubmitMeta: undefined });
+  const unmount = form.mount();
+  try {
+    setServerFormErrors(form, apiError(403, { detail: 'Obecnie nie można przesłać formularza.' }));
+    expect(form.state.errorMap.onServer).toEqual(['Obecnie nie można przesłać formularza.']);
+    expect(getFormLevelErrors(form)).toEqual(['Obecnie nie można przesłać formularza.']);
+    setServerFormErrors(form, new TypeError('Failed to fetch'));
+    expect(getFormLevelErrors(form)).toEqual([
+      'Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.',
+    ]);
+  } finally {
+    unmount();
+  }
+});
+
+it('reports root-level and unmounted client issues, but not issues shown by mounted fields', async () => {
   const form = new FormApi({
-    defaultValues: { email: '' },
-    validators: { onSubmit: z.object({ email: z.string().min(1, 'Adres jest wymagany') }) },
+    defaultValues: { name: '', hidden: '' },
+    validators: {
+      onSubmit: z
+        .object({ name: z.string().min(1, 'Nazwa jest wymagana'), hidden: z.string().min(1, 'Ukryte pole') })
+        .refine(() => false, 'Formularz jest niekompletny'),
+    },
     onSubmitMeta: undefined,
   });
   const unmount = form.mount();
-  const field = new FieldApi({ form, name: 'email' });
-  const unmountField = field.mount();
+  const unmountField = new FieldApi({ form, name: 'name' }).mount();
   try {
     await form.handleSubmit();
-    setServerFormErrors(form, { problem: { errors: { email: ['Adres jest wymagany', 'Adres jest zajęty'] } } });
-    expect(getErrors(field.state.meta, 1)).toEqual(['Adres jest wymagany', 'Adres jest zajęty']);
+    expect(getFormLevelErrors(form)).toEqual(['Ukryte pole', 'Formularz jest niekompletny']);
   } finally {
     unmountField();
     unmount();
   }
+});
+
+it('ignores form-level values that are not issue lists', () => {
+  const form = new FormApi({ defaultValues: { name: '' }, onSubmitMeta: undefined });
+  expect(
+    getFormLevelErrors(form, { onServer: ['Serwer'], onDynamic: { name: 'nie lista', '': [{ message: 'Formularz' }] } })
+  ).toEqual(['Serwer', 'Formularz']);
 });

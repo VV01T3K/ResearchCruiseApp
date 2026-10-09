@@ -1,3 +1,4 @@
+import { getProblemDetail } from '@/api/errors';
 import { useSelector } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -87,7 +88,7 @@ function getOverlappingBlockadesForPeriod(
 
 export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
-  const { isReadonly, initValues, blockades } = context;
+  const { isReadonly, initValues, blockades, blockadesError } = context;
 
   const year = useSelector(form.store, (state) => state.values.year);
   const periodSelectionType = useSelector(form.store, (state) => state.values.periodSelectionType ?? 'period');
@@ -184,6 +185,12 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
     >
       <div className="space-y-4">
         <BlockadeWarning year={+year} blockades={blockades} />
+        {!!blockadesError && !isReadonly && (
+          <AppAlert variant="danger" data-testid="form-a-blockades-error">
+            Nie udało się wczytać blokad statku, więc kolizje terminów sprawdzi dopiero zapis formularza:{' '}
+            {getProblemDetail(blockadesError, 'Nieznany błąd.')}
+          </AppAlert>
+        )}
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {!isReadonly && (
             <div className="lg:col-span-2">

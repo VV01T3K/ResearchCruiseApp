@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -8,13 +9,15 @@ using FluentValidation.Internal;
 
 namespace ResearchCruiseApp.Infrastructure.Api;
 
-internal static partial class ValidationPropertyNames
+internal static partial class ValidationConventions
 {
-    // Validation errors are keyed by the camelCase JSON paths clients send, e.g. form.permissions[0].
-    // A module initializer applies this before any validator is built, in the app and in tests.
+    // Validation errors are keyed by the camelCase JSON paths clients send, e.g. form.permissions[0],
+    // and FluentValidation's default messages are Polish. A module initializer applies this before
+    // any validator is built, in the app and in tests.
     [ModuleInitializer]
-    internal static void UseJsonPropertyPaths()
+    internal static void Configure()
     {
+        ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("pl");
         ValidatorOptions.Global.PropertyNameResolver = (_, member, expression) =>
         {
             var path = GetMemberPath(member, expression);
@@ -22,7 +25,7 @@ internal static partial class ValidationPropertyNames
                 ? null
                 : string.Join('.', path.Split('.').Select(JsonNamingPolicy.CamelCase.ConvertName));
         };
-        // Default messages keep FluentValidation's readable names, e.g. 'First Name'.
+        // Rules without WithName fall back to readable member names, e.g. 'First Name'.
         ValidatorOptions.Global.DisplayNameResolver = (_, member, expression) =>
             GetMemberPath(member, expression) is { } path ? SplitPascalCase(path) : null;
     }

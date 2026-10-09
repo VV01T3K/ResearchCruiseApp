@@ -5,4 +5,5 @@ export type FormAViewModel = {
   initValues: FormAOptions;
   isReadonly: boolean;
   blockades?: BlockadeResponse[];
+  blockadesError?: unknown;
 };

@@ -10,10 +10,9 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { getFormErrorMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
+import { INVALID_FORM_MESSAGE, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
-  FORM_A_FIELD_TO_SECTION,
   type FormAValues,
   formADefaultValues,
   getFormASubmissionSchema,
@@ -65,7 +64,7 @@ function NewCruiseApplicationPage() {
     onSubmitInvalid: () => {
       if (!form.state.values.draft) trackFormSubmit('new-application', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
-      toast.error(getFormErrorMessage(form, FORM_A_FIELD_TO_SECTION));
+      toast.error(INVALID_FORM_MESSAGE);
       navigateToFirstError();
     },
   });
@@ -75,6 +74,7 @@ function NewCruiseApplicationPage() {
     initValues: initialStateQuery.data,
     isReadonly: false,
     blockades: blockadesQuery.data,
+    blockadesError: blockadesQuery.error,
     onSaveDraft: () => setIsSaveDraftModalOpen(true),
     actionsDisabled: saveMutation.isPending,
   };

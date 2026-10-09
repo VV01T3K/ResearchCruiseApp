@@ -1,5 +1,4 @@
-import { getErrorMessage, getProblemDetail } from '@/api/errors';
-import { toast } from '@/components/shared/layout/toast';
+import { getProblemDetail } from '@/api/errors';
 import type { RegisterAccountRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
@@ -12,7 +11,6 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { useRegisterAccount } from '@/api/generated/endpoints/auth.gen';
-import { Result } from '@/integrations/auth/types';
 
 export const Route = createFileRoute('/(auth)/register')({
   component: RegisterPage,
@@ -43,15 +41,9 @@ const validationSchema = z
     }
   });
 
-const errorMessages: Record<Result | 'username-taken', string> = {
-  success: '',
-  'username-taken': 'Podany adres e-mail jest już zajęty.',
-  error: 'Wystąpił błąd podczas rejestracji. Sprawdź połączenie z internetem.',
-};
-
 function RegisterPage() {
   const navigate = useNavigate();
-  const [result, setResult] = React.useState<(Result | 'username-taken') | undefined>(undefined);
+  const [submitError, setSubmitError] = React.useState<string>();
   const { mutateAsync } = useRegisterAccount({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
@@ -68,15 +60,14 @@ function RegisterPage() {
     onSubmit: async ({ value }) => {
       trackFormSubmit('register', 'valid', form.state);
 
+      setSubmitError(undefined);
       try {
         const { email, firstName, lastName, password } = value;
         await mutateAsync({ data: { email, firstName, lastName, password } satisfies RegisterAccountRequest });
       } catch (error) {
-        setResult(getProblemDetail(error, '').includes('taken') ? 'username-taken' : 'error');
-        toast.error(getErrorMessage(error, 'Rejestracja nie powiodła się'));
+        setSubmitError(getProblemDetail(error, 'Rejestracja nie powiodła się. Spróbuj ponownie.'));
         return;
       }
-      setResult('success');
       await navigate({ to: '/login' });
     },
     onSubmitInvalid: ({ formApi }) => {
@@ -123,7 +114,7 @@ function RegisterPage() {
               )}
             />
 
-            {result && <p className="mt-2 text-center text-sm font-semibold text-danger">{errorMessages[result]}</p>}
+            {submitError && <p className="mt-2 text-center text-sm font-semibold text-danger">{submitError}</p>}
           </div>
 
           <p className="!mt-8">
