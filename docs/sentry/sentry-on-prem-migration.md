@@ -64,7 +64,7 @@ env var but default to `https://sentry.io`. This is the **only missing plumbing*
   differs).
   Add a second GitHub secret (e.g. `SENTRY_AUTH_TOKEN_PROD`) holding the on-prem token and pass
   it as the `sentry_auth_token` build secret in that workflow.
-  The staging workflow (`deploy-komodo-staging.yaml`) stays untouched — it keeps uploading to
+  The staging workflow (`deploy-staging.yaml`) stays untouched — it keeps uploading to
   cloud with the existing `SENTRY_AUTH_TOKEN`.
 - The GitHub runner must be able to reach `SENTRY_URL`; if the instance is not public, use a
   self-hosted runner or expose the upload endpoint.
