@@ -22,17 +22,19 @@ public sealed class ApplicationWriteContractTests
         Assert.Throws<JsonException>(() => JsonSerializer.Deserialize("{}", contractType));
     }
 
+    // Unfilled values arrive as empty strings, as the frontend sends them. Omitting a key for a
+    // required column is rejected even in drafts.
     [Fact]
     public void DraftRequestsAllowPartiallyFilledNestedObjects()
     {
         var formA = JsonSerializer.Deserialize<FormAWriteRequest>(
-            """{"Form":{"CruiseHours":"0","Permissions":[{"Description":"started"}],"ResearchTasks":[{"Type":"0","Title":"started"}],"Contracts":[{"Category":"0"}],"Publications":[{"Title":"started"}]},"Draft":true}"""
+            """{"Form":{"Year":"","CruiseHours":"0","PeriodNotes":"","DifferentUsage":"","SupervisorEmail":"","CruiseGoalDescription":"","Permissions":[{"Description":"started"}],"ResearchTasks":[{"Type":"0","Title":"started"}],"Contracts":[{"Category":"0"}],"Publications":[{"Title":"started","Category":"","MinisterialPoints":""}]},"Draft":true}"""
         )!;
         var formB = JsonSerializer.Deserialize<FormBWriteRequest>(
-            """{"Form":{"Permissions":[{"Description":"started"}],"CrewMembers":[{"FirstName":"Anna"}],"CruiseDaysDetails":[{"TaskName":"started"}],"ResearchEquipments":[{"Name":"started"}]},"Draft":true}"""
+            """{"Form":{"IsCruiseManagerPresent":"","Permissions":[{"Description":"started"}],"CrewMembers":[{"Title":"","FirstName":"Anna","LastName":"","BirthPlace":"","BirthDate":"","DocumentNumber":"","DocumentExpiryDate":"","Institution":""}],"CruiseDaysDetails":[{"Number":"","Hours":"","TaskName":"started","Region":"","Position":"","Comment":""}],"ResearchEquipments":[{"Name":"started","Permission":""}]},"Draft":true}"""
         )!;
         var formC = JsonSerializer.Deserialize<FormCWriteRequest>(
-            """{"Form":{"Permissions":[{}],"CollectedSamples":[{"Type":"water"}],"CruiseDaysDetails":[{"TaskName":"started"}]},"Draft":true}"""
+            """{"Form":{"ShipUsage":"","DifferentUsage":"","Permissions":[{}],"CollectedSamples":[{"Type":"water","Amount":"","Analysis":"","Publishing":""}],"CruiseDaysDetails":[{"Number":"","Hours":"","TaskName":"started","Region":"","Position":"","Comment":""}]},"Draft":true}"""
         )!;
         Assert.True(new FormAWriteRequestValidator(FileInspector).Validate(formA).IsValid);
         Assert.True(new FormBWriteRequestValidator(FileInspector).Validate(formB).IsValid);

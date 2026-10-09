@@ -1,5 +1,6 @@
 using FluentValidation;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -7,33 +8,116 @@ public sealed class FormBWriteRequestValidator : AbstractValidator<FormBWriteReq
 {
     public FormBWriteRequestValidator(FileInspector fileInspector)
     {
-        When(
-            request => !request.Draft,
-            () =>
+        var collections = new InlineValidator<FormBFields>();
+        collections.Include(new FormBStorageValidator());
+        collections
+            .RuleFor(fields => fields.Permissions)
+            .NotNull()
+            .ForEach(item =>
+                item.NotNull()
+                    .ChildRules(permission =>
+                    {
+                        // A null scan remains an incomplete draft; validate fields when an upload exists.
+                        permission
+                            .RuleFor(fields => fields.Scan!)
+                            .SetValidator(new UploadFieldsValidator());
+                    })
+            );
+        collections.RuleFor(fields => fields.UgTeams).NotNull().ForEach(item => item.NotNull());
+        collections.RuleFor(fields => fields.GuestTeams).NotNull().ForEach(item => item.NotNull());
+        collections.RuleFor(fields => fields.CrewMembers).NotNull().ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.ShortResearchEquipments)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.LongResearchEquipments)
+            .NotNull()
+            .ForEach(item =>
+                item.NotNull()
+                    .ChildRules(equipment =>
+                        equipment
+                            .RuleFor(fields => fields.Action)
+                            .Must(value =>
+                                Enum.TryParse<ResearchEquipmentAction>(value, out var action)
+                                && Enum.IsDefined(action)
+                            )
+                            .WithMessage("Podany rodzaj operacji sprzętu jest nieprawidłowy.")
+                    )
+            );
+        collections.RuleFor(fields => fields.Ports).NotNull().ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.CruiseDaysDetails)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections
+            .RuleFor(fields => fields.ResearchEquipments)
+            .NotNull()
+            .ForEach(item => item.NotNull());
+        collections.RuleFor(fields => fields.ShipEquipmentsIds).NotNull();
+
+        collections
+            .RuleForEach(fields => fields.Permissions)
+            .SetValidator(new PermissionStorageValidator());
+        collections
+            .RuleForEach(fields => fields.UgTeams)
+            .SetValidator(new UgTeamStorageValidator());
+        collections
+            .RuleForEach(fields => fields.GuestTeams)
+            .SetValidator(new GuestTeamStorageValidator());
+        collections
+            .RuleForEach(fields => fields.ShortResearchEquipments)
+            .SetValidator(new ShortTermResearchEquipmentStorageValidator());
+        collections
+            .RuleForEach(fields => fields.LongResearchEquipments)
+            .SetValidator(new LongTermResearchEquipmentStorageValidator());
+        collections
+            .RuleForEach(fields => fields.Ports)
+            .SetValidator(new PortCallStorageValidator());
+        collections
+            .RuleForEach(fields => fields.CruiseDaysDetails)
+            .SetValidator(new CruiseDayStorageValidator());
+        collections
+            .RuleForEach(fields => fields.ResearchEquipments)
+            .SetValidator(new ResearchEquipmentStorageValidator());
+        collections
+            .RuleForEach(fields => fields.CrewMembers)
+            .SetValidator(new CrewMemberStorageValidator());
+
+        // Validate structure before rules that dereference collection entries.
+        RuleFor(request => request.Form)
+            .NotNull()
+            .SetValidator(collections)
+            .DependentRules(() =>
             {
-                RuleForEach(request => request.Form.Permissions)
-                    .Must(permissionFields => permissionFields.Scan is not null)
-                    .WithMessage(
-                        "Na etapie Formularza B wymagane jest przesłanie skanów pozwoleń."
-                    );
+                When(
+                    request => request.Form is not null && !request.Draft,
+                    () =>
+                    {
+                        RuleForEach(request => request.Form.Permissions)
+                            .Must(permissionFields => permissionFields.Scan is not null)
+                            .WithMessage(
+                                "Na etapie Formularza B wymagane jest przesłanie skanów pozwoleń."
+                            );
 
-                RuleForEach(request => request.Form.Permissions)
-                    .Must(permissionFields =>
-                        permissionFields.Scan is not null
-                        && fileInspector.IsFilePdf(permissionFields.Scan.Content)
-                    )
-                    .WithMessage("Skan pozwolenia musi być plikiem PDF.");
+                        RuleForEach(request => request.Form.Permissions)
+                            .Must(permissionFields =>
+                                permissionFields.Scan is not null
+                                && fileInspector.IsFilePdf(permissionFields.Scan.Content)
+                            )
+                            .WithMessage("Skan pozwolenia musi być plikiem PDF.");
 
-                RuleForEach(request => request.Form.Permissions)
-                    .Must(permissionFields =>
-                        permissionFields.Scan is not null
-                        && fileInspector.IsFileSizeValid(
-                            permissionFields.Scan.Content,
-                            PermissionScanLimits.MaxFileSize
-                        )
-                    )
-                    .WithMessage("Rozmiar skanu pozwolenia nie może przekraczać 2 MiB.");
-            }
-        );
+                        RuleForEach(request => request.Form.Permissions)
+                            .Must(permissionFields =>
+                                permissionFields.Scan is not null
+                                && fileInspector.IsFileSizeValid(
+                                    permissionFields.Scan.Content,
+                                    PermissionScanLimits.MaxFileSize
+                                )
+                            )
+                            .WithMessage("Rozmiar skanu pozwolenia nie może przekraczać 2 MiB.");
+                    }
+                );
+            });
     }
 }
