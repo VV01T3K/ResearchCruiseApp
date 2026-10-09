@@ -9,8 +9,7 @@
         "backend/ResearchCruiseApp/Infrastructure/DependencyInjection.cs",
         "backend/ResearchCruiseApp/Program.cs",
         "backend/ResearchCruiseApp/appsettings*.json",
-        "docker/**",
-        "kubernetes/**"
+        "docker/**"
       ]
     },
     {
