@@ -1,4 +1,4 @@
-name: Build images & deploy to Komodo staging
+name: Build staging images & deploy
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -70,18 +70,20 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.component }}
           cache-to: type=gha,scope=${{ matrix.component }},mode=max
 
-  trigger-komodo:
-    name: Trigger Komodo webhook
+  deploy:
+    name: Deploy staging
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push'
-
+    if: github.event_name == 'push' && github.ref == 'refs/heads/staging' && vars.STAGING_DEPLOY_ENABLED == 'true'
+    permissions:
+      contents: read
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v6
-
-      - name: Trigger Komodo webhook
+      - name: Sync configuration and deploy
         env:
-          KOMODO_WEBHOOK_URL: https://komodo_wb.wojtecs.com/listener/github/procedure/695bdc102652deb41b6ef3ec/__ANY__
-          KOMODO_WEBHOOK_SECRET: ${{ secrets.KOMODO_WEBHOOK_SECRET }}
+          STAGING_SYNC_URL: ${{ vars.STAGING_SYNC_URL }}
+          STAGING_DEPLOY_URL: ${{ vars.STAGING_DEPLOY_URL }}
+          STAGING_DEPLOY_API_KEY: ${{ secrets.STAGING_DEPLOY_API_KEY }}
           CLOUDFLARE_WEBHOOK_SECRET: ${{ secrets.CLOUDFLARE_WEBHOOK_SECRET }}
-        run: bash scripts/trigger-komodo-webhook.sh
+        run: bash scripts/deploy-staging.sh
