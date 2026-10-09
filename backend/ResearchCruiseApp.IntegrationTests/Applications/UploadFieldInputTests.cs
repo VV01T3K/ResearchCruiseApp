@@ -85,13 +85,13 @@ public sealed class UploadFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 cancellationToken: ct
             );
             var path =
-                target <= 2 ? "Form.Contracts[0].Scans[0]"
-                : target <= 4 ? "Form.Permissions[0].Scan"
-                : "Form.Photos[0]";
+                target <= 2 ? "form.contracts[0].scans[0]"
+                : target <= 4 ? "form.permissions[0].scan"
+                : "form.photos[0]";
             Assert.NotEmpty(
                 problem
                     .RootElement.GetProperty("errors")
-                    .GetProperty($"{path}.{property}")
+                    .GetProperty($"{path}.{JsonNamingPolicy.CamelCase.ConvertName(property)}")
                     .EnumerateArray()
             );
             Assert.Equal(original, await Snapshot(app));
@@ -147,13 +147,13 @@ public sealed class UploadFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 cancellationToken: ct
             );
             var path =
-                target <= 2 ? "Form.Contracts[0].Scans[0]"
-                : target <= 4 ? "Form.Permissions[0].Scan"
-                : "Form.Photos[0]";
+                target <= 2 ? "form.contracts[0].scans[0]"
+                : target <= 4 ? "form.permissions[0].scan"
+                : "form.photos[0]";
             Assert.NotEmpty(
                 problem
                     .RootElement.GetProperty("errors")
-                    .GetProperty($"{path}.Name")
+                    .GetProperty($"{path}.name")
                     .EnumerateArray()
             );
             Assert.Equal(original, await Snapshot(app));

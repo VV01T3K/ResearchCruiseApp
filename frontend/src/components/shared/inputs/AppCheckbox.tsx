@@ -1,3 +1,4 @@
+import { useInputAria } from '@/components/inputs/useInputAria';
 import { Checkbox } from '@base-ui/react/checkbox';
 import CheckIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 import React from 'react';
@@ -36,10 +37,11 @@ export function AppCheckbox({
   disabled,
   helper,
 }: Props) {
+  const aria = useInputAria(errors, helper);
   return (
     <div className={cn('flex flex-col', className)}>
       <div className={cn('flex items-center gap-2', labelPosition === 'left' ? 'flex-row' : 'flex-col')}>
-        <AppInputLabel name={name} value={label} className="mb-0" />
+        <AppInputLabel name={aria.id} value={label} className="mb-0" />
 
         <Checkbox.Root
           name={name}
@@ -47,7 +49,7 @@ export function AppCheckbox({
           onCheckedChange={(checked) => onChange?.(checked === true)}
           onBlur={onBlur}
           disabled={disabled}
-          aria-invalid={!!errors?.length}
+          {...aria.inputProps}
           className={cn(
             'flex items-center justify-center rounded-md border border-gray-300 transition-all duration-300',
             sizes[size],
@@ -63,8 +65,8 @@ export function AppCheckbox({
       </div>
 
       <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
-        <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} />
+        <AppInputHelper id={aria.helperId} helper={helper} />
+        <AppInputErrorsList id={aria.errorId} errors={errors} />
       </div>
     </div>
   );

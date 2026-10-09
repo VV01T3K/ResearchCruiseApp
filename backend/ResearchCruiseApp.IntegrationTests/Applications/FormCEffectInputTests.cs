@@ -89,8 +89,8 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
                         .RootElement.GetProperty("errors")
                         .GetProperty(
                             value is null
-                                ? $"Form.ResearchTasksEffects[0].{(field == "done" ? "Done" : field == "manager" ? "ManagerConditionMet" : "DeputyConditionMet")}"
-                                : "Form.ResearchTasksEffects[0]"
+                                ? $"form.researchTasksEffects[0].{(field == "done" ? "done" : field == "manager" ? "managerConditionMet" : "deputyConditionMet")}"
+                                : "form.researchTasksEffects[0]"
                         )
                         .EnumerateArray()
                 );

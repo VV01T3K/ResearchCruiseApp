@@ -77,7 +77,7 @@ public sealed class PermissionScanHttpTests(SqlFixture fixture) : IAsyncLifetime
             Assert.NotEmpty(
                 problem
                     .RootElement.GetProperty("errors")
-                    .GetProperty("Form.Permissions[0]")
+                    .GetProperty("form.permissions[0]")
                     .EnumerateArray()
             );
             Assert.Equal(

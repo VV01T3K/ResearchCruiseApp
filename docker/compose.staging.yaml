@@ -1,0 +1,59 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-CU23-ubuntu-22.04
+    container_name: researchcruiseapp-db
+    restart: unless-stopped
+    mem_limit: 3g
+    environment:
+      ACCEPT_EULA: 'Y'
+      MSSQL_MEMORY_LIMIT_MB: '2048'
+      MSSQL_SA_PASSWORD: ${DB_PASSWORD:?Preserve the deployed SQL Server password}
+    volumes:
+      - researchcruiseapp-db:/var/opt/mssql
+    healthcheck:
+      test: [CMD-SHELL, '/opt/mssql-tools18/bin/sqlcmd -S 127.0.0.1 -U sa -P "$$MSSQL_SA_PASSWORD" -C -b -Q "SELECT 1" >/dev/null']
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+  backend:
+    image: ghcr.io/vv01t3k/researchcruiseapp/backend:staging
+    container_name: researchcruiseapp-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__Database: ${DB_CONNECTION_STRING:?Preserve the deployed connection string}
+      Database__SeedAccountsAutomatically: ${DATABASE_SEED_ACCOUNTS_AUTOMATICALLY:-false}
+      Database__LogUserPasswordsWhenSeeding: ${DATABASE_LOG_USER_PASSWORDS_WHEN_SEEDING:-false}
+      FrontendUrl: ${FRONTEND_URL:-https://cruise.wsiwiec.com}
+      SmtpSettings__SmtpUsername: ${SMTP_USERNAME:?Preserve the deployed SMTP username}
+      SmtpSettings__SmtpPassword: ${SMTP_PASSWORD:?Preserve the deployed SMTP password}
+      JWT__Secret: ${JWT_SECRET:?Preserve the deployed token signing secret}
+      Sentry__Dsn: ${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
+      Sentry__TracesSampleRate: ${SENTRY_TRACES_SAMPLE_RATE:-1}
+  frontend:
+    image: ghcr.io/vv01t3k/researchcruiseapp/frontend:staging
+    container_name: researchcruiseapp-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      API_URL: http://backend:8080/
+      SENTRY_DSN: ${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
+      SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-1}
+      SENTRY_REPLAYS_SESSION_SAMPLE_RATE: ${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-1}
+    networks: [default, caddy]
+    labels:
+      caddy: ${FRONTEND_URL:-https://cruise.wsiwiec.com}
+      caddy.import: protected
+      caddy.reverse_proxy: '{{upstreams 8080}}'
+
+volumes:
+  researchcruiseapp-db:
+    external: true
+networks:
+  caddy:
+    external: true

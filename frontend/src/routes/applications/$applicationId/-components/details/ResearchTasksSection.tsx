@@ -3,14 +3,16 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
-import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
-import { EvaluationFormAResearchTask } from '@/api/client/applications/models';
+import {
+  type ApplicationEvaluation,
+  useApplicationEvaluation,
+} from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 export function ResearchTasksSection() {
   const evaluation = useApplicationEvaluation();
 
-  const columns: ColumnDef<EvaluationFormAResearchTask>[] = [
+  const columns: ColumnDef<ApplicationEvaluation['formAResearchTasks'][number]>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,
@@ -19,7 +21,7 @@ export function ResearchTasksSection() {
     {
       header: 'Zadanie',
       accessorFn: (row) => getTaskName(row.researchTask.type),
-      cell: ({ row }) => getTaskName(row.original.researchTask.type) ?? 'Nieznany typ',
+      cell: ({ row }) => getTaskName(row.original.researchTask.type),
       size: 20,
     },
     {

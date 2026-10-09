@@ -90,7 +90,7 @@ public sealed class FormValidationTests(SqlFixture fixture) : IAsyncLifetime
             cancellationToken: ct
         );
         var errors = problem.RootElement.GetProperty("errors");
-        Assert.Contains(errors.EnumerateObject(), error => error.Name == "Form.Permissions[0]");
+        Assert.Contains(errors.EnumerateObject(), error => error.Name == "form.permissions[0]");
         await app.InDatabase(async db =>
         {
             Assert.Equal(status, (await db.CruiseApplications.SingleAsync(ct)).Status);

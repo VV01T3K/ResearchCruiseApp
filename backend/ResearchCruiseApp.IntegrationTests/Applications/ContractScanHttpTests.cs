@@ -61,7 +61,7 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
             Assert.NotEmpty(
                 problem
                     .RootElement.GetProperty("errors")
-                    .GetProperty("Form.Contracts[0]")
+                    .GetProperty("form.contracts[0]")
                     .EnumerateArray()
             );
             var persisted = await AssertFiles(app, client, id, [original], false);
@@ -178,7 +178,7 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
             Assert.NotEmpty(
                 problem
                     .RootElement.GetProperty("errors")
-                    .GetProperty("Form.Permissions[0]")
+                    .GetProperty("form.permissions[0]")
                     .EnumerateArray()
             );
             var read = await client.GetFromJsonAsync<FormAFields>(

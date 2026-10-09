@@ -12,9 +12,9 @@ export const namedUgTeamNoOfStudentsMax = 1024;
 
 
 export const NamedUgTeam = zod.object({
-  "ugUnitName": zod.string().min(namedUgTeamUgUnitNameMin).max(namedUgTeamUgUnitNameMax).optional(),
-  "noOfEmployees": zod.string().min(namedUgTeamNoOfEmployeesMin).max(namedUgTeamNoOfEmployeesMax).optional(),
-  "noOfStudents": zod.string().min(namedUgTeamNoOfStudentsMin).max(namedUgTeamNoOfStudentsMax).optional()
+  "ugUnitName": zod.string().min(namedUgTeamUgUnitNameMin).max(namedUgTeamUgUnitNameMax),
+  "noOfEmployees": zod.string().min(namedUgTeamNoOfEmployeesMin).max(namedUgTeamNoOfEmployeesMax),
+  "noOfStudents": zod.string().min(namedUgTeamNoOfStudentsMin).max(namedUgTeamNoOfStudentsMax)
 });
 
 export type NamedUgTeam = zod.input<typeof NamedUgTeam>;

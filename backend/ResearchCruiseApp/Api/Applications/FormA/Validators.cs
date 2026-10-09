@@ -160,8 +160,16 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                 || request.Form.PrecisePeriodEnd is not null,
             () =>
             {
-                RuleFor(request => request.Form.AcceptablePeriod).Null();
-                RuleFor(request => request.Form.OptimalPeriod).Null();
+                RuleFor(request => request.Form.AcceptablePeriod)
+                    .Null()
+                    .WithMessage(
+                        "Nie można podać jednocześnie dokładnego terminu i okresu akceptowalnego."
+                    );
+                RuleFor(request => request.Form.OptimalPeriod)
+                    .Null()
+                    .WithMessage(
+                        "Nie można podać jednocześnie dokładnego terminu i okresu optymalnego."
+                    );
 
                 RuleFor(request => request.Form)
                     .Must(dto =>
@@ -169,7 +177,9 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                         && dto.PrecisePeriodEnd is not null
                         && dto.PrecisePeriodEnd >= dto.PrecisePeriodStart
                     )
-                    .WithMessage("PrecisePeriod must not start after it's end");
+                    .WithMessage(
+                        "Data zakończenia dokładnego terminu nie może być wcześniejsza niż data rozpoczęcia."
+                    );
 
                 RuleFor(request => request.Form)
                     .Must(HasEnoughPrecisePeriodForCruise)
@@ -186,9 +196,12 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             () =>
             {
                 RuleFor(request => request.Form.AcceptablePeriod)
-                    .Must(period => period?.Count == 2);
+                    .Must(period => period?.Count == 2)
+                    .WithMessage("Należy podać okres akceptowalny.");
 
-                RuleFor(request => request.Form.OptimalPeriod).Must(period => period?.Count == 2);
+                RuleFor(request => request.Form.OptimalPeriod)
+                    .Must(period => period?.Count == 2)
+                    .WithMessage("Należy podać okres optymalny.");
 
                 RuleForEach(request => request.Form.AcceptablePeriod)
                     .Must(edge =>

@@ -19,8 +19,8 @@ if [[ "$mode" == check || "$mode" == fix ]]; then
     scratch="$(mktemp -d "$PWD/backend/artifacts/contracts/run-XXXXXX")"
     trap 'rm -rf -- "$scratch"' EXIT
     export RCA_CONTRACT_ROOT="$scratch"
-    mkdir -p "$scratch/frontend/src/api/client"
-    cp frontend/src/api/client/custom-fetch.ts "$scratch/frontend/src/api/client/"
+    mkdir -p "$scratch/frontend/src/api"
+    cp frontend/src/api/fetch.ts "$scratch/frontend/src/api/"
     vp run -F backend build --no-restore --warnaserror -p:GenerateApiContract=true "-p:OpenApiDocumentsDirectory=$scratch/openapi"
     vp run -F frontend gen
     python3 scripts/compare-contracts.py "$mode" "$scratch"

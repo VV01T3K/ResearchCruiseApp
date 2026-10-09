@@ -80,7 +80,8 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
                 response.Content.Headers.ContentType?.MediaType
             );
             using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct));
-            var path = $"Form.{prepared.Collection}[1].Type";
+            var path =
+                $"form.{JsonNamingPolicy.CamelCase.ConvertName(prepared.Collection)}[1].type";
             Assert.True(
                 problem.RootElement.GetProperty("errors").TryGetProperty(path, out var errors),
                 $"HTTP 400 lacks {path}: {problem.RootElement}"

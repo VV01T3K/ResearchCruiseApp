@@ -6,17 +6,17 @@ export const cruiseApplicationCandidateResponseDeputyManagerIdRegExp = new RegEx
 
 
 export const CruiseApplicationCandidateResponse = zod.object({
-  "id": zod.string().regex(cruiseApplicationCandidateResponseIdRegExp).optional(),
-  "number": zod.string().optional(),
-  "year": zod.int().optional(),
-  "cruiseManagerId": zod.string().regex(cruiseApplicationCandidateResponseCruiseManagerIdRegExp).optional(),
-  "cruiseManagerFirstName": zod.string().optional(),
-  "cruiseManagerLastName": zod.string().optional(),
-  "deputyManagerId": zod.string().regex(cruiseApplicationCandidateResponseDeputyManagerIdRegExp).optional(),
-  "hasFormA": zod.boolean().optional(),
-  "hasFormB": zod.boolean().optional(),
-  "hasFormC": zod.boolean().optional(),
-  "points": zod.int().optional()
+  "id": zod.string().regex(cruiseApplicationCandidateResponseIdRegExp),
+  "number": zod.string(),
+  "year": zod.int(),
+  "cruiseManagerId": zod.string().regex(cruiseApplicationCandidateResponseCruiseManagerIdRegExp),
+  "cruiseManagerFirstName": zod.string(),
+  "cruiseManagerLastName": zod.string(),
+  "deputyManagerId": zod.string().regex(cruiseApplicationCandidateResponseDeputyManagerIdRegExp),
+  "hasFormA": zod.boolean(),
+  "hasFormB": zod.boolean(),
+  "hasFormC": zod.boolean(),
+  "points": zod.int()
 });
 
 export type CruiseApplicationCandidateResponse = zod.input<typeof CruiseApplicationCandidateResponse>;

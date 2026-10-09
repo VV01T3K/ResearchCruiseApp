@@ -80,6 +80,8 @@ internal class FormInitValuesReader(
     private async Task<FormAOptions> CreatePublicFormA(CancellationToken cancellationToken) =>
         new()
         {
+            CruiseManagers = [],
+            DeputyManagers = [],
             Years = [DateTime.Now.Year.ToString(), (DateTime.Now.Year + 1).ToString()],
             ShipUsages = FormAValuesConstants.ShipUsages,
             StandardSpubTasks = FormAValuesConstants.StandardSpubTasks,
@@ -96,6 +98,11 @@ internal class FormInitValuesReader(
             )
                 .Select(ApplicationMappings.ToUgUnitOption)
                 .ToList(),
+            HistoricalResearchTasks = [],
+            HistoricalContracts = [],
+            HistoricalGuestInstitutions = [],
+            HistoricalSpubTasks = [],
+            HistoricalPublications = [],
         };
 
     private async Task<List<CruiseApplication>> GetApplicationsForCurrentUser(

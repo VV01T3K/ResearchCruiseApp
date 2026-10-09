@@ -68,67 +68,68 @@ public class FormAFields
 
 public class ScoredContract
 {
-    public Guid Id { get; init; }
+    public required Guid Id { get; init; }
 
-    public ContractFields Contract { get; set; } = null!;
+    public required ContractFields Contract { get; set; }
 
-    public string Points { get; init; } = "0";
+    public required string Points { get; init; }
 }
 
 public class ScoredPublication
 {
-    public Guid Id { get; init; }
+    public required Guid Id { get; init; }
 
-    public PublicationFields Publication { get; init; } = null!;
+    public required PublicationFields Publication { get; init; }
 
-    public string Points { get; init; } = "0";
+    public required string Points { get; init; }
 }
 
 public class ScoredResearchTask
 {
-    public Guid Id { get; init; }
+    public required Guid Id { get; init; }
 
-    public ResearchTaskFields ResearchTask { get; init; } = null!;
+    public required ResearchTaskFields ResearchTask { get; init; }
 
-    public string Points { get; init; } = "0";
+    public required string Points { get; init; }
 }
 
 public class ScoredSpubTask
 {
-    public Guid Id { get; init; }
+    public required Guid Id { get; init; }
 
-    public SpubTaskFields SpubTask { get; init; } = null!;
+    public required SpubTaskFields SpubTask { get; init; }
 
-    public string Points { get; init; } = "0";
+    public required string Points { get; init; }
 }
 
 [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
 public class FormAOptions
 {
-    public List<UserOption> CruiseManagers { get; set; } = [];
+    public required List<UserOption> CruiseManagers { get; set; }
 
-    public List<UserOption> DeputyManagers { get; set; } = [];
+    public required List<UserOption> DeputyManagers { get; set; }
 
-    public List<string> Years { get; set; } = [];
+    public required List<string> Years { get; set; }
 
-    public List<string> ShipUsages { get; set; } = [];
+    public required List<string> ShipUsages { get; set; }
 
-    public List<string> StandardSpubTasks { get; set; } = [];
+    public required List<string> StandardSpubTasks { get; set; }
 
-    public List<ResearchAreaOption> ResearchAreas { get; set; } = [];
+    public required List<ResearchAreaOption> ResearchAreas { get; set; }
 
-    public List<string> CruiseGoals { get; set; } = [];
+    public required List<string> CruiseGoals { get; set; }
 
-    public List<ResearchTaskFields> HistoricalResearchTasks { get; set; } = [];
+    public required List<ResearchTaskFields> HistoricalResearchTasks { get; set; }
 
-    public List<ContractFields> HistoricalContracts { get; set; } = [];
+    public required List<ContractFields> HistoricalContracts { get; set; }
 
-    public List<UgUnitOption> UgUnits { get; set; } = [];
+    public required List<UgUnitOption> UgUnits { get; set; }
 
-    public List<string> HistoricalGuestInstitutions { get; set; } = [];
+    public required List<string> HistoricalGuestInstitutions { get; set; }
 
-    public List<SpubTaskFields> HistoricalSpubTasks { get; set; } = [];
-    public List<PublicationFields> HistoricalPublications { get; set; } = [];
+    public required List<SpubTaskFields> HistoricalSpubTasks { get; set; }
+
+    public required List<PublicationFields> HistoricalPublications { get; set; }
 }
 
 public class CruiseApplicationSummary
@@ -199,48 +200,48 @@ public class CruiseApplicationSummary
 // candidate picker (attach/detach applications on a cruise) actually renders.
 public class CruiseApplicationCandidateResponse
 {
-    public Guid Id { get; init; }
+    public required Guid Id { get; init; }
 
-    public string Number { get; init; } = null!;
-
-    [JsonNumberHandling(JsonNumberHandling.Strict)]
-    public int Year { get; init; }
-
-    public Guid CruiseManagerId { get; init; }
-
-    public string CruiseManagerFirstName { get; set; } = null!;
-
-    public string CruiseManagerLastName { get; set; } = null!;
-
-    public Guid DeputyManagerId { get; init; }
-
-    public bool HasFormA { get; init; }
-
-    public bool HasFormB { get; init; }
-
-    public bool HasFormC { get; init; }
+    public required string Number { get; init; }
 
     [JsonNumberHandling(JsonNumberHandling.Strict)]
-    public int Points { get; set; }
+    public required int Year { get; init; }
+
+    public required Guid CruiseManagerId { get; init; }
+
+    public required string CruiseManagerFirstName { get; set; }
+
+    public required string CruiseManagerLastName { get; set; }
+
+    public required Guid DeputyManagerId { get; init; }
+
+    public required bool HasFormA { get; init; }
+
+    public required bool HasFormB { get; init; }
+
+    public required bool HasFormC { get; init; }
+
+    [JsonNumberHandling(JsonNumberHandling.Strict)]
+    public required int Points { get; set; }
 }
 
 public class CruiseApplicationEvaluation
 {
-    public List<ScoredResearchTask> FormAResearchTasks { get; init; } = [];
+    public required List<ScoredResearchTask> FormAResearchTasks { get; init; }
 
-    public List<ScoredContract> FormAContracts { get; init; } = [];
+    public required List<ScoredContract> FormAContracts { get; init; }
 
-    public List<NamedUgTeam> UgTeams { get; init; } = [];
+    public required List<NamedUgTeam> UgTeams { get; init; }
 
-    public List<GuestTeamFields> GuestTeams { get; init; } = [];
+    public required List<GuestTeamFields> GuestTeams { get; init; }
 
-    public string UgUnitsPoints { get; init; } = null!;
+    public required string UgUnitsPoints { get; init; }
 
-    public List<ScoredPublication> FormAPublications { get; init; } = [];
+    public required List<ScoredPublication> FormAPublications { get; init; }
 
-    public List<ScoredSpubTask> FormASpubTasks { get; init; } = [];
+    public required List<ScoredSpubTask> FormASpubTasks { get; init; }
 
-    public string EffectsPoints { get; init; } = null!;
+    public required string EffectsPoints { get; init; }
 }
 
 public class PermissionFields
@@ -434,20 +435,20 @@ public class UgTeamFields
 public class NamedUgTeam
 {
     [StringLength(1024)]
-    public string UgUnitName { get; init; } = null!;
+    public required string UgUnitName { get; init; }
 
     [StringLength(1024)]
-    public string NoOfEmployees { get; init; } = null!;
+    public required string NoOfEmployees { get; init; }
 
     [StringLength(1024)]
-    public string NoOfStudents { get; init; } = null!;
+    public required string NoOfStudents { get; init; }
 }
 
 public class UgUnitOption
 {
-    public Guid Id { get; init; }
+    public required Guid Id { get; init; }
 
-    public string Name { get; init; } = null!;
+    public required string Name { get; init; }
 }
 
 public class GuestTeamFields
@@ -486,9 +487,9 @@ public class CrewMemberFields
 
 public class ShipEquipmentOption
 {
-    public Guid Id { get; init; }
+    public required Guid Id { get; init; }
 
-    public string Name { get; init; } = null!;
+    public required string Name { get; init; }
 }
 
 public class CollectedSampleFields
@@ -607,11 +608,11 @@ public class FileContent
 [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
 public class UserOption
 {
-    public Guid Id { get; set; }
+    public required Guid Id { get; set; }
 
-    public string Email { get; set; } = null!;
+    public required string Email { get; set; }
 
-    public string FirstName { get; set; } = null!;
+    public required string FirstName { get; set; }
 
-    public string LastName { get; set; } = null!;
+    public required string LastName { get; set; }
 }

@@ -39,9 +39,7 @@ export default defineConfig({
       override: {
         header: false,
         mutator: {
-          path: contractRoot
-            ? resolve(contractRoot, 'frontend/src/api/client/custom-fetch.ts')
-            : 'src/api/client/custom-fetch.ts',
+          path: contractRoot ? resolve(contractRoot, 'frontend/src/api/fetch.ts') : 'src/api/fetch.ts',
           name: 'customFetch',
         },
         requestOptions: true,

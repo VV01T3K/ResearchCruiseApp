@@ -67,7 +67,11 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
             var fields = (JsonObject)prepared.Fields.DeepClone();
             fields[property] = item ? new JsonArray((JsonNode?)null) : null;
             using var response = await Write(client, prepared.Route, fields, draft, create);
-            await CheckRejection(response, $"Form.{property}{(item ? "[0]" : "")}", failures);
+            await CheckRejection(
+                response,
+                $"form.{JsonNamingPolicy.CamelCase.ConvertName(property)}{(item ? "[0]" : "")}",
+                failures
+            );
             Assert.Equal(original, await Snapshot(app));
             if (!create)
                 Assert.Equal(originalHttp, await Read(client, prepared.Route));
@@ -109,7 +113,7 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         contract["Scans"] = item ? new JsonArray(Scan(), null) : null;
         using var response = await Write(client, prepared.Route, fields, draft, target == 0);
         var failures = new List<string>();
-        await CheckRejection(response, $"Form.Contracts[0].Scans{(item ? "[1]" : "")}", failures);
+        await CheckRejection(response, $"form.contracts[0].scans{(item ? "[1]" : "")}", failures);
         Assert.Equal(original, await Snapshot(app));
         if (target != 0)
             Assert.Equal(originalHttp, await Read(client, prepared.Route));
@@ -164,7 +168,7 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
             Assert.NotEmpty(
                 problem
                     .RootElement.GetProperty("errors")
-                    .GetProperty($"Form.{property}")
+                    .GetProperty($"form.{JsonNamingPolicy.CamelCase.ConvertName(property)}")
                     .EnumerateArray()
             );
         Assert.Equal(original, await Snapshot(app));

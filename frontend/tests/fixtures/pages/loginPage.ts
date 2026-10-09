@@ -54,7 +54,7 @@ export class LoginPage {
       });
     } else {
       await this.page.route(`${API_URL}/v2/auth/login`, (route) => {
-        route.fulfill({ status: 401 });
+        route.fulfill({ status: 401, json: { detail: 'Podano błędne hasło lub użytkownik nie istnieje.' } });
       });
     }
   }

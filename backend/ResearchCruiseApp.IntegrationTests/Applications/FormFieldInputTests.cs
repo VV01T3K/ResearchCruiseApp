@@ -71,7 +71,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 parent[field.Property] = kind == 0 ? null : new string('x', field.Limit + 1);
             using var response = await Write(client, prepared.Route, fields, draft, target);
             var path =
-                $"Form.{(field.Collection is null ? "" : field.Collection + "[0].")}{field.Property}";
+                $"form.{(field.Collection is null ? "" : JsonNamingPolicy.CamelCase.ConvertName(field.Collection) + "[0].")}{JsonNamingPolicy.CamelCase.ConvertName(field.Property)}";
             var body = await response.Content.ReadAsStringAsync(ct);
             if (
                 response.StatusCode != HttpStatusCode.BadRequest

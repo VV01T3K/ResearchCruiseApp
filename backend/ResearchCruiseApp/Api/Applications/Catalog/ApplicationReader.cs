@@ -56,7 +56,11 @@ internal class ApplicationReader(
         CruiseApplication application
     )
     {
-        var dto = new CruiseApplicationCandidateResponse
+        var manager = application.FormA?.CruiseManagerId is { } managerId
+            ? await identityService.GetUserDtoById(managerId)
+            : null;
+
+        return new CruiseApplicationCandidateResponse
         {
             Id = application.Id,
             Number = application.Number.ToString(),
@@ -66,17 +70,10 @@ internal class ApplicationReader(
             HasFormA = application.FormA is not null,
             HasFormB = application.FormB is not null,
             HasFormC = application.FormC is not null,
+            CruiseManagerFirstName = manager?.FirstName ?? string.Empty,
+            CruiseManagerLastName = manager?.LastName ?? string.Empty,
             Points = evaluator.GetPointsSum(application),
         };
-
-        if (application.FormA?.CruiseManagerId is { } managerId)
-        {
-            var manager = await identityService.GetUserDtoById(managerId);
-            dto.CruiseManagerFirstName = manager?.FirstName ?? string.Empty;
-            dto.CruiseManagerLastName = manager?.LastName ?? string.Empty;
-        }
-
-        return dto;
     }
 
     public async Task<CruiseApplicationEvaluation> CreateEvaluationDetails(

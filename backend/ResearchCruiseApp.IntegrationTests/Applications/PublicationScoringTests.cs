@@ -83,8 +83,8 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
                     .RootElement.GetProperty("errors")
                     .GetProperty(
                         amount is null
-                            ? "Form.Publications[0].MinisterialPoints"
-                            : "Form.Publications[0]"
+                            ? "form.publications[0].ministerialPoints"
+                            : "form.publications[0]"
                     )
                     .EnumerateArray()
             );

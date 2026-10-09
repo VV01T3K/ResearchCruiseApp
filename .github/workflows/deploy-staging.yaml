@@ -1,0 +1,93 @@
+name: Build staging images & deploy
+
+on:
+  push:
+    branches: [staging]
+    paths-ignore: ["docs/**", "**.md", ".gitignore"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  workspace:
+    name: Validate workspace
+    uses: ./.github/workflows/workspace-ci.yaml
+    permissions:
+      contents: read
+
+  build:
+    needs: workspace
+    name: Build ${{ matrix.component }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        include:
+          - component: frontend
+            context: .
+            dockerfile: frontend/Dockerfile
+            build-args: |
+              APP_ENVIRONMENT=staging
+              SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}
+          - component: backend
+            context: backend
+            dockerfile: backend/Dockerfile
+            build-args: |
+              APP_ENVIRONMENT=staging
+              SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/${{ matrix.component }}
+          tags: type=raw,value=staging
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: ${{ matrix.build-args }}
+          secrets: |
+            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
+          cache-from: type=gha,scope=${{ matrix.component }}
+          cache-to: type=gha,scope=${{ matrix.component }},mode=max
+
+  deploy:
+    name: Deploy staging
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/staging' && vars.STAGING_DEPLOY_ENABLED == 'true'
+    permissions:
+      contents: read
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+      - name: Sync configuration and deploy
+        env:
+          STAGING_SYNC_URL: ${{ vars.STAGING_SYNC_URL }}
+          STAGING_DEPLOY_URL: ${{ vars.STAGING_DEPLOY_URL }}
+          STAGING_DEPLOY_API_KEY: ${{ secrets.STAGING_DEPLOY_API_KEY }}
+          CLOUDFLARE_WEBHOOK_SECRET: ${{ secrets.CLOUDFLARE_WEBHOOK_SECRET }}
+        run: bash scripts/deploy-staging.sh

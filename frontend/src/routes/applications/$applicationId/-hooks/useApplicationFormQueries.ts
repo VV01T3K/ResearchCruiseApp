@@ -1,40 +1,35 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import {
-  getApplicationFormA,
   getApplicationFormB,
   getApplicationFormC,
-  getGetApplicationFormAQueryKey,
   getGetApplicationFormBQueryKey,
   getGetApplicationFormCQueryKey,
+  useGetApplicationFormASuspense,
 } from '@/api/generated/endpoints/applications.gen';
 import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { ApiError } from '@/api/client/custom-fetch';
+import { ApiError } from '@/api/errors';
 import { mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { mapFormBToValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { mapFormCToValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 
 export function useFormAQuery(applicationId: string) {
-  return useSuspenseQuery({
-    queryKey: getGetApplicationFormAQueryKey(applicationId),
-    queryFn: async () => {
-      return mapFormAToValues(await getApplicationFormA(applicationId));
-    },
-  });
+  return useGetApplicationFormASuspense(applicationId, { query: { select: mapFormAToValues } });
 }
 
 export function useFormBQuery(applicationId: string) {
   return useSuspenseQuery({
     queryKey: getGetApplicationFormBQueryKey(applicationId),
-    queryFn: async (): Promise<FormBValues | null> => {
+    queryFn: async ({ signal }) => {
       try {
-        return mapFormBToValues(await getApplicationFormB(applicationId));
+        return await getApplicationFormB(applicationId, { signal });
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) return null;
         throw error;
       }
     },
+    select: (data): FormBValues | null => (data ? mapFormBToValues(data) : null),
     retry: false,
   });
 }
@@ -42,14 +37,15 @@ export function useFormBQuery(applicationId: string) {
 export function useFormCQuery(applicationId: string) {
   return useSuspenseQuery({
     queryKey: getGetApplicationFormCQueryKey(applicationId),
-    queryFn: async (): Promise<FormCValues | null> => {
+    queryFn: async ({ signal }) => {
       try {
-        return mapFormCToValues(await getApplicationFormC(applicationId));
+        return await getApplicationFormC(applicationId, { signal });
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) return null;
         throw error;
       }
     },
+    select: (data): FormCValues | null => (data ? mapFormCToValues(data) : null),
     retry: false,
   });
 }

@@ -36,7 +36,10 @@ public sealed class RateLimitTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
         var problem = await response.Content.ReadFromJsonAsync<JsonElement>(ct);
         Assert.Equal(429, problem.GetProperty("status").GetInt32());
-        Assert.Equal("Too many requests.", problem.GetProperty("title").GetString());
+        Assert.Equal(
+            "Wysłano zbyt wiele żądań. Odczekaj chwilę i spróbuj ponownie.",
+            problem.GetProperty("detail").GetString()
+        );
         Assert.False(response.Headers.Contains("Set-Cookie"));
         await app.InDatabase(async db =>
         {

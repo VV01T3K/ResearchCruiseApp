@@ -101,7 +101,7 @@ public sealed class AccountStorageTests(SqlFixture fixture) : IAsyncLifetime
             );
             using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct));
             var error = Assert.Single(problem.RootElement.GetProperty("errors").EnumerateObject());
-            Assert.Equal(field, error.Name);
+            Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(field), error.Name);
             Assert.NotEmpty(error.Value.EnumerateArray());
         }
         await app.InDatabase(async db =>

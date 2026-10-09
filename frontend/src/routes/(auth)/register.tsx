@@ -1,17 +1,16 @@
+import { getProblemDetail } from '@/api/errors';
+import type { RegisterAccountRequest } from '@/api/generated/schemas';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { revalidateLogic, useForm } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
-import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useRegisterAccount } from '@/api/generated/endpoints/auth.gen';
-import { getProblemDetail } from '@/api/client/custom-fetch';
-import { Result } from '@/api/client/user';
 
 export const Route = createFileRoute('/(auth)/register')({
   component: RegisterPage,
@@ -42,22 +41,11 @@ const validationSchema = z
     }
   });
 
-const errorMessages: Record<Result | 'username-taken', string> = {
-  success: '',
-  'username-taken': 'Podany adres e-mail jest już zajęty.',
-  error: 'Wystąpił błąd podczas rejestracji. Sprawdź połączenie z internetem.',
-};
-
 function RegisterPage() {
   const navigate = useNavigate();
-  const [result, setResult] = React.useState<(Result | 'username-taken') | undefined>(undefined);
-  const { mutateAsync } = useRegisterAccount({
-    mutation: {
-      onSuccess: () => setResult('success'),
-      onError: (error) => setResult(getProblemDetail(error, '').includes('taken') ? 'username-taken' : 'error'),
-    },
-  });
-  const form = useForm({
+  const [submitError, setSubmitError] = React.useState<string>();
+  const { mutateAsync } = useRegisterAccount({ mutation: { meta: { handlesError: true } } });
+  const form = useAppForm({
     defaultValues: {
       email: '',
       firstName: '',
@@ -65,21 +53,22 @@ function RegisterPage() {
       password: '',
       confirmPassword: '',
     },
-    validationLogic: revalidateLogic({ mode: 'change', modeAfterSubmission: 'change' }),
+    validationLogic: formValidationLogic,
     validators: {
       onDynamic: validationSchema,
     },
     onSubmit: async ({ value }) => {
       trackFormSubmit('register', 'valid', form.state);
 
-      await mutateAsync(
-        { data: value },
-        {
-          onSuccess: async () => {
-            await navigate({ to: '/login' });
-          },
-        }
-      ).catch(() => {});
+      setSubmitError(undefined);
+      try {
+        const { email, firstName, lastName, password } = value;
+        await mutateAsync({ data: { email, firstName, lastName, password } satisfies RegisterAccountRequest });
+      } catch (error) {
+        setSubmitError(getProblemDetail(error, 'Rejestracja nie powiodła się. Spróbuj ponownie.'));
+        return;
+      }
+      await navigate({ to: '/login' });
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('register', 'invalid', formApi.state);
@@ -89,86 +78,30 @@ function RegisterPage() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    form.handleSubmit();
+    void form.handleSubmit();
   }
 
   return (
     <AppLayout title="Rejestracja" variant="narrow">
       <form className="px-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <form.Field
-            name="email"
-            children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="email"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                label="E-mail"
-              />
-            )}
-          />
+          <form.AppField name="email" children={(field) => <field.FloatingTextField type="email" label="E-mail" />} />
 
-          <form.Field
-            name="firstName"
-            children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="text"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                label="Imię"
-              />
-            )}
-          />
+          <form.AppField name="firstName" children={(field) => <field.FloatingTextField type="text" label="Imię" />} />
 
-          <form.Field
+          <form.AppField
             name="lastName"
-            children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="text"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                label="Nazwisko"
-              />
-            )}
+            children={(field) => <field.FloatingTextField type="text" label="Nazwisko" />}
           />
 
-          <form.Field
+          <form.AppField
             name="password"
-            children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="password"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                label="Hasło"
-              />
-            )}
+            children={(field) => <field.FloatingTextField type="password" label="Hasło" />}
           />
 
-          <form.Field
+          <form.AppField
             name="confirmPassword"
-            children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="password"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                label="Potwierdź hasło"
-              />
-            )}
+            children={(field) => <field.FloatingTextField type="password" label="Potwierdź hasło" />}
           />
 
           <div className="!mt-12">
@@ -181,7 +114,7 @@ function RegisterPage() {
               )}
             />
 
-            {result && <p className="mt-2 text-center text-sm font-semibold text-danger">{errorMessages[result]}</p>}
+            {submitError && <p className="mt-2 text-center text-sm font-semibold text-danger">{submitError}</p>}
           </div>
 
           <p className="!mt-8">

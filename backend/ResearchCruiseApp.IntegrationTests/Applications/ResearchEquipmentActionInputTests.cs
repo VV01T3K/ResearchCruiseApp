@@ -84,7 +84,7 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
                 using var problem = JsonDocument.Parse(
                     await response.Content.ReadAsStringAsync(ct)
                 );
-                const string path = "Form.LongResearchEquipments[1].Action";
+                const string path = "form.longResearchEquipments[1].action";
                 Assert.True(
                     problem.RootElement.GetProperty("errors").TryGetProperty(path, out var errors),
                     $"HTTP 400 lacks {path}: {problem.RootElement}"

@@ -5,12 +5,14 @@ export enum PublicationCategory {
   Postscript = 'postscript',
 }
 
-export function getPublicationCategoryLabel(category: PublicationCategory) {
+export function getPublicationCategoryLabel(category: string | undefined) {
   switch (category) {
     case PublicationCategory.Subject:
       return 'Temat';
     case PublicationCategory.Postscript:
       return 'Dopisek';
+    default:
+      return 'Nieznany typ';
   }
 }
 

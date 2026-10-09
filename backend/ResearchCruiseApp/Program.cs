@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Infrastructure;
+using ResearchCruiseApp.Infrastructure.Api;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization.DevData;
 using ResearchCruiseApp.Infrastructure.Sentry;
@@ -33,7 +34,9 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     );
 });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddProblemDetails();
+builder.Services.AddProblemDetails(options =>
+    options.CustomizeProblemDetails = ProblemDetailsMessages.AddDefaultDetail
+);
 const string dotNetGuidPattern =
     "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
 builder.Services.AddOpenApi(
@@ -108,20 +111,6 @@ builder.Services.AddRateLimiter(options =>
                 }
             )
     );
-    options.OnRejected = async (context, cancellationToken) =>
-    {
-        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-        await context.HttpContext.Response.WriteAsJsonAsync(
-            new ProblemDetails
-            {
-                Status = StatusCodes.Status429TooManyRequests,
-                Title = "Too many requests.",
-            },
-            options: null,
-            contentType: "application/problem+json",
-            cancellationToken: cancellationToken
-        );
-    };
 });
 builder.Services.AddHealthChecks();
 builder.Services.AddCors(options =>
@@ -190,6 +179,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("CustomPolicy");
+
+// Turns bodiless errors (auth challenges, rate limits, unknown routes) into ProblemDetails.
+app.UseStatusCodePages();
 app.UseRateLimiter();
 app.UseAuthentication().UseAuthorization();
 app.UseMiddleware<SentryUserMiddleware>();

@@ -1,17 +1,19 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
+import { AppFileList } from '@/components/shared/inputs/parts/AppFileList';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
+import {
+  type ApplicationEvaluation,
+  useApplicationEvaluation,
+} from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
-import { EvaluationFormAContract } from '@/api/client/applications/models';
 
 export function ContractsSection() {
   const evaluation = useApplicationEvaluation();
 
-  const columns: ColumnDef<EvaluationFormAContract>[] = [
+  const columns: ColumnDef<ApplicationEvaluation['formAContracts'][number]>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,
@@ -19,7 +21,7 @@ export function ContractsSection() {
     },
     {
       header: 'Kategoria',
-      cell: ({ row }) => getContractCategoryName(row.original.contract.category) ?? 'Nieznany typ',
+      cell: ({ row }) => getContractCategoryName(row.original.contract.category),
       size: 10,
     },
     {
@@ -64,16 +66,7 @@ export function ContractsSection() {
       header: 'Skany',
       enableColumnFilter: false,
       enableSorting: false,
-      cell: ({ row }) => (
-        <AppFileInput
-          name="scans"
-          value={row.original.contract.scans}
-          allowMultiple={true}
-          label="Skany"
-          maxSizeInMb={2}
-          disabled
-        />
-      ),
+      cell: ({ row }) => <AppFileList files={row.original.contract.scans} disabled />,
       size: 20,
     },
     {

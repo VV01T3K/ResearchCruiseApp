@@ -125,7 +125,9 @@ public sealed class FormCollectionInputTests(SqlFixture fixture) : IAsyncLifetim
                 Assert.NotEmpty(
                     problem
                         .RootElement.GetProperty("errors")
-                        .GetProperty($"Form.{property}{(item ? "[0]" : "")}")
+                        .GetProperty(
+                            $"form.{JsonNamingPolicy.CamelCase.ConvertName(property)}{(item ? "[0]" : "")}"
+                        )
                         .EnumerateArray()
                 );
             }

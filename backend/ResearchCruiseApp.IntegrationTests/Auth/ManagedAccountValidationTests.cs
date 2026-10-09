@@ -54,7 +54,7 @@ public sealed class ManagedAccountValidationTests(SqlFixture fixture) : IAsyncLi
             cancellationToken: ct
         );
         Assert.NotEmpty(
-            problem.RootElement.GetProperty("errors").GetProperty("Email").EnumerateArray()
+            problem.RootElement.GetProperty("errors").GetProperty("email").EnumerateArray()
         );
         await AssertTarget(
             app,

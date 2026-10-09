@@ -89,7 +89,7 @@ public sealed class CruiseStorageTests(SqlFixture fixture) : IAsyncLifetime
             );
             using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct));
             var error = Assert.Single(problem.RootElement.GetProperty("errors").EnumerateObject());
-            Assert.Equal(field, error.Name);
+            Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(field), error.Name);
             Assert.NotEmpty(error.Value.EnumerateArray());
             using var after = await client.GetAsync($"/v2/cruises/{original.Id}", ct);
             Assert.Equal(HttpStatusCode.OK, after.StatusCode);

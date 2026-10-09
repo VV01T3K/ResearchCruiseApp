@@ -16,8 +16,8 @@ requirement. Apply only the area checks relevant to the changed behavior.
 - For role or resource-access changes, compare `RolePermissionRules`, backend enforcement
   and frontend permission helpers across list, detail, export and write paths.
   Include multiple roles and assigned cruise managers/deputies in the comparison.
-- For session changes, trace `frontend/src/api/client/auth-session.ts`,
-  `frontend/src/api/client/custom-fetch.ts` and backend session endpoints together.
+- For session changes, trace `frontend/src/integrations/auth/session.ts`,
+  `frontend/src/api/fetch.ts` and backend session endpoints together.
   Distinguish cross-tab refresh conflicts with status 409 and transient failures
   from terminal 401 responses. Check that refresh retries respect logout, in-memory
   access tokens and HttpOnly refresh cookies.
@@ -52,7 +52,7 @@ requirement. Apply only the area checks relevant to the changed behavior.
   backend `Infrastructure/Email`. Check atomic business/outbox writes where required,
   protected payloads, retries, expiry and worker leases. A crash after SMTP accepts
   a message but before database acknowledgement can legitimately cause redelivery.
-- For deployment changes, compare option bindings with Docker/Kubernetes settings,
+- For deployment changes, compare option bindings with Docker settings,
   including SMTP validation and shared Data Protection keys used by the outbox.
   Keep credentials out of tracked settings/logs and tests on fake email delivery.
 

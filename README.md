@@ -44,7 +44,7 @@ and Dependabot.
 
 Database migrations and reference data seeding run on startup. Missing roles, UG units, research areas and ship equipment are added; existing reference rows, including inactive entries, are preserved. Seeding shares Entity Framework's migration lock so application replicas do not seed simultaneously.
 
-`Database__SeedAccountsAutomatically` controls only the accounts configured in `users.json`. It replaces `Database__SeedAutomatically`; `Database__MigrateAutomatically` has been removed. Account seeding defaults to off in the backend and production Compose, and is enabled in development and staging Compose. For staging, rename `DATABASE_SEED_AUTOMATICALLY` to `DATABASE_SEED_ACCOUNTS_AUTOMATICALLY` in the deployment environment.
+`Database__SeedAccountsAutomatically` controls only the accounts configured in `users.json`. It replaces `Database__SeedAutomatically`; `Database__MigrateAutomatically` has been removed. Account seeding defaults to off in the backend, staging and production Compose, and is enabled in development Compose. For staging, rename `DATABASE_SEED_AUTOMATICALLY` to `DATABASE_SEED_ACCOUNTS_AUTOMATICALLY` in the deployment environment.
 
 ## Deployment
 
@@ -55,11 +55,8 @@ The application can be run using Docker compose. Multiple configuration files ar
 - `docker-compose.dev.yml` - Development configuration
 - `docker-compose.infra.yml` - MS SQL Database configuration
 - `docker-compose.prod.yml` - Production configuration
+- `compose.staging.yaml` - Staging application and database
 
 See [the Sentry on-prem migration notes](docs/sentry/sentry-on-prem-migration.md) for the planned move to a self-hosted Sentry instance.
 
-SMTP credentials must not be added to `appsettings*.json` or another tracked file. Local development uses the fake SMTP sender by default, including Docker development. Staging and production Compose require `SMTP_USERNAME` and `SMTP_PASSWORD` in the deployment environment and map them to the backend's `SmtpSettings` configuration. For staging, configure these in the Komodo stack environment. Copy `docker/.env.staging.template` only for local deployment setup and keep the populated file untracked. See [SMTP configuration and rollout](docs/smtp-configuration.md) for setup, rotation, and verification.
-
-### Kubernetes
-
-You can also deploy the application using Kubernetes. The [`kubernetes` directory](./kubernetes/) contains the necessary configuration files, both a default and staging `kustomize` configuration.
+SMTP credentials must not be added to `appsettings*.json` or another tracked file. Local development uses the fake SMTP sender by default, including Docker development. Staging and production Compose require `SMTP_USERNAME` and `SMTP_PASSWORD` in the deployment environment and map them to the backend's `SmtpSettings` configuration. For staging, configure these in the staging deployment environment. Copy `docker/.env.staging.template` only for local deployment setup and keep the populated file untracked. See [SMTP configuration and rollout](docs/smtp-configuration.md) for setup, rotation, and verification.

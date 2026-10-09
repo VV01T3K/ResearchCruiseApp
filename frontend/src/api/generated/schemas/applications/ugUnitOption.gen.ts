@@ -4,8 +4,8 @@ export const ugUnitOptionIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[
 
 
 export const UgUnitOption = zod.object({
-  "id": zod.string().regex(ugUnitOptionIdRegExp).optional(),
-  "name": zod.string().optional()
+  "id": zod.string().regex(ugUnitOptionIdRegExp),
+  "name": zod.string()
 });
 
 export type UgUnitOption = zod.input<typeof UgUnitOption>;
