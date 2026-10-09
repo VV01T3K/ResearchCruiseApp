@@ -1,18 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>false</InvariantGlobalization>
+    <!-- Compile Minimal API delegates once instead of rebuilding them for every host. -->
+    <EnableRequestDelegateGenerator>true</EnableRequestDelegateGenerator>
+    <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+    <NoWarn>$(NoWarn);IDE0130;CA1305;CA1310;CA1711;CA1716;CA1822;CA1824;CA1825;CA1848;CA1859;CA1861</NoWarn>
     <RootNamespace>ResearchCruiseApp</RootNamespace>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <UserSecretsId>36dfba4d-eec1-47b9-ab0e-59344a3424a8</UserSecretsId>
     <Version>2.5.1</Version>
-    <AnalysisLevel>latest-recommended</AnalysisLevel>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <!-- Accept legacy findings that require API, culture, DI, or generated-migration changes. -->
-    <NoWarn>$(NoWarn);IDE0130;CA1305;CA1310;CA1711;CA1716;CA1822;CA1824;CA1825;CA1848;CA1859;CA1861</NoWarn>
     <!--
       Keep the single v2 OpenAPI document instead of Asp.Versioning.OpenApi: its transformer turns
       string parameter defaults into single-value enums and titles build-time documents
@@ -28,7 +24,7 @@
     <SentryUploadSources>true</SentryUploadSources>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+  <PropertyGroup Condition="'$(GenerateApiContract)' == 'true'">
     <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
     <OpenApiDocumentsDirectory>openapi</OpenApiDocumentsDirectory>
   </PropertyGroup>
@@ -107,4 +103,13 @@
   <ItemGroup>
     <Folder Include="Infrastructure\Persistence\Migrations\" />
   </ItemGroup>
+  <!-- The generator skips when the assembly is unchanged; always regenerate so a hand-edited
+       document is overwritten and the contract check sees it. -->
+  <Target
+    Name="RefreshApiContractOutput"
+    BeforeTargets="GenerateOpenApiDocuments"
+    Condition="'$(GenerateApiContract)' == 'true'"
+  >
+    <Delete Files="$(_OpenApiDocumentsCache)" />
+  </Target>
 </Project>

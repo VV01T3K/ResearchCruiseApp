@@ -4,16 +4,20 @@ on:
   push:
     branches: [staging]
     paths-ignore: ["docs/**", "**.md", ".gitignore"]
-  pull_request:
-    branches: [staging]
-    paths-ignore: ["docs/**", "**.md", ".gitignore"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
+  checks:
+    name: Checks
+    uses: ./.github/workflows/format-and-lint.yaml
+    permissions:
+      contents: read
+
   build:
+    needs: checks
     name: Build ${{ matrix.component }}
     runs-on: ubuntu-latest
     permissions:

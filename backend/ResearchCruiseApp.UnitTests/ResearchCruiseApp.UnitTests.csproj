@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <!-- Test names use Behavior_WhenCondition_ExpectedOutcome. -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3.mtp-v2" Version="4.0.1" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.4.1" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.11.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../ResearchCruiseApp/ResearchCruiseApp.csproj" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>
