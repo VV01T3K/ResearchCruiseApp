@@ -1,3 +1,4 @@
+import { useInputAria } from '@/components/inputs/useInputAria';
 import { Select } from '@base-ui/react/select';
 import CheckIcon from 'bootstrap-icons/icons/check.svg?react';
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
@@ -53,6 +54,7 @@ export function AppDropdownInput({
   'data-testid-button': buttonTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
+  const aria = useInputAria(errors, helper);
   const allPossibleOptions = React.useMemo(() => {
     if (allowEmptyOption) {
       return [
@@ -79,7 +81,7 @@ export function AppDropdownInput({
 
   return (
     <div className="flex flex-col" data-testid={testId}>
-      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+      <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
 
       <Select.Root
         name={name}
@@ -94,7 +96,7 @@ export function AppDropdownInput({
         }}
       >
         <Select.Trigger
-          aria-invalid={!!hasError}
+          {...aria.inputProps}
           className={cn(
             'relative inline-flex w-full items-center justify-between',
             'rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900',
@@ -156,8 +158,8 @@ export function AppDropdownInput({
       </Select.Root>
 
       <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
-        <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
+        <AppInputHelper id={aria.helperId} helper={helper} />
+        <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import { OwnResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { OwnResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
   data: OwnResearchTaskValues;
@@ -33,6 +33,7 @@ export function OwnResearchTaskDetails({ data }: Props) {
       />
 
       <AppNumberInput
+        nullable
         name="researchTasks[].ministerialPoints"
         value={data.ministerialPoints}
         minimum={0}

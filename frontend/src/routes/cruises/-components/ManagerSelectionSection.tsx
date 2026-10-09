@@ -7,8 +7,8 @@ import { AppAlert } from '@/components/shared/AppAlert';
 import { AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
 import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMappers';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import { CruiseApplicationCandidate } from '@/api/client/applications/types/CruiseApplicationCandidate';
-import { UserOption } from '@/api/client/applications/types/UserOption';
+import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
+import { UserOption } from '@/api/generated/schemas';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useGetAvailableCruiseManagersSuspense } from '@/api/generated/endpoints/users.gen';
 import type { CruiseManagerResponse, CruiseResponse } from '@/api/generated/schemas';
@@ -19,17 +19,17 @@ export function ManagerSelectionSection({
   isReadonly,
 }: {
   cruise?: CruiseResponse;
-  cruiseApplications: CruiseApplicationCandidate[];
+  cruiseApplications: CruiseApplicationCandidateResponse[];
   isReadonly: boolean;
 }) {
   const form = useTypedAppFormContext({ defaultValues: cruiseFormDefaultValues });
   const usersQuery = useGetAvailableCruiseManagersSuspense();
-  const cruiseApplicationsIds = useSelector(form.store, (state) => state.values.cruiseApplicationsIds);
-  const selectedCruiseManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainCruiseManagerId);
-  const selectedDeputyManagerId = useSelector(form.store, (state) => state.values.managersTeam.mainDeputyManagerId);
+  const cruiseApplicationIds = useSelector(form.store, (state) => state.values.cruiseApplicationIds);
+  const selectedCruiseManagerId = useSelector(form.store, (state) => state.values.mainManagerId);
+  const selectedDeputyManagerId = useSelector(form.store, (state) => state.values.deputyManagerId);
 
   const users = React.useMemo(() => {
-    if (!isReadonly) return getAllUsersForDropdown(usersQuery.data ?? [], cruiseApplications, cruiseApplicationsIds);
+    if (!isReadonly) return getAllUsersForDropdown(usersQuery.data ?? [], cruiseApplications, cruiseApplicationIds);
     const options: AppDropdownInputOption[] = [];
     if (cruise && selectedCruiseManagerId) {
       options.push(
@@ -55,7 +55,7 @@ export function ManagerSelectionSection({
   }, [
     cruise,
     cruiseApplications,
-    cruiseApplicationsIds,
+    cruiseApplicationIds,
     isReadonly,
     selectedCruiseManagerId,
     selectedDeputyManagerId,
@@ -70,11 +70,11 @@ export function ManagerSelectionSection({
             usersQuery.data ?? [],
             [selectedCruiseManagerId, selectedDeputyManagerId],
             cruiseApplications,
-            cruiseApplicationsIds
+            cruiseApplicationIds
           ),
     [
       cruiseApplications,
-      cruiseApplicationsIds,
+      cruiseApplicationIds,
       isReadonly,
       selectedCruiseManagerId,
       selectedDeputyManagerId,
@@ -85,7 +85,7 @@ export function ManagerSelectionSection({
   return (
     <AppAccordion title="3. Kierownik główny i zastępca kierownika głównego" expandedByDefault>
       {!isReadonly && (
-        <AnimatePresence initial={cruiseApplicationsIds.length !== 0}>
+        <AnimatePresence initial={cruiseApplicationIds.length !== 0}>
           {cruiseManagersNotAssignedToApplication.length > 0 && (
             <motion.div
               className="mt-2"
@@ -105,7 +105,7 @@ export function ManagerSelectionSection({
 
       <div className="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <form.AppField
-          name="managersTeam.mainCruiseManagerId"
+          name="mainManagerId"
           children={(field) => (
             <field.SelectField
               allOptions={users}
@@ -117,7 +117,7 @@ export function ManagerSelectionSection({
         />
 
         <form.AppField
-          name="managersTeam.mainDeputyManagerId"
+          name="deputyManagerId"
           children={(field) => (
             <field.SelectField
               allOptions={users}
@@ -134,7 +134,7 @@ export function ManagerSelectionSection({
 
 function checkIfCruiseManagerIsAssignedToAnyApplication(
   managerId: string,
-  cruiseApplications: CruiseApplicationCandidate[],
+  cruiseApplications: CruiseApplicationCandidateResponse[],
   selectedCruiseApplicationsIds: string[]
 ) {
   return cruiseApplications.some(
@@ -147,7 +147,7 @@ function checkIfCruiseManagerIsAssignedToAnyApplication(
 function getCruiseManagersNotAssignedToApplication(
   users: CruiseManagerResponse[],
   selectedUsersIds: string[],
-  cruiseApplications: CruiseApplicationCandidate[],
+  cruiseApplications: CruiseApplicationCandidateResponse[],
   selectedCruiseApplicationsIds: string[]
 ): CruiseManagerResponse[] {
   return selectedUsersIds
@@ -165,7 +165,7 @@ function getCruiseManagersNotAssignedToApplication(
 
 function getAllUsersForDropdown(
   users: CruiseManagerResponse[],
-  cruiseApplications: CruiseApplicationCandidate[],
+  cruiseApplications: CruiseApplicationCandidateResponse[],
   selectedCruiseApplicationsIds: string[]
 ): AppDropdownInputOption[] {
   const formUsers: UserOption[] = users.map((user) => ({

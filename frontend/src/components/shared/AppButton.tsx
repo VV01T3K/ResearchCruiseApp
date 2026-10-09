@@ -12,6 +12,8 @@ type Props = {
   disabled?: boolean;
   role?: React.HTMLAttributes<HTMLButtonElement>['role'];
   name?: string;
+  id?: string;
+  'aria-describedby'?: string;
   'aria-invalid'?: boolean;
   'data-testid'?: string;
 } & (
@@ -26,6 +28,8 @@ export function AppButton(props: Props) {
     disabled,
     role,
     name,
+    id,
+    'aria-describedby': ariaDescribedBy,
     variant = 'primary',
     size = 'md',
     'aria-invalid': ariaInvalid,
@@ -46,6 +50,8 @@ export function AppButton(props: Props) {
       disabled={disabled}
       role={role}
       name={name}
+      id={id}
+      aria-describedby={ariaDescribedBy}
       aria-invalid={ariaInvalid}
       data-testid={testId}
     >

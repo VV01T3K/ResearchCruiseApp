@@ -1,7 +1,7 @@
 import { ParsedLocation, redirect } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
 
-import { Role } from '@/api/client/user';
+import { Role } from '@/integrations/auth/types';
 import { currentUserQueryOptions } from '@/integrations/tanstack/query/auth';
 
 type GuardContextType = {

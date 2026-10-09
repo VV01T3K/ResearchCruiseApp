@@ -5,14 +5,16 @@ import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 import { AppTable } from '@/components/shared/table/AppTable';
-import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
-import { EvaluationFormAPublication } from '@/api/client/applications/models';
+import {
+  type ApplicationEvaluation,
+  useApplicationEvaluation,
+} from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 
 export function PublicationsSection() {
   const evaluation = useApplicationEvaluation();
 
-  const columns: ColumnDef<EvaluationFormAPublication>[] = [
+  const columns: ColumnDef<ApplicationEvaluation['formAPublications'][number]>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}. `,

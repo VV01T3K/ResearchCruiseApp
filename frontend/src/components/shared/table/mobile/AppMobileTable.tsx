@@ -10,6 +10,7 @@ import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/components/shared/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/lib/utils';
 import { TableBody } from '@/integrations/tanstack/table/TableBody';
+import { TableCell } from '@/integrations/tanstack/table/TableCell';
 
 export function AppMobileTable<T extends object>({
   table,
@@ -66,7 +67,9 @@ export function AppMobileTable<T extends object>({
                           header: { column: cell.column } as Header<T, unknown>,
                         })}
                       </div>
-                      <div>{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
+                      <div>
+                        <TableCell cell={cell} />
+                      </div>
                     </div>
                   );
                 })}

@@ -6,7 +6,7 @@ public sealed class RequestPasswordResetValidator : AbstractValidator<RequestPas
 {
     public RequestPasswordResetValidator()
     {
-        RuleFor(request => request.Email).NotEmpty().EmailAddress();
+        RuleFor(request => request.Email).NotEmpty().WithName("Adres e-mail").EmailAddress();
     }
 }
 
@@ -14,9 +14,11 @@ public sealed class ResetPasswordValidator : AbstractValidator<ResetPasswordRequ
 {
     public ResetPasswordValidator()
     {
-        RuleFor(request => request.EmailBase64).NotEmpty();
-        RuleFor(request => request.ResetCode).NotEmpty();
-        RuleFor(request => request.Password).NotEmpty();
-        RuleFor(request => request.PasswordConfirm).Equal(request => request.Password);
+        RuleFor(request => request.EmailBase64).NotEmpty().WithName("Adres e-mail");
+        RuleFor(request => request.ResetCode).NotEmpty().WithName("Kod resetowania hasła");
+        RuleFor(request => request.Password).NotEmpty().WithName("Hasło");
+        RuleFor(request => request.PasswordConfirm)
+            .Equal(request => request.Password)
+            .WithName("Potwierdzenie hasła");
     }
 }

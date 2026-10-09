@@ -1,3 +1,4 @@
+import { mapPublicationToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -252,11 +253,11 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                           publication.magazine &&
                           publication.year
                       ),
-                      (x) => x.category
+                      (x) => x.category ?? ''
                     ).flatMap(([category, publications]) => [
                       ...[
                         {
-                          value: category,
+                          value: category ?? '',
                           content: (
                             <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
                               {getPublicationCategoryLabel(category as PublicationCategory)}
@@ -286,7 +287,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                           </div>
                         ),
                         onClick: () => {
-                          field.pushValue(publication);
+                          field.pushValue(mapPublicationToValues(publication));
                           field.handleBlur();
                         },
                       })),

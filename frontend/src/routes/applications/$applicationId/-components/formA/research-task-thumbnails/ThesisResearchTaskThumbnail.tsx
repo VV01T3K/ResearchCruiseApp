@@ -1,7 +1,7 @@
-import { ThesisResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { ResearchTaskFields } from '@/api/generated/schemas';
 
 type Props = {
-  task: ThesisResearchTaskValues;
+  task: ResearchTaskFields;
 };
 export function ThesisResearchTaskThumbnail({ task }: Props) {
   return (

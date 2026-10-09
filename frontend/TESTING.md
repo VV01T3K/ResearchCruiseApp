@@ -2,10 +2,10 @@
 
 Two layers, split by what they can actually prove:
 
-| Layer                     | Runner             | Location            | Count | Time   |
-| ------------------------- | ------------------ | ------------------- | ----- | ------ |
-| Unit (validation schemas) | Vitest (`vp test`) | `src/**/__tests__/` | 178   | ~0.5 s |
-| End-to-end (browser)      | Playwright         | `tests/`            | 80    | ~2 min |
+| Layer                | Runner             | Location          | Count | Time   |
+| -------------------- | ------------------ | ----------------- | ----- | ------ |
+| Unit                 | Vitest (`vp test`) | `tests/unit/`     | 218   | ~1 s   |
+| End-to-end (browser) | Playwright         | `tests/*.spec.ts` | 109   | ~2 min |
 
 ## Commands
 
@@ -41,7 +41,7 @@ rules, list minimums) is covered at the schema level.
 
 ## Unit tests — validation schemas
 
-`src/routes/applications/$applicationId/-schemas/__tests__/`
+`tests/unit/routes/applications/$applicationId/-schemas/`
 
 | File                   | Tests | Schema under test                      |
 | ---------------------- | ----- | -------------------------------------- |
@@ -49,7 +49,10 @@ rules, list minimums) is covered at the schema level.
 | `formB.schema.test.ts` | 54    | `getFormBValidationSchema()`           |
 | `formC.schema.test.ts` | 41    | `getFormCValidationSchema(initValues)` |
 
-`src/validation/__tests__/loginValidation.test.ts` — 3 tests for `loginValidationSchema`.
+`tests/unit/validation/loginValidation.test.ts` — 3 tests for `loginValidationSchema`.
+
+Other unit tests mirror the `src/` path of the module they cover, e.g.
+`tests/unit/integrations/tanstack/form/errors.test.ts` for `src/integrations/tanstack/form/errors.ts`.
 
 ### How they are written
 
@@ -90,8 +93,8 @@ have its conditions met); collected samples (amount must be positive); contracts
 
 ## E2E tests — Playwright
 
-`tests/` — `formA.spec.ts` (14), `formB.spec.ts` (8), `formC.spec.ts` (15),
-`login.spec.ts` (5), `session.spec.ts` (11), `server-health-message.spec.ts` (3), plus
+`tests/` — `formA.spec.ts` (19), `formB.spec.ts` (13), `formC.spec.ts` (17),
+`login.spec.ts` (7), `session.spec.ts` (11), `server-health-message.spec.ts` (3), plus
 auth, user-management, applications, cruises and supervisor-review specs.
 
 ### Fixtures and how a form is loaded
@@ -187,16 +190,17 @@ attachment upload.
 
 ## Configuration notes
 
-**Vitest is scoped to `src/`** (`vite.config.ts`):
+**Vitest and Playwright split `tests/`.** Vitest only loads `tests/unit` (`vite.config.ts`):
 
 ```ts
 test: {
-  include: ['src/**/*.{test,spec}.{ts,tsx}'];
+  include: ['tests/unit/**/*.test.{ts,tsx}'];
 }
 ```
 
-Without this the default glob also matches `tests/*.spec.ts` and Vitest tries to load the
-Playwright specs, failing with _"Playwright Test did not expect test() to be called here."_
+Playwright ignores it (`playwright.config.ts`: `testIgnore: 'unit/**'`). Without these, each
+runner tries to load the other's files, failing with errors such as _"Playwright Test did not
+expect test() to be called here."_
 
 **The `vitest` dependency is aliased** to `@voidzero-dev/vite-plus-test`. It ships no `bin`,
 so `vitest run` cannot resolve — the working invocation is `vp test run`. The package is still
