@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: research-cruise-app-frontend-config
-data:
-  API_URL: http://research-cruise-app-backend:8080/
