@@ -18,26 +18,18 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     // BE-EQUIPMENT-ACTION-001: reject before resolving equipment or replacing saved links.
+    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
     [Theory]
-    [InlineData("b", true, 0)]
-    [InlineData("b", true, 1)]
-    [InlineData("b", true, 2)]
-    [InlineData("b", true, 3)]
-    [InlineData("b", false, 0)]
-    [InlineData("b", false, 1)]
-    [InlineData("b", false, 2)]
-    [InlineData("b", false, 3)]
-    [InlineData("c", true, 0)]
-    [InlineData("c", true, 1)]
-    [InlineData("c", true, 2)]
-    [InlineData("c", true, 3)]
-    [InlineData("c", false, 0)]
-    [InlineData("c", false, 1)]
-    [InlineData("c", false, 2)]
-    [InlineData("c", false, 3)]
+    [InlineData("b", 0)]
+    [InlineData("b", 1)]
+    [InlineData("b", 2)]
+    [InlineData("b", 3)]
+    [InlineData("c", 0)]
+    [InlineData("c", 1)]
+    [InlineData("c", 2)]
+    [InlineData("c", 3)]
     public async Task Write_WhenActionIsUnsupported_RejectsCreationAndReplacement(
         string form,
-        bool draft,
         int family
     )
     {
@@ -72,10 +64,10 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
                     equipment.Remove("Action");
                 else
                     equipment["Action"] = values[index];
-                using var response = await Write(client, route, fields, draft);
+                using var response = await Write(client, route, fields, true);
                 Assert.True(
                     response.StatusCode == HttpStatusCode.BadRequest,
-                    $"form={form}, draft={draft}, saved={saved}, family={family}, action={values[index] ?? "null"}: HTTP {(int)response.StatusCode}"
+                    $"form={form}, saved={saved}, family={family}, action={values[index] ?? "null"}: HTTP {(int)response.StatusCode}"
                 );
                 Assert.Equal(
                     "application/problem+json",

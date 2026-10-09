@@ -934,3 +934,19 @@ BE-FORM-VALIDATION-002 (P1, #424 partial draft rows, validator level): Form A/B/
 Policy collision resolved in favor of the accepted storage rules; the maintainer confirmed this on 2026-10-09. #424's legacy case omitted keys entirely inside draft rows, e.g. a crew member with only `FirstName`. Those properties map to `IsRequired()` SQL columns. On staging the validator accepted such drafts, and persisting one would then hit a NOT NULL insert failure. This PR rejects an omitted key for a required column with 400, even in drafts (BE-FORM-FIELD-001/002, already accepted). The real frontend always sends every row key, with empty strings for unfilled values (`satisfies Required<...>` in the form schemas), so the port sends that shape. Omitted keys stay covered by BE-FORM-FIELD-001/002.
 
 Gate after the merge: `vp run check` exits 0 with 220 frontend, 47 unit and 434 SQL integration cases (701 total), no skips. Formatting, locked restore, strict build, generated contract comparison and frontend lint/types pass. SQL execution took 194.372 seconds, below the 667-case local SQL median of 209.688 seconds; this single run is not a new calibration. Log: `backend/artifacts/evidence/merge-staging-10e687dc-workspace.log`. Calibration is not repeated for this merge, and the proposed budgets remain unratified and unenforced.
+
+## Draft-only input rejection, 2026-10-09
+
+To move hosted CI toward the five-minute goal without splitting jobs, the maintainer approved removing low-value duplicates. Seven input-rejection theories ran every case once as a draft save and once as a final submission. Both paths run the same storage or enum rule, and the draft path is the stricter one because completeness checks do not apply. The final-submission duplicates are removed: 58 SQL cases.
+
+| Scenario | Test | Cases |
+| --- | --- | --- |
+| BE-FILE-009 | `UploadFieldInputTests.Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles` | 24 → 12 |
+| BE-FORM-FIELD-001/002 | `FormFieldInputTests.Write_WhenStoredStringIsInvalid_RejectsWithoutBusinessChanges` | 24 → 12 |
+| BE-TASK-TYPE-001 | `ResearchTaskTypeInputTests.Write_WhenTaskTypeIsUnsupported_RejectsAndPreservesSavedState` | 24 → 12 |
+| BE-EQUIPMENT-ACTION-001 | `ResearchEquipmentActionInputTests.Write_WhenActionIsUnsupported_RejectsCreationAndReplacement` | 16 → 8 |
+| BE-FORM-COLLECTION-004 | `FormACollectionInputTests.Write_WhenCollectionOrItemIsNull_RejectsWithoutBusinessChanges` | 8 → 4 |
+| BE-FORM-COLLECTION-006 | `FormACollectionInputTests.Write_WhenContractScanStructureIsNull_RejectsWithoutBusinessChanges` | 12 → 6 |
+| BE-FORM-COLLECTION-001/002 | `FormCollectionInputTests.Write_WhenCollectionOrItemIsNull_ReturnsFieldErrorAndPreservesDraft` | 8 → 4 |
+
+None of these scenarios is a replacement for an accepted legacy disposition. Final-submission rejection stays covered by BE-FORM-VALIDATION-001, BE-FILE-003, the upload-name boundary theory and the workflow tests. Access matrices, storage boundaries, status codes, upgrade and email scenarios are unchanged. The workspace job timeout is now 10 minutes, a hang guard rather than a performance budget.

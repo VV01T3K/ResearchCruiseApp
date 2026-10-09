@@ -40,18 +40,14 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     // BE-FORM-COLLECTION-004: both Form A routes reject null lists/items without business writes.
+    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
     [Theory]
-    [InlineData(true, true, false)]
-    [InlineData(true, false, false)]
-    [InlineData(false, true, false)]
-    [InlineData(false, false, false)]
-    [InlineData(true, true, true)]
-    [InlineData(true, false, true)]
-    [InlineData(false, true, true)]
-    [InlineData(false, false, true)]
+    [InlineData(true, false)]
+    [InlineData(false, false)]
+    [InlineData(true, true)]
+    [InlineData(false, true)]
     public async Task Write_WhenCollectionOrItemIsNull_RejectsWithoutBusinessChanges(
         bool create,
-        bool draft,
         bool item
     )
     {
@@ -66,7 +62,7 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         {
             var fields = (JsonObject)prepared.Fields.DeepClone();
             fields[property] = item ? new JsonArray((JsonNode?)null) : null;
-            using var response = await Write(client, prepared.Route, fields, draft, create);
+            using var response = await Write(client, prepared.Route, fields, true, create);
             await CheckRejection(
                 response,
                 $"form.{JsonNamingPolicy.CamelCase.ConvertName(property)}{(item ? "[0]" : "")}",
@@ -82,22 +78,16 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
     }
 
     // BE-FORM-COLLECTION-006: nested scan lists/items are shared by A create/update and C update.
+    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
     [Theory]
-    [InlineData(0, true, false)]
-    [InlineData(0, false, false)]
-    [InlineData(0, true, true)]
-    [InlineData(0, false, true)]
-    [InlineData(1, true, false)]
-    [InlineData(1, false, false)]
-    [InlineData(1, true, true)]
-    [InlineData(1, false, true)]
-    [InlineData(2, true, false)]
-    [InlineData(2, false, false)]
-    [InlineData(2, true, true)]
-    [InlineData(2, false, true)]
+    [InlineData(0, false)]
+    [InlineData(0, true)]
+    [InlineData(1, false)]
+    [InlineData(1, true)]
+    [InlineData(2, false)]
+    [InlineData(2, true)]
     public async Task Write_WhenContractScanStructureIsNull_RejectsWithoutBusinessChanges(
         int target,
-        bool draft,
         bool item
     )
     {
@@ -111,7 +101,7 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         var contract = fields["Contracts"]![0]!;
         // A valid preceding upload proves that the error identifies the actual nested index.
         contract["Scans"] = item ? new JsonArray(Scan(), null) : null;
-        using var response = await Write(client, prepared.Route, fields, draft, target == 0);
+        using var response = await Write(client, prepared.Route, fields, true, target == 0);
         var failures = new List<string>();
         await CheckRejection(response, $"form.contracts[0].scans{(item ? "[1]" : "")}", failures);
         Assert.Equal(original, await Snapshot(app));

@@ -18,34 +18,22 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     // BE-TASK-TYPE-001: reject unsupported enum values before mapping/scoring/replacement.
+    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
     [Theory]
-    [InlineData(0, true, 0)]
-    [InlineData(0, true, 1)]
-    [InlineData(0, true, 2)]
-    [InlineData(0, true, 3)]
-    [InlineData(0, false, 0)]
-    [InlineData(0, false, 1)]
-    [InlineData(0, false, 2)]
-    [InlineData(0, false, 3)]
-    [InlineData(1, true, 0)]
-    [InlineData(1, true, 1)]
-    [InlineData(1, true, 2)]
-    [InlineData(1, true, 3)]
-    [InlineData(1, false, 0)]
-    [InlineData(1, false, 1)]
-    [InlineData(1, false, 2)]
-    [InlineData(1, false, 3)]
-    [InlineData(2, true, 0)]
-    [InlineData(2, true, 1)]
-    [InlineData(2, true, 2)]
-    [InlineData(2, true, 3)]
-    [InlineData(2, false, 0)]
-    [InlineData(2, false, 1)]
-    [InlineData(2, false, 2)]
-    [InlineData(2, false, 3)]
+    [InlineData(0, 0)]
+    [InlineData(0, 1)]
+    [InlineData(0, 2)]
+    [InlineData(0, 3)]
+    [InlineData(1, 0)]
+    [InlineData(1, 1)]
+    [InlineData(1, 2)]
+    [InlineData(1, 3)]
+    [InlineData(2, 0)]
+    [InlineData(2, 1)]
+    [InlineData(2, 2)]
+    [InlineData(2, 3)]
     public async Task Write_WhenTaskTypeIsUnsupported_RejectsAndPreservesSavedState(
         int target,
-        bool draft,
         int family
     )
     {
@@ -70,10 +58,10 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
                 task.Remove("Type");
             else
                 task["Type"] = values[index];
-            using var response = await Write(client, prepared.Route, fields, draft, target);
+            using var response = await Write(client, prepared.Route, fields, true, target);
             Assert.True(
                 response.StatusCode == HttpStatusCode.BadRequest,
-                $"target={target}, draft={draft}, family={family}, type={values[index] ?? "null"}: HTTP {(int)response.StatusCode}"
+                $"target={target}, family={family}, type={values[index] ?? "null"}: HTTP {(int)response.StatusCode}"
             );
             Assert.Equal(
                 "application/problem+json",

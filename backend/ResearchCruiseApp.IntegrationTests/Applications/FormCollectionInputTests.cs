@@ -49,18 +49,14 @@ public sealed class FormCollectionInputTests(SqlFixture fixture) : IAsyncLifetim
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     // BE-FORM-COLLECTION-001/002: explicit null lists/items cannot replace saved B/C drafts.
+    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
     [Theory]
-    [InlineData(false, true, false)]
-    [InlineData(false, false, false)]
-    [InlineData(true, true, false)]
-    [InlineData(true, false, false)]
-    [InlineData(false, true, true)]
-    [InlineData(false, false, true)]
-    [InlineData(true, true, true)]
-    [InlineData(true, false, true)]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
     public async Task Write_WhenCollectionOrItemIsNull_ReturnsFieldErrorAndPreservesDraft(
         bool formC,
-        bool draft,
         bool item
     )
     {
@@ -107,7 +103,7 @@ public sealed class FormCollectionInputTests(SqlFixture fixture) : IAsyncLifetim
             fields[property] = item ? new JsonArray((JsonNode?)null) : null;
             using var response = await client.PutAsJsonAsync(
                 route,
-                new { Form = fields, Draft = draft },
+                new { Form = fields, Draft = true },
                 ct
             );
             if (response.StatusCode != HttpStatusCode.BadRequest)

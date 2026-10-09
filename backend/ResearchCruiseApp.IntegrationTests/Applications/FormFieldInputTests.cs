@@ -19,34 +19,22 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     // BE-FORM-FIELD-001/002: every property is attacked independently through real HTTP.
+    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
     [Theory]
-    [InlineData(0, true, 0)]
-    [InlineData(0, true, 1)]
-    [InlineData(0, true, 2)]
-    [InlineData(0, false, 0)]
-    [InlineData(0, false, 1)]
-    [InlineData(0, false, 2)]
-    [InlineData(1, true, 0)]
-    [InlineData(1, true, 1)]
-    [InlineData(1, true, 2)]
-    [InlineData(1, false, 0)]
-    [InlineData(1, false, 1)]
-    [InlineData(1, false, 2)]
-    [InlineData(2, true, 0)]
-    [InlineData(2, true, 1)]
-    [InlineData(2, true, 2)]
-    [InlineData(2, false, 0)]
-    [InlineData(2, false, 1)]
-    [InlineData(2, false, 2)]
-    [InlineData(3, true, 0)]
-    [InlineData(3, true, 1)]
-    [InlineData(3, true, 2)]
-    [InlineData(3, false, 0)]
-    [InlineData(3, false, 1)]
-    [InlineData(3, false, 2)]
+    [InlineData(0, 0)]
+    [InlineData(0, 1)]
+    [InlineData(0, 2)]
+    [InlineData(1, 0)]
+    [InlineData(1, 1)]
+    [InlineData(1, 2)]
+    [InlineData(2, 0)]
+    [InlineData(2, 1)]
+    [InlineData(2, 2)]
+    [InlineData(3, 0)]
+    [InlineData(3, 1)]
+    [InlineData(3, 2)]
     public async Task Write_WhenStoredStringIsInvalid_RejectsWithoutBusinessChanges(
         int target,
-        bool draft,
         int kind
     )
     {
@@ -69,7 +57,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 parent.Remove(field.Property);
             else
                 parent[field.Property] = kind == 0 ? null : new string('x', field.Limit + 1);
-            using var response = await Write(client, prepared.Route, fields, draft, target);
+            using var response = await Write(client, prepared.Route, fields, true, target);
             var path =
                 $"form.{(field.Collection is null ? "" : JsonNamingPolicy.CamelCase.ConvertName(field.Collection) + "[0].")}{JsonNamingPolicy.CamelCase.ConvertName(field.Property)}";
             var body = await response.Content.ReadAsStringAsync(ct);

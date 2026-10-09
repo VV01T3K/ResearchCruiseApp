@@ -23,34 +23,22 @@ public sealed class UploadFieldInputTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     // BE-FILE-009: shared non-null upload fields reject before factory/scoring/file changes.
+    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
     [Theory]
-    [InlineData(0, true, true)]
-    [InlineData(0, true, false)]
-    [InlineData(0, false, true)]
-    [InlineData(0, false, false)]
-    [InlineData(1, true, true)]
-    [InlineData(1, true, false)]
-    [InlineData(1, false, true)]
-    [InlineData(1, false, false)]
-    [InlineData(2, true, true)]
-    [InlineData(2, true, false)]
-    [InlineData(2, false, true)]
-    [InlineData(2, false, false)]
-    [InlineData(3, true, true)]
-    [InlineData(3, true, false)]
-    [InlineData(3, false, true)]
-    [InlineData(3, false, false)]
-    [InlineData(4, true, true)]
-    [InlineData(4, true, false)]
-    [InlineData(4, false, true)]
-    [InlineData(4, false, false)]
-    [InlineData(5, true, true)]
-    [InlineData(5, true, false)]
-    [InlineData(5, false, true)]
-    [InlineData(5, false, false)]
+    [InlineData(0, true)]
+    [InlineData(0, false)]
+    [InlineData(1, true)]
+    [InlineData(1, false)]
+    [InlineData(2, true)]
+    [InlineData(2, false)]
+    [InlineData(3, true)]
+    [InlineData(3, false)]
+    [InlineData(4, true)]
+    [InlineData(4, false)]
+    [InlineData(5, true)]
+    [InlineData(5, false)]
     public async Task Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles(
         int target,
-        bool draft,
         bool name
     )
     {
@@ -71,10 +59,10 @@ public sealed class UploadFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 file.Remove(property);
             else
                 file[property] = null;
-            using var response = await Write(client, prepared.Route, fields, draft, target == 0);
+            using var response = await Write(client, prepared.Route, fields, true, target == 0);
             Assert.True(
                 response.StatusCode == HttpStatusCode.BadRequest,
-                $"Target={target}, draft={draft}, {property}, omitted={omitted}: {(int)response.StatusCode}"
+                $"Target={target}, {property}, omitted={omitted}: {(int)response.StatusCode}"
             );
             Assert.Equal(
                 "application/problem+json",
