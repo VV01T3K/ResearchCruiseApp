@@ -317,7 +317,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         fields.AddRange(Fields("GuestTeams", true, 1024, false, "NoOfPersons"));
         fields.AddRange(Fields("GuestTeams", false, 1024, true, "Name"));
         fields.AddRange(Fields("Permissions", false, 1024, true, "Executive"));
-        fields.AddRange(Fields("Permissions", false, 10240, true, "Description"));
+        fields.AddRange(Fields("Permissions", false, 1024, true, "Description"));
         if (target is 0 or 1 or 3)
         {
             fields.AddRange(Fields("Contracts", true, 1024, false, "Category"));
@@ -368,13 +368,13 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         }
         if (target is 0 or 1)
         {
-            fields.AddRange(
-                Fields(null, true, 1024, false, "Year", "CruiseHours", "SupervisorEmail")
-            );
+            fields.AddRange(Fields(null, true, 4, false, "Year"));
+            fields.AddRange(Fields(null, true, 8, false, "CruiseHours"));
+            fields.AddRange(Fields(null, true, 1024, false, "SupervisorEmail"));
             fields.AddRange(Fields(null, true, 1024, true, "PeriodNotes", "DifferentUsage"));
             fields.AddRange(Fields(null, true, 10240, true, "CruiseGoalDescription"));
             fields.AddRange(Fields(null, false, 16, false, "PeriodSelectionType"));
-            fields.AddRange(Fields(null, false, 1024, false, "ShipUsage"));
+            fields.AddRange(Fields(null, false, 1, false, "ShipUsage"));
             fields.AddRange(Fields(null, false, 1024, true, "Note"));
             fields.AddRange(Fields(null, false, 10240, false, "CruiseGoal"));
             fields.AddRange(
@@ -448,7 +448,8 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
             }
             else
             {
-                fields.AddRange(Fields(null, true, 1024, true, "ShipUsage", "DifferentUsage"));
+                fields.AddRange(Fields(null, true, 1, false, "ShipUsage"));
+                fields.AddRange(Fields(null, true, 1024, true, "DifferentUsage"));
                 fields.AddRange(
                     Fields(null, false, 10240, true, "SpubReportData", "AdditionalDescription")
                 );
