@@ -7,7 +7,7 @@ Install the .NET SDK pinned in `backend/global.json`, Vite+, Python 3 and Docker
 | `vp run check` | Locked restore, format check, Release build, OpenAPI/client contract comparison, frontend checks and unit tests, backend unit and SQL integration tests |
 | `vp run fix` | Applies formatting and generated-client changes, then runs the full check |
 | `vp run lint` | Format, build and frontend checks without test containers |
-| `vp run check:quick` | Backend unit tests only; skips SQL integration and contract comparison |
+| `vp run check:quick` | Frontend lint, types and unit tests, plus backend unit tests; skips SQL integration and contract comparison |
 | `vp run test:coverage` | Backend tests with coverage reports |
 | `vp run test:e2e` | Browser suite, outside the root check |
 
