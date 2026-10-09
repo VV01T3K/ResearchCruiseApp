@@ -1,3 +1,4 @@
+import { mapContractToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -166,7 +167,7 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
                     options={formAInitValues.historicalContracts.map((contract) => ({
                       value: `${contract.institutionName}, ${contract.institutionUnit}, ${contract.institutionLocalization} - ${contract.description}`,
                       onClick: () => {
-                        field.pushValue(contract);
+                        field.pushValue(mapContractToValues(contract));
                         field.handleBlur();
                       },
                     }))}

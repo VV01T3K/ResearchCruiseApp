@@ -33,9 +33,8 @@ export default defineConfig({
   lint: lintConfig,
   fmt: fmtConfig,
   test: {
-    // Unit tests live next to the source; `tests/` holds Playwright E2E specs,
-    // which must not be picked up by the unit test runner.
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    // Unit tests live in `tests/unit`; the rest of `tests/` holds Playwright E2E specs.
+    include: ['tests/unit/**/*.test.{ts,tsx}'],
   },
   server: {
     host: true, // TODO: set only for development, not for production build

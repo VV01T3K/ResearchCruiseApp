@@ -1,7 +1,7 @@
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
-import { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
   data: ProjectResearchTaskValues;
@@ -33,6 +33,7 @@ export function ProjectResearchTaskDetails({ data }: Props) {
       />
 
       <AppNumberInput
+        nullable
         name="researchTasks[].financingAmount"
         value={data.financingAmount}
         type="float"
@@ -42,6 +43,7 @@ export function ProjectResearchTaskDetails({ data }: Props) {
       />
 
       <AppNumberInput
+        nullable
         name="researchTasks[].securedAmount"
         value={data.securedAmount}
         type="float"

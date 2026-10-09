@@ -61,6 +61,45 @@ async function expectSectionsInvalid(
 test('all sections valid', async ({ formCPage }) => {
   await formCPage.fillForm();
   await formCPage.submitForm({ expectedResult: 'valid' });
+  await expect(formCPage.submissionApprovedMessage).toHaveText('Formularz został wysłany pomyślnie.');
+});
+
+test('draft save confirms a draft rather than final submission', async ({ formCPage, page }) => {
+  await formCPage.fillForm();
+  const request = page.waitForRequest(
+    (request) => request.url() === `${API_URL}/v2/applications/${formCPage.formId}/form-c` && request.method() === 'PUT'
+  );
+  await page.getByRole('button', { name: 'Zapisz wersję roboczą' }).click();
+  expect((await request).postDataJSON().draft).toBe(true);
+  await expect(formCPage.submissionApprovedMessage).toHaveText('Formularz został zapisany jako wersja robocza');
+});
+
+test('a forbidden draft save explains the reason and keeps the form for retry', async ({ formCPage, page }) => {
+  const pageErrors: Error[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error));
+  await formCPage.fillForm();
+  const description = page.locator('textarea[name="additionalDescription"]');
+  await description.fill('Niedokończony opis');
+  let rejected = true;
+  await page.route(`${API_URL}/v2/applications/${formCPage.formId}/form-c`, (route) =>
+    route.request().method() !== 'PUT'
+      ? route.fallback()
+      : rejected
+        ? route.fulfill({ status: 403, json: { detail: 'Obecnie nie można przesłać formularza C.' } })
+        : route.fulfill({ status: 201 })
+  );
+  const save = page.getByRole('button', { name: 'Zapisz wersję roboczą' });
+
+  await save.click();
+  await expect(page.getByTestId('toast-error')).toHaveCount(1);
+  await expect(page.getByTestId('toast-error')).toContainText('Obecnie nie można przesłać formularza C.');
+  await expect(description).toHaveValue('Niedokończony opis');
+  await expect(page).toHaveURL(/\/formC\?mode=edit$/);
+
+  rejected = false;
+  await save.click();
+  await expect(formCPage.submissionApprovedMessage).toContainText('wersja robocza');
+  expect(pageErrors).toEqual([]);
 });
 
 test('all sections filled with invalid rows', async ({ formCPage }) => {

@@ -4,10 +4,10 @@ import {
   useGetApplicationSupervisorReviewSuspense,
   useUpdateApplicationSupervisorReviewDecision,
 } from '@/api/generated/endpoints/applications.gen';
-import { ApiError, getProblemDetail } from '@/api/client/custom-fetch';
+import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';
-import { mapFormAOptions, mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 
 export const Route = createFileRoute('/cruise-approval')({
@@ -32,12 +32,12 @@ function SupervisorViewPage() {
     {
       query: {
         select: (value) => {
-          return { ...value, form: mapFormAToValues(value.form), initValues: mapFormAOptions(value.initValues) };
+          return { ...value, form: mapFormAToValues(value.form), initValues: value.initValues };
         },
       },
     }
   );
-  const answerMutation = useUpdateApplicationSupervisorReviewDecision();
+  const answerMutation = useUpdateApplicationSupervisorReviewDecision({ mutation: { meta: { handlesError: true } } });
   const formA = supervisorReview.data.form;
 
   const form = useAppForm({
@@ -55,11 +55,7 @@ function SupervisorViewPage() {
         },
         onError: (err) => {
           console.error(err);
-          if (err instanceof ApiError && err.status === 403) {
-            toast.error('Niedozwolona operacja: ' + getProblemDetail(err, ''));
-          } else {
-            toast.error('Wystąpił błąd: Nie udało się zaakceptować zgłoszenia');
-          }
+          toast.error(getErrorMessage(err, 'Nie udało się zaakceptować zgłoszenia'));
         },
         onSettled: () => {
           toast.dismiss(loading);
@@ -79,11 +75,7 @@ function SupervisorViewPage() {
         },
         onError: (err) => {
           console.error(err);
-          if (err instanceof ApiError && err.status === 403) {
-            toast.error('Niedozwolona operacja: ' + getProblemDetail(err, ''));
-          } else {
-            toast.error('Wystąpił błąd: Nie udało się odrzucić zgłoszenia');
-          }
+          toast.error(getErrorMessage(err, 'Nie udało się odrzucić zgłoszenia'));
         },
         onSettled: () => {
           toast.dismiss(loading);
