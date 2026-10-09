@@ -24,6 +24,8 @@ public sealed class CreateRequestValidator : AbstractValidator<CreateRequest>
             .When(request => !string.IsNullOrEmpty(request.Title))
             .WithMessage("Tytuł nie może być dłuższy niż 512 znaków.");
 
+        RuleFor(request => request.StartDate).MaximumLength(64).WithName("Data rozpoczęcia");
+        RuleFor(request => request.EndDate).MaximumLength(64).WithName("Data zakończenia");
         RuleFor(request => request.CruiseApplicationIds).NotNull().WithName("Zgłoszenia");
     }
 }
@@ -50,6 +52,8 @@ public sealed class UpdateRequestValidator : AbstractValidator<UpdateRequest>
             .When(request => !string.IsNullOrEmpty(request.Title))
             .WithMessage("Tytuł nie może być dłuższy niż 512 znaków.");
 
+        RuleFor(request => request.StartDate).MaximumLength(64).WithName("Data rozpoczęcia");
+        RuleFor(request => request.EndDate).MaximumLength(64).WithName("Data zakończenia");
         RuleFor(request => request.CruiseApplicationIds).NotNull().WithName("Zgłoszenia");
     }
 }

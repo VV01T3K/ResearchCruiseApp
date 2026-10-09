@@ -3370,27 +3370,37 @@
         "type": "object",
         "properties": {
           "category": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": "string"
           },
           "institutionName": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "institutionUnit": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "institutionLocalization": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "description": {
+            "maxLength": 10240,
+            "minLength": 0,
             "type": [
               "null",
               "string"
@@ -4078,6 +4088,8 @@
             }
           },
           "cruiseGoal": {
+            "maxLength": 10240,
+            "minLength": 0,
             "type": [
               "null",
               "string"
@@ -4493,12 +4505,16 @@
         "type": "object",
         "properties": {
           "name": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "noOfPersons": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": "string"
           }
         }
@@ -4777,39 +4793,53 @@
             "type": "string"
           },
           "category": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": "string"
           },
           "doi": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "authors": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "title": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "magazine": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "year": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "ministerialPoints": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": "string"
           }
         }
@@ -4940,7 +4970,10 @@
           "info": {
             "maxLength": 10240,
             "minLength": 0,
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -4982,90 +5015,122 @@
             "type": "string"
           },
           "title": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "magazine": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "author": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "institution": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "date": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "startDate": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "endDate": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "financingAmount": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "financingApproved": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "description": {
+            "maxLength": 10240,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "securedAmount": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "ministerialPoints": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "done": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": "string"
           },
           "publicationMinisterialPoints": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "managerConditionMet": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": "string"
           },
           "deputyConditionMet": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": "string"
           }
         }
@@ -5077,72 +5142,96 @@
             "type": "string"
           },
           "title": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "magazine": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "author": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "institution": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "date": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "startDate": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "endDate": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "financingAmount": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "financingApproved": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "description": {
+            "maxLength": 10240,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "securedAmount": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "ministerialPoints": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
@@ -5304,18 +5393,24 @@
         "type": "object",
         "properties": {
           "name": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "yearFrom": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"
             ]
           },
           "yearTo": {
+            "maxLength": 1024,
+            "minLength": 0,
             "type": [
               "null",
               "string"

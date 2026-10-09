@@ -43,10 +43,7 @@ public static class RolePermissionRules
         Guid? deputyManagerId
     )
     {
-        if (
-            currentUserRoles.Contains(RoleName.Administrator)
-            || currentUserRoles.Contains(RoleName.Shipowner)
-        )
+        if (currentUserRoles.Contains(RoleName.Administrator))
         {
             return true;
         }

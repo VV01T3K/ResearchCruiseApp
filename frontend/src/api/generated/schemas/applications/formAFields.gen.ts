@@ -29,6 +29,9 @@ export const formAFieldsShipUsageMax = 1;
 export const formAFieldsDifferentUsageMin = 0;
 export const formAFieldsDifferentUsageMax = 1024;
 
+export const formAFieldsCruiseGoalMin = 0;
+export const formAFieldsCruiseGoalMax = 10240;
+
 export const formAFieldsCruiseGoalDescriptionMin = 0;
 export const formAFieldsCruiseGoalDescriptionMax = 10240;
 
@@ -56,7 +59,7 @@ export const FormAFields = zod.object({
   "differentUsage": zod.string().min(formAFieldsDifferentUsageMin).max(formAFieldsDifferentUsageMax).optional(),
   "permissions": zod.array(PermissionFields).optional(),
   "researchAreaDescriptions": zod.array(ResearchAreaSelection).optional(),
-  "cruiseGoal": zod.string().nullish(),
+  "cruiseGoal": zod.string().min(formAFieldsCruiseGoalMin).max(formAFieldsCruiseGoalMax).nullish(),
   "cruiseGoalDescription": zod.string().min(formAFieldsCruiseGoalDescriptionMin).max(formAFieldsCruiseGoalDescriptionMax).optional(),
   "researchTasks": zod.array(ResearchTaskFields).optional(),
   "contracts": zod.array(ContractFields).optional(),

@@ -166,6 +166,10 @@ public static class FormAEndpoints
 
         await cruiseApplicationEvaluator.Evaluate(application, request.Draft, cancellationToken);
 
+        // Persist replacement references before cleanup counts shared child rows.
+        // The surrounding transaction still rolls back the complete submission on failure.
+        await dbContext.SaveChangesAsync(cancellationToken);
+
         if (oldFormA is not null)
             await formsService.DeleteFormA(oldFormA, cancellationToken);
 
