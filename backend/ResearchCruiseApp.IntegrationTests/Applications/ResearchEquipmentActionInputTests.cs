@@ -5,6 +5,7 @@ using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
+using static ResearchCruiseApp.IntegrationTests.Infrastructure.FormRequests;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
 
@@ -198,93 +199,5 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
                 .ToArray()
         );
         return fields;
-    }
-
-    private static Task<HttpResponseMessage> Write(
-        HttpClient client,
-        string route,
-        JsonObject fields,
-        bool draft
-    ) =>
-        client.PutAsJsonAsync(
-            route,
-            new { Form = fields, Draft = draft },
-            TestContext.Current.CancellationToken
-        );
-
-    private static async Task<string> Read(HttpClient client, string route)
-    {
-        using var response = await client.GetAsync(route, TestContext.Current.CancellationToken);
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        return await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task<string> Snapshot(TestApplication app)
-    {
-        var ct = TestContext.Current.CancellationToken;
-        string snapshot = "";
-        await app.InDatabase(async db =>
-        {
-            Assert.Empty(await db.UserEffects.ToListAsync(ct));
-            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
-            snapshot = JsonSerializer.Serialize(
-                new
-                {
-                    Applications = await db
-                        .CruiseApplications.Select(row => new
-                        {
-                            row.Id,
-                            row.Status,
-                            row.Number,
-                            row.Date,
-                            row.Note,
-                            row.EffectsPoints,
-                            row.SupervisorCode,
-                            FormAId = row.FormA!.Id,
-                            row.FormA.CruiseManagerId,
-                            row.FormA.DeputyManagerId,
-                        })
-                        .ToArrayAsync(ct),
-                    FormsB = await db
-                        .FormsB.Select(row => new { row.Id, row.IsCruiseManagerPresent })
-                        .ToArrayAsync(ct),
-                    FormsC = await db
-                        .FormsC.Select(row => new
-                        {
-                            row.Id,
-                            row.ShipUsage,
-                            row.DifferentUsage,
-                        })
-                        .ToArrayAsync(ct),
-                    Equipment = await db
-                        .ResearchEquipments.OrderBy(row => row.Id)
-                        .Select(row => new { row.Id, row.Name })
-                        .ToArrayAsync(ct),
-                    BLinks = await db
-                        .FormBLongResearchEquipments.OrderBy(row => row.Id)
-                        .Select(row => new
-                        {
-                            row.Id,
-                            FormId = row.FormB.Id,
-                            EquipmentId = row.ResearchEquipment.Id,
-                            row.Action,
-                            row.Duration,
-                        })
-                        .ToArrayAsync(ct),
-                    CLinks = await db
-                        .FormCLongResearchEquipments.OrderBy(row => row.Id)
-                        .Select(row => new
-                        {
-                            row.Id,
-                            FormId = row.FormC.Id,
-                            EquipmentId = row.ResearchEquipment.Id,
-                            row.Action,
-                            row.Duration,
-                        })
-                        .ToArrayAsync(ct),
-                }
-            );
-        });
-        return snapshot;
     }
 }

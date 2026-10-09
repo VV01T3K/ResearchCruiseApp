@@ -5,6 +5,7 @@ using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
+using static ResearchCruiseApp.IntegrationTests.Infrastructure.FormRequests;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
 
@@ -236,11 +237,4 @@ public sealed class FormCollectionInputTests(SqlFixture fixture) : IAsyncLifetim
         formC
             ? new JsonObject { ["ShipUsage"] = "0", ["DifferentUsage"] = "" }
             : new JsonObject { ["IsCruiseManagerPresent"] = "true" };
-
-    private static async Task<string> Read(HttpClient client, string route)
-    {
-        using var response = await client.GetAsync(route, TestContext.Current.CancellationToken);
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        return await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
-    }
 }

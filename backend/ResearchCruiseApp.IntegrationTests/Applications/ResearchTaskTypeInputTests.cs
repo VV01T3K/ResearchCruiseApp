@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
+using static ResearchCruiseApp.IntegrationTests.Infrastructure.FormRequests;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
 
@@ -58,7 +59,7 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
                 task.Remove("Type");
             else
                 task["Type"] = values[index];
-            using var response = await Write(client, prepared.Route, fields, true, target);
+            using var response = await Write(client, prepared.Route, fields, true, target == 0);
             Assert.True(
                 response.StatusCode == HttpStatusCode.BadRequest,
                 $"target={target}, family={family}, type={values[index] ?? "null"}: HTTP {(int)response.StatusCode}"
@@ -109,7 +110,13 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
         prepared.Fields[prepared.Collection] = new JsonArray(
             inputs.Select((type, index) => (JsonNode)TaskFields(type, index)).ToArray()
         );
-        using var response = await Write(client, prepared.Route, prepared.Fields, draft, target);
+        using var response = await Write(
+            client,
+            prepared.Route,
+            prepared.Fields,
+            draft,
+            target == 0
+        );
         Assert.Equal(
             target == 1 ? HttpStatusCode.NoContent : HttpStatusCode.Created,
             response.StatusCode
@@ -230,7 +237,13 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
         {
             if (target == 1)
             {
-                using var response = await Write(client, "/v2/applications", fields, true, 0);
+                using var response = await Write(
+                    client,
+                    "/v2/applications",
+                    fields,
+                    true,
+                    create: true
+                );
                 Assert.Equal(HttpStatusCode.Created, response.StatusCode);
                 await app.InDatabase(async db =>
                     id = (await db.CruiseApplications.SingleAsync(ct)).Id
@@ -242,7 +255,7 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
                     : $"/v2/applications/{id}/form-{(target == 1 ? "a" : "c")}";
             if (target == 2)
             {
-                using var response = await Write(client, route, fields, true, target);
+                using var response = await Write(client, route, fields, true, target == 0);
                 Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             }
             return (client, fields, route, collection);
@@ -252,104 +265,5 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
             client.Dispose();
             throw;
         }
-    }
-
-    private static Task<HttpResponseMessage> Write(
-        HttpClient client,
-        string route,
-        JsonObject fields,
-        bool draft,
-        int target
-    ) =>
-        target == 0
-            ? client.PostAsJsonAsync(
-                route,
-                new { Form = fields, Draft = draft },
-                TestContext.Current.CancellationToken
-            )
-            : client.PutAsJsonAsync(
-                route,
-                new { Form = fields, Draft = draft },
-                TestContext.Current.CancellationToken
-            );
-
-    private static async Task<string> Read(HttpClient client, string route)
-    {
-        using var response = await client.GetAsync(route, TestContext.Current.CancellationToken);
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        return await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task<string> Snapshot(TestApplication app)
-    {
-        var ct = TestContext.Current.CancellationToken;
-        string snapshot = "";
-        await app.InDatabase(async db =>
-            snapshot = JsonSerializer.Serialize(
-                new
-                {
-                    Applications = await db
-                        .CruiseApplications.OrderBy(row => row.Id)
-                        .Select(row => new
-                        {
-                            row.Id,
-                            row.Status,
-                            row.Note,
-                            row.Number,
-                            row.EffectsPoints,
-                            row.SupervisorCode,
-                        })
-                        .ToArrayAsync(ct),
-                    FormsA = await db
-                        .FormsA.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    FormsC = await db
-                        .FormsC.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Tasks = await db
-                        .ResearchTasks.OrderBy(row => row.Id)
-                        .Select(row => new
-                        {
-                            row.Id,
-                            row.Type,
-                            row.Title,
-                            row.Description,
-                        })
-                        .ToArrayAsync(ct),
-                    ScoredTasks = await db
-                        .FormAResearchTasks.OrderBy(row => row.Id)
-                        .Select(row => new
-                        {
-                            row.Id,
-                            row.Points,
-                            TaskId = row.ResearchTask.Id,
-                        })
-                        .ToArrayAsync(ct),
-                    TaskEffects = await db
-                        .ResearchTaskEffects.OrderBy(row => row.Id)
-                        .Select(row => new
-                        {
-                            row.Id,
-                            TaskId = row.ResearchTask.Id,
-                            row.Done,
-                            row.PublicationMinisterialPoints,
-                            row.ManagerConditionMet,
-                            row.DeputyConditionMet,
-                        })
-                        .ToArrayAsync(ct),
-                    UserEffects = await db
-                        .UserEffects.OrderBy(row => row.Id)
-                        .Select(row => new { row.Id, row.Points })
-                        .ToArrayAsync(ct),
-                    Outbox = await db
-                        .EmailOutboxMessages.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                }
-            )
-        );
-        return snapshot;
     }
 }

@@ -8,6 +8,7 @@ using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
+using static ResearchCruiseApp.IntegrationTests.Infrastructure.FormRequests;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
 
@@ -57,7 +58,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 parent.Remove(field.Property);
             else
                 parent[field.Property] = kind == 0 ? null : new string('x', field.Limit + 1);
-            using var response = await Write(client, prepared.Route, fields, true, target);
+            using var response = await Write(client, prepared.Route, fields, true, target == 0);
             var path =
                 $"form.{(field.Collection is null ? "" : JsonNamingPolicy.CamelCase.ConvertName(field.Collection) + "[0].")}{JsonNamingPolicy.CamelCase.ConvertName(field.Property)}";
             var body = await response.Content.ReadAsStringAsync(ct);
@@ -105,7 +106,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 : fields[field.Collection]![0]!.AsObject();
             parent[field.Property] = new string('z', field.Limit);
         }
-        using (var response = await Write(client, prepared.Route, fields, true, target))
+        using (var response = await Write(client, prepared.Route, fields, true, target == 0))
             Assert.Equal(
                 target == 1 ? HttpStatusCode.NoContent : HttpStatusCode.Created,
                 response.StatusCode
@@ -162,7 +163,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 : fields[field.Collection]![0]!.AsObject();
             parent[field.Property] = null;
         }
-        using (var response = await Write(client, route, fields, true, target == 0 ? 1 : target))
+        using (var response = await Write(client, route, fields, true))
             Assert.Equal(
                 target is 0 or 1 ? HttpStatusCode.NoContent : HttpStatusCode.Created,
                 response.StatusCode
@@ -195,7 +196,13 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         await using var app = new TestApplication(fixture.ConnectionString);
         var prepared = await Prepare(app, target);
         using var client = prepared.Client;
-        using var response = await Write(client, prepared.Route, prepared.Fields, false, target);
+        using var response = await Write(
+            client,
+            prepared.Route,
+            prepared.Fields,
+            false,
+            target == 0
+        );
         Assert.True(
             response.StatusCode
                 == (target == 1 ? HttpStatusCode.NoContent : HttpStatusCode.Created),
@@ -244,7 +251,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
             fields["AcceptablePeriod"] = null;
             fields["OptimalPeriod"] = null;
         }
-        using (var response = await Write(client, prepared.Route, fields, true, target))
+        using (var response = await Write(client, prepared.Route, fields, true, target == 0))
             Assert.True(
                 response.StatusCode == HttpStatusCode.Created,
                 await response.Content.ReadAsStringAsync(ct)
@@ -255,7 +262,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 route =
                     $"/v2/applications/{(await db.CruiseApplications.SingleAsync(ct)).Id}/form-a"
             );
-        using (var response = await Write(client, route, fields, true, target == 0 ? 1 : target))
+        using (var response = await Write(client, route, fields, true))
             Assert.Equal(
                 target == 0 ? HttpStatusCode.NoContent : HttpStatusCode.Created,
                 response.StatusCode
@@ -597,7 +604,13 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         {
             if (target == 1)
             {
-                using var saved = await Write(client, "/v2/applications", fields, true, 0);
+                using var saved = await Write(
+                    client,
+                    "/v2/applications",
+                    fields,
+                    true,
+                    create: true
+                );
                 Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
                 await app.InDatabase(async db =>
                     id = (await db.CruiseApplications.SingleAsync(ct)).Id
@@ -609,7 +622,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                     : $"/v2/applications/{id}/form-{(target == 1 ? "a" : target == 2 ? "b" : "c")}";
             if (target is 2 or 3)
             {
-                using var saved = await Write(client, route, fields, true, target);
+                using var saved = await Write(client, route, fields, true, target == 0);
                 Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
             }
             return (client, fields, route);
@@ -623,62 +636,4 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
 
     private static string Camel(string property) =>
         JsonNamingPolicy.CamelCase.ConvertName(property);
-
-    private static Task<HttpResponseMessage> Write(
-        HttpClient client,
-        string route,
-        JsonObject fields,
-        bool draft,
-        int target
-    ) =>
-        target == 0
-            ? client.PostAsJsonAsync(
-                route,
-                new { Form = fields, Draft = draft },
-                TestContext.Current.CancellationToken
-            )
-            : client.PutAsJsonAsync(
-                route,
-                new { Form = fields, Draft = draft },
-                TestContext.Current.CancellationToken
-            );
-
-    private static async Task<string> Read(HttpClient client, string route)
-    {
-        using var response = await client.GetAsync(route, TestContext.Current.CancellationToken);
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        return await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task<string> Snapshot(TestApplication app)
-    {
-        var ct = TestContext.Current.CancellationToken;
-        string snapshot = "";
-        await app.InDatabase(async db =>
-        {
-            // One SQL statement snapshots all business tables, including link IDs and stored bytes.
-            var tables = db
-                .Model.GetEntityTypes()
-                .Where(type => typeof(Entity).IsAssignableFrom(type.ClrType))
-                .Select(type => type.GetTableName()!)
-                .Distinct()
-                .Order(StringComparer.Ordinal)
-                .ToArray();
-            var selects = tables.Select(table =>
-                $"SELECT '{table}' AS [table], JSON_QUERY((SELECT * FROM [{table}] ORDER BY [Id] FOR JSON PATH, INCLUDE_NULL_VALUES)) AS [rows]"
-            );
-            await db.Database.OpenConnectionAsync(ct);
-            await using var command = db.Database.GetDbConnection().CreateCommand();
-            command.CommandText =
-                "SELECT [table], JSON_QUERY([rows]) AS [rows] FROM ("
-                + string.Join(" UNION ALL ", selects)
-                + ") AS snapshot FOR JSON PATH";
-            await using var reader = await command.ExecuteReaderAsync(ct);
-            var json = new StringBuilder();
-            while (await reader.ReadAsync(ct))
-                json.Append(reader.GetString(0));
-            snapshot = json.ToString();
-        });
-        return snapshot;
-    }
 }

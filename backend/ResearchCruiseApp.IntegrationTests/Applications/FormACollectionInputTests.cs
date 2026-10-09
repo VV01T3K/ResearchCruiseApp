@@ -7,6 +7,7 @@ using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
+using static ResearchCruiseApp.IntegrationTests.Infrastructure.FormRequests;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
 
@@ -378,25 +379,6 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
     private static JsonObject Scan() =>
         new() { ["Name"] = "original.txt", ["Content"] = FileContent };
 
-    private static Task<HttpResponseMessage> Write(
-        HttpClient client,
-        string route,
-        JsonObject fields,
-        bool draft,
-        bool create
-    ) =>
-        create
-            ? client.PostAsJsonAsync(
-                route,
-                new { Form = fields, Draft = draft },
-                TestContext.Current.CancellationToken
-            )
-            : client.PutAsJsonAsync(
-                route,
-                new { Form = fields, Draft = draft },
-                TestContext.Current.CancellationToken
-            );
-
     private static async Task CheckRejection(
         HttpResponseMessage response,
         string property,
@@ -426,108 +408,5 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
             id = (await db.CruiseApplications.SingleAsync(TestContext.Current.CancellationToken)).Id
         );
         return id;
-    }
-
-    private static async Task<string> Read(HttpClient client, string route)
-    {
-        using var response = await client.GetAsync(route, TestContext.Current.CancellationToken);
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        return await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
-    }
-
-    private static async Task<string> Snapshot(TestApplication app)
-    {
-        var ct = TestContext.Current.CancellationToken;
-        string snapshot = "";
-        await app.InDatabase(async db =>
-            snapshot = JsonSerializer.Serialize(
-                new
-                {
-                    Applications = await db
-                        .CruiseApplications.OrderBy(row => row.Id)
-                        .Select(row => new
-                        {
-                            row.Id,
-                            row.Note,
-                            row.Status,
-                            row.Date,
-                            row.SupervisorCode,
-                            row.Number,
-                            row.EffectsPoints,
-                        })
-                        .ToArrayAsync(ct),
-                    FormsA = await db
-                        .FormsA.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    FormsC = await db
-                        .FormsC.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Contracts = await db
-                        .Contracts.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Files = await db
-                        .ContractFiles.OrderBy(row => row.Id)
-                        .Select(row => new
-                        {
-                            row.Id,
-                            row.FileName,
-                            row.FileContent,
-                        })
-                        .ToArrayAsync(ct),
-                    Permissions = await db
-                        .Permissions.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Areas = await db
-                        .ResearchAreaDescriptions.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Tasks = await db
-                        .ResearchTasks.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    ScoredTasks = await db
-                        .FormAResearchTasks.OrderBy(row => row.Id)
-                        .Select(row => new { row.Id, row.Points })
-                        .ToArrayAsync(ct),
-                    Units = await db
-                        .FormAUgUnits.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Guests = await db
-                        .GuestUnits.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Publications = await db
-                        .Publications.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    UserPublications = await db
-                        .UserPublications.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Spub = await db
-                        .SpubTasks.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Effects = await db
-                        .ResearchTaskEffects.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Scores = await db
-                        .UserEffects.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Outbox = await db
-                        .EmailOutboxMessages.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                }
-            )
-        );
-        return snapshot;
     }
 }

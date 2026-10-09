@@ -8,6 +8,7 @@ using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
+using static ResearchCruiseApp.IntegrationTests.Infrastructure.FormRequests;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
 
@@ -279,32 +280,6 @@ public sealed class UploadFieldInputTests(SqlFixture fixture) : IAsyncLifetime
             : fields["Photos"]![0]!
         ).AsObject();
 
-    private static Task<HttpResponseMessage> Write(
-        HttpClient client,
-        string route,
-        JsonObject fields,
-        bool draft,
-        bool create
-    ) =>
-        create
-            ? client.PostAsJsonAsync(
-                route,
-                new { Form = fields, Draft = draft },
-                TestContext.Current.CancellationToken
-            )
-            : client.PutAsJsonAsync(
-                route,
-                new { Form = fields, Draft = draft },
-                TestContext.Current.CancellationToken
-            );
-
-    private static async Task<string> Read(HttpClient client, string route)
-    {
-        using var response = await client.GetAsync(route, TestContext.Current.CancellationToken);
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        return await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
-    }
-
     private static async Task AssertUpload(
         TestApplication app,
         HttpClient client,
@@ -349,96 +324,5 @@ public sealed class UploadFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         using var reader = new StreamReader(gzip);
         Assert.Equal(expected, await reader.ReadToEndAsync(ct));
         Assert.Empty(app.Transport.Messages);
-    }
-
-    private static async Task<string> Snapshot(TestApplication app)
-    {
-        var ct = TestContext.Current.CancellationToken;
-        string snapshot = "";
-        await app.InDatabase(async db =>
-            snapshot = JsonSerializer.Serialize(
-                new
-                {
-                    Applications = await db
-                        .CruiseApplications.OrderBy(row => row.Id)
-                        .Select(row => new
-                        {
-                            row.Id,
-                            row.Note,
-                            row.Status,
-                            row.Number,
-                            row.EffectsPoints,
-                            row.SupervisorCode,
-                        })
-                        .ToArrayAsync(ct),
-                    FormsA = await db
-                        .FormsA.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    FormsB = await db
-                        .FormsB.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    FormsC = await db
-                        .FormsC.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Contracts = await db
-                        .Contracts.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Files = await db
-                        .ContractFiles.OrderBy(row => row.Id)
-                        .Select(row => new
-                        {
-                            row.Id,
-                            row.FileName,
-                            row.FileContent,
-                        })
-                        .ToArrayAsync(ct),
-                    Permissions = await db
-                        .Permissions.OrderBy(row => row.Id)
-                        .Select(row => new
-                        {
-                            row.Id,
-                            row.Description,
-                            row.Executive,
-                            row.ScanName,
-                            row.ScanContent,
-                        })
-                        .ToArrayAsync(ct),
-                    Photos = await db
-                        .Photos.OrderBy(row => row.Id)
-                        .Select(row => new
-                        {
-                            row.Id,
-                            row.Name,
-                            row.Content,
-                        })
-                        .ToArrayAsync(ct),
-                    Areas = await db
-                        .ResearchAreaDescriptions.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Tasks = await db
-                        .FormAResearchTasks.OrderBy(row => row.Id)
-                        .Select(row => new { row.Id, row.Points })
-                        .ToArrayAsync(ct),
-                    Units = await db
-                        .FormAUgUnits.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Effects = await db
-                        .UserEffects.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                    Outbox = await db
-                        .EmailOutboxMessages.OrderBy(row => row.Id)
-                        .Select(row => row.Id)
-                        .ToArrayAsync(ct),
-                }
-            )
-        );
-        return snapshot;
     }
 }
