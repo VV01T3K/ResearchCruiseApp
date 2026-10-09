@@ -1,6 +1,6 @@
 # Backend development and checks
 
-Use Linux or Ubuntu WSL with the repository on the Linux filesystem. Enable Ubuntu integration in Docker Desktop and verify `docker info`. Install the SDK pinned in `backend/global.json` (10.0.401), Vite+, Python 3 and the platform ICU runtime. Run `vp install --frozen-lockfile` at the repository root. NuGet dependencies and local tools are restored by the root checks; SQL Server is pulled at its pinned digest by Testcontainers.
+Use Linux or Ubuntu WSL with the repository on the Linux filesystem. Enable Ubuntu integration in Docker Desktop and verify `docker info`. Install the SDK pinned in `backend/global.json` (10.0.401), Vite+, Python 3 and the platform ICU runtime. Run `vp install --frozen-lockfile` at the repository root. With rootless Podman instead of Docker, export `DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock` and `TESTCONTAINERS_RYUK_DISABLED=true`. If SQL fixture startup times out after two minutes, the pinned SQL Server image is probably missing; pull the image named in `SqlFixture.Image` first. NuGet dependencies and local tools are restored by the root checks; SQL Server is pulled at its pinned digest by Testcontainers.
 
 | Root command | Behavior |
 | --- | --- |
@@ -21,4 +21,4 @@ The local `Workspace checks` workflow is shared with image build/deploy workflow
 
 The complete devcontainer image builds with its Docker-in-Docker feature. Its tool smoke reports SDK 10.0.401, Node 25.8.2, Bun 1.3.11 and Vite+ 1.0.0. C# Dev Kit is included for test discovery. Full onCreate/browser dependency installation and nested Docker runtime are not covered by that image smoke.
 
-See [the scenario ledger](backend-test-scenarios.md) for measured evidence and open policies. Every required behavior family has executable replacements. The maintainer accepted all 78 legacy dispositions and authorized native cutover on 2026-10-03. Native cutover passes the complete 667-case gate locally and in three fresh hosted jobs. Five warm local measurements and the performance proposals are recorded in the review packet; performance ratification and required-check rollout remain open. The user confirmed production runs v2.5.1; it is the supported previous-release upgrade test baseline. The test uses a separate synthetic database.
+See [the scenario ledger](backend-test-scenarios.md) for the scenario catalog, settled policies and the accepted legacy mapping. The gate runs 643 cases: 220 frontend, 47 unit and 376 SQL integration. No CI time budget is enforced; five minutes for the hosted job is a goal, and the job timeout is 10 minutes. Required-check rollout remains open.
