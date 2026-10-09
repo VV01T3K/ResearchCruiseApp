@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: research-cruise-app-backend-config
-data:
-  FrontendUrl: https://rca.nasus.dev

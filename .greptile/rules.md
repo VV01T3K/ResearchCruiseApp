@@ -52,7 +52,7 @@ requirement. Apply only the area checks relevant to the changed behavior.
   backend `Infrastructure/Email`. Check atomic business/outbox writes where required,
   protected payloads, retries, expiry and worker leases. A crash after SMTP accepts
   a message but before database acknowledgement can legitimately cause redelivery.
-- For deployment changes, compare option bindings with Docker/Kubernetes settings,
+- For deployment changes, compare option bindings with Docker settings,
   including SMTP validation and shared Data Protection keys used by the outbox.
   Keep credentials out of tracked settings/logs and tests on fake email delivery.
 
