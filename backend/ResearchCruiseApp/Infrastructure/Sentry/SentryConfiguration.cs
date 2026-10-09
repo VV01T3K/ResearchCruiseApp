@@ -1,4 +1,5 @@
 using Sentry.Extensibility;
+using Sentry.Protocol;
 
 namespace ResearchCruiseApp.Infrastructure.Sentry;
 
@@ -30,7 +31,13 @@ public static class SentryConfiguration
                 }
             );
             options.SetBeforeSendTransaction(
-                (transaction, _) => IsHealthTransaction(transaction.Name) ? null : transaction
+                (transaction, _) =>
+                {
+                    if (IsHealthTransaction(transaction.Name))
+                        return null;
+                    ScrubSensitiveData(transaction.Request, transaction.User);
+                    return transaction;
+                }
             );
         });
     }
@@ -38,15 +45,16 @@ public static class SentryConfiguration
     internal static bool IsHealthTransaction(string transactionName) =>
         transactionName.EndsWith("/health", StringComparison.OrdinalIgnoreCase);
 
-    internal static void ScrubSensitiveData(SentryEvent @event)
+    internal static void ScrubSensitiveData(SentryEvent @event) =>
+        ScrubSensitiveData(@event.Request, @event.User);
+
+    private static void ScrubSensitiveData(SentryRequest request, SentryUser? user)
     {
         // Never send the client IP address.
-        if (@event.User is not null)
+        if (user is not null)
         {
-            @event.User.IpAddress = null;
+            user.IpAddress = null;
         }
-
-        var request = @event.Request;
 
         if (request.Headers is not null)
         {
