@@ -51,14 +51,12 @@ public sealed class FormCollectionInputTests(SqlFixture fixture) : IAsyncLifetim
 
     // BE-FORM-COLLECTION-001/002: explicit null lists/items cannot replace saved B/C drafts.
     // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
+    // Each case covers one form; null lists and null items run on the same host.
     [Theory]
-    [InlineData(false, false)]
-    [InlineData(true, false)]
-    [InlineData(false, true)]
-    [InlineData(true, true)]
+    [InlineData(false)]
+    [InlineData(true)]
     public async Task Write_WhenCollectionOrItemIsNull_ReturnsFieldErrorAndPreservesDraft(
-        bool formC,
-        bool item
+        bool formC
     )
     {
         var ct = TestContext.Current.CancellationToken;
@@ -95,6 +93,7 @@ public sealed class FormCollectionInputTests(SqlFixture fixture) : IAsyncLifetim
         });
 
         var failures = new List<string>();
+        foreach (var item in new[] { false, true })
         foreach (var property in formC ? FormCCollections : FormBCollections)
         {
             // Guid entries already reject JSON null during binding; reference entries need validation.

@@ -25,22 +25,16 @@ public sealed class UploadFieldInputTests(SqlFixture fixture) : IAsyncLifetime
 
     // BE-FILE-009: shared non-null upload fields reject before factory/scoring/file changes.
     // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
+    // Each case covers one upload location; every field/shape combination runs on the same host.
     [Theory]
-    [InlineData(0, true)]
-    [InlineData(0, false)]
-    [InlineData(1, true)]
-    [InlineData(1, false)]
-    [InlineData(2, true)]
-    [InlineData(2, false)]
-    [InlineData(3, true)]
-    [InlineData(3, false)]
-    [InlineData(4, true)]
-    [InlineData(4, false)]
-    [InlineData(5, true)]
-    [InlineData(5, false)]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
     public async Task Write_WhenUploadStringIsNullOrMissing_RejectsAndPreservesStoredFiles(
-        int target,
-        bool name
+        int target
     )
     {
         var ct = TestContext.Current.CancellationToken;
@@ -51,7 +45,7 @@ public sealed class UploadFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         var originalHttp = target == 0 ? null : await Read(client, prepared.Route);
         if (target != 0)
             await AssertUpload(app, client, prepared.Route, target);
-        var property = name ? "Name" : "Content";
+        foreach (var property in new[] { "Name", "Content" })
         foreach (var omitted in new[] { false, true })
         {
             var fields = (JsonObject)prepared.Fields.DeepClone();
@@ -91,7 +85,7 @@ public sealed class UploadFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
         if (target == 0)
         {
-            // Only the valid control may create a row after both rejected creation attempts.
+            // Only the valid control may create a row after every rejected creation attempt.
             using var saved = await Write(client, prepared.Route, prepared.Fields, true, true);
             Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
             Guid id = default;

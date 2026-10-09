@@ -20,23 +20,12 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
 
     // BE-TASK-TYPE-001: reject unsupported enum values before mapping/scoring/replacement.
     // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
+    // Each case covers one route; every unsupported value runs on the same host.
     [Theory]
-    [InlineData(0, 0)]
-    [InlineData(0, 1)]
-    [InlineData(0, 2)]
-    [InlineData(0, 3)]
-    [InlineData(1, 0)]
-    [InlineData(1, 1)]
-    [InlineData(1, 2)]
-    [InlineData(1, 3)]
-    [InlineData(2, 0)]
-    [InlineData(2, 1)]
-    [InlineData(2, 2)]
-    [InlineData(2, 3)]
-    public async Task Write_WhenTaskTypeIsUnsupported_RejectsAndPreservesSavedState(
-        int target,
-        int family
-    )
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public async Task Write_WhenTaskTypeIsUnsupported_RejectsAndPreservesSavedState(int target)
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -44,25 +33,31 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
         using var client = prepared.Client;
         var original = await Snapshot(app);
         var originalHttp = target == 0 ? null : await Read(client, prepared.Route);
-        string?[] values = family switch
-        {
-            0 => ["2147483648", "-2147483649"],
-            1 => ["12", "-1"],
-            2 => ["not-a-task", "", "bachelorthesis"],
-            _ => [null, null],
-        };
-        for (var index = 0; index < values.Length; index++)
+        // Out-of-range, undefined, unknown or differently cased names, null, then an omitted key.
+        (string? Value, bool Omit)[] values =
+        [
+            ("2147483648", false),
+            ("-2147483649", false),
+            ("12", false),
+            ("-1", false),
+            ("not-a-task", false),
+            ("", false),
+            ("bachelorthesis", false),
+            (null, false),
+            (null, true),
+        ];
+        foreach (var (value, omit) in values)
         {
             var fields = (JsonObject)prepared.Fields.DeepClone();
             var task = fields[prepared.Collection]![1]!.AsObject();
-            if (family == 3 && index == 1)
+            if (omit)
                 task.Remove("Type");
             else
-                task["Type"] = values[index];
+                task["Type"] = value;
             using var response = await Write(client, prepared.Route, fields, true, target == 0);
             Assert.True(
                 response.StatusCode == HttpStatusCode.BadRequest,
-                $"target={target}, family={family}, type={values[index] ?? "null"}: HTTP {(int)response.StatusCode}"
+                $"target={target}, type={(omit ? "omitted" : value ?? "null")}: HTTP {(int)response.StatusCode}"
             );
             Assert.Equal(
                 "application/problem+json",

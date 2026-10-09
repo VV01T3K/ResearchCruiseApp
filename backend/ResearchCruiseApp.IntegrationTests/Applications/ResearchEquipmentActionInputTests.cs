@@ -20,32 +20,30 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
 
     // BE-EQUIPMENT-ACTION-001: reject before resolving equipment or replacing saved links.
     // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
+    // Each case covers one form; every unsupported value runs on the same host.
     [Theory]
-    [InlineData("b", 0)]
-    [InlineData("b", 1)]
-    [InlineData("b", 2)]
-    [InlineData("b", 3)]
-    [InlineData("c", 0)]
-    [InlineData("c", 1)]
-    [InlineData("c", 2)]
-    [InlineData("c", 3)]
-    public async Task Write_WhenActionIsUnsupported_RejectsCreationAndReplacement(
-        string form,
-        int family
-    )
+    [InlineData("b")]
+    [InlineData("c")]
+    public async Task Write_WhenActionIsUnsupported_RejectsCreationAndReplacement(string form)
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
         var application = await TestApplications.Create(app, EditableStatus(form));
         using var client = await TestApplications.Login(app, application.OwnerEmail);
         var route = $"/v2/applications/{application.Id}/form-{form}";
-        string?[] values = family switch
-        {
-            0 => ["2147483648", "-2147483649"],
-            1 => ["2", "-1"],
-            2 => ["not-an-action", "", "put"],
-            _ => [null, null],
-        };
+        // Out-of-range, undefined, unknown or differently cased names, null, then an omitted key.
+        (string? Value, bool Omit)[] values =
+        [
+            ("2147483648", false),
+            ("-2147483649", false),
+            ("2", false),
+            ("-1", false),
+            ("not-an-action", false),
+            ("", false),
+            ("put", false),
+            (null, false),
+            (null, true),
+        ];
         foreach (var saved in new[] { false, true })
         {
             if (saved)
@@ -55,20 +53,20 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
             }
             var original = await Snapshot(app);
             var originalHttp = saved ? await Read(client, route) : null;
-            for (var index = 0; index < values.Length; index++)
+            foreach (var (value, omit) in values)
             {
                 var fields = Fields(form, DefaultActions);
                 var equipment = fields["LongResearchEquipments"]![1]!.AsObject();
                 equipment["Name"] = "Rejected replacement equipment";
                 equipment["Duration"] = "99";
-                if (family == 3 && index == 1)
+                if (omit)
                     equipment.Remove("Action");
                 else
-                    equipment["Action"] = values[index];
+                    equipment["Action"] = value;
                 using var response = await Write(client, route, fields, true);
                 Assert.True(
                     response.StatusCode == HttpStatusCode.BadRequest,
-                    $"form={form}, saved={saved}, family={family}, action={values[index] ?? "null"}: HTTP {(int)response.StatusCode}"
+                    $"form={form}, saved={saved}, action={(omit ? "omitted" : value ?? "null")}: HTTP {(int)response.StatusCode}"
                 );
                 Assert.Equal(
                     "application/problem+json",

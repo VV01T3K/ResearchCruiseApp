@@ -42,15 +42,11 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
 
     // BE-FORM-COLLECTION-004: both Form A routes reject null lists/items without business writes.
     // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
+    // Each case covers one route; null lists and null items run on the same host.
     [Theory]
-    [InlineData(true, false)]
-    [InlineData(false, false)]
-    [InlineData(true, true)]
-    [InlineData(false, true)]
-    public async Task Write_WhenCollectionOrItemIsNull_RejectsWithoutBusinessChanges(
-        bool create,
-        bool item
-    )
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Write_WhenCollectionOrItemIsNull_RejectsWithoutBusinessChanges(bool create)
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -59,6 +55,7 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         var original = await Snapshot(app);
         var originalHttp = create ? null : await Read(client, prepared.Route);
         var failures = new List<string>();
+        foreach (var item in new[] { false, true })
         foreach (var property in Collections)
         {
             var fields = (JsonObject)prepared.Fields.DeepClone();
@@ -80,16 +77,13 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
 
     // BE-FORM-COLLECTION-006: nested scan lists/items are shared by A create/update and C update.
     // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
+    // Each case covers one route; a null scan list and a null scan item run on the same host.
     [Theory]
-    [InlineData(0, false)]
-    [InlineData(0, true)]
-    [InlineData(1, false)]
-    [InlineData(1, true)]
-    [InlineData(2, false)]
-    [InlineData(2, true)]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
     public async Task Write_WhenContractScanStructureIsNull_RejectsWithoutBusinessChanges(
-        int target,
-        bool item
+        int target
     )
     {
         var ct = TestContext.Current.CancellationToken;
@@ -98,16 +92,23 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         using var client = prepared.Client;
         var original = await Snapshot(app);
         var originalHttp = target == 0 ? null : await Read(client, prepared.Route);
-        var fields = (JsonObject)prepared.Fields.DeepClone();
-        var contract = fields["Contracts"]![0]!;
-        // A valid preceding upload proves that the error identifies the actual nested index.
-        contract["Scans"] = item ? new JsonArray(Scan(), null) : null;
-        using var response = await Write(client, prepared.Route, fields, true, target == 0);
         var failures = new List<string>();
-        await CheckRejection(response, $"form.contracts[0].scans{(item ? "[1]" : "")}", failures);
-        Assert.Equal(original, await Snapshot(app));
-        if (target != 0)
-            Assert.Equal(originalHttp, await Read(client, prepared.Route));
+        foreach (var item in new[] { false, true })
+        {
+            var fields = (JsonObject)prepared.Fields.DeepClone();
+            var contract = fields["Contracts"]![0]!;
+            // A valid preceding upload proves that the error identifies the actual nested index.
+            contract["Scans"] = item ? new JsonArray(Scan(), null) : null;
+            using var response = await Write(client, prepared.Route, fields, true, target == 0);
+            await CheckRejection(
+                response,
+                $"form.contracts[0].scans{(item ? "[1]" : "")}",
+                failures
+            );
+            Assert.Equal(original, await Snapshot(app));
+            if (target != 0)
+                Assert.Equal(originalHttp, await Read(client, prepared.Route));
+        }
         await app.Dispatch(ct);
         Assert.Empty(app.Transport.Messages);
         Assert.True(failures.Count == 0, string.Join("; ", failures));

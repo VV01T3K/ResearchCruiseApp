@@ -18,15 +18,9 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     // BE-FORMC-INPUT-001/002: malformed scoring fields cannot replace a saved report draft.
-    [Theory]
-    [InlineData(true, true)]
-    [InlineData(true, false)]
-    [InlineData(false, true)]
-    [InlineData(false, false)]
-    public async Task Write_WhenEffectValueIsInvalid_ReturnsIndexedErrorAndPreservesDraft(
-        bool draft,
-        bool numeric
-    )
+    // Draft and final writes of points and condition flags all run on the same host.
+    [Fact]
+    public async Task Write_WhenEffectValueIsInvalid_ReturnsIndexedErrorAndPreservesDraft()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -55,10 +49,22 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
             effectId = effect.Id;
             taskId = effect.ResearchTask.Id;
         });
-        string?[] invalid = numeric
-            ? ["not-a-number", "-1", "NaN", "Infinity", "1.5", "2147483648", "4294967295"]
-            : ["banana", "1", "0", " false ", null];
-        foreach (var value in invalid)
+        foreach (var draft in new[] { true, false })
+        foreach (var numeric in new[] { true, false })
+        foreach (
+            var value in numeric
+                ? new[]
+                {
+                    "not-a-number",
+                    "-1",
+                    "NaN",
+                    "Infinity",
+                    "1.5",
+                    "2147483648",
+                    "4294967295",
+                }
+                : new[] { "banana", "1", "0", " false ", null }
+        )
         {
             foreach (
                 var field in numeric ? new[] { "points" } : new[] { "done", "manager", "deputy" }

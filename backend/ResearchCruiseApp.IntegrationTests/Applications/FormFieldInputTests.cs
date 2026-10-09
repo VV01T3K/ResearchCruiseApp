@@ -21,23 +21,13 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
 
     // BE-FORM-FIELD-001/002: every property is attacked independently through real HTTP.
     // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
+    // Each case covers one route; null, missing and oversized values run on the same host.
     [Theory]
-    [InlineData(0, 0)]
-    [InlineData(0, 1)]
-    [InlineData(0, 2)]
-    [InlineData(1, 0)]
-    [InlineData(1, 1)]
-    [InlineData(1, 2)]
-    [InlineData(2, 0)]
-    [InlineData(2, 1)]
-    [InlineData(2, 2)]
-    [InlineData(3, 0)]
-    [InlineData(3, 1)]
-    [InlineData(3, 2)]
-    public async Task Write_WhenStoredStringIsInvalid_RejectsWithoutBusinessChanges(
-        int target,
-        int kind
-    )
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public async Task Write_WhenStoredStringIsInvalid_RejectsWithoutBusinessChanges(int target)
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -46,6 +36,8 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         var original = await Snapshot(app);
         var originalHttp = target == 0 ? null : await Read(client, prepared.Route);
         var failures = new List<string>();
+        // kind 0 sends null, 1 omits the key, 2 exceeds the column limit.
+        foreach (var kind in new[] { 0, 1, 2 })
         foreach (var field in Boundaries(target))
         {
             if (kind != 2 && !field.Required)
@@ -67,7 +59,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 || response.Content.Headers.ContentType?.MediaType != "application/problem+json"
             )
             {
-                failures.Add($"{path}: HTTP {(int)response.StatusCode}");
+                failures.Add($"{path} (kind {kind}): HTTP {(int)response.StatusCode}");
                 continue;
             }
             using var problem = JsonDocument.Parse(body);
@@ -75,7 +67,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 !problem.RootElement.GetProperty("errors").TryGetProperty(path, out var errors)
                 || errors.GetArrayLength() == 0
             )
-                failures.Add($"{path}: missing property error in {body}");
+                failures.Add($"{path} (kind {kind}): missing property error in {body}");
         }
         Assert.Equal(original, await Snapshot(app));
         if (target != 0)
