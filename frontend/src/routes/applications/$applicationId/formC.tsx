@@ -6,7 +6,7 @@ import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { INVALID_FORM_MESSAGE, navigateToFirstError } from '@/integrations/tanstack/form/errors';
+import { INVALID_FORM_MESSAGE, navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
 import { FormView } from './-components/formC/FormView';
 import {
   type FormCValues,
@@ -124,8 +124,9 @@ function FormCPage() {
     } catch (err) {
       console.error(err);
       setServerFormErrors(form, err);
-      toast.error(getErrorMessage(err, 'Nie udało się zapisać formularza'));
+      toast.error(getErrorMessage(err, saveFailedMessage(values.draft)));
       navigateToFirstError();
+      throw err;
     } finally {
       toast.dismiss(loading);
     }

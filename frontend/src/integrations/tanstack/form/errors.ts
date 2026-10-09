@@ -3,6 +3,10 @@ import { ApiError, getProblemDetail } from '@/api/errors';
 
 export const INVALID_FORM_MESSAGE = 'Formularz zawiera błędy. Popraw zaznaczone pola.';
 
+export function saveFailedMessage(draft: boolean | undefined): string {
+  return draft ? 'Nie udało się zapisać wersji roboczej formularza' : 'Nie udało się wysłać formularza';
+}
+
 // Errors are Zod issues from client validation or messages from the server.
 function getMessage(error: unknown): string {
   return typeof error === 'object' && error !== null && 'message' in error ? String(error.message) : String(error);

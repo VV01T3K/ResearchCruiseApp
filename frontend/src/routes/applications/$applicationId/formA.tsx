@@ -10,7 +10,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { INVALID_FORM_MESSAGE, navigateToFirstError } from '@/integrations/tanstack/form/errors';
+import { INVALID_FORM_MESSAGE, navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   type FormAValues,
@@ -94,8 +94,9 @@ function FormAPage() {
     if (!values.draft) trackFormSubmit('form-a', 'valid', form.state);
     if (values.cruiseManagerId !== currentUser.id && values.deputyManagerId !== currentUser.id) {
       setIsSaveDraftModalOpen(false);
-      toast.error('Jedynie kierownik lub jego zastępca mogą zapisać formularz');
-      return;
+      const message = 'Jedynie kierownik lub jego zastępca mogą zapisać formularz';
+      toast.error(message);
+      throw new Error(message);
     }
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
@@ -113,8 +114,9 @@ function FormAPage() {
       await navigate({ to: '/' });
     } catch (error) {
       setServerFormErrors(form, error);
-      toast.error(getErrorMessage(error, 'Nie udało się zapisać formularza'));
+      toast.error(getErrorMessage(error, saveFailedMessage(values.draft)));
       navigateToFirstError();
+      throw error;
     } finally {
       toast.dismiss(loading);
       setIsSaveDraftModalOpen(false);
