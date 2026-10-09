@@ -18,26 +18,20 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     // BE-ACCESS-007/008: test route policies and existing assignment on editable B/C applications.
+    // Forms B and C share one access check, so each actor runs once. Every outcome still runs on
+    // both routes, and the owner and anonymous cases run on both.
     [Theory]
     [InlineData("b", "owner", HttpStatusCode.Created)]
     [InlineData("c", "owner", HttpStatusCode.Created)]
-    [InlineData("b", "deputy", HttpStatusCode.Created)]
     [InlineData("c", "deputy", HttpStatusCode.Created)]
     [InlineData("b", RoleName.Administrator, HttpStatusCode.Created)]
-    [InlineData("c", RoleName.Administrator, HttpStatusCode.Created)]
-    [InlineData("b", "shipowner-owner", HttpStatusCode.Created)]
     [InlineData("c", "shipowner-owner", HttpStatusCode.Created)]
     [InlineData("b", "shipowner-deputy", HttpStatusCode.Created)]
-    [InlineData("c", "shipowner-deputy", HttpStatusCode.Created)]
     [InlineData("b", "anonymous", HttpStatusCode.Unauthorized)]
     [InlineData("c", "anonymous", HttpStatusCode.Unauthorized)]
     [InlineData("b", RoleName.CruiseManager, HttpStatusCode.NotFound)]
-    [InlineData("c", RoleName.CruiseManager, HttpStatusCode.NotFound)]
-    [InlineData("b", RoleName.Shipowner, HttpStatusCode.NotFound)]
     [InlineData("c", RoleName.Shipowner, HttpStatusCode.NotFound)]
     [InlineData("b", RoleName.Guest, HttpStatusCode.Forbidden)]
-    [InlineData("c", RoleName.Guest, HttpStatusCode.Forbidden)]
-    [InlineData("b", RoleName.ShipCrew, HttpStatusCode.Forbidden)]
     [InlineData("c", RoleName.ShipCrew, HttpStatusCode.Forbidden)]
     public async Task Write_WhenActorRequestsLaterForm_EnforcesAssignmentAndPreservesDeniedState(
         string form,

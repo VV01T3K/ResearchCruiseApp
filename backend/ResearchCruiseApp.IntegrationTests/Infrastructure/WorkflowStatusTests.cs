@@ -14,48 +14,54 @@ public sealed class WorkflowStatusTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     // BE-INFRA-003: assert the actual SQL-backed response, including production serialization.
-    [Theory]
-    [InlineData(CruiseApplicationStatus.Draft, "draft")]
-    [InlineData(CruiseApplicationStatus.WaitingForSupervisor, "waitingForSupervisor")]
-    [InlineData(CruiseApplicationStatus.AcceptedBySupervisor, "acceptedBySupervisor")]
-    [InlineData(CruiseApplicationStatus.DeniedBySupervisor, "deniedBySupervisor")]
-    [InlineData(CruiseApplicationStatus.Accepted, "accepted")]
-    [InlineData(CruiseApplicationStatus.Denied, "denied")]
-    [InlineData(CruiseApplicationStatus.FormBRequired, "formBRequired")]
-    [InlineData(CruiseApplicationStatus.FormBFilled, "formBFilled")]
-    [InlineData(CruiseApplicationStatus.Undertaken, "undertaken")]
-    [InlineData(CruiseApplicationStatus.Reported, "reported")]
-    public async Task Application_WhenRead_ReturnsStableStatusCode(
-        CruiseApplicationStatus status,
-        string code
-    )
+    // One application and one cruise move through every status on the same host.
+    [Fact]
+    public async Task Application_WhenRead_ReturnsStableStatusCode()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
-        var application = await TestApplications.Create(app, status);
+        var application = await TestApplications.Create(app, CruiseApplicationStatus.Draft);
         Guid formId = default;
         await app.InDatabase(async db => formId = (await db.FormsA.SingleAsync(ct)).Id);
         using var client = await TestApplications.Login(app, application.OwnerEmail);
-        using var response = await client.GetAsync($"/v2/applications/{application.Id}", ct);
-        await AssertResponse(response, application.Id, code);
-        await app.InDatabase(async db =>
+        (CruiseApplicationStatus Status, string Code)[] statuses =
+        [
+            (CruiseApplicationStatus.Draft, "draft"),
+            (CruiseApplicationStatus.WaitingForSupervisor, "waitingForSupervisor"),
+            (CruiseApplicationStatus.AcceptedBySupervisor, "acceptedBySupervisor"),
+            (CruiseApplicationStatus.DeniedBySupervisor, "deniedBySupervisor"),
+            (CruiseApplicationStatus.Accepted, "accepted"),
+            (CruiseApplicationStatus.Denied, "denied"),
+            (CruiseApplicationStatus.FormBRequired, "formBRequired"),
+            (CruiseApplicationStatus.FormBFilled, "formBFilled"),
+            (CruiseApplicationStatus.Undertaken, "undertaken"),
+            (CruiseApplicationStatus.Reported, "reported"),
+        ];
+        foreach (var (status, code) in statuses)
         {
-            var stored = await db.CruiseApplications.Include(row => row.FormA).SingleAsync(ct);
-            Assert.Equal(application.Id, stored.Id);
-            Assert.Equal(status, stored.Status);
-            Assert.Equal(formId, stored.FormA!.Id);
-            Assert.Equal(new DateOnly(2030, 1, 15), stored.Date);
-            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
-        });
+            await app.InDatabase(async db =>
+            {
+                (await db.CruiseApplications.SingleAsync(ct)).Status = status;
+                await db.SaveChangesAsync(ct);
+            });
+            using var response = await client.GetAsync($"/v2/applications/{application.Id}", ct);
+            await AssertResponse(response, application.Id, code);
+            await app.InDatabase(async db =>
+            {
+                var stored = await db.CruiseApplications.Include(row => row.FormA).SingleAsync(ct);
+                Assert.Equal(application.Id, stored.Id);
+                Assert.Equal(status, stored.Status);
+                Assert.Equal(formId, stored.FormA!.Id);
+                Assert.Equal(new DateOnly(2030, 1, 15), stored.Date);
+                Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
+            });
+        }
         await app.Dispatch(ct);
         Assert.Empty(app.Transport.Messages);
     }
 
-    [Theory]
-    [InlineData(CruiseStatus.New, "new")]
-    [InlineData(CruiseStatus.Confirmed, "confirmed")]
-    [InlineData(CruiseStatus.Ended, "ended")]
-    public async Task Cruise_WhenRead_ReturnsStableStatusCode(CruiseStatus status, string code)
+    [Fact]
+    public async Task Cruise_WhenRead_ReturnsStableStatusCode()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -70,7 +76,7 @@ public sealed class WorkflowStatusTests(SqlFixture fixture) : IAsyncLifetime
             MainCruiseManagerId = Guid.Parse(manager.Id),
             StartDate = "2030-06-01T08:00:00",
             EndDate = "2030-06-02T08:00:00",
-            Status = status,
+            Status = CruiseStatus.New,
             Title = "Status fixture",
             CruiseApplications = [],
         };
@@ -85,20 +91,36 @@ public sealed class WorkflowStatusTests(SqlFixture fixture) : IAsyncLifetime
             RoleName.Shipowner
         );
         using var client = await TestApplications.Login(app, office.Email!);
-        using var response = await client.GetAsync($"/v2/cruises/{cruise.Id}", ct);
-        await AssertResponse(response, cruise.Id, code);
-        await app.InDatabase(async db =>
+        (CruiseStatus Status, string Code)[] statuses =
+        [
+            (CruiseStatus.New, "new"),
+            (CruiseStatus.Confirmed, "confirmed"),
+            (CruiseStatus.Ended, "ended"),
+        ];
+        foreach (var (status, code) in statuses)
         {
-            var stored = await db.Cruises.Include(row => row.CruiseApplications).SingleAsync(ct);
-            Assert.Equal(cruise.Id, stored.Id);
-            Assert.Equal(status, stored.Status);
-            Assert.Equal(cruise.Number, stored.Number);
-            Assert.Equal(cruise.MainCruiseManagerId, stored.MainCruiseManagerId);
-            Assert.Equal(cruise.StartDate, stored.StartDate);
-            Assert.Equal(cruise.EndDate, stored.EndDate);
-            Assert.Empty(stored.CruiseApplications);
-            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
-        });
+            await app.InDatabase(async db =>
+            {
+                (await db.Cruises.SingleAsync(ct)).Status = status;
+                await db.SaveChangesAsync(ct);
+            });
+            using var response = await client.GetAsync($"/v2/cruises/{cruise.Id}", ct);
+            await AssertResponse(response, cruise.Id, code);
+            await app.InDatabase(async db =>
+            {
+                var stored = await db
+                    .Cruises.Include(row => row.CruiseApplications)
+                    .SingleAsync(ct);
+                Assert.Equal(cruise.Id, stored.Id);
+                Assert.Equal(status, stored.Status);
+                Assert.Equal(cruise.Number, stored.Number);
+                Assert.Equal(cruise.MainCruiseManagerId, stored.MainCruiseManagerId);
+                Assert.Equal(cruise.StartDate, stored.StartDate);
+                Assert.Equal(cruise.EndDate, stored.EndDate);
+                Assert.Empty(stored.CruiseApplications);
+                Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
+            });
+        }
         await app.Dispatch(ct);
         Assert.Empty(app.Transport.Messages);
     }
