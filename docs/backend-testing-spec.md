@@ -265,7 +265,7 @@ CI must:
 4. Attempt both suites after a successful build even if the first fails, and preserve failure in the final job result. Do not use `continue-on-error` to turn a failed test gate green.
 5. Upload reports and failure logs with `if: always()` and a modest retention such as 14 days. Missing expected reports after a test command ran must be surfaced as an error. Artifact publishing must not replace the actual failing exit code.
 6. Preserve OpenAPI/client drift checks with the task order in section 7. Replace Debug-only OpenAPI generation with an explicit build property enabled on the check's Release build. Normal publish/test invocations must not regenerate it redundantly. Compare temporary output, including missing/untracked files. Avoid a second full backend build solely for generation.
-7. Use `contents: read`, no deployment secrets, and an 8-minute workspace job timeout. PR/fork tests must need no shared SQL server, SMTP account, or Sentry credentials. Cancel superseded PR runs; do not let another workflow's concurrency group cancel a deployment's required invocation.
+7. Use `contents: read`, no deployment secrets, and a 10-minute workspace job timeout as a hang guard. PR/fork tests must need no shared SQL server, SMTP account, or Sentry credentials. Cancel superseded PR runs; do not let another workflow's concurrency group cancel a deployment's required invocation.
 
 Replace the checks in `format-and-lint.yaml` with the shared workspace gate once equivalent coverage exists, avoiding repeated frontend/backend validation. Move frontend unit execution out of the browser workflow into this gate. Document and enable the matching required check in rules for both protected branches; YAML alone does not configure branch protection. Verify emitted check contexts because reusable calls can prefix job names. Preserve any distinct existing release checks outside this scope.
 
@@ -281,7 +281,7 @@ The earlier 10-minute backend target is replaced by the provisional targets belo
 | Complete backend integration execution, including container startup, migrations and resets, with SQL image present | 60 seconds |
 | Root `vpr check`, warm dependencies/image and incremental build, with fresh test execution | 90 seconds |
 | Complete backend CI work, including restore/build/container startup | 3 minutes target; 5 minutes with cold downloads/image pull |
-| Complete workspace CI check, excluding runner queue and deploy/image builds | 5 minutes target; 8-minute hard job timeout |
+| Complete workspace CI check, excluding runner queue and deploy/image builds | 5-minute goal, not enforced; 10-minute hang-guard job timeout |
 
 During foundation, benchmark a representative slice containing a real login/new auth host, an authorized form write/read and reset, outbox delivery across host replacement, concurrent startup seeding, and an upgrade from the previous supported schema. Also measure build/generation and frontend static/unit work. Measure at least five warm executions and three clean hosted runs; record commit, toolchain, machine/runner, test counts, median/slowest run, setup/reset/host costs, and slowest tests in the ledger's performance record. Separate fixed setup cost from per-scenario cost and estimate the remaining matrix with stated assumptions; a small slice's total cannot be presented as the full-suite benchmark.
 

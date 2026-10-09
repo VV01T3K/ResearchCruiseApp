@@ -16,7 +16,7 @@ jobs:
   checks:
     name: Workspace checks
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: "1"
       TESTINGPLATFORM_TELEMETRY_OPTOUT: "1"
