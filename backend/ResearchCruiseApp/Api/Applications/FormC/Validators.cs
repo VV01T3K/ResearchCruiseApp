@@ -9,7 +9,7 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
     public FormCWriteRequestValidator(FileInspector fileInspector)
     {
         var collections = new InlineValidator<FormCFields>();
-        collections.Include(new FormCStorageValidator());
+        collections.Include(new StorageValidator<FormCFields>());
         collections
             .RuleFor(fields => fields.Permissions)
             .NotNull()
@@ -99,45 +99,44 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
 
         collections
             .RuleForEach(fields => fields.Permissions)
-            .SetValidator(new PermissionStorageValidator());
+            .SetValidator(new StorageValidator<PermissionFields>());
         collections
             .RuleForEach(fields => fields.UgTeams)
-            .SetValidator(new UgTeamStorageValidator());
+            .SetValidator(new StorageValidator<UgTeamFields>());
         collections
             .RuleForEach(fields => fields.GuestTeams)
-            .SetValidator(new GuestTeamStorageValidator());
+            .SetValidator(new StorageValidator<GuestTeamFields>());
         collections
             .RuleForEach(fields => fields.ResearchAreaDescriptions)
-            .SetValidator(new ResearchAreaSelectionStorageValidator());
+            .SetValidator(new StorageValidator<ResearchAreaSelection>());
         collections
             .RuleForEach(fields => fields.ResearchTasksEffects)
-            .SetValidator(new ResearchTaskEffectStorageValidator());
+            .SetValidator(new StorageValidator<ResearchTaskEffectFields>());
         collections
             .RuleForEach(fields => fields.Contracts)
-            .SetValidator(new ContractStorageValidator());
+            .SetValidator(new StorageValidator<ContractFields>());
         collections
             .RuleForEach(fields => fields.SpubTasks)
-            .SetValidator(new SpubTaskStorageValidator());
+            .SetValidator(new StorageValidator<SpubTaskFields>());
         collections
             .RuleForEach(fields => fields.ShortResearchEquipments)
-            .SetValidator(new ShortTermResearchEquipmentStorageValidator());
+            .SetValidator(new StorageValidator<ShortTermResearchEquipmentFields>());
         collections
             .RuleForEach(fields => fields.LongResearchEquipments)
-            .SetValidator(new LongTermResearchEquipmentStorageValidator());
+            .SetValidator(new StorageValidator<LongTermResearchEquipmentFields>());
         collections
             .RuleForEach(fields => fields.Ports)
-            .SetValidator(new PortCallStorageValidator());
+            .SetValidator(new StorageValidator<PortCallFields>());
         collections
             .RuleForEach(fields => fields.CruiseDaysDetails)
-            .SetValidator(new CruiseDayStorageValidator());
+            .SetValidator(new StorageValidator<CruiseDayFields>());
         collections
             .RuleForEach(fields => fields.ResearchEquipments)
-            .SetValidator(new ResearchEquipmentStorageValidator());
+            .SetValidator(new StorageValidator<ResearchEquipmentFields>());
         collections
             .RuleForEach(fields => fields.CollectedSamples)
-            .SetValidator(new CollectedSampleStorageValidator());
+            .SetValidator(new StorageValidator<CollectedSampleFields>());
 
-        // Validate structure before rules that dereference collection entries.
         RuleFor(request => request.Form)
             .NotNull()
             .SetValidator(collections)
