@@ -22,6 +22,8 @@ The user explicitly keeps current behavior for concurrent cruise allocation [#43
 
 Final native calibration is complete on `c57958ff444493875e58831e776529aa1def4084`. All five fully warm local runs and three fresh hosted jobs execute and pass all 667 cases with no skips, no legacy invocation and unchanged tracked source. The [performance record](backend-performance-calibration.json) contains every run, environment/cache state, build/setup/reset/host costs, sampled local frequencies and ten slowest SQL cases per run.
 
+After the 2026-10-09 staging merge, the gate runs 701 cases (220 frontend, 47 unit, 434 SQL integration). One local post-merge run took 194.372 seconds of SQL execution, below the calibrated local SQL median of 209.688 seconds. The proposals below still rest on the 667-case calibration.
+
 | Measurement | Runs | Median | Slowest | Proposed target |
 | --- | --- | --- | --- | --- |
 | Local warm root | 5 | 215.536s | 224.833s | 270s |

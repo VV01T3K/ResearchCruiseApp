@@ -14,6 +14,8 @@ Final calibration is complete on c57958ff with unchanged clean source: five full
 
 Documentation/evidence commits follow the tested runtime revision without changing the runner/application. Inspect Git refs for the latest documentation head and verify its hosted check. No implementation gap remains identified within the accepted PR scope. Performance target ratification and protected-branch rollout are the remaining maintainer decisions.
 
+Staging integration (2026-10-09): staging commits `c43a0bc8` and `10e687dc` (#424) are merged normally, preserving the cleaned ancestry. The gate now runs 701 cases: 220 frontend, 47 unit and 434 SQL integration, no skips. #424's contract changes, the two ported test families (BE-INFRA-007, BE-FORM-VALIDATION-002) and the draft omitted-key policy decision are recorded at the end of the scenario ledger. The 667-case figures below describe the calibrated revision.
+
 ## Confirmed scope
 
 - Production runs v2.5.1, confirmed by the user on 2026-10-02. BE-UPGRADE-001 uses that previous-release migration baseline with a separate synthetic account/application/cruise/file graph and actual Polish Unicode. Production data was not inspected.
