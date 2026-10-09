@@ -34,7 +34,7 @@ services:
       JWT__Secret: ${JWT_SECRET:?Preserve the deployed token signing secret}
       Sentry__Dsn: ${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
       Sentry__TracesSampleRate: ${SENTRY_TRACES_SAMPLE_RATE:-1}
-    networks: [database]
+    networks: [database, application]
   frontend:
     image: ghcr.io/vv01t3k/researchcruiseapp/frontend:staging
     container_name: researchcruiseapp-frontend
@@ -47,7 +47,7 @@ services:
       SENTRY_DSN: ${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-1}
       SENTRY_REPLAYS_SESSION_SAMPLE_RATE: ${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-1}
-    networks: [database, caddy]
+    networks: [application, caddy]
     labels:
       caddy: ${FRONTEND_URL:-https://cruise.wsiwiec.com}
       caddy.import: protected
@@ -59,5 +59,7 @@ volumes:
 networks:
   database:
     name: researchcruiseapp-network
+    internal: true
+  application: {}
   caddy:
     external: true
