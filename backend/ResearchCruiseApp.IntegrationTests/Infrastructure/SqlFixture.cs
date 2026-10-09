@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Infrastructure.Persistence;
@@ -39,18 +38,13 @@ public sealed class SqlFixture : IAsyncLifetime
         try
         {
             using var startup = new CancellationTokenSource(TimeSpan.FromMinutes(2));
-            var phase = Stopwatch.StartNew();
             await _container.StartAsync(startup.Token);
-            TestTiming.Record("SQL startup", phase.Elapsed);
-            phase.Restart();
             ConnectionString = new SqlConnectionStringBuilder(_container.GetConnectionString())
             {
                 InitialCatalog = _database,
             }.ConnectionString;
             await using var db = CreateDbContext();
             await db.Database.MigrateAsync(startup.Token);
-            TestTiming.Record("SQL migrations", phase.Elapsed);
-            phase.Restart();
             await using var connection = await OpenOwnedConnection();
             _respawner = await Respawner.CreateAsync(
                 connection,
@@ -60,7 +54,6 @@ public sealed class SqlFixture : IAsyncLifetime
                     TablesToIgnore = [new Table("__EFMigrationsHistory")],
                 }
             );
-            TestTiming.Record("SQL reset planning", phase.Elapsed);
             await using var command = connection.CreateCommand();
             command.CommandText =
                 "SELECT CONVERT(nvarchar(128), DATABASEPROPERTYEX(DB_NAME(), 'Collation')), compatibility_level FROM sys.databases WHERE name = DB_NAME()";
@@ -80,12 +73,10 @@ public sealed class SqlFixture : IAsyncLifetime
 
     internal async Task ResetAsync()
     {
-        var elapsed = Stopwatch.StartNew();
         await using var connection = await OpenOwnedConnection();
         await (
             _respawner ?? throw new InvalidOperationException("SQL fixture did not initialize.")
         ).ResetAsync(connection);
-        TestTiming.Record("SQL reset", elapsed.Elapsed);
     }
 
     private async Task<SqlConnection> OpenOwnedConnection()

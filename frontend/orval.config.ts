@@ -1,24 +1,15 @@
-import { resolve, sep } from 'node:path';
 import { defineConfig } from 'orval';
-
-const contractRoot = process.env.RCA_CONTRACT_ROOT;
-if (contractRoot && !resolve(contractRoot).startsWith(resolve('../backend/artifacts/contracts') + sep)) {
-  throw new Error('Contract generation must stay inside backend/artifacts/contracts');
-}
-const generatedRoot = contractRoot ? resolve(contractRoot, 'frontend/src/api/generated') : 'src/api/generated';
 
 export default defineConfig({
   backend: {
     input: {
-      target: contractRoot
-        ? resolve(contractRoot, 'openapi/ResearchCruiseApp_v2.json')
-        : '../backend/ResearchCruiseApp/openapi/ResearchCruiseApp_v2.json',
+      target: '../backend/ResearchCruiseApp/openapi/ResearchCruiseApp_v2.json',
       unsafeDisableValidation: false,
     },
     output: {
-      target: resolve(generatedRoot, 'endpoints'),
+      target: 'src/api/generated/endpoints',
       schemas: {
-        path: resolve(generatedRoot, 'schemas'),
+        path: 'src/api/generated/schemas',
         type: 'zod',
         splitByTags: true,
       },
@@ -39,7 +30,7 @@ export default defineConfig({
       override: {
         header: false,
         mutator: {
-          path: contractRoot ? resolve(contractRoot, 'frontend/src/api/fetch.ts') : 'src/api/fetch.ts',
+          path: 'src/api/fetch.ts',
           name: 'customFetch',
         },
         requestOptions: true,

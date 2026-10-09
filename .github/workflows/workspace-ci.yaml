@@ -41,23 +41,11 @@ jobs:
         run: vp install --frozen-lockfile
       - name: Audit JavaScript dependencies
         run: bun audit --audit-level=high
-      - name: Record runner environment
-        run: |
-          mkdir -p backend/artifacts
-          uname -a > backend/artifacts/runner-environment.txt
-          lscpu >> backend/artifacts/runner-environment.txt
-          cat /etc/os-release >> backend/artifacts/runner-environment.txt
-          dotnet --info >> backend/artifacts/runner-environment.txt
-          node --version >> backend/artifacts/runner-environment.txt
-          bun --version >> backend/artifacts/runner-environment.txt
       - name: Check workspace
         shell: bash
         run: |
           mkdir -p backend/artifacts
           vp run check 2>&1 | tee backend/artifacts/workspace-check.log
-      - name: Summarize suites
-        if: always()
-        run: python3 scripts/summarize-checks.py >> "$GITHUB_STEP_SUMMARY"
       - name: Publish diagnostics
         if: always()
         uses: actions/upload-artifact@v6

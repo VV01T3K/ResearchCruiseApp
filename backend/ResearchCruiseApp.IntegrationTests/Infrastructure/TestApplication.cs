@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.SqlClient;
@@ -16,14 +15,6 @@ internal sealed class TestApplication(string connectionString, string environmen
 {
     internal CapturingEmailTransport Transport { get; } = new();
     internal ControlledClock Clock { get; } = new();
-
-    protected override IHost CreateHost(IHostBuilder builder)
-    {
-        var elapsed = Stopwatch.StartNew();
-        var host = base.CreateHost(builder);
-        TestTiming.Record("Application host", elapsed.Elapsed);
-        return host;
-    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

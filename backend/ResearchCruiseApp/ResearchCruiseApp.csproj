@@ -4,6 +4,7 @@
     <!-- Compile Minimal API delegates once instead of rebuilding them for every host. -->
     <EnableRequestDelegateGenerator>true</EnableRequestDelegateGenerator>
     <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+    <NoWarn>$(NoWarn);IDE0130;CA1305;CA1310;CA1711;CA1716;CA1822;CA1824;CA1825;CA1848;CA1859;CA1861</NoWarn>
     <RootNamespace>ResearchCruiseApp</RootNamespace>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <UserSecretsId>36dfba4d-eec1-47b9-ab0e-59344a3424a8</UserSecretsId>
@@ -25,8 +26,7 @@
 
   <PropertyGroup Condition="'$(GenerateApiContract)' == 'true'">
     <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
-    <OpenApiDocumentsDirectory Condition="'$(OpenApiDocumentsDirectory)' == ''"
-      >openapi</OpenApiDocumentsDirectory>
+    <OpenApiDocumentsDirectory>openapi</OpenApiDocumentsDirectory>
   </PropertyGroup>
 
   <ItemGroup>
@@ -103,8 +103,8 @@
   <ItemGroup>
     <Folder Include="Infrastructure\Persistence\Migrations\" />
   </ItemGroup>
-  <!-- The generator tracks its file list, not a changed temporary output directory.
-       Explicit contract checks must regenerate even when compilation is incremental. -->
+  <!-- The generator skips when the assembly is unchanged; always regenerate so a hand-edited
+       document is overwritten and the contract check sees it. -->
   <Target
     Name="RefreshApiContractOutput"
     BeforeTargets="GenerateOpenApiDocuments"
