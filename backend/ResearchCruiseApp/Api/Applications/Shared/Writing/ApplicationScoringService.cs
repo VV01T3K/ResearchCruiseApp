@@ -74,14 +74,16 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
                     ? EvaluationConstants.PointsForProjectPreparationWithFinancing
                     : EvaluationConstants.PointsForProjectPreparationWithoutFinancing,
 
-                ResearchTaskType.DomesticProject when researchTask.FinancingAmount is not null =>
+                ResearchTaskType.DomesticProject
+                    when !string.IsNullOrEmpty(researchTask.FinancingAmount) =>
                     EvaluationConstants.PointsPerDivisionForDomesticProject
                         * (int)(
                             double.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
                             / EvaluationConstants.DomesticProjectDivision
                         ),
 
-                ResearchTaskType.ForeignProject when researchTask.FinancingAmount is not null =>
+                ResearchTaskType.ForeignProject
+                    when !string.IsNullOrEmpty(researchTask.FinancingAmount) =>
                     EvaluationConstants.PointsPerDivisionForForeignProject
                         * (int)(
                             double.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
@@ -119,7 +121,7 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
 
         // Redundant since teams have been already validated on formA creation
         var notEmptyTeamsCount = cruiseApplication.FormA.FormAUgUnits.Count(formAUgUnit =>
-            int.Parse(formAUgUnit.NoOfEmployees) > 0 || int.Parse(formAUgUnit.NoOfStudents) > 0
+            uint.Parse(formAUgUnit.NoOfEmployees) > 0 || uint.Parse(formAUgUnit.NoOfStudents) > 0
         );
 
         cruiseApplication.FormA.UgUnitsPoints = notEmptyTeamsCount switch
@@ -146,9 +148,10 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
                 ministerialPointsRatio =
                     EvaluationConstants.MinisterialPointsRatioForPostscriptPublication;
 
-            formAPublication.Points = (int)(
-                int.Parse(publication.MinisterialPoints) * ministerialPointsRatio
-            );
+            var ministerialPoints = string.IsNullOrEmpty(publication.MinisterialPoints)
+                ? 0
+                : int.Parse(publication.MinisterialPoints);
+            formAPublication.Points = (int)(ministerialPoints * ministerialPointsRatio);
         }
     }
 
