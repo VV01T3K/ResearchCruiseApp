@@ -3,8 +3,10 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-CU23-ubuntu-22.04
     container_name: researchcruiseapp-db
     restart: unless-stopped
+    mem_limit: 3g
     environment:
       ACCEPT_EULA: 'Y'
+      MSSQL_MEMORY_LIMIT_MB: '2048'
       MSSQL_SA_PASSWORD: ${DB_PASSWORD:?Preserve the deployed SQL Server password}
     volumes:
       - researchcruiseapp-db:/var/opt/mssql
