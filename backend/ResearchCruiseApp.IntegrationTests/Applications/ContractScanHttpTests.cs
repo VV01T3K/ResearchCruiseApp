@@ -19,7 +19,6 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FILE-005: invalid contract uploads cannot replace an existing Form A.
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -73,7 +72,6 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         }
     }
 
-    // BE-FILE-006: contracts accept any file type; the limit is on decoded bytes.
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -140,7 +138,6 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         );
     }
 
-    // BE-FILE-007: Form A permits permission descriptions but no scan, including empty controls.
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -204,7 +201,6 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-FILE-008: shared contracts retain their files until the final application releases them.
     [Fact]
     public async Task Remove_WhenContractIsShared_DeletesFilesOnlyAfterFinalReference()
     {

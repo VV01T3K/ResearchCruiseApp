@@ -14,7 +14,6 @@ public sealed class LogoutTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-AUTH-005: both bearer and cookie logout revoke only the requesting account's session.
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

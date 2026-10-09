@@ -15,7 +15,6 @@ public sealed class StartupTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-STARTUP-002: seeding repairs missing reference rows without overwriting local choices.
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -108,7 +107,6 @@ public sealed class StartupTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-STARTUP-001: independent service providers share only the SQL database.
     [Fact]
     public async Task Initialize_WhenTwoHostsStart_SeedsReferenceDataWithoutDuplicateRowsOrAccounts()
     {

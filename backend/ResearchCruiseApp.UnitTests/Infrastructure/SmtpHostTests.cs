@@ -8,7 +8,6 @@ namespace ResearchCruiseApp.UnitTests.Infrastructure;
 
 public sealed class SmtpHostTests
 {
-    // BE-SMTP-003: independently reviewed native binding/startup candidates; legacy execution remains.
     [Theory]
     [InlineData("SmtpServer", "")]
     [InlineData("SmtpServer", "https://smtp.gmail.com")]

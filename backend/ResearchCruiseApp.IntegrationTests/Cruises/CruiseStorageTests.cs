@@ -15,7 +15,6 @@ public sealed class CruiseStorageTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-CRUISE-011: both date columns have a 64-character SQL limit; existing date formats remain unchanged.
     [Theory]
     [InlineData(false, "StartDate", false)]
     [InlineData(false, "StartDate", true)]

@@ -14,7 +14,6 @@ public sealed class OfficeDecisionTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-DECISION-001: an omitted decision cannot be interpreted as office rejection.
     [Fact]
     public async Task Decide_WhenAcceptIsMissing_RejectsWithoutChangingApplication()
     {

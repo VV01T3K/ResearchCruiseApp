@@ -17,7 +17,6 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-AUTH-003: refresh consumes the old credential; replay cannot change the new session.
     [Fact]
     public async Task Refresh_WhenUsedThenReplayed_RotatesAndPreservesTheNewSession()
     {
@@ -67,7 +66,6 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-AUTH-010: the actual browser cookie jar performs the complete session round trip.
     [Fact]
     public async Task Session_WhenCookieContainerHandlesRotationAndLogout_RejectsRefreshAfterLogout()
     {
@@ -107,7 +105,6 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-AUTH-004: invalid or ineligible refresh requests cannot mutate an existing session.
     [Theory]
     [InlineData("missing")]
     [InlineData("invalid")]

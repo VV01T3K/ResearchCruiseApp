@@ -14,7 +14,6 @@ public sealed class AccountLifecycleTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ACCOUNT-003: confirmation does not substitute for office acceptance; deactivation revokes refresh.
     [Fact]
     public async Task Account_WhenConfirmedAcceptedThenDeactivated_EnforcesBothGatesAndRevokesSession()
     {

@@ -11,7 +11,6 @@ public sealed class PublicStatusTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-INFRA-002: anonymous probes work with Sentry disabled and do not create accounts/mail.
     [Fact]
     public async Task Status_WhenRequestedAnonymously_ReturnsHealthAndThreePartVersion()
     {

@@ -16,7 +16,6 @@ public sealed class CruiseLifecycleTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-CRUISE-001: planning, confirmation and completion propagate to the assigned application.
     [Fact]
     public async Task Cruise_WhenPlannedConfirmedCompletedAndReverted_PersistsLifecycleAndNotification()
     {

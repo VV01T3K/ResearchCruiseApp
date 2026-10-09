@@ -12,7 +12,6 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ROLES-001: route permissions and shipowner escalation limits preserve membership.
     [Theory]
     [InlineData("anonymous", RoleName.Guest, HttpStatusCode.Unauthorized)]
     [InlineData(RoleName.CruiseManager, RoleName.Guest, HttpStatusCode.Forbidden)]
@@ -46,7 +45,6 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-ROLES-002: both office roles can grant and remove a lower role without losing others.
     [Theory]
     [InlineData(RoleName.Administrator)]
     [InlineData(RoleName.Shipowner)]

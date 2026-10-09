@@ -6,7 +6,6 @@ namespace ResearchCruiseApp.IntegrationTests.Persistence;
 [Collection(SqlTestCollectionDefinition.Name)]
 public sealed class MigrationTests(SqlFixture fixture)
 {
-    // BE-MIGRATION-001: fixture setup must apply the real chain to an empty SQL database.
     [Fact]
     public async Task Migrate_WhenAppliedAgain_PreservesHistoryAndMatchesCurrentModel()
     {

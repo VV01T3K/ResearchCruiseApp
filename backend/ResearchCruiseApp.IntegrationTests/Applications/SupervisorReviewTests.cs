@@ -16,7 +16,6 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-SUPERVISOR-002: the first decision changes only the application named by its code.
     [Theory]
     [InlineData(true, CruiseApplicationStatus.AcceptedBySupervisor)]
     [InlineData(false, CruiseApplicationStatus.DeniedBySupervisor)]
@@ -61,7 +60,6 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-SUPERVISOR-001: the first decision is final, but the review link stays readable.
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -107,7 +105,6 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-SUPERVISOR-003: missing decision data must never become an implicit rejection.
     [Theory]
     [InlineData("{\"code\":\"{code}\"}")]
     [InlineData("{\"accept\":true}")]
@@ -149,7 +146,6 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-SUPERVISOR-004: review codes authorize exactly one application.
     [Fact]
     public async Task Review_WhenCodeIsInvalidOrBelongsToAnotherApplication_DeniesWithoutChanges()
     {

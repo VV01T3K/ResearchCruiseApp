@@ -18,7 +18,6 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FORMA-003: final submission persists the form and a usable supervisor invitation together.
     [Theory]
     [InlineData(true, true)]
     [InlineData(true, false)]

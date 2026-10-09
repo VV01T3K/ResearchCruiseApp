@@ -17,7 +17,6 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ACCESS-002: a valid body cannot bypass route-level create permissions.
     [Theory]
     [InlineData("anonymous", HttpStatusCode.Unauthorized)]
     [InlineData(RoleName.Guest, HttpStatusCode.Forbidden)]
@@ -62,7 +61,6 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-ACCESS-003: drafts are readable only by their manager/deputy, even for privileged roles.
     [Theory]
     [InlineData("owner", HttpStatusCode.OK)]
     [InlineData("deputy", HttpStatusCode.OK)]
@@ -104,7 +102,6 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-ACCESS-004/005: only the assigned manager/deputy can replace a draft form.
     [Theory]
     [InlineData("owner", HttpStatusCode.NoContent)]
     [InlineData("deputy", HttpStatusCode.NoContent)]
@@ -160,7 +157,6 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-ACCESS-004: assignment grants shipowners edit access; a request body cannot grant it.
     [Theory]
     [InlineData("owner", HttpStatusCode.NoContent)]
     [InlineData("deputy", HttpStatusCode.NoContent)]
@@ -226,7 +222,6 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-ACCESS-006: the same ownership rule protects the later form endpoints.
     [Theory]
     [InlineData("b")]
     [InlineData("c")]

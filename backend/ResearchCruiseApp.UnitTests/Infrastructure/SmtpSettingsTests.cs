@@ -4,7 +4,6 @@ namespace ResearchCruiseApp.UnitTests.Infrastructure;
 
 public sealed class SmtpSettingsTests
 {
-    // BE-SMTP-001: SMTP setup defines the inclusive TCP port range.
     [Theory]
     [InlineData(0, false)]
     [InlineData(1, true)]

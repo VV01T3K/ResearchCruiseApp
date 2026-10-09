@@ -14,7 +14,6 @@ public sealed class RateLimitTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-INFRA-001: auth endpoints share the ten-attempt budget and advertise ProblemDetails.
     [Fact]
     public async Task Login_WhenAuthBudgetIsExhausted_ReturnsProblemWithoutCreatingSession()
     {

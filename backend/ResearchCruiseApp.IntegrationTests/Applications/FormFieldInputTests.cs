@@ -19,9 +19,6 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FORM-FIELD-001/002: every property is attacked independently through real HTTP.
-    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
-    // Each case covers one route; null, missing and oversized values run on the same host.
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -77,7 +74,6 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         Assert.True(failures.Count == 0, string.Join("; ", failures));
     }
 
-    // BE-FORM-FIELD-002: exact storage limits and nullable fields retain draft compatibility.
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -176,7 +172,6 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-FORM-FIELD-003: the rejection bodies are valid apart from the independently changed field.
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -214,7 +209,6 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(target is 0 or 1 ? 1 : 0, app.Transport.Messages.Count);
     }
 
-    // BE-FORM-FIELD-004: empty text/collections and zero Form A hours remain supported incomplete drafts.
     [Theory]
     [InlineData(0)]
     [InlineData(2)]

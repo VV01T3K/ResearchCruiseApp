@@ -15,7 +15,6 @@ public sealed class PasswordChangeTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ACCOUNT-004: failed changes preserve the session; a successful change revokes refresh.
     [Fact]
     public async Task ChangePassword_WhenCurrentPasswordIsVerified_ReplacesPasswordAndRevokesRefresh()
     {
@@ -89,7 +88,6 @@ public sealed class PasswordChangeTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-ACCOUNT-006: unauthenticated or malformed changes cannot alter credentials or sessions.
     [Fact]
     public async Task ChangePassword_WhenUnauthenticatedOrMalformed_PreservesCredentialsAndSession()
     {

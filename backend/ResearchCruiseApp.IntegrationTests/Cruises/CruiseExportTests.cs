@@ -18,7 +18,6 @@ public sealed class CruiseExportTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-EXPORT-001: CSV consumers must see six columns and intact Polish names/quoted text.
     [Theory]
     [InlineData("2024-01-15", "15.01.2024", "11:30", "13:00")]
     [InlineData("2024-07-15", "15.07.2024", "12:30", "14:00")]

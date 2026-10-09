@@ -22,7 +22,6 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-CATALOG-001: SQL keyset paging must preserve ties and terminate without duplicates.
     [Theory]
     [InlineData("number", false)]
     [InlineData("number", true)]
@@ -72,7 +71,6 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-CATALOG-002/006: visibility, deputy changes and filters apply before paging/manager choices.
     [Theory]
     [InlineData(RoleName.CruiseManager, false)]
     [InlineData(RoleName.Administrator, true)]
@@ -212,7 +210,6 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-CATALOG-005: manager IDs disambiguate names; all supplied filters must match.
     [Fact]
     public async Task Pages_WhenManagersShareNames_CombinesManagerNumberAndDateFilters()
     {
@@ -271,7 +268,6 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-CATALOG-003: unusable cursors preserve the current first-page fallback contract.
     [Fact]
     public async Task Pages_WhenCursorIsMalformedOrIncompatible_ReturnFirstPage()
     {
@@ -314,7 +310,6 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         }
     }
 
-    // BE-CATALOG-004: editing retains attached applications without bypassing visibility.
     [Theory]
     [InlineData(RoleName.CruiseManager, false)]
     [InlineData(RoleName.Administrator, true)]

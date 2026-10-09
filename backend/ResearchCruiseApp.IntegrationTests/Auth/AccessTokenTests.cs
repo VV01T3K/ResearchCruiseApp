@@ -17,7 +17,6 @@ public sealed class AccessTokenTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-AUTH-006: real bearer middleware rejects each independently invalid credential.
     [Theory]
     [InlineData("issuer")]
     [InlineData("audience")]

@@ -5,7 +5,6 @@ namespace ResearchCruiseApp.UnitTests.Infrastructure;
 
 public sealed class PermissionScanTests
 {
-    // BE-FILE-001: recognize the supported PDF signature encodings and reject malformed content.
     [Theory]
     [InlineData("JVBERi0xLjcK", true)]
     [InlineData("data:application/pdf;base64,JVBERi0xLjcK", true)]
@@ -22,7 +21,6 @@ public sealed class PermissionScanTests
         Assert.Equal(expected, new FileInspector().IsFilePdf(content));
     }
 
-    // BE-FILE-002: documented limit is two MiB of decoded data, not encoded text length.
     [Theory]
     [InlineData(2_097_151, true)]
     [InlineData(2_097_152, true)]

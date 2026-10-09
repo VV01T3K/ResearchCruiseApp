@@ -43,7 +43,6 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
         await fixture.ResetAsync();
     }
 
-    // BE-INFRA-004: production middleware/callbacks sanitize the real emitted event.
     [Fact]
     public async Task Capture_WhenAuthenticatedWriteFails_EmitsSafeUserAndRoleDiagnostics()
     {
@@ -191,7 +190,6 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
         }
     }
 
-    // BE-INFRA-005: exercise the registered SDK callback, including a sent control.
     [Theory]
     [InlineData("GET /health")]
     [InlineData("GET /HEALTH")]
@@ -202,7 +200,6 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
         await using var telemetry = EnableTelemetry(app, transport);
         var hub = telemetry.Services.GetRequiredService<IHub>();
         Assert.True(hub.IsEnabled);
-        // BE-INFRA-006: the non-health control also proves transaction privacy.
         hub.ConfigureScope(scope =>
         {
             scope.User = new SentryUser { Id = "trace-user", IpAddress = "192.0.2.1" };

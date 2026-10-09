@@ -10,7 +10,6 @@ namespace ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 public sealed class SmtpStartupTests
 {
-    // BE-SMTP-002: actual Program validates SMTP before migration/seed connections.
     [Fact]
     public async Task Start_WhenSmtpCredentialsAreMissing_FailsBeforeOpeningDatabase()
     {

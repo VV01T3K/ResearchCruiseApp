@@ -7,10 +7,8 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.IntegrationTests.Infrastructure;
 
-// Shared request and state helpers for the application-form input tests.
 internal static class FormRequests
 {
-    // POST creates a form; PUT replaces an existing one.
     internal static Task<HttpResponseMessage> Write(
         HttpClient client,
         string route,

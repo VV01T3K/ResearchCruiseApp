@@ -17,7 +17,6 @@ public sealed class LoginTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-AUTH-001: real login in a fresh host, real Identity and SQL persistence.
     [Theory]
     [InlineData("Testing", true)]
     [InlineData("Development", false)]
@@ -54,7 +53,6 @@ public sealed class LoginTests(SqlFixture fixture) : IAsyncLifetime
         Assert.True(cookie.HttpOnly);
         Assert.Equal(SameSiteMode.Strict, cookie.SameSite);
         Assert.Equal("/", cookie.Path.Value);
-        // BE-AUTH-009: HTTP expiry agrees with the actual JWT, cookie and SQL session.
         var accessExpiry = body.RootElement.GetProperty("accessTokenExpirationDate").GetDateTime();
         var refreshExpiry = body
             .RootElement.GetProperty("refreshTokenExpirationDate")

@@ -13,8 +13,6 @@ public sealed class WorkflowStatusTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-INFRA-003: assert the actual SQL-backed response, including production serialization.
-    // One application and one cruise move through every status on the same host.
     [Fact]
     public async Task Application_WhenRead_ReturnsStableStatusCode()
     {

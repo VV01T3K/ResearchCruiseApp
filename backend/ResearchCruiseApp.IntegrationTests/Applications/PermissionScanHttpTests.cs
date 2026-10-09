@@ -20,7 +20,6 @@ public sealed class PermissionScanHttpTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FILE-003: rejected final scans preserve the existing compressed scan and form.
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -95,7 +94,6 @@ public sealed class PermissionScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         }
     }
 
-    // BE-FILE-004: exact decoded size, persisted compression, access and final-reference cleanup.
     [Theory]
     [InlineData(false, false)]
     [InlineData(false, true)]

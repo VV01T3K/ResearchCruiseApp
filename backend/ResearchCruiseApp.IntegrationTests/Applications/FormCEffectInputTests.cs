@@ -17,8 +17,6 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FORMC-INPUT-001/002: malformed scoring fields cannot replace a saved report draft.
-    // Draft and final writes of points and condition flags all run on the same host.
     [Fact]
     public async Task Write_WhenEffectValueIsInvalid_ReturnsIndexedErrorAndPreservesDraft()
     {
@@ -134,7 +132,6 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-FORMC-INPUT-003: optional points, signed maximum, fractional scoring and empty bools.
     [Theory]
     [InlineData(null, ResearchTaskType.OwnResearchTask, 0)]
     [InlineData("", ResearchTaskType.OwnResearchTask, 0)]

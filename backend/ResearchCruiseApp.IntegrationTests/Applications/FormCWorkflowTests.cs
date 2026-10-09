@@ -18,7 +18,6 @@ public sealed class FormCWorkflowTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FORMC-001: photo replacement/deletion and completion/reopening persist across HTTP scopes.
     [Fact]
     public async Task FormC_WhenPhotosAreReplacedThenRemoved_StoresOnlyCurrentFilesAndCanBeReopened()
     {

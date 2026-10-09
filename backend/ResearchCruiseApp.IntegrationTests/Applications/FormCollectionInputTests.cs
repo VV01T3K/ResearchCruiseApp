@@ -49,9 +49,6 @@ public sealed class FormCollectionInputTests(SqlFixture fixture) : IAsyncLifetim
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FORM-COLLECTION-001/002: explicit null lists/items cannot replace saved B/C drafts.
-    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
-    // Each case covers one form; null lists and null items run on the same host.
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -161,7 +158,6 @@ public sealed class FormCollectionInputTests(SqlFixture fixture) : IAsyncLifetim
         Assert.True(failures.Count == 0, string.Join("; ", failures));
     }
 
-    // BE-FORM-COLLECTION-003: omitted and empty lists retain their supported empty semantics.
     [Theory]
     [InlineData(false, true)]
     [InlineData(false, false)]

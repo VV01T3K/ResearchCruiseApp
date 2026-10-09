@@ -11,7 +11,6 @@ public sealed class IsolationTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ISOLATION-001: reset clears business, Identity, queue and host key state.
     [Fact]
     public async Task Reset_WhenPreviousScenarioWroteData_PreservesOnlyMigrationHistory()
     {

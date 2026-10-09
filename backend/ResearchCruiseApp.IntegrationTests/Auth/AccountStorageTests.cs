@@ -27,7 +27,6 @@ public sealed class AccountStorageTests(SqlFixture fixture) : IAsyncLifetime
         }
     }
 
-    // BE-ACCOUNT-018: Identity's email/name storage limits apply at all three HTTP boundaries.
     [Theory]
     [MemberData(nameof(Boundaries))]
     public async Task Write_WhenFieldReachesStorageBoundary_PersistsLimitAndRejectsOverflow(

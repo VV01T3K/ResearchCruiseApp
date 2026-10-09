@@ -15,7 +15,6 @@ public sealed class FormAAtomicityTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ATOMIC-002: final creation and draft replacement commit with their invitation.
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

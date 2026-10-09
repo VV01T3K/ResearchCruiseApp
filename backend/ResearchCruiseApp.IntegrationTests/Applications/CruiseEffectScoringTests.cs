@@ -17,8 +17,6 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-SCORING-007/008: completion scores each manager, replacement removes old effects,
-    // and final Form A includes only its manager's historical effects.
     [Fact]
     public async Task Effects_WhenSubmittedThenReplaced_ScoreBothManagersAndFeedNextApplication()
     {
@@ -288,8 +286,7 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
         });
 
-        // BE-SCORING-008: draft excludes historical effects; final submission takes 738,
-        // not the combined manager/deputy total of 1406.
+        // Final submission takes 738, not the combined manager/deputy total of 1406.
         var nextForm = FormAWorkflowTests.CompleteForm(managerId, deputyId, unit.Id);
         using var nextDraft = await manager.PostAsJsonAsync(
             "/v2/applications",

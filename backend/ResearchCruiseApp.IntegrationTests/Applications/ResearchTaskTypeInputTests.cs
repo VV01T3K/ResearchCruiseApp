@@ -18,9 +18,6 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-TASK-TYPE-001: reject unsupported enum values before mapping/scoring/replacement.
-    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
-    // Each case covers one route; every unsupported value runs on the same host.
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -33,7 +30,6 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
         using var client = prepared.Client;
         var original = await Snapshot(app);
         var originalHttp = target == 0 ? null : await Read(client, prepared.Route);
-        // Out-of-range, undefined, unknown or differently cased names, null, then an omitted key.
         (string? Value, bool Omit)[] values =
         [
             ("2147483648", false),
@@ -79,7 +75,6 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-TASK-TYPE-002: preserve all declared types and existing Enum.Parse representations.
     [Theory]
     [InlineData(0, true)]
     [InlineData(0, false)]

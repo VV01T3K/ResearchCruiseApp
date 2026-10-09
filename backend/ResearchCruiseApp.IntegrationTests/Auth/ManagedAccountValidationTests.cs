@@ -15,7 +15,6 @@ public sealed class ManagedAccountValidationTests(SqlFixture fixture) : IAsyncLi
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ACCOUNT-007: invalid email is rejected by both real managed-account routes.
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -84,7 +83,6 @@ public sealed class ManagedAccountValidationTests(SqlFixture fixture) : IAsyncLi
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-ACCOUNT-008: null/omitted email and an empty update preserve credentials and membership.
     [Fact]
     public async Task Update_WhenEmailIsOmittedOrNull_PreservesEmailAndSessionWhileChangingNames()
     {

@@ -16,7 +16,6 @@ public sealed class FormBWorkflowTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FORMB-001: draft replacement preserves children, final submission locks, office may reopen.
     [Fact]
     public async Task FormB_WhenSavedReplacedSubmittedAndReopened_PersistsExpectedStateAndChildren()
     {

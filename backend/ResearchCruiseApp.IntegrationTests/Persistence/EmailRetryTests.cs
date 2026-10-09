@@ -10,7 +10,6 @@ public sealed class EmailRetryTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-EMAIL-002: retry schedule and identity survive a failed SMTP attempt.
     [Fact]
     public async Task Dispatch_WhenTransportFails_RetriesOnlyWhenDueWithTheSameMessageId()
     {
@@ -70,7 +69,6 @@ public sealed class EmailRetryTests(SqlFixture fixture) : IAsyncLifetime
         );
     }
 
-    // BE-EMAIL-005: terminal rows lose sensitive payloads and do not block other delivery.
     [Theory]
     [InlineData("expired")]
     [InlineData("exhausted")]

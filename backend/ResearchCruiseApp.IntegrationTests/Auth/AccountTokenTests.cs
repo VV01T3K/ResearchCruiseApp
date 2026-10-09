@@ -23,7 +23,6 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ACCOUNT-011: expired or corrupted protected email tokens leave the original usable.
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -104,7 +103,6 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Single(app.Transport.Messages);
     }
 
-    // BE-ACCOUNT-012: a genuine token cannot confirm or reset another existing account.
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -143,7 +141,6 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(2, app.Transport.Messages.Count);
     }
 
-    // BE-ACCOUNT-013: reset/confirmation tokens share a protector, but their purposes differ.
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -168,7 +165,6 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(2, app.Transport.Messages.Count);
     }
 
-    // BE-ACCOUNT-014: current confirmation replay is idempotent and preserves a live session.
     [Fact]
     public async Task Confirm_WhenLinkIsRepeated_PreservesAcceptedAccountAndRefreshSession()
     {
@@ -205,7 +201,6 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(2, app.Transport.Messages.Count);
     }
 
-    // BE-ACCOUNT-015: changing the password invalidates a previously issued confirmation token.
     [Fact]
     public async Task Confirm_WhenPasswordResetChangesSecurityStamp_RejectsOldTokenAndAllowsResend()
     {

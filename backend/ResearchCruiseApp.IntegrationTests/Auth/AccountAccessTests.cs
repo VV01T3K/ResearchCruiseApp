@@ -26,7 +26,6 @@ public sealed class AccountAccessTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ACCOUNT-009: real list routes apply role restrictions and filter eligible managers.
     [Theory]
     [InlineData("anonymous", HttpStatusCode.Unauthorized)]
     [InlineData(RoleName.Guest, HttpStatusCode.Forbidden)]
@@ -143,7 +142,6 @@ public sealed class AccountAccessTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-ACCOUNT-010: shipowners can edit lower single-role accounts, never their peers/admins.
     [Theory]
     [InlineData(RoleName.Administrator, HttpStatusCode.Forbidden)]
     [InlineData(RoleName.Shipowner, HttpStatusCode.Forbidden)]

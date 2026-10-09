@@ -8,9 +8,8 @@ public sealed class DraftValidationTests
 {
     private static readonly FileInspector FileInspector = new();
 
-    // BE-FORM-VALIDATION-002: drafts accept partially filled nested objects; B/C submission does not.
     // Unfilled values arrive as empty strings, as the frontend sends them. Omitting a key for a
-    // required column stays rejected even in drafts (BE-FORM-FIELD-001/002).
+    // required column stays rejected even in drafts.
     [Fact]
     public void Validate_WhenDraftHasPartialNestedObjects_AcceptsDraftButRejectsSubmission()
     {

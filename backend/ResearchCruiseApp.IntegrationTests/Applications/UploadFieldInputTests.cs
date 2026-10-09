@@ -23,9 +23,6 @@ public sealed class UploadFieldInputTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FILE-009: shared non-null upload fields reject before factory/scoring/file changes.
-    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
-    // Each case covers one upload location; every field/shape combination runs on the same host.
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -94,7 +91,6 @@ public sealed class UploadFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         }
     }
 
-    // BE-FILE-010: reject the first unsupported length; preserve the exact supported boundary.
     [Theory]
     [InlineData(0)]
     [InlineData(1)]

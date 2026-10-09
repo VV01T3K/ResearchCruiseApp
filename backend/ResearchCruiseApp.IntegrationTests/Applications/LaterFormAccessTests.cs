@@ -17,9 +17,6 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ACCESS-007/008: test route policies and existing assignment on editable B/C applications.
-    // Forms B and C share one access check, so each actor runs once. Every outcome still runs on
-    // both routes, and the owner and anonymous cases run on both.
     [Theory]
     [InlineData("b", "owner", HttpStatusCode.Created)]
     [InlineData("c", "owner", HttpStatusCode.Created)]

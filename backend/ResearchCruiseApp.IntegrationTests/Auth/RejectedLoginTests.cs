@@ -12,7 +12,6 @@ public sealed class RejectedLoginTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-AUTH-002: failed authentication must not create a refresh session.
     [Theory]
     [InlineData("wrong-password")]
     [InlineData("unknown-account")]

@@ -10,7 +10,6 @@ public sealed class EmailLeaseTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-EMAIL-003: an independent worker cannot deliver a message with an active lease.
     [Fact]
     public async Task Dispatch_WhenAnotherWorkerIsDelivering_DoesNotTakeItsLease()
     {
@@ -63,7 +62,6 @@ public sealed class EmailLeaseTests(SqlFixture fixture) : IAsyncLifetime
         );
     }
 
-    // BE-EMAIL-004: shutdown retains a durable lease; a replacement recovers after expiry.
     [Fact]
     public async Task Dispatch_WhenCancelledDuringDelivery_RecoversAfterLeaseExpiry()
     {

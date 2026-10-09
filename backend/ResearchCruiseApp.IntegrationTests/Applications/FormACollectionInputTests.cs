@@ -40,9 +40,6 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FORM-COLLECTION-004: both Form A routes reject null lists/items without business writes.
-    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
-    // Each case covers one route; null lists and null items run on the same host.
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -75,9 +72,6 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         Assert.True(failures.Count == 0, string.Join("; ", failures));
     }
 
-    // BE-FORM-COLLECTION-006: nested scan lists/items are shared by A create/update and C update.
-    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
-    // Each case covers one route; a null scan list and a null scan item run on the same host.
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
@@ -114,7 +108,6 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         Assert.True(failures.Count == 0, string.Join("; ", failures));
     }
 
-    // BE-FORM-COLLECTION-005: empty/omitted drafts remain supported; final completeness still applies.
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -179,7 +172,6 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-FORM-COLLECTION-005: optional empty lists do not prevent a complete final submission.
     [Theory]
     [InlineData(true, true)]
     [InlineData(true, false)]
@@ -247,7 +239,6 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         );
     }
 
-    // BE-FORM-COLLECTION-006: omitted/empty nested scan lists remain supported by both forms.
     [Theory]
     [InlineData(false, true)]
     [InlineData(false, false)]

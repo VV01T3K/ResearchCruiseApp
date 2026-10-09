@@ -17,7 +17,6 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-SCORING-004: fixed task categories and both preparation branches use literal scores.
     [Fact]
     public async Task ResearchTasks_WhenCategoriesAreCombined_PersistsEachScoreAndClearsReplacement()
     {
@@ -93,7 +92,6 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         await AssertSummary(app, client, id, 0);
     }
 
-    // BE-SCORING-005: contracts, publication truncation and SPUB add to the same persisted total.
     [Fact]
     public async Task SupportingCategories_WhenCombined_PersistsScoresAndRecalculatesRemoval()
     {
@@ -229,7 +227,6 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         await AssertSummary(app, client, id, 0);
     }
 
-    // BE-SCORING-006: empty teams do not count, both employee/student participation does.
     [Theory]
     [InlineData(0, 0)]
     [InlineData(1, 0)]
@@ -296,7 +293,6 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         await AssertSummary(app, client, id, 0);
     }
 
-    // BE-SCORING-012: team fields support unsigned counts, including values above Int32.
     [Fact]
     public async Task UgUnits_WhenCountsExceedSignedRange_PreservesCountsAndScoresNonemptyTeams()
     {
@@ -411,7 +407,6 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-SCORING-001: complete funding bands score points; replacing a draft recalculates them.
     [Theory]
     [InlineData("4", "50", "100", 200)]
     [InlineData("5", "80", "160", 320)]
@@ -490,7 +485,6 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-SCORING-002: non-finite amounts cannot enter scoring or persistence.
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -534,7 +528,6 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-SCORING-003: incomplete drafts may omit funding without failing numeric scoring.
     [Theory]
     [InlineData(null)]
     [InlineData("")]

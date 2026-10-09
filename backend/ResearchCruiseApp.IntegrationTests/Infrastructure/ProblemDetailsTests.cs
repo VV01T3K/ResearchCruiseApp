@@ -13,7 +13,6 @@ public sealed class ProblemDetailsTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-INFRA-007: failed logins, bodiless failures and Identity errors explain themselves in Polish.
     [Fact]
     public async Task Request_WhenItFailsWithoutFieldErrors_ReturnsPolishProblemDetail()
     {
@@ -58,7 +57,6 @@ public sealed class ProblemDetailsTests(SqlFixture fixture) : IAsyncLifetime
         });
     }
 
-    // BE-INFRA-007: validation problems key Polish messages by camelCase JSON path, without detail.
     [Fact]
     public async Task Register_WhenFieldsAreEmpty_ReturnsPolishErrorsByJsonPath()
     {

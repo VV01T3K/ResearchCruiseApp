@@ -18,9 +18,6 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-EQUIPMENT-ACTION-001: reject before resolving equipment or replacing saved links.
-    // Drafts only: final submission runs the same rule, so repeating it adds runtime, not coverage.
-    // Each case covers one form; every unsupported value runs on the same host.
     [Theory]
     [InlineData("b")]
     [InlineData("c")]
@@ -31,7 +28,6 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
         var application = await TestApplications.Create(app, EditableStatus(form));
         using var client = await TestApplications.Login(app, application.OwnerEmail);
         var route = $"/v2/applications/{application.Id}/form-{form}";
-        // Out-of-range, undefined, unknown or differently cased names, null, then an omitted key.
         (string? Value, bool Omit)[] values =
         [
             ("2147483648", false),
@@ -95,7 +91,6 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-EQUIPMENT-ACTION-002: retain named, numeric, whitespace and comma parser compatibility.
     [Theory]
     [InlineData("b", true)]
     [InlineData("b", false)]

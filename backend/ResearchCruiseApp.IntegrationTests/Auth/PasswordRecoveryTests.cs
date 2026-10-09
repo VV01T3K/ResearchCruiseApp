@@ -14,7 +14,6 @@ public sealed class PasswordRecoveryTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ACCOUNT-002: use the real emailed reset token and verify session revocation/replay.
     [Fact]
     public async Task ResetPassword_WhenEmailTokenIsUsed_ChangesPasswordRevokesSessionAndRejectsReplay()
     {

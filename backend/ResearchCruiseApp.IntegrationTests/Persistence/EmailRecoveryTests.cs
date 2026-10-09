@@ -13,7 +13,6 @@ public sealed class EmailRecoveryTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-EMAIL-006: rollback of the caller's transaction leaves no deliverable queue row.
     [Fact]
     public async Task Enqueue_WhenCallerRollsBack_DoesNotDeliverTheMessage()
     {
@@ -38,7 +37,6 @@ public sealed class EmailRecoveryTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-EMAIL-001: no shared provider or key ring survives the first host.
     [Fact]
     public async Task Dispatch_WhenHostIsReplaced_RecoversProtectedMessageFromSql()
     {

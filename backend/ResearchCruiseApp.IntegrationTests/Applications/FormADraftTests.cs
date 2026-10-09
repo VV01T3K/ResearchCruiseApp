@@ -19,7 +19,6 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FORMA-001
     [Fact]
     public async Task Create_WhenManagerSavesIncompleteDraft_ReadsPersistedFormAndChildren()
     {
@@ -95,7 +94,6 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-FORMA-002
     [Fact]
     public async Task Create_WhenRequiredFormIsMissing_RejectsWithoutBusinessOrEmailWrites()
     {

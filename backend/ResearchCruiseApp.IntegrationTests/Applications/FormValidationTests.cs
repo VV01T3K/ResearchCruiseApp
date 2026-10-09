@@ -16,7 +16,6 @@ public sealed class FormValidationTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FORM-VALIDATION-001: an incomplete permission is allowed in drafts, rejected on submit.
     [Theory]
     [InlineData("b", CruiseApplicationStatus.FormBRequired)]
     [InlineData("c", CruiseApplicationStatus.Undertaken)]

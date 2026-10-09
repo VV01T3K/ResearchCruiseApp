@@ -15,7 +15,6 @@ namespace ResearchCruiseApp.IntegrationTests.Persistence;
 [Collection(SqlTestCollectionDefinition.Name)]
 public sealed class UpgradeTests(SqlFixture fixture)
 {
-    // BE-UPGRADE-001: latest published release candidate v2.5.1, not an inferred live DB state.
     private const string PreviousMigration =
         "20260213144221_MakeFormAFieldsNullableSoDraftsCanAlwaysBeSaved";
 

@@ -15,7 +15,6 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ATOMIC-003: cleanup failure rolls back replacement; retry retains reused children.
     [Theory]
     [InlineData(false, true)]
     [InlineData(false, false)]
@@ -179,7 +178,6 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
         }
     }
 
-    // BE-FORM-SHARING-001: cleanup honors other applications and every equipment category.
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

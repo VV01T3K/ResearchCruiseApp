@@ -12,7 +12,6 @@ public sealed class AccountDeletionTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ACCOUNT-005: deleting another account obeys role limits and preserves denied sessions.
     [Theory]
     [InlineData("anonymous", RoleName.Guest, HttpStatusCode.Unauthorized)]
     [InlineData(RoleName.CruiseManager, RoleName.Guest, HttpStatusCode.Forbidden)]

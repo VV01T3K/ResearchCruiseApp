@@ -13,7 +13,6 @@ public sealed class FormBindingTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-FORM-BINDING-001: every form rejects absent/null form and absent/mistyped draft flag.
     [Theory]
     [InlineData("a", CruiseApplicationStatus.Draft)]
     [InlineData("b", CruiseApplicationStatus.FormBRequired)]

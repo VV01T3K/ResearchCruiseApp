@@ -15,7 +15,6 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-CRUISE-ACCESS-001: all mutation routes reject anonymous and non-office roles.
     [Theory]
     [InlineData("anonymous", HttpStatusCode.Unauthorized)]
     [InlineData(RoleName.Guest, HttpStatusCode.Forbidden)]
@@ -82,7 +81,6 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-ATOMIC-002: returned manager validation errors do not commit earlier tracked edits.
     [Fact]
     public async Task UpdateCruise_WhenManagerDoesNotExist_PreservesDatesTitleAndAssignments()
     {

@@ -5,7 +5,6 @@ namespace ResearchCruiseApp.IntegrationTests.Persistence;
 
 public sealed class FakeEmailTransportTests
 {
-    // BE-EMAIL-007: real filesystem output stays idempotent for an outbox message ID.
     [Fact]
     public async Task Deliver_WhenRetried_ReplacesTheSameFileAndPreservesOtherMessages()
     {

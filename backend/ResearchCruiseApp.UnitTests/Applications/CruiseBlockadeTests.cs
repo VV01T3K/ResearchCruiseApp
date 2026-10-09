@@ -4,7 +4,6 @@ namespace ResearchCruiseApp.UnitTests.Applications;
 
 public sealed class CruiseBlockadeTests
 {
-    // BE-BLOCKADE-001: a cruise needs one contiguous interval, not summed fragments.
     [Theory]
     [InlineData("none", 4, false)]
     [InlineData("none", 4.01, true)]

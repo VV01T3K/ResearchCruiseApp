@@ -19,7 +19,6 @@ public sealed class SeedAccountTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-STARTUP-003: repair once, then retain the repaired identity and password.
     [Fact]
     public async Task Seed_WhenAccountIsIncomplete_RepairsOnceAndPreservesCredentialsOnRepeat()
     {
@@ -93,7 +92,6 @@ public sealed class SeedAccountTests(SqlFixture fixture) : IAsyncLifetime
         );
     }
 
-    // BE-STARTUP-004: the caller owns the transaction for account, membership and email.
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -140,7 +138,6 @@ public sealed class SeedAccountTests(SqlFixture fixture) : IAsyncLifetime
         );
     }
 
-    // BE-STARTUP-005: a failed repair preserves the original account and earlier caller writes.
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

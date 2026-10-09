@@ -15,7 +15,6 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-ACCOUNT-001: registration commits Identity membership and protected confirmation together.
     [Fact]
     public async Task Register_WhenSmtpIsUnavailable_CommitsAccountAndRetryableConfirmation()
     {
@@ -72,7 +71,6 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         });
     }
 
-    // BE-ATOMIC-001: a real SQL queue failure rolls back account and role writes.
     [Fact]
     public async Task Register_WhenQueuePersistenceFails_RollsBackAccountAndMembership()
     {

@@ -17,7 +17,6 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
-    // BE-SCORING-009: reject numbers that cannot be safely parsed into stored signed points.
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -100,7 +99,6 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-SCORING-010: incomplete drafts carry zero publication points until filled in.
     [Fact]
     public async Task Publication_WhenDraftPointsAreEmpty_PersistsBothCategoriesWithZeroPoints()
     {
@@ -149,7 +147,6 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    // BE-SCORING-011: valid individual Int32 maximum and fractional subject truncation.
     [Theory]
     [InlineData("subject", "1073741823", 1_073_741_823)]
     [InlineData("postscript", "2147483647", 2_147_483_647)]
