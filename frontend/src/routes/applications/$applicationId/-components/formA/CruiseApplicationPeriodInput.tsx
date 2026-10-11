@@ -6,7 +6,10 @@ import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper'
 import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
 import { months } from '@/lib/calendarUtils';
 import { cn } from '@/lib/utils';
-import { getExplanationForPeriod } from '@/routes/applications/$applicationId/-components/formA/cruisePeriodExplanation';
+import {
+  getExplanationForPeriod,
+  getPeriodBoundaryText,
+} from '@/routes/applications/$applicationId/-components/formA/cruisePeriodExplanation';
 import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 
 type Props = {
@@ -83,6 +86,8 @@ export function CruiseApplicationPeriodInput({
     onChange?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
   };
   const stepPositions = Array.from(Array(25).keys()).map((i) => (i / 24) * 100);
+  const periodName = typeof label === 'string' ? label : 'Okres';
+  const getThumbLabel = (index: number) => `${periodName}: ${index === 0 ? 'początek' : 'koniec'}`;
   return (
     <div className="flex flex-col">
       <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
@@ -127,6 +132,8 @@ export function CruiseApplicationPeriodInput({
           </Slider.Track>
           <Slider.Thumb
             index={0}
+            getAriaLabel={getThumbLabel}
+            getAriaValueText={(_, thumbValue, thumbIndex) => getPeriodBoundaryText(thumbValue, thumbIndex)}
             className={cn(
               'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none',
               !disabled ? 'bg-primary-800 cursor-pointer' : 'bg-gray-400',
@@ -135,6 +142,8 @@ export function CruiseApplicationPeriodInput({
           />
           <Slider.Thumb
             index={1}
+            getAriaLabel={getThumbLabel}
+            getAriaValueText={(_, thumbValue, thumbIndex) => getPeriodBoundaryText(thumbValue, thumbIndex)}
             className={cn(
               'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none',
               !disabled ? 'bg-primary-800 cursor-pointer' : 'bg-gray-400',

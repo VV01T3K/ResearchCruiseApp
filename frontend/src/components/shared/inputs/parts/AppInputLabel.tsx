@@ -4,10 +4,11 @@ type Props = {
   value: React.ReactNode | undefined;
 
   name?: string;
+  id?: string;
   className?: string;
   showRequiredAsterisk?: boolean;
 };
-export function AppInputLabel({ name, value, className, showRequiredAsterisk }: Props) {
+export function AppInputLabel({ name, id, value, className, showRequiredAsterisk }: Props) {
   if (!value) return null;
 
   const labelContent: React.ReactNode = value;
@@ -18,7 +19,7 @@ export function AppInputLabel({ name, value, className, showRequiredAsterisk }: 
   }
 
   return (
-    <label htmlFor={name} className={cn('mb-2 block text-sm font-medium text-gray-900', className)}>
+    <label htmlFor={name} id={id} className={cn('mb-2 block text-sm font-medium text-gray-900', className)}>
       <span title={showAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>{labelContent}</span>
       {showAsterisk && (
         <span className="ml-1 font-bold text-red-600" title="Pole jest obowiązkowe do wypełnienia">

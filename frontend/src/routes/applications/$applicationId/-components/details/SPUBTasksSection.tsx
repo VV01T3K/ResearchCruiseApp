@@ -55,6 +55,7 @@ export function SPUBTasksSection() {
       enableSorting: false,
       cell: ({ row }) => (
         <AppInput
+          aria-label="Nazwa zadania"
           name={`spubTasks[${row.index}].name`}
           value={row.original.spubTask.name}
           showRequiredAsterisk

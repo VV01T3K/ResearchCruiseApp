@@ -28,6 +28,7 @@ export function MembersSection() {
       accessorFn: (row) => row.noOfEmployees,
       cell: ({ row }) => (
         <AppNumberInput
+          aria-label="Liczba pracowników"
           name={`ugTeams[${row.index}].noOfEmployees`}
           value={parseInt(row.original.noOfEmployees)}
           minimum={0}
@@ -50,6 +51,7 @@ export function MembersSection() {
       accessorFn: (row) => row.noOfStudents,
       cell: ({ row }) => (
         <AppNumberInput
+          aria-label="Liczba studentów"
           name={`ugTeams[${row.index}].noOfStudents`}
           value={parseInt(row.original.noOfStudents)}
           minimum={0}
@@ -83,6 +85,7 @@ export function MembersSection() {
       accessorFn: (row) => row.noOfPersons,
       cell: ({ row }) => (
         <AppNumberInput
+          aria-label="Liczba osób"
           name={`guestTeams[${row.index}].noOfPersons`}
           value={Number(row.original.noOfPersons)}
           minimum={0}

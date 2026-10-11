@@ -40,6 +40,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
             name={`ugTeams[${row.index}].noOfEmployees`}
             children={(field) => (
               <field.NumberField
+                aria-label="Liczba pracowników"
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
@@ -63,6 +64,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
             name={`ugTeams[${row.index}].noOfStudents`}
             children={(field) => (
               <field.NumberField
+                aria-label="Liczba studentów"
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
@@ -109,7 +111,12 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
           <form.AppField
             name={`guestTeams[${row.index}].name`}
             children={(field) => (
-              <field.TextField containerClassName="mx-4" showRequiredAsterisk disabled={isReadonly} />
+              <field.TextField
+                aria-label="Instytucja"
+                containerClassName="mx-4"
+                showRequiredAsterisk
+                disabled={isReadonly}
+              />
             )}
           />
         ),
@@ -125,6 +132,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
             name={`guestTeams[${row.index}].noOfPersons`}
             children={(field) => (
               <field.NumberField
+                aria-label="Liczba osób"
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);

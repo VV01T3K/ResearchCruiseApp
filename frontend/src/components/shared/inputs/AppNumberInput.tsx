@@ -21,6 +21,8 @@ type CommonProps = {
   className?: string;
   disabled?: boolean;
   helper?: React.ReactNode;
+  /** Accessible name for inputs without a visible label, such as table cells. */
+  'aria-label'?: string;
   minimum?: number;
   maximum?: number;
   step?: number;
@@ -63,6 +65,7 @@ export function AppNumberInput({
   className,
   disabled,
   helper,
+  'aria-label': ariaLabel,
   minimum,
   maximum,
   step = 1,
@@ -155,6 +158,7 @@ export function AppNumberInput({
               onBlur?.();
             }}
             disabled={disabled}
+            aria-label={ariaLabel}
             {...aria.inputProps}
             className={cn(
               'block h-11 w-full border border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900',
@@ -202,6 +206,7 @@ function AppNumberInputButton({ side, inputToFocus, onClick, disabled }: ButtonP
     <AppButton
       onClick={() => handleClick()}
       disabled={disabled}
+      aria-label={side === 'left' ? 'Zmniejsz' : 'Zwiększ'}
       className={cn(
         'flex h-11 w-11 items-center justify-center',
         'text-gray-500',

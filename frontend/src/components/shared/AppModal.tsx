@@ -32,7 +32,10 @@ export function AppModal({ title, children, isOpen, onClose, className, dismissi
             {dismissible && (
               <Dialog.Close
                 render={
-                  <button className="rounded-md p-2 text-gray-500 hover:cursor-pointer hover:bg-black/5 hover:text-gray-700" />
+                  <button
+                    aria-label="Zamknij"
+                    className="rounded-md p-2 text-gray-500 hover:cursor-pointer hover:bg-black/5 hover:text-gray-700"
+                  />
                 }
               >
                 <XLgIcon className="h-5 w-5" />

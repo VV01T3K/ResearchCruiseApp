@@ -28,6 +28,7 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].number`}
         children={(field) => (
           <field.NumberField
+            aria-label="Dzień"
             data-testid-input="cruise-day-number-input"
             data-testid-errors="cruise-day-number-errors"
             disabled={isReadonly}
@@ -49,6 +50,7 @@ const cruiseDayDetailsColumns = (
         name={`cruiseDaysDetails[${row.index}].hours`}
         children={(field) => (
           <field.NumberField
+            aria-label="Liczba godzin"
             data-testid-input="cruise-day-hours-input"
             data-testid-errors="cruise-day-hours-errors"
             disabled={isReadonly}

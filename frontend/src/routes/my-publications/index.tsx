@@ -44,6 +44,7 @@ function MyPublicationsPage() {
       header: ({ table }) => (
         <AppCheckbox
           name="selectAllPublications"
+          aria-label="Zaznacz wszystkie publikacje"
           onChange={(x) => table.toggleAllRowsSelected(x)}
           checked={table.getIsAllRowsSelected()}
           size="lg"
@@ -52,6 +53,7 @@ function MyPublicationsPage() {
       cell: ({ row }) => (
         <AppCheckbox
           name={`selectPublication-${row.id}`}
+          aria-label={`Zaznacz publikację ${row.original.title ?? row.original.doi ?? ''}`.trim()}
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}
           onChange={(checked) => row.toggleSelected(checked)}
