@@ -27,6 +27,7 @@ import {
 import { getErrorMessage } from '@/api/errors';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formC')({
@@ -143,6 +144,7 @@ function FormCPage() {
           <FormView context={context} />
         </form.AppForm>
       </AppLayout>
+      <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} />
     </>
   );
 }
