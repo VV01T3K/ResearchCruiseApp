@@ -12,7 +12,7 @@ export const researchAreaSelectionInfoMax = 10240;
 export const ResearchAreaSelection = zod.object({
   "areaId": zod.string().regex(researchAreaSelectionAreaIdRegExp).nullish(),
   "differentName": zod.string().min(researchAreaSelectionDifferentNameMin).max(researchAreaSelectionDifferentNameMax).nullish(),
-  "info": zod.string().min(researchAreaSelectionInfoMin).max(researchAreaSelectionInfoMax).nullish()
+  "info": zod.string().min(researchAreaSelectionInfoMin).max(researchAreaSelectionInfoMax).optional()
 });
 
 export type ResearchAreaSelection = zod.input<typeof ResearchAreaSelection>;
