@@ -6,6 +6,11 @@ on:
     branches-ignore: [staging, main]
     paths-ignore:
       - docs
+  # Fork branches never push here, so their pull requests run the checks instead.
+  pull_request:
+    branches: [staging, main]
+    paths-ignore:
+      - docs
   workflow_call:
 
 concurrency:
@@ -15,6 +20,7 @@ concurrency:
 jobs:
   javascript-audit:
     name: JavaScript dependency audit
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork
     runs-on: ubuntu-latest
 
     steps:
@@ -31,6 +37,7 @@ jobs:
 
   frontend-checks:
     name: Frontend checks
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork
     runs-on: ubuntu-latest
 
     defaults:
@@ -69,6 +76,7 @@ jobs:
 
   backend-checks:
     name: Backend checks
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
