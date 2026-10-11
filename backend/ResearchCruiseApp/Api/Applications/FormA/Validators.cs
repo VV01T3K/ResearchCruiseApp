@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using FluentValidation;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
@@ -12,100 +12,21 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     public FormAWriteRequestValidator(FileInspector fileInspector)
     {
         _fileInspector = fileInspector;
-        var collections = new InlineValidator<FormAFields>();
-        collections.Include(new StorageValidator<FormAFields>());
-        collections.RuleForEach(fields => fields.AcceptablePeriod).MaximumLength(1024);
-        collections.RuleForEach(fields => fields.OptimalPeriod).MaximumLength(1024);
-        collections.RuleFor(fields => fields.Permissions).NotNull().ForEach(item => item.NotNull());
-        collections
-            .RuleFor(fields => fields.ResearchAreaDescriptions)
-            .NotNull()
-            .ForEach(item => item.NotNull());
-        collections
-            .RuleFor(fields => fields.ResearchTasks)
-            .NotNull()
-            .ForEach(item =>
-                item.NotNull()
-                    .ChildRules(task =>
-                        task.RuleFor(fields => fields.Type)
-                            .Must(value =>
-                                Enum.TryParse<ResearchTaskType>(value, out var type)
-                                && Enum.IsDefined(type)
-                            )
-                            .WithMessage("Podany typ zadania jest nieprawidłowy.")
-                    )
-            );
-        collections
-            .RuleFor(fields => fields.Contracts)
-            .NotNull()
-            .ForEach(item =>
-                item.NotNull()
-                    .ChildRules(contract =>
-                    {
-                        contract
-                            .RuleFor(fields => fields.Scans)
-                            .NotNull()
-                            .ForEach(scan =>
-                                scan.NotNull().SetValidator(new UploadFieldsValidator())
-                            );
-                    })
-            );
-        collections.RuleFor(fields => fields.UgTeams).NotNull().ForEach(item => item.NotNull());
-        collections.RuleFor(fields => fields.GuestTeams).NotNull().ForEach(item => item.NotNull());
-        collections
-            .RuleFor(fields => fields.Publications)
-            .NotNull()
-            .ForEach(item => item.NotNull());
-        collections.RuleFor(fields => fields.SpubTasks).NotNull().ForEach(item => item.NotNull());
 
-        collections
-            .RuleForEach(fields => fields.Permissions)
-            .SetValidator(new StorageValidator<PermissionFields>());
-        collections
-            .RuleForEach(fields => fields.UgTeams)
-            .SetValidator(new StorageValidator<UgTeamFields>());
-        collections
-            .RuleForEach(fields => fields.GuestTeams)
-            .SetValidator(new StorageValidator<GuestTeamFields>());
-        collections
-            .RuleForEach(fields => fields.ResearchAreaDescriptions)
-            .SetValidator(new StorageValidator<ResearchAreaSelection>());
-        collections
-            .RuleForEach(fields => fields.ResearchTasks)
-            .SetValidator(new StorageValidator<ResearchTaskFields>());
-        collections
-            .RuleForEach(fields => fields.Contracts)
-            .SetValidator(new StorageValidator<ContractFields>());
-        collections
-            .RuleForEach(fields => fields.SpubTasks)
-            .SetValidator(new StorageValidator<SpubTaskFields>());
-        collections
-            .RuleForEach(fields => fields.Publications)
-            .SetValidator(new StorageValidator<PublicationFields>());
-
-        RuleFor(request => request.Form)
-            .NotNull()
-            .SetValidator(collections)
-            .DependentRules(() =>
-            {
-                AddDraftValidation();
-                AddNonDraftValidation();
-            });
+        AddDraftValidation();
+        AddNonDraftValidation();
     }
 
     private void AddDraftValidation()
     {
         When(
-            request => request.Form is not null && request.Draft,
+            request => request.Draft,
             () =>
             {
                 AddCruiseHoursDraftValidation();
                 AddShipUsageDraftValidation();
                 AddCruiseGoalDraftValidation();
-                AddPermissionsCommonValidation();
-                AddContractScansCommonValidation();
-                AddResearchTasksCommonValidation();
-                AddPublicationPointsDraftValidation();
+                AddResearchTaskDraftValidation();
                 AddUgTeamsDraftValidation();
                 AddGuestTeamsDraftValidation();
             }
@@ -115,7 +36,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private void AddNonDraftValidation()
     {
         When(
-            request => request.Form is not null && !request.Draft,
+            request => !request.Draft,
             () =>
             {
                 AddManagersTeamNonDraftValidation();
@@ -393,6 +314,37 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             .WithMessage("Opisanie celu rejsu jest wymagane.");
     }
 
+    private void AddResearchTaskDraftValidation()
+    {
+        RuleForEach(request => request.Form.ResearchTasks)
+            .Must(researchTaskFields =>
+            {
+                try
+                {
+                    var type = researchTaskFields.Type.ToEnum<ResearchTaskType>();
+
+                    return type
+                        is ResearchTaskType.BachelorThesis
+                            or ResearchTaskType.MasterThesis
+                            or ResearchTaskType.DoctoralThesis
+                            or ResearchTaskType.ProjectPreparation
+                            or ResearchTaskType.DomesticProject
+                            or ResearchTaskType.ForeignProject
+                            or ResearchTaskType.InternalUgProject
+                            or ResearchTaskType.OtherProject
+                            or ResearchTaskType.CommercialProject
+                            or ResearchTaskType.Didactics
+                            or ResearchTaskType.OwnResearchTask
+                            or ResearchTaskType.OtherResearchTask;
+                }
+                catch (ArgumentException)
+                {
+                    return false;
+                }
+            })
+            .WithMessage("Podany typ zadania jest nieprawidłowy.");
+    }
+
     private void AddResearchTasksNonDraftValidation()
     {
         RuleFor(request => request.Form.ResearchTasks)
@@ -500,11 +452,6 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             )
             .WithMessage("Należy podać poprawną kategorię umowy.");
 
-        AddContractScansCommonValidation();
-    }
-
-    private void AddContractScansCommonValidation()
-    {
         RuleForEach(request => request.Form.Contracts)
             .Must(contractFields =>
                 contractFields.Scans.All(scan => scan.Content == "" || scan.Name != "")
@@ -598,19 +545,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             .WithMessage("Należy podać poprawną kategorię publikacji");
 
         RuleForEach(request => request.Form.Publications)
-            .Must(publicationFields => IsNonNegativeInt(publicationFields.MinisterialPoints))
-            .WithMessage(
-                "Podano liczbę punktów ministerialnych publikacji w niepoprawnym formacie."
-            );
-    }
-
-    private void AddPublicationPointsDraftValidation()
-    {
-        RuleForEach(request => request.Form.Publications)
-            .Must(publicationFields =>
-                publicationFields.MinisterialPoints == ""
-                || IsNonNegativeInt(publicationFields.MinisterialPoints)
-            )
+            .Must(publicationFields => uint.TryParse(publicationFields.MinisterialPoints, out _))
             .WithMessage(
                 "Podano liczbę punktów ministerialnych publikacji w niepoprawnym formacie."
             );
@@ -637,12 +572,8 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     private static bool IsNonNegativeDouble(string? value)
     {
         return double.TryParse(value, CultureInfo.InvariantCulture, out var valueDouble)
-            && double.IsFinite(valueDouble)
             && valueDouble >= 0;
     }
-
-    private static bool IsNonNegativeInt(string? value) =>
-        int.TryParse(value, out var points) && points >= 0;
 
     private static bool IsValidShipUsage(string? shipUsage)
     {

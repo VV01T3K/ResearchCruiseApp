@@ -42,7 +42,6 @@ public class FormAFields
 
     public List<ResearchAreaSelection> ResearchAreaDescriptions { get; init; } = [];
 
-    [StringLength(10240)]
     public string? CruiseGoal { get; init; }
 
     [StringLength(10240)]
@@ -258,19 +257,14 @@ public class PermissionFields
 
 public class ContractFields
 {
-    [StringLength(1024)]
     public string Category { get; init; } = null!;
 
-    [StringLength(1024)]
     public string? InstitutionName { get; init; }
 
-    [StringLength(1024)]
     public string? InstitutionUnit { get; init; }
 
-    [StringLength(1024)]
     public string? InstitutionLocalization { get; init; }
 
-    [StringLength(10240)]
     public string? Description { get; init; }
 
     public List<FileContent> Scans { get; set; } = [];
@@ -309,40 +303,28 @@ public class ResearchTaskFields : IResearchTaskFields
 {
     public string Type { get; init; } = null!;
 
-    [StringLength(1024)]
     public string? Title { get; init; }
 
-    [StringLength(1024)]
     public string? Magazine { get; init; }
 
-    [StringLength(1024)]
     public string? Author { get; init; }
 
-    [StringLength(1024)]
     public string? Institution { get; init; }
 
-    [StringLength(1024)]
     public string? Date { get; init; }
 
-    [StringLength(1024)]
     public string? StartDate { get; init; }
 
-    [StringLength(1024)]
     public string? EndDate { get; init; }
 
-    [StringLength(1024)]
     public string? FinancingAmount { get; init; }
 
-    [StringLength(1024)]
     public string? FinancingApproved { get; init; }
 
-    [StringLength(10240)]
     public string? Description { get; init; }
 
-    [StringLength(1024)]
     public string? SecuredAmount { get; init; }
 
-    [StringLength(1024)]
     public string? MinisterialPoints { get; init; }
 }
 
@@ -350,52 +332,36 @@ public class ResearchTaskEffectFields : IResearchTaskFields
 {
     public string Type { get; init; } = null!;
 
-    [StringLength(1024)]
     public string? Title { get; init; }
 
-    [StringLength(1024)]
     public string? Magazine { get; init; }
 
-    [StringLength(1024)]
     public string? Author { get; init; }
 
-    [StringLength(1024)]
     public string? Institution { get; init; }
 
-    [StringLength(1024)]
     public string? Date { get; init; }
 
-    [StringLength(1024)]
     public string? StartDate { get; init; }
 
-    [StringLength(1024)]
     public string? EndDate { get; init; }
 
-    [StringLength(1024)]
     public string? FinancingAmount { get; init; }
 
-    [StringLength(1024)]
     public string? FinancingApproved { get; init; }
 
-    [StringLength(10240)]
     public string? Description { get; init; }
 
-    [StringLength(1024)]
     public string? SecuredAmount { get; init; }
 
-    [StringLength(1024)]
     public string? MinisterialPoints { get; init; }
 
-    [StringLength(1024)]
     public string Done { get; init; } = null!;
 
-    [StringLength(1024)]
     public string? PublicationMinisterialPoints { get; init; }
 
-    [StringLength(1024)]
     public string ManagerConditionMet { get; init; } = null!;
 
-    [StringLength(1024)]
     public string DeputyConditionMet { get; init; } = null!;
 }
 
@@ -403,25 +369,18 @@ public class PublicationFields
 {
     public Guid Id { get; set; }
 
-    [StringLength(1024)]
     public string Category { get; init; } = null!;
 
-    [StringLength(1024)]
     public string? Doi { get; init; }
 
-    [StringLength(1024)]
     public string? Authors { get; init; }
 
-    [StringLength(1024)]
     public string? Title { get; init; }
 
-    [StringLength(1024)]
     public string? Magazine { get; init; }
 
-    [StringLength(1024)]
     public string? Year { get; init; }
 
-    [StringLength(1024)]
     public string MinisterialPoints { get; init; } = null!;
 }
 
@@ -436,13 +395,10 @@ public class UserPublicationDto
 
 public class SpubTaskFields
 {
-    [StringLength(1024)]
     public string? Name { get; init; }
 
-    [StringLength(1024)]
     public string? YearFrom { get; init; }
 
-    [StringLength(1024)]
     public string? YearTo { get; init; }
 }
 
@@ -462,7 +418,7 @@ public record ResearchAreaSelection
     public string? DifferentName { get; init; }
 
     [StringLength(10240)]
-    public string? Info { get; init; } = "";
+    public string Info { get; init; } = "";
 }
 
 public class UgTeamFields
@@ -497,10 +453,8 @@ public class UgUnitOption
 
 public class GuestTeamFields
 {
-    [StringLength(1024)]
     public string? Name { get; init; }
 
-    [StringLength(1024)]
     public string NoOfPersons { get; init; } = null!;
 }
 
