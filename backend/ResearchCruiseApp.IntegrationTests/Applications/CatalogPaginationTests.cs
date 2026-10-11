@@ -153,7 +153,6 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Contains(managers, manager => manager.Id == Guid.Parse(other.Id));
         Assert.DoesNotContain(managers, manager => manager.Id == Guid.Parse(hiddenOwner.Id));
 
-        // An owner removes the deputy through HTTP; the existing actor session loses access immediately.
         using var owner = await TestApplications.Login(app, other.Email!);
         using var removed = await owner.PutAsJsonAsync(
             $"/v2/applications/{deputyDraft.Id}/form-a",

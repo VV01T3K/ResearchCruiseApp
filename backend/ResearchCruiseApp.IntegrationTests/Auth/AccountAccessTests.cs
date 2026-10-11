@@ -129,7 +129,6 @@ public sealed class AccountAccessTests(SqlFixture fixture) : IAsyncLifetime
                     manager.Email
                 );
             }
-            // The account list must expose no password, security stamp or refresh credential.
             using var json = JsonDocument.Parse(body);
             foreach (var user in json.RootElement.EnumerateArray())
                 Assert.Equal(

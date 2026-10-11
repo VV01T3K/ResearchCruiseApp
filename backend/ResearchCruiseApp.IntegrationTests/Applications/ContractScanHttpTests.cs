@@ -96,7 +96,6 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         };
         form.Contracts[0].Scans.Clear();
         form.Contracts[0].Scans.Add(second);
-        // Empty upload controls are accepted but never create a ContractFile row.
         form.Contracts[0].Scans.Add(new FileContent { Name = "", Content = "" });
         using var replaced = await Write(client, route, form, true);
         Assert.Equal(HttpStatusCode.NoContent, replaced.StatusCode);

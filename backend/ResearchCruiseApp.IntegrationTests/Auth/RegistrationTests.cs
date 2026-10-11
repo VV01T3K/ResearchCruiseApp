@@ -128,7 +128,6 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             );
         }
 
-        // The same request succeeds after removing only the injected persistence fault.
         using var recovered = await client.PostAsJsonAsync(
             "/v2/auth/register",
             new

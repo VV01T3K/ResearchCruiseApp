@@ -63,7 +63,6 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 parent.GetProperty(Camel(field.Property)).GetString()
             );
         }
-        // Check the actual persisted values independently from the HTTP reader/mapping.
         await app.InDatabase(async db =>
         {
             var contract = target is 0 or 1 or 3 ? await db.Contracts.SingleAsync(ct) : null;
@@ -485,7 +484,6 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                 }
             );
         }
-        // Populate every exercised child with values valid for the existing final rules.
         foreach (
             var group in Boundaries(target)
                 .Where(field => field.Collection is not null)

@@ -75,7 +75,6 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var client =
             actor == "anonymous" ? app.CreateApiClient() : await TestApplications.Login(app, email);
-        // Assigned shipowners may replace the original owner in this fixture.
         using var reader = await TestApplications.Login(
             app,
             actor == "shipowner-owner" ? email : application.OwnerEmail

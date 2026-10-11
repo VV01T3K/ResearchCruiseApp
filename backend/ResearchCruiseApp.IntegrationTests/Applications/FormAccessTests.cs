@@ -191,7 +191,6 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
             session.Access
         );
 
-        // An unrelated shipowner attempts to name themselves manager in the replacement.
         using var response = await client.PutAsJsonAsync(
             $"/v2/applications/{draft.Id}/form-a",
             new FormAWriteRequest

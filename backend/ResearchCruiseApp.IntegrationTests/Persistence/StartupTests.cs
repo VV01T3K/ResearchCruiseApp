@@ -154,7 +154,6 @@ public sealed class StartupTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(await verification.Users.ToListAsync(cancellationToken));
         Assert.Empty(await verification.EmailOutboxMessages.ToListAsync(cancellationToken));
 
-        // Repair a missing reference row, not just an already complete database.
         var removedName = units.Order(StringComparer.Ordinal).First();
         await verification
             .UgUnits.Where(row => row.Name == removedName)
