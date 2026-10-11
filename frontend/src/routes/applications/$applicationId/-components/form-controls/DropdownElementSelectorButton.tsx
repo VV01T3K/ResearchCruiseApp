@@ -38,7 +38,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
           <button
             type="button"
             className={cn(
-              'text-white outline-none hover:cursor-pointer disabled:cursor-default',
+              'text-white outline-none focus-ring hover:cursor-pointer disabled:cursor-default',
               variants[variant],
               'flex items-center gap-4 px-5 py-2.5'
             )}

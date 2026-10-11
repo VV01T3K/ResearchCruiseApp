@@ -22,7 +22,7 @@ export function AppAccordion({
     <Collapsible.Root defaultOpen={!!expandedByDefault} data-testid={testId}>
       <h2 className="w-full">
         <Collapsible.Trigger
-          className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-black/2 px-4 py-4 outline-none"
+          className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-black/2 px-4 py-4 focus-ring outline-none"
           data-testid={toggleTestId}
         >
           <span className="text-lg font-semibold">{title}</span>

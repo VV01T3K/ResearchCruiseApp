@@ -135,7 +135,7 @@ export function CruiseApplicationPeriodInput({
             getAriaLabel={getThumbLabel}
             getAriaValueText={(_, thumbValue, thumbIndex) => getPeriodBoundaryText(thumbValue, thumbIndex)}
             className={cn(
-              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none',
+              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary has-[:focus-visible]:outline-solid',
               !disabled ? 'bg-primary-800 cursor-pointer' : 'bg-gray-400',
               'data-[dragging]:scale-125'
             )}
@@ -145,7 +145,7 @@ export function CruiseApplicationPeriodInput({
             getAriaLabel={getThumbLabel}
             getAriaValueText={(_, thumbValue, thumbIndex) => getPeriodBoundaryText(thumbValue, thumbIndex)}
             className={cn(
-              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none',
+              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary has-[:focus-visible]:outline-solid',
               !disabled ? 'bg-primary-800 cursor-pointer' : 'bg-gray-400',
               'data-[dragging]:scale-125'
             )}

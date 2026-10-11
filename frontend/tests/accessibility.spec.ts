@@ -84,3 +84,72 @@ test.describe('control names', () => {
     await expectNamedControls(formCPage.page);
   });
 });
+
+/**
+ * Tabs through the page and returns every focus stop without a visible indicator
+ * (a non-zero outline or a focus box-shadow).
+ */
+async function focusStopsWithoutIndicator(page: Page, maxStops = 250) {
+  const missing: string[] = [];
+  const seen = new Set<number>();
+  for (let stop = 0; stop < maxStops; stop++) {
+    await page.keyboard.press('Tab');
+    const focused = await page.evaluate(() => {
+      const el = document.activeElement as HTMLElement | null;
+      if (!el || el === document.body) return null;
+      const style = getComputedStyle(el);
+      const hasOutline = style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) >= 1;
+      const hasShadow = style.boxShadow !== 'none';
+      const registry = ((window as { focusStops?: Element[] }).focusStops ??= []);
+      if (!registry.includes(el)) registry.push(el);
+      const name = el.getAttribute('aria-label') ?? el.getAttribute('title') ?? el.textContent?.trim();
+      const path = [el.tagName.toLowerCase(), el.id && `#${el.id}`, name].filter(Boolean).join(' ').slice(0, 120);
+      return { path, key: registry.indexOf(el), visible: hasOutline || hasShadow };
+    });
+    if (!focused) continue;
+    if (seen.has(focused.key)) break; // wrapped around
+    seen.add(focused.key);
+    // The TanStack Query devtools toggle exists only in development builds.
+    if (!focused.visible && !/tanstack query devtools/i.test(focused.path)) missing.push(focused.path);
+  }
+  return { missing, stops: seen.size };
+}
+
+test.describe('keyboard focus', () => {
+  test('header controls show a focus indicator', async ({ page }) => {
+    await signInAsAdmin(page);
+    await page.goto('/');
+    const signOut = page.getByRole('button', { name: 'Wyloguj' });
+    await expect(signOut).toBeVisible();
+
+    for (let stop = 0; stop < 20 && !(await signOut.evaluate((el) => el === document.activeElement)); stop++) {
+      await page.keyboard.press('Tab');
+    }
+    await expect(signOut).toBeFocused();
+    const outline = await signOut.evaluate((el) => {
+      const style = getComputedStyle(el);
+      return { matches: el.matches(':focus-visible'), style: style.outlineStyle, width: style.outlineWidth };
+    });
+    expect(outline).toEqual({ matches: true, style: 'solid', width: '2px' });
+  });
+
+  test('every focus stop on the dashboard is visible', async ({ page }) => {
+    await signInAsAdmin(page);
+    await page.goto('/');
+    await expect(page.getByRole('button', { name: 'Wyloguj' })).toBeVisible();
+
+    const { missing, stops } = await focusStopsWithoutIndicator(page);
+    expect(stops).toBeGreaterThan(5);
+    expect(missing).toEqual([]);
+  });
+
+  test('every focus stop on an editable Form A is visible', async ({ formAPage }) => {
+    const { page } = formAPage;
+    await formAPage.fillForm();
+    await expect(page.getByTestId('form-a-period-notes-input')).toBeVisible();
+
+    const { missing, stops } = await focusStopsWithoutIndicator(page, 400);
+    expect(stops).toBeGreaterThan(30);
+    expect(missing).toEqual([]);
+  });
+});

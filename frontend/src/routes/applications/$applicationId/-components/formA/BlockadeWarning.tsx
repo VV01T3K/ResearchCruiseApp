@@ -23,7 +23,7 @@ export function BlockadeWarning({ year, blockades }: Props) {
           <AppAlert variant="warning">
             <Collapsible.Root data-testid="form-a-blockade-warning-accordion">
               <Collapsible.Trigger
-                className="flex w-full cursor-pointer items-center justify-between py-1 outline-none"
+                className="flex w-full cursor-pointer items-center justify-between py-1 focus-ring outline-none"
                 data-testid="form-a-blockade-warning-toggle"
               >
                 <div className="flex flex-col items-start">
