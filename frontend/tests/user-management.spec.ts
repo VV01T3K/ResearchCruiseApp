@@ -78,7 +78,7 @@ for (const mobile of [false, true]) {
       await page.getByRole('button', { name: 'Email', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
       await expect(rows.first()).toContainText('alpha@example.com');
-      await page.getByRole('menuitem', { name: 'zebra@example.com', exact: true }).click();
+      await page.getByRole('menuitemcheckbox', { name: 'zebra@example.com', exact: true }).click();
     }
     await expect(rows).toHaveCount(1);
     await expect(rows).toContainText('zebra@example.com');

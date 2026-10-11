@@ -133,7 +133,7 @@ test('pagination continues through empty pages and resets for sorting and filter
   await expect.poll(() => requests.at(-1)?.get('descending')).toBe('false');
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Rok rejsu', exact: true }).click();
-  await page.getByRole('menuitem', { name: '2026', exact: true }).click();
+  await page.getByRole('menuitemcheckbox', { name: '2026', exact: true }).click();
   await expect.poll(() => requests.at(-1)?.get('year')).toBe('2026');
   expect(requests.at(-1)?.has('cursor')).toBe(false);
 });
@@ -230,15 +230,13 @@ test('number, date and same-named manager filters send exact values', async ({ p
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Kierownik', exact: true }).click();
   await page.getByLabel('Szukaj').fill('other@example.com');
-  await page.getByRole('menuitem', { name: 'Ada Lovelace (other@example.com)' }).click();
+  await page.getByRole('menuitemcheckbox', { name: 'Ada Lovelace (other@example.com)' }).click();
   await expect.poll(() => params.getAll('cruiseManager')).toEqual([otherManager.id]);
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Wyczyść filtry', exact: true }).click();
   await expect.poll(() => params.has('cruiseManager') || params.has('number') || params.has('date')).toBe(false);
   await page.getByRole('button', { name: 'Kierownik', exact: true }).click();
-  await expect(
-    page.getByRole('menuitem', { name: 'Ada Lovelace (other@example.com)' }).getByRole('checkbox')
-  ).not.toBeChecked();
+  await expect(page.getByRole('menuitemcheckbox', { name: 'Ada Lovelace (other@example.com)' })).not.toBeChecked();
 });
 
 test('application detail and evaluation load from v2 routes', async ({ page }) => {
