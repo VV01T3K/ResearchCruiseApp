@@ -22,6 +22,8 @@ type Props = {
   className?: string;
   disabled?: boolean;
   helper?: React.ReactNode;
+  /** Accessible name for checkboxes without a visible label, such as table row selectors. */
+  'aria-label'?: string;
 };
 export function AppCheckbox({
   name,
@@ -36,12 +38,14 @@ export function AppCheckbox({
   className,
   disabled,
   helper,
+  'aria-label': ariaLabel,
 }: Props) {
   const aria = useInputAria(errors, helper);
+  const labelId = `${aria.id}-label`;
   return (
     <div className={cn('flex flex-col', className)}>
       <div className={cn('flex items-center gap-2', labelPosition === 'left' ? 'flex-row' : 'flex-col')}>
-        <AppInputLabel name={aria.id} value={label} className="mb-0" />
+        <AppInputLabel name={aria.id} id={labelId} value={label} className="mb-0" />
 
         <Checkbox.Root
           name={name}
@@ -50,6 +54,8 @@ export function AppCheckbox({
           onBlur={onBlur}
           disabled={disabled}
           {...aria.inputProps}
+          aria-label={ariaLabel}
+          aria-labelledby={label && !ariaLabel ? labelId : undefined}
           className={cn(
             'flex items-center justify-center rounded-md border border-gray-300 transition-all duration-300',
             sizes[size],

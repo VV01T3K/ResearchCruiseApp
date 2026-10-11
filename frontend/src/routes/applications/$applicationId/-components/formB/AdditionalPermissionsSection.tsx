@@ -32,6 +32,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
             name={`permissions[${row.index}].description`}
             children={(field) => (
               <field.TextField
+                aria-label="Treść pozwolenia"
                 data-testid="permission-description-input"
                 data-testid-errors="permission-description-errors"
                 containerClassName="mx-4"
@@ -52,6 +53,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
             name={`permissions[${row.index}].executive`}
             children={(field) => (
               <field.TextField
+                aria-label="Organ wydający"
                 data-testid="permission-executive-input"
                 data-testid-errors="permission-executive-errors"
                 className="mx-4"

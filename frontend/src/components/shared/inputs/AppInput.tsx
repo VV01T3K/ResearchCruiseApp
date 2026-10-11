@@ -13,6 +13,8 @@ type Props = {
   name?: string;
   type?: 'text' | 'password' | 'email' | 'textarea';
   placeholder?: string;
+  /** Accessible name for inputs without a visible label, such as table cells. */
+  'aria-label'?: string;
   onBlur?: () => void;
   onChange?: (value: string) => void;
   errors?: string[];
@@ -31,6 +33,7 @@ export function AppInput({
   value,
   type = 'text',
   placeholder,
+  'aria-label': ariaLabel,
   onBlur,
   onChange,
   errors,
@@ -65,6 +68,7 @@ export function AppInput({
           name={name}
           value={value}
           placeholder={placeholder}
+          aria-label={ariaLabel}
           type={type}
           onBlur={onBlur}
           onChange={(evt) => onChange?.(evt.target.value)}

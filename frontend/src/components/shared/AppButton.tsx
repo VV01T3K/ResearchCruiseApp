@@ -12,6 +12,8 @@ type Props = {
   disabled?: boolean;
   role?: React.HTMLAttributes<HTMLButtonElement>['role'];
   name?: string;
+  title?: string;
+  'aria-label'?: string;
   id?: string;
   'aria-describedby'?: string;
   'aria-invalid'?: boolean;
@@ -28,6 +30,8 @@ export function AppButton(props: Props) {
     disabled,
     role,
     name,
+    title,
+    'aria-label': ariaLabel,
     id,
     'aria-describedby': ariaDescribedBy,
     variant = 'primary',
@@ -50,6 +54,8 @@ export function AppButton(props: Props) {
       disabled={disabled}
       role={role}
       name={name}
+      title={title}
+      aria-label={ariaLabel}
       id={id}
       aria-describedby={ariaDescribedBy}
       aria-invalid={ariaInvalid}

@@ -20,6 +20,7 @@ const shipEquipmentColumns = (form: FormBFormApi, isReadonly: boolean): ColumnDe
         name={`shipEquipmentsIds`}
         children={(field) => (
           <field.ArrayCheckboxField
+            aria-label={`W użyciu: ${row.original.name}`}
             item={row.original.id}
             size="md"
             className="grid place-items-center"

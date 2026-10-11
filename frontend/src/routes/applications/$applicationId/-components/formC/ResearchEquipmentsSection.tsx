@@ -79,7 +79,12 @@ const researchEquipmentsColumns = (
       <form.AppField
         name={`researchEquipments[${row.index}].permission`}
         children={(field) => (
-          <field.CheckboxField size="md" className="grid place-items-center" disabled={isReadonly} />
+          <field.CheckboxField
+            aria-label="Czy uzyskano zgodę opiekuna?"
+            size="md"
+            className="grid place-items-center"
+            disabled={isReadonly}
+          />
         )}
       />
     ),

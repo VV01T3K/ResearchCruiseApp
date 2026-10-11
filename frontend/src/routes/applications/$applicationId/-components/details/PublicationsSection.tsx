@@ -90,6 +90,7 @@ export function PublicationsSection() {
       enableSorting: false,
       cell: ({ row }) => (
         <AppNumberInput
+          aria-label="Punkty ministerialne"
           name={`publications[${row.index}].publication.ministerialPoints`}
           value={row.original.publication.ministerialPoints}
           minimum={0}

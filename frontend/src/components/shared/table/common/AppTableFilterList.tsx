@@ -92,7 +92,12 @@ export function AppTableFilterList<TData extends object, TValue>({ header, expan
     <>
       <div className="inline-flex w-full items-center gap-4 px-4 py-2">
         <div>
-          <AppCheckbox name="toggleAll" checked={areAllChecked} onChange={(x) => toggleAll(x)} />
+          <AppCheckbox
+            name="toggleAll"
+            aria-label="Zaznacz wszystkie wartości"
+            checked={areAllChecked}
+            onChange={(x) => toggleAll(x)}
+          />
         </div>
         <div className="relative w-full text-left">
           <AppFloatingLabelInput

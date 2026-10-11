@@ -45,6 +45,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
             name={`ugTeams[${row.index}].noOfEmployees`}
             children={(field) => (
               <field.NumberField
+                aria-label="Liczba pracowników"
                 data-testid="ug-team-employees"
                 minimum={0}
                 onChange={(x: number) => {
@@ -68,6 +69,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
             name={`ugTeams[${row.index}].noOfStudents`}
             children={(field) => (
               <field.NumberField
+                aria-label="Liczba studentów"
                 data-testid="ug-team-students"
                 minimum={0}
                 onChange={(x: number) => {
@@ -117,6 +119,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
             name={`guestTeams[${row.index}].name`}
             children={(field) => (
               <field.TextField
+                aria-label="Instytucja"
                 data-testid="guest-team-name-input"
                 data-testid-errors="guest-team-name-errors"
                 containerClassName="mx-4"
@@ -137,6 +140,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
             name={`guestTeams[${row.index}].noOfPersons`}
             children={(field) => (
               <field.NumberField
+                aria-label="Liczba osób"
                 data-testid-input="guest-team-people-input"
                 data-testid-errors="guest-team-people-errors"
                 minimum={0}

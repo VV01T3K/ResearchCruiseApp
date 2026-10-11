@@ -58,6 +58,7 @@ function UserManagementPage() {
       header: ({ table }) => (
         <AppCheckbox
           name="selectAllUsers"
+          aria-label="Zaznacz wszystkich użytkowników"
           onChange={(x) => table.toggleAllRowsSelected(x)}
           checked={table.getIsAllRowsSelected()}
           size="lg"
@@ -66,6 +67,7 @@ function UserManagementPage() {
       cell: ({ row }) => (
         <AppCheckbox
           name={`selectUser-${row.id}`}
+          aria-label={`Zaznacz użytkownika ${row.original.email}`}
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}
           onChange={(checked) => row.toggleSelected(checked)}

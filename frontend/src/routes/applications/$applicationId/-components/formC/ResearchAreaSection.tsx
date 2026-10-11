@@ -62,6 +62,7 @@ export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
             name={`researchAreaDescriptions[${row.index}].info`}
             children={(field) => (
               <field.TextField
+                aria-label="Informacje dodatkowe"
                 placeholder={isReadonly ? '' : 'np. szczegóły dotyczące celu rejsu'}
                 disabled={isReadonly}
               />

@@ -19,6 +19,11 @@ function getPointAtTime(position: number): string {
   return `${week} ${month}`;
 }
 
+/** Screen reader text for one slider thumb: index 0 is the period start, index 1 its end. */
+export function getPeriodBoundaryText(value: number, index: number): string {
+  return index === 0 ? `początek ${getPointAtTime(value)}` : `koniec ${getPointAtTime(value - 1)}`;
+}
+
 export function getExplanationForPeriod(start: number, end: number): string {
   if (start === 0 && end === 24) {
     return 'Cały rok';
