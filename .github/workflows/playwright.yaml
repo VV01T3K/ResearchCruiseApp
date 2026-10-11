@@ -2,13 +2,8 @@ name: Playwright Tests
 
 on:
   push:
-    branches:
-      - main
-      - staging
-  pull_request:
-    branches:
-      - main
-      - staging
+    paths-ignore:
+      - docs
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,8 +11,6 @@ concurrency:
 
 jobs:
   test:
-    # Code from forks never runs here.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
