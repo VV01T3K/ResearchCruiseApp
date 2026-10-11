@@ -18,4 +18,4 @@ dotnet test --project ResearchCruiseApp.IntegrationTests/ResearchCruiseApp.Integ
 
 Failed, skipped or missing tests fail the run. If SQL startup times out after two minutes, pull the image named in `SqlFixture.Image` first.
 
-The "Format & lint checks" workflow runs the backend tests after the build; the job times out after 10 minutes.
+The "Format & lint checks" workflow runs frontend unit tests and backend tests; the backend job times out after 10 minutes. Pushes to `staging` and `main` run it inside their deploy workflows, and images build only after it passes.
