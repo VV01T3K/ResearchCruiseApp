@@ -24,6 +24,7 @@ import {
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { getErrorMessage } from '@/api/errors';
 
@@ -116,6 +117,7 @@ function NewCruiseApplicationPage() {
           <FormView context={context} />
         </form.AppForm>
       </AppLayout>
+      <UnsavedChangesGuard form={form} />
 
       <AppModal
         title="Zapisz wersję roboczą Formularza A"
