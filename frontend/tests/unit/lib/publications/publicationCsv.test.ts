@@ -121,6 +121,21 @@ describe('parsePublicationCsv', () => {
       'Niepoprawna liczba kolumn w wierszu 2 pliku CSV (oczekiwano 6).',
     ],
     ['unclosed quotes', `${HEADER}\n10.1/x;A;"Tytuł;M;2026;140`, 'Niezamknięty cudzysłów w wierszu 2 pliku CSV.'],
+    [
+      'short rows after blank lines',
+      `${HEADER}\n\n;;;;;\n10.1/x;A;T`,
+      'Niepoprawna liczba kolumn w wierszu 4 pliku CSV (oczekiwano 6).',
+    ],
+    [
+      'short rows after multi-line quoted values',
+      `${HEADER}\r\n10.1/x;A;"Tytuł\r\nw dwóch liniach";M;2026;140\r\n10.1/y;A;T`,
+      'Niepoprawna liczba kolumn w wierszu 4 pliku CSV (oczekiwano 6).',
+    ],
+    [
+      'unclosed quotes after blank lines',
+      `${HEADER}\n${ROW}\n\n10.1/x;A;"Tytuł;M;2026;140`,
+      'Niezamknięty cudzysłów w wierszu 4 pliku CSV.',
+    ],
   ])('rejects %s with a readable message', (_, csv, message) => {
     expect(() => parsePublicationCsv(csv)).toThrow(PublicationCsvError);
     expect(() => parsePublicationCsv(csv)).toThrow(message);

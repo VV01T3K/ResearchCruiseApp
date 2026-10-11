@@ -46,14 +46,8 @@ export function parsePublicationCsv(text: string): ImportPublicationRequest[] {
     throw new PublicationCsvError('Plik CSV jest pusty.');
   }
 
-  const result = Papa.parse<Record<string, string>>(text, {
-    delimiter: DELIMITER,
-    header: true,
-    skipEmptyLines: 'greedy',
-    transformHeader: (header) => header.replace(/^﻿/, '').trim(),
-  });
-
-  const headers = result.meta.fields ?? [];
+  const [header, ...rows] = parseRecords(text);
+  const headers = header.fields.map((field) => field.replace(/^\uFEFF/, '').trim());
   const missingColumns = Object.values(COLUMNS).filter((column) => !headers.includes(column));
   if (missingColumns.length > 0) {
     const separatorHint =
@@ -63,41 +57,53 @@ export function parsePublicationCsv(text: string): ImportPublicationRequest[] {
     );
   }
 
-  const [error] = result.errors;
-  if (error) {
-    throw new PublicationCsvError(describeParseError(error, text, headers.length));
+  for (const record of [header, ...rows]) {
+    const [error] = record.errors;
+    if (error) {
+      throw new PublicationCsvError(
+        error.code === 'MissingQuotes'
+          ? `Niezamknięty cudzysłów w wierszu ${record.line} pliku CSV.`
+          : `Nie udało się odczytać wiersza ${record.line} pliku CSV.`
+      );
+    }
+    if (record.fields.length !== headers.length) {
+      throw new PublicationCsvError(
+        `Niepoprawna liczba kolumn w wierszu ${record.line} pliku CSV (oczekiwano ${headers.length}).`
+      );
+    }
   }
 
-  if (result.data.length === 0) {
+  if (rows.length === 0) {
     throw new PublicationCsvError('Plik CSV nie zawiera żadnych publikacji.');
   }
 
-  return result.data.map(toImportRequest);
+  return rows.map((record) => toImportRequest(Object.fromEntries(headers.map((h, i) => [h, record.fields[i]]))));
 }
 
 export async function readPublicationCsv(file: Blob): Promise<ImportPublicationRequest[]> {
   return parsePublicationCsv(decodePublicationCsv(await file.arrayBuffer()));
 }
 
-function describeParseError(error: Papa.ParseError, text: string, columnCount: number): string {
-  // Quote errors carry a character index; field count errors carry a 0-based data row following the header line.
-  const line =
-    error.code === 'MissingQuotes' && error.index !== undefined
-      ? text.slice(0, error.index).split('\n').length
-      : error.row !== undefined
-        ? error.row + 2
-        : undefined;
-  const where = line !== undefined ? ` w wierszu ${line}` : '';
+type CsvRecord = { fields: string[]; errors: Papa.ParseError[]; line: number };
 
-  switch (error.code) {
-    case 'MissingQuotes':
-      return `Niezamknięty cudzysłów${where} pliku CSV.`;
-    case 'TooFewFields':
-    case 'TooManyFields':
-      return `Niepoprawna liczba kolumn${where} pliku CSV (oczekiwano ${columnCount}).`;
-    default:
-      return `Nie udało się odczytać pliku CSV${where}.`;
-  }
+// Parses records with the file line each one starts on, so errors point at the right line
+// even after skipped blank lines or quoted values spanning several lines.
+function parseRecords(text: string): CsvRecord[] {
+  const records: CsvRecord[] = [];
+  let offset = 0;
+
+  Papa.parse<string[]>(text, {
+    delimiter: DELIMITER,
+    skipEmptyLines: 'greedy',
+    step: (result) => {
+      // Skipped blank lines sit between the previous record and this one.
+      const start = offset + (text.slice(offset).match(/^[\s;]*/)?.[0].length ?? 0);
+      records.push({ fields: result.data, errors: result.errors, line: text.slice(0, start).split('\n').length });
+      offset = result.meta.cursor;
+    },
+  });
+
+  return records;
 }
 
 function toImportRequest(row: Record<string, string>): ImportPublicationRequest {
