@@ -95,7 +95,12 @@ public static class FormBEndpoints
         var oldFormB = application.FormB;
         application.FormB = await forms.Create(request.Form, cancellationToken);
         if (oldFormB is not null)
+        {
+            // Cleanup counts persisted references. Keep the replacement visible within
+            // the endpoint transaction before deciding which shared children to delete.
+            await dbContext.SaveChangesAsync(cancellationToken);
             await formsService.DeleteFormB(oldFormB, cancellationToken);
+        }
 
         if (!request.Draft)
             CompleteFormB(application);
