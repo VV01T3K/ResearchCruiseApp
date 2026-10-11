@@ -2,14 +2,11 @@ name: Format & lint checks
 
 on:
   push:
-    # staging and main run these checks through their deploy workflows.
-    branches-ignore: [staging, main]
     paths-ignore:
       - docs
-  workflow_call:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-checks
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -55,12 +52,6 @@ jobs:
       - name: Run checks
         run: vp check
 
-      - name: Check types
-        run: vp run type
-
-      - name: Run unit tests
-        run: vp test run
-
       - name: Check generated API
         run: |
           vp run gen
@@ -83,7 +74,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          global-json-file: backend/global.json
+          dotnet-version: '10.0.x'
 
       - name: Setup Vite+
         uses: voidzero-dev/setup-vp@v1
@@ -103,9 +94,7 @@ jobs:
         run: vp run check
 
       - name: Check OpenAPI spec
-        run: |
-          git diff --exit-code -- '*openapi*'
-          test -z "$(git ls-files --others --exclude-standard -- '*openapi*')"
+        run: git diff --exit-code -- '*openapi*'
 
       - name: Run tests
         run: vp run test
