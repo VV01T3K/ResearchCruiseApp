@@ -16,6 +16,8 @@ type Props = {
   maxValues?: CruisePeriodType;
   minPeriodValue?: number;
   onChange?: (value: CruisePeriodType) => void;
+  /** Receives values clamped to new bounds; defaults to onChange. Not a user edit. */
+  onNormalize?: (value: CruisePeriodType) => void;
   onBlur?: () => void;
   errors?: string[];
   label: React.ReactNode;
@@ -51,6 +53,7 @@ export function CruiseApplicationPeriodInput({
   maxValues,
   minPeriodValue = 0,
   onChange,
+  onNormalize,
   onBlur,
   errors,
   label,
@@ -72,9 +75,9 @@ export function CruiseApplicationPeriodInput({
       !isValidPeriod(value) || clamped[0].toString() !== value[0] || clamped[1].toString() !== value[1];
     if (valueChanged) {
       if (clamped[0] === clamped[1]) return;
-      onChange?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
+      (onNormalize ?? onChange)?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
     }
-  }, [minBound, maxBound, sliderValues, onChange, value]);
+  }, [minBound, maxBound, sliderValues, onChange, onNormalize, value]);
 
   const handleValueChange = (newValues: number | number[]) => {
     if (!Array.isArray(newValues) || newValues.length !== 2) return;

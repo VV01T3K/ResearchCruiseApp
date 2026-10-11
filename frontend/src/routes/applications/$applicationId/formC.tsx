@@ -118,7 +118,7 @@ function FormCPage() {
         applicationId,
         data: { form: schema.parse(values), draft: values.draft ?? false },
       });
-      navigate({ to: '/applications' });
+      navigate({ to: '/applications', ignoreBlocker: true });
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );

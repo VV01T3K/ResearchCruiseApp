@@ -1,6 +1,9 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
-import { formTest as test } from './fixtures/fixtures';
+import fs from 'fs';
+
+import { API_URL, formTest as test } from './fixtures/fixtures';
+import { MOCK_IMAGE_FILEPATH, TESTED_FORM_ID } from './fixtures/consts';
 
 const UNSAVED_TEXT = 'Notatka, której nie zapisano';
 const homeLinkName = 'Portal rejsów badawczych R/V Oceanograf';
@@ -105,6 +108,92 @@ test.describe('unsaved application edits', () => {
 
     await expect(page).toHaveURL('/');
     await expect(unsavedChangesDialog(page)).toHaveCount(0);
+  });
+});
+
+test.describe('edits made without pointer or keyboard events', () => {
+  test('a trusted input event alone, as from autofill or dictation, is protected', async ({ formAPage: { page } }) => {
+    await expect(periodNotes(page)).toBeVisible();
+    // Autofill and some dictation/IME paths fire only `input`: hide every earlier event from the page.
+    await page.evaluate(() => {
+      for (const type of ['beforeinput', 'pointerdown', 'keydown', 'keyup']) {
+        window.addEventListener(type, (event) => event.stopImmediatePropagation(), { capture: true });
+      }
+    });
+    await periodNotes(page).evaluate((element: HTMLElement) => element.focus());
+    await page.keyboard.insertText(UNSAVED_TEXT);
+    await expect(periodNotes(page)).toHaveValue(UNSAVED_TEXT);
+
+    await page.getByRole('link', { name: homeLinkName }).click();
+
+    await expect(unsavedChangesDialog(page)).toBeVisible();
+  });
+
+  test('a file dropped as the first edit is protected', async ({ formCPage }) => {
+    const { page } = formCPage;
+    await formCPage.fillForm();
+    const dropZone = page.getByTestId('form-c-attachment-input-button');
+    await expect(dropZone).toBeVisible();
+
+    const image = fs.readFileSync(MOCK_IMAGE_FILEPATH).toString('base64');
+    const dataTransfer = await page.evaluateHandle((base64) => {
+      const bytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0));
+      const transfer = new DataTransfer();
+      transfer.items.add(new File([bytes], 'zdjecie.jpg', { type: 'image/jpeg' }));
+      return transfer;
+    }, image);
+    await dropZone.dispatchEvent('drop', { dataTransfer });
+    await expect(page.getByRole('button', { name: 'zdjecie.jpg', exact: true })).toBeVisible();
+
+    await page.getByRole('link', { name: homeLinkName }).click();
+
+    await expect(unsavedChangesDialog(page)).toBeVisible();
+  });
+});
+
+test.describe('pending saves', () => {
+  test('edits stay protected while a save is pending and after it fails', async ({ formAPage }) => {
+    const { page } = formAPage;
+    await formAPage.fillForm();
+    await periodNotes(page).fill(UNSAVED_TEXT);
+
+    let releaseSave!: () => void;
+    const saveReleased = new Promise<void>((resolve) => (releaseSave = resolve));
+    await page.route(`${API_URL}/v2/applications/${TESTED_FORM_ID}/form-a`, async (route) => {
+      if (route.request().method() !== 'PUT') return route.fallback();
+      await saveReleased;
+      await route.fulfill({
+        status: 500,
+        contentType: 'application/problem+json',
+        body: JSON.stringify({ title: 'Błąd serwera', status: 500 }),
+      });
+    });
+    const saveRequest = page.waitForRequest(
+      (request) => request.method() === 'PUT' && request.url().endsWith('/form-a')
+    );
+    await page.getByTestId('form-submit-btn').click();
+    await saveRequest;
+
+    // Reload while the request is pending shows the native prompt.
+    const prompt = page.waitForEvent('dialog');
+    const reload = page.reload().catch(() => undefined);
+    const nativeDialog = await prompt;
+    expect(nativeDialog.type()).toBe('beforeunload');
+    await nativeDialog.dismiss();
+    await reload;
+
+    // An in-app link while the request is pending asks too.
+    await page.getByRole('link', { name: homeLinkName }).click();
+    const dialog = unsavedChangesDialog(page);
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: 'Zostań na stronie' }).click();
+
+    releaseSave();
+    await expect(page.getByTestId('toast-error').first()).toBeVisible();
+    await expect(periodNotes(page)).toHaveValue(UNSAVED_TEXT);
+
+    await page.getByRole('link', { name: homeLinkName }).click();
+    await expect(unsavedChangesDialog(page)).toBeVisible();
   });
 });
 

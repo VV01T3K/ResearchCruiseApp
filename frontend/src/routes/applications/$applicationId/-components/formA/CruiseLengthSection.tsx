@@ -147,11 +147,12 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   useEffect(() => {
     if (periodSelectionType !== 'period' || isReadonly) return;
 
+    // Normalising an empty period on mount is not a user edit.
     if (!isValidPeriod(acceptablePeriod)) {
-      form.setFieldValue('acceptablePeriod', ['0', '24'] as CruisePeriodType);
+      form.setFieldValue('acceptablePeriod', ['0', '24'] as CruisePeriodType, { dontUpdateMeta: true });
     }
     if (!isValidPeriod(optimalPeriod)) {
-      form.setFieldValue('optimalPeriod', ['0', '24'] as CruisePeriodType);
+      form.setFieldValue('optimalPeriod', ['0', '24'] as CruisePeriodType, { dontUpdateMeta: true });
     }
   }, [periodSelectionType, isReadonly, acceptablePeriod, optimalPeriod, form]);
 
@@ -266,6 +267,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     name={field.name}
                     value={field.state.value}
                     onChange={field.handleChange}
+                    onNormalize={(period) => field.setValue(period, { dontUpdateMeta: true })}
                     onBlur={field.handleBlur}
                     errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                     label="Dopuszczalny okres, w którym miałby się odbywać rejs"
@@ -286,6 +288,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                         name={field.name}
                         value={field.state.value}
                         onChange={field.handleChange}
+                        onNormalize={(period) => field.setValue(period, { dontUpdateMeta: true })}
                         onBlur={field.handleBlur}
                         errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                         maxValues={acceptablePeriod}

@@ -112,7 +112,7 @@ function FormAPage() {
           ? 'Formularz został zapisany jako wersja robocza'
           : 'Formularz został zapisany i wysłany do potwierdzenia przez przełożonego'
       );
-      await navigate({ to: '/' });
+      await navigate({ to: '/', ignoreBlocker: true });
     } catch (error) {
       setServerFormErrors(form, error);
       toast.error(getErrorMessage(error, saveFailedMessage(values.draft)));
