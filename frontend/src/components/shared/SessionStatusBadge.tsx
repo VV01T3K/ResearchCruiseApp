@@ -21,13 +21,13 @@ function formatTimeRemaining(remainingMs: number): string {
   if (remainingMs > 1000 * 60 * 60) {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
-    return `Sesja: ${hours}h ${minutes}m`;
+    return `${hours}h ${minutes}m`;
   }
 
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
 
-  return `Sesja: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
 export function SessionStatusBadge({ refreshTokenExpirationDate, onRefresh }: Props) {
@@ -64,12 +64,13 @@ export function SessionStatusBadge({ refreshTokenExpirationDate, onRefresh }: Pr
     <div
       title="Pozostały czas sesji"
       data-testid="session-status-badge"
-      className={`flex items-center gap-2 rounded-lg px-3 py-1 text-sm font-medium ${
+      className={`flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-medium whitespace-nowrap sm:gap-2 sm:px-3 ${
         isWarning ? 'bg-red-100 text-red-700' : 'bg-white/20 text-white'
       }`}
     >
-      <ClockIcon className="h-4 w-4" />
+      <ClockIcon className="hidden h-4 w-4 sm:block" />
       <span data-testid="session-status-value" className="font-mono">
+        {remainingMs > 0 && <span className="sr-only sm:not-sr-only">Sesja: </span>}
         {formatTimeRemaining(remainingMs)}
       </span>
       <button
