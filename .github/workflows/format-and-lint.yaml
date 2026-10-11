@@ -68,6 +68,8 @@ jobs:
     name: Backend checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      TESTINGPLATFORM_TELEMETRY_OPTOUT: 1
 
     defaults:
       run:

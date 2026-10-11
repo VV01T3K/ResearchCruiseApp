@@ -1,6 +1,6 @@
 # Backend development and checks
 
-Install a .NET 10 SDK (10.0.401 or newer, see `backend/global.json`), Vite+ and Docker (or rootless Podman), then run `vp install --frozen-lockfile` at the repository root and `dotnet tool restore && dotnet restore ResearchCruiseApp.slnx` in `backend`. With rootless Podman, export `DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock` and `TESTCONTAINERS_RYUK_DISABLED=true`.
+Install a .NET 10 SDK (10.0.401 or newer, see `backend/global.json`), Vite+ and Docker (or rootless Podman), then run `vp install --frozen-lockfile` at the repository root and `dotnet tool restore && dotnet restore ResearchCruiseApp.slnx` in `backend`. Export `TESTINGPLATFORM_TELEMETRY_OPTOUT=1` to stop the test platform sending usage telemetry to Microsoft, as CI does. With rootless Podman, export `DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock` and `TESTCONTAINERS_RYUK_DISABLED=true`.
 
 | Command | Behavior |
 | --- | --- |
