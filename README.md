@@ -3,6 +3,10 @@
 The ResearchCruiseApp project is designed to manage research cruises aboard the research vessel Oceanograf, owned by the Institute of Oceanography at the University of Gdańsk.
 The application aims to streamline processes related to the booking, management, and organization of research cruises, and enable efficient communication between various stakeholders.
 
+## Backend testing and tooling
+
+See [backend development and checks](docs/backend-development.md) for setup, workspace commands and the test suites.
+
 ## Configuration
 
 See [dependency maintenance](docs/dependency-maintenance.md) for installs, audits
