@@ -30,49 +30,68 @@ export function AppNavbar() {
   return (
     <motion.header
       id="header"
-      className="z-50 flex h-[var(--header-height)] items-center justify-between bg-primary px-2 py-4 sm:px-4 md:px-6 lg:px-8"
+      className="z-50 flex h-[var(--header-height)] items-center justify-between gap-2 bg-primary px-2 py-4 sm:px-4 md:px-6 lg:px-8"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div>
+      <div className="min-w-0">
         <motion.div
           whileHover={{ scale: 1.1, translateX: '5%' }}
           className="flex-col items-end sm:flex sm:flex-row sm:font-thin"
         >
-          <AppLink href="/" title="Strona Główna" className="pr-4 text-white hover:no-underline sm:text-2xl">
-            Portal rejsów badawczych R/V Oceanograf
+          <AppLink
+            href="/"
+            title="Strona Główna"
+            className="block text-sm leading-tight text-white hover:no-underline sm:inline sm:pr-4 sm:text-xl lg:text-2xl"
+          >
+            <span className="lg:hidden">R/V Oceanograf</span>
+            <span className="hidden lg:inline">Portal rejsów badawczych R/V Oceanograf</span>
           </AppLink>
-          <AppLink href={`${packageJson.repository}/releases/latest`} variant="white" className="text-xs">
+          <AppLink
+            href={`${packageJson.repository}/releases/latest`}
+            variant="white"
+            className="text-[0.625rem] sm:text-xs"
+          >
             {packageJson.version}
           </AppLink>
         </motion.div>
       </div>
-      <div className="flex gap-6">
-        <motion.div className="w-4" whileHover={{ scale: 1.3 }}>
-          <AppLink href="https://ug.edu.pl" target="_blank" title="Uniwersytet Gdański" className="text-white">
-            <UGLogoIcon />
+      <div className="flex shrink-0 items-center gap-0.5 sm:gap-4 md:gap-6">
+        <motion.div className="inline-grid size-7 place-items-center sm:size-8" whileHover={{ scale: 1.3 }}>
+          <AppLink
+            href="https://ug.edu.pl"
+            target="_blank"
+            title="Uniwersytet Gdański"
+            className="grid size-7 place-items-center text-white sm:size-8"
+          >
+            <UGLogoIcon className="h-6 w-4" />
           </AppLink>
         </motion.div>
-        <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
-          <AppButton onClick={() => openUGRadio()} title="Radio MORS" variant="plain" className="p-0 text-white">
-            <BroadcastIcon />
+        <motion.div className="inline-grid size-7 place-items-center sm:size-8" whileHover={{ scale: 1.3 }}>
+          <AppButton
+            onClick={() => openUGRadio()}
+            title="Radio MORS"
+            variant="plain"
+            className="size-7 p-0 text-white sm:size-8"
+          >
+            <BroadcastIcon className="size-5" />
           </AppButton>
         </motion.div>
-        <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
+        <motion.div className="inline-grid size-7 place-items-center sm:size-8" whileHover={{ scale: 1.3 }}>
           <AppLink
             href="https://outlook.com/ug.edu.pl"
             target="_blank"
             title="Poczta Uniwersytecka"
-            className="text-white"
+            className="grid size-7 place-items-center text-white sm:size-8"
           >
-            <EnvelopeIcon />
+            <EnvelopeIcon className="size-5" />
           </AppLink>
         </motion.div>
         <AnimatePresence>
           {currentUser && (
             <motion.div
-              className="flex items-center gap-4"
+              className="flex items-center gap-1 sm:gap-4"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
@@ -83,15 +102,15 @@ export function AppNavbar() {
                   onRefresh={refresh}
                 />
               )}
-              <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
+              <motion.div className="inline-grid size-7 place-items-center sm:size-8" whileHover={{ scale: 1.3 }}>
                 <AppButton
                   onClick={() => onSignOutButtonClicked()}
                   title="Wyloguj"
                   data-testid="sign-out-btn"
                   variant="plain"
-                  className="p-0 text-white"
+                  className="size-7 p-0 text-white sm:size-8"
                 >
-                  <BoxArrowRightIcon />
+                  <BoxArrowRightIcon className="size-5" />
                 </AppButton>
               </motion.div>
             </motion.div>
