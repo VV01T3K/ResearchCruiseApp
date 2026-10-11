@@ -33,6 +33,7 @@
         "ahmadalli.vscode-nginx-conf",
         "csharpier.csharpier-vscode",
         "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
         "cweijan.vscode-mysql-client2",
         "ms-playwright.playwright",
         "VoidZero.vite-plus-extension-pack"
