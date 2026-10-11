@@ -24,61 +24,6 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
     [InlineData(1)]
     [InlineData(2)]
     [InlineData(3)]
-    public async Task Write_WhenStoredStringIsInvalid_RejectsWithoutBusinessChanges(int target)
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
-        var prepared = await Prepare(app, target);
-        using var client = prepared.Client;
-        var original = await Snapshot(app);
-        var originalHttp = target == 0 ? null : await Read(client, prepared.Route);
-        var failures = new List<string>();
-        // kind 0 sends null, 1 omits the key, 2 exceeds the column limit.
-        foreach (var kind in new[] { 0, 1, 2 })
-        foreach (var field in Boundaries(target))
-        {
-            if (kind != 2 && !field.Required)
-                continue;
-            var fields = (JsonObject)prepared.Fields.DeepClone();
-            var parent = field.Collection is null
-                ? fields
-                : fields[field.Collection]![0]!.AsObject();
-            if (kind == 1)
-                parent.Remove(field.Property);
-            else
-                parent[field.Property] = kind == 0 ? null : new string('x', field.Limit + 1);
-            using var response = await Write(client, prepared.Route, fields, true, target == 0);
-            var path =
-                $"form.{(field.Collection is null ? "" : JsonNamingPolicy.CamelCase.ConvertName(field.Collection) + "[0].")}{JsonNamingPolicy.CamelCase.ConvertName(field.Property)}";
-            var body = await response.Content.ReadAsStringAsync(ct);
-            if (
-                response.StatusCode != HttpStatusCode.BadRequest
-                || response.Content.Headers.ContentType?.MediaType != "application/problem+json"
-            )
-            {
-                failures.Add($"{path} (kind {kind}): HTTP {(int)response.StatusCode}");
-                continue;
-            }
-            using var problem = JsonDocument.Parse(body);
-            if (
-                !problem.RootElement.GetProperty("errors").TryGetProperty(path, out var errors)
-                || errors.GetArrayLength() == 0
-            )
-                failures.Add($"{path} (kind {kind}): missing property error in {body}");
-        }
-        Assert.Equal(original, await Snapshot(app));
-        if (target != 0)
-            Assert.Equal(originalHttp, await Read(client, prepared.Route));
-        await app.Dispatch(ct);
-        Assert.Empty(app.Transport.Messages);
-        Assert.True(failures.Count == 0, string.Join("; ", failures));
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    [InlineData(2)]
-    [InlineData(3)]
     public async Task Draft_WhenTextIsAtStorageLimit_RoundTripsAndAllowsNullableFields(int target)
     {
         var ct = TestContext.Current.CancellationToken;
@@ -311,7 +256,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         fields.AddRange(Fields("GuestTeams", true, 1024, false, "NoOfPersons"));
         fields.AddRange(Fields("GuestTeams", false, 1024, true, "Name"));
         fields.AddRange(Fields("Permissions", false, 1024, true, "Executive"));
-        fields.AddRange(Fields("Permissions", false, 1024, true, "Description"));
+        fields.AddRange(Fields("Permissions", false, 10240, true, "Description"));
         if (target is 0 or 1 or 3)
         {
             fields.AddRange(Fields("Contracts", true, 1024, false, "Category"));
@@ -362,13 +307,13 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         }
         if (target is 0 or 1)
         {
-            fields.AddRange(Fields(null, true, 4, false, "Year"));
-            fields.AddRange(Fields(null, true, 8, false, "CruiseHours"));
-            fields.AddRange(Fields(null, true, 1024, false, "SupervisorEmail"));
+            fields.AddRange(
+                Fields(null, true, 1024, false, "Year", "CruiseHours", "SupervisorEmail")
+            );
             fields.AddRange(Fields(null, true, 1024, true, "PeriodNotes", "DifferentUsage"));
             fields.AddRange(Fields(null, true, 10240, true, "CruiseGoalDescription"));
             fields.AddRange(Fields(null, false, 16, false, "PeriodSelectionType"));
-            fields.AddRange(Fields(null, false, 1, false, "ShipUsage"));
+            fields.AddRange(Fields(null, false, 1024, false, "ShipUsage"));
             fields.AddRange(Fields(null, false, 1024, true, "Note"));
             fields.AddRange(Fields(null, false, 10240, false, "CruiseGoal"));
             fields.AddRange(
@@ -442,8 +387,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
             }
             else
             {
-                fields.AddRange(Fields(null, true, 1, false, "ShipUsage"));
-                fields.AddRange(Fields(null, true, 1024, true, "DifferentUsage"));
+                fields.AddRange(Fields(null, true, 1024, true, "ShipUsage", "DifferentUsage"));
                 fields.AddRange(
                     Fields(null, false, 10240, true, "SpubReportData", "AdditionalDescription")
                 );

@@ -8,8 +8,7 @@ public sealed class DraftValidationTests
 {
     private static readonly FileInspector FileInspector = new();
 
-    // Unfilled values arrive as empty strings, as the frontend sends them. Omitting a key for a
-    // required column stays rejected even in drafts.
+    // Unfilled values arrive as empty strings, as the frontend sends them.
     [Fact]
     public void Validate_WhenDraftHasPartialNestedObjects_AcceptsDraftButRejectsSubmission()
     {

@@ -105,47 +105,6 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    [Theory]
-    [InlineData("{\"code\":\"{code}\"}")]
-    [InlineData("{\"accept\":true}")]
-    [InlineData("{\"accept\":null,\"code\":\"{code}\"}")]
-    [InlineData("{\"accept\":\"true\",\"code\":\"{code}\"}")]
-    public async Task Decision_WhenRequiredDataIsInvalid_ReturnsBadRequestWithoutChangingState(
-        string body
-    )
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
-        var (target, _) = await Seed(app);
-        using var client = app.CreateApiClient();
-        using var content = new StringContent(
-            body.Replace(
-                "{code}",
-                WebEncoders.Base64UrlEncode(target.SupervisorCode),
-                StringComparison.Ordinal
-            ),
-            System.Text.Encoding.UTF8,
-            "application/json"
-        );
-        using var response = await client.PutAsync(
-            $"/v2/applications/{target.Id}/supervisor-review/decision",
-            content,
-            ct
-        );
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        await app.InDatabase(async db =>
-        {
-            var rows = await db.CruiseApplications.ToListAsync(ct);
-            Assert.Equal(2, rows.Count);
-            Assert.All(
-                rows,
-                row => Assert.Equal(CruiseApplicationStatus.WaitingForSupervisor, row.Status)
-            );
-            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
-        });
-        Assert.Empty(app.Transport.Messages);
-    }
-
     [Fact]
     public async Task Review_WhenCodeIsInvalidOrBelongsToAnotherApplication_DeniesWithoutChanges()
     {

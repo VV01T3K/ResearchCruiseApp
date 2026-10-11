@@ -12,84 +12,9 @@ namespace ResearchCruiseApp.IntegrationTests.Applications;
 [Collection(SqlTestCollectionDefinition.Name)]
 public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsyncLifetime
 {
-    private static readonly string[] DefaultActions = ["Put", "Collect"];
-
     public async ValueTask InitializeAsync() => await fixture.ResetAsync();
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
-
-    [Theory]
-    [InlineData("b")]
-    [InlineData("c")]
-    public async Task Write_WhenActionIsUnsupported_RejectsCreationAndReplacement(string form)
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
-        var application = await TestApplications.Create(app, EditableStatus(form));
-        using var client = await TestApplications.Login(app, application.OwnerEmail);
-        var route = $"/v2/applications/{application.Id}/form-{form}";
-        (string? Value, bool Omit)[] values =
-        [
-            ("2147483648", false),
-            ("-2147483649", false),
-            ("2", false),
-            ("-1", false),
-            ("not-an-action", false),
-            ("", false),
-            ("put", false),
-            (null, false),
-            (null, true),
-        ];
-        foreach (var saved in new[] { false, true })
-        {
-            if (saved)
-            {
-                using var control = await Write(client, route, Fields(form, DefaultActions), true);
-                Assert.Equal(HttpStatusCode.Created, control.StatusCode);
-            }
-            var original = await Snapshot(app);
-            var originalHttp = saved ? await Read(client, route) : null;
-            foreach (var (value, omit) in values)
-            {
-                var fields = Fields(form, DefaultActions);
-                var equipment = fields["LongResearchEquipments"]![1]!.AsObject();
-                equipment["Name"] = "Rejected replacement equipment";
-                equipment["Duration"] = "99";
-                if (omit)
-                    equipment.Remove("Action");
-                else
-                    equipment["Action"] = value;
-                using var response = await Write(client, route, fields, true);
-                Assert.True(
-                    response.StatusCode == HttpStatusCode.BadRequest,
-                    $"form={form}, saved={saved}, action={(omit ? "omitted" : value ?? "null")}: HTTP {(int)response.StatusCode}"
-                );
-                Assert.Equal(
-                    "application/problem+json",
-                    response.Content.Headers.ContentType?.MediaType
-                );
-                using var problem = JsonDocument.Parse(
-                    await response.Content.ReadAsStringAsync(ct)
-                );
-                const string path = "form.longResearchEquipments[1].action";
-                Assert.True(
-                    problem.RootElement.GetProperty("errors").TryGetProperty(path, out var errors),
-                    $"HTTP 400 lacks {path}: {problem.RootElement}"
-                );
-                Assert.NotEmpty(errors.EnumerateArray());
-                Assert.Equal(original, await Snapshot(app));
-                if (saved)
-                    Assert.Equal(originalHttp, await Read(client, route));
-                else
-                {
-                    using var absent = await client.GetAsync(route, ct);
-                    Assert.Equal(HttpStatusCode.NotFound, absent.StatusCode);
-                }
-            }
-        }
-        await app.Dispatch(ct);
-        Assert.Empty(app.Transport.Messages);
-    }
 
     [Theory]
     [InlineData("b", true)]

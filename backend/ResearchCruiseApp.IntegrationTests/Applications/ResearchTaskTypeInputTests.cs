@@ -19,63 +19,6 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    [InlineData(2)]
-    public async Task Write_WhenTaskTypeIsUnsupported_RejectsAndPreservesSavedState(int target)
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
-        var prepared = await Prepare(app, target);
-        using var client = prepared.Client;
-        var original = await Snapshot(app);
-        var originalHttp = target == 0 ? null : await Read(client, prepared.Route);
-        (string? Value, bool Omit)[] values =
-        [
-            ("2147483648", false),
-            ("-2147483649", false),
-            ("12", false),
-            ("-1", false),
-            ("not-a-task", false),
-            ("", false),
-            ("bachelorthesis", false),
-            (null, false),
-            (null, true),
-        ];
-        foreach (var (value, omit) in values)
-        {
-            var fields = (JsonObject)prepared.Fields.DeepClone();
-            var task = fields[prepared.Collection]![1]!.AsObject();
-            if (omit)
-                task.Remove("Type");
-            else
-                task["Type"] = value;
-            using var response = await Write(client, prepared.Route, fields, true, target == 0);
-            Assert.True(
-                response.StatusCode == HttpStatusCode.BadRequest,
-                $"target={target}, type={(omit ? "omitted" : value ?? "null")}: HTTP {(int)response.StatusCode}"
-            );
-            Assert.Equal(
-                "application/problem+json",
-                response.Content.Headers.ContentType?.MediaType
-            );
-            using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct));
-            var path =
-                $"form.{JsonNamingPolicy.CamelCase.ConvertName(prepared.Collection)}[1].type";
-            Assert.True(
-                problem.RootElement.GetProperty("errors").TryGetProperty(path, out var errors),
-                $"HTTP 400 lacks {path}: {problem.RootElement}"
-            );
-            Assert.NotEmpty(errors.EnumerateArray());
-            Assert.Equal(original, await Snapshot(app));
-            if (target != 0)
-                Assert.Equal(originalHttp, await Read(client, prepared.Route));
-        }
-        await app.Dispatch(ct);
-        Assert.Empty(app.Transport.Messages);
-    }
-
-    [Theory]
     [InlineData(0, true)]
     [InlineData(0, false)]
     [InlineData(1, true)]

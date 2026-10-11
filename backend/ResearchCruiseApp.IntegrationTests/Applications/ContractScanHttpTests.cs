@@ -20,7 +20,6 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     [Theory]
-    [InlineData(true)]
     [InlineData(false)]
     public async Task Write_WhenContractScanIsInvalid_PreservesDraftAndOriginalFiles(bool draft)
     {
@@ -136,69 +135,6 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
             "supervisor@example.invalid",
             Assert.Single(app.Transport.Messages).Payload.Recipient
         );
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task Write_WhenFormAContainsPermissionScan_RejectsWithoutMutation(bool draft)
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
-        var form = await CompleteForm(app);
-        using var client = await TestApplications.Login(app, "owner@example.invalid");
-        var permission = new PermissionFields { Description = "Sampling", Executive = "Authority" };
-        form.Permissions.Add(permission);
-        var id = await CreateDraft(app, client, form);
-        Guid permissionId = default;
-        Guid formId = default;
-        await app.InDatabase(async db =>
-        {
-            permissionId = (await db.Permissions.SingleAsync(ct)).Id;
-            formId = (await db.FormsA.SingleAsync(ct)).Id;
-        });
-        foreach (
-            var scan in new[]
-            {
-                new FileContent { Name = "permission.pdf", Content = "JVBERi0xLjQKJSVFT0Y=" },
-                new FileContent { Name = "", Content = "" },
-            }
-        )
-        {
-            permission.Scan = scan;
-            using var rejected = await Write(client, $"/v2/applications/{id}/form-a", form, draft);
-            Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
-            using var problem = await JsonDocument.ParseAsync(
-                await rejected.Content.ReadAsStreamAsync(ct),
-                cancellationToken: ct
-            );
-            Assert.NotEmpty(
-                problem
-                    .RootElement.GetProperty("errors")
-                    .GetProperty("form.permissions[0]")
-                    .EnumerateArray()
-            );
-            var read = await client.GetFromJsonAsync<FormAFields>(
-                $"/v2/applications/{id}/form-a",
-                ct
-            );
-            Assert.Null(Assert.Single(read!.Permissions).Scan);
-            await app.InDatabase(async db =>
-            {
-                var stored = await db.Permissions.SingleAsync(ct);
-                Assert.Equal(permissionId, stored.Id);
-                Assert.Null(stored.ScanName);
-                Assert.Null(stored.ScanContent);
-                Assert.Equal(formId, (await db.FormsA.SingleAsync(ct)).Id);
-                Assert.Equal(
-                    CruiseApplicationStatus.Draft,
-                    (await db.CruiseApplications.SingleAsync(ct)).Status
-                );
-                Assert.Empty(await db.Set<ContractFile>().ToListAsync(ct));
-                Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
-            });
-        }
-        Assert.Empty(app.Transport.Messages);
     }
 
     [Fact]

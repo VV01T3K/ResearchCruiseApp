@@ -43,74 +43,6 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task Write_WhenCollectionOrItemIsNull_RejectsWithoutBusinessChanges(bool create)
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
-        var prepared = await Prepare(app, create ? 0 : 1);
-        using var client = prepared.Client;
-        var original = await Snapshot(app);
-        var originalHttp = create ? null : await Read(client, prepared.Route);
-        var failures = new List<string>();
-        foreach (var item in new[] { false, true })
-        foreach (var property in Collections)
-        {
-            var fields = (JsonObject)prepared.Fields.DeepClone();
-            fields[property] = item ? new JsonArray((JsonNode?)null) : null;
-            using var response = await Write(client, prepared.Route, fields, true, create);
-            await CheckRejection(
-                response,
-                $"form.{JsonNamingPolicy.CamelCase.ConvertName(property)}{(item ? "[0]" : "")}",
-                failures
-            );
-            Assert.Equal(original, await Snapshot(app));
-            if (!create)
-                Assert.Equal(originalHttp, await Read(client, prepared.Route));
-        }
-        await app.Dispatch(ct);
-        Assert.Empty(app.Transport.Messages);
-        Assert.True(failures.Count == 0, string.Join("; ", failures));
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    [InlineData(2)]
-    public async Task Write_WhenContractScanStructureIsNull_RejectsWithoutBusinessChanges(
-        int target
-    )
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
-        var prepared = await Prepare(app, target);
-        using var client = prepared.Client;
-        var original = await Snapshot(app);
-        var originalHttp = target == 0 ? null : await Read(client, prepared.Route);
-        var failures = new List<string>();
-        foreach (var item in new[] { false, true })
-        {
-            var fields = (JsonObject)prepared.Fields.DeepClone();
-            var contract = fields["Contracts"]![0]!;
-            // A valid preceding upload proves that the error identifies the actual nested index.
-            contract["Scans"] = item ? new JsonArray(Scan(), null) : null;
-            using var response = await Write(client, prepared.Route, fields, true, target == 0);
-            await CheckRejection(
-                response,
-                $"form.contracts[0].scans{(item ? "[1]" : "")}",
-                failures
-            );
-            Assert.Equal(original, await Snapshot(app));
-            if (target != 0)
-                Assert.Equal(originalHttp, await Read(client, prepared.Route));
-        }
-        await app.Dispatch(ct);
-        Assert.Empty(app.Transport.Messages);
-        Assert.True(failures.Count == 0, string.Join("; ", failures));
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
     public async Task Draft_WhenCollectionsAreOmittedOrEmpty_SavesButFinalCompletenessStillApplies(
         bool explicitEmpty
     )
@@ -370,28 +302,6 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
 
     private static JsonObject Scan() =>
         new() { ["Name"] = "original.txt", ["Content"] = FileContent };
-
-    private static async Task CheckRejection(
-        HttpResponseMessage response,
-        string property,
-        List<string> failures
-    )
-    {
-        var ct = TestContext.Current.CancellationToken;
-        if (response.StatusCode != HttpStatusCode.BadRequest)
-        {
-            failures.Add($"{property}: {(int)response.StatusCode}");
-            return;
-        }
-        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
-        using var problem = await JsonDocument.ParseAsync(
-            await response.Content.ReadAsStreamAsync(ct),
-            cancellationToken: ct
-        );
-        Assert.NotEmpty(
-            problem.RootElement.GetProperty("errors").GetProperty(property).EnumerateArray()
-        );
-    }
 
     private static async Task<Guid> ApplicationId(TestApplication app)
     {

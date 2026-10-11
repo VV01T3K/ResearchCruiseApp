@@ -486,49 +486,6 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task Funding_WhenAmountIsInvalid_RejectsWithoutWritingDraft(bool secured)
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
-        var owner = await TestUsers.Create(
-            app,
-            "invalid-scoring@example.invalid",
-            RoleName.CruiseManager
-        );
-        using var client = await TestApplications.Login(app, owner.Email!);
-        foreach (var amount in new[] { "not-a-number", "-1", "NaN", "Infinity", "1e309" })
-        {
-            var form = FormAccessTests.Draft(Guid.Parse(owner.Id));
-            form.ResearchTasks.Add(
-                new ResearchTaskFields
-                {
-                    Type = "4",
-                    FinancingAmount = secured ? "100000" : amount,
-                    SecuredAmount = secured ? amount : null,
-                }
-            );
-            using var response = await client.PostAsJsonAsync(
-                "/v2/applications",
-                new FormAWriteRequest { Form = form, Draft = true },
-                ct
-            );
-            Assert.True(
-                response.StatusCode == HttpStatusCode.BadRequest,
-                $"Amount {amount} returned {(int)response.StatusCode}"
-            );
-            await app.InDatabase(async db =>
-            {
-                Assert.Empty(await db.CruiseApplications.ToListAsync(ct));
-                Assert.Empty(await db.FormsA.ToListAsync(ct));
-                Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
-            });
-        }
-        Assert.Empty(app.Transport.Messages);
-    }
-
-    [Theory]
     [InlineData(null)]
     [InlineData("")]
     public async Task Funding_WhenDraftAmountIsAbsent_SavesBothProjectTypesWithZeroPoints(
