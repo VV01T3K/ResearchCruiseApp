@@ -13,12 +13,15 @@ public static class CatalogEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {
+        Delegate getAll = GetAll;
+#pragma warning disable RDG002
         group
-            .MapGet("", GetAll)
+            .MapGet("", getAll)
             .WithName("GetApplications")
             .WithSummary("Get visible applications.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
+#pragma warning restore RDG002
 
         group
             .MapGet("/managers", GetManagers)

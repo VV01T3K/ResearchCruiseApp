@@ -14,7 +14,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  checks:
+    if: github.event_name == 'push'
+    uses: ./.github/workflows/format-and-lint.yaml
+
   build:
+    needs: checks
+    if: ${{ !failure() && !cancelled() }}
     name: Build ${{ matrix.component }}
     runs-on: ubuntu-latest
     permissions:
