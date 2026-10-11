@@ -23,6 +23,20 @@ test.describe('unsaved application edits', () => {
     await expect(unsavedChangesDialog(page)).toHaveCount(0);
   });
 
+  test('leaving an untouched new application does not ask, although its periods normalise on load', async ({
+    formAPage: { page },
+  }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: /Nowe zgłoszenie/ }).click();
+    await expect(periodNotes(page)).toBeVisible();
+    await expect(page.getByRole('slider').first()).toBeVisible();
+
+    await page.getByRole('link', { name: homeLinkName }).click();
+
+    await expect(page).toHaveURL('/');
+    await expect(unsavedChangesDialog(page)).toHaveCount(0);
+  });
+
   test('an in-app link asks before discarding edits, and staying keeps them', async ({ formAPage: { page } }) => {
     const formUrl = page.url();
     await periodNotes(page).fill(UNSAVED_TEXT);
