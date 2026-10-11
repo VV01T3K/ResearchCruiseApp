@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
@@ -171,9 +172,11 @@ internal class CruiseEffectService(
             case ResearchTaskType.InternalUgProject:
             case ResearchTaskType.OtherProject:
             case ResearchTaskType.OwnResearchTask:
-                var publicationMinisterialPoints = int.Parse(
-                    effect.PublicationMinisterialPoints ?? "0"
-                );
+                var publicationMinisterialPoints = string.IsNullOrEmpty(
+                    effect.PublicationMinisterialPoints
+                )
+                    ? 0
+                    : int.Parse(effect.PublicationMinisterialPoints);
                 managerPoints = publicationMinisterialPoints / 2;
                 deputyPoints = publicationMinisterialPoints / 2;
                 break;
@@ -200,7 +203,7 @@ internal class CruiseEffectService(
         switch (effect.ResearchTask.Type)
         {
             case ResearchTaskType.ProjectPreparation:
-                int? publicationPoints = effect.PublicationMinisterialPoints is null
+                int? publicationPoints = string.IsNullOrEmpty(effect.PublicationMinisterialPoints)
                     ? null
                     : int.Parse(effect.PublicationMinisterialPoints);
                 return publicationPoints
@@ -230,7 +233,7 @@ internal class CruiseEffectService(
             .SingleOrDefault();
     }
 
-    private Task AddEvaluationForUser(
+    private Task<EntityEntry<UserEffect>> AddEvaluationForUser(
         ResearchTaskEffect effect,
         Guid userId,
         int points,
