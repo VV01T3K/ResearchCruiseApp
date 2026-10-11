@@ -521,7 +521,6 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
             fields["Publications"]![0]!["Category"] = PublicationCategory.Subject;
         if (target is 2 or 3)
             fields["LongResearchEquipments"]![0]!["Action"] = "Put";
-        // No permission scan is required in A; B/C final mode needs a valid PDF.
         if (target is 2 or 3)
             fields["Permissions"]![0]!["Scan"] = new JsonObject
             {

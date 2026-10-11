@@ -29,7 +29,6 @@ public sealed class CruiseBlockadeTests
         {
             "none" => [],
             "middle" => [(start.AddDays(1), start.AddDays(2))],
-            // Deliberately reversed input order with an overlap.
             "overlapping" => [(start.AddDays(1), start.AddDays(3)), (start, start.AddDays(2))],
             "outside" => [(start.AddDays(-1), start), (end, end.AddDays(1))],
             "covers-all" => [(start.AddDays(-1), end.AddDays(1))],

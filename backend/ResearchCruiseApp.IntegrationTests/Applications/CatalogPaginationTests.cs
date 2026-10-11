@@ -99,7 +99,6 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         var hidden = Create(Guid.NewGuid(), Guid.Parse(hiddenOwner.Id));
         hidden.Status = CruiseApplicationStatus.Draft;
         var excludedByYear = Create(Guid.NewGuid(), Guid.Parse(actor.Id), "2029");
-        // Newest rows are excluded: taking a page before filtering would lose valid results.
         foreach (
             var application in new[] { own, visibleOther, deputyDraft, hidden, excludedByYear }
         )

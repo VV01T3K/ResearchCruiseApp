@@ -286,7 +286,6 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
         });
 
-        // Final submission takes 738, not the combined manager/deputy total of 1406.
         var nextForm = FormAWorkflowTests.CompleteForm(managerId, deputyId, unit.Id);
         using var nextDraft = await manager.PostAsJsonAsync(
             "/v2/applications",

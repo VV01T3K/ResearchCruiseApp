@@ -13,8 +13,6 @@ public static class CatalogEndpoints
 {
     public static void Map(RouteGroupBuilder group)
     {
-        // RDG 10 misdescribes these optional query arrays (including a status body).
-        // Keep this route on runtime generation until its contract matches again.
         Delegate getAll = GetAll;
 #pragma warning disable RDG002
         group

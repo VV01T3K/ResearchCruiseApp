@@ -369,8 +369,6 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         DateTimeOffset creationTime
     )
     {
-        // ASP.NET Core 10.0.12 stores UTC ticks as the first Int64 of the protected payload.
-        // https://github.com/dotnet/aspnetcore/blob/v10.0.12/src/Identity/Core/src/DataProtectorTokenProvider.cs
         var options = app
             .Services.GetRequiredService<IOptions<DataProtectionTokenProviderOptions>>()
             .Value;

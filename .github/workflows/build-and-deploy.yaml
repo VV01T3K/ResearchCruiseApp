@@ -15,16 +15,10 @@ concurrency:
 
 jobs:
   checks:
-    name: Checks
-    if: github.event_name == 'push'
     uses: ./.github/workflows/format-and-lint.yaml
-    permissions:
-      contents: read
 
   build:
     needs: checks
-    # Pull requests build without the checks; their branch push already ran them.
-    if: ${{ !failure() && !cancelled() }}
     name: Build ${{ matrix.component }}
     runs-on: ubuntu-latest
     permissions:

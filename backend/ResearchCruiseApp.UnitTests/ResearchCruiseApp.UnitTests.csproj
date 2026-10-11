@@ -2,7 +2,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
-    <!-- Test names use Behavior_WhenCondition_ExpectedOutcome. -->
     <NoWarn>$(NoWarn);CA1707</NoWarn>
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>

@@ -75,8 +75,6 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
                 .ToArrayAsync(ct);
         });
 
-        // The foreign key permits the replacement INSERT but rejects cleanup of the
-        // original form. This exercises rollback after the first save has succeeded.
         await app.InDatabase(db =>
             db.Database.ExecuteSqlRawAsync(
                 formC
@@ -224,7 +222,6 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
         await Save(firstClient, firstRoute, empty);
         await AssertFields(secondClient, secondRoute, fields, ct);
 
-        // These moves cover all six directed category changes without creating six hosts.
         foreach (var category in new[] { "long", "insured", "long", "short", "insured", "short" })
         {
             var replacement = Fields(formC, unit.Id, shipEquipment.Id);

@@ -41,7 +41,6 @@ internal static class FormRequests
         string snapshot = "";
         await app.InDatabase(async db =>
         {
-            // One SQL statement snapshots all business tables, including link IDs and stored bytes.
             var tables = db
                 .Model.GetEntityTypes()
                 .Where(type => typeof(Entity).IsAssignableFrom(type.ClrType))

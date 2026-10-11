@@ -44,8 +44,6 @@ internal sealed class TestApplication(string connectionString, string environmen
         builder.ConfigureServices(
             (context, services) =>
             {
-                // Program adds environment variables again before Build. Reapply isolation
-                // settings before services start, without replacing production DB registration.
                 foreach (var (key, value) in settings)
                     context.Configuration[key] = value;
                 var worker = services.Single(descriptor =>
