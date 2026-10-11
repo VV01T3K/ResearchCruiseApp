@@ -2,11 +2,13 @@ name: Format & lint checks
 
 on:
   push:
+    branches-ignore: [staging, main]
     paths-ignore:
       - docs
+  workflow_call:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-checks
   cancel-in-progress: true
 
 jobs:
@@ -52,6 +54,9 @@ jobs:
       - name: Run checks
         run: vp check
 
+      - name: Run unit tests
+        run: vp run test:unit
+
       - name: Check generated API
         run: |
           vp run gen
@@ -61,6 +66,9 @@ jobs:
   backend-checks:
     name: Backend checks
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TESTINGPLATFORM_TELEMETRY_OPTOUT: 1
 
     defaults:
       run:
@@ -87,7 +95,7 @@ jobs:
         run: dotnet tool restore
 
       - name: Restore dependencies
-        run: dotnet restore ResearchCruiseApp.sln
+        run: dotnet restore ResearchCruiseApp.slnx
 
       - name: Run checks
         run: vp run check
