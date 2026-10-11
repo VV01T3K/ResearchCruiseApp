@@ -17,8 +17,21 @@ export type Props = {
   title?: string;
   rel?: string;
   disabled?: boolean;
+  'aria-label'?: string;
+  'data-testid'?: string;
 };
-export function AppLink({ children, href, className, title, rel, variant, target = '_self', disabled = false }: Props) {
+export function AppLink({
+  children,
+  href,
+  className,
+  title,
+  rel,
+  variant,
+  target = '_self',
+  disabled = false,
+  'aria-label': ariaLabel,
+  'data-testid': testId,
+}: Props) {
   variant = variant ?? (disabled ? 'disabled' : 'default');
   const isInternalLink = (href as string).startsWith('/') || (href as string).startsWith('.');
 
@@ -31,6 +44,8 @@ export function AppLink({ children, href, className, title, rel, variant, target
         title={title}
         rel={rel}
         disabled={disabled}
+        aria-label={ariaLabel}
+        data-testid={testId}
       >
         {children}
       </Link>
@@ -45,6 +60,8 @@ export function AppLink({ children, href, className, title, rel, variant, target
       title={title}
       rel={rel}
       aria-disabled={disabled}
+      aria-label={ariaLabel}
+      data-testid={testId}
     >
       {children}
     </a>

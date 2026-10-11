@@ -16,6 +16,7 @@ type Props = {
   'aria-label'?: string;
   id?: string;
   'aria-describedby'?: string;
+  'aria-checked'?: boolean;
   'aria-invalid'?: boolean;
   'data-testid'?: string;
 } & (
@@ -34,23 +35,46 @@ export function AppButton(props: Props) {
     'aria-label': ariaLabel,
     id,
     'aria-describedby': ariaDescribedBy,
+    'aria-checked': ariaChecked,
     variant = 'primary',
     size = 'md',
     'aria-invalid': ariaInvalid,
     'data-testid': testId,
   } = props;
 
-  const button = (
+  const buttonClassName = cn(
+    'text-white outline-none focus-ring hover:cursor-pointer disabled:cursor-default',
+    variants[variant],
+    sizes[size],
+    className,
+    variant != 'plain' ? 'flex items-center justify-around' : ''
+  );
+
+  // A link styled as a button. Rendering a <button> inside the <a> would nest two interactive
+  // elements, which assistive technology announces and focuses twice.
+  if (props.type === 'link') {
+    return (
+      <AppLink
+        variant="plain"
+        href={props.href}
+        target={props.target}
+        rel={props.rel}
+        disabled={disabled}
+        title={title}
+        aria-label={ariaLabel}
+        data-testid={testId}
+        className={cn(buttonClassName, 'aria-disabled:pointer-events-none aria-disabled:opacity-60')}
+      >
+        {children}
+      </AppLink>
+    );
+  }
+
+  return (
     <Button
-      type={props.type === 'link' ? 'button' : (props.type ?? 'button')}
-      className={cn(
-        'text-white outline-none focus-ring hover:cursor-pointer disabled:cursor-default',
-        variants[variant],
-        sizes[size],
-        className,
-        variant != 'plain' ? 'flex items-center justify-around' : ''
-      )}
-      onClick={props.type === 'link' ? undefined : props.onClick}
+      type={props.type ?? 'button'}
+      className={buttonClassName}
+      onClick={props.onClick}
       disabled={disabled}
       role={role}
       name={name}
@@ -58,25 +82,13 @@ export function AppButton(props: Props) {
       aria-label={ariaLabel}
       id={id}
       aria-describedby={ariaDescribedBy}
+      aria-checked={ariaChecked}
       aria-invalid={ariaInvalid}
       data-testid={testId}
     >
       {children}
     </Button>
   );
-
-  if (props.type === 'link') {
-    // oxlint-disable-next-line @typescript-eslint/no-unused-vars
-    const { variant: _, ...other } = props;
-
-    return (
-      <AppLink variant="plain" className={className} {...other}>
-        {button}
-      </AppLink>
-    );
-  }
-
-  return button;
 }
 
 const sizes = {

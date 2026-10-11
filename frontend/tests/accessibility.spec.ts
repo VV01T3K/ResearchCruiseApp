@@ -153,3 +153,76 @@ test.describe('keyboard focus', () => {
     expect(missing).toEqual([]);
   });
 });
+
+const NESTED_INTERACTIVE = 'a button, a a, a input, a [role="button"], a [role="checkbox"], button a, button button';
+
+function listedApplication(id: string, status: string) {
+  return {
+    id,
+    number: `2026/${id.slice(-2)}`,
+    year: 2026,
+    date: '2026-05-16',
+    mainManager: {
+      id: '11111111-1111-1111-1111-111111111111',
+      email: 'm@example.com',
+      firstName: 'Ada',
+      lastName: 'L',
+    },
+    deputyManager: {
+      id: '22222222-2222-2222-2222-222222222222',
+      email: 'd@example.com',
+      firstName: 'Grace',
+      lastName: 'H',
+    },
+    hasFormA: true,
+    hasFormB: false,
+    hasFormC: false,
+    points: 100,
+    status,
+    effectsDoneRate: '0',
+    note: status === 'draft' ? 'szkic' : null,
+    cruiseHours: '24',
+    cruiseDays: 1,
+    acceptablePeriodBeg: '2026-06-01',
+    acceptablePeriodEnd: '2026-06-10',
+    optimalPeriodBeg: '2026-06-02',
+    optimalPeriodEnd: '2026-06-08',
+    precisePeriodStart: null,
+    precisePeriodEnd: null,
+    startDate: null,
+    endDate: null,
+  };
+}
+
+test.describe('nested interactive controls', () => {
+  test('application actions are single links and filters are menu checkboxes', async ({ page }) => {
+    await signInAsAdmin(page);
+    await page.route(`${API_URL}/v2/applications/managers`, (route) => route.fulfill({ json: [] }));
+    await page.route(`${API_URL}/v2/applications?*`, (route) =>
+      route.fulfill({
+        json: {
+          items: [
+            listedApplication('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa01', 'draft'),
+            listedApplication('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa02', 'acceptedBySupervisor'),
+          ],
+          nextCursor: null,
+        },
+      })
+    );
+    await page.goto('/applications');
+
+    await expect(page.getByRole('link', { name: 'Kontynuuj wypełnianie' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Szczegóły' })).toHaveCount(2);
+    await expect(page.getByRole('button', { name: 'Szczegóły' })).toHaveCount(0);
+    await expect(page.locator(NESTED_INTERACTIVE)).toHaveCount(0);
+
+    await page.getByRole('button', { name: 'Rok rejsu', exact: true }).click();
+    const year = page.getByRole('menuitemcheckbox', { name: '2026', exact: true });
+    await expect(year).not.toBeChecked();
+    await expect(year.getByRole('checkbox')).toHaveCount(0);
+    await expect(page.locator(NESTED_INTERACTIVE)).toHaveCount(0);
+
+    const results = await new AxeBuilder({ page }).withRules(['nested-interactive', ...CONTROL_NAME_RULES]).analyze();
+    expect(results.violations.map((violation) => violation.id)).toEqual([]);
+  });
+});

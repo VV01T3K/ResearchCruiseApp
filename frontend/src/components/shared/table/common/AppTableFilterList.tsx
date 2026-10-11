@@ -1,4 +1,5 @@
 import { Header } from '@/integrations/tanstack/table/features';
+import CheckIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
 import React from 'react';
 
@@ -6,6 +7,7 @@ import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { AppTableListItem } from '@/components/shared/table/common/AppTableListItem';
 import { getCapabilities } from '@/components/shared/table/common/utils';
+import { cn } from '@/lib/utils';
 
 type Props<TData extends object, TValue> = {
   header: Header<TData, TValue>;
@@ -118,10 +120,11 @@ export function AppTableFilterList<TData extends object, TValue>({ header, expan
             <AppTableListItem
               key={value[0]}
               onClick={() => toggleFilter(value[0])}
+              checked={isFilterChecked(value[0])}
               isRendered={supportsFilter}
               expanded={expanded}
             >
-              <AppCheckbox name={`isFilterChecked-${value}`} checked={isFilterChecked(value[0])} />
+              <FilterCheckMark checked={isFilterChecked(value[0])} />
               {getFilterOptionLabel ? getFilterOptionLabel(value[0]) : value[0]}
             </AppTableListItem>
           ))}
@@ -137,5 +140,20 @@ export function AppTableFilterList<TData extends object, TValue>({ header, expan
         Wyczyść filtry
       </AppTableListItem>
     </>
+  );
+}
+
+/** Visual check box for a menu checkbox item; the item itself carries the checked state. */
+function FilterCheckMark({ checked }: { checked: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        'flex h-4 w-4 shrink-0 items-center justify-center rounded-md border',
+        checked ? 'border-primary bg-primary text-white' : 'border-gray-300 bg-white'
+      )}
+    >
+      {checked && <CheckIcon />}
+    </span>
   );
 }
