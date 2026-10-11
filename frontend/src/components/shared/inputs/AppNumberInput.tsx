@@ -211,7 +211,7 @@ function AppNumberInputButton({ side, inputToFocus, onClick, disabled }: ButtonP
         'flex h-11 w-11 items-center justify-center',
         'text-gray-500',
         'transition duration-300 ease-in-out',
-        'focus:ring-primary focus:border-primary focus:shadow focus:outline-none',
+        'focus:ring-primary focus:border-primary focus:shadow',
         'disabled:cursor-not-allowed disabled:opacity-50',
         'border-collapse border border-gray-300 px-2',
         side === 'left' ? 'rounded-l' : 'rounded-r',

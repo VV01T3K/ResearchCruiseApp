@@ -16,3 +16,14 @@
     --header-height: 4.5rem;
   }
 }
+
+/*
+ * Keyboard focus indicator for controls that remove the browser outline.
+ * Containers on dark backgrounds override --focus-ring-color.
+ */
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--focus-ring-color, var(--color-primary));
+    outline-offset: 2px;
+  }
+}

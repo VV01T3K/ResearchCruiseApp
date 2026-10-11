@@ -30,7 +30,7 @@ export function AppNavbar() {
   return (
     <motion.header
       id="header"
-      className="z-50 flex h-[var(--header-height)] items-center justify-between gap-2 bg-primary px-2 py-4 sm:px-4 md:px-6 lg:px-8"
+      className="z-50 flex h-[var(--header-height)] items-center justify-between gap-2 bg-primary px-2 py-4 [--focus-ring-color:var(--color-white)] sm:px-4 md:px-6 lg:px-8"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.3 }}

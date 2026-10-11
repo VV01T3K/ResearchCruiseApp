@@ -44,7 +44,7 @@ export function AppButton(props: Props) {
     <Button
       type={props.type === 'link' ? 'button' : (props.type ?? 'button')}
       className={cn(
-        'text-white outline-none hover:cursor-pointer disabled:cursor-default',
+        'text-white outline-none focus-ring hover:cursor-pointer disabled:cursor-default',
         variants[variant],
         sizes[size],
         className,
