@@ -104,6 +104,10 @@ internal class UserPermissionVerifier(
         if (currentUserId is null)
             return false;
 
+        if (cruiseApplication.Status == CruiseApplicationStatus.Draft)
+            return currentUserId == cruiseApplication.FormA.CruiseManagerId
+                || currentUserId == cruiseApplication.FormA.DeputyManagerId;
+
         return RolePermissionRules.CanAddApplicationForm(
             currentUserRoles,
             currentUserId.Value,

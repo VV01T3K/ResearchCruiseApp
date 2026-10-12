@@ -5,6 +5,7 @@ import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/
 import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppDesktopTableHeader } from '@/components/shared/table/desktop/AppDesktopTableHeader';
 import { TableBody } from '@/integrations/tanstack/table/TableBody';
+import { TableCell } from '@/integrations/tanstack/table/TableCell';
 
 export function AppDesktopTable<T extends object>({
   table,
@@ -69,7 +70,7 @@ export function AppDesktopTable<T extends object>({
             row.getVisibleCells().map((cell) => {
               return (
                 <td key={cell.id} className="px-3 py-3 text-center">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  <TableCell cell={cell} />
                 </td>
               );
             })

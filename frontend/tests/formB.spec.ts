@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { formTest as test } from '@tests/fixtures/fixtures';
 
-import { MOCK_PDF_FILEPATH } from './fixtures/consts';
+import { API_URL, MOCK_PDF_FILEPATH } from './fixtures/consts';
 import { touchInput } from './utils/form-filling-utils';
 
 /** Section → fields that must report an error when the section holds a row of invalid data. */
@@ -46,6 +46,108 @@ async function expectSectionsInvalid(
 test('all sections valid', async ({ formBPage }) => {
   await formBPage.fillForm();
   await formBPage.submitForm({ expectedResult: 'valid' });
+  await expect(formBPage.submissionApprovedMessage).toHaveText('Formularz został wysłany pomyślnie.');
+});
+
+test('draft save confirms a draft rather than final submission', async ({ formBPage, page }) => {
+  await formBPage.fillForm();
+  const request = page.waitForRequest(
+    (request) => request.url() === `${API_URL}/v2/applications/${formBPage.formId}/form-b` && request.method() === 'PUT'
+  );
+  await page.getByRole('button', { name: 'Zapisz wersję roboczą' }).click();
+  expect((await request).postDataJSON().draft).toBe(true);
+  await expect(formBPage.submissionApprovedMessage).toHaveText('Formularz został zapisany jako wersja robocza');
+});
+
+test('failed draft saves explain the reason and retain partial rows for retry', async ({ formBPage, page }) => {
+  const pageErrors: Error[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error));
+  await formBPage.fillForm();
+  await formBPage.sections.cruiseDayDetailsSection.addTaskButton.click();
+  const task = page.getByTestId('cruise-day-task-name-input').first();
+  await task.fill('Niedokończone zadanie');
+  const managerPresent = page.getByRole('checkbox', { name: 'Czy kierownik jest obecny na rejsie?' });
+  const save = page.getByRole('button', { name: 'Zapisz wersję roboczą' });
+  const failures = [
+    {
+      status: 400,
+      body: {
+        detail: 'Zgłoszenie jest zablokowane.',
+        errors: {
+          'form.isCruiseManagerPresent': ['Obecność kierownika została odrzucona'],
+          form: ['Nieprawidłowy stan wersji roboczej'],
+          'form.unknownField': ['Nieprawidłowe powiązanie'],
+        },
+      },
+      inline: 'Obecność kierownika została odrzucona',
+      formReasons: ['Zgłoszenie jest zablokowane.', 'Nieprawidłowy stan wersji roboczej', 'Nieprawidłowe powiązanie'],
+      reasons: [
+        'Zgłoszenie jest zablokowane.',
+        'Obecność kierownika została odrzucona',
+        'Nieprawidłowy stan wersji roboczej',
+        'Nieprawidłowe powiązanie',
+      ],
+    },
+    {
+      status: 403,
+      body: { detail: 'Obecnie nie można przesłać formularza B.' },
+      reasons: ['Obecnie nie można przesłać formularza B.'],
+      formReasons: ['Obecnie nie można przesłać formularza B.'],
+    },
+  ];
+  let failure = failures[0];
+  await page.route(`${API_URL}/v2/applications/${formBPage.formId}/form-b`, (route) =>
+    route.request().method() === 'PUT'
+      ? route.fulfill({ status: failure.status, json: failure.body })
+      : route.fallback()
+  );
+  for (failure of failures) {
+    await save.click();
+    const toast = page.getByTestId('toast-error').filter({ hasText: failure.reasons[0] });
+    await expect(toast).toHaveCount(1);
+    for (const reason of failure.reasons) await expect(toast).toContainText(reason);
+    if (failure.inline) await expect(managerPresent).toHaveAccessibleDescription(failure.inline);
+    const formErrors = page.getByTestId('form-errors');
+    for (const reason of failure.formReasons) await expect(formErrors).toContainText(reason);
+    if (failure.inline) await expect(formErrors).not.toContainText(failure.inline);
+    await expect(task).toHaveValue('Niedokończone zadanie');
+    await expect(page).toHaveURL(/\/formB\?mode=edit$/);
+  }
+  await page.route(`${API_URL}/v2/applications/${formBPage.formId}/form-b`, (route) => route.fulfill({ status: 201 }));
+  await save.click();
+  await expect(formBPage.submissionApprovedMessage).toContainText('wersja robocza');
+  expect(pageErrors).toEqual([]);
+});
+
+test('server errors stay under fields inside table rows', async ({ formBPage, page }) => {
+  await formBPage.fillForm();
+  await page.route(`${API_URL}/v2/applications/${formBPage.formId}/form-b`, (route) =>
+    route.request().method() === 'PUT'
+      ? route.fulfill({
+          status: 400,
+          json: { errors: { 'form.cruiseDaysDetails[0].taskName': ['Nazwa zadania została odrzucona'] } },
+        })
+      : route.fallback()
+  );
+  await formBPage.sections.cruiseDayDetailsSection.addTaskButton.click();
+  const task = page.getByTestId('cruise-day-task-name-input').first();
+  await task.fill('Zadanie');
+  await page.getByRole('button', { name: 'Zapisz wersję roboczą' }).click();
+
+  await expect(task).toHaveAccessibleDescription('Nazwa zadania została odrzucona');
+  await expect(page.getByTestId('form-errors')).toHaveCount(0);
+});
+
+test('cruise day import rejects unsupported spreadsheet formats', async ({ formBPage, page }) => {
+  await formBPage.fillForm();
+  await page.locator('input[type="file"][accept=".csv,.txt,.xlsx"]').setInputFiles({
+    name: 'dni.xls',
+    mimeType: 'application/vnd.ms-excel',
+    buffer: Buffer.from('binary'),
+  });
+
+  await expect(page.getByTestId('toast-error')).toContainText('Nieobsługiwany format pliku');
+  await expect(page.getByTestId('cruise-day-task-name-input')).toHaveCount(0);
 });
 
 test('all sections filled with invalid rows', async ({ formBPage }) => {
@@ -58,6 +160,32 @@ test('all sections filled with invalid rows', async ({ formBPage }) => {
   // One submit yields an independent verdict per section.
   const errors = await formBPage.getInvalidFormState();
   await expectSectionsInvalid(errors, INVALID_ROW_SECTION_FIELDS);
+});
+
+test('scan fields report dropped files immediately and keep file controls outside the upload button', async ({
+  formBPage,
+  page,
+}) => {
+  await formBPage.fillForm();
+  const section = formBPage.sections.additionalPermissionsSection;
+  await section.addPermissionButton.click();
+  const dataTransfer = await page.evaluateHandle(() => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File(['tekst'], 'skan.txt', { type: 'text/plain' }));
+    return transfer;
+  });
+  await section
+    .permissionRowLocator('last')
+    .getByTestId('permission-scan-button')
+    .dispatchEvent('drop', { dataTransfer });
+  await expect(section.permissionRowLocator('last').getByTestId('permission-scan-errors')).toContainText(
+    'Plik musi być w formacie PDF'
+  );
+
+  await section.permissionRow('last').scanFileInput.send(MOCK_PDF_FILEPATH);
+  const upload = section.permissionRowLocator('last').getByTestId('permission-scan-button');
+  await expect(section.permissionRowLocator('last').getByRole('button', { name: /^Usuń plik/ })).toBeVisible();
+  await expect(upload.locator('button, a, [role="button"]')).toHaveCount(0);
 });
 
 test.describe('additional permissions section tests', () => {

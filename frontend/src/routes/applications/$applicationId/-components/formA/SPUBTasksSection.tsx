@@ -1,3 +1,4 @@
+import { mapSpubTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { AppAccordion } from '@/components/shared/AppAccordion';
@@ -153,7 +154,7 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
                         value: JSON.stringify(task),
                         content: `${task.name ?? ''} (${task.yearFrom ?? ''} - ${task.yearTo ?? ''})`,
                         onClick: () => {
-                          field.pushValue(task);
+                          field.pushValue(mapSpubTaskToValues(task));
                           field.handleBlur();
                         },
                       }))}

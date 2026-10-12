@@ -1,20 +1,9 @@
-import Papa from 'papaparse';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
+import { toast } from '@/components/shared/layout/toast';
 import type { ImportPublicationRequest } from '@/api/generated/schemas';
-
-function parseRow(row: Record<string, string>) {
-  return {
-    category: 'subject',
-    doi: row['Numer DOI'] !== '' ? row['Numer DOI'] : '-',
-    authors: row['Autorzy'] !== '' ? row['Autorzy'] : '-',
-    title: row['Tytuł publikacji'] !== '' ? row['Tytuł publikacji'] : '-',
-    magazine: row['Nazwa czasopisma'] !== '' ? row['Nazwa czasopisma'] : '-',
-    year: row['Rok'] !== '' ? row['Rok'] : '-',
-    ministerialPoints: row['Punkty'] !== '' ? row['Punkty'] : '-',
-  };
-}
+import { PublicationCsvError, readPublicationCsv } from '@/lib/publications/publicationCsv';
 
 type Props = {
   onUpload: (publications: ImportPublicationRequest[]) => void;
@@ -22,42 +11,28 @@ type Props = {
 export function UploadButton({ onUpload }: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  function handleFileChange() {
-    const file = inputRef.current?.files?.[0];
-    if (!file) {
+  async function handleFileChange() {
+    const input = inputRef.current;
+    const file = input?.files?.[0];
+    if (!input || !file) {
       return;
     }
+    input.value = '';
 
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const decoder = new TextDecoder('windows-1250');
-      const csvText = decoder.decode(evt.target?.result as ArrayBuffer);
-
-      Papa.parse(csvText, {
-        delimiter: ';',
-        header: true,
-        skipEmptyLines: true,
-        complete: (results: { data: Record<string, string>[] }) => {
-          const publications = results.data.map(parseRow);
-          onUpload(publications as ImportPublicationRequest[]);
-        },
-      });
-    };
-    reader.readAsArrayBuffer(file);
-
-    inputRef.current!.value = '';
+    try {
+      onUpload(await readPublicationCsv(file));
+    } catch (error) {
+      toast.error(
+        error instanceof PublicationCsvError
+          ? `Nie zaimportowano publikacji. ${error.message}`
+          : 'Nie udało się odczytać pliku CSV.'
+      );
+    }
   }
 
   return (
     <>
-      <input
-        type="file"
-        ref={inputRef}
-        multiple={true}
-        className="hidden"
-        onChange={handleFileChange}
-        accept="text/csv"
-      />
+      <input type="file" ref={inputRef} className="hidden" onChange={handleFileChange} accept=".csv,text/csv" />
       <AppButton onClick={() => inputRef.current?.click()}>Import publikacji z pliku CSV</AppButton>
     </>
   );
