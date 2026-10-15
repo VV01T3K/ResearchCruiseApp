@@ -1,6 +1,7 @@
 import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, waitFor } from 'storybook/test';
+import { useState } from 'react';
 
 import { AppInput } from '@/components/shared/inputs/AppInput';
 
@@ -99,12 +100,32 @@ export const WithHelper: Story = {
 };
 
 export const DuplicateFieldNames: Story = {
-  render: (args) => (
-    <div className="space-y-4">
-      <AppInput {...args} label="First field" />
-      <AppInput {...args} label="Second field" />
-    </div>
-  ),
+  render: function Render(args) {
+    const [firstValue, setFirstValue] = useState(args.value);
+    const [secondValue, setSecondValue] = useState(args.value);
+    return (
+      <div className="space-y-4">
+        <AppInput
+          {...args}
+          label="First field"
+          value={firstValue}
+          onChange={(value) => {
+            args.onChange?.(value);
+            setFirstValue(value);
+          }}
+        />
+        <AppInput
+          {...args}
+          label="Second field"
+          value={secondValue}
+          onChange={(value) => {
+            args.onChange?.(value);
+            setSecondValue(value);
+          }}
+        />
+      </div>
+    );
+  },
   parameters: { a11y: { test: 'error' } },
   play: async ({ canvas, userEvent }) => {
     const first = canvas.getByLabelText('First field');
@@ -112,5 +133,11 @@ export const DuplicateFieldNames: Story = {
     await expect(first).not.toBe(second);
     await userEvent.click(canvas.getByText('Second field'));
     await expect(second).toHaveFocus();
+    await userEvent.type(first, 'Alpha');
+    await expect(first).toHaveValue('Alpha');
+    await expect(second).toHaveValue('');
+    await userEvent.type(second, 'Beta');
+    await expect(first).toHaveValue('Alpha');
+    await expect(second).toHaveValue('Beta');
   },
 };
