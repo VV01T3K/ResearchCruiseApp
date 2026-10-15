@@ -27,7 +27,6 @@ const meta = {
       },
     ],
   },
-  // Wait for the entry animation so accessibility checks see final colors.
   play: async ({ canvas }) => {
     await waitFor(() =>
       expect(canvas.getByRole('button', { name: 'File 2' }).closest('li')).toHaveStyle({ opacity: '1' })

@@ -2,29 +2,28 @@
 
 Three layers, split by what they can actually prove:
 
-| Layer                            | Runner                          | Location      | Count | Time   |
-| -------------------------------- | ------------------------------- | ------------- | ----- | ------ |
-| Unit (schemas and session state) | Vitest (`vp test`)              | `tests/unit/` | 228   | ~1 s   |
-| Components and UI states         | Storybook + Vitest / Playwright | `stories/`    | 182   | ~25 s  |
-| End-to-end (browser)             | Playwright                      | `tests/`      | 129   | ~3 min |
+| Layer                            | Runner             | Location      | Count | Time   |
+| -------------------------------- | ------------------ | ------------- | ----- | ------ |
+| Unit (schemas and session state) | Vitest (`vp test`) | `tests/unit/` | 228   | ~1 s   |
+| Components and UI states         | Storybook + Vitest | `stories/`    | 181   | ~25 s  |
+| End-to-end (browser)             | Playwright         | `tests/`      | 129   | ~3 min |
 
 ## Commands
 
-| Command                        | What it runs                                                               |
-| ------------------------------ | -------------------------------------------------------------------------- |
-| `vp run test:unit`             | All Vitest unit tests (no browser)                                         |
-| `vp run test:storybook`        | Render every story, run its interactions and reviewed accessibility checks |
-| `vp run test:storybook:visual` | Build Storybook and compare selected desktop/mobile screenshots            |
-| `vp run test`                  | All Playwright E2E tests                                                   |
-| `vp run test:ui`               | Playwright's interactive debugger                                          |
-| `vp run type`                  | `tsgo` — type-checks tests along with the app                              |
+| Command                 | What it runs                                                               |
+| ----------------------- | -------------------------------------------------------------------------- |
+| `vp run test:unit`      | All Vitest unit tests (no browser)                                         |
+| `vp run test:storybook` | Render every story, run its interactions and reviewed accessibility checks |
+| `vp run test`           | All Playwright E2E tests                                                   |
+| `vp run test:ui`        | Playwright's interactive debugger                                          |
+| `vp run type`           | `tsgo` — type-checks tests along with the app                              |
 
 First-time browser setup: `vp exec playwright install --with-deps`.
 
 Storybook tests exercise isolated UI behavior, including controlled inputs, modal dismissal,
 table sorting/filtering, file removal, form error display, and session actions. Application E2E
 tests still own routing, authentication, API contracts, and complete form workflows.
-See [STORYBOOK.md](./STORYBOOK.md) for fixture and visual-test conventions.
+See [STORYBOOK.md](./STORYBOOK.md) for story and fixture conventions.
 
 ---
 

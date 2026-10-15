@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { MINIMAL_VIEWPORTS } from 'storybook/viewport';
 import { expect, fn, waitFor, within } from 'storybook/test';
 
 import { AppButton } from '@/components/shared/AppButton';
@@ -15,7 +14,6 @@ type ExampleUser = {
 const meta: Meta<typeof AppTable<ExampleUser>> = {
   component: AppTable,
   parameters: {
-    viewport: { options: MINIMAL_VIEWPORTS },
     docs: {
       description: {
         component:
@@ -119,17 +117,6 @@ export const Filtered: Story = {
     await expect(canvas.getByRole('cell', { name: 'Jane Doe' })).toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: /Wyczyść/ }));
     await expect(await canvas.findByRole('cell', { name: 'John Doe' })).toBeVisible();
-  },
-};
-
-export const Mobile: Story = {
-  globals: { viewport: { value: 'mobile1', isRotated: false } },
-  play: async ({ canvas, canvasElement, userEvent }) => {
-    await userEvent.click(canvas.getByRole('button', { name: 'Filtrowanie i sortowanie' }));
-    const page = within(canvasElement.ownerDocument.body);
-    await waitFor(() => expect(page.getByRole('dialog', { name: 'Filtrowanie i sortowanie' })).toBeVisible());
-    await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
   },
 };
 

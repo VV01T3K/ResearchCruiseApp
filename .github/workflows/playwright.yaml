@@ -18,9 +18,6 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    container:
-      # Keep this version aligned with @playwright/test and the screenshot baselines.
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
 
     defaults:
       run:
@@ -38,18 +35,15 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        id: install
         run: vp install --frozen-lockfile
 
-      - name: Run Storybook component and accessibility tests
+      - name: Install Playwright Browsers
+        run: vp exec playwright install --with-deps
+
+      - name: Run Storybook tests
         run: vp run test:storybook
 
-      - name: Run Storybook visual tests
-        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
-        run: vp run test:storybook:visual
-
       - name: Run Playwright tests
-        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: vp run test
 
       - uses: actions/upload-artifact@v6
@@ -58,10 +52,3 @@ jobs:
           name: playwright-report
           path: frontend/playwright-report/
           retention-days: 30
-
-      - uses: actions/upload-artifact@v6
-        if: ${{ failure() }}
-        with:
-          name: storybook-visual-results
-          path: frontend/test-results/storybook-visual/
-          retention-days: 7

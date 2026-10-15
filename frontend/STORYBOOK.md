@@ -2,87 +2,46 @@
 
 Run these commands from `frontend/`:
 
-| Command                        | Purpose                                               |
-| ------------------------------ | ----------------------------------------------------- |
-| `vp run storybook`             | Open the component workshop on port 6006              |
-| `vp run test:storybook`        | Run all stories as Vitest browser tests               |
-| `vp run test:storybook:visual` | Build and compare selected desktop/mobile screenshots |
-| `vp run test:unit`             | Run unit tests without a browser                      |
+| Command                 | Purpose                                  |
+| ----------------------- | ---------------------------------------- |
+| `vp run storybook`      | Open the component workshop on port 6006 |
+| `vp run test:storybook` | Run all stories as Vitest browser tests  |
 
-CI runs all three test layers and the existing application Playwright suite. Install Chromium
-with `vp exec playwright install --with-deps` before running browser tests locally.
+`test:storybook` renders every story in Chromium, runs its `play` function, and runs the
+accessibility checks. It needs the Playwright browsers (`vp exec playwright install --with-deps`).
 
-## Writing useful stories
+## Writing stories
 
-Keep CSF 3 (`Meta`, `StoryObj`, and `satisfies`). It remains supported; CSF Next is still a
-preview feature. Put stories under the component's feature in `stories/`, with names describing
-the actual state: empty, invalid, loading, disabled, open, mobile, or a meaningful boundary.
-Import the production component or form integration instead of reimplementing its behavior.
+Put stories under the component's feature in `stories/`, named after the state they show: empty,
+invalid, loading, disabled, open, or a meaningful boundary. Import the production component or
+form integration instead of reimplementing its behavior.
 
 Use `fn()` from `storybook/test` for callbacks. Add a `play` function when a behavior needs
-protection: perform the action and assert its result, including callback values where relevant.
-Prefer accessible roles and labels. Use `waitFor` for async rendering and closing transitions,
-and scope portal queries to `canvasElement.ownerDocument.body` with `within`.
+protection: perform the action and assert its result. Prefer accessible roles and labels, use
+`waitFor` for async rendering and closing transitions, and query portals through
+`within(canvasElement.ownerDocument.body)`.
 
-Controlled values need working state. `withControlledValue` supplies React state and forwards
-callbacks. Changing the initial `value` in Controls resets that example. This works in both
-the workshop and Vitest; Storybook args updates alone did not rerender the portable tests.
+Controlled inputs use the `withControlledValue` decorator, which holds the value in React state
+and forwards `onChange`. Storybook's `useArgs` does not rerender stories under Vitest.
 
-Modal stories use `docs.story.inline: false` so their portals stay inside each example's frame.
-Use the viewport global for mobile examples, with the corresponding viewport options.
+Modal stories set `docs.story.inline: false` so each portal stays inside its own frame.
 
 ## Fixtures and providers
 
-The story clock is fixed to **2026-01-15T12:00:00Z** through MockDate, without replacing timers.
-Use fixed dates in module-level fixtures too, since those execute before `beforeEach`.
-Visual tests use the Europe/Warsaw timezone and pl-PL locale.
+- The clock is fixed to **2026-01-15T12:00:00Z** with MockDate. Use fixed dates in module-level
+  fixtures too, since they are created before `beforeEach` runs.
+- Every story is wrapped in `StoryRouterProvider`, a memory router for components that render
+  links. It does not replace application navigation tests.
+- `MockAuthQueryProvider` seeds the current user into a fresh query client with queries disabled.
+- `customFetch` is spied on globally. Mock it in a story's `beforeEach`; stories must not need a
+  running backend.
+- Use valid data URLs for file fixtures.
 
-The global `StoryRouterProvider` provides a stable memory-router context for isolated components.
-It is not a substitute for application navigation tests. TanStack-specific helpers live under
-`src/integrations/tanstack/`. `MockAuthQueryProvider` creates a fresh seeded query cache per mount
-and disables background queries. Configure fetch spies in a story's `beforeEach`; examples must
-not depend on a running backend. Use valid data URLs for file fixtures.
+The project uses `@storybook/react-vite` because `@storybook/tanstack-react@10.6.0` is
+incompatible with our `@tanstack/router-core`.
 
-`@storybook/tanstack-react@10.6.0` is incompatible with our `@tanstack/router-core` (it calls
-`interpolatePath` with an object), so stories use `@storybook/react-vite`. Revisit when a newer
-release passes the router-dependent stories.
+## Accessibility
 
-## Accessibility and visual review
-
-The accessibility addon runs automated checks. The global default is `parameters.a11y.test: 'todo'`,
-which shows findings in Storybook without failing CI. Stories whose states pass opt into `'error'`
-so regressions fail CI; promote more as components are fixed, and do not disable rules to hide
-violations. Keyboard interaction and focus assertions supplement the automated checks.
-
-Selected screenshots live in `stories/visual/__screenshots__/`. CI runs browser tests in
-`mcr.microsoft.com/playwright:v1.63.0-noble`, which pins the browsers, fonts, and rendering libraries.
-Keep that image version aligned with `@playwright/test`. Host rendering can differ even when
-both systems resolve Arial to Liberation Sans, so use the same container to update baselines.
-
-From the repository root:
-
-```sh
-docker run --rm --ipc=host \
-  -v "$PWD:/work" -v /work/node_modules -v /work/frontend/node_modules \
-  -w /work mcr.microsoft.com/playwright:v1.63.0-noble \
-  bash -lc 'npm install --global bun@1.3.11 && bun install --frozen-lockfile &&
-    cd frontend && bun run test:storybook:visual --update-snapshots'
-```
-
-Omit `--update-snapshots` to compare against existing baselines. Podman can replace Docker.
-Inspect every changed image before committing approved baselines. Browser and font upgrades
-can change pixels; keep the screenshot environment and its baselines together.
-Visual failures and traces go to `test-results/storybook-visual/`.
-
-Expand coverage where users interact with the app, such as forms, tables, pickers, and session
-states, rather than adding redundant color examples.
-
-## References
-
-- [Vitest integration](https://storybook.js.org/docs/writing-tests/integrations/vitest-addon)
-- [Interaction tests](https://storybook.js.org/docs/writing-tests/interaction-testing)
-- [Accessibility tests](https://storybook.js.org/docs/writing-tests/accessibility-testing)
-- [TanStack framework](https://storybook.js.org/docs/get-started/frameworks/tanstack-react)
-- [CSF Next status](https://storybook.js.org/docs/api/csf/csf-next)
-- [Vite+ testing configuration](https://viteplus.dev/guide/test)
-- [Playwright visual comparisons](https://playwright.dev/docs/test-snapshots)
+The default is `parameters.a11y.test: 'todo'`, which reports violations in Storybook without
+failing tests. Stories that pass set `'error'` so regressions fail CI. Promote more as components
+are fixed rather than disabling rules.

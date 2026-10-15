@@ -21,7 +21,6 @@ const preview: Preview = {
     ),
   ],
   parameters: {
-    // Existing violations remain visible; reviewed stories opt into failing CI.
     a11y: { test: 'todo' },
     controls: {
       matchers: {
