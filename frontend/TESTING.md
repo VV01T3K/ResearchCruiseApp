@@ -1,22 +1,30 @@
 # Frontend tests
 
-Two layers, split by what they can actually prove:
+Three layers, split by what they can actually prove:
 
-| Layer                | Runner             | Location          | Count | Time   |
-| -------------------- | ------------------ | ----------------- | ----- | ------ |
-| Unit                 | Vitest (`vp test`) | `tests/unit/`     | 218   | ~1 s   |
-| End-to-end (browser) | Playwright         | `tests/*.spec.ts` | 109   | ~2 min |
+| Layer                            | Runner                          | Location      | Count | Time   |
+| -------------------------------- | ------------------------------- | ------------- | ----- | ------ |
+| Unit (schemas and session state) | Vitest (`vp test`)              | `tests/unit/` | 228   | ~1 s   |
+| Components and UI states         | Storybook + Vitest / Playwright | `stories/`    | 182   | ~25 s  |
+| End-to-end (browser)             | Playwright                      | `tests/`      | 129   | ~3 min |
 
 ## Commands
 
-| Command            | What it runs                                  |
-| ------------------ | --------------------------------------------- |
-| `vp run test:unit` | All Vitest unit tests (no browser)            |
-| `vp run test`      | All Playwright E2E tests                      |
-| `vp run test:ui`   | Playwright's interactive debugger             |
-| `vp run type`      | `tsgo` — type-checks tests along with the app |
+| Command                        | What it runs                                                               |
+| ------------------------------ | -------------------------------------------------------------------------- |
+| `vp run test:unit`             | All Vitest unit tests (no browser)                                         |
+| `vp run test:storybook`        | Render every story, run its interactions and reviewed accessibility checks |
+| `vp run test:storybook:visual` | Build Storybook and compare selected desktop/mobile screenshots            |
+| `vp run test`                  | All Playwright E2E tests                                                   |
+| `vp run test:ui`               | Playwright's interactive debugger                                          |
+| `vp run type`                  | `tsgo` — type-checks tests along with the app                              |
 
-First-time browser setup: `vp dlx playwright install --with-deps`.
+First-time browser setup: `vp exec playwright install --with-deps`.
+
+Storybook tests exercise isolated UI behavior, including controlled inputs, modal dismissal,
+table sorting/filtering, file removal, form error display, and session actions. Application E2E
+tests still own routing, authentication, API contracts, and complete form workflows.
+See [STORYBOOK.md](./STORYBOOK.md) for fixture and visual-test conventions.
 
 ---
 
@@ -190,17 +198,10 @@ attachment upload.
 
 ## Configuration notes
 
-**Vitest and Playwright split `tests/`.** Vitest only loads `tests/unit` (`vite.config.ts`):
-
-```ts
-test: {
-  include: ['tests/unit/**/*.test.{ts,tsx}'];
-}
-```
-
-Playwright ignores it (`playwright.config.ts`: `testIgnore: 'unit/**'`). Without these, each
-runner tries to load the other's files, failing with errors such as _"Playwright Test did not
-expect test() to be called here."_
+**Vitest has separate projects** (`vite.config.ts`). The `unit` project includes only
+`tests/unit/`. The `storybook` project discovers stories through the addon
+and runs them in Chromium. Keeping these separate prevents Vitest from loading the application
+Playwright specs under `tests/` and failing with _"Playwright Test did not expect test() to be called here."_
 
 **The `vitest` dependency is aliased** to `@voidzero-dev/vite-plus-test`. It ships no `bin`,
 so `vitest run` cannot resolve — the working invocation is `vp test run`. The package is still
@@ -227,9 +228,10 @@ Ask what the case actually needs:
 
 1. **Is it a rule about data?** Add it to the matching `*.schema.test.ts`. Start from
    `validPayload()`, change one field, use `expectRejectedAt` with the field path.
-2. **Does it need the browser?** Add it to the spec, and prefer extending an existing
+2. **Is it isolated component behavior?** Add a Storybook state and a `play` function with assertions.
+3. **Is it an application workflow?** Add it to the Playwright spec, and prefer extending an existing
    `describe` over adding a new one — each new block costs another page load.
-3. **Is it a new required section?** Add the section and its fields to
+4. **Is it a new required section?** Add the section and its fields to
    `INVALID_ROW_SECTION_FIELDS` (and `REQUIRED_SECTION_FIELDS` in `formA.spec.ts`), and give
    it an invalid row in `applyInvalidRows()` in the page object. It is then covered by the
    combined test at no extra runtime cost.

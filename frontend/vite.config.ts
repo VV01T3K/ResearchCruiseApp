@@ -5,6 +5,8 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import svgr from 'vite-plugin-svgr';
 import tailwindcss from '@tailwindcss/vite';
 import babel from '@rolldown/plugin-babel';
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import { playwright } from 'vite-plus/test/browser-playwright';
 import { fmtConfig, lintConfig } from './vite.tool.config.ts';
 
 const {
@@ -33,8 +35,28 @@ export default defineConfig({
   lint: lintConfig,
   fmt: fmtConfig,
   test: {
-    // Unit tests live in `tests/unit`; the rest of `tests/` holds Playwright E2E specs.
-    include: ['tests/unit/**/*.test.{ts,tsx}'],
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'unit',
+          include: ['tests/unit/**/*.test.{ts,tsx}'],
+        },
+      },
+      {
+        extends: true,
+        plugins: [storybookTest({ configDir: '.storybook', storybookScript: 'vp run storybook --no-open' })],
+        test: {
+          name: 'storybook',
+          browser: {
+            enabled: true,
+            provider: playwright(),
+            headless: true,
+            instances: [{ browser: 'chromium' }],
+          },
+        },
+      },
+    ],
   },
   server: {
     host: true, // TODO: set only for development, not for production build

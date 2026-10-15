@@ -1,3 +1,4 @@
+import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
@@ -10,6 +11,7 @@ const stringOptions = [
 ];
 
 const meta = {
+  decorators: [withControlledValue],
   component: AppDropdownInput,
   args: {
     name: 'Dropdown input',

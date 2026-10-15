@@ -40,6 +40,12 @@ jobs:
       - name: Install Playwright Browsers
         run: vp exec playwright install --with-deps
 
+      - name: Run Storybook component and accessibility tests
+        run: vp run test:storybook
+
+      - name: Run Storybook visual tests
+        run: vp run test:storybook:visual
+
       - name: Run Playwright tests
         run: vp run test
 
@@ -49,3 +55,10 @@ jobs:
           name: playwright-report
           path: frontend/playwright-report/
           retention-days: 30
+
+      - uses: actions/upload-artifact@v6
+        if: ${{ failure() }}
+        with:
+          name: storybook-test-results
+          path: frontend/test-results/
+          retention-days: 7

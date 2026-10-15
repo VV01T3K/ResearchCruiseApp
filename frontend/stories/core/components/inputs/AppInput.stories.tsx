@@ -1,9 +1,11 @@
+import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { expect, fn, waitFor } from 'storybook/test';
 
 import { AppInput } from '@/components/shared/inputs/AppInput';
 
 const meta = {
+  decorators: [withControlledValue],
   component: AppInput,
   args: {
     name: 'Input',
@@ -20,7 +22,19 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const EmptyText: Story = {};
+export const EmptyText: Story = {
+  play: async ({ canvas, userEvent }) => {
+    const input = canvas.getByRole('textbox');
+    let value = '';
+    for (const character of 'Cruise') {
+      await userEvent.type(input, character);
+      value += character;
+      await waitFor(() => expect(input).toHaveValue(value));
+    }
+    await userEvent.clear(input);
+    await waitFor(() => expect(input).toHaveValue(''));
+  },
+};
 
 export const FilledText: Story = {
   args: {
@@ -81,5 +95,22 @@ export const WithHelper: Story = {
     value: 'Some string',
     label: 'With helper',
     helper: 'Helper text',
+  },
+};
+
+export const DuplicateFieldNames: Story = {
+  render: (args) => (
+    <div className="space-y-4">
+      <AppInput {...args} label="First field" />
+      <AppInput {...args} label="Second field" />
+    </div>
+  ),
+  parameters: { a11y: { test: 'error' } },
+  play: async ({ canvas, userEvent }) => {
+    const first = canvas.getByLabelText('First field');
+    const second = canvas.getByLabelText('Second field');
+    await expect(first).not.toBe(second);
+    await userEvent.click(canvas.getByText('Second field'));
+    await expect(second).toHaveFocus();
   },
 };

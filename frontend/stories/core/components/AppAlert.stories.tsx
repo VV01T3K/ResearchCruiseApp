@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { expect, fn } from 'storybook/test';
+import { useState } from 'react';
 
 import { AppAlert } from '@/components/shared/AppAlert';
+import { AppButton } from '@/components/shared/AppButton';
 
 const meta = {
   component: AppAlert,
@@ -49,6 +51,27 @@ export const Info: Story = {
 };
 
 export const Closeable: Story = {
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Close' }));
+    await expect(args.onClose).toHaveBeenCalledTimes(1);
+    await expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole('button', { name: 'Show alert' }));
+    await expect(canvas.getByRole('alert')).toHaveTextContent('Closeable Alert');
+  },
+  render: function Render(args) {
+    const [isOpen, setIsOpen] = useState(true);
+    return isOpen ? (
+      <AppAlert
+        {...args}
+        onClose={() => {
+          args.onClose?.();
+          setIsOpen(false);
+        }}
+      />
+    ) : (
+      <AppButton onClick={() => setIsOpen(true)}>Show alert</AppButton>
+    );
+  },
   args: {
     onClose: fn(),
     children: 'Closeable Alert',

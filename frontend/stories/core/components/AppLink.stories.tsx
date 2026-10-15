@@ -1,17 +1,9 @@
-import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { AppLink } from '@/components/shared/AppLink';
 
 const meta = {
   component: AppLink,
-  decorators: [
-    (Story) => (
-      <MockRouterProvider>
-        <Story />
-      </MockRouterProvider>
-    ),
-  ],
   args: {
     href: '/link',
   },
