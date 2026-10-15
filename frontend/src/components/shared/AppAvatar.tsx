@@ -25,7 +25,7 @@ export function AppAvatar({ fullName, className, variant = 'default' }: Props) {
   return (
     <div
       className={cn(
-        'relative inline-flex items-center justify-center overflow-hidden rounded-full bg-[var(--color)]',
+        'relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--color)]',
         variants[variant],
         className
       )}

@@ -18,7 +18,7 @@ export function AppDesktopTableHeader<TData extends object, TValue>({ header, ch
   const { supportsDropdown, supportsFilter, supportsSort } = getCapabilities(header);
 
   return (
-    <th colSpan={header.colSpan} style={{ width: `${header.getSize()}px` }} className="px-3 py-3">
+    <th colSpan={header.colSpan} style={{ width: `${header.getSize()}px` }} className="px-2 py-3">
       <Popover.Root open={expanded} onOpenChange={setExpanded} modal={false}>
         <div className="relative inline-block">
           {supportsDropdown && (
@@ -28,7 +28,7 @@ export function AppDesktopTableHeader<TData extends object, TValue>({ header, ch
                   className={cn(
                     'text-default outline-none hover:cursor-pointer disabled:cursor-default',
                     supportsDropdown ? 'cursor-pointer' : '',
-                    'flex items-center justify-center gap-2 py-1'
+                    'flex items-center justify-center gap-1 py-1'
                   )}
                 />
               }
