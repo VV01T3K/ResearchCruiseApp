@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -34,6 +35,8 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
         "Set-Cookie",
         "x-api-key",
     ];
+
+    private static readonly IPAddress ClientAddress = IPAddress.Parse("192.0.2.1");
 
     public async ValueTask InitializeAsync() => await fixture.ResetAsync();
 
@@ -134,6 +137,9 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
             Assert.False(captured.GetProperty("user").TryGetProperty("ip_address", out _));
             var request = captured.GetProperty("request");
             Assert.False(request.TryGetProperty("cookies", out _));
+            var env = request.GetProperty("env");
+            Assert.False(env.TryGetProperty("REMOTE_ADDR", out _));
+            Assert.False(env.TryGetProperty("SERVER_NAME", out _));
             var headers = request.GetProperty("headers");
             Assert.Contains(
                 headers.EnumerateObject(),
@@ -165,6 +171,8 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
                     "cookie-secret",
                     "set-cookie-secret",
                     "api-key-secret",
+                    ClientAddress.ToString(),
+                    Environment.MachineName,
                 }
             )
                 Assert.DoesNotContain(secret, raw, StringComparison.Ordinal);
@@ -207,6 +215,9 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
             foreach (var header in SensitiveHeaderNames)
                 scope.Request.Headers[header] = "trace-header-secret";
             scope.Request.Headers["Accept"] = "application/json";
+            scope.Request.Env["REMOTE_ADDR"] = "192.0.2.1";
+            scope.Request.Env["SERVER_NAME"] = "backend-container";
+            scope.Request.Env["SERVER_PORT"] = "8080";
         });
         hub.StartTransaction(name, "http.server").Finish();
         hub.StartTransaction("GET /v2/cruises", "http.server").Finish();
@@ -222,6 +233,9 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
         var headers = request.GetProperty("headers");
         Assert.Equal("application/json", headers.GetProperty("Accept").GetString());
         Assert.Single(headers.EnumerateObject());
+        var env = request.GetProperty("env");
+        Assert.Equal("8080", env.GetProperty("SERVER_PORT").GetString());
+        Assert.Single(env.EnumerateObject());
         Assert.DoesNotContain(
             "trace-header-secret",
             transaction.GetRawText(),
@@ -241,6 +255,7 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
     ) =>
         app.WithWebHostBuilder(builder =>
             builder.ConfigureServices(services =>
+            {
                 services.PostConfigure<SentryAspNetCoreOptions>(options =>
                 {
                     options.Dsn = "https://synthetic@telemetry.invalid/1";
@@ -249,9 +264,29 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
                     options.AutoSessionTracking = false;
                     options.SendClientReports = false;
                     options.MinimumEventLevel = LogLevel.Critical;
-                })
-            )
+                });
+                services.Insert(
+                    0,
+                    ServiceDescriptor.Singleton<IStartupFilter>(new ClientAddressStartupFilter())
+                );
+            })
         );
+
+    private sealed class ClientAddressStartupFilter : IStartupFilter
+    {
+        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) =>
+            app =>
+            {
+                app.Use(
+                    (context, nextMiddleware) =>
+                    {
+                        context.Connection.RemoteIpAddress = ClientAddress;
+                        return nextMiddleware(context);
+                    }
+                );
+                next(app);
+            };
+    }
 
     private sealed class CapturingSentryTransport : ITransport
     {
