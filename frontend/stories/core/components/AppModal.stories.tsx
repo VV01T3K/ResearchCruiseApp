@@ -12,10 +12,6 @@ const meta = {
     a11y: { test: 'error' },
     docs: {
       story: { inline: false },
-      description: {
-        component:
-          'Controlled dialog with a portal, focus management, Escape handling, and optional dismissal. Open examples show the actual overlay state.',
-      },
     },
   },
   args: {

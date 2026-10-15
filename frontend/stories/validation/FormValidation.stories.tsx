@@ -48,12 +48,6 @@ const meta = {
   args: { onSubmit: fn() },
   parameters: {
     a11y: { test: 'error' },
-    docs: {
-      description: {
-        component:
-          'Exercises the same useAppForm and field components as the application. Errors appear after blur or submission, and clear when corrected. Schema rules are tested separately in the unit suite.',
-      },
-    },
   },
 } satisfies Meta<typeof FormValidation>;
 

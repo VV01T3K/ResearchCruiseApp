@@ -14,12 +14,6 @@ const meta = {
   component: AppFileList,
   parameters: {
     a11y: { test: 'error' },
-    docs: {
-      description: {
-        component:
-          'File removal updates the example list. Preview and download use valid data URLs; disabled lists omit removal actions.',
-      },
-    },
   },
   args: {
     files: [

@@ -5,7 +5,7 @@ Three layers, split by what they can actually prove:
 | Layer                            | Runner             | Location      | Count | Time   |
 | -------------------------------- | ------------------ | ------------- | ----- | ------ |
 | Unit (schemas and session state) | Vitest (`vp test`) | `tests/unit/` | 228   | ~1 s   |
-| Components and UI states         | Storybook + Vitest | `stories/`    | 181   | ~25 s  |
+| Components and UI states         | Storybook + Vitest | `stories/`    | 178   | ~25 s  |
 | End-to-end (browser)             | Playwright         | `tests/`      | 129   | ~3 min |
 
 ## Commands

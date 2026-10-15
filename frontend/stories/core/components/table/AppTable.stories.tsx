@@ -13,14 +13,6 @@ type ExampleUser = {
 
 const meta: Meta<typeof AppTable<ExampleUser>> = {
   component: AppTable,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Responsive table with sorting, column filters and optional virtualization. Controlled sorting/filtering and server pagination are covered by the application Playwright suite.',
-      },
-    },
-  },
   args: {
     data: [
       {
