@@ -89,6 +89,7 @@ function ApplicationsPage() {
       id: 'date',
       header: 'Data',
       accessorFn: (row) => row.date,
+      cell: ({ row }) => <span className="whitespace-nowrap">{row.original.date}</span>,
       sortDescFirst: true,
       meta: { filterInputType: 'date' },
       size: 5,
@@ -114,7 +115,7 @@ function ApplicationsPage() {
         const { start, end } = getDisplayPeriod(row.original);
         if (start && end) {
           return (
-            <div className="text-sm">
+            <div className="text-sm whitespace-nowrap">
               <div>od: {formatDate(start, 'date')}</div>
               <div>do: {formatDate(end, 'date')}</div>
             </div>
@@ -131,7 +132,7 @@ function ApplicationsPage() {
       cell: ({ row }) => {
         if (row.original.startDate && row.original.endDate) {
           return (
-            <div className="text-sm">
+            <div className="text-sm whitespace-nowrap">
               <div>od: {formatDate(row.original.startDate, 'date')}</div>
               <div>do: {formatDate(row.original.endDate, 'date')}</div>
             </div>
@@ -258,7 +259,7 @@ function ApplicationsPage() {
       header: 'Akcje',
       cell: ({ row }) => (
         <>
-          <AppButton type="link" href={`/applications/${row.original.id}/details`} className="flex gap-2">
+          <AppButton type="link" size="sm" href={`/applications/${row.original.id}/details`} className="flex gap-2">
             Szczegóły
             <ZoomInIcon className="h-4 w-4" />
           </AppButton>
