@@ -48,9 +48,7 @@ const cruiseDayDetailsColumns = (
     cell: ({ row }) => (
       <form.AppField
         name={`cruiseDaysDetails[${row.index}].taskName`}
-        children={(field) => (
-          <field.TextField onChange={field.setValue} disabled={isReadonly} placeholder="Nazwa zadania" />
-        )}
+        children={(field) => <field.TextField disabled={isReadonly} placeholder="Nazwa zadania" />}
       />
     ),
     size: 20,
@@ -63,9 +61,7 @@ const cruiseDayDetailsColumns = (
     cell: ({ row }) => (
       <form.AppField
         name={`cruiseDaysDetails[${row.index}].region`}
-        children={(field) => (
-          <field.TextField onChange={field.setValue} disabled={isReadonly} placeholder="Rejon zadania" />
-        )}
+        children={(field) => <field.TextField disabled={isReadonly} placeholder="Rejon zadania" />}
       />
     ),
     size: 20,
@@ -78,7 +74,7 @@ const cruiseDayDetailsColumns = (
     cell: ({ row }) => (
       <form.AppField
         name={`cruiseDaysDetails[${row.index}].position`}
-        children={(field) => <field.TextField onChange={field.setValue} disabled={isReadonly} placeholder="Pozycja" />}
+        children={(field) => <field.TextField disabled={isReadonly} placeholder="Pozycja" />}
       />
     ),
     size: 20,
@@ -91,7 +87,7 @@ const cruiseDayDetailsColumns = (
     cell: ({ row }) => (
       <form.AppField
         name={`cruiseDaysDetails[${row.index}].comment`}
-        children={(field) => <field.TextField onChange={field.setValue} disabled={isReadonly} placeholder="Uwagi" />}
+        children={(field) => <field.TextField disabled={isReadonly} placeholder="Uwagi" />}
       />
     ),
     size: 20,

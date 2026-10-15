@@ -1,3 +1,4 @@
+import { getProblemDetail } from '@/api/errors';
 import { useSelector } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -87,7 +88,7 @@ function getOverlappingBlockadesForPeriod(
 
 export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
-  const { isReadonly, initValues, blockades } = context;
+  const { isReadonly, initValues, blockades, blockadesError } = context;
 
   const year = useSelector(form.store, (state) => state.values.year);
   const periodSelectionType = useSelector(form.store, (state) => state.values.periodSelectionType ?? 'period');
@@ -121,6 +122,8 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
     return false;
   });
 
+  const [hasToggledPastDates, setHasToggledPastDates] = useState(false);
+
   const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
 
   const overlappingPreciseBlockades = useMemo(
@@ -147,10 +150,10 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
     if (periodSelectionType !== 'period' || isReadonly) return;
 
     if (!isValidPeriod(acceptablePeriod)) {
-      form.setFieldValue('acceptablePeriod', ['0', '24'] as CruisePeriodType);
+      form.setFieldValue('acceptablePeriod', ['0', '24'] as CruisePeriodType, { dontUpdateMeta: true });
     }
     if (!isValidPeriod(optimalPeriod)) {
-      form.setFieldValue('optimalPeriod', ['0', '24'] as CruisePeriodType);
+      form.setFieldValue('optimalPeriod', ['0', '24'] as CruisePeriodType, { dontUpdateMeta: true });
     }
   }, [periodSelectionType, isReadonly, acceptablePeriod, optimalPeriod, form]);
 
@@ -184,6 +187,12 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
     >
       <div className="space-y-4">
         <BlockadeWarning year={+year} blockades={blockades} />
+        {!!blockadesError && !isReadonly && (
+          <AppAlert variant="danger" data-testid="form-a-blockades-error">
+            Nie udało się wczytać blokad statku, więc kolizje terminów sprawdzi dopiero zapis formularza:{' '}
+            {getProblemDetail(blockadesError, 'Nieznany błąd.')}
+          </AppAlert>
+        )}
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {!isReadonly && (
             <div className="lg:col-span-2">
@@ -214,7 +223,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                 name="precisePeriodStart"
                 children={(field) => (
                   <field.DateField
-                    onChange={(newValue) => field.handleChange(newValue ?? '')}
                     label="Dokładny termin rozpoczęcia rejsu"
                     type="date"
                     showRequiredAsterisk
@@ -231,7 +239,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     name="precisePeriodEnd"
                     children={(field) => (
                       <field.DateField
-                        onChange={(newValue) => field.handleChange(newValue ?? '')}
                         label="Dokładny termin zakończenia rejsu"
                         type="date"
                         showRequiredAsterisk
@@ -261,6 +268,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     name={field.name}
                     value={field.state.value}
                     onChange={field.handleChange}
+                    onNormalize={(period) => field.setValue(period, { dontUpdateMeta: !hasToggledPastDates })}
                     onBlur={field.handleBlur}
                     errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                     label="Dopuszczalny okres, w którym miałby się odbywać rejs"
@@ -281,6 +289,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                         name={field.name}
                         value={field.state.value}
                         onChange={field.handleChange}
+                        onNormalize={(period) => field.setValue(period, { dontUpdateMeta: !hasToggledPastDates })}
                         onBlur={field.handleBlur}
                         errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                         maxValues={acceptablePeriod}
@@ -322,7 +331,10 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
               <AppCheckbox
                 name="allowPastDates"
                 checked={allowPastDates}
-                onChange={setAllowPastDates}
+                onChange={(checked) => {
+                  setAllowPastDates(checked);
+                  setHasToggledPastDates(true);
+                }}
                 label="Zezwól na wybór dat z przeszłości"
               />
             </div>

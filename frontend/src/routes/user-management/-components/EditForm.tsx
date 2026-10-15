@@ -1,4 +1,6 @@
-import { revalidateLogic, useForm } from '@tanstack/react-form';
+import type { CreateUserRequest, UpdateUserRequest, UserResponse } from '@/api/generated/schemas';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
 import ExclamationTriangleFill from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
@@ -14,13 +16,9 @@ import { AppAlert } from '@/components/shared/AppAlert';
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { getErrors } from '@/integrations/tanstack/form/errors';
-import { getRoleLabel, Role } from '@/api/client/user';
-import { User } from '@/api/client/user';
+import { getRoleLabel, Role } from '@/integrations/auth/types';
 import {
   useAcceptUser,
   useAddUserRole,
@@ -31,11 +29,11 @@ import {
   useUpdateUser,
 } from '@/api/generated/endpoints/users.gen';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
-import { getProblemDetail } from '@/api/client/custom-fetch';
+import { getProblemDetail } from '@/api/errors';
 
 type Props = {
-  user?: User;
-  allUsers: User[];
+  user?: UserResponse;
+  allUsers: UserResponse[];
 
   allowedRoles: Role[];
   allowToRemoveUsers: boolean;
@@ -109,26 +107,27 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
     },
   });
 
-  const form = useForm({
+  const form = useAppForm({
     defaultValues: {
       email: user?.email ?? '',
       firstName: user?.firstName ?? '',
       lastName: user?.lastName ?? '',
       role: user?.roles[0] ?? '',
     },
-    validationLogic: revalidateLogic({ mode: 'change', modeAfterSubmission: 'change' }),
+    validationLogic: formValidationLogic,
     validators: {
       onDynamic: validationSchema,
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit(editMode ? 'edit-user' : 'add-user', 'valid', formApi.state);
+      const profile = { email: value.email, firstName: value.firstName, lastName: value.lastName };
 
       if (editMode) {
         const loading = toast.loading('Zapisywanie zmian...');
         try {
           await updateUserMutation.mutateAsync({
             userId: user.id,
-            data: { email: value.email, firstName: value.firstName, lastName: value.lastName },
+            data: profile satisfies UpdateUserRequest,
           });
           const currentRole = user.roles[0];
           if (currentRole && currentRole !== value.role) {
@@ -147,12 +146,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         const loading = toast.loading('Dodawanie użytkownika...');
         try {
           await addNewUserMutation.mutateAsync({
-            data: {
-              email: value.email,
-              firstName: value.firstName,
-              lastName: value.lastName,
-              roles: [value.role],
-            },
+            data: { ...profile, roles: [value.role] } satisfies CreateUserRequest,
           });
           toast.dismiss(loading);
           close();
@@ -172,7 +166,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    form.handleSubmit();
+    void form.handleSubmit();
   }
 
   async function handleUserDeletion() {
@@ -291,66 +285,27 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
       </div>
 
       <div className="space-y-4">
-        <form.Field
-          name="firstName"
-          children={(field) => (
-            <AppInput
-              name={field.name}
-              value={field.state.value}
-              label="Imię"
-              placeholder="Jan"
-              onBlur={field.handleBlur}
-              onChange={field.handleChange}
-              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-            />
-          )}
-        />
+        <form.AppField name="firstName" children={(field) => <field.TextField label="Imię" placeholder="Jan" />} />
 
-        <form.Field
+        <form.AppField
           name="lastName"
-          children={(field) => (
-            <AppInput
-              name={field.name}
-              value={field.state.value}
-              label="Nazwisko"
-              placeholder="Kowalski"
-              onBlur={field.handleBlur}
-              onChange={field.handleChange}
-              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-            />
-          )}
+          children={(field) => <field.TextField label="Nazwisko" placeholder="Kowalski" />}
         />
 
-        <form.Field
+        <form.AppField
           name="email"
-          children={(field) => (
-            <AppInput
-              name={field.name}
-              value={field.state.value}
-              label="Email"
-              placeholder="jan.kowalski@example.com"
-              type="email"
-              onBlur={field.handleBlur}
-              onChange={field.handleChange}
-              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-            />
-          )}
+          children={(field) => <field.TextField label="Email" placeholder="jan.kowalski@example.com" type="email" />}
         />
 
-        <form.Field
+        <form.AppField
           name="role"
           children={(field) => (
-            <AppDropdownInput
-              name={field.name}
-              value={field.state.value as string}
+            <field.SelectField
               allOptions={Object.values(allowedRoles).map((role) => ({
                 value: role,
                 inlineLabel: getRoleLabel(role),
               }))}
               label="Rola"
-              onBlur={field.handleBlur}
-              onChange={field.handleChange}
-              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
           )}
         />

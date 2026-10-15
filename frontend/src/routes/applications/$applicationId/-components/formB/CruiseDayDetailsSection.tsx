@@ -1,3 +1,4 @@
+import { getErrorMessage } from '@/api/errors';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { useRef } from 'react';
 
@@ -10,12 +11,7 @@ import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
-import {
-  exportCruiseDayDetailsToXlsx,
-  parseCruiseDayDetailsFromCsv,
-  parseCruiseDayDetailsFromFile,
-  readFileAsText,
-} from '@/lib/applications/csvParser';
+import { exportCruiseDayDetailsToXlsx, parseCruiseDayDetailsFromFile } from '@/lib/applications/csvParser';
 
 const cruiseDayDetailsColumns = (
   form: FormBFormApi,
@@ -76,7 +72,6 @@ const cruiseDayDetailsColumns = (
           <field.TextField
             data-testid="cruise-day-task-name-input"
             data-testid-errors="cruise-day-task-name-errors"
-            onChange={field.setValue}
             disabled={isReadonly}
             placeholder="Nazwa zadania"
           />
@@ -97,7 +92,6 @@ const cruiseDayDetailsColumns = (
           <field.TextField
             data-testid="cruise-day-region-input"
             data-testid-errors="cruise-day-region-errors"
-            onChange={field.setValue}
             disabled={isReadonly}
             placeholder="Rejon zadania"
           />
@@ -118,7 +112,6 @@ const cruiseDayDetailsColumns = (
           <field.TextField
             data-testid="cruise-day-position-input"
             data-testid-errors="cruise-day-position-errors"
-            onChange={field.setValue}
             disabled={isReadonly}
             placeholder="Pozycja"
           />
@@ -139,7 +132,6 @@ const cruiseDayDetailsColumns = (
           <field.TextField
             data-testid="cruise-day-comment-input"
             data-testid-errors="cruise-day-comment-errors"
-            onChange={field.setValue}
             disabled={isReadonly}
             placeholder="Uwagi"
           />
@@ -172,35 +164,18 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const isXlsx = file.name.toLowerCase().endsWith('.xlsx');
-    const toastId = toast.loading(isXlsx ? 'Wczytywanie pliku XLSX...' : 'Wczytywanie pliku CSV...');
-
+    const toastId = toast.loading(`Wczytywanie pliku ${file.name}...`);
     try {
-      let rows: CruiseDayValues[];
-
-      if (isXlsx) {
-        rows = await parseCruiseDayDetailsFromFile(file);
-      } else {
-        const csvContent = await readFileAsText(file);
-        rows = parseCruiseDayDetailsFromCsv(csvContent);
-      }
-
+      const rows = await parseCruiseDayDetailsFromFile(file);
       const currentRows = form.getFieldValue('cruiseDaysDetails') || [];
       form.setFieldValue('cruiseDaysDetails', [...currentRows, ...rows]);
-
-      toast.dismiss(toastId);
-      const fileType = isXlsx ? 'XLSX' : 'CSV';
-      toast.success(`Wczytano ${rows.length} wierszy z pliku ${fileType}.`);
+      toast.success(`Wczytano ${rows.length} wierszy z pliku ${file.name}.`);
     } catch (error) {
+      console.error(error);
+      toast.error(getErrorMessage(error, `Nie udało się wczytać pliku ${file.name}`));
+    } finally {
       toast.dismiss(toastId);
-      const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
-      const fileType = isXlsx ? 'XLSX' : 'CSV';
-      toast.error(`Błąd przy wczytywaniu pliku ${fileType}: ${errorMessage}`);
-      console.error('File Import Error:', error);
-    }
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 

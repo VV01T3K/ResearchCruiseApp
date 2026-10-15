@@ -79,7 +79,7 @@ export function AppNavbar() {
             >
               {authDetails?.refreshTokenExpirationDate && (
                 <SessionStatusBadge
-                  refreshTokenExpirationDate={authDetails.refreshTokenExpirationDate}
+                  refreshTokenExpirationDate={new Date(authDetails.refreshTokenExpirationDate)}
                   onRefresh={refresh}
                 />
               )}

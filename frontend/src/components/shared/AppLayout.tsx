@@ -67,12 +67,12 @@ const outerPaddingVariants = {
   default: '',
   narrow: '',
   defaultWithCentering: '',
-  wide: 'px-6 py-4 md:px-16 md:py-8',
+  wide: 'px-2 py-4 md:px-4 md:py-8 2xl:px-16',
 };
 
 const innerPaddingVariants = {
   default: '',
   narrow: '',
   defaultWithCentering: '',
-  wide: 'px-8 py-4 md:px-16 md:py-8',
+  wide: 'px-2 py-4 md:px-4 md:py-8 2xl:px-16',
 };

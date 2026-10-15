@@ -10,29 +10,30 @@ import {
   SessionRefreshError,
   setSession,
   subscribeAuthDetails,
-  toAuthDetails,
-} from '@/api/client/auth-session';
-import { ApiError } from '@/api/client/custom-fetch';
-import type { Role, SignInResult, User } from '@/api/client/user';
+} from '@/integrations/auth/session';
+import { ApiError, getProblemDetail } from '@/api/errors';
+import type { UserResponse } from '@/api/generated/schemas';
+import type { Role, SignInResult } from '@/integrations/auth/types';
 import { logout as logoutSession, useLogin, useLogout } from '@/api/generated/endpoints/auth.gen';
 import { getCurrentUser, getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
+
+async function fetchCurrentUser(): Promise<UserResponse | null> {
+  try {
+    return await getCurrentUser();
+  } catch (error) {
+    if (
+      (error instanceof ApiError && error.status === 401) ||
+      (error instanceof SessionRefreshError && error.unauthorized)
+    )
+      return null;
+    throw error;
+  }
+}
 
 export function currentUserQueryOptions() {
   return queryOptions({
     queryKey: getGetCurrentUserQueryKey(),
-    queryFn: async (): Promise<User | null> => {
-      try {
-        const user = await getCurrentUser();
-        return { ...user, roles: user.roles as Role[] };
-      } catch (error) {
-        if (
-          (error instanceof ApiError && error.status === 401) ||
-          (error instanceof SessionRefreshError && error.unauthorized)
-        )
-          return null;
-        throw error;
-      }
-    },
+    queryFn: fetchCurrentUser,
     refetchOnWindowFocus: true,
     staleTime: 60_000,
   });
@@ -58,14 +59,14 @@ export function useAuthDetails() {
   return authDetails;
 }
 
-export function isInRole(user: User | null, allowedRoles: Role | Role[]) {
+export function isInRole(user: UserResponse | null, allowedRoles: Role | Role[]) {
   const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
   return !!user && roles.some((role) => user.roles.includes(role));
 }
 
 export function useSignIn() {
   const queryClient = useQueryClient();
-  const { mutateAsync: login } = useLogin();
+  const { mutateAsync: login } = useLogin({ mutation: { meta: { handlesError: true } } });
 
   return async (email: string, password: string): Promise<SignInResult> => {
     let response;
@@ -73,19 +74,21 @@ export function useSignIn() {
       response = await login({ data: { email, password } });
     } catch (error) {
       clearSession(queryClient);
-      return error instanceof ApiError && error.status === 401 ? 'invalid_credentials' : 'error';
+      return { error: getProblemDetail(error, 'Wystąpił błąd podczas logowania. Spróbuj ponownie.') };
     }
 
-    setSession(toAuthDetails(response));
+    setSession(response);
     try {
-      const user = await queryClient.query({ ...currentUserQueryOptions(), staleTime: 0 });
-      if (!user) throw new Error('The authenticated account profile is unavailable');
+      // Fetched outside the query cache: sign-in reports this failure itself.
+      const user = await fetchCurrentUser();
+      if (!user) throw new Error('Nie udało się wczytać profilu konta.');
+      queryClient.setQueryData(getGetCurrentUserQueryKey(), user);
       return 'success';
-    } catch {
+    } catch (error) {
       await prepareForLogout();
       await logoutSession().catch(() => undefined);
       clearSessionEverywhere(queryClient);
-      return 'error';
+      return { error: getProblemDetail(error, 'Nie udało się wczytać profilu. Spróbuj ponownie.') };
     }
   };
 }

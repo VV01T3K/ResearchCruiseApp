@@ -1,18 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>false</InvariantGlobalization>
+    <EnableRequestDelegateGenerator>true</EnableRequestDelegateGenerator>
+    <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+    <NoWarn>$(NoWarn);IDE0130;CA1305;CA1310;CA1711;CA1716;CA1822;CA1824;CA1825;CA1848;CA1859;CA1861</NoWarn>
     <RootNamespace>ResearchCruiseApp</RootNamespace>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <UserSecretsId>36dfba4d-eec1-47b9-ab0e-59344a3424a8</UserSecretsId>
     <Version>2.5.1</Version>
-    <AnalysisLevel>latest-recommended</AnalysisLevel>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <!-- Accept legacy findings that require API, culture, DI, or generated-migration changes. -->
-    <NoWarn>$(NoWarn);IDE0130;CA1305;CA1310;CA1711;CA1716;CA1822;CA1824;CA1825;CA1848;CA1859;CA1861</NoWarn>
     <!--
       Keep the single v2 OpenAPI document instead of Asp.Versioning.OpenApi: its transformer turns
       string parameter defaults into single-value enums and titles build-time documents
@@ -28,7 +23,7 @@
     <SentryUploadSources>true</SentryUploadSources>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+  <PropertyGroup Condition="'$(GenerateApiContract)' == 'true'">
     <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
     <OpenApiDocumentsDirectory>openapi</OpenApiDocumentsDirectory>
   </PropertyGroup>
@@ -39,28 +34,30 @@
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="MailKit" Version="4.18.1" />
     <PackageReference Include="MimeKit" Version="4.18.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
+    <!-- MimeKit resolves 10.0.0, affected by GHSA-846f-f764-76mx; pin the patched release. -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.13" />
     <PackageReference
       Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"
-      Version="10.0.12"
+      Version="10.0.13"
     />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.13" />
     <PackageReference
       Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore"
-      Version="10.0.12"
+      Version="10.0.13"
     />
     <PackageReference
       Include="Microsoft.Extensions.ApiDescription.Server"
-      Version="10.0.12"
+      Version="10.0.13"
       PrivateAssets="all"
     />
     <PackageReference Include="Microsoft.OpenApi" Version="2.12.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.13">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.12">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.13">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -107,4 +104,11 @@
   <ItemGroup>
     <Folder Include="Infrastructure\Persistence\Migrations\" />
   </ItemGroup>
+  <Target
+    Name="RefreshApiContractOutput"
+    BeforeTargets="GenerateOpenApiDocuments"
+    Condition="'$(GenerateApiContract)' == 'true'"
+  >
+    <Delete Files="$(_OpenApiDocumentsCache)" />
+  </Target>
 </Project>

@@ -135,7 +135,7 @@ export const ResearchTaskValuesInputSchema = z.union([
 ]);
 export type ResearchTaskValues = z.input<typeof ResearchTaskValuesInputSchema>;
 
-export function getTaskName(taskType: ResearchTaskType): string {
+export function getTaskName(taskType: string | undefined): string {
   switch (taskType) {
     case ResearchTaskType.BachelorThesis:
       return 'Praca licencjacka';
@@ -161,6 +161,8 @@ export function getTaskName(taskType: ResearchTaskType): string {
       return 'Realizacja własnego zadania badawczego';
     case ResearchTaskType.OtherResearchTask:
       return 'Inne zadanie';
+    default:
+      return 'Nieznany typ';
   }
 }
 

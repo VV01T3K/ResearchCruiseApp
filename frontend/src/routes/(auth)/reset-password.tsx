@@ -1,18 +1,20 @@
+import { getErrorMessage } from '@/api/errors';
+import { toast } from '@/components/shared/layout/toast';
+import { ResetPasswordRequest } from '@/api/generated/schemas';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { revalidateLogic, useForm } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
-import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useResetPassword } from '@/api/generated/endpoints/auth.gen';
-import { Result } from '@/api/client/user';
+import { Result } from '@/integrations/auth/types';
 
 export const Route = createFileRoute('/(auth)/reset-password')({
   component: ResetPasswordPage,
@@ -42,23 +44,19 @@ const validationSchema = z
         path: ['passwordConfirm'],
       });
     }
-  });
+  })
+  .pipe(ResetPasswordRequest.pick({ password: true, passwordConfirm: true }));
 
 function ResetPasswordPage() {
   const { emailBase64, resetCode } = Route.useSearch();
   const [result, setResult] = React.useState<Result | undefined>(undefined);
-  const { mutateAsync } = useResetPassword({
-    mutation: {
-      onSuccess: () => setResult('success'),
-      onError: () => setResult('error'),
-    },
-  });
-  const form = useForm({
+  const { mutateAsync } = useResetPassword({ mutation: { meta: { handlesError: true } } });
+  const form = useAppForm({
     defaultValues: {
       password: '',
       passwordConfirm: '',
     },
-    validationLogic: revalidateLogic({ mode: 'change', modeAfterSubmission: 'change' }),
+    validationLogic: formValidationLogic,
     validators: {
       onDynamic: validationSchema,
     },
@@ -69,14 +67,15 @@ function ResetPasswordPage() {
         throw new Error('Not all fields are filled despite validation');
       }
 
-      await mutateAsync({
-        data: {
-          emailBase64,
-          resetCode,
-          password: value.password,
-          passwordConfirm: value.passwordConfirm,
-        },
-      }).catch(() => {});
+      try {
+        await mutateAsync({
+          data: { emailBase64, resetCode, password: value.password, passwordConfirm: value.passwordConfirm },
+        });
+        setResult('success');
+      } catch (error) {
+        setResult('error');
+        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
+      }
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('reset-password', 'invalid', formApi.state);
@@ -119,37 +118,17 @@ function ResetPasswordPage() {
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
       >
-        <form.Field
+        <form.AppField
           name="password"
-          children={(field) => (
-            <AppFloatingLabelInput
-              name={field.name}
-              value={field.state.value}
-              type="password"
-              onBlur={field.handleBlur}
-              onChange={field.handleChange}
-              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-              label="Hasło"
-            />
-          )}
+          children={(field) => <field.FloatingTextField type="password" label="Hasło" />}
         />
 
-        <form.Field
+        <form.AppField
           name="passwordConfirm"
-          children={(field) => (
-            <AppFloatingLabelInput
-              name={field.name}
-              value={field.state.value}
-              type="password"
-              onBlur={field.handleBlur}
-              onChange={field.handleChange}
-              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-              label="Potwierdź hasło"
-            />
-          )}
+          children={(field) => <field.FloatingTextField type="password" label="Potwierdź hasło" />}
         />
 
         <form.Subscribe

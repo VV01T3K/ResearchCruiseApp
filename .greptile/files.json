@@ -9,8 +9,7 @@
         "backend/ResearchCruiseApp/Infrastructure/DependencyInjection.cs",
         "backend/ResearchCruiseApp/Program.cs",
         "backend/ResearchCruiseApp/appsettings*.json",
-        "docker/**",
-        "kubernetes/**"
+        "docker/**"
       ]
     },
     {
@@ -19,7 +18,7 @@
       "scope": [
         "backend/ResearchCruiseApp/Api/**",
         "backend/ResearchCruiseApp/Infrastructure/Identity/**",
-        "frontend/src/api/client/user.ts",
+        "frontend/src/integrations/auth/types.ts",
         "frontend/src/lib/guards.ts",
         "frontend/src/lib/user-management/**",
         "frontend/src/integrations/tanstack/query/**",
