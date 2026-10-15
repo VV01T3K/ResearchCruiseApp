@@ -197,6 +197,71 @@ test.describe('pending saves', () => {
   });
 });
 
+test.describe('saves that finish later', () => {
+  async function holdFormASave(page: Page) {
+    let releaseSave!: () => void;
+    const saveReleased = new Promise<void>((resolve) => (releaseSave = resolve));
+    await page.route(`${API_URL}/v2/applications/${TESTED_FORM_ID}/form-a`, async (route) => {
+      if (route.request().method() !== 'PUT') return route.fallback();
+      await saveReleased;
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+    });
+    const saveRequest = page.waitForRequest(
+      (request) => request.method() === 'PUT' && request.url().endsWith('/form-a')
+    );
+    await page.getByTestId('form-submit-btn').click();
+    await saveRequest;
+    return releaseSave;
+  }
+
+  test('edits made while a save is pending still ask after it succeeds', async ({ formAPage }) => {
+    const { page } = formAPage;
+    await formAPage.fillForm();
+    const formUrl = page.url();
+    await periodNotes(page).fill(UNSAVED_TEXT);
+
+    const releaseSave = await holdFormASave(page);
+    await periodNotes(page).fill(`${UNSAVED_TEXT} i dopisek`);
+    releaseSave();
+
+    await expect(page.getByTestId('toast-success')).toBeVisible();
+    await expect(unsavedChangesDialog(page)).toBeVisible();
+    expect(page.url()).toBe(formUrl);
+  });
+
+  test('a save that finishes after the user left does not navigate away from the next page', async ({ formAPage }) => {
+    const { page } = formAPage;
+    await formAPage.fillForm();
+    await periodNotes(page).fill(UNSAVED_TEXT);
+
+    const releaseSave = await holdFormASave(page);
+    await page.getByRole('link', { name: homeLinkName }).click();
+    await unsavedChangesDialog(page).getByRole('button', { name: 'Opuść bez zapisywania' }).click();
+    await page.getByRole('link', { name: /Nowe zgłoszenie/ }).click();
+    await expect(page).toHaveURL('/applications/new');
+    await periodNotes(page).fill(UNSAVED_TEXT);
+    releaseSave();
+
+    await expect(page.getByTestId('toast-success')).toBeVisible();
+    await expect(page).toHaveURL('/applications/new');
+    await expect(periodNotes(page)).toHaveValue(UNSAVED_TEXT);
+  });
+});
+
+test('disallowing past dates, which clamps a saved period, asks before leaving', async ({ formAPage }) => {
+  const { page } = formAPage;
+  // The saved 2025 period starts at January; from mid-October onward only later fortnights are allowed.
+  await page.clock.setFixedTime(new Date('2026-10-15T12:00:00'));
+  await formAPage.fillForm();
+  await expect(page.getByText('Wybrano okres: Cały rok').first()).toBeVisible();
+
+  await page.getByText('Zezwól na wybór dat z przeszłości').click();
+  await expect(page.getByText('Wybrano okres: Cały rok')).toHaveCount(0);
+  await page.getByRole('link', { name: homeLinkName }).click();
+
+  await expect(unsavedChangesDialog(page)).toBeVisible();
+});
+
 async function leaveLoadedForm(page: Page, field: Locator, edit: boolean) {
   await expect(field).toBeEditable();
   if (edit) await field.fill('7');

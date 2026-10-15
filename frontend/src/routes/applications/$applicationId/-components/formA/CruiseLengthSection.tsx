@@ -122,6 +122,9 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
     return false;
   });
 
+  // Periods clamped after the user toggles past dates are edits; clamping on load is not.
+  const [hasToggledPastDates, setHasToggledPastDates] = useState(false);
+
   const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
 
   const overlappingPreciseBlockades = useMemo(
@@ -267,7 +270,11 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     name={field.name}
                     value={field.state.value}
                     onChange={field.handleChange}
-                    onNormalize={(period) => field.setValue(period, { dontUpdateMeta: true })}
+                    onNormalize={
+                      hasToggledPastDates
+                        ? field.handleChange
+                        : (period) => field.setValue(period, { dontUpdateMeta: true })
+                    }
                     onBlur={field.handleBlur}
                     errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                     label="Dopuszczalny okres, w którym miałby się odbywać rejs"
@@ -288,7 +295,11 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                         name={field.name}
                         value={field.state.value}
                         onChange={field.handleChange}
-                        onNormalize={(period) => field.setValue(period, { dontUpdateMeta: true })}
+                        onNormalize={
+                          hasToggledPastDates
+                            ? field.handleChange
+                            : (period) => field.setValue(period, { dontUpdateMeta: true })
+                        }
                         onBlur={field.handleBlur}
                         errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                         maxValues={acceptablePeriod}
@@ -330,7 +341,10 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
               <AppCheckbox
                 name="allowPastDates"
                 checked={allowPastDates}
-                onChange={setAllowPastDates}
+                onChange={(checked) => {
+                  setAllowPastDates(checked);
+                  setHasToggledPastDates(true);
+                }}
                 label="Zezwól na wybór dat z przeszłości"
               />
             </div>

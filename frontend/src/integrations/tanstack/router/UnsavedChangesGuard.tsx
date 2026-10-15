@@ -19,7 +19,7 @@ type Props = {
  * an untouched form stays clean.
  *
  * Protection stays on while a save is pending. Only the redirect after a successful save skips
- * it, by navigating with `ignoreBlocker: true`.
+ * it, through `useLeaveAfterSave`, and only when no edits were made after the save started.
  */
 export function UnsavedChangesGuard({ form, disabled = false }: Props) {
   const hasUnsavedChanges = () => !disabled && form.state.isDirty;

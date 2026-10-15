@@ -24,6 +24,7 @@ import {
 import { getErrorMessage } from '@/api/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formB')({
@@ -69,6 +70,7 @@ function FormBPage() {
       navigateToFirstError();
     },
   });
+  const leaveAfterSave = useLeaveAfterSave(form);
   const context = {
     form,
     formA: formA.data,
@@ -92,7 +94,7 @@ function FormBPage() {
         applicationId,
         data: { form: schema.parse(values), draft: values.draft ?? false },
       });
-      navigate({ to: '/applications', ignoreBlocker: true });
+      void leaveAfterSave(values, { to: '/applications' });
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );
