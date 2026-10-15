@@ -56,6 +56,9 @@ public static class SentryConfiguration
             user.IpAddress = null;
         }
 
+        request.Env.Remove("REMOTE_ADDR");
+        request.Env.Remove("SERVER_NAME");
+
         if (request.Headers is not null)
         {
             var sensitiveKeys = request.Headers.Keys.Where(key =>
