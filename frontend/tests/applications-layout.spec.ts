@@ -5,6 +5,9 @@ import { getAdminAccountPayload, mockAuthenticatedSession } from './fixtures/moc
 
 const statuses = ['draft', 'formBRequired', 'undertaken', 'acceptedBySupervisor'];
 
+// The signed-in user manages every row, so the manager-only Form B/C actions render too.
+const signedInUser = getAdminAccountPayload();
+
 // Worst-case rows for width: 100-point badges, both periods and cruise dates, long names and
 // the widest status actions.
 const applications = Array.from({ length: 100 }, (_, index) => ({
@@ -13,7 +16,7 @@ const applications = Array.from({ length: 100 }, (_, index) => ({
   year: 2026,
   date: '2026-05-16',
   mainManager: {
-    id: '11111111-1111-1111-1111-111111111111',
+    id: signedInUser.id,
     email: 'manager@example.com',
     firstName: 'Małgorzata',
     lastName: 'Wiśniewska-Kowalczyk',
@@ -52,7 +55,7 @@ for (const viewport of [
     await page.setViewportSize(viewport);
     await mockAuthenticatedSession(page);
     await page.route(`${API_URL}/v2/users/me`, (route) =>
-      route.fulfill({ status: 200, body: JSON.stringify(getAdminAccountPayload()), contentType: 'application/json' })
+      route.fulfill({ status: 200, body: JSON.stringify(signedInUser), contentType: 'application/json' })
     );
     await page.route(`${API_URL}/v2/applications/managers`, (route) => route.fulfill({ json: [] }));
     await page.route(`${API_URL}/v2/applications?*`, (route) =>
@@ -62,6 +65,14 @@ for (const viewport of [
 
     const firstRow = page.locator('tbody tr[data-index="0"]');
     await expect(firstRow).toBeVisible();
+    // Rows 0-2 cover the widest status actions: draft, Form B required and undertaken.
+    await expect(firstRow.getByRole('link', { name: 'Kontynuuj wypełnianie' })).toBeVisible();
+    await expect(
+      page.locator('tbody tr[data-index="1"]').getByRole('link', { name: 'Wypełnij', exact: true })
+    ).toBeVisible();
+    await expect(
+      page.locator('tbody tr[data-index="2"]').getByRole('link', { name: 'Wypełnij formularz C' })
+    ).toBeVisible();
 
     const layout = await page.locator('table').evaluate((table) => {
       const container = table.parentElement!;
@@ -80,11 +91,22 @@ for (const viewport of [
         return new Set([...range.getClientRects()].map((rect) => Math.round(rect.top))).size;
       };
       const action = [...row.querySelectorAll('a')].find((link) => link.textContent?.includes('Szczegóły'))!;
+      const statusActions = [0, 1, 2].map((index) => {
+        const actionRow = table.querySelector(`tbody tr[data-index="${index}"]`)!;
+        const link = [...actionRow.querySelectorAll('a')].find((a) => /Kontynuuj|Wypełnij/.test(a.textContent ?? ''))!;
+        const rect = link.getBoundingClientRect();
+        const cell = link.closest('td')!.getBoundingClientRect();
+        return {
+          text: link.textContent?.trim(),
+          insideCell: rect.left >= cell.left - 0.5 && rect.right <= cell.right + 0.5,
+        };
+      });
       return {
         overflow: container.scrollWidth - container.clientWidth,
         badgeLines: lineCount('100 pkt.'),
         dateLines: lineCount('2026-05-16'),
         actionRight: action.getBoundingClientRect().right,
+        statusActions,
         avatarAspect: (() => {
           const avatar = row.querySelector('.rounded-full')!.getBoundingClientRect();
           return avatar.width / avatar.height;
@@ -101,6 +123,9 @@ for (const viewport of [
     expect(layout.actionRight, 'row actions are visible next to the application number').toBeLessThanOrEqual(
       layout.containerRight + 0.5
     );
+    for (const statusAction of layout.statusActions) {
+      expect(statusAction.insideCell, `"${statusAction.text}" fits inside its status cell`).toBe(true);
+    }
     // Virtualization still renders a window of rows, not all 100.
     expect(layout.rowsRendered).toBeGreaterThan(0);
     expect(layout.rowsRendered).toBeLessThan(100);
