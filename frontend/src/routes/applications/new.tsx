@@ -1,5 +1,5 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
@@ -24,6 +24,8 @@ import {
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { getErrorMessage } from '@/api/errors';
 
@@ -33,7 +35,6 @@ export const Route = createFileRoute('/applications/new')({
 });
 
 function NewCruiseApplicationPage() {
-  const navigate = useNavigate();
   const currentUser = useCurrentUser()!;
   const initialStateQuery = useGetApplicationFormAContextSuspense();
   const saveMutation = useCreateApplication({ mutation: { meta: { handlesError: true } } });
@@ -68,6 +69,7 @@ function NewCruiseApplicationPage() {
       navigateToFirstError();
     },
   });
+  const leaveAfterSave = useLeaveAfterSave(form);
 
   const context = {
     form,
@@ -97,7 +99,7 @@ function NewCruiseApplicationPage() {
           ? 'Formularz został zapisany jako wersja robocza'
           : 'Formularz został zapisany i wysłany do potwierdzenia przez przełożonego'
       );
-      await navigate({ to: '/' });
+      await leaveAfterSave(values, { to: '/' });
     } catch (error) {
       setServerFormErrors(form, error);
       toast.error(getErrorMessage(error, saveFailedMessage(values.draft)));
@@ -116,6 +118,7 @@ function NewCruiseApplicationPage() {
           <FormView context={context} />
         </form.AppForm>
       </AppLayout>
+      <UnsavedChangesGuard form={form} />
 
       <AppModal
         title="Zapisz wersję roboczą Formularza A"

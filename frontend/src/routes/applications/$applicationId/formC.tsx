@@ -1,5 +1,5 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
-import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, notFound } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
@@ -27,6 +27,8 @@ import {
 import { getErrorMessage } from '@/api/errors';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formC')({
@@ -40,8 +42,6 @@ export const Route = createFileRoute('/applications/$applicationId/formC')({
 function FormCPage() {
   const { applicationId } = Route.useParams();
   const mode = Route.useSearch().mode ?? 'preview';
-
-  const navigate = useNavigate();
 
   const formA = useFormAQuery(applicationId);
   const formB = useFormBQuery(applicationId);
@@ -94,6 +94,7 @@ function FormCPage() {
       navigateToFirstError();
     },
   });
+  const leaveAfterSave = useLeaveAfterSave(form);
   const context = {
     form,
     formA: formA.data,
@@ -117,7 +118,7 @@ function FormCPage() {
         applicationId,
         data: { form: schema.parse(values), draft: values.draft ?? false },
       });
-      navigate({ to: '/applications' });
+      leaveAfterSave(values, { to: '/applications' });
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );
@@ -143,6 +144,7 @@ function FormCPage() {
           <FormView context={context} />
         </form.AppForm>
       </AppLayout>
+      <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} />
     </>
   );
 }
