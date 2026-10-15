@@ -69,7 +69,7 @@ export function AppDesktopTable<T extends object>({
           renderCells={(row) =>
             row.getVisibleCells().map((cell) => {
               return (
-                <td key={cell.id} className="px-3 py-3 text-center">
+                <td key={cell.id} className="px-2 py-3 text-center">
                   <TableCell cell={cell} />
                 </td>
               );
