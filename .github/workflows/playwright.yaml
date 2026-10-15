@@ -18,6 +18,9 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    container:
+      # Keep this version aligned with @playwright/test and the screenshot baselines.
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
 
     defaults:
       run:
@@ -36,9 +39,6 @@ jobs:
 
       - name: Install dependencies
         run: vp install --frozen-lockfile
-
-      - name: Install Playwright Browsers
-        run: vp exec playwright install --with-deps
 
       - name: Run Storybook component and accessibility tests
         run: vp run test:storybook

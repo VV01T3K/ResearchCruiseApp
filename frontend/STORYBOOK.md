@@ -58,10 +58,24 @@ Keyboard interaction and focus assertions supplement the automated checks. Modal
 invalid-form contrast remain reported as `'todo'` pending separate application accessibility fixes.
 This change does not include the header or accessibility QA fixes from #455/#456.
 
-Selected screenshots live in `stories/visual/__screenshots__/`. After an intentional change,
-run `vp run test:storybook:visual --update-snapshots`, inspect every changed image, then commit
-the approved baselines. Screenshots use Arial (Liberation Sans on Linux). Generate and compare
-baselines in the same Linux/browser environment; browser and font upgrades can change pixels.
+Selected screenshots live in `stories/visual/__screenshots__/`. CI runs browser tests in
+`mcr.microsoft.com/playwright:v1.63.0-noble`, which pins the browsers, fonts, and rendering libraries.
+Keep that image version aligned with `@playwright/test`. Host rendering can differ even when
+both systems resolve Arial to Liberation Sans, so use the same container to update baselines.
+
+From the repository root:
+
+```sh
+docker run --rm --ipc=host \
+  -v "$PWD:/work" -v /work/node_modules -v /work/frontend/node_modules \
+  -w /work mcr.microsoft.com/playwright:v1.63.0-noble \
+  bash -lc 'npm install --global bun@1.3.11 && bun install --frozen-lockfile &&
+    cd frontend && bun run test:storybook:visual --update-snapshots'
+```
+
+Omit `--update-snapshots` to compare against existing baselines. Podman can replace Docker.
+Inspect every changed image before committing approved baselines. Browser and font upgrades
+can change pixels; keep the screenshot environment and its baselines together.
 Failures and traces go to `test-results/`, with application E2E artifacts in a separate subdirectory.
 
 The unused AppPopover showcase was retired. Expand coverage where users interact with the app,

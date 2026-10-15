@@ -15,7 +15,7 @@ for (const [name, id, readyText] of examples) {
     await expect(page.getByText(readyText, { exact: true })).toBeVisible();
     await expect(page.locator('#storybook-root')).not.toBeEmpty();
     await expect(page.locator('.sb-errordisplay')).not.toBeVisible();
-    // Arial maps to Liberation Sans on Linux, keeping the baselines portable across CI and local runs.
+    // Use the same comparison font in both viewports; the CI container pins its rendering libraries.
     await page.addStyleTag({ content: 'html { font-family: Arial, sans-serif; }' });
     await page.evaluate(async () => {
       await document.fonts.ready;
