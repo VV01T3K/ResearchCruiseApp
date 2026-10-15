@@ -1,6 +1,6 @@
 import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, waitFor } from 'storybook/test';
+import { expect, fn } from 'storybook/test';
 import { useState } from 'react';
 
 import { AppInput } from '@/components/shared/inputs/AppInput';
@@ -26,14 +26,10 @@ type Story = StoryObj<typeof meta>;
 export const EmptyText: Story = {
   play: async ({ canvas, userEvent }) => {
     const input = canvas.getByRole('textbox');
-    let value = '';
-    for (const character of 'Cruise') {
-      await userEvent.type(input, character);
-      value += character;
-      await waitFor(() => expect(input).toHaveValue(value));
-    }
+    await userEvent.type(input, 'Cruise');
+    await expect(input).toHaveValue('Cruise');
     await userEvent.clear(input);
-    await waitFor(() => expect(input).toHaveValue(''));
+    await expect(input).toHaveValue('');
   },
 };
 

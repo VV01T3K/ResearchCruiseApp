@@ -23,7 +23,7 @@ export default defineConfig({
   ],
   webServer: {
     cwd: fileURLToPath(new URL('..', import.meta.url)),
-    command: 'vp preview --outDir test-results/storybook-build --port 6007 --strictPort',
+    command: 'vp preview --outDir storybook-static --port 6007 --strictPort',
     url: 'http://localhost:6007/index.json',
     reuseExistingServer: false,
     timeout: 30_000,

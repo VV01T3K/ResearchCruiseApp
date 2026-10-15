@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, waitFor } from 'storybook/test';
+import { expect, fn } from 'storybook/test';
 import { useState } from 'react';
 
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
@@ -53,13 +53,11 @@ export const Default: Story = {
   play: async ({ canvas, userEvent }) => {
     const [first, second, disabledChecked, disabledUnchecked] = canvas.getAllByRole('checkbox');
     await userEvent.click(first);
-    await waitFor(() => expect(first).not.toBeChecked());
+    await expect(first).not.toBeChecked();
     await userEvent.click(second);
-    await waitFor(() => expect(second).toBeChecked());
+    await expect(second).toBeChecked();
     await expect(disabledChecked).toHaveAttribute('aria-disabled', 'true');
     await expect(disabledUnchecked).toHaveAttribute('aria-disabled', 'true');
-    await userEvent.click(first);
-    await userEvent.click(second);
   },
 };
 

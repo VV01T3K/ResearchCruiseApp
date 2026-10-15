@@ -9,7 +9,6 @@ import AppBackground from '@/components/shared/layout/AppBackground';
 const meta = {
   component: AppModal,
   parameters: {
-    a11y: { test: 'todo' },
     docs: {
       story: { inline: false },
       description: {
@@ -64,7 +63,7 @@ export const Default: Story = {
     await userEvent.click(await canvas.findByRole('button', { name: 'Open modal' }));
     const dialog = await page.findByRole('dialog', { name: 'Modal' });
     await userEvent.click(within(dialog).getByRole('button'));
-    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument(), { timeout: 5000 });
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
     await expect(await canvas.findByRole('button', { name: 'Open modal' })).toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: 'Open modal' }));
     await waitFor(() => expect(page.getByRole('dialog', { name: 'Modal' })).toBeVisible());
@@ -96,5 +95,12 @@ export const NonDismissible: Story = {
     isOpen: true,
     dismissible: false,
     children: 'Complete the action before continuing.',
+  },
+  play: async ({ args, canvasElement, userEvent }) => {
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Action required' });
+    await expect(within(dialog).queryByRole('button')).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+    await expect(dialog).toBeVisible();
+    await expect(args.onClose).not.toHaveBeenCalled();
   },
 };

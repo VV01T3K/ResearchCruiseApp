@@ -15,8 +15,6 @@ for (const [name, id, readyText] of examples) {
     await expect(page.getByText(readyText, { exact: true })).toBeVisible();
     await expect(page.locator('#storybook-root')).not.toBeEmpty();
     await expect(page.locator('.sb-errordisplay')).not.toBeVisible();
-    // Use the same comparison font in both viewports; the CI container pins its rendering libraries.
-    await page.addStyleTag({ content: 'html { font-family: Arial, sans-serif; }' });
     await page.evaluate(async () => {
       await document.fonts.ready;
       await Promise.all(Array.from(document.images, (image) => image.decode().catch(() => {})));

@@ -43,20 +43,16 @@ It is not a substitute for application navigation tests. TanStack-specific helpe
 and disables background queries. Configure fetch spies in a story's `beforeEach`; examples must
 not depend on a running backend. Use valid data URLs for file fixtures.
 
-We evaluated `@storybook/tanstack-react@10.6.0`. Its object-form `interpolatePath` call fails
-against this checkout's `@tanstack/router-core@1.171.32`, which expects positional arguments.
-Keep `@storybook/react-vite` until a compatible framework release passes the router-dependent
-stories. Do not downgrade the application's router to make the workshop run.
+`@storybook/tanstack-react@10.6.0` is incompatible with our `@tanstack/router-core` (it calls
+`interpolatePath` with an object), so stories use `@storybook/react-vite`. Revisit when a newer
+release passes the router-dependent stories.
 
 ## Accessibility and visual review
 
-The accessibility addon runs automated checks. Reviewed file-list, input-label, and valid/corrected form states use
-`parameters.a11y.test: 'error'`, making violations fail CI. The remaining legacy catalog uses
-`'todo'`, which shows findings in Storybook without claiming those components are accessible.
-Promote a component to `'error'` once its states pass; do not disable rules to hide violations.
-Keyboard interaction and focus assertions supplement the automated checks. Modal controls and
-invalid-form contrast remain reported as `'todo'` pending separate application accessibility fixes.
-This change does not include the header or accessibility QA fixes from #455/#456.
+The accessibility addon runs automated checks. The global default is `parameters.a11y.test: 'todo'`,
+which shows findings in Storybook without failing CI. Stories whose states pass opt into `'error'`
+so regressions fail CI; promote more as components are fixed, and do not disable rules to hide
+violations. Keyboard interaction and focus assertions supplement the automated checks.
 
 Selected screenshots live in `stories/visual/__screenshots__/`. CI runs browser tests in
 `mcr.microsoft.com/playwright:v1.63.0-noble`, which pins the browsers, fonts, and rendering libraries.
@@ -76,10 +72,10 @@ docker run --rm --ipc=host \
 Omit `--update-snapshots` to compare against existing baselines. Podman can replace Docker.
 Inspect every changed image before committing approved baselines. Browser and font upgrades
 can change pixels; keep the screenshot environment and its baselines together.
-Failures and traces go to `test-results/`, with application E2E artifacts in a separate subdirectory.
+Visual failures and traces go to `test-results/storybook-visual/`.
 
-The unused AppPopover showcase was retired. Expand coverage where users interact with the app,
-such as forms, tables, pickers, and session states, rather than adding redundant color examples.
+Expand coverage where users interact with the app, such as forms, tables, pickers, and session
+states, rather than adding redundant color examples.
 
 ## References
 

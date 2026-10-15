@@ -18,7 +18,7 @@
     "test:ui": "playwright test --ui",
     "test:unit": "vp test run --project unit",
     "test:storybook": "vp test run --project storybook",
-    "test:storybook:visual": "storybook build --output-dir test-results/storybook-build && playwright test --config .storybook/playwright.config.ts",
+    "test:storybook:visual": "storybook build && playwright test --config .storybook/playwright.config.ts",
     "lint": "vp check && vp run type"
   },
   "dependencies": {

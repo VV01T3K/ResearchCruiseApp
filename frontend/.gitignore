@@ -25,6 +25,7 @@ dist-ssr
 *.sw?
 
 *storybook.log
+storybook-static
 
 # Playwright
 /test-results/
