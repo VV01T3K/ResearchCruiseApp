@@ -9,6 +9,7 @@ import AppBackground from '@/components/shared/layout/AppBackground';
 const meta = {
   component: AppModal,
   parameters: {
+    a11y: { test: 'error' },
     docs: {
       story: { inline: false },
       description: {
@@ -62,7 +63,7 @@ export const Default: Story = {
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(await canvas.findByRole('button', { name: 'Open modal' }));
     const dialog = await page.findByRole('dialog', { name: 'Modal' });
-    await userEvent.click(within(dialog).getByRole('button'));
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Zamknij' }));
     await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
     await expect(await canvas.findByRole('button', { name: 'Open modal' })).toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: 'Open modal' }));
