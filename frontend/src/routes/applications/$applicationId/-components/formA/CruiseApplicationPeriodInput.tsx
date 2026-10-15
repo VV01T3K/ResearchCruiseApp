@@ -16,7 +16,6 @@ type Props = {
   maxValues?: CruisePeriodType;
   minPeriodValue?: number;
   onChange?: (value: CruisePeriodType) => void;
-  /** Receives values clamped to new bounds; defaults to onChange. Not a user edit. */
   onNormalize?: (value: CruisePeriodType) => void;
   onBlur?: () => void;
   errors?: string[];

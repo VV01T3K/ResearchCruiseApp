@@ -118,7 +118,7 @@ function FormCPage() {
         applicationId,
         data: { form: schema.parse(values), draft: values.draft ?? false },
       });
-      void leaveAfterSave(values, { to: '/applications' });
+      leaveAfterSave(values, { to: '/applications' });
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );

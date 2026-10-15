@@ -122,7 +122,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
     return false;
   });
 
-  // Periods clamped after the user toggles past dates are edits; clamping on load is not.
   const [hasToggledPastDates, setHasToggledPastDates] = useState(false);
 
   const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
@@ -150,7 +149,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   useEffect(() => {
     if (periodSelectionType !== 'period' || isReadonly) return;
 
-    // Normalising an empty period on mount is not a user edit.
     if (!isValidPeriod(acceptablePeriod)) {
       form.setFieldValue('acceptablePeriod', ['0', '24'] as CruisePeriodType, { dontUpdateMeta: true });
     }
@@ -270,11 +268,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     name={field.name}
                     value={field.state.value}
                     onChange={field.handleChange}
-                    onNormalize={
-                      hasToggledPastDates
-                        ? field.handleChange
-                        : (period) => field.setValue(period, { dontUpdateMeta: true })
-                    }
+                    onNormalize={(period) => field.setValue(period, { dontUpdateMeta: !hasToggledPastDates })}
                     onBlur={field.handleBlur}
                     errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                     label="Dopuszczalny okres, w którym miałby się odbywać rejs"
@@ -295,11 +289,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                         name={field.name}
                         value={field.state.value}
                         onChange={field.handleChange}
-                        onNormalize={
-                          hasToggledPastDates
-                            ? field.handleChange
-                            : (period) => field.setValue(period, { dontUpdateMeta: true })
-                        }
+                        onNormalize={(period) => field.setValue(period, { dontUpdateMeta: !hasToggledPastDates })}
                         onBlur={field.handleBlur}
                         errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                         maxValues={acceptablePeriod}

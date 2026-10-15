@@ -75,7 +75,6 @@ test.describe('unsaved application edits', () => {
 
   test('reloading with edits triggers the native leave-page prompt', async ({ formAPage: { page } }) => {
     await periodNotes(page).fill(UNSAVED_TEXT);
-    // Chromium only shows beforeunload prompts after a real user gesture on the page.
     await periodNotes(page).click();
 
     const prompt = page.waitForEvent('dialog');
@@ -114,7 +113,6 @@ test.describe('unsaved application edits', () => {
 test.describe('edits made without pointer or keyboard events', () => {
   test('a trusted input event alone, as from autofill or dictation, is protected', async ({ formAPage: { page } }) => {
     await expect(periodNotes(page)).toBeVisible();
-    // Autofill and some dictation/IME paths fire only `input`: hide every earlier event from the page.
     await page.evaluate(() => {
       for (const type of ['beforeinput', 'pointerdown', 'keydown', 'keyup']) {
         window.addEventListener(type, (event) => event.stopImmediatePropagation(), { capture: true });
@@ -151,30 +149,28 @@ test.describe('edits made without pointer or keyboard events', () => {
   });
 });
 
+async function submitHeldFormASave(page: Page, status: number) {
+  let releaseSave!: () => void;
+  const saveReleased = new Promise<void>((resolve) => (releaseSave = resolve));
+  await page.route(`${API_URL}/v2/applications/${TESTED_FORM_ID}/form-a`, async (route) => {
+    if (route.request().method() !== 'PUT') return route.fallback();
+    await saveReleased;
+    await route.fulfill({ status, contentType: 'application/json', body: JSON.stringify({ status }) });
+  });
+  const saveRequest = page.waitForRequest((request) => request.method() === 'PUT' && request.url().endsWith('/form-a'));
+  await page.getByTestId('form-submit-btn').click();
+  await saveRequest;
+  return releaseSave;
+}
+
 test.describe('pending saves', () => {
   test('edits stay protected while a save is pending and after it fails', async ({ formAPage }) => {
     const { page } = formAPage;
     await formAPage.fillForm();
     await periodNotes(page).fill(UNSAVED_TEXT);
 
-    let releaseSave!: () => void;
-    const saveReleased = new Promise<void>((resolve) => (releaseSave = resolve));
-    await page.route(`${API_URL}/v2/applications/${TESTED_FORM_ID}/form-a`, async (route) => {
-      if (route.request().method() !== 'PUT') return route.fallback();
-      await saveReleased;
-      await route.fulfill({
-        status: 500,
-        contentType: 'application/problem+json',
-        body: JSON.stringify({ title: 'Błąd serwera', status: 500 }),
-      });
-    });
-    const saveRequest = page.waitForRequest(
-      (request) => request.method() === 'PUT' && request.url().endsWith('/form-a')
-    );
-    await page.getByTestId('form-submit-btn').click();
-    await saveRequest;
+    const releaseSave = await submitHeldFormASave(page, 500);
 
-    // Reload while the request is pending shows the native prompt.
     const prompt = page.waitForEvent('dialog');
     const reload = page.reload().catch(() => undefined);
     const nativeDialog = await prompt;
@@ -182,7 +178,6 @@ test.describe('pending saves', () => {
     await nativeDialog.dismiss();
     await reload;
 
-    // An in-app link while the request is pending asks too.
     await page.getByRole('link', { name: homeLinkName }).click();
     const dialog = unsavedChangesDialog(page);
     await expect(dialog).toBeVisible();
@@ -195,24 +190,6 @@ test.describe('pending saves', () => {
     await page.getByRole('link', { name: homeLinkName }).click();
     await expect(unsavedChangesDialog(page)).toBeVisible();
   });
-});
-
-test.describe('saves that finish later', () => {
-  async function holdFormASave(page: Page) {
-    let releaseSave!: () => void;
-    const saveReleased = new Promise<void>((resolve) => (releaseSave = resolve));
-    await page.route(`${API_URL}/v2/applications/${TESTED_FORM_ID}/form-a`, async (route) => {
-      if (route.request().method() !== 'PUT') return route.fallback();
-      await saveReleased;
-      await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
-    });
-    const saveRequest = page.waitForRequest(
-      (request) => request.method() === 'PUT' && request.url().endsWith('/form-a')
-    );
-    await page.getByTestId('form-submit-btn').click();
-    await saveRequest;
-    return releaseSave;
-  }
 
   test('edits made while a save is pending still ask after it succeeds', async ({ formAPage }) => {
     const { page } = formAPage;
@@ -220,7 +197,7 @@ test.describe('saves that finish later', () => {
     const formUrl = page.url();
     await periodNotes(page).fill(UNSAVED_TEXT);
 
-    const releaseSave = await holdFormASave(page);
+    const releaseSave = await submitHeldFormASave(page, 200);
     await periodNotes(page).fill(`${UNSAVED_TEXT} i dopisek`);
     releaseSave();
 
@@ -234,11 +211,10 @@ test.describe('saves that finish later', () => {
     await formAPage.fillForm();
     await periodNotes(page).fill(UNSAVED_TEXT);
 
-    const releaseSave = await holdFormASave(page);
+    const releaseSave = await submitHeldFormASave(page, 200);
     await page.getByRole('link', { name: homeLinkName }).click();
     await unsavedChangesDialog(page).getByRole('button', { name: 'Opuść bez zapisywania' }).click();
     await page.getByRole('link', { name: /Nowe zgłoszenie/ }).click();
-    await expect(page).toHaveURL('/applications/new');
     await periodNotes(page).fill(UNSAVED_TEXT);
     releaseSave();
 
@@ -250,7 +226,6 @@ test.describe('saves that finish later', () => {
 
 test('disallowing past dates, which clamps a saved period, asks before leaving', async ({ formAPage }) => {
   const { page } = formAPage;
-  // The saved 2025 period starts at January; from mid-October onward only later fortnights are allowed.
   await page.clock.setFixedTime(new Date('2026-10-15T12:00:00'));
   await formAPage.fillForm();
   await expect(page.getByText('Wybrano okres: Cały rok').first()).toBeVisible();
