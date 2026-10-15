@@ -265,7 +265,6 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
                     options.SendClientReports = false;
                     options.MinimumEventLevel = LogLevel.Critical;
                 });
-                // TestServer has no client address; give requests one so Sentry records it.
                 services.Insert(
                     0,
                     ServiceDescriptor.Singleton<IStartupFilter>(new ClientAddressStartupFilter())

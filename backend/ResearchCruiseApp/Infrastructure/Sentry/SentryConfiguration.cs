@@ -56,8 +56,6 @@ public static class SentryConfiguration
             user.IpAddress = null;
         }
 
-        // Sentry fills a missing user IP from REMOTE_ADDR, and SERVER_NAME repeats the
-        // host name that is already removed from the event.
         request.Env.Remove("REMOTE_ADDR");
         request.Env.Remove("SERVER_NAME");
 
