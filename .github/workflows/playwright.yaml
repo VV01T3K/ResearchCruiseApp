@@ -52,10 +52,3 @@ jobs:
           name: playwright-report
           path: frontend/playwright-report/
           retention-days: 30
-
-      - uses: actions/upload-artifact@v6
-        if: ${{ failure() }}
-        with:
-          name: playwright-traces
-          path: frontend/test-results/
-          retention-days: 7

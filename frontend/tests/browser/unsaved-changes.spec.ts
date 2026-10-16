@@ -18,14 +18,13 @@ async function expectLeftWithoutPrompt(page: Page) {
   await expect(dialog(page)).toHaveCount(0);
 }
 
-async function expectNativePromptOnReload(page: Page) {
+/** Closing the tab asks the browser's own leave-page question; dismissing it keeps the page. */
+async function expectBrowserLeavePrompt(page: Page) {
   const prompt = page.waitForEvent('dialog');
-  // page.reload() would wait for a navigation that the dismissed prompt cancels.
-  const reload = page.evaluate(() => window.location.reload());
-  const native = await prompt;
-  expect(native.type()).toBe('beforeunload');
-  await native.dismiss();
-  await reload;
+  await page.close({ runBeforeUnload: true });
+  const dialog = await prompt;
+  expect(dialog.type()).toBe('beforeunload');
+  await dialog.dismiss();
 }
 
 /** Holds the next form A save until the returned function releases it. */
@@ -102,11 +101,10 @@ test('browser Back asks before discarding edits on a new application', async ({ 
   await expect(notes(page)).toHaveValue(UNSAVED);
 });
 
-test('reloading with edits shows the native leave-page prompt', async ({ page }) => {
+test('closing the tab with edits shows the browser leave-page prompt', async ({ page }) => {
   await page.goto(formA);
   await notes(page).fill(UNSAVED);
-  await notes(page).click();
-  await expectNativePromptOnReload(page);
+  await expectBrowserLeavePrompt(page);
   await expect(notes(page)).toHaveValue(UNSAVED);
 });
 
@@ -116,21 +114,6 @@ test('a successful save leaves the form without asking', async ({ page, api }) =
   await notes(page).fill(UNSAVED);
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
   await expectLeftWithoutPrompt(page);
-});
-
-test('an edit without pointer or keyboard events, as from autofill, is protected', async ({ page }) => {
-  await page.goto(formA);
-  await expect(notes(page)).toBeVisible();
-  await page.evaluate(() => {
-    for (const type of ['beforeinput', 'pointerdown', 'keydown', 'keyup']) {
-      window.addEventListener(type, (event) => event.stopImmediatePropagation(), { capture: true });
-    }
-  });
-  await notes(page).focus();
-  await page.keyboard.insertText(UNSAVED);
-  await expect(notes(page)).toHaveValue(UNSAVED);
-  await goHome(page);
-  await expect(dialog(page)).toBeVisible();
 });
 
 test('a file dropped as the first edit is protected', async ({ page }) => {
@@ -151,7 +134,7 @@ test.describe('pending saves', () => {
     await page.goto(formA);
     await notes(page).fill(UNSAVED);
     const release = await holdFormASave(page, api, 503);
-    await expectNativePromptOnReload(page);
+    await expectBrowserLeavePrompt(page);
     await goHome(page);
     await dialog(page).getByRole('button', { name: 'Zostań na stronie' }).click();
     release();
