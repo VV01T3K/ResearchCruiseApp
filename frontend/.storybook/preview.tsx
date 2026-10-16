@@ -1,12 +1,9 @@
 import type { Preview } from '@storybook/react-vite';
 import { Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
-import { sb } from 'storybook/test';
 import MockDate from 'mockdate';
 import { StoryRouterProvider } from '../src/integrations/tanstack/router/StoryRouterProvider';
 
 import '../src/styles/index.css';
-
-sb.mock(import('../src/api/fetch.ts'), { spy: true });
 
 const preview: Preview = {
   beforeEach: () => {

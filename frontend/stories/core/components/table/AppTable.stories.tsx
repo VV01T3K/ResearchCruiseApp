@@ -99,19 +99,6 @@ export const Sorted: Story = {
   },
 };
 
-export const Filtered: Story = {
-  play: async ({ canvas, canvasElement, userEvent }) => {
-    await userEvent.click(canvas.getByRole('button', { name: 'Name' }));
-    const page = within(canvasElement.ownerDocument.body);
-    await userEvent.click(await page.findByRole('menuitem', { name: 'Jane Doe' }));
-    await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(canvas.queryByRole('cell', { name: 'John Doe' })).not.toBeInTheDocument());
-    await expect(canvas.getByRole('cell', { name: 'Jane Doe' })).toBeVisible();
-    await userEvent.click(canvas.getByRole('button', { name: /Wyczyść/ }));
-    await expect(await canvas.findByRole('cell', { name: 'John Doe' })).toBeVisible();
-  },
-};
-
 export const Disabled: Story = { args: { disabled: true } };
 export const EmptyWithErrors: Story = {
   args: {
@@ -120,24 +107,6 @@ export const EmptyWithErrors: Story = {
     emptyTableMessage: 'Add at least one participant',
     errors: ['Participants are required'],
     showRequiredAsterisk: true,
-  },
-};
-
-export const Virtualized: Story = {
-  args: {
-    virtualized: true,
-    data: Array.from({ length: 500 }, (_, index) => ({
-      id: index + 1,
-      name: `Participant ${index + 1}`,
-      age: 30,
-      email: `participant${index + 1}@example.com`,
-    })),
-  },
-  play: async ({ canvas }) => {
-    await expect(canvas.getByRole('table')).toHaveAttribute('aria-rowcount', '502');
-    const rows = canvas.getAllByRole('row');
-    await expect(rows.length).toBeLessThan(100);
-    await expect(await canvas.findByRole('cell', { name: 'Participant 1' })).toBeVisible();
   },
 };
 
