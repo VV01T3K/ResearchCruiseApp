@@ -16,6 +16,7 @@ it('writes the shared create/update cruise API shape', () => {
 });
 
 it.each([
+  ['mainManagerId', { mainManagerId: 'not-a-guid' }],
   ['endDate', { endDate: '2026-05-01T00:00:00Z' }],
   ['deputyManagerId', { mainManagerId: manager.id, deputyManagerId: manager.id }],
   ['title', { title: '  ', shipUnavailable: true }],
