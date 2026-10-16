@@ -1,5 +1,8 @@
 import type { Page } from '@playwright/test';
-import { test, expect, mockApplicationForms, type Api } from './fixtures';
+import type { NetworkFixture } from '@msw/playwright';
+import { getUpdateApplicationFormAMockHandler } from '@/api/generated/mocks/applications/applications.msw.gen';
+import { HttpResponse } from 'msw';
+import { test, expect, applicationForms, dropFile } from './fixtures';
 import { admin } from '../data/accounts';
 import { applicationId } from '../data/forms';
 
@@ -7,7 +10,7 @@ const UNSAVED = 'Notatka, której nie zapisano';
 const formA = `/applications/${applicationId}/formA?mode=edit`;
 
 test.use({ account: admin });
-test.beforeEach(({ api }) => mockApplicationForms(api));
+test.beforeEach(({ network }) => network.use(...applicationForms()));
 
 const dialog = (page: Page) => page.getByRole('dialog', { name: 'Niezapisane zmiany' });
 const notes = (page: Page) => page.getByLabel('Uwagi dotyczące terminu');
@@ -28,12 +31,14 @@ async function expectBrowserLeavePrompt(page: Page) {
 }
 
 /** Holds the next form A save until the returned function releases it. */
-async function holdFormASave(page: Page, api: Api, status: number) {
+async function holdFormASave(page: Page, network: NetworkFixture, outcome: 'saved' | 'failed') {
   const { promise: released, resolve: release } = Promise.withResolvers<void>();
-  await api('PUT', `/v2/applications/${applicationId}/form-a`, async (route) => {
-    await released;
-    await route.fulfill({ status, json: status >= 400 ? { detail: 'Serwer niedostępny' } : undefined });
-  });
+  network.use(
+    getUpdateApplicationFormAMockHandler(async () => {
+      await released;
+      if (outcome === 'failed') throw HttpResponse.json({ detail: 'Serwer niedostępny' }, { status: 503 });
+    })
+  );
   const request = page.waitForRequest((request) => request.method() === 'PUT');
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
   await request;
@@ -108,8 +113,8 @@ test('closing the tab with edits shows the browser leave-page prompt', async ({ 
   await expect(notes(page)).toHaveValue(UNSAVED);
 });
 
-test('a successful save leaves the form without asking', async ({ page, api }) => {
-  await api('PUT', `/v2/applications/${applicationId}/form-a`, (route) => route.fulfill({ status: 204 }));
+test('a successful save leaves the form without asking', async ({ page, network }) => {
+  network.use(getUpdateApplicationFormAMockHandler());
   await page.goto(formA);
   await notes(page).fill(UNSAVED);
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
@@ -118,22 +123,21 @@ test('a successful save leaves the form without asking', async ({ page, api }) =
 
 test('a file dropped as the first edit is protected', async ({ page }) => {
   await page.goto(`/applications/${applicationId}/formC?mode=edit`);
-  const photo = await page.evaluateHandle(() => {
-    const transfer = new DataTransfer();
-    transfer.items.add(new File([new Uint8Array([0xff, 0xd8, 0xff, 0xd9])], 'zdjecie.jpg', { type: 'image/jpeg' }));
-    return transfer;
+  await dropFile(page.getByTestId('form-c-attachment-input-button'), {
+    name: 'zdjecie.jpg',
+    mimeType: 'image/jpeg',
+    buffer: Buffer.from([0xff, 0xd8, 0xff, 0xd9]),
   });
-  await page.getByTestId('form-c-attachment-input-button').dispatchEvent('drop', { dataTransfer: photo });
   await expect(page.getByRole('button', { name: 'zdjecie.jpg', exact: true })).toBeVisible();
   await goHome(page);
   await expect(dialog(page)).toBeVisible();
 });
 
 test.describe('pending saves', () => {
-  test('edits stay protected while a save is pending and after it fails', async ({ page, api }) => {
+  test('edits stay protected while a save is pending and after it fails', async ({ page, network }) => {
     await page.goto(formA);
     await notes(page).fill(UNSAVED);
-    const release = await holdFormASave(page, api, 503);
+    const release = await holdFormASave(page, network, 'failed');
     await expectBrowserLeavePrompt(page);
     await goHome(page);
     await dialog(page).getByRole('button', { name: 'Zostań na stronie' }).click();
@@ -144,20 +148,23 @@ test.describe('pending saves', () => {
     await expect(dialog(page)).toBeVisible();
   });
 
-  test('edits made while a save is pending still ask after it succeeds', async ({ page, api }) => {
+  test('edits made while a save is pending still ask after it succeeds', async ({ page, network }) => {
     await page.goto(formA);
     await notes(page).fill(UNSAVED);
-    const release = await holdFormASave(page, api, 204);
+    const release = await holdFormASave(page, network, 'saved');
     await notes(page).fill(`${UNSAVED} i dopisek`);
     release();
     await expect(dialog(page)).toBeVisible();
     await expect(page).toHaveURL(formA);
   });
 
-  test('a save that finishes after the user left does not navigate away from the next page', async ({ page, api }) => {
+  test('a save that finishes after the user left does not navigate away from the next page', async ({
+    page,
+    network,
+  }) => {
     await page.goto(formA);
     await notes(page).fill(UNSAVED);
-    const release = await holdFormASave(page, api, 204);
+    const release = await holdFormASave(page, network, 'saved');
     await goHome(page);
     await dialog(page).getByRole('button', { name: 'Opuść bez zapisywania' }).click();
     await page.getByRole('link', { name: /Nowe zgłoszenie/ }).click();

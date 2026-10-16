@@ -32,11 +32,31 @@ request correctly; the schema's cases belong in the unit tests.
 
 ## Writing browser journeys
 
-- Import `test` and `expect` from `tests/browser/fixtures.ts`. Choose the signed-in user with
-  `test.use({ account: admin })`; without one, the session refresh returns 401.
-- Mock every request with `api(method, path, handler)`. The fixture fails a test on any request
-  without a mock and on any uncaught page error. Later mocks take precedence, so a test can
-  override `mockApplicationForms`.
+```ts
+import { getUpdateApplicationFormAMockHandler } from '@/api/generated/mocks/applications/applications.msw.gen';
+import { test, expect, applicationForms, fail } from './fixtures';
+
+test.use({ account: admin });
+
+test('a failed save can be retried', async ({ page, network, requests }) => {
+  network.use(
+    ...applicationForms(),
+    getUpdateApplicationFormAMockHandler(fail(503), { once: true }),
+    getUpdateApplicationFormAMockHandler()
+  );
+  // ...act like a user...
+  expect(requests.bodies(`PUT /v2/applications/${applicationId}/form-a`)).toHaveLength(2);
+});
+```
+
+- Respond with the handlers Orval generates from the OpenAPI spec into `src/api/generated/mocks/`
+  (`vp run gen`). Pass the response, or `fail(status, problem)` for an error. `{ once: true }`
+  answers one request, so a sequence reads top to bottom. In one `network.use()` call the first
+  matching handler wins, and a later call takes precedence over an earlier one.
+- Check what the app sent with `requests.bodies(route)` and `requests.queries(route)` after the
+  user's action, not inside handlers.
+- Choose the signed-in user with `test.use({ account })`; without one, the session refresh returns 401. The fixture fails a test on any API request without a handler and on any uncaught page
+  error.
 - Build responses from `tests/data/`. `fixtures.test.ts` checks them against the generated API
   schemas, so they stay valid when the API changes.
 - Assert what a user can observe and what the app sends. Do not assert internal state.
@@ -44,12 +64,11 @@ request correctly; the schema's cases belong in the unit tests.
   has no accessible name yet.
 - Control time with `page.clock` instead of waiting.
 
-The suite runs against `vp build --mode test` served by `vp preview`. Each checkout uses its own
-port, so suites in different worktrees can run at the same time. Set `PLAYWRIGHT_PORT` to choose
-one. CI runs one worker; locally Playwright uses half the cores.
+The suite runs against `vp build --mode test` served by `vp preview` on a port the system picks,
+so suites in different worktrees can run at the same time. CI runs one worker; locally Playwright
+uses a quarter of the CPUs it may use.
 
-Unit tests run in `America/Los_Angeles` and the browser in `Europe/Warsaw`, so code that shifts
-calendar dates through local time fails.
+Unit and browser tests both run in `Europe/Warsaw`, the users' timezone.
 
 ## Storybook
 

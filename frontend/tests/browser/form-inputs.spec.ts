@@ -1,28 +1,31 @@
-import { test, expect, mockApplicationForms } from './fixtures';
+import {
+  getGetApplicationFormAMockHandler,
+  getGetApplicationFormBMockHandler,
+  getUpdateApplicationFormBMockHandler,
+} from '@/api/generated/mocks/applications/applications.msw.gen';
+import { getGetCruiseBlockadesMockHandler } from '@/api/generated/mocks/cruises/cruises.msw.gen';
+import { test, expect, applicationForms, fail } from './fixtures';
 import { admin } from '../data/accounts';
 import { applicationId, formA } from '../data/forms';
 
 test.use({ account: admin });
+test.beforeEach(({ network }) => network.use(...applicationForms()));
 
-test.beforeEach(({ api }) => mockApplicationForms(api));
-
-test('cruise days and hours stay in sync through typing, decimals, steppers and limits', async ({ page, api }) => {
-  await api('GET', `/v2/applications/${applicationId}/form-a`, (route) =>
-    route.fulfill({
-      json: {
-        ...formA(),
-        cruiseHours: '48',
-        researchTasks: [
-          {
-            type: '4',
-            title: 'Projekt',
-            startDate: '2026-09',
-            endDate: '2026-10',
-            financingAmount: '100',
-            securedAmount: '5',
-          },
-        ],
-      },
+test('cruise days and hours stay in sync through typing, decimals, steppers and limits', async ({ page, network }) => {
+  network.use(
+    getGetApplicationFormAMockHandler({
+      ...formA(),
+      cruiseHours: '48',
+      researchTasks: [
+        {
+          type: '4',
+          title: 'Projekt',
+          startDate: '2026-09',
+          endDate: '2026-10',
+          financingAmount: '100',
+          securedAmount: '5',
+        },
+      ],
     })
   );
   await page.goto(`/applications/${applicationId}/formA?mode=edit`);
@@ -91,11 +94,9 @@ for (const picker of [
 ]) {
   test(`a cleared research task ${picker.field} is reported on its picker and can be chosen again`, async ({
     page,
-    api,
+    network,
   }) => {
-    await api('GET', `/v2/applications/${applicationId}/form-a`, (route) =>
-      route.fulfill({ json: { ...formA(), researchTasks: [picker.task] } })
-    );
+    network.use(getGetApplicationFormAMockHandler({ ...formA(), researchTasks: [picker.task] }));
     await page.goto(`/applications/${applicationId}/formA?mode=edit`);
     const control = page.locator(`button[name="researchTasks[0].${picker.field}"]`);
     await control.getByRole('button').click();
@@ -109,35 +110,32 @@ for (const picker of [
   });
 }
 
-test('ship blockades that fail to load are explained on the form', async ({ page, api }) => {
+test('ship blockades that fail to load are explained on the form', async ({ page, network }) => {
   await page.clock.install();
-  await api('GET', '/v2/cruises/blockades?*', (route) =>
-    route.fulfill({ status: 503, json: { detail: 'Usługa jest chwilowo niedostępna.' } })
-  );
+  network.use(getGetCruiseBlockadesMockHandler(fail(503, { detail: 'Usługa jest chwilowo niedostępna.' })));
   await page.goto(`/applications/${applicationId}/formA?mode=edit`);
-  // Skip the query's retry backoff.
+  // The query retries with growing delays; advance the clock until it gives up.
   await expect(async () => {
     await page.clock.runFor(5_000);
     await expect(page.getByText('Usługa jest chwilowo niedostępna.')).toBeVisible({ timeout: 100 });
   }).toPass();
 });
 
-test('form B shows server errors under row fields and the remaining reasons above the form', async ({ page, api }) => {
-  let rejected = true;
-  await api('PUT', `/v2/applications/${applicationId}/form-b`, (route) =>
-    rejected
-      ? route.fulfill({
-          status: 400,
-          json: {
-            detail: 'Zgłoszenie jest zablokowane.',
-            errors: {
-              'form.cruiseDaysDetails[0].taskName': ['Nazwa zadania została odrzucona'],
-              'form.isCruiseManagerPresent': ['Obecność kierownika została odrzucona'],
-              form: ['Nieprawidłowy stan wersji roboczej'],
-            },
-          },
-        })
-      : route.fulfill({ status: 204 })
+test('form B shows server errors under row fields and the remaining reasons above the form', async ({
+  page,
+  network,
+}) => {
+  const problem = {
+    detail: 'Zgłoszenie jest zablokowane.',
+    errors: {
+      'form.cruiseDaysDetails[0].taskName': ['Nazwa zadania została odrzucona'],
+      'form.isCruiseManagerPresent': ['Obecność kierownika została odrzucona'],
+      form: ['Nieprawidłowy stan wersji roboczej'],
+    },
+  };
+  network.use(
+    getUpdateApplicationFormBMockHandler(fail(400, problem), { once: true }),
+    getUpdateApplicationFormBMockHandler()
   );
   await page.goto(`/applications/${applicationId}/formB?mode=edit`);
   await page
@@ -158,13 +156,12 @@ test('form B shows server errors under row fields and the remaining reasons abov
   await expect(formErrors).not.toContainText('Nazwa zadania została odrzucona');
   await expect(task).toHaveValue('Niedokończone zadanie');
 
-  rejected = false;
   await page.getByRole('button', { name: 'Zapisz wersję roboczą', exact: true }).click();
   await expect(page.getByText('Formularz został zapisany jako wersja robocza')).toBeVisible();
 });
 
-test('form C reports a missing form B as not found', async ({ page, api }) => {
-  await api('GET', `/v2/applications/${applicationId}/form-b`, (route) => route.fulfill({ status: 404 }));
+test('form C reports a missing form B as not found', async ({ page, network }) => {
+  network.use(getGetApplicationFormBMockHandler(fail(404)));
   await page.goto(`/applications/${applicationId}/formC?mode=edit`);
   await expect(page.getByText('Strona nie znaleziona')).toBeVisible();
 });

@@ -8,15 +8,17 @@ import {
   FormBFields,
   FormCFields,
   FormAOptions,
+  PublicationResponse,
   TokenResponse,
 } from '@/api/generated/schemas';
-import { admin, session } from '@tests/data/accounts';
+import { admin, publication, session } from '@tests/data/accounts';
 import { application, cruise, evaluation } from '@tests/data/cruises';
 import { filledFormA, filledFormB, filledFormC, formA, formB, formC, formOptions } from '@tests/data/forms';
 
 it.each([
   ['account', CurrentUserResponse, () => admin],
   ['session', TokenResponse, session],
+  ['publication', PublicationResponse, publication],
   ['application', ApplicationResponse, application],
   ['cruise', CruiseResponse, cruise],
   ['evaluation', CruiseApplicationEvaluation, evaluation],
