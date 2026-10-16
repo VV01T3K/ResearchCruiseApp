@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { expect, fn } from 'storybook/test';
 
 import { AppAlert } from '@/components/shared/AppAlert';
 
@@ -49,6 +49,10 @@ export const Info: Story = {
 };
 
 export const Closeable: Story = {
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Close' }));
+    await expect(args.onClose).toHaveBeenCalledTimes(1);
+  },
   args: {
     onClose: fn(),
     children: 'Closeable Alert',

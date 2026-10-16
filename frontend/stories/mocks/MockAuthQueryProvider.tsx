@@ -9,9 +9,9 @@ type Props = {
   children: React.ReactNode;
 };
 
-export function MockAuthQueryProvider({ loggedIn, children }: Props) {
-  const [queryClient] = useState(() => new QueryClient());
-  queryClient.setQueryData(
+function createSeededQueryClient(loggedIn?: boolean) {
+  const client = new QueryClient({ defaultOptions: { queries: { enabled: false } } });
+  client.setQueryData(
     getGetCurrentUserQueryKey(),
     loggedIn
       ? {
@@ -25,6 +25,11 @@ export function MockAuthQueryProvider({ loggedIn, children }: Props) {
         }
       : null
   );
+  return client;
+}
+
+export function MockAuthQueryProvider({ loggedIn, children }: Props) {
+  const [queryClient] = useState(() => createSeededQueryClient(loggedIn));
 
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }

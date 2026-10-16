@@ -1,15 +1,17 @@
+import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
 
 const meta = {
+  decorators: [withControlledValue],
   component: AppFileInput,
   args: {
     name: 'name',
     value: {
       name: 'File 1',
-      content: 'Content 1',
+      content: 'data:text/plain;base64,Q29udGVudCAx',
     },
     allowMultiple: false,
     onChange: fn(),
@@ -35,11 +37,11 @@ export const Multiple: Story = {
     value: [
       {
         name: 'File 1',
-        content: 'Content 1',
+        content: 'data:text/plain;base64,Q29udGVudCAx',
       },
       {
         name: 'File 2',
-        content: 'Content 2',
+        content: 'data:text/plain;base64,Q29udGVudCAy',
       },
     ],
   },

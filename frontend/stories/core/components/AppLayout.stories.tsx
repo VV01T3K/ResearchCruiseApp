@@ -1,4 +1,3 @@
-import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -11,10 +10,10 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <MockRouterProvider>
+      <>
         <AppBackground />
         <Story />
-      </MockRouterProvider>
+      </>
     ),
   ],
 } satisfies Meta<typeof AppLayout>;
@@ -40,7 +39,7 @@ export const Narrow: Story = {
 export const DefaultWithCentering: Story = {
   args: {
     variant: 'defaultWithCentering',
-    title: 'Default without centering',
+    title: 'Default with centering',
   },
 };
 

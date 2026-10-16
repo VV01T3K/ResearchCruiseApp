@@ -1,9 +1,11 @@
+import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { AppDatePickerTimeInput } from '@/components/shared/inputs/dates/AppTimePickerInput';
 
 const meta = {
+  decorators: [withControlledValue],
   component: AppDatePickerTimeInput,
   args: {
     name: 'Time picker input',
@@ -22,7 +24,7 @@ export const Default: Story = {};
 
 export const WithLabel: Story = {
   args: {
-    label: 'Month picker',
+    label: 'Time picker',
   },
 };
 
