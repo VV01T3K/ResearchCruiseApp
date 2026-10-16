@@ -29,8 +29,8 @@ routing, authentication, API contracts and full form workflows stay in the E2E s
 - The clock is fixed to 2026-01-15T12:00:00Z with MockDate. Use fixed dates in module-level
   fixtures too, since they are created before `beforeEach` runs.
 - Every story has a memory router (`StoryRouterProvider`) for components that render links.
-- Stories must not need a running backend. `MockAuthQueryProvider` seeds the current user with
-  queries disabled.
+- `src/api/fetch.ts` is mocked globally, so stories never reach the backend.
+  `MockAuthQueryProvider` seeds the current user with queries disabled.
 - Controlled inputs use the `withControlledValue` decorator, because Storybook's `useArgs` does not
   rerender stories under Vitest.
 - Modal stories set `docs.story.inline: false` so each portal stays in its own frame.
