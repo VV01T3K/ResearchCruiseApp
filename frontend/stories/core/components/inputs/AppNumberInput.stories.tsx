@@ -1,9 +1,11 @@
+import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 
 const meta = {
+  decorators: [withControlledValue],
   component: AppNumberInput,
   args: {
     name: 'Numer input',

@@ -40,6 +40,9 @@ jobs:
       - name: Install Playwright Browsers
         run: vp exec playwright install --with-deps
 
+      - name: Run Storybook tests
+        run: vp run test:storybook
+
       - name: Run Playwright tests
         run: vp run test
 
