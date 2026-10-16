@@ -1,9 +1,11 @@
+import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 
 const meta = {
+  decorators: [withControlledValue],
   component: AppYearPickerInput,
   args: {
     name: 'Year picker input',

@@ -7,6 +7,18 @@ import { AppModal } from '@/components/shared/AppModal';
 import type { FileContent } from '@/api/generated/schemas';
 import { cn, createModalPortal } from '@/lib/utils';
 
+const fileKeys = new WeakMap<FileContent, number>();
+let nextFileKey = 0;
+
+function getFileKey(file: FileContent) {
+  let key = fileKeys.get(file);
+  if (key === undefined) {
+    key = nextFileKey++;
+    fileKeys.set(file, key);
+  }
+  return key;
+}
+
 type FileListProps<File extends FileContent> = {
   files: File[];
 
@@ -22,10 +34,9 @@ export function AppFileList<File extends FileContent>({ files, onRemove, disable
     <>
       <ul className={cn('w-full', className)} onClick={(e) => e.stopPropagation()}>
         <AnimatePresence>
-          {files.map((file, i) => (
+          {files.map((file) => (
             <motion.li
-              // oxlint-disable-next-line @eslint-react/no-array-index-key
-              key={(file.name ?? '') + i}
+              key={getFileKey(file)}
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}

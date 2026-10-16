@@ -1,9 +1,11 @@
+import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
 
 const meta = {
+  decorators: [withControlledValue],
   component: AppFloatingLabelInput,
   args: {
     name: 'Text input',

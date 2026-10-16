@@ -1,9 +1,12 @@
+import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { useState } from 'react';
+import { expect, fn } from 'storybook/test';
 
 import { AppInput } from '@/components/shared/inputs/AppInput';
 
 const meta = {
+  decorators: [withControlledValue],
   component: AppInput,
   args: {
     name: 'Input',
@@ -20,7 +23,15 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const EmptyText: Story = {};
+export const EmptyText: Story = {
+  play: async ({ canvas, userEvent }) => {
+    const input = canvas.getByRole('textbox');
+    await userEvent.type(input, 'Cruise');
+    await expect(input).toHaveValue('Cruise');
+    await userEvent.clear(input);
+    await expect(input).toHaveValue('');
+  },
+};
 
 export const FilledText: Story = {
   args: {
@@ -81,5 +92,40 @@ export const WithHelper: Story = {
     value: 'Some string',
     label: 'With helper',
     helper: 'Helper text',
+  },
+};
+
+function IndependentInput(props: React.ComponentProps<typeof AppInput>) {
+  const [value, setValue] = useState(props.value);
+  return (
+    <AppInput
+      {...props}
+      value={value}
+      onChange={(nextValue) => {
+        props.onChange?.(nextValue);
+        setValue(nextValue);
+      }}
+    />
+  );
+}
+
+export const DuplicateFieldNames: Story = {
+  render: (args) => (
+    <div className="space-y-4">
+      <IndependentInput {...args} label="First field" />
+      <IndependentInput {...args} label="Second field" />
+    </div>
+  ),
+  parameters: { a11y: { test: 'error' } },
+  play: async ({ args, canvas, userEvent }) => {
+    const first = canvas.getByLabelText('First field');
+    const second = canvas.getByLabelText('Second field');
+    await expect(first).not.toBe(second);
+    await userEvent.click(canvas.getByText('Second field'));
+    await expect(second).toHaveFocus();
+    await userEvent.type(first, 'Alpha');
+    await expect(first).toHaveValue('Alpha');
+    await expect(second).toHaveValue('');
+    await expect(args.onChange).toHaveBeenLastCalledWith('Alpha');
   },
 };
