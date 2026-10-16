@@ -18,10 +18,12 @@ async function freePort(start: number) {
 
 // Each checkout starts from its own port, so suites in different worktrees can run at the same
 // time. Workers inherit the chosen port from the environment. Set PLAYWRIGHT_PORT to pick one.
+// 20000-24999 is above every port Chromium refuses to load (ERR_UNSAFE_PORT, up to 10080) and
+// below Linux's ephemeral range.
 const hash = createHash('sha1')
   .update(import.meta.dirname)
   .digest();
-process.env.PLAYWRIGHT_PORT ??= String(await freePort(4300 + (hash.readUInt16BE(0) % 1000)));
+process.env.PLAYWRIGHT_PORT ??= String(await freePort(20000 + (hash.readUInt16BE(0) % 5000)));
 const baseURL = `http://127.0.0.1:${process.env.PLAYWRIGHT_PORT}`;
 
 export default defineConfig({
