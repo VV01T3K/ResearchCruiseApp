@@ -74,6 +74,49 @@ test('a failed save preserves edits and allows a successful retry', async ({ pag
   });
 });
 
+test('form A research tasks can be removed, added and saved, with errors that follow their rows', async ({
+  page,
+  network,
+  requests,
+}) => {
+  network.use(getUpdateApplicationFormAMockHandler());
+  await page.goto(formA);
+  const send = page.getByRole('button', { name: 'Wyślij', exact: true });
+  const task = (name: string) => page.getByRole('row').filter({ hasText: name });
+  // The icon-only delete button has no accessible name yet (#491); it is the row's only button.
+  const removeTask = (name: string) => task(name).getByRole('button').click();
+  const addTask = async (name: string) => {
+    await page.getByRole('button', { name: 'Dodaj nowe efekty rejsu' }).click();
+    await page.getByRole('button', { name, exact: true }).click();
+  };
+  const required = page.getByText('Co najmniej jedno zadanie badawcze jest wymagane');
+  const emptyDescription = page.getByText('Opis nie może być pusty', { exact: true });
+
+  await removeTask('Praca licencjacka');
+  await send.click();
+  await expect(required.first()).toBeVisible();
+
+  await addTask('Inne zadanie');
+  await addTask('Dydaktyka');
+  await expect(required).toHaveCount(0);
+  await send.click();
+  await expect(emptyDescription).toHaveCount(2);
+
+  await removeTask('Dydaktyka');
+  await expect(emptyDescription).toHaveCount(1);
+  await task('Inne zadanie').getByLabel('Opis zadania').fill('Pomiary zasolenia');
+  await expect(emptyDescription).toHaveCount(0);
+  await send.click();
+  await expect(page).toHaveURL('/');
+  expect(requests.bodies(savedForm('form-a'))).toEqual([
+    expect.objectContaining({
+      form: expect.objectContaining({
+        researchTasks: [expect.objectContaining({ type: '11', description: 'Pomiary zasolenia' })],
+      }),
+    }),
+  ]);
+});
+
 test('a new application can be created as an incomplete draft with a note', async ({ page, network, requests }) => {
   network.use(getCreateApplicationMockHandler());
   await page.goto('/applications/new');
