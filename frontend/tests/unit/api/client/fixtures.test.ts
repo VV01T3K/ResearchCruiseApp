@@ -1,6 +1,7 @@
 import { expect, it } from 'vite-plus/test';
 import {
   ApplicationResponse,
+  CruiseApplicationEvaluation,
   CruiseResponse,
   CurrentUserResponse,
   FormAFields,
@@ -10,7 +11,7 @@ import {
   TokenResponse,
 } from '@/api/generated/schemas';
 import { admin, session } from '@tests/data/accounts';
-import { application, cruise } from '@tests/data/cruises';
+import { application, cruise, evaluation } from '@tests/data/cruises';
 import { formA, formB, formC, formOptions } from '@tests/data/forms';
 
 it.each([
@@ -18,6 +19,7 @@ it.each([
   ['session', TokenResponse, session],
   ['application', ApplicationResponse, application],
   ['cruise', CruiseResponse, cruise],
+  ['evaluation', CruiseApplicationEvaluation, evaluation],
   ['form A', FormAFields, formA],
   ['form B', FormBFields, formB],
   ['form C', FormCFields, formC],

@@ -1,4 +1,4 @@
-import type { ApplicationResponse, CruiseResponse } from '@/api/generated/schemas';
+import type { ApplicationResponse, CruiseApplicationEvaluation, CruiseResponse } from '@/api/generated/schemas';
 import { manager, deputy } from './accounts';
 import { applicationId } from './forms';
 
@@ -42,5 +42,18 @@ export function cruise(): CruiseResponse {
     status: 'new',
     title: 'Bałtyk',
     shipUnavailable: false,
+  };
+}
+
+export function evaluation(): CruiseApplicationEvaluation {
+  return {
+    formAResearchTasks: [],
+    formAContracts: [],
+    ugTeams: [],
+    guestTeams: [],
+    ugUnitsPoints: '0',
+    formAPublications: [],
+    formASpubTasks: [],
+    effectsPoints: '0',
   };
 }

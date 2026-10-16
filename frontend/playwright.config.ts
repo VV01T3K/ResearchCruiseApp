@@ -1,97 +1,34 @@
-import os from 'os';
-
+import { createHash } from 'node:crypto';
 import { defineConfig, devices } from '@playwright/test';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+// Each checkout gets its own stable port, so suites in different worktrees can run at the same
+// time. Set PLAYWRIGHT_PORT to choose one explicitly.
+const hash = createHash('sha1')
+  .update(import.meta.dirname)
+  .digest();
+process.env.PLAYWRIGHT_PORT ??= String(4300 + (hash.readUInt16BE(0) % 1000));
+const baseURL = `http://127.0.0.1:${process.env.PLAYWRIGHT_PORT}`;
 
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
 export default defineConfig({
-  testDir: './tests',
-  /* Vitest unit tests live in tests/unit. */
-  testIgnore: 'unit/**',
-  /* Run tests in files in parallel */
+  testDir: './tests/browser',
+  outputDir: './test-results',
   fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 1,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : Math.max(Math.floor(os.cpus().length / 4), 1),
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'line',
-  /* The 30s default leaves no headroom for a cold page load under parallel CPU contention. */
-  timeout: 60_000,
-
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  workers: process.env.CI ? 1 : undefined,
+  timeout: 10_000,
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:5174',
-
-    /* A first page load can be slow while several workers warm up at once. */
-    navigationTimeout: 30_000,
-
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    ...devices['Desktop Chrome'],
+    baseURL,
+    locale: 'pl-PL',
+    timezoneId: 'Europe/Warsaw',
+    serviceWorkers: 'block',
+    trace: 'retain-on-failure',
   },
-
-  /* Configure projects for major browsers */
-  projects: [
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        bypassCSP: true,
-        launchOptions: {
-          args: ['--disable-web-security'],
-        },
-      },
-    },
-
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
-  ],
-
-  /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'vp dev --port 5174 --strictPort',
-    url: 'http://localhost:5174',
-    /* The 60s default can be tight for a cold start on a busy machine. */
-    timeout: 120_000,
-    reuseExistingServer: !process.env.CI,
+    command: `vp build --mode test --outDir dist-test && vp preview --outDir dist-test --host 127.0.0.1 --port ${process.env.PLAYWRIGHT_PORT} --strictPort`,
+    url: baseURL,
+    timeout: 60_000,
+    env: { API_URL: '/api', APP_ENVIRONMENT: 'test', SENTRY_DSN: '', SENTRY_AUTH_TOKEN: '' },
   },
 });

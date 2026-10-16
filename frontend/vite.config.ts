@@ -41,6 +41,8 @@ export default defineConfig({
         test: {
           name: 'unit',
           include: ['tests/unit/**/*.test.{ts,tsx}'],
+          // A negative UTC offset exposes code that shifts calendar dates through local time.
+          env: { TZ: 'America/Los_Angeles' },
         },
       },
       {

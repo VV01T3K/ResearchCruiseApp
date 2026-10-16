@@ -14,10 +14,11 @@
     "preview": "vp preview --host",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "playwright test",
-    "test:ui": "playwright test --ui",
+    "test": "vp run test:unit && vp run test:storybook && vp run test:browser",
     "test:unit": "vp test run --project unit",
     "test:storybook": "vp test run --project storybook",
+    "test:browser": "playwright test",
+    "test:ui": "playwright test --ui",
     "lint": "vp check && vp run type"
   },
   "dependencies": {
