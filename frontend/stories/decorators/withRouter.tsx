@@ -1,7 +1,14 @@
+import type { Decorator } from '@storybook/react-vite';
 import { createMemoryHistory, createRootRoute, createRouter, RouterContextProvider } from '@tanstack/react-router';
 import { useState } from 'react';
 
-export function StoryRouterProvider({ children }: { children: React.ReactNode }) {
+export const withRouter: Decorator = (Story) => (
+  <MemoryRouter>
+    <Story />
+  </MemoryRouter>
+);
+
+function MemoryRouter({ children }: { children: React.ReactNode }) {
   const [router] = useState(() =>
     createRouter({
       history: createMemoryHistory({ initialEntries: ['/'] }),

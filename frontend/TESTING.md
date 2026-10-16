@@ -28,7 +28,7 @@ routing, authentication, API contracts and full form workflows stay in the E2E s
 
 - The clock is fixed to 2026-01-15T12:00:00Z with MockDate. Use fixed dates in module-level
   fixtures too, since they are created before `beforeEach` runs.
-- Every story has a memory router (`StoryRouterProvider`) for components that render links.
+- Every story has a memory router (`withRouter`) for components that render links.
 - `src/api/fetch.ts` is mocked globally, so stories never reach the backend.
   `MockAuthQueryProvider` seeds the current user with queries disabled.
 - Controlled inputs use the `withControlledValue` decorator, because Storybook's `useArgs` does not
