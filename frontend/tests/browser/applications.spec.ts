@@ -7,6 +7,7 @@ import {
   getUpdateApplicationDecisionMockHandler,
   getUpdateApplicationSupervisorReviewDecisionMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
+import type { Page } from '@playwright/test';
 import type { ApplicationResponse } from '@/api/generated/schemas';
 import { test, expect } from './fixtures';
 import { admin } from '../data/accounts';
@@ -20,40 +21,47 @@ test.describe('application table', () => {
   test.use({ account: admin });
   test.beforeEach(({ network }) => network.use(getGetApplicationManagersMockHandler([application().mainManager])));
 
-  test('continues through an empty cursor page and resets pagination when sorted or filtered by year', async ({
-    page,
-    network,
-    requests,
-  }) => {
-    const pages: Record<string, ReturnType<typeof listPage>> = {
-      first: listPage([], 'empty'),
-      empty: listPage([], 'last'),
-      last: listPage([{ ...application(), number: 'Last page' }]),
-    };
-    network.use(
-      getGetApplicationsMockHandler(({ request }) => {
-        const query = new URL(request.url).searchParams;
-        if (query.get('descending') === 'false' || query.has('year')) return listPage([application()]);
-        return pages[query.get('cursor') ?? 'first'];
-      })
-    );
-    await page.goto('/applications');
-    await expect(page.getByRole('cell', { name: 'Last page', exact: true })).toBeVisible();
-    expect(requests.queries(listRequests).map((query) => query.cursor)).toEqual([undefined, 'empty', 'last']);
+  const changes = {
+    sorted: async (page: Page) => {
+      await page.getByRole('button', { name: 'Nr', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
+    },
+    'filtered by year': async (page: Page) => {
+      await page.getByRole('button', { name: 'Rok rejsu', exact: true }).click();
+      await page.getByRole('menuitem', { name: '2026', exact: true }).click();
+    },
+  };
 
-    await page.getByRole('button', { name: 'Nr', exact: true }).click();
-    await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
-    await expect(page.getByRole('cell', { name: '2026/17', exact: true })).toBeVisible();
-    expect(requests.queries(listRequests).at(-1)).toMatchObject({ descending: 'false' });
-    expect(requests.queries(listRequests).at(-1)).not.toHaveProperty('cursor');
+  for (const [change, apply] of Object.entries(changes)) {
+    test(`continues through an empty cursor page and restarts from the first page when ${change}`, async ({
+      page,
+      network,
+      requests,
+    }) => {
+      const pages: Record<string, ReturnType<typeof listPage>> = {
+        first: listPage([], 'empty'),
+        empty: listPage([], 'last'),
+        last: listPage([{ ...application(), number: 'Last page' }]),
+      };
+      network.use(
+        getGetApplicationsMockHandler(({ request }) => {
+          const query = new URL(request.url).searchParams;
+          if (query.get('descending') === 'false' || query.has('year')) return listPage([application()]);
+          return pages[query.get('cursor') ?? 'first'];
+        })
+      );
+      await page.goto('/applications');
+      await expect(page.getByRole('cell', { name: 'Last page', exact: true })).toBeVisible();
+      expect(requests.queries(listRequests).map((query) => query.cursor)).toEqual([undefined, 'empty', 'last']);
 
-    await page.keyboard.press('Escape');
-    await page.getByRole('button', { name: 'Rok rejsu', exact: true }).click();
-    await page.getByRole('menuitem', { name: '2026', exact: true }).click();
-    await expect.poll(() => requests.queries(listRequests).at(-1)).toMatchObject({ year: '2026' });
-    expect(requests.queries(listRequests).at(-1)).not.toHaveProperty('cursor');
-    await expect(page.getByRole('cell', { name: '2026/17', exact: true })).toBeVisible();
-  });
+      await apply(page);
+      await expect(page.getByRole('cell', { name: '2026/17', exact: true })).toBeVisible();
+      expect(requests.queries(listRequests).at(-1)).not.toHaveProperty('cursor');
+      expect(requests.queries(listRequests).at(-1)).toMatchObject(
+        change === 'sorted' ? { descending: 'false' } : { year: '2026' }
+      );
+    });
+  }
 
   test('filters send exact values, tell same-named managers apart, and clear together', async ({
     page,

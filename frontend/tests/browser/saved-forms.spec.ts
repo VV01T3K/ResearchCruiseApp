@@ -53,8 +53,9 @@ for (const { name, saved, handlers, shown } of forms) {
           .getByText(text, { exact: true })
           .or(page.locator(`[value="${text}"]`))
           .first()
-      ).toBeAttached();
+      ).toBeVisible();
     }
+    await expect(page.getByRole('textbox', { disabled: false })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Wyślij', exact: true })).toHaveCount(0);
 
     await page.goto(`${form}?mode=edit`);

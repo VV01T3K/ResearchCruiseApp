@@ -40,19 +40,28 @@ test('publications can be deleted one at a time or all at once after confirmatio
   network,
   requests,
 }) => {
+  const first = publication();
+  const second = { ...publication(), id: '88888888-8888-4888-8888-888888888888', title: 'Temperature' };
   network.use(
-    getGetCurrentUserPublicationsMockHandler([publication()]),
-    getDeleteCurrentUserPublicationMockHandler(),
-    getDeleteAllCurrentUserPublicationsMockHandler()
+    getGetCurrentUserPublicationsMockHandler([first, second]),
+    getDeleteCurrentUserPublicationMockHandler(() => network.use(getGetCurrentUserPublicationsMockHandler([second]))),
+    getDeleteAllCurrentUserPublicationsMockHandler(() => network.use(getGetCurrentUserPublicationsMockHandler([])))
   );
-  const deletedOne = () => requests.bodies(`DELETE /v2/users/me/publications/${publication().id}`);
-  const deletedAll = () => requests.bodies('DELETE /v2/users/me/publications');
   await page.goto('/my-publications');
-  await page.getByRole('button', { name: 'Usuń', exact: true }).click();
-  await expect.poll(deletedOne).toHaveLength(1);
+  await page
+    .getByRole('row')
+    .filter({ hasText: first.title! })
+    .getByRole('button', { name: 'Usuń', exact: true })
+    .click();
+  await expect(page.getByRole('cell', { name: first.title!, exact: true })).toHaveCount(0);
+  await expect(page.getByRole('cell', { name: second.title, exact: true })).toBeVisible();
+  expect(requests.bodies(`DELETE /v2/users/me/publications/${first.id}`)).toHaveLength(1);
 
   await page.getByRole('button', { name: 'Usuń wszystkie publikacje' }).click();
-  expect(deletedAll()).toHaveLength(0);
-  await page.getByRole('button', { name: 'Usuń wszystkie publikacje' }).last().click();
-  await expect.poll(deletedAll).toHaveLength(1);
+  const confirmation = page.getByRole('dialog', { name: 'Czy na pewno chcesz usunąć wszystkie publikacje?' });
+  await expect(confirmation).toBeVisible();
+  expect(requests.bodies('DELETE /v2/users/me/publications')).toHaveLength(0);
+  await confirmation.getByRole('button', { name: 'Usuń wszystkie publikacje' }).click();
+  await expect(page.getByRole('cell', { name: second.title, exact: true })).toHaveCount(0);
+  expect(requests.bodies('DELETE /v2/users/me/publications')).toHaveLength(1);
 });
