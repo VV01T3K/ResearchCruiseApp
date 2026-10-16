@@ -96,8 +96,17 @@ export const WithHelper: Story = {
 };
 
 function IndependentInput(props: React.ComponentProps<typeof AppInput>) {
-  const [value, setValue] = useState('');
-  return <AppInput {...props} value={value} onChange={setValue} />;
+  const [value, setValue] = useState(props.value);
+  return (
+    <AppInput
+      {...props}
+      value={value}
+      onChange={(nextValue) => {
+        props.onChange?.(nextValue);
+        setValue(nextValue);
+      }}
+    />
+  );
 }
 
 export const DuplicateFieldNames: Story = {
@@ -108,13 +117,15 @@ export const DuplicateFieldNames: Story = {
     </div>
   ),
   parameters: { a11y: { test: 'error' } },
-  play: async ({ canvas, userEvent }) => {
+  play: async ({ args, canvas, userEvent }) => {
     const first = canvas.getByLabelText('First field');
     const second = canvas.getByLabelText('Second field');
     await expect(first).not.toBe(second);
     await userEvent.click(canvas.getByText('Second field'));
     await expect(second).toHaveFocus();
     await userEvent.type(first, 'Alpha');
+    await expect(first).toHaveValue('Alpha');
     await expect(second).toHaveValue('');
+    await expect(args.onChange).toHaveBeenLastCalledWith('Alpha');
   },
 };
