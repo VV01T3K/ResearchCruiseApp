@@ -1,12 +1,27 @@
 import { createHash } from 'node:crypto';
+import { createServer } from 'node:net';
+import { availableParallelism } from 'node:os';
 import { defineConfig, devices } from '@playwright/test';
 
-// Each checkout gets its own stable port, so suites in different worktrees can run at the same
-// time. Set PLAYWRIGHT_PORT to choose one explicitly.
+/** The first port from `start` that nothing is listening on. */
+async function freePort(start: number) {
+  for (let port = start; port < start + 100; port++) {
+    const free = await new Promise<boolean>((resolve) => {
+      const server = createServer()
+        .once('error', () => resolve(false))
+        .listen(port, '127.0.0.1', () => server.close(() => resolve(true)));
+    });
+    if (free) return port;
+  }
+  throw new Error(`No free port in ${start}-${start + 99}; set PLAYWRIGHT_PORT.`);
+}
+
+// Each checkout starts from its own port, so suites in different worktrees can run at the same
+// time. Workers inherit the chosen port from the environment. Set PLAYWRIGHT_PORT to pick one.
 const hash = createHash('sha1')
   .update(import.meta.dirname)
   .digest();
-process.env.PLAYWRIGHT_PORT ??= String(4300 + (hash.readUInt16BE(0) % 1000));
+process.env.PLAYWRIGHT_PORT ??= String(await freePort(4300 + (hash.readUInt16BE(0) % 1000)));
 const baseURL = `http://127.0.0.1:${process.env.PLAYWRIGHT_PORT}`;
 
 export default defineConfig({
@@ -14,8 +29,9 @@ export default defineConfig({
   outputDir: './test-results',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  // A quarter of the cores leaves room for a second suite running in another worktree.
-  workers: process.env.CI ? 1 : '25%',
+  // A quarter of the CPUs leaves room for a second suite in another worktree. Unlike '25%', which
+  // counts the host's cores, availableParallelism() respects a container's CPU limit.
+  workers: process.env.CI ? 1 : Math.max(1, Math.floor(availableParallelism() / 4)),
   timeout: 20_000,
   expect: { timeout: 10_000 },
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
