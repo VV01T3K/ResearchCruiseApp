@@ -107,6 +107,32 @@ describe('application submission', () => {
   it.each([
     ['A', schemaA, a],
     ['C', schemaC, c],
+  ] as const)('form %s accepts known or custom research areas and rejects unknown IDs', (_, schema, make) => {
+    const valid = make();
+    expect(schema.safeParse(valid).success).toBe(true);
+    expect(
+      schema.safeParse({
+        ...valid,
+        researchAreaDescriptions: [{ areaId: null, differentName: 'Własny rejon', info: '' }],
+      }).success
+    ).toBe(true);
+    expect(
+      schema.safeParse({
+        ...valid,
+        researchAreaDescriptions: [{ areaId: '00000000-0000-0000-0000-000000000000', differentName: null, info: '' }],
+      })
+    ).toMatchObject(issueAt(['researchAreaDescriptions', 0, 'areaId']));
+    expect(
+      schema.safeParse({
+        ...valid,
+        researchAreaDescriptions: [{ areaId: null, differentName: null, info: '' }],
+      })
+    ).toMatchObject(issueAt(['researchAreaDescriptions', 0, 'differentName']));
+  });
+
+  it.each([
+    ['A', schemaA, a],
+    ['C', schemaC, c],
   ] as const)('form %s requires an explanation for alternative ship usage', (_, schema, make) => {
     expect(schema.safeParse({ ...make(), shipUsage: '4', differentUsage: '' })).toMatchObject(
       issueAt(['differentUsage'])
