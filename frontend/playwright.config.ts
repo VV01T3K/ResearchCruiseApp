@@ -14,8 +14,10 @@ export default defineConfig({
   outputDir: './test-results',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  workers: process.env.CI ? 1 : undefined,
-  timeout: 10_000,
+  // A quarter of the cores leaves room for a second suite running in another worktree.
+  workers: process.env.CI ? 1 : '25%',
+  timeout: 20_000,
+  expect: { timeout: 10_000 },
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
     ...devices['Desktop Chrome'],

@@ -191,7 +191,8 @@ test('completing a confirmed cruise updates its visible status', async ({ page, 
 });
 
 test('a new cruise is saved with Warsaw-midnight dates and the chosen managers', async ({ page, api }) => {
-  await page.clock.install({ time: new Date('2026-05-16T12:00:00Z') });
+  // Fix only the date; faked timers would also stall the comboboxes' transitions.
+  await page.clock.setFixedTime(new Date('2026-05-16T12:00:00Z'));
   await mockCruiseEditor(api);
   await api('GET', '/v2/cruises', (route) => route.fulfill({ json: [] }));
   let created: unknown;
@@ -206,6 +207,7 @@ test('a new cruise is saved with Warsaw-midnight dates and the chosen managers',
   await page.getByText('18', { exact: true }).last().click();
   await page.getByRole('combobox', { name: 'Kierownik główny' }).click();
   await page.getByRole('option', { name: `${manager.firstName} ${manager.lastName}` }).click();
+  await expect(page.getByRole('listbox')).toHaveCount(0);
   await page.getByRole('combobox', { name: 'Zastępca kierownika głównego' }).click();
   await page.getByRole('option', { name: `${deputy.firstName} ${deputy.lastName}` }).click();
   await page.getByRole('button', { name: 'Zapisz' }).click();

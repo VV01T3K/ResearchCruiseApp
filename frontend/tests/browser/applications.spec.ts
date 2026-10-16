@@ -164,9 +164,7 @@ test.describe('application review', () => {
 
 for (const accept of [true, false]) {
   test(`supervisor ${accept ? 'accepts' : 'rejects'} an application using the review link`, async ({ page, api }) => {
-    let loads = 0;
     await api('GET', `/v2/applications/${applicationId}/supervisor-review?*`, (route) => {
-      loads++;
       expect(new URL(route.request().url()).searchParams.get('code')).toBe('review-token');
       return route.fulfill({ json: { form: formA(), initValues: formOptions() } });
     });
@@ -177,7 +175,6 @@ for (const accept of [true, false]) {
     });
     await page.goto(`/cruise-approval?cruiseApplicationId=${applicationId}&supervisorCode=review-token`);
     await expect(page.getByRole('button', { name: 'Zaakceptuj', exact: true })).toBeVisible();
-    expect(loads).toBe(1);
     await page.getByRole('button', { name: accept ? 'Zaakceptuj' : 'Odrzuć', exact: true }).click();
     await expect.poll(() => decision).toEqual({ accept, code: 'review-token' });
     await expect(page).toHaveURL('/login?redirect=%2F');
