@@ -10,7 +10,7 @@ import {
 import type { Page } from '@playwright/test';
 import type { ApplicationResponse } from '@/api/generated/schemas';
 import { test, expect } from './fixtures';
-import { admin } from '../data/accounts';
+import { admin, managerAccount } from '../data/accounts';
 import { application, evaluation } from '../data/cruises';
 import { applicationId, formA, formOptions } from '../data/forms';
 
@@ -201,6 +201,16 @@ test.describe('application review', () => {
     await page.getByRole('button', { name: 'Potwierdź odrzucenie' }).click();
     await expect.poll(decisions).toEqual([{ accept: true }, { accept: false }]);
     await expect(page.getByRole('button', { name: 'Potwierdź odrzucenie' })).toHaveCount(0);
+  });
+});
+test.describe(() => {
+  test.use({ account: managerAccount });
+
+  test('the cruise manager sees the application but cannot decide on it', async ({ page, network }) => {
+    network.use(getGetApplicationEvaluationMockHandler(evaluation()), getGetApplicationMockHandler(application()));
+    await page.goto(`/applications/${applicationId}/details`);
+    await expect(page.getByLabel('Numer zgłoszenia:')).toHaveValue('2026/17');
+    await expect(page.getByRole('button', { name: /zgłoszenie$/ })).toHaveCount(0);
   });
 });
 

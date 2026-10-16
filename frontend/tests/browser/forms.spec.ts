@@ -5,7 +5,7 @@ import {
   getUpdateApplicationFormCMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
 import { test, expect, applicationForms, dropFile, fail } from './fixtures';
-import { admin } from '../data/accounts';
+import { admin, deputyAccount, outsider } from '../data/accounts';
 import { applicationId, formB } from '../data/forms';
 
 const formA = `/applications/${applicationId}/formA?mode=edit`;
@@ -116,6 +116,28 @@ test('form A research tasks can be removed, added and saved, with errors that fo
     }),
   ]);
 });
+
+for (const { who, account, saves } of [
+  { who: 'the deputy', account: deputyAccount, saves: true },
+  { who: 'an administrator who is neither manager nor deputy', account: outsider, saves: false },
+]) {
+  test.describe(() => {
+    test.use({ account });
+
+    test(`form A ${saves ? 'is saved' : 'is refused'} for ${who}`, async ({ page, network, requests }) => {
+      network.use(getUpdateApplicationFormAMockHandler());
+      await page.goto(formA);
+      await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+      if (saves) {
+        await expect(page).toHaveURL('/');
+        expect(requests.bodies(savedForm('form-a'))).toHaveLength(1);
+      } else {
+        await expect(page.getByText('Jedynie kierownik lub jego zastępca mogą zapisać formularz')).toBeVisible();
+        expect(requests.bodies(savedForm('form-a'))).toEqual([]);
+      }
+    });
+  });
+}
 
 test('a new application can be created as an incomplete draft with a note', async ({ page, network, requests }) => {
   network.use(getCreateApplicationMockHandler());

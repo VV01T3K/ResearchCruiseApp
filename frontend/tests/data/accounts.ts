@@ -18,6 +18,17 @@ export const admin = {
   emailConfirmed: true,
   accepted: true,
 } satisfies CurrentUserResponse;
+export const managerAccount = { ...admin, roles: ['CruiseManager'] } satisfies CurrentUserResponse;
+export const deputyAccount = { ...admin, ...deputy, roles: ['CruiseManager'] } satisfies CurrentUserResponse;
+/** An administrator who is neither the manager nor the deputy of the test application. */
+export const outsider = {
+  ...admin,
+  id: '55555555-5555-4555-8555-555555555555',
+  email: 'alan@example.com',
+  firstName: 'Alan',
+  lastName: 'Turing',
+  roles: ['Administrator'],
+} satisfies CurrentUserResponse;
 
 export function session(expiresIn = 86_400_000): TokenResponse {
   return {
