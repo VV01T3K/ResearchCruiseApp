@@ -1,5 +1,5 @@
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vite-plus/test';
 import { FieldApi, FormApi } from '@tanstack/react-form';
 import { z } from 'zod';
 
@@ -12,7 +12,7 @@ import {
   getFormBSubmissionSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 
-describe('form submission contracts', () => {
+describe('application form submission', () => {
   it('waits for blur and clears errors while correcting before the first submission', async () => {
     const form = new FormApi({
       defaultValues: { name: '', other: '' },
@@ -102,6 +102,23 @@ describe('form submission contracts', () => {
       expect(reported).toHaveLength(1);
       expect(form.state.isSubmitting).toBe(false);
       expect(form.state.values.name).toBe('Unfinished research');
+    } finally {
+      unmount();
+    }
+  });
+
+  it('records a rejected save as unsuccessful without rejecting the caller', async () => {
+    const form = new FormApi({
+      defaultValues: { draft: false },
+      onSubmit: () => Promise.reject(new Error('Usługa jest chwilowo niedostępna')),
+      onSubmitMeta: undefined,
+    });
+    const unmount = form.mount();
+    try {
+      await expect(submitApplicationForm(form, true)).resolves.toBeUndefined();
+      expect(form.state.values.draft).toBe(true);
+      expect(form.state.submissionAttempts).toBe(1);
+      expect(form.state.isSubmitSuccessful).toBe(false);
     } finally {
       unmount();
     }
