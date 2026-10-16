@@ -22,7 +22,6 @@ import { ShipEquipmentsSection } from './ShipEquipmentsSection';
 import { ShipUsageSection } from './ShipUsageSection';
 import { SPUBReportDataSection } from './SPUBReportDataSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
-import { FormStateProbe } from '@/components/shared/FormStateProbe';
 import { useFormCContext, type FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 
 type Props = {
@@ -39,7 +38,6 @@ export function FormView({ context }: Props) {
 
   return (
     <>
-      <FormStateProbe form={form} />
       <form
         className="space-y-8"
         onSubmit={(event) => {
