@@ -5,7 +5,7 @@ Three layers, split by what they can actually prove:
 | Layer                            | Runner             | Location      | Count | Time   |
 | -------------------------------- | ------------------ | ------------- | ----- | ------ |
 | Unit (schemas and session state) | Vitest (`vp test`) | `tests/unit/` | 228   | ~1 s   |
-| Components and UI states         | Storybook + Vitest | `stories/`    | 178   | ~25 s  |
+| Components and UI states         | Storybook + Vitest | `stories/`    | 177   | ~25 s  |
 | End-to-end (browser)             | Playwright         | `tests/`      | 129   | ~3 min |
 
 ## Commands
@@ -20,10 +20,24 @@ Three layers, split by what they can actually prove:
 
 First-time browser setup: `vp exec playwright install --with-deps`.
 
-Storybook tests exercise isolated UI behavior, including controlled inputs, modal dismissal,
-table sorting/filtering, file removal, form error display, and session actions. Application E2E
-tests still own routing, authentication, API contracts, and complete form workflows.
-See [STORYBOOK.md](./STORYBOOK.md) for story and fixture conventions.
+## Storybook
+
+`vp run storybook` opens the workshop. `vp run test:storybook` renders every story in Chromium
+and runs its `play` function and accessibility checks. Stories cover isolated UI behavior;
+routing, authentication, API contracts and full form workflows stay in the E2E suite.
+
+- The clock is fixed to 2026-01-15T12:00:00Z with MockDate. Use fixed dates in module-level
+  fixtures too, since they are created before `beforeEach` runs.
+- Every story has a memory router (`StoryRouterProvider`) for components that render links.
+- `customFetch` is spied on globally; mock it in a story's `beforeEach`. Stories must not need a
+  running backend. `MockAuthQueryProvider` seeds the current user.
+- Controlled inputs use the `withControlledValue` decorator, because Storybook's `useArgs` does not
+  rerender stories under Vitest.
+- Modal stories set `docs.story.inline: false` so each portal stays in its own frame.
+- Accessibility checks default to `todo` (reported, not failing). Stories that pass set
+  `parameters.a11y.test: 'error'`; promote more as components are fixed.
+- `@storybook/tanstack-react@10.6.0` is incompatible with our `@tanstack/router-core`, so stories
+  use `@storybook/react-vite`.
 
 ---
 

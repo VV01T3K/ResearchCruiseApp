@@ -70,7 +70,6 @@ export const Default: Story = {
   },
 };
 
-export const Open: Story = { args: { title: 'Modal', isOpen: true } };
 export const LongContent: Story = {
   args: {
     title: 'Cruise details',

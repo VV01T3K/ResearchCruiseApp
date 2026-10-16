@@ -20,6 +20,3 @@ TanStack Query hooks, and Zod schemas under `src/api/generated`; commit both out
 - Install browsers (first time / CI): `vp exec playwright install --with-deps`
 
 See [TESTING.md](./TESTING.md) for what each layer covers and how to add tests.
-
-Run `vp run storybook` for the component workshop. See [STORYBOOK.md](./STORYBOOK.md)
-for story conventions and mocking.
