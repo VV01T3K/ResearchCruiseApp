@@ -9,7 +9,10 @@ test.describe('application table', () => {
     await api('GET', '/v2/applications/managers', (route) => route.fulfill({ json: [application().mainManager] }));
   });
 
-  test('continues through an empty cursor page and resets pagination when sorted', async ({ page, api }) => {
+  test('continues through an empty cursor page and resets pagination when sorted or filtered by year', async ({
+    page,
+    api,
+  }) => {
     const requests: URLSearchParams[] = [];
     await api('GET', '/v2/applications?*', (route) => {
       const params = new URL(route.request().url()).searchParams;
@@ -31,6 +34,12 @@ test.describe('application table', () => {
     await expect(page.getByRole('cell', { name: '2026/17', exact: true })).toBeVisible();
     expect(requests.at(-1)?.get('descending')).toBe('false');
     expect(requests.at(-1)?.has('cursor')).toBe(false);
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'Rok rejsu', exact: true }).click();
+    await page.getByRole('menuitem', { name: '2026', exact: true }).click();
+    await expect.poll(() => requests.at(-1)?.get('year')).toBe('2026');
+    expect(requests.at(-1)?.has('cursor')).toBe(false);
+    await expect(page.getByRole('cell', { name: '2026/17', exact: true })).toBeVisible();
   });
 
   test('filters send exact values, tell same-named managers apart, and clear together', async ({ page, api }) => {
@@ -159,6 +168,7 @@ test.describe('application review', () => {
     expect(decisions).toHaveLength(1);
     await page.getByRole('button', { name: 'Potwierdź odrzucenie' }).click();
     await expect.poll(() => decisions).toEqual([{ accept: true }, { accept: false }]);
+    await expect(page.getByRole('button', { name: 'Potwierdź odrzucenie' })).toHaveCount(0);
   });
 });
 
@@ -180,3 +190,24 @@ for (const accept of [true, false]) {
     await expect(page).toHaveURL('/login?redirect=%2F');
   });
 }
+
+test('the supervisor sees precise cruise dates on the days the manager chose', async ({ page, api }) => {
+  await api('GET', `/v2/applications/${applicationId}/supervisor-review?*`, (route) =>
+    route.fulfill({
+      json: {
+        form: {
+          ...formA(),
+          periodSelectionType: 'precise',
+          acceptablePeriod: null,
+          optimalPeriod: null,
+          precisePeriodStart: '2026-06-01T00:00:00',
+          precisePeriodEnd: '2026-06-03T00:00:00',
+        },
+        initValues: formOptions(),
+      },
+    })
+  );
+  await page.goto(`/cruise-approval?cruiseApplicationId=${applicationId}&supervisorCode=review-token`);
+  await expect(page.getByRole('button', { name: 'Dokładny termin rozpoczęcia rejsu' })).toContainText('01.06.2026');
+  await expect(page.getByRole('button', { name: 'Dokładny termin zakończenia rejsu' })).toContainText('03.06.2026');
+});
