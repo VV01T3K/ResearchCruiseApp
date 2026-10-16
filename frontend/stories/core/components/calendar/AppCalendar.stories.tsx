@@ -1,4 +1,3 @@
-import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { AppButton } from '@/components/shared/AppButton';
@@ -10,18 +9,18 @@ const meta = {
     events: [
       {
         title: 'Event 1',
-        start: new Date(),
-        end: new Date(),
+        start: new Date(2026, 0, 15),
+        end: new Date(2026, 0, 15),
       },
       {
         title: 'Event 2',
-        start: new Date(Date.now() - 1000 * 60 * 60 * 24),
-        end: new Date(Date.now() + 1000 * 60 * 60 * 24),
+        start: new Date(2026, 0, 14),
+        end: new Date(2026, 0, 16),
       },
       {
         title: 'Event 3',
-        start: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
-        end: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2),
+        start: new Date(2026, 0, 13),
+        end: new Date(2026, 0, 17),
       },
     ],
   },
@@ -44,17 +43,10 @@ export const WithLink: Story = {
     events: [
       {
         title: 'Event with link',
-        start: new Date(),
-        end: new Date(),
+        start: new Date(2026, 0, 15),
+        end: new Date(2026, 0, 15),
         link: '/link',
       },
     ],
   },
-  decorators: [
-    (Story) => (
-      <MockRouterProvider>
-        <Story />
-      </MockRouterProvider>
-    ),
-  ],
 };

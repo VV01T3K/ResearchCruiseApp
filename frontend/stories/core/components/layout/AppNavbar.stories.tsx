@@ -1,4 +1,3 @@
-import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import { MockAuthQueryProvider } from '@stories/mocks/MockAuthQueryProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -19,11 +18,6 @@ export const LoggedIn: Story = {
         <Story />
       </MockAuthQueryProvider>
     ),
-    (Story) => (
-      <MockRouterProvider>
-        <Story />
-      </MockRouterProvider>
-    ),
   ],
 };
 
@@ -33,11 +27,6 @@ export const LoggedOut: Story = {
       <MockAuthQueryProvider>
         <Story />
       </MockAuthQueryProvider>
-    ),
-    (Story) => (
-      <MockRouterProvider>
-        <Story />
-      </MockRouterProvider>
     ),
   ],
 };

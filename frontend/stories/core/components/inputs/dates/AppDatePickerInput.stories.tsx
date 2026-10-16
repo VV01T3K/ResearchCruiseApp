@@ -1,9 +1,11 @@
+import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 
 const meta = {
+  decorators: [withControlledValue],
   component: AppDatePickerInput,
   args: {
     name: 'Date picker input',
@@ -54,19 +56,19 @@ export const WithPlaceholder: Story = {
 
 export const WithSelectionStart: Story = {
   args: {
-    selectionStartDate: new Date(),
+    selectionStartDate: new Date(2026, 0, 15),
   },
 };
 
 export const WithMinimum: Story = {
   args: {
-    minimalDate: new Date(),
+    minimalDate: new Date(2026, 0, 15),
   },
 };
 
 export const WithMaximum: Story = {
   args: {
-    maximalDate: new Date(),
+    maximalDate: new Date(2026, 0, 15),
   },
 };
 
