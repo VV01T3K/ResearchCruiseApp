@@ -1,9 +1,21 @@
 import { describe, expect, it } from 'vite-plus/test';
 import type { ZodType } from 'zod';
 import { formA, formB, formC, formOptions } from '@tests/data/forms';
-import { getFormAValidationSchema, mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { getFormBValidationSchema, mapFormBToValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { getFormCValidationSchema, mapFormCToValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import {
+  getFormADraftFieldsSchema,
+  getFormAValidationSchema,
+  mapFormAToValues,
+} from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import {
+  getFormBDraftFieldsSchema,
+  getFormBValidationSchema,
+  mapFormBToValues,
+} from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import {
+  getFormCDraftFieldsSchema,
+  getFormCValidationSchema,
+  mapFormCToValues,
+} from '@/routes/applications/$applicationId/-schemas/formC.schema';
 
 type RowCase = {
   section: string;
@@ -11,15 +23,22 @@ type RowCase = {
   required: string[];
   invalid?: [field: string, value: unknown][];
   schema: ZodType;
+  draft: ZodType;
   form: () => unknown;
 };
 const a = {
   schema: getFormAValidationSchema(formOptions()),
+  draft: getFormADraftFieldsSchema(),
   form: () => mapFormAToValues(formA()),
 };
-const b = { schema: getFormBValidationSchema(), form: () => mapFormBToValues(formB()) };
+const b = {
+  schema: getFormBValidationSchema(),
+  draft: getFormBDraftFieldsSchema(),
+  form: () => mapFormBToValues(formB()),
+};
 const c = {
   schema: getFormCValidationSchema(formOptions()),
+  draft: getFormCDraftFieldsSchema(),
   form: () => mapFormCToValues(formC()),
 };
 
@@ -39,7 +58,7 @@ const cases: RowCase[] = [
       institutionUnit: 'Wydział',
       institutionLocalization: 'Gdańsk',
       description: 'Badania',
-      scans: [],
+      scans: [{ name: 'umowa.pdf', content: 'data:application/pdf;base64,YQ==' }],
     },
     required: ['institutionName', 'institutionUnit', 'institutionLocalization', 'description'],
   },
@@ -164,11 +183,16 @@ const cases: RowCase[] = [
   },
 ];
 
-for (const { section, row, required, invalid = [], schema, form } of cases) {
+for (const { section, row, required, invalid = [], schema, draft, form } of cases) {
   describe(section, () => {
     it('accepts a completed row', () => {
       const payload = Object.assign({}, form(), { [section]: [row] });
       expect(schema.safeParse(payload).success).toBe(true);
+    });
+    it('saves a draft whose required row fields are all blank', () => {
+      const blank = Object.fromEntries(required.map((field) => [field, '']));
+      const payload = Object.assign({}, form(), { [section]: [{ ...row, ...blank }] });
+      expect(draft.safeParse(payload).error?.issues ?? []).toEqual([]);
     });
     it.each([...required.map((field) => [field, ''] as const), ...invalid])(
       'reports %s = %j on its row',

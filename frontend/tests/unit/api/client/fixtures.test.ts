@@ -12,7 +12,7 @@ import {
 } from '@/api/generated/schemas';
 import { admin, session } from '@tests/data/accounts';
 import { application, cruise, evaluation } from '@tests/data/cruises';
-import { formA, formB, formC, formOptions } from '@tests/data/forms';
+import { filledFormA, filledFormB, filledFormC, formA, formB, formC, formOptions } from '@tests/data/forms';
 
 it.each([
   ['account', CurrentUserResponse, () => admin],
@@ -23,6 +23,9 @@ it.each([
   ['form A', FormAFields, formA],
   ['form B', FormBFields, formB],
   ['form C', FormCFields, formC],
+  ['filled form A', FormAFields, filledFormA],
+  ['filled form B', FormBFields, filledFormB],
+  ['filled form C', FormCFields, filledFormC],
   ['form options', FormAOptions, formOptions],
 ] as const)('%s fixture satisfies the generated API schema', (_, schema, make) => {
   expect(schema.safeParse(make()).success).toBe(true);

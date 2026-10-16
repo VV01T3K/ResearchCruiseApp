@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vite-plus/test';
-import { formA, formB, formC, formOptions, applicationId, unitId } from '@tests/data/forms';
+import {
+  filledFormA,
+  filledFormB,
+  filledFormC,
+  formA,
+  formB,
+  formC,
+  formOptions,
+  applicationId,
+  unitId,
+} from '@tests/data/forms';
 import { manager } from '@tests/data/accounts';
 import {
   formADefaultValues,
@@ -39,6 +49,18 @@ function issueAt(path: (string | number)[]) {
     error: { issues: expect.arrayContaining([expect.objectContaining({ path })]) },
   };
 }
+
+describe('saved applications', () => {
+  // A form that was saved completely must load, validate and save back without changes.
+  it.each([
+    ['A', filledFormA(), mapFormAToValues(filledFormA()), schemaA, getFormAFieldsSchema(options)],
+    ['B', filledFormB(), mapFormBToValues(filledFormB()), schemaB, getFormBFieldsSchema()],
+    ['C', filledFormC(), mapFormCToValues(filledFormC()), schemaC, getFormCFieldsSchema(options)],
+  ] as const)('a completely filled form %s validates and saves back unchanged', (_, saved, values, schema, fields) => {
+    expect(schema.safeParse(values).error?.issues ?? []).toEqual([]);
+    expect(fields.parse(values)).toEqual(saved);
+  });
+});
 
 describe('application submission', () => {
   it('loads editable values and serializes all three forms to API fields', () => {
@@ -151,6 +173,13 @@ describe('application submission', () => {
       issueAt(['differentUsage'])
     );
     expect(schema.safeParse({ ...make(), shipUsage: '4', differentUsage: 'Pomiary nocne' }).success).toBe(true);
+  });
+
+  it.each([
+    ['an empty acceptable period', { acceptablePeriod: ['4', '4'], optimalPeriod: ['4', '4'] }, 'acceptablePeriod'],
+    ['an empty optimal period', { optimalPeriod: ['4', '4'] }, 'optimalPeriod'],
+  ])('rejects %s', (_, change, path) => {
+    expect(schemaA.safeParse({ ...a(), ...change })).toMatchObject(issueAt([path]));
   });
 
   it('keeps the optimal period within the acceptable period and reserves enough time', () => {
