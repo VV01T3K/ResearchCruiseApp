@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, expect, it, vi } from 'vite-plus/test';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { session } from '@tests/data/accounts';
 
 // The boundary is HTTP. Keep the generated client and session implementation real.
@@ -142,4 +142,48 @@ it('preserves problem details and supports empty success responses', async () =>
     problem,
   });
   await expect(client.customFetch('/v2/example', {})).resolves.toBeNull();
+});
+
+describe('another tab', () => {
+  // Node provides BroadcastChannel; the module opens its channel only when it finds one on `window`.
+  const channels: BroadcastChannel[] = [];
+  class Channel extends BroadcastChannel {
+    constructor(name: string) {
+      super(name);
+      channels.push(this);
+    }
+  }
+  let otherTab: BroadcastChannel;
+  const tokensSeen: (string | undefined)[] = [];
+
+  beforeEach(async () => {
+    vi.stubGlobal('window', { BroadcastChannel: Channel });
+    vi.resetModules();
+    auth = await import('@/integrations/auth/session');
+    otherTab = new Channel('rca-auth-session');
+    tokensSeen.length = 0;
+    auth.subscribeAuthDetails((details) => tokensSeen.push(details?.accessToken));
+  });
+  afterEach(() => {
+    channels.splice(0).forEach((channel) => channel.close());
+  });
+
+  it('adopts a session it broadcasts', async () => {
+    auth.setSession(session());
+    otherTab.postMessage({ type: 'session', session: { ...session(), accessToken: 'other-tab' } });
+    await vi.waitFor(() => expect(auth.getSession()?.accessToken).toBe('other-tab'));
+  });
+
+  it('ignores a session it broadcasts after this tab logged out', async () => {
+    auth.setSession(session());
+    await auth.prepareForLogout();
+    auth.completeLogout();
+    tokensSeen.length = 0;
+    // Messages from one channel arrive in order, so the logout marks when the late session was handled.
+    otherTab.postMessage({ type: 'session', session: { ...session(), accessToken: 'late' } });
+    otherTab.postMessage({ type: 'logout' });
+    await vi.waitFor(() => expect(tokensSeen).toHaveLength(1));
+    expect(tokensSeen).toEqual([undefined]);
+    await expect(auth.getValidAccessToken()).resolves.toBeUndefined();
+  });
 });
