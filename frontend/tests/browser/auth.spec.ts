@@ -5,6 +5,7 @@ import {
   getLogoutMockHandler,
   getRefreshTokensMockHandler,
   getRegisterAccountMockHandler,
+  getRequestPasswordResetMockHandler,
   getResetPasswordMockHandler,
 } from '@/api/generated/mocks/auth/auth.msw.gen';
 import {
@@ -183,6 +184,31 @@ test('a rejected registration explains why and can be resubmitted', async ({ pag
   await expect(page).toHaveURL(/\/login$/);
   const account = { email: 'person@example.com', firstName: 'Ada', lastName: 'Lovelace', password: 'Password1' };
   expect(requests.bodies('POST /v2/auth/register')).toEqual([account, account]);
+});
+
+test('a failed password reset request can be retried and confirms where the link went', async ({
+  page,
+  network,
+  requests,
+}) => {
+  network.use(
+    getRequestPasswordResetMockHandler(fail(503, { detail: 'Wysyłka wiadomości chwilowo niedostępna' }), {
+      once: true,
+    }),
+    getRequestPasswordResetMockHandler()
+  );
+  await page.goto('/forgot-password');
+  await page.getByLabel('E-mail').fill(admin.email);
+  const send = page.getByRole('button', { name: 'Przypomnij hasło' });
+  await send.click();
+  await expect(page.getByText('Wysyłka wiadomości chwilowo niedostępna')).toBeVisible();
+
+  await send.click();
+  await expect(page.getByText(`Link do resetowania hasła został wysłany na adres: ${admin.email}`)).toBeVisible();
+  expect(requests.bodies('POST /v2/auth/password-reset-request')).toEqual([
+    { email: admin.email },
+    { email: admin.email },
+  ]);
 });
 
 test('password reset carries the emailed token and the new password', async ({ page, network, requests }) => {
