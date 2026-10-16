@@ -78,7 +78,7 @@ test.describe('unsaved application edits', () => {
     await periodNotes(page).click();
 
     const prompt = page.waitForEvent('dialog');
-    const reload = page.reload().catch(() => undefined);
+    const reload = page.evaluate(() => window.location.reload());
     const dialog = await prompt;
     expect(dialog.type()).toBe('beforeunload');
     await dialog.dismiss();
@@ -172,7 +172,7 @@ test.describe('pending saves', () => {
     const releaseSave = await submitHeldFormASave(page, 500);
 
     const prompt = page.waitForEvent('dialog');
-    const reload = page.reload().catch(() => undefined);
+    const reload = page.evaluate(() => window.location.reload());
     const nativeDialog = await prompt;
     expect(nativeDialog.type()).toBe('beforeunload');
     await nativeDialog.dismiss();

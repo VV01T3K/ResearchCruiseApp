@@ -1,6 +1,6 @@
 import { test as base } from '@playwright/test';
 
-export const apiUrl = 'http://localhost:3000';
+export const apiUrl = 'http://127.0.0.1:5174/api';
 
 export const test = base.extend<{ forEachTest: void }>({
   forEachTest: [

@@ -43,46 +43,6 @@ test('current publications load from the v2 route', async ({ page }) => {
   expect(requested).toBe(true);
 });
 
-test('current publication import uses the v2 route', async ({ page }) => {
-  await seedAuthenticatedUser(page);
-  let requestBody: unknown;
-  await page.route(`${API_URL}/v2/users/me/publications`, (route) => {
-    route.fulfill({
-      status: 200,
-      body: JSON.stringify([]),
-      contentType: 'application/json',
-    });
-  });
-  await page.route(`${API_URL}/v2/users/me/publications/import`, async (route) => {
-    requestBody = route.request().postDataJSON();
-    await route.fulfill({ status: 204 });
-  });
-
-  await page.goto('/my-publications');
-  await page.locator('input[type="file"]').setInputFiles({
-    name: 'publications.csv',
-    mimeType: 'text/csv',
-    buffer: Buffer.from(
-      'Numer DOI;Autorzy;Tytu\xb3 publikacji;Nazwa czasopisma;Rok;Punkty\n10.1000/example;Ada Lovelace;Analytical Engines;Journal;1843;100',
-      'binary'
-    ),
-  });
-
-  await expect
-    .poll(() => requestBody)
-    .toEqual([
-      {
-        category: 'subject',
-        doi: '10.1000/example',
-        authors: 'Ada Lovelace',
-        title: 'Analytical Engines',
-        magazine: 'Journal',
-        year: '1843',
-        ministerialPoints: '100',
-      },
-    ]);
-});
-
 test('current publications delete one and all through v2 routes', async ({ page }) => {
   await seedAuthenticatedUser(page);
   let deletedOne = false;

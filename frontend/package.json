@@ -14,11 +14,13 @@
     "preview": "vp preview --host",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "playwright test",
+    "test": "vp run test:unit && vp run test:storybook && vp run test:browser",
     "test:ui": "playwright test --ui",
-    "test:unit": "vp test run --project unit",
+    "test:unit": "TZ=America/Los_Angeles vp test run --project unit",
     "test:storybook": "vp test run --project storybook",
-    "lint": "vp check && vp run type"
+    "lint": "vp check && vp run type",
+    "test:browser": "playwright test",
+    "test:watch": "vp test --project unit"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

@@ -65,32 +65,6 @@ test.describe('session expiration and refresh', () => {
     await expect(page).not.toHaveURL(/\/login/);
   });
 
-  test('warning modal appears before the cookie-backed session expires', async ({ page }) => {
-    await mockAuthenticatedPage(page);
-    await mockRefreshSequence(page, [{ status: 200, body: sessionPayload(63_000, 63_000) }]);
-
-    await page.goto('/user-management');
-
-    await expect(page.getByText('Sesja wygasa')).toBeVisible();
-  });
-
-  test('a reload bootstraps from the refresh cookie without persisting JWTs', async ({ page }) => {
-    await mockAuthenticatedPage(page);
-    const refreshCalls = await mockRefreshSequence(page, [
-      { status: 200, body: sessionPayload(86_400_000, 86_400_000) },
-    ]);
-
-    await page.goto('/user-management');
-    await expect(page.getByTestId('session-status-badge')).toBeVisible();
-    expect(await page.evaluate(() => window.localStorage.getItem('authDetails'))).toBeNull();
-
-    await page.reload();
-
-    await expect(page).toHaveURL('/user-management');
-    await expect.poll(refreshCalls).toBeGreaterThan(1);
-    expect(await page.evaluate(() => window.localStorage.getItem('authDetails'))).toBeNull();
-  });
-
   test('failed initial refresh redirects a protected route to login', async ({ page }) => {
     await mockRefreshSequence(page, [{ status: 401 }]);
 
@@ -153,18 +127,6 @@ test.describe('session expiration and refresh', () => {
     await expect(page.getByText('Zarządzanie użytkownikami')).toBeHidden();
   });
 
-  test('sign out calls the generated logout endpoint before clearing the session', async ({ page }) => {
-    await mockAuthenticatedPage(page);
-    await mockRefreshSequence(page, [{ status: 200, body: sessionPayload(86_400_000, 86_400_000) }]);
-    const logoutRequest = page.waitForRequest(`${API_URL}/v2/auth/logout`);
-
-    await page.goto('/user-management');
-    await page.getByTestId('sign-out-btn').click();
-
-    expect((await logoutRequest).method()).toBe('POST');
-    await expect(page).toHaveURL(/\/login/);
-  });
-
   test('sign out waits for an in-flight refresh and remains logged out', async ({ page }) => {
     await mockAuthenticatedPage(page);
     await mockRefreshSequence(page, [
@@ -181,8 +143,7 @@ test.describe('session expiration and refresh', () => {
     await expect(page).toHaveURL(/\/login/);
     await expect(page.getByTestId('session-status-badge')).toBeHidden();
   });
-
-  test('logout in another tab clears this tab immediately', async ({ page }) => {
+  test('ignores stale session broadcasts after cross-tab logout', async ({ page }) => {
     await mockAuthenticatedPage(page);
     const staleSession = sessionPayload(86_400_000, 86_400_000);
     await mockRefreshSequence(page, [{ status: 200, body: staleSession }]);

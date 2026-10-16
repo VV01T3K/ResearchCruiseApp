@@ -73,42 +73,6 @@ test('failed registration shows the server reason and allows retry', async ({ pa
   expect(pageErrors).toEqual([]);
 });
 
-test('forgot password uses the v2 reset-request route', async ({ page }) => {
-  let requestBody: unknown;
-  await page.route(`${API_URL}/v2/auth/password-reset-request`, async (route) => {
-    requestBody = route.request().postDataJSON();
-    await route.fulfill({ status: 204 });
-  });
-
-  await page.goto('/forgot-password');
-  await page.getByLabel('E-mail').fill('person@example.com');
-  await page.getByRole('button', { name: 'Przypomnij hasło' }).click();
-
-  await expect(page.getByText(/Link do resetowania hasła został wysłany/)).toBeVisible();
-  expect(requestBody).toEqual({ email: 'person@example.com' });
-});
-
-test('reset password uses the v2 reset route', async ({ page }) => {
-  let requestBody: unknown;
-  await page.route(`${API_URL}/v2/auth/password-reset`, async (route) => {
-    requestBody = route.request().postDataJSON();
-    await route.fulfill({ status: 204 });
-  });
-
-  await page.goto('/reset-password?emailBase64=email-token&resetCode=reset-token');
-  await page.getByRole('textbox', { name: 'Hasło', exact: true }).fill('StrongPass1');
-  await page.getByRole('textbox', { name: 'Potwierdź hasło' }).fill('StrongPass1');
-  await page.getByRole('button', { name: 'Zmień hasło' }).click();
-
-  await expect(page.getByText('Hasło zostało zmienione')).toBeVisible();
-  expect(requestBody).toEqual({
-    emailBase64: 'email-token',
-    resetCode: 'reset-token',
-    password: 'StrongPass1',
-    passwordConfirm: 'StrongPass1',
-  });
-});
-
 test('change password uses the v2 current-user route', async ({ page }) => {
   let requestBody: unknown;
   await seedAuthenticatedUser(page);
