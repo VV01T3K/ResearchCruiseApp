@@ -1,7 +1,8 @@
 import { expect, it } from 'vite-plus/test';
 import { cruise } from '@tests/data/cruises';
 import { manager, deputy } from '@tests/data/accounts';
-import { CruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
+import { emptyGuid } from '@/lib/applications/person';
+import { CruiseFormSchema, cruiseFormDefaultValues, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 
 it('writes the shared create/update cruise API shape', () => {
   expect(CruiseFormSchema.parse(mapCruiseToValues(cruise()))).toEqual({
@@ -17,6 +18,7 @@ it('writes the shared create/update cruise API shape', () => {
 
 it.each([
   ['mainManagerId', { mainManagerId: 'not-a-guid' }],
+  ['deputyManagerId', { deputyManagerId: 'not-a-guid' }],
   ['endDate', { endDate: '2026-05-01T00:00:00Z' }],
   ['deputyManagerId', { mainManagerId: manager.id, deputyManagerId: manager.id }],
   ['title', { title: '  ', shipUnavailable: true }],
@@ -26,4 +28,17 @@ it.each([
     success: false,
     error: { issues: expect.arrayContaining([expect.objectContaining({ path: path.split('.') })]) },
   });
+});
+
+it.each([
+  ['a cruise without a deputy', { mainManagerId: manager.id }, manager.id],
+  ['an unassigned blockade', { title: 'Remont', shipUnavailable: true }, emptyGuid],
+])('sends blank managers of %s as the empty GUID', (_, change, mainManagerId) => {
+  const values = {
+    ...cruiseFormDefaultValues,
+    startDate: '2026-06-01T08:00:00Z',
+    endDate: '2026-06-02T11:00:00Z',
+    ...change,
+  };
+  expect(CruiseFormSchema.parse(values)).toMatchObject({ mainManagerId, deputyManagerId: emptyGuid });
 });

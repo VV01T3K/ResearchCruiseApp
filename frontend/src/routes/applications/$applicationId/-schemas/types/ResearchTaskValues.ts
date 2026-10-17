@@ -15,7 +15,12 @@ export enum ResearchTaskType {
   OtherResearchTask = '11',
 }
 
+const metadataFields = {
+  institution: z.string().nullable().optional(),
+};
+
 export const ThesisResearchTaskInputSchema = z.object({
+  ...metadataFields,
   type: z.enum([ResearchTaskType.BachelorThesis, ResearchTaskType.MasterThesis, ResearchTaskType.DoctoralThesis]),
   author: z.string(),
   title: z.string(),
@@ -27,6 +32,7 @@ export const ThesisResearchTaskValuesSchema = ThesisResearchTaskInputSchema.exte
 export type ThesisResearchTaskValues = z.input<typeof ThesisResearchTaskInputSchema>;
 
 export const ProjectPreparationResearchTaskInputSchema = z.object({
+  ...metadataFields,
   type: z.enum([ResearchTaskType.ProjectPreparation]),
   title: z.string(),
   date: z.string(),
@@ -40,6 +46,7 @@ export const ProjectPreparationResearchTaskValuesSchema = ProjectPreparationRese
 export type ProjectPreparationResearchTaskValues = z.input<typeof ProjectPreparationResearchTaskInputSchema>;
 
 export const ProjectResearchTaskInputSchema = z.object({
+  ...metadataFields,
   type: z.enum([
     ResearchTaskType.DomesticProject,
     ResearchTaskType.ForeignProject,
@@ -63,6 +70,7 @@ export const ProjectResearchTaskValuesSchema = ProjectResearchTaskInputSchema.ex
 export type ProjectResearchTaskValues = z.input<typeof ProjectResearchTaskInputSchema>;
 
 export const DidacticsResearchTaskInputSchema = z.object({
+  ...metadataFields,
   type: z.enum([ResearchTaskType.Didactics]),
   description: z.string(),
 });
@@ -72,6 +80,7 @@ export const DidacticsResearchTaskValuesSchema = DidacticsResearchTaskInputSchem
 export type DidacticsResearchTaskValues = z.input<typeof DidacticsResearchTaskInputSchema>;
 
 export const OwnResearchTaskInputSchema = z.object({
+  ...metadataFields,
   type: z.enum([ResearchTaskType.OwnResearchTask]),
   title: z.string(),
   date: z.string(),
@@ -90,6 +99,7 @@ export const OwnResearchTaskValuesSchema = OwnResearchTaskInputSchema.extend({
 export type OwnResearchTaskValues = z.input<typeof OwnResearchTaskInputSchema>;
 
 export const OtherResearchTaskInputSchema = z.object({
+  ...metadataFields,
   type: z.enum([ResearchTaskType.OtherResearchTask]),
   description: z.string(),
 });
