@@ -86,7 +86,7 @@ test('form A research tasks can be removed, added and saved, with errors that fo
   // The icon-only delete button has no accessible name yet (#491); it is the row's only button.
   const removeTask = (name: string) => task(name).getByRole('button').click();
   const addTask = async (name: string) => {
-    await page.getByRole('button', { name: 'Dodaj nowe efekty rejsu' }).click();
+    await page.getByRole('button', { name: 'Dodaj nowe zadanie badawcze' }).click();
     await page.getByRole('button', { name, exact: true }).click();
   };
   const required = page.getByText('Co najmniej jedno zadanie badawcze jest wymagane');
@@ -181,6 +181,22 @@ test('a new application can be created as an incomplete draft with a note', asyn
       form: expect.objectContaining({ supervisorEmail: '', note: 'Czekam na przełożonego' }),
     }),
   ]);
+});
+
+test('form B shows one permission add button and one crew member add button in their sections', async ({ page }) => {
+  await page.goto(`/applications/${applicationId}/formB?mode=edit`);
+  const addPermission = page.getByRole('button', { name: 'Dodaj pozwolenie', exact: true });
+  const addCrewMember = page.getByRole('button', { name: 'Dodaj członka załogi', exact: true });
+  await expect(addPermission).toHaveCount(1);
+  await expect(
+    page
+      .getByTestId('form-b-additional-permissions-section')
+      .getByRole('button', { name: 'Dodaj pozwolenie', exact: true })
+  ).toHaveCount(1);
+  await expect(addCrewMember).toHaveCount(1);
+  await expect(
+    page.getByTestId('form-b-members-section').getByRole('button', { name: 'Dodaj członka załogi', exact: true })
+  ).toHaveCount(1);
 });
 
 test('form B adds a permission, accepts only a PDF scan and submits the new row', async ({
