@@ -1,6 +1,6 @@
 import { FieldApi, FormApi } from '@tanstack/react-form';
 import { z } from 'zod';
-import { expect, it } from 'vitest';
+import { expect, it } from 'vite-plus/test';
 import { getFormLevelErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { ApiError, getErrorMessage, responseErrorMessage } from '@/api/errors';
 

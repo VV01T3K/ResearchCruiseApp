@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 import { ApiError, getErrorMessage, responseErrorMessage } from '@/api/errors';
 
 describe('API failure reasons', () => {

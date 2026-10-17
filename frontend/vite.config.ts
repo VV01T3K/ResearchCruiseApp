@@ -41,6 +41,8 @@ export default defineConfig({
         test: {
           name: 'unit',
           include: ['tests/unit/**/*.test.{ts,tsx}'],
+          // Match the users' and the browser tests' timezone, whatever the machine's own is.
+          env: { TZ: 'Europe/Warsaw' },
         },
       },
       {
