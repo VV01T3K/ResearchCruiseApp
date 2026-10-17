@@ -149,14 +149,15 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     for (const action of absent) await expect(button(action)).toHaveCount(0);
   };
 
-  await expectStatus('Nowy', ['Zatwierdź rejs'], ['Zakończ rejs', 'Cofnij status']);
+  await expectStatus('Nowy', ['Edytuj', 'Zatwierdź rejs'], ['Zakończ rejs', 'Cofnij status']);
   await button('Zatwierdź rejs').click();
   await dialog.getByRole('button', { name: `Potwierdź rejs nr. ${item.number}` }).click();
-  await expectStatus('Potwierdzony', ['Zakończ rejs', 'Cofnij status', 'Usuń rejs'], ['Zatwierdź rejs']);
+  await expectStatus('Potwierdzony', ['Edytuj', 'Zakończ rejs', 'Cofnij status', 'Usuń rejs'], ['Zatwierdź rejs']);
 
   await button('Zakończ rejs').click();
   await dialog.getByRole('button', { name: `Oznacz rejs nr. ${item.number} jako zakończony` }).click();
-  await expectStatus('Zakończony', ['Cofnij status'], ['Zakończ rejs', 'Usuń rejs']);
+  // An ended cruise is read-only: only undoing its status is offered.
+  await expectStatus('Zakończony', ['Cofnij status'], ['Edytuj', 'Zakończ rejs', 'Usuń rejs']);
 
   await button('Cofnij status').click();
   await expect(dialog).toContainText('z "Zakończony" na "Potwierdzony"');
@@ -174,6 +175,24 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     sent('PUT /v2/cruises/{id}/completion'),
     sent('DELETE /v2/cruises/{id}/confirmation'),
   ]).toEqual([1, 1, 2]);
+});
+
+test('a rejected status undo shows the server reason and keeps the cruise status', async ({ page, network }) => {
+  const item: CruiseResponse = { ...cruise(), status: 'ended' };
+  const reason = 'Nie można cofnąć statusu rejsu, ponieważ co najmniej jedno zgłoszenie ma już złożony Formularz C.';
+  network.use(
+    getGetCruiseMockHandler(item),
+    getRemoveCruiseConfirmationMockHandler(fail(400, { status: 400, detail: reason }))
+  );
+  await page.goto(`/cruises/${item.id}`);
+  const dialog = page.getByRole('dialog');
+
+  await page.getByRole('button', { name: 'Cofnij status', exact: true }).click();
+  await dialog.getByRole('button', { name: `Cofnij status rejsu nr. ${item.number}` }).click();
+
+  await expect(page.getByText(reason)).toBeVisible();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByText('Zakończony', { exact: true })).toBeVisible();
 });
 
 test('auto-planning adds the planned cruises to the list', async ({ page, network, requests }) => {

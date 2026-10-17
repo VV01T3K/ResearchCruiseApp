@@ -84,43 +84,19 @@ public static class LifecycleEndpoints
             return Error.ForbiddenOperation("Rejs został już potwierdzony.").ToProblemHttpResult();
         }
 
-        cruise.Status = CruiseStatus.Confirmed;
-        foreach (var cruiseApplication in cruise.CruiseApplications)
+        var missingFormA = cruise.CruiseApplications.FirstOrDefault(application =>
+            application.FormA is null
+        );
+        if (missingFormA is not null)
         {
-            if (cruiseApplication.FormA is null)
-            {
-                return Error
-                    .ServerError($"Zgłoszenie {cruiseApplication.Id} nie zawiera Formularza A.")
-                    .ToProblemHttpResult();
-            }
-
-            cruiseApplication.Status = CruiseApplicationStatus.FormBRequired;
-
-            var deputyManager = await identityService.GetUserDtoById(
-                cruiseApplication.FormA.DeputyManagerId
-            );
-            var cruiseManager = await identityService.GetUserDtoById(
-                cruiseApplication.FormA.CruiseManagerId
-            );
-
-            if (deputyManager is not null)
-            {
-                await emailSender.SendCruiseConfirmMessage(
-                    cruise,
-                    deputyManager,
-                    deputyManager.Email
-                );
-            }
-
-            if (cruiseManager is not null)
-            {
-                await emailSender.SendCruiseConfirmMessage(
-                    cruise,
-                    cruiseManager,
-                    cruiseManager.Email
-                );
-            }
+            return Error
+                .ServerError($"Zgłoszenie {missingFormA.Id} nie zawiera Formularza A.")
+                .ToProblemHttpResult();
         }
+
+        cruise.Status = CruiseStatus.Confirmed;
+        var formBRequested = CruiseLifecycleRules.RequestFormB(cruise.CruiseApplications);
+        await CruiseConfirmationEmails.Send(cruise, formBRequested, emailSender, identityService);
 
         await dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
@@ -142,9 +118,18 @@ public static class LifecycleEndpoints
         }
 
         var result = CruiseLifecycleRules.Revert(cruise);
-        if (result != CruiseLifecycleResult.Applied)
+        if (result == CruiseLifecycleResult.AlreadyNew)
         {
             return Error.InvalidArgument("Rejs jest już w stanie 'Nowy'").ToProblemHttpResult();
+        }
+
+        if (result == CruiseLifecycleResult.HasReportedApplications)
+        {
+            return Error
+                .InvalidArgument(
+                    "Nie można cofnąć statusu rejsu, ponieważ co najmniej jedno zgłoszenie ma już złożony Formularz C."
+                )
+                .ToProblemHttpResult();
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);

@@ -172,25 +172,16 @@ function CruiseDetailsPage() {
           </>
         );
       case 'ended':
+        // An ended cruise is read-only; undoing its status makes it editable again.
         return (
-          <>
-            <AppButton
-              className="w-36 !justify-center gap-4 lg:w-48"
-              variant="primaryOutline"
-              onClick={() => setEditMode(true)}
-            >
-              <PencilIcon className="h-4 w-4" />
-              Edytuj
-            </AppButton>
-            <AppButton
-              className="w-36 !justify-center gap-4 lg:w-48"
-              variant="dangerOutline"
-              onClick={() => setIsConfirmRevertModalOpen(true)}
-            >
-              <ArrowClockwiseIcon className="h-4 w-4" />
-              Cofnij status
-            </AppButton>
-          </>
+          <AppButton
+            className="w-36 !justify-center gap-4 lg:w-48"
+            variant="dangerOutline"
+            onClick={() => setIsConfirmRevertModalOpen(true)}
+          >
+            <ArrowClockwiseIcon className="h-4 w-4" />
+            Cofnij status
+          </AppButton>
         );
       default:
         return null;
@@ -312,10 +303,10 @@ function CruiseDetailsPage() {
           <AppButton
             variant="dangerOutline"
             className="basis-2/3"
-            onClick={async () => {
-              await revertCruiseStatusMutation.mutateAsync({ cruiseId });
-              setIsConfirmRevertModalOpen(false);
-            }}
+            onClick={() =>
+              // A rejected undo is reported by the shared mutation error toast.
+              revertCruiseStatusMutation.mutate({ cruiseId }, { onSettled: () => setIsConfirmRevertModalOpen(false) })
+            }
             disabled={revertCruiseStatusMutation.isPending}
           >
             Cofnij status rejsu nr. {cruiseQuery.data?.number}

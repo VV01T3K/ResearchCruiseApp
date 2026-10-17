@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Cruises.Shared;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using DomainCruise = ResearchCruiseApp.Domain.Entities.Cruise;
 
@@ -119,16 +120,33 @@ public static class CruiseEndpoints
         Guid cruiseId,
         UpdateRequest request,
         IdentityService identityService,
+        EmailSender emailSender,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
+        // Queuing a confirmation email saves, so the transaction keeps it with the edit.
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(
+            System.Data.IsolationLevel.Serializable,
+            cancellationToken
+        );
+
         var cruise = await dbContext
             .Cruises.IncludeCruiseApplications()
             .SingleOrDefaultAsync(cruise => cruise.Id == cruiseId, cancellationToken);
         if (cruise is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
+        }
+
+        // Form C stays editable after the cruise ends; the cruise itself does not.
+        if (cruise.Status == CruiseStatus.Ended)
+        {
+            return Error
+                .InvalidArgument(
+                    "Nie można edytować zakończonego rejsu. Aby wprowadzić zmiany, najpierw cofnij status rejsu."
+                )
+                .ToProblemHttpResult();
         }
 
         var newApplicationIds = request
@@ -167,31 +185,36 @@ public static class CruiseEndpoints
         }
 
         var newCruiseApplications = await dbContext
-            .CruiseApplications.Where(application =>
-                request.CruiseApplicationIds.Contains(application.Id)
-            )
+            .CruiseApplications.Include(application => application.FormA)
+            .Where(application => request.CruiseApplicationIds.Contains(application.Id))
             .ToListAsync(cancellationToken);
-        foreach (var application in newCruiseApplications)
+        var formBRequested = new List<CruiseApplication>();
+        if (cruise.Status == CruiseStatus.Confirmed)
         {
-            if (
-                cruise.Status == CruiseStatus.Confirmed
-                && application.Status == CruiseApplicationStatus.Accepted
+            // A removed application can be planned again, as when a confirmed cruise is
+            // deleted. Its Form B is kept but requested again on its next cruise.
+            foreach (
+                var application in cruise.CruiseApplications.Where(application =>
+                    !request.CruiseApplicationIds.Contains(application.Id)
+                )
             )
             {
-                application.Status = CruiseApplicationStatus.FormBRequired;
+                application.Status = CruiseApplicationStatus.Accepted;
             }
 
-            if (
-                cruise.Status == CruiseStatus.Ended
-                && application.Status == CruiseApplicationStatus.FormBFilled
-            )
-            {
-                application.Status = CruiseApplicationStatus.Undertaken;
-            }
+            formBRequested = CruiseLifecycleRules.RequestFormB(newCruiseApplications);
         }
 
         cruise.CruiseApplications = newCruiseApplications;
+        // Managers of applications already on the cruise were told when it was confirmed.
+        await CruiseConfirmationEmails.Send(
+            cruise,
+            formBRequested.Where(application => newApplicationIds.Contains(application.Id)),
+            emailSender,
+            identityService
+        );
         await dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 
