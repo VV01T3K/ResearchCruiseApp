@@ -59,7 +59,7 @@ public sealed class CruiseStatusTransitionTests(SqlFixture fixture) : IAsyncLife
         );
         Assert.Equal(0, await PendingEmails(app));
         Assert.Equal(
-            [filled.Id, required.Id],
+            new[] { filled.Id, required.Id }.Order(),
             (await PlanningCandidates(office, null)).Select(candidate => candidate.Id).Order()
         );
 
