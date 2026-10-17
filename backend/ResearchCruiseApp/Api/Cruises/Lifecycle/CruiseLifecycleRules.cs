@@ -5,6 +5,18 @@ namespace ResearchCruiseApp.Api.Cruises;
 
 public static class CruiseLifecycleRules
 {
+    // Only accepted applications are asked for Form B; a submitted one is kept.
+    public static List<CruiseApplication> RequestFormB(IEnumerable<CruiseApplication> applications)
+    {
+        var requested = applications
+            .Where(application => application.Status == CruiseApplicationStatus.Accepted)
+            .ToList();
+        foreach (var application in requested)
+            application.Status = CruiseApplicationStatus.FormBRequired;
+
+        return requested;
+    }
+
     public static CruiseLifecycleResult Complete(Cruise cruise)
     {
         if (cruise.Status == CruiseStatus.New)
@@ -26,6 +38,16 @@ public static class CruiseLifecycleRules
     {
         if (cruise.Status == CruiseStatus.New)
             return CruiseLifecycleResult.AlreadyNew;
+
+        // A submitted Form C has awarded effect points, which an earlier status cannot hold.
+        if (
+            cruise.CruiseApplications.Any(application =>
+                application.Status == CruiseApplicationStatus.Reported
+            )
+        )
+        {
+            return CruiseLifecycleResult.HasReportedApplications;
+        }
 
         foreach (var application in cruise.CruiseApplications)
         {
@@ -63,4 +85,5 @@ public enum CruiseLifecycleResult
     AlreadyNew,
     NotConfirmed,
     NotCompletable,
+    HasReportedApplications,
 }

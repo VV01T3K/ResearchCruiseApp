@@ -173,24 +173,14 @@ function CruiseDetailsPage() {
         );
       case 'ended':
         return (
-          <>
-            <AppButton
-              className="w-36 !justify-center gap-4 lg:w-48"
-              variant="primaryOutline"
-              onClick={() => setEditMode(true)}
-            >
-              <PencilIcon className="h-4 w-4" />
-              Edytuj
-            </AppButton>
-            <AppButton
-              className="w-36 !justify-center gap-4 lg:w-48"
-              variant="dangerOutline"
-              onClick={() => setIsConfirmRevertModalOpen(true)}
-            >
-              <ArrowClockwiseIcon className="h-4 w-4" />
-              Cofnij status
-            </AppButton>
-          </>
+          <AppButton
+            className="w-36 !justify-center gap-4 lg:w-48"
+            variant="dangerOutline"
+            onClick={() => setIsConfirmRevertModalOpen(true)}
+          >
+            <ArrowClockwiseIcon className="h-4 w-4" />
+            Cofnij status
+          </AppButton>
         );
       default:
         return null;
@@ -312,10 +302,9 @@ function CruiseDetailsPage() {
           <AppButton
             variant="dangerOutline"
             className="basis-2/3"
-            onClick={async () => {
-              await revertCruiseStatusMutation.mutateAsync({ cruiseId });
-              setIsConfirmRevertModalOpen(false);
-            }}
+            onClick={() =>
+              revertCruiseStatusMutation.mutate({ cruiseId }, { onSettled: () => setIsConfirmRevertModalOpen(false) })
+            }
             disabled={revertCruiseStatusMutation.isPending}
           >
             Cofnij status rejsu nr. {cruiseQuery.data?.number}
