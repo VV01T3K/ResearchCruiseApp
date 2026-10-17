@@ -185,7 +185,8 @@ test('a rejected status undo shows the server reason and keeps the cruise status
     getRemoveCruiseConfirmationMockHandler(fail(400, { status: 400, detail: reason }))
   );
   await page.goto(`/cruises/${item.id}`);
-  const dialog = page.getByRole('dialog');
+  // The error toast is a dialog too, so find the modal by its title.
+  const dialog = page.getByRole('dialog', { name: `Czy na pewno chcesz cofnąć status rejsu nr. ${item.number}?` });
 
   await page.getByRole('button', { name: 'Cofnij status', exact: true }).click();
   await dialog.getByRole('button', { name: `Cofnij status rejsu nr. ${item.number}` }).click();
