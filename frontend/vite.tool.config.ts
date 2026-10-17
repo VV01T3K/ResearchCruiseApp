@@ -53,6 +53,24 @@ export const lintConfig = {
         browser: true,
       },
     },
+    {
+      files: ['src/**'],
+      rules: {
+        // Importing package.json ships every dependency and script to browsers. Use the
+        // APP_VERSION and APP_REPOSITORY_URL defines from vite.config.ts through `@/config`.
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              {
+                regex: '(^|/)package\\.json$',
+                message: 'Use the version and repository URL from `@/config` instead of importing package.json.',
+              },
+            ],
+          },
+        ],
+      },
+    },
   ],
 } satisfies NonNullable<UserConfig['lint']>;
 

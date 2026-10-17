@@ -102,7 +102,7 @@ function HelpPage() {
           <CompanyInfoCard icon={<WindowStackIcon />} title="Wersja aplikacji">
             <div className="grid grid-cols-2 gap-1 text-sm text-gray-500">
               <div>Wersja frontendu:</div>
-              <div className="font-bold text-black">{APP_VERSION}</div>
+              <div className="font-bold text-black">{config.version}</div>
               <div>Wersja backendu:</div>
               <div className="font-bold text-black">{backendVersion.data}</div>
             </div>
