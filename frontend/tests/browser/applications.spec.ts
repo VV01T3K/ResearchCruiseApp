@@ -193,6 +193,19 @@ test.describe('application review', () => {
     await expect(page.locator('input[name="deputyManager"]')).toHaveValue('Nieznany użytkownik');
   });
 
+  test('the details leave the deputy empty when none is assigned', async ({ page, network }) => {
+    // The API sends an application without a deputy as a person with the all-zero id and no name.
+    const unassigned = { id: '00000000-0000-0000-0000-000000000000', email: '', firstName: '', lastName: '' };
+    network.use(
+      getGetApplicationEvaluationMockHandler(evaluation()),
+      getGetApplicationMockHandler({ ...application(), deputyManager: unassigned })
+    );
+    await page.goto(`/applications/${applicationId}/details`);
+
+    await expect(page.locator('input[name="cruiseLeader"]')).toHaveValue('Ada Lovelace (ada@example.com)');
+    await expect(page.locator('input[name="deputyManager"]')).toHaveValue('');
+  });
+
   test('the office accepts or rejects an application after confirming the rejection', async ({
     page,
     network,

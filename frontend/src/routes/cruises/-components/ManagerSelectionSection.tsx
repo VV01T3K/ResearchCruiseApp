@@ -6,10 +6,11 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
 import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMappers';
+import { isUnassignedPerson } from '@/lib/applications/person';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
 import { UserOption } from '@/api/generated/schemas';
-import { cruiseFormDefaultValues, emptyGuid } from '@/routes/cruises/-schemas/form.schema';
+import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useGetAvailableCruiseManagersSuspense } from '@/api/generated/endpoints/users.gen';
 import type { CruiseManagerResponse, CruiseResponse } from '@/api/generated/schemas';
 
@@ -147,7 +148,7 @@ function withCruiseManagers(users: CruiseManagerResponse[], cruise: CruiseRespon
   if (!cruise) return users;
   const missing = [cruise.mainManager, cruise.deputyManager]
     .filter((person, index, all) => all.findIndex((other) => other.id === person.id) === index)
-    .filter((person) => person.id !== emptyGuid && !users.some((user) => user.id === person.id))
+    .filter((person) => !isUnassignedPerson(person) && !users.some((user) => user.id === person.id))
     .map((person) => ({ ...person, email: '' }));
   return [...users, ...missing];
 }
