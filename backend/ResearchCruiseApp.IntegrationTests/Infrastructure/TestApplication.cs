@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -10,8 +11,11 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.IntegrationTests.Infrastructure;
 
-internal sealed class TestApplication(string connectionString, string environment = "Testing")
-    : WebApplicationFactory<Program>
+internal sealed class TestApplication(
+    string connectionString,
+    string environment = "Testing",
+    IInterceptor? interceptor = null
+) : WebApplicationFactory<Program>
 {
     internal CapturingEmailTransport Transport { get; } = new();
     internal ControlledClock Clock { get; } = new();
@@ -54,6 +58,10 @@ internal sealed class TestApplication(string connectionString, string environmen
                 services.AddSingleton<IEmailTransport>(Transport);
                 services.RemoveAll<TimeProvider>();
                 services.AddSingleton<TimeProvider>(Clock);
+                if (interceptor is not null)
+                    services.ConfigureDbContext<ApplicationDbContext>(options =>
+                        options.AddInterceptors(interceptor)
+                    );
             }
         );
     }

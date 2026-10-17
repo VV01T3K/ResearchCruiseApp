@@ -29,7 +29,7 @@ public static class FormBEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .WithDbTransaction()
+            .WithSerializableTransaction()
             .WithRequestValidation<FormBWriteRequest>()
             .RequireAuthorization(AuthorizationPolicies.ApplicationFormEditors);
 
@@ -40,6 +40,7 @@ public static class FormBEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 

@@ -28,7 +28,7 @@ public static class FormCEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .WithDbTransaction()
+            .WithSerializableTransaction()
             .WithRequestValidation<FormCWriteRequest>()
             .RequireAuthorization(AuthorizationPolicies.ApplicationFormEditors);
 
@@ -39,6 +39,7 @@ public static class FormCEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 

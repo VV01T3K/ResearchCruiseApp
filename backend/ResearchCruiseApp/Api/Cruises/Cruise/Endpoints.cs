@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Cruises.Shared;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using DomainCruise = ResearchCruiseApp.Domain.Entities.Cruise;
 
@@ -41,6 +42,7 @@ public static class CruiseEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .WithRequestValidation<UpdateRequest>()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
@@ -55,6 +57,7 @@ public static class CruiseEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
@@ -119,6 +122,7 @@ public static class CruiseEndpoints
         Guid cruiseId,
         UpdateRequest request,
         IdentityService identityService,
+        EmailSender emailSender,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
@@ -129,6 +133,16 @@ public static class CruiseEndpoints
         if (cruise is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
+        }
+
+        // Form C stays editable after the cruise ends; the cruise itself does not.
+        if (cruise.Status == CruiseStatus.Ended)
+        {
+            return Error
+                .InvalidArgument(
+                    "Nie można edytować zakończonego rejsu. Aby wprowadzić zmiany, najpierw cofnij status rejsu."
+                )
+                .ToProblemHttpResult();
         }
 
         var newApplicationIds = request
@@ -167,30 +181,33 @@ public static class CruiseEndpoints
         }
 
         var newCruiseApplications = await dbContext
-            .CruiseApplications.Where(application =>
-                request.CruiseApplicationIds.Contains(application.Id)
-            )
+            .CruiseApplications.Include(application => application.FormA)
+            .Where(application => request.CruiseApplicationIds.Contains(application.Id))
             .ToListAsync(cancellationToken);
-        foreach (var application in newCruiseApplications)
+        var formBRequested = new List<CruiseApplication>();
+        if (cruise.Status == CruiseStatus.Confirmed)
         {
-            if (
-                cruise.Status == CruiseStatus.Confirmed
-                && application.Status == CruiseApplicationStatus.Accepted
+            // Removed applications can be planned again; Form B is kept.
+            foreach (
+                var application in cruise.CruiseApplications.Where(application =>
+                    !request.CruiseApplicationIds.Contains(application.Id)
+                )
             )
             {
-                application.Status = CruiseApplicationStatus.FormBRequired;
+                application.Status = CruiseApplicationStatus.Accepted;
             }
 
-            if (
-                cruise.Status == CruiseStatus.Ended
-                && application.Status == CruiseApplicationStatus.FormBFilled
-            )
-            {
-                application.Status = CruiseApplicationStatus.Undertaken;
-            }
+            formBRequested = CruiseLifecycleRules.RequestFormB(newCruiseApplications);
         }
 
         cruise.CruiseApplications = newCruiseApplications;
+        // Managers of applications already on the cruise were told when it was confirmed.
+        await CruiseConfirmationEmails.Send(
+            cruise,
+            formBRequested.Where(application => newApplicationIds.Contains(application.Id)),
+            emailSender,
+            identityService
+        );
         await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
