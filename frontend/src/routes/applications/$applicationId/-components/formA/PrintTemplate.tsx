@@ -82,7 +82,7 @@ export function PrintTemplate({ ref, context, values }: Props) {
         </div>
       </PrintingPageSection>
 
-      <PrintingPageSection title="3. Zgłaszany rejs">
+      <PrintingPageSection title="3. Dodatkowe pozwolenia do planowanych podczas rejsu badań">
         <div className="grid grid-cols-9 gap-x-8">
           <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
           <div className="col-span-4 mb-4 text-center font-semibold">Treść pozwolenia</div>
