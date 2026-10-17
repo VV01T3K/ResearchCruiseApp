@@ -86,6 +86,34 @@ test('a new cruise is saved with Warsaw-midnight dates and the chosen managers',
     ]);
 });
 
+test('cruise details label the manager and deputy the same way when read and edited', async ({ page, network }) => {
+  const item = cruise();
+  network.use(getGetCruiseMockHandler(item));
+  await page.goto(`/cruises/${item.id}`);
+  const main = page.getByRole('combobox', { name: 'Kierownik główny' });
+  const deputyManager = page.getByRole('combobox', { name: 'Zastępca kierownika głównego' });
+
+  await expect(main).toHaveText('Ada Lovelace (ada@example.com)');
+  await expect(deputyManager).toHaveText('Grace Hopper (grace@example.com)');
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await expect(main).toHaveText('Ada Lovelace (ada@example.com)');
+  await expect(deputyManager).toHaveText('Grace Hopper (grace@example.com)');
+});
+
+test('a cruise manager who is no longer available keeps their name, without an empty email', async ({
+  page,
+  network,
+}) => {
+  const item = cruise();
+  network.use(getGetCruiseMockHandler(item), getGetAvailableCruiseManagersMockHandler([admin]));
+  await page.goto(`/cruises/${item.id}`);
+  const deputyManager = page.getByRole('combobox', { name: 'Zastępca kierownika głównego' });
+
+  await expect(deputyManager).toHaveText('Grace Hopper');
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await expect(deputyManager).toHaveText('Grace Hopper');
+});
+
 test('rejected cruise edits show field and general errors, keep the edits and can be resaved', async ({
   page,
   network,
