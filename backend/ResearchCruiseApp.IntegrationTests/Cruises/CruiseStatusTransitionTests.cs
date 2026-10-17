@@ -13,7 +13,7 @@ namespace ResearchCruiseApp.IntegrationTests.Cruises;
 // How editing and moving a cruise through its lifecycle changes its applications (#467,
 // #468, #469). Each test asserts the statuses, forms, points and emails stored in SQL.
 [Collection(SqlTestCollectionDefinition.Name)]
-public sealed class CruiseStatusTransitionTests(SqlFixture fixture) : IAsyncLifetime
+public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IAsyncLifetime
 {
     private const string ConfirmationSubject = "Rejs zaakceptowany";
     private const string EndedCruiseLocked =
@@ -570,7 +570,16 @@ public sealed class CruiseStatusTransitionTests(SqlFixture fixture) : IAsyncLife
         List<Guid> applicationIds
     )
     {
-        using var response = await office.PatchAsJsonAsync(
+        using var response = await PatchResponse(office, cruiseId, applicationIds);
+        return response.StatusCode;
+    }
+
+    private static Task<HttpResponseMessage> PatchResponse(
+        HttpClient office,
+        Guid cruiseId,
+        List<Guid> applicationIds
+    ) =>
+        office.PatchAsJsonAsync(
             $"/v2/cruises/{cruiseId}",
             new UpdateRequest(
                 "2030-06-01",
@@ -583,8 +592,6 @@ public sealed class CruiseStatusTransitionTests(SqlFixture fixture) : IAsyncLife
             ),
             TestContext.Current.CancellationToken
         );
-        return response.StatusCode;
-    }
 
     private static async Task<HttpStatusCode> Confirm(HttpClient office, Guid cruiseId)
     {
@@ -645,7 +652,12 @@ public sealed class CruiseStatusTransitionTests(SqlFixture fixture) : IAsyncLife
     private static async Task SubmitFormB(TestApplication app, Seeded application)
     {
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
-        using var response = await manager.PutAsJsonAsync(
+        using var response = await SendFormB(manager, application);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    }
+
+    private static Task<HttpResponseMessage> SendFormB(HttpClient manager, Seeded application) =>
+        manager.PutAsJsonAsync(
             $"/v2/applications/{application.Id}/form-b",
             new FormBWriteRequest
             {
@@ -654,12 +666,17 @@ public sealed class CruiseStatusTransitionTests(SqlFixture fixture) : IAsyncLife
             },
             TestContext.Current.CancellationToken
         );
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-    }
 
     // One finished doctoral effect with both conditions met: 200 points each for the
     // manager and the deputy slot (the deputy is Guid.Empty unless seeded).
     private static async Task<HttpStatusCode> SubmitFormC(TestApplication app, Seeded application)
+    {
+        using var manager = await TestApplications.Login(app, application.OwnerEmail);
+        using var response = await SendFormC(manager, application);
+        return response.StatusCode;
+    }
+
+    private static Task<HttpResponseMessage> SendFormC(HttpClient manager, Seeded application)
     {
         var fields = new FormCFields { ShipUsage = "0", DifferentUsage = "" };
         fields.ResearchTasksEffects.Add(
@@ -672,13 +689,11 @@ public sealed class CruiseStatusTransitionTests(SqlFixture fixture) : IAsyncLife
                 DeputyConditionMet = "true",
             }
         );
-        using var manager = await TestApplications.Login(app, application.OwnerEmail);
-        using var response = await manager.PutAsJsonAsync(
+        return manager.PutAsJsonAsync(
             $"/v2/applications/{application.Id}/form-c",
             new FormCWriteRequest { Form = fields, Draft = false },
             TestContext.Current.CancellationToken
         );
-        return response.StatusCode;
     }
 
     private static async Task AssertCruise(TestApplication app, Guid cruiseId, CruiseStatus status)

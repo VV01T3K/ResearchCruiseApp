@@ -24,6 +24,7 @@ public static class LifecycleEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
@@ -37,6 +38,7 @@ public static class LifecycleEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
@@ -50,6 +52,7 @@ public static class LifecycleEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
@@ -61,11 +64,6 @@ public static class LifecycleEndpoints
         CancellationToken cancellationToken
     )
     {
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(
-            System.Data.IsolationLevel.Serializable,
-            cancellationToken
-        );
-
         var cruise = await dbContext
             .Cruises.IncludeCruiseApplications()
                 .ThenInclude(application => application.FormA)
@@ -99,7 +97,6 @@ public static class LifecycleEndpoints
         await CruiseConfirmationEmails.Send(cruise, formBRequested, emailSender, identityService);
 
         await dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 

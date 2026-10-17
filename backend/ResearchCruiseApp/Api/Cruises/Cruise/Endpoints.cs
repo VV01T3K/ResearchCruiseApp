@@ -42,6 +42,7 @@ public static class CruiseEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .WithRequestValidation<UpdateRequest>()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
@@ -56,6 +57,7 @@ public static class CruiseEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
@@ -125,12 +127,6 @@ public static class CruiseEndpoints
         CancellationToken cancellationToken
     )
     {
-        // Queuing a confirmation email saves, so the transaction keeps it with the edit.
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(
-            System.Data.IsolationLevel.Serializable,
-            cancellationToken
-        );
-
         var cruise = await dbContext
             .Cruises.IncludeCruiseApplications()
             .SingleOrDefaultAsync(cruise => cruise.Id == cruiseId, cancellationToken);
@@ -214,7 +210,6 @@ public static class CruiseEndpoints
             identityService
         );
         await dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
         return TypedResults.NoContent();
     }
 
