@@ -2,6 +2,7 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 declare const APP_VERSION: string;
+declare const APP_REPOSITORY_URL: string;
 declare const API_URL: string;
 declare const APP_ENVIRONMENT: string;
 declare const SENTRY_DSN: string;
