@@ -1,4 +1,4 @@
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, expect, it, vi } from 'vite-plus/test';
 import { ApiError } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { queryClient } from '@/integrations/tanstack/query/root-provider';
