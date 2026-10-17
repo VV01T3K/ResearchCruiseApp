@@ -21,6 +21,8 @@ import {
   useCruiseApplicationsInfiniteQuery,
 } from '@/routes/applications/-hooks/useApplications';
 import { ApplicationResponse, CruiseApplicationStatus } from '@/api/generated/schemas';
+import { mapPersonToText } from '@/lib/applications/PersonMappers';
+import { getPersonName } from '@/lib/applications/person';
 import { getApplicationStatusLabel } from '@/lib/applications/status';
 
 export const Route = createFileRoute('/applications/')({
@@ -69,12 +71,7 @@ function ApplicationsPage() {
   );
   const cruiseManagersQuery = useGetApplicationManagersSuspense();
   const cruiseManagerFilterOptions = cruiseManagersQuery.data.map((manager) => manager.id);
-  const managerLabels = new Map(
-    cruiseManagersQuery.data.map((manager) => [
-      manager.id,
-      `${manager.firstName} ${manager.lastName} (${manager.email})`,
-    ])
-  );
+  const managerLabels = new Map(cruiseManagersQuery.data.map((manager) => [manager.id, mapPersonToText(manager)]));
 
   const columns: ColumnDef<ApplicationResponse>[] = [
     {
@@ -147,14 +144,14 @@ function ApplicationsPage() {
     {
       id: 'cruiseManager',
       header: 'Kierownik',
-      accessorFn: (row) => `${row.mainManager.firstName} ${row.mainManager.lastName}`,
+      accessorFn: (row) => getPersonName(row.mainManager),
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <AppAvatar
             fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
             variant="small"
           />
-          <span>{`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}</span>
+          <span>{getPersonName(row.original.mainManager)}</span>
         </div>
       ),
       enableSorting: false,

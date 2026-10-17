@@ -1,19 +1,19 @@
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
 import { UserOption } from '@/api/generated/schemas';
+import { getPersonName } from '@/lib/applications/person';
 
 export function mapPersonToLabel(person: UserOption): AppDropdownInputOption {
+  const fullName = `${person.firstName} ${person.lastName}`.trim();
   return {
     value: person.id,
-    inlineLabel: `${person.firstName} ${person.lastName} (${person.email})`,
+    inlineLabel: mapPersonToText(person),
     richLabel: (
       <div className="flex w-full gap-4">
-        <AppAvatar fullName={`${person.firstName} ${person.lastName}`} variant="small" />
+        <AppAvatar fullName={fullName} variant="small" />
         <div className="flex flex-1 flex-col justify-center">
-          <div className="font-semibold">
-            {person.firstName} {person.lastName}
-          </div>
-          <div>{person.email}</div>
+          <div className="font-semibold">{getPersonName(person)}</div>
+          {person.email && <div>{person.email}</div>}
         </div>
       </div>
     ),
@@ -21,8 +21,6 @@ export function mapPersonToLabel(person: UserOption): AppDropdownInputOption {
 }
 
 export function mapPersonToText(person: UserOption | undefined): string {
-  if (!person) {
-    return '';
-  }
-  return `${person.firstName} ${person.lastName} (${person.email})`;
+  const name = getPersonName(person);
+  return name && person?.email ? `${name} (${person.email})` : name;
 }
