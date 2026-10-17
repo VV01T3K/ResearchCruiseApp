@@ -57,25 +57,42 @@ test('an administrator creates a user, then edits them and sees the refreshed re
   ]);
 });
 
-test('a failed account acceptance is explained and can be retried', async ({ page, network, requests }) => {
-  network.use(
-    getGetUsersMockHandler([cruiseManager({ accepted: false })]),
-    getAcceptUserMockHandler(fail(503, { detail: 'Spróbuj ponownie później' }), { once: true }),
-    getAcceptUserMockHandler()
-  );
-  await page.goto('/user-management');
-  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
-  const accept = page.getByRole('button', { name: 'Zaakceptuj konto użytkownika', exact: true });
-  await accept.click();
-  await expect(page.getByRole('alert')).toContainText('Spróbuj ponownie później');
-  // A failed action stays blocked until its error is dismissed.
-  await expect(accept).toBeDisabled();
-  await page.getByRole('alert').getByRole('button', { name: 'Close' }).click();
+for (const { action, accepted, button, route, handler } of [
+  {
+    action: 'acceptance',
+    accepted: false,
+    button: 'Zaakceptuj konto użytkownika',
+    route: `PUT /v2/users/${deputy.id}/acceptance`,
+    handler: getAcceptUserMockHandler,
+  },
+  {
+    action: 'deactivation',
+    accepted: true,
+    button: 'Cofnij akceptację konta',
+    route: `DELETE /v2/users/${deputy.id}/acceptance`,
+    handler: getDeactivateUserMockHandler,
+  },
+]) {
+  test(`a failed account ${action} is explained and can be retried`, async ({ page, network, requests }) => {
+    network.use(
+      getGetUsersMockHandler([cruiseManager({ accepted })]),
+      handler(fail(503, { detail: 'Spróbuj ponownie później' }), { once: true }),
+      handler()
+    );
+    await page.goto('/user-management');
+    await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+    const toggle = page.getByRole('button', { name: button, exact: true });
+    await toggle.click();
+    await expect(page.getByRole('alert')).toContainText('Spróbuj ponownie później');
+    // A failed action stays blocked until its error is dismissed.
+    await expect(toggle).toBeDisabled();
+    await page.getByRole('alert').getByRole('button', { name: 'Close' }).click();
 
-  await accept.click();
-  await expect(accept).toHaveCount(0);
-  expect(requests.bodies(`PUT /v2/users/${deputy.id}/acceptance`)).toHaveLength(2);
-});
+    await toggle.click();
+    await expect(toggle).toHaveCount(0);
+    expect(requests.bodies(route)).toHaveLength(2);
+  });
+}
 
 test('a user is deactivated, then deleted only after the deletion is confirmed', async ({
   page,
