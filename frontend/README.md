@@ -14,9 +14,10 @@ TanStack Query hooks, and Zod schemas under `src/api/generated`; commit both out
 
 ## Tests
 
-- Unit tests (validation schemas, no browser): `vp run test:unit`
+- All layers: `vp run test`
+- Unit tests (no browser): `vp run test:unit`
 - Storybook component and accessibility tests: `vp run test:storybook`
-- End-to-end tests (Playwright): `vp run test`
-- Install browsers (first time / CI): `vp exec playwright install --with-deps`
+- Browser journeys (Playwright): `vp run test:browser`
+- Install the browser (first time): `vp exec playwright install --with-deps chromium`
 
 See [TESTING.md](./TESTING.md) for what each layer covers and how to add tests.

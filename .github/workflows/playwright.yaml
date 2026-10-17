@@ -38,13 +38,13 @@ jobs:
         run: vp install --frozen-lockfile
 
       - name: Install Playwright Browsers
-        run: vp exec playwright install --with-deps
+        run: vp exec playwright install --with-deps chromium
 
       - name: Run Storybook tests
         run: vp run test:storybook
 
       - name: Run Playwright tests
-        run: vp run test
+        run: vp run test:browser
 
       - uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
