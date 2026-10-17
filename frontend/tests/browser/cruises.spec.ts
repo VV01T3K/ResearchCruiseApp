@@ -1,16 +1,21 @@
 import { getGetApplicationsForCruisePlanningMockHandler } from '@/api/generated/mocks/applications/applications.msw.gen';
+import { readFile } from 'node:fs/promises';
 import {
+  getAutoPlanCruisesMockHandler,
   getCompleteCruiseMockHandler,
+  getConfirmCruiseMockHandler,
   getCreateCruiseMockHandler,
   getDeleteCruiseMockHandler,
+  getExportCruisesMockHandler,
   getGetCruiseMockHandler,
   getGetCruisesMockHandler,
+  getRemoveCruiseConfirmationMockHandler,
   getUpdateCruiseMockHandler,
 } from '@/api/generated/mocks/cruises/cruises.msw.gen';
 import { getGetAvailableCruiseManagersMockHandler } from '@/api/generated/mocks/users/users.msw.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
 import { test, expect, fail } from './fixtures';
-import { admin, deputy, manager } from '../data/accounts';
+import { admin, deputy, manager, managerAccount } from '../data/accounts';
 import { cruise } from '../data/cruises';
 
 test.use({ account: admin });
@@ -38,7 +43,7 @@ test('cruise deletion requires confirmation and removes the row after saving', a
   await dialog.getByRole('button', { name: 'Anuluj' }).click();
   await expect(dialog).toBeHidden();
   await expect(row).toBeVisible();
-  expect(requests.bodies(`DELETE /v2/cruises/${item.id}`)).toEqual([]);
+  expect(requests.bodies(`DELETE /v2/cruises/${item.id}`)).toHaveLength(0);
 
   await row.getByRole('button', { name: 'Usuń', exact: true }).click();
   await dialog.getByRole('button', { name: `Usuń rejs nr. ${item.number}` }).click();
@@ -121,18 +126,104 @@ test('rejected cruise edits show field and general errors, keep the edits and ca
   });
 });
 
-test('completing a confirmed cruise updates its visible status', async ({ page, network }) => {
-  const item = confirmed();
+test('a cruise is confirmed, completed and reverted step by step, offering the actions of each status', async ({
+  page,
+  network,
+  requests,
+}) => {
+  const item = cruise();
+  const showStatus = (status: CruiseResponse['status']) => network.use(getGetCruiseMockHandler({ ...item, status }));
+  let status: CruiseResponse['status'] = 'new';
   network.use(
     getGetCruiseMockHandler(item),
-    getCompleteCruiseMockHandler(() => network.use(getGetCruiseMockHandler({ ...item, status: 'ended' })))
+    getConfirmCruiseMockHandler(() => showStatus((status = 'confirmed'))),
+    getCompleteCruiseMockHandler(() => showStatus((status = 'ended'))),
+    getRemoveCruiseConfirmationMockHandler(() => showStatus((status = status === 'ended' ? 'confirmed' : 'new')))
   );
   await page.goto(`/cruises/${item.id}`);
-  await page.getByRole('button', { name: 'Zakończ rejs', exact: true }).click();
-  await page
-    .getByRole('dialog')
-    .getByRole('button', { name: /Oznacz rejs nr\./ })
-    .click();
-  await expect(page.getByText('Zakończony', { exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Zakończ rejs', exact: true })).toHaveCount(0);
+  const dialog = page.getByRole('dialog');
+  const button = (name: string) => page.getByRole('button', { name, exact: true });
+  const expectStatus = async (label: string, actions: string[], absent: string[]) => {
+    await expect(page.getByText(label, { exact: true })).toBeVisible();
+    for (const action of actions) await expect(button(action)).toBeVisible();
+    for (const action of absent) await expect(button(action)).toHaveCount(0);
+  };
+
+  await expectStatus('Nowy', ['Zatwierdź rejs'], ['Zakończ rejs', 'Cofnij status']);
+  await button('Zatwierdź rejs').click();
+  await dialog.getByRole('button', { name: `Potwierdź rejs nr. ${item.number}` }).click();
+  await expectStatus('Potwierdzony', ['Zakończ rejs', 'Cofnij status', 'Usuń rejs'], ['Zatwierdź rejs']);
+
+  await button('Zakończ rejs').click();
+  await dialog.getByRole('button', { name: `Oznacz rejs nr. ${item.number} jako zakończony` }).click();
+  await expectStatus('Zakończony', ['Cofnij status'], ['Zakończ rejs', 'Usuń rejs']);
+
+  await button('Cofnij status').click();
+  await expect(dialog).toContainText('z "Zakończony" na "Potwierdzony"');
+  await dialog.getByRole('button', { name: `Cofnij status rejsu nr. ${item.number}` }).click();
+  await expectStatus('Potwierdzony', ['Zakończ rejs'], []);
+
+  await button('Cofnij status').click();
+  await expect(dialog).toContainText('z "Potwierdzony" na "Nowy"');
+  await dialog.getByRole('button', { name: `Cofnij status rejsu nr. ${item.number}` }).click();
+  await expectStatus('Nowy', ['Zatwierdź rejs'], ['Cofnij status']);
+
+  const sent = (route: string) => requests.bodies(route.replace('{id}', item.id)).length;
+  expect([
+    sent('PUT /v2/cruises/{id}/confirmation'),
+    sent('PUT /v2/cruises/{id}/completion'),
+    sent('DELETE /v2/cruises/{id}/confirmation'),
+  ]).toEqual([1, 1, 2]);
+});
+
+test('auto-planning adds the planned cruises to the list', async ({ page, network, requests }) => {
+  const planned = { ...cruise(), id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', number: '2026/2', title: 'Zaplanowany' };
+  network.use(
+    getGetCruisesMockHandler([cruise()]),
+    getAutoPlanCruisesMockHandler(() => network.use(getGetCruisesMockHandler([cruise(), planned])))
+  );
+  await page.goto('/cruises');
+  await page.getByRole('button', { name: 'Dodaj rejsy automatycznie' }).click();
+  await expect(page.getByText('Rejsy zostały dodane automatycznie')).toBeVisible();
+  await expect(page.getByRole('row').filter({ hasText: planned.title })).toBeVisible();
+  expect(requests.bodies('POST /v2/cruises/auto-plan')).toHaveLength(1);
+});
+
+test('the export downloads the CSV file of the chosen year', async ({ page, network, requests }) => {
+  const csv = 'Numer;Tytuł\n2025/4;Zatoka';
+  network.use(
+    getGetCruisesMockHandler([
+      cruise(),
+      { ...cruise(), id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd', startDate: '2025-06-01T08:00:00Z' },
+    ]),
+    getExportCruisesMockHandler({
+      name: 'rejsy-2025.csv',
+      content: `data:text/csv;base64,${Buffer.from(csv).toString('base64')}`,
+    })
+  );
+  await page.goto('/cruises');
+  await page.getByRole('button', { name: 'Eksport' }).click();
+  await page.getByRole('dialog').getByText('2026', { exact: true }).click();
+  await page.getByRole('option', { name: '2025' }).click();
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Eksportuj rejsy z roku 2025 do pliku CSV' }).click();
+  const file = await download;
+  expect(file.suggestedFilename()).toBe('rejsy-2025.csv');
+  expect((await readFile(await file.path())).toString()).toBe(csv);
+  expect(requests.queries('GET /v2/cruises/export')).toEqual([{ year: '2025' }]);
+});
+
+test.describe(() => {
+  test.use({ account: managerAccount });
+
+  test('a cruise manager sees the cruises without the planning actions', async ({ page, network }) => {
+    network.use(getGetCruisesMockHandler([cruise()]));
+    await page.goto('/cruises');
+    await expect(page.getByRole('row').filter({ hasText: cruise().title! })).toBeVisible();
+    for (const action of ['Dodaj rejsy automatycznie', 'Nowy rejs', 'Nowa blokada', 'Eksport']) {
+      await expect(page.getByRole('button', { name: action }).or(page.getByRole('link', { name: action }))).toHaveCount(
+        0
+      );
+    }
+  });
 });
