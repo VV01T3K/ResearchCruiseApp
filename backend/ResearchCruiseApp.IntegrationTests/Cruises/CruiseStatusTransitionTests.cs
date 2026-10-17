@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
@@ -9,14 +10,16 @@ using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Cruises;
 
-// Reproductions for #467, #468 and #469. Each test pins the behaviour that staging has
-// today, not the intended behaviour: the product owner has not chosen a policy yet. A
-// test failing here means the behaviour changed and the assertion should be replaced
-// by the agreed outcome.
+// How editing and moving a cruise through its lifecycle changes its applications (#467,
+// #468, #469). Each test asserts the statuses, forms, points and emails stored in SQL.
 [Collection(SqlTestCollectionDefinition.Name)]
-public sealed class CruiseStatusReproductionTests(SqlFixture fixture) : IAsyncLifetime
+public sealed class CruiseStatusTransitionTests(SqlFixture fixture) : IAsyncLifetime
 {
     private const string ConfirmationSubject = "Rejs zaakceptowany";
+    private const string EndedCruiseLocked =
+        "Nie można edytować zakończonego rejsu. Aby wprowadzić zmiany, najpierw cofnij status rejsu.";
+    private const string ReportedBlocksRevert =
+        "Nie można cofnąć statusu rejsu, ponieważ co najmniej jedno zgłoszenie ma już złożony Formularz C.";
 
     public async ValueTask InitializeAsync() => await fixture.ResetAsync();
 
@@ -24,9 +27,8 @@ public sealed class CruiseStatusReproductionTests(SqlFixture fixture) : IAsyncLi
 
     // #467
     [Fact]
-    public async Task RemoveFromConfirmedCruise_CurrentBehaviour_StrandsFormBStatusesAndBlocksReplanning()
+    public async Task RemoveFromConfirmedCruise_ReturnsApplicationsToAcceptedAndKeepsFormB()
     {
-        var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
         var office = await Office(app);
         var required = await Accepted(app, "required@example.invalid");
@@ -42,130 +44,61 @@ public sealed class CruiseStatusReproductionTests(SqlFixture fixture) : IAsyncLi
             cruiseId,
             formB: true
         );
-        var pendingBefore = await PendingEmails(app);
+        await DispatchConfirmations(app);
 
         Assert.Equal(HttpStatusCode.NoContent, await Patch(office, cruiseId, []));
 
         await AssertCruise(app, cruiseId, CruiseStatus.Confirmed);
-        await AssertApplication(app, required.Id, CruiseApplicationStatus.FormBRequired, null);
+        await AssertApplication(app, required.Id, CruiseApplicationStatus.Accepted, null);
         await AssertApplication(
             app,
             filled.Id,
-            CruiseApplicationStatus.FormBFilled,
+            CruiseApplicationStatus.Accepted,
             null,
             formB: true
         );
-        Assert.Equal(pendingBefore, await PendingEmails(app));
+        Assert.Equal(0, await PendingEmails(app));
+        Assert.Equal(
+            [filled.Id, required.Id],
+            (await PlanningCandidates(office, null)).Select(candidate => candidate.Id).Order()
+        );
 
-        // Neither removed application can be planned again.
-        Assert.Empty(await PlanningCandidates(office, null));
+        // Planned on another cruise and confirmed, both must submit Form B for it.
         var otherId = await PostCruise(app, office, "Other");
-        Assert.Equal(HttpStatusCode.BadRequest, await Patch(office, otherId, [required.Id]));
-        Assert.Equal(HttpStatusCode.BadRequest, await Patch(office, otherId, [filled.Id]));
-        using var created = await office.PostAsJsonAsync(
-            "/v2/cruises",
-            new CreateRequest(
-                "2030-08-01",
-                "2030-08-02",
-                Guid.Empty,
-                Guid.Empty,
-                [required.Id],
-                "Rejected",
-                false
-            ),
-            ct
+        Assert.Equal(
+            HttpStatusCode.NoContent,
+            await Patch(office, otherId, [required.Id, filled.Id])
         );
-        Assert.Equal(HttpStatusCode.BadRequest, created.StatusCode);
-        // The office cannot re-accept them either.
-        Assert.Equal(HttpStatusCode.Forbidden, await Decide(office, required.Id));
-        Assert.Equal(HttpStatusCode.Forbidden, await Decide(office, filled.Id));
-
-        // Form B can still be submitted for the cruise-less application.
-        await SubmitFormB(app, required);
+        await AssertApplication(app, required.Id, CruiseApplicationStatus.Accepted, otherId);
         await AssertApplication(
             app,
-            required.Id,
-            CruiseApplicationStatus.FormBFilled,
-            null,
+            filled.Id,
+            CruiseApplicationStatus.Accepted,
+            otherId,
             formB: true
         );
-        Assert.Equal(pendingBefore, await PendingEmails(app));
-    }
-
-    // #467
-    [Fact]
-    public async Task RemoveFromEndedCruise_CurrentBehaviour_StrandsUndertakenAndReportedWithPoints()
-    {
-        await using var app = new TestApplication(fixture.ConnectionString);
-        var office = await Office(app);
-        var undertaken = await Accepted(app, "undertaken@example.invalid");
-        var reported = await Accepted(app, "reported@example.invalid");
-        var cruiseId = await PostCruise(app, office, "Ended", undertaken.Id, reported.Id);
-        Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
-        await SubmitFormB(app, undertaken);
-        await SubmitFormB(app, reported);
-        Assert.Equal(HttpStatusCode.NoContent, await Complete(office, cruiseId));
-        Assert.Equal(HttpStatusCode.Created, await SubmitFormC(app, reported));
+        Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, otherId));
+        await AssertApplication(app, required.Id, CruiseApplicationStatus.FormBRequired, otherId);
         await AssertApplication(
             app,
-            undertaken.Id,
-            CruiseApplicationStatus.Undertaken,
-            cruiseId,
+            filled.Id,
+            CruiseApplicationStatus.FormBRequired,
+            otherId,
             formB: true
         );
-        await AssertApplication(
-            app,
-            reported.Id,
-            CruiseApplicationStatus.Reported,
-            cruiseId,
-            formB: true,
-            formC: true,
-            points: 400
-        );
-        var pendingBefore = await PendingEmails(app);
-
-        Assert.Equal(HttpStatusCode.NoContent, await Patch(office, cruiseId, []));
-
-        await AssertCruise(app, cruiseId, CruiseStatus.Ended);
-        await AssertApplication(
-            app,
-            undertaken.Id,
-            CruiseApplicationStatus.Undertaken,
-            null,
-            formB: true
-        );
-        await AssertApplication(
-            app,
-            reported.Id,
-            CruiseApplicationStatus.Reported,
-            null,
-            formB: true,
-            formC: true,
-            points: 400
-        );
-        Assert.Equal(pendingBefore, await PendingEmails(app));
-
-        Assert.Empty(await PlanningCandidates(office, null));
-        var otherId = await PostCruise(app, office, "Other");
-        Assert.Equal(HttpStatusCode.BadRequest, await Patch(office, otherId, [undertaken.Id]));
-        Assert.Equal(HttpStatusCode.BadRequest, await Patch(office, otherId, [reported.Id]));
-
-        // Form C can still be submitted, and points awarded, without any cruise.
-        Assert.Equal(HttpStatusCode.Created, await SubmitFormC(app, undertaken));
-        await AssertApplication(
-            app,
-            undertaken.Id,
-            CruiseApplicationStatus.Reported,
-            null,
-            formB: true,
-            formC: true,
-            points: 400
+        Assert.Equal(
+            new Dictionary<string, int> { [filled.OwnerEmail] = 1, [required.OwnerEmail] = 1 },
+            await DispatchConfirmations(app)
         );
     }
 
-    // #468
-    [Fact]
-    public async Task UpdateEndedCruise_CurrentBehaviour_AppliesChangesAndLeavesAddedApplicationAccepted()
+    // #468, and #467 for ended cruises: membership cannot change once the cruise ended.
+    [Theory]
+    [InlineData("dates")]
+    [InlineData("managers")]
+    [InlineData("add")]
+    [InlineData("remove")]
+    public async Task UpdateEndedCruise_IsRejectedWithoutChanges(string change)
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -177,31 +110,64 @@ public sealed class CruiseStatusReproductionTests(SqlFixture fixture) : IAsyncLi
         await SubmitFormB(app, original);
         Assert.Equal(HttpStatusCode.NoContent, await Complete(office, cruiseId));
         var pendingBefore = await PendingEmails(app);
-
-        using var updated = await office.PatchAsJsonAsync(
-            $"/v2/cruises/{cruiseId}",
-            new UpdateRequest(
+        var request = change switch
+        {
+            "dates" => new UpdateRequest(
                 "2030-09-01",
                 "2030-09-05",
-                late.ManagerId,
-                original.ManagerId,
-                [original.Id, late.Id],
-                "Edited after end",
+                Guid.Empty,
+                Guid.Empty,
+                [original.Id],
+                "Ended",
                 false
             ),
-            ct
-        );
+            "managers" => new UpdateRequest(
+                "2030-06-01",
+                "2030-06-02",
+                original.ManagerId,
+                late.ManagerId,
+                [original.Id],
+                "Ended",
+                false
+            ),
+            "add" => new UpdateRequest(
+                "2030-06-01",
+                "2030-06-02",
+                Guid.Empty,
+                Guid.Empty,
+                [original.Id, late.Id],
+                "Ended",
+                false
+            ),
+            "remove" => new UpdateRequest(
+                "2030-06-01",
+                "2030-06-02",
+                Guid.Empty,
+                Guid.Empty,
+                [],
+                "Ended",
+                false
+            ),
+            _ => throw new ArgumentOutOfRangeException(nameof(change)),
+        };
 
-        Assert.Equal(HttpStatusCode.NoContent, updated.StatusCode);
+        using var response = await office.PatchAsJsonAsync($"/v2/cruises/{cruiseId}", request, ct);
+
+        await AssertRejected(response, EndedCruiseLocked);
         await app.InDatabase(async db =>
         {
             var cruise = await db.Cruises.SingleAsync(row => row.Id == cruiseId, ct);
-            Assert.Equal(CruiseStatus.Ended, cruise.Status);
-            Assert.Equal("2030-09-01", cruise.StartDate);
-            Assert.Equal("2030-09-05", cruise.EndDate);
-            Assert.Equal("Edited after end", cruise.Title);
-            Assert.Equal(late.ManagerId, cruise.MainCruiseManagerId);
-            Assert.Equal(original.ManagerId, cruise.MainDeputyManagerId);
+            Assert.Equal(
+                (CruiseStatus.Ended, "2030-06-01", "2030-06-02", "Ended", Guid.Empty, Guid.Empty),
+                (
+                    cruise.Status,
+                    cruise.StartDate,
+                    cruise.EndDate,
+                    cruise.Title,
+                    cruise.MainCruiseManagerId,
+                    cruise.MainDeputyManagerId
+                )
+            );
         });
         await AssertApplication(
             app,
@@ -210,65 +176,76 @@ public sealed class CruiseStatusReproductionTests(SqlFixture fixture) : IAsyncLi
             cruiseId,
             formB: true
         );
-        await AssertApplication(app, late.Id, CruiseApplicationStatus.Accepted, cruiseId);
+        await AssertApplication(app, late.Id, CruiseApplicationStatus.Accepted, null);
         Assert.Equal(pendingBefore, await PendingEmails(app));
+    }
 
-        // The added application cannot progress: no Form B, no Form C, no refill.
-        Assert.Equal(HttpStatusCode.Forbidden, await SubmitFormBStatus(app, late));
-        Assert.Equal(HttpStatusCode.Forbidden, await SubmitFormC(app, late));
+    // The UG Form C allows the effects to be edited after the cruise ends.
+    [Fact]
+    public async Task EndedCruise_StillAcceptsFormCAndAllowsReopeningIt()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var office = await Office(app);
+        var application = await Accepted(app, "manager@example.invalid");
+        var cruiseId = await PostCruise(app, office, "Ended", application.Id);
+        Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
+        await SubmitFormB(app, application);
+        Assert.Equal(HttpStatusCode.NoContent, await Complete(office, cruiseId));
+
+        Assert.Equal(HttpStatusCode.Created, await SubmitFormC(app, application));
+        await AssertApplication(
+            app,
+            application.Id,
+            CruiseApplicationStatus.Reported,
+            cruiseId,
+            formB: true,
+            formC: true,
+            points: 400
+        );
+
         using var refill = await office.PutAsync(
-            $"/v2/applications/{late.Id}/form-b/refill",
+            $"/v2/applications/{application.Id}/form-c/refill",
             null,
             ct
         );
-        Assert.Equal(HttpStatusCode.Forbidden, refill.StatusCode);
-        Assert.Equal(HttpStatusCode.Forbidden, await Decide(office, late.Id));
-        await AssertApplication(app, late.Id, CruiseApplicationStatus.Accepted, cruiseId);
-
-        // Reverting completion leaves it accepted on a confirmed cruise.
-        Assert.Equal(HttpStatusCode.NoContent, await Revert(office, cruiseId));
-        await AssertCruise(app, cruiseId, CruiseStatus.Confirmed);
+        Assert.Equal(HttpStatusCode.NoContent, refill.StatusCode);
         await AssertApplication(
             app,
-            original.Id,
-            CruiseApplicationStatus.FormBFilled,
+            application.Id,
+            CruiseApplicationStatus.Undertaken,
             cruiseId,
-            formB: true
+            formB: true,
+            formC: true,
+            points: 400
         );
-        await AssertApplication(app, late.Id, CruiseApplicationStatus.Accepted, cruiseId);
 
-        // Saving the confirmed cruise again is the only way to request Form B, and it
-        // sends no confirmation email.
-        Assert.Equal(
-            HttpStatusCode.NoContent,
-            await Patch(office, cruiseId, [original.Id, late.Id])
+        Assert.Equal(HttpStatusCode.Created, await SubmitFormC(app, application));
+        await AssertCruise(app, cruiseId, CruiseStatus.Ended);
+        await AssertApplication(
+            app,
+            application.Id,
+            CruiseApplicationStatus.Reported,
+            cruiseId,
+            formB: true,
+            formC: true,
+            points: 400
         );
-        await AssertApplication(app, late.Id, CruiseApplicationStatus.FormBRequired, cruiseId);
-        Assert.Equal(pendingBefore, await PendingEmails(app));
     }
 
     // #469
     [Fact]
-    public async Task ConfirmUndoConfirm_CurrentBehaviour_ResetsFilledFormBAndResendsEveryEmail()
+    public async Task ConfirmUndoConfirm_KeepsFilledFormBAndEmailsOnlyApplicationsAskedForIt()
     {
         await using var app = new TestApplication(fixture.ConnectionString);
         var office = await Office(app);
         var deputy = await TestUsers.Create(app, "deputy@example.invalid", RoleName.CruiseManager);
         var deputyId = Guid.Parse(deputy.Id);
         var required = await Accepted(app, "required@example.invalid", deputyId);
-        var filled = await Accepted(app, "filled@example.invalid", deputyId);
+        var filled = await Accepted(app, "filled@example.invalid");
         var cruiseId = await PostCruise(app, office, "Reconfirmed", required.Id, filled.Id);
-
         Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
-        Assert.Equal(
-            new Dictionary<string, int>
-            {
-                [deputy.Email!] = 2,
-                [filled.OwnerEmail] = 1,
-                [required.OwnerEmail] = 1,
-            },
-            await DispatchConfirmations(app)
-        );
+        await DispatchConfirmations(app);
         await SubmitFormB(app, filled);
 
         Assert.Equal(HttpStatusCode.NoContent, await Revert(office, cruiseId));
@@ -281,77 +258,108 @@ public sealed class CruiseStatusReproductionTests(SqlFixture fixture) : IAsyncLi
             cruiseId,
             formB: true
         );
-        // Delivered messages leave the outbox, so this counts what the undo queued.
         Assert.Equal(0, await PendingEmails(app));
 
         Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
+
         await AssertCruise(app, cruiseId, CruiseStatus.Confirmed);
         await AssertApplication(app, required.Id, CruiseApplicationStatus.FormBRequired, cruiseId);
         await AssertApplication(
             app,
             filled.Id,
-            CruiseApplicationStatus.FormBRequired,
+            CruiseApplicationStatus.FormBFilled,
             cruiseId,
             formB: true
         );
-        Assert.Equal(4, await PendingEmails(app));
+        Assert.Equal(
+            new Dictionary<string, int> { [deputy.Email!] = 1, [required.OwnerEmail] = 1 },
+            await DispatchConfirmations(app)
+        );
+    }
+
+    [Fact]
+    public async Task ConfirmCruise_WhenPeopleShareApplications_EmailsEachPersonOnce()
+    {
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var office = await Office(app);
+        var deputy = await TestUsers.Create(app, "deputy@example.invalid", RoleName.CruiseManager);
+        var deputyId = Guid.Parse(deputy.Id);
+        var first = await Accepted(app, "first@example.invalid", deputyId);
+        var second = await Accepted(app, "second@example.invalid", deputyId);
+        var cruiseId = await PostCruise(app, office, "Shared", first.Id, second.Id);
+
+        Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
+
+        Assert.Equal(3, await PendingEmails(app));
         Assert.Equal(
             new Dictionary<string, int>
             {
-                [deputy.Email!] = 2,
-                [filled.OwnerEmail] = 1,
-                [required.OwnerEmail] = 1,
+                [deputy.Email!] = 1,
+                [first.OwnerEmail] = 1,
+                [second.OwnerEmail] = 1,
             },
             await DispatchConfirmations(app)
         );
     }
 
+    [Fact]
+    public async Task AddToConfirmedCruise_RequestsFormBAndEmailsOnlyTheAddedApplicationsPeopleOnce()
+    {
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var office = await Office(app);
+        var deputy = await TestUsers.Create(app, "deputy@example.invalid", RoleName.CruiseManager);
+        var deputyId = Guid.Parse(deputy.Id);
+        var existing = await Accepted(app, "existing@example.invalid");
+        var first = await Accepted(app, "first@example.invalid", deputyId);
+        var second = await Accepted(app, "second@example.invalid", deputyId);
+        var cruiseId = await PostCruise(app, office, "Confirmed", existing.Id);
+        Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
+        await DispatchConfirmations(app);
+
+        Assert.Equal(
+            HttpStatusCode.NoContent,
+            await Patch(office, cruiseId, [existing.Id, first.Id, second.Id])
+        );
+
+        await AssertApplication(app, existing.Id, CruiseApplicationStatus.FormBRequired, cruiseId);
+        await AssertApplication(app, first.Id, CruiseApplicationStatus.FormBRequired, cruiseId);
+        await AssertApplication(app, second.Id, CruiseApplicationStatus.FormBRequired, cruiseId);
+        Assert.Equal(
+            new Dictionary<string, int>
+            {
+                [deputy.Email!] = 1,
+                [first.OwnerEmail] = 1,
+                [second.OwnerEmail] = 1,
+            },
+            await DispatchConfirmations(app)
+        );
+
+        // Saving again without new applications sends nothing.
+        Assert.Equal(
+            HttpStatusCode.NoContent,
+            await Patch(office, cruiseId, [existing.Id, first.Id, second.Id])
+        );
+        Assert.Equal(0, await PendingEmails(app));
+    }
+
     // #469
     [Fact]
-    public async Task CompleteUndoComplete_CurrentBehaviour_KeepsReportedFormCAndPointsThroughEveryRevert()
+    public async Task UndoCompletion_WithReportedApplication_IsRejectedWithoutChanges()
     {
         await using var app = new TestApplication(fixture.ConnectionString);
         var office = await Office(app);
         var undertaken = await Accepted(app, "undertaken@example.invalid");
         var reported = await Accepted(app, "reported@example.invalid");
-        var cruiseId = await PostCruise(app, office, "Reverted", undertaken.Id, reported.Id);
+        var cruiseId = await PostCruise(app, office, "Reported", undertaken.Id, reported.Id);
         Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
         await SubmitFormB(app, undertaken);
         await SubmitFormB(app, reported);
         Assert.Equal(HttpStatusCode.NoContent, await Complete(office, cruiseId));
         Assert.Equal(HttpStatusCode.Created, await SubmitFormC(app, reported));
-        await AssertApplication(
-            app,
-            reported.Id,
-            CruiseApplicationStatus.Reported,
-            cruiseId,
-            formB: true,
-            formC: true,
-            points: 400
-        );
         var pendingBefore = await PendingEmails(app);
 
-        Assert.Equal(HttpStatusCode.NoContent, await Revert(office, cruiseId));
-        await AssertCruise(app, cruiseId, CruiseStatus.Confirmed);
-        await AssertApplication(
-            app,
-            undertaken.Id,
-            CruiseApplicationStatus.FormBFilled,
-            cruiseId,
-            formB: true
-        );
-        await AssertApplication(
-            app,
-            reported.Id,
-            CruiseApplicationStatus.Reported,
-            cruiseId,
-            formB: true,
-            formC: true,
-            points: 400
-        );
-        Assert.Equal(pendingBefore, await PendingEmails(app));
+        await AssertRejected(await RevertResponse(office, cruiseId), ReportedBlocksRevert);
 
-        Assert.Equal(HttpStatusCode.NoContent, await Complete(office, cruiseId));
         await AssertCruise(app, cruiseId, CruiseStatus.Ended);
         await AssertApplication(
             app,
@@ -369,52 +377,95 @@ public sealed class CruiseStatusReproductionTests(SqlFixture fixture) : IAsyncLi
             formC: true,
             points: 400
         );
+        Assert.Equal(pendingBefore, await PendingEmails(app));
 
-        // Reverting twice returns the cruise to new with a reported application, and
-        // confirming again demands Form B from it while its Form C and points remain.
+        // Accepted by the product owner: reopening Form C first lifts the block, and the
+        // submitted Form C and its points stay.
+        using var refill = await office.PutAsync(
+            $"/v2/applications/{reported.Id}/form-c/refill",
+            null,
+            TestContext.Current.CancellationToken
+        );
+        Assert.Equal(HttpStatusCode.NoContent, refill.StatusCode);
         Assert.Equal(HttpStatusCode.NoContent, await Revert(office, cruiseId));
-        Assert.Equal(HttpStatusCode.NoContent, await Revert(office, cruiseId));
-        await AssertCruise(app, cruiseId, CruiseStatus.New);
+        await AssertCruise(app, cruiseId, CruiseStatus.Confirmed);
         await AssertApplication(
             app,
-            undertaken.Id,
+            reported.Id,
+            CruiseApplicationStatus.FormBFilled,
+            cruiseId,
+            formB: true,
+            formC: true,
+            points: 400
+        );
+    }
+
+    // #469
+    [Fact]
+    public async Task UndoConfirmation_WithReportedApplication_IsRejectedWithoutChanges()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var office = await Office(app);
+        var required = await Accepted(app, "required@example.invalid");
+        var reported = await Accepted(app, "reported@example.invalid");
+        var cruiseId = await PostCruise(app, office, "Confirmed", required.Id, reported.Id);
+        Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
+        // Before this rule, undoing completion left reported applications on confirmed
+        // cruises; the API can no longer produce this state.
+        await app.InDatabase(async db =>
+        {
+            (await db.CruiseApplications.SingleAsync(row => row.Id == reported.Id, ct)).Status =
+                CruiseApplicationStatus.Reported;
+            await db.SaveChangesAsync(ct);
+        });
+        var pendingBefore = await PendingEmails(app);
+
+        await AssertRejected(await RevertResponse(office, cruiseId), ReportedBlocksRevert);
+
+        await AssertCruise(app, cruiseId, CruiseStatus.Confirmed);
+        await AssertApplication(app, required.Id, CruiseApplicationStatus.FormBRequired, cruiseId);
+        await AssertApplication(app, reported.Id, CruiseApplicationStatus.Reported, cruiseId);
+        Assert.Equal(pendingBefore, await PendingEmails(app));
+    }
+
+    [Fact]
+    public async Task UndoCompletion_WithoutReportedApplication_ReturnsUndertakenToFormBFilled()
+    {
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var office = await Office(app);
+        var filled = await Accepted(app, "filled@example.invalid");
+        var required = await Accepted(app, "required@example.invalid");
+        var cruiseId = await PostCruise(app, office, "Reverted", filled.Id, required.Id);
+        Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
+        await SubmitFormB(app, filled);
+        Assert.Equal(HttpStatusCode.NoContent, await Complete(office, cruiseId));
+        await AssertApplication(
+            app,
+            filled.Id,
+            CruiseApplicationStatus.Undertaken,
+            cruiseId,
+            formB: true
+        );
+        var pendingBefore = await PendingEmails(app);
+
+        Assert.Equal(HttpStatusCode.NoContent, await Revert(office, cruiseId));
+
+        await AssertCruise(app, cruiseId, CruiseStatus.Confirmed);
+        await AssertApplication(
+            app,
+            filled.Id,
             CruiseApplicationStatus.FormBFilled,
             cruiseId,
             formB: true
         );
-        await AssertApplication(
-            app,
-            reported.Id,
-            CruiseApplicationStatus.Reported,
-            cruiseId,
-            formB: true,
-            formC: true,
-            points: 400
-        );
+        await AssertApplication(app, required.Id, CruiseApplicationStatus.FormBRequired, cruiseId);
         Assert.Equal(pendingBefore, await PendingEmails(app));
-
-        Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
-        await AssertApplication(
-            app,
-            undertaken.Id,
-            CruiseApplicationStatus.FormBRequired,
-            cruiseId,
-            formB: true
-        );
-        await AssertApplication(
-            app,
-            reported.Id,
-            CruiseApplicationStatus.FormBRequired,
-            cruiseId,
-            formB: true,
-            formC: true,
-            points: 400
-        );
-        Assert.Equal(pendingBefore + 2, await PendingEmails(app));
     }
 
+    // Unchanged: deleting a confirmed cruise is how removal from a confirmed cruise behaves.
     [Fact]
-    public async Task DeleteConfirmedCruise_CurrentBehaviour_ResetsToAcceptedButKeepsFormB()
+    public async Task DeleteConfirmedCruise_ResetsToAcceptedButKeepsFormB()
     {
         await using var app = new TestApplication(fixture.ConnectionString);
         var office = await Office(app);
@@ -547,11 +598,26 @@ public sealed class CruiseStatusReproductionTests(SqlFixture fixture) : IAsyncLi
 
     private static async Task<HttpStatusCode> Revert(HttpClient office, Guid cruiseId)
     {
-        using var response = await office.DeleteAsync(
+        using var response = await RevertResponse(office, cruiseId);
+        return response.StatusCode;
+    }
+
+    private static Task<HttpResponseMessage> RevertResponse(HttpClient office, Guid cruiseId) =>
+        office.DeleteAsync(
             $"/v2/cruises/{cruiseId}/confirmation",
             TestContext.Current.CancellationToken
         );
-        return response.StatusCode;
+
+    private static async Task AssertRejected(HttpResponseMessage response, string detail)
+    {
+        using (response)
+        {
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            var problem = await response.Content.ReadFromJsonAsync<JsonElement>(
+                TestContext.Current.CancellationToken
+            );
+            Assert.Equal(detail, problem.GetProperty("detail").GetString());
+        }
     }
 
     private static async Task<HttpStatusCode> Complete(HttpClient office, Guid cruiseId)
@@ -559,16 +625,6 @@ public sealed class CruiseStatusReproductionTests(SqlFixture fixture) : IAsyncLi
         using var response = await office.PutAsync(
             $"/v2/cruises/{cruiseId}/completion",
             null,
-            TestContext.Current.CancellationToken
-        );
-        return response.StatusCode;
-    }
-
-    private static async Task<HttpStatusCode> Decide(HttpClient office, Guid applicationId)
-    {
-        using var response = await office.PutAsJsonAsync(
-            $"/v2/applications/{applicationId}/decision",
-            new ApplicationDecisionRequest(true),
             TestContext.Current.CancellationToken
         );
         return response.StatusCode;
@@ -586,13 +642,7 @@ public sealed class CruiseStatusReproductionTests(SqlFixture fixture) : IAsyncLi
             )
         )!;
 
-    private static async Task SubmitFormB(TestApplication app, Seeded application) =>
-        Assert.Equal(HttpStatusCode.Created, await SubmitFormBStatus(app, application));
-
-    private static async Task<HttpStatusCode> SubmitFormBStatus(
-        TestApplication app,
-        Seeded application
-    )
+    private static async Task SubmitFormB(TestApplication app, Seeded application)
     {
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
         using var response = await manager.PutAsJsonAsync(
@@ -604,7 +654,7 @@ public sealed class CruiseStatusReproductionTests(SqlFixture fixture) : IAsyncLi
             },
             TestContext.Current.CancellationToken
         );
-        return response.StatusCode;
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 
     // One finished doctoral effect with both conditions met: 200 points each for the
