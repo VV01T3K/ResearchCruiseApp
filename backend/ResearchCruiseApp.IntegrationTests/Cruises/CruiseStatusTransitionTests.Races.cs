@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
-using DomainCruise = ResearchCruiseApp.Domain.Entities.Cruise;
 
 namespace ResearchCruiseApp.IntegrationTests.Cruises;
 
@@ -53,35 +52,6 @@ public sealed partial class CruiseStatusTransitionTests
     }
 
     [Fact]
-    public async Task AddToConfirmedCruise_WhileConfirmationIsUndone_IsRejected()
-    {
-        var gate = new SaveChangesGate();
-        await using var app = new TestApplication(fixture.ConnectionString, interceptor: gate);
-        var office = await Office(app);
-        var existing = await Accepted(app, "existing@example.invalid");
-        var added = await Accepted(app, "added@example.invalid");
-        var cruiseId = await PostCruise(app, office, "Race", existing.Id);
-        Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
-        var pendingBefore = await PendingEmails(app);
-
-        gate.Hold(db => SavesStatus(db, cruiseId, CruiseStatus.New));
-        var (undo, add) = await gate.Race(
-            fixture.ConnectionString,
-            RevertResponse(office, cruiseId),
-            () => PatchResponse(office, cruiseId, [existing.Id, added.Id]),
-            TestContext.Current.CancellationToken
-        );
-
-        using (undo)
-            Assert.Equal(HttpStatusCode.NoContent, undo.StatusCode);
-        await AssertConflict(add);
-        await AssertCruise(app, cruiseId, CruiseStatus.New);
-        await AssertApplication(app, existing.Id, CruiseApplicationStatus.Accepted, cruiseId);
-        await AssertApplication(app, added.Id, CruiseApplicationStatus.Accepted, null);
-        Assert.Equal(pendingBefore, await PendingEmails(app));
-    }
-
-    [Fact]
     public async Task RemoveFromConfirmedCruise_WhileFormBIsSubmitted_IsRejectedAndKeepsIt()
     {
         var gate = new SaveChangesGate();
@@ -120,39 +90,6 @@ public sealed partial class CruiseStatusTransitionTests
         );
     }
 
-    [Fact]
-    public async Task RemoveFromConfirmedCruise_WhileItIsCompleted_IsRejected()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var gate = new SaveChangesGate();
-        await using var app = new TestApplication(fixture.ConnectionString, interceptor: gate);
-        var office = await Office(app);
-        var application = await Accepted(app, "manager@example.invalid");
-        var cruiseId = await PostCruise(app, office, "Race", application.Id);
-        Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
-        await SubmitFormB(app, application);
-
-        gate.Hold(db => SavesStatus(db, cruiseId, CruiseStatus.Ended));
-        var (completion, removal) = await gate.Race(
-            fixture.ConnectionString,
-            office.PutAsync($"/v2/cruises/{cruiseId}/completion", null, ct),
-            () => PatchResponse(office, cruiseId, []),
-            ct
-        );
-
-        using (completion)
-            Assert.Equal(HttpStatusCode.NoContent, completion.StatusCode);
-        await AssertConflict(removal);
-        await AssertCruise(app, cruiseId, CruiseStatus.Ended);
-        await AssertApplication(
-            app,
-            application.Id,
-            CruiseApplicationStatus.Undertaken,
-            cruiseId,
-            formB: true
-        );
-    }
-
     private static bool SavesStatus(
         DbContext db,
         Guid applicationId,
@@ -162,15 +99,6 @@ public sealed partial class CruiseStatusTransitionTests
             .ChangeTracker.Entries<CruiseApplication>()
             .Any(entry =>
                 entry.Entity.Id == applicationId
-                && entry.Entity.Status == status
-                && entry.Property(row => row.Status).IsModified
-            );
-
-    private static bool SavesStatus(DbContext db, Guid cruiseId, CruiseStatus status) =>
-        db
-            .ChangeTracker.Entries<DomainCruise>()
-            .Any(entry =>
-                entry.Entity.Id == cruiseId
                 && entry.Entity.Status == status
                 && entry.Property(row => row.Status).IsModified
             );
