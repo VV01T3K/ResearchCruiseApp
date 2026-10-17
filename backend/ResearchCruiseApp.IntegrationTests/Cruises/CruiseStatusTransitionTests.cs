@@ -177,7 +177,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
             cruiseId,
             formB: true,
             formC: true,
-            points: 400
+            points: 200
         );
 
         using var refill = await office.PutAsync(
@@ -193,7 +193,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
             cruiseId,
             formB: true,
             formC: true,
-            points: 400
+            points: 200
         );
 
         Assert.Equal(HttpStatusCode.Created, await SubmitFormC(app, application));
@@ -205,7 +205,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
             cruiseId,
             formB: true,
             formC: true,
-            points: 400
+            points: 200
         );
     }
 
@@ -334,7 +334,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
             cruiseId,
             formB: true,
             formC: true,
-            points: 400
+            points: 200
         );
         Assert.Equal(pendingBefore, await PendingEmails(app));
 
@@ -354,7 +354,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
             cruiseId,
             formB: true,
             formC: true,
-            points: 400
+            points: 200
         );
     }
 
@@ -523,7 +523,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
             TestContext.Current.CancellationToken
         );
 
-    // 200 points each for the manager and the deputy slot.
+    // 200 points for the manager; seeded applications have no deputy.
     private static async Task<HttpStatusCode> SubmitFormC(TestApplication app, Seeded application)
     {
         using var manager = await TestApplications.Login(app, application.OwnerEmail);

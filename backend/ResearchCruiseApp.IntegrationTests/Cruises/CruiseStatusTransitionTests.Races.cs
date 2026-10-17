@@ -46,7 +46,7 @@ public sealed partial class CruiseStatusTransitionTests
             cruiseId,
             formB: true,
             formC: true,
-            points: 400
+            points: 200
         );
         await AssertRejected(await RevertResponse(office, cruiseId), ReportedBlocksRevert);
     }
