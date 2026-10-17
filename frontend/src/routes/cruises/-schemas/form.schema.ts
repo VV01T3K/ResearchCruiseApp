@@ -4,7 +4,7 @@ import { CreateRequest, type CruiseResponse } from '@/api/generated/schemas';
 import { emptyGuid } from '@/lib/applications/person';
 
 function managerIdSchema(message: string) {
-  return z.union([z.literal(''), z.guid()], { error: message }).transform((id) => id || emptyGuid);
+  return z.union([z.literal(''), z.guid(message)]).transform((id) => id || emptyGuid);
 }
 
 export const CruiseFormInputSchema = z

@@ -17,8 +17,14 @@ it('writes the shared create/update cruise API shape', () => {
 });
 
 it.each([
-  ['mainManagerId', { mainManagerId: 'not-a-guid' }],
-  ['deputyManagerId', { deputyManagerId: 'not-a-guid' }],
+  ['mainManagerId', 'Nieprawidłowy identyfikator kierownika rejsu'],
+  ['deputyManagerId', 'Nieprawidłowy identyfikator zastępcy kierownika rejsu'],
+])('rejects a malformed %s with a field-specific message', (path, message) => {
+  const result = CruiseFormSchema.safeParse({ ...mapCruiseToValues(cruise()), [path]: 'not-a-guid' });
+  expect(result.error?.issues).toEqual([expect.objectContaining({ path: [path], message })]);
+});
+
+it.each([
   ['endDate', { endDate: '2026-05-01T00:00:00Z' }],
   ['deputyManagerId', { mainManagerId: manager.id, deputyManagerId: manager.id }],
   ['title', { title: '  ', shipUnavailable: true }],
