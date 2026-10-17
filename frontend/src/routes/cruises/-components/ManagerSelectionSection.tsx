@@ -140,10 +140,7 @@ function getCruiseManagersNotAssignedToApplication(
     .filter((user): user is CruiseManagerResponse => user !== undefined);
 }
 
-/**
- * The available cruise managers plus the cruise's own managers, who keep a label even if they are no longer
- * available. Unassigned managers are skipped. The cruise response has no email, so the managers list is preferred.
- */
+// The cruise response has no email, so prefer the managers list.
 function withCruiseManagers(users: CruiseManagerResponse[], cruise: CruiseResponse | undefined): UserOption[] {
   if (!cruise) return users;
   const missing = [cruise.mainManager, cruise.deputyManager]
