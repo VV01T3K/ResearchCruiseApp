@@ -18,7 +18,12 @@ export default defineConfig({
       mode: 'tags',
       baseUrl: '',
       clean: true,
-      mock: false,
+      // Typed MSW request handlers for tests; nothing in the app imports them.
+      mock: {
+        path: 'src/api/generated/mocks',
+        indexMockFiles: true,
+        generators: [{ type: 'msw', delay: false }],
+      },
       docs: false,
       headers: false,
       indexFiles: true,

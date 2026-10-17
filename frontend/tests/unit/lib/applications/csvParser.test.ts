@@ -1,7 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 import writeXlsxFile from 'write-excel-file/node';
 
-import { parseCruiseDayDetailsFromFile, parseCruiseDayDetailsFromXlsx } from '@/lib/applications/csvParser';
+import {
+  parseCruiseDayDetailsFromCsv,
+  parseCruiseDayDetailsFromFile,
+  parseCruiseDayDetailsFromXlsx,
+} from '@/lib/applications/csvParser';
 
 async function xlsxFile(rows: (string | number | null)[][]): Promise<File> {
   const buffer = await writeXlsxFile(rows).toBuffer();
@@ -55,4 +59,52 @@ describe('parseCruiseDayDetailsFromFile', () => {
 
     await expect(parseCruiseDayDetailsFromFile(file)).rejects.toThrow('Nieobsługiwany format pliku');
   });
+});
+
+it.each([',', ';'])('imports quoted fields and escaped quotes with delimiter %s', (delimiter) => {
+  const csv = [
+    ['day', 'hours', 'task name', 'region', 'comment'].join(delimiter),
+    ['1', '8', '"Pomiary, woda; osady"', 'Zatoka', '"Stacja ""A"""'].join(delimiter),
+  ].join('\n');
+  expect(parseCruiseDayDetailsFromCsv(csv)).toEqual([
+    {
+      number: 1,
+      hours: 8,
+      taskName: 'Pomiary, woda; osady',
+      region: 'Zatoka',
+      position: '',
+      comment: 'Stacja "A"',
+    },
+  ]);
+});
+it('imports Polish headers, CRLF, coordinates and a named station', () => {
+  expect(
+    parseCruiseDayDetailsFromCsv(
+      'dzien;godziny;zadanie;rejon;LAT;;;LONG;;;Nazwa Punktu\r\n1;8;Pomiary;Zatoka;54;30;N;18;40;E;A\r\n\r\n'
+    )
+  ).toEqual([
+    {
+      number: 1,
+      hours: 8,
+      taskName: 'Pomiary',
+      region: 'Zatoka',
+      position: '54 30 N, 18 40 E - A',
+      comment: '',
+    },
+  ]);
+});
+it('rejects a header without data rows', () => {
+  expect(() => parseCruiseDayDetailsFromCsv('day,hours')).toThrow(
+    'Plik CSV musi zawierać wiersz nagłówka i przynajmniej jeden wiersz danych'
+  );
+});
+it('rejects an incomplete set of coordinate columns', () => {
+  expect(() => parseCruiseDayDetailsFromCsv('day,LAT\n1,54')).toThrow(
+    'Jeśli jedna z kolumn latitude(LAT), longitude(LONG) lub "Nazwa Punktu" jest obecna, wszystkie trzy muszą być obecne'
+  );
+});
+it('allows missing optional columns', () => {
+  expect(parseCruiseDayDetailsFromCsv('day\n1')).toEqual([
+    { number: 1, hours: 0, taskName: '', region: '', position: '', comment: '' },
+  ]);
 });
