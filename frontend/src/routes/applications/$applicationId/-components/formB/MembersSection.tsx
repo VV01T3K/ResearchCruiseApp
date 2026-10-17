@@ -453,7 +453,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                   }}
                   disabled={isReadonly}
                 >
-                  Dodaj pozwolenie
+                  Dodaj członka załogi
                 </AppButton>,
               ]}
               emptyTableMessage="Nie dodano żadnego członka załogi."

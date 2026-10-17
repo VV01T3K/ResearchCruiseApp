@@ -86,7 +86,7 @@ test('form A research tasks can be removed, added and saved, with errors that fo
   // The icon-only delete button has no accessible name yet (#491); it is the row's only button.
   const removeTask = (name: string) => task(name).getByRole('button').click();
   const addTask = async (name: string) => {
-    await page.getByRole('button', { name: 'Dodaj nowe efekty rejsu' }).click();
+    await page.getByRole('button', { name: 'Dodaj nowe zadanie badawcze' }).click();
     await page.getByRole('button', { name, exact: true }).click();
   };
   const required = page.getByText('Co najmniej jedno zadanie badawcze jest wymagane');
