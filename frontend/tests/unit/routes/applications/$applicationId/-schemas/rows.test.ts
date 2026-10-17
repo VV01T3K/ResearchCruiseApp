@@ -19,6 +19,8 @@ import {
 
 type RowCase = {
   section: string;
+  /** Tells apart rows of one section that follow different rules, such as research task types. */
+  variant?: string;
   row: Record<string, unknown>;
   required: string[];
   invalid?: [field: string, value: unknown][];
@@ -97,8 +99,50 @@ const cases: RowCase[] = [
   {
     ...a,
     section: 'researchTasks',
+    variant: 'thesis',
     row: { type: '0', author: 'Ada', title: 'Salinity' },
     required: ['author', 'title'],
+  },
+  {
+    ...a,
+    section: 'researchTasks',
+    variant: 'project preparation',
+    row: { type: '3', title: 'Wniosek', date: '2026-03-01', financingApproved: true },
+    required: ['title', 'date'],
+  },
+  {
+    ...a,
+    section: 'researchTasks',
+    variant: 'project',
+    row: {
+      type: '4',
+      title: 'Projekt',
+      financingAmount: 1500,
+      startDate: '2026-01',
+      endDate: '2026-12',
+      securedAmount: 200,
+    },
+    required: ['title', 'startDate', 'endDate'],
+    invalid: [
+      ['financingAmount', -1],
+      ['securedAmount', -0.01],
+    ],
+  },
+  {
+    ...a,
+    section: 'researchTasks',
+    variant: 'didactics',
+    row: { type: '9', description: 'Zajęcia' },
+    required: ['description'],
+    invalid: [['description', 'x'.repeat(10_241)]],
+  },
+  {
+    ...a,
+    section: 'researchTasks',
+    variant: 'own research',
+    row: { type: '10', title: 'Badania', date: '2026-05-01', magazine: 'Oceanologia', ministerialPoints: 70 },
+    required: ['title', 'date', 'magazine'],
+    invalid: [['ministerialPoints', -1]],
   },
   {
     ...b,
@@ -183,8 +227,8 @@ const cases: RowCase[] = [
   },
 ];
 
-for (const { section, row, required, invalid = [], schema, draft, form } of cases) {
-  describe(section, () => {
+for (const { section, variant, row, required, invalid = [], schema, draft, form } of cases) {
+  describe(variant ? `${section} (${variant})` : section, () => {
     it('accepts a completed row', () => {
       const payload = Object.assign({}, form(), { [section]: [row] });
       expect(schema.safeParse(payload).success).toBe(true);
