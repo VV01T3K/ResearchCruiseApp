@@ -6,6 +6,7 @@ import {
   getRefreshTokensMockHandler,
   getRegisterAccountMockHandler,
   getRequestPasswordResetMockHandler,
+  getResendConfirmationEmailMockHandler,
   getResetPasswordMockHandler,
 } from '@/api/generated/mocks/auth/auth.msw.gen';
 import {
@@ -159,6 +160,19 @@ test.describe('authenticated session', () => {
     expect(requests.bodies('PATCH /v2/users/me/password')).toEqual([
       { password: 'CurrentPass1', newPassword: 'NewStrongPass1' },
     ]);
+  });
+});
+
+test.describe(() => {
+  test.use({ account: { ...admin, emailConfirmed: false } });
+
+  test('an unconfirmed address can have its confirmation email sent again', async ({ page, network, requests }) => {
+    network.use(getResendConfirmationEmailMockHandler());
+    await page.goto('/account-settings');
+    await expect(page.getByText('Niepotwierdzony adres e-mail', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Wyślij ponownie', exact: true }).click();
+    await expect(page.getByText('Wiadomość potwierdzająca została wysłana ponownie')).toBeVisible();
+    expect(requests.bodies('POST /v2/auth/resend-confirmation-email')).toEqual([{ email: admin.email }]);
   });
 });
 
