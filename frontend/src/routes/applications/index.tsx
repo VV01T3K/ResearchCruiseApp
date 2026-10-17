@@ -210,7 +210,9 @@ function ApplicationsPage() {
         <>
           <p className="mb-2 text-right italic sm:text-center">
             {getApplicationStatusLabel(row.original.status)}
-            {row.original.status === CruiseApplicationStatus.enum.draft ? ` (${row.original.note})` : null}
+            {row.original.status === CruiseApplicationStatus.enum.draft && row.original.note?.trim()
+              ? ` (${row.original.note.trim()})`
+              : null}
           </p>
           {row.original.status === CruiseApplicationStatus.enum.draft && (
             <AppButton
