@@ -9,7 +9,7 @@ import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMapp
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
 import { UserOption } from '@/api/generated/schemas';
-import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
+import { cruiseFormDefaultValues, emptyGuid } from '@/routes/cruises/-schemas/form.schema';
 import { useGetAvailableCruiseManagersSuspense } from '@/api/generated/endpoints/users.gen';
 import type { CruiseManagerResponse, CruiseResponse } from '@/api/generated/schemas';
 
@@ -141,13 +141,13 @@ function getCruiseManagersNotAssignedToApplication(
 
 /**
  * The available cruise managers plus the cruise's own managers, who keep a label even if they are no longer
- * available. The cruise response has no email, so the managers list is preferred.
+ * available. Unassigned managers are skipped. The cruise response has no email, so the managers list is preferred.
  */
 function withCruiseManagers(users: CruiseManagerResponse[], cruise: CruiseResponse | undefined): UserOption[] {
   if (!cruise) return users;
   const missing = [cruise.mainManager, cruise.deputyManager]
     .filter((person, index, all) => all.findIndex((other) => other.id === person.id) === index)
-    .filter((person) => !users.some((user) => user.id === person.id))
+    .filter((person) => person.id !== emptyGuid && !users.some((user) => user.id === person.id))
     .map((person) => ({ ...person, email: '' }));
   return [...users, ...missing];
 }

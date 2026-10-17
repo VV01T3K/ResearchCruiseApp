@@ -126,6 +126,20 @@ test('a cruise manager whose account was deleted is labelled as unknown', async 
   await expect(deputyManager).toHaveText('Nieznany użytkownik');
 });
 
+test('a cruise without assigned managers offers no blank manager choice', async ({ page, network }) => {
+  const unassigned = { id: '00000000-0000-0000-0000-000000000000', firstName: '', lastName: '' };
+  const item = { ...cruise(), mainManager: unassigned, deputyManager: unassigned };
+  network.use(getGetCruiseMockHandler(item));
+  await page.goto(`/cruises/${item.id}`);
+  const main = page.getByRole('combobox', { name: 'Kierownik główny' });
+
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await expect(main).toHaveText('Wybierz kierownika głównego');
+  await main.click();
+  await expect(page.getByRole('option')).toHaveCount(2);
+  await expect(page.getByRole('option', { name: 'Nieznany użytkownik' })).toHaveCount(0);
+});
+
 test('a saved manager change is labelled by the new id before the cruise is refetched', async ({
   page,
   network,

@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 import { CreateRequest, type CruiseResponse } from '@/api/generated/schemas';
 
-const emptyGuid = '00000000-0000-0000-0000-000000000000';
+/** The id the API uses for a manager who is not assigned. */
+export const emptyGuid = '00000000-0000-0000-0000-000000000000';
 export const CruiseFormInputSchema = z
   .object({
     startDate: z.iso.datetime('Wymagane jest wskazanie daty rozpoczęcia rejsu'),
