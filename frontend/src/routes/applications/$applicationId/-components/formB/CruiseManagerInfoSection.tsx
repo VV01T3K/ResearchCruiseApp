@@ -1,5 +1,6 @@
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
+import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -15,9 +16,9 @@ export function CruiseManagerInfoSection({ context }: { context: FormBViewModel 
           <AppDropdownInput
             name="cruiseManager"
             value={formA.cruiseManagerId}
-            allOptions={formAInitValues.cruiseManagers.map((cruiseManager) => ({
-              inlineLabel: `${cruiseManager.firstName} ${cruiseManager.lastName} (${cruiseManager.email})`,
-              value: cruiseManager.id,
+            allOptions={formAInitValues.cruiseManagers.map((person) => ({
+              inlineLabel: mapPersonToText(person),
+              value: person.id,
             }))}
             label="Kierownik rejsu"
             disabled
@@ -27,9 +28,9 @@ export function CruiseManagerInfoSection({ context }: { context: FormBViewModel 
           <AppDropdownInput
             name="deputyManager"
             value={formA.deputyManagerId}
-            allOptions={formAInitValues.deputyManagers.map((deputyManager) => ({
-              inlineLabel: `${deputyManager.firstName} ${deputyManager.lastName} (${deputyManager.email})`,
-              value: deputyManager.id,
+            allOptions={formAInitValues.deputyManagers.map((person) => ({
+              inlineLabel: mapPersonToText(person),
+              value: person.id,
             }))}
             label="Zastępca kierownika rejsu"
             disabled

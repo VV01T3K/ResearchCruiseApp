@@ -5,6 +5,7 @@ import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { CruiseApplicationStatus } from '@/api/generated/schemas';
+import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { getApplicationStatusLabel } from '@/lib/applications/status';
 
 export function InformationSection() {
@@ -18,15 +19,10 @@ export function InformationSection() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <AppInput name="number" value={application.number} label="Numer zgłoszenia:" disabled />
         <AppDatePickerInput name="date" value={application.date} label="Data wysłania:" disabled />
-        <AppInput
-          name="cruiseLeader"
-          value={`${application.mainManager.firstName} ${application.mainManager.lastName} (${application.mainManager.email})`}
-          label="Kierownik:"
-          disabled
-        />
+        <AppInput name="cruiseLeader" value={mapPersonToText(application.mainManager)} label="Kierownik:" disabled />
         <AppInput
           name="deputyManager"
-          value={`${application.deputyManager.firstName} ${application.deputyManager.lastName} (${application.deputyManager.email})`}
+          value={mapPersonToText(application.deputyManager)}
           label="Zastępca kierownika:"
           disabled
         />
