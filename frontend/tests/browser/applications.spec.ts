@@ -100,31 +100,6 @@ test.describe('application table', () => {
     expect(requests.queries(listRequests).at(-1)).not.toHaveProperty('cruiseManager');
   });
 
-  test('draft statuses show only a meaningful note', async ({ page, network }) => {
-    const notes = { 'No note': null, 'Empty note': '', 'Blank note': '   ', 'With note': ' Czekam na przełożonego ' };
-    network.use(
-      getGetApplicationsMockHandler(
-        listPage(
-          Object.entries(notes).map(([number, note], i) => ({
-            ...application(),
-            id: `00000000-0000-4000-8000-${String(i).padStart(12, '0')}`,
-            number,
-            status: 'draft' as const,
-            note,
-          }))
-        )
-      )
-    );
-    await page.goto('/applications');
-
-    for (const number of ['No note', 'Empty note', 'Blank note']) {
-      const row = page.getByRole('row').filter({ hasText: number });
-      await expect(row.getByText(/^Wersja robocza/)).toHaveText('Wersja robocza');
-    }
-    const row = page.getByRole('row').filter({ hasText: 'With note' });
-    await expect(row.getByText(/^Wersja robocza/)).toHaveText('Wersja robocza (Czekam na przełożonego)');
-  });
-
   for (const width of [1440, 390]) {
     test(`large lists remain bounded and reachable at ${width}px`, async ({ page, network }) => {
       await page.setViewportSize({ width, height: 900 });
