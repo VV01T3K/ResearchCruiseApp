@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import packageJson from '../../../../package.json';
 
 import { AppButton } from '@/components/shared/AppButton';
+import config from '@/config';
 import { AppLink } from '@/components/shared/AppLink';
 import { SessionStatusBadge } from '@/components/shared/SessionStatusBadge';
 import { useAuthDetails, useCurrentUser, useSessionActions } from '@/integrations/tanstack/query/auth';
@@ -44,7 +45,7 @@ export function AppNavbar() {
             Portal rejsów badawczych R/V Oceanograf
           </AppLink>
           <AppLink href={`${packageJson.repository}/releases/latest`} variant="white" className="text-xs">
-            {packageJson.version}
+            {config.version}
           </AppLink>
         </motion.div>
       </div>
