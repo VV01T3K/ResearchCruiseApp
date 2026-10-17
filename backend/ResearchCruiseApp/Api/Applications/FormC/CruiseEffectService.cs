@@ -39,6 +39,11 @@ internal class CruiseEffectService(
                 pointsForManagersTeam[CruiseFunction.CruiseManager],
                 cancellationToken
             );
+
+            // Form A stores a missing deputy as Guid.Empty
+            if (deputyManagerId == Guid.Empty)
+                continue;
+
             await AddEvaluationForUser(
                 effect,
                 deputyManagerId,
