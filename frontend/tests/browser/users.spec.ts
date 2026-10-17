@@ -1,14 +1,20 @@
+import type { Page } from '@playwright/test';
 import {
   getAcceptUserMockHandler,
   getCreateUserMockHandler,
+  getDeactivateUserMockHandler,
+  getDeleteUserMockHandler,
   getGetUsersMockHandler,
   getUpdateUserMockHandler,
 } from '@/api/generated/mocks/users/users.msw.gen';
 import type { UserResponse } from '@/api/generated/schemas';
 import { test, expect, fail } from './fixtures';
-import { admin, deputy } from '../data/accounts';
+import { admin, deputy, outsider } from '../data/accounts';
 
 test.use({ account: admin });
+
+// The select-all checkbox is the header row's only editable checkbox.
+const selectAll = (page: Page) => page.locator('thead').getByRole('checkbox', { disabled: false }).check();
 
 const cruiseManager = (changes: Partial<UserResponse> = {}): UserResponse => ({
   ...deputy,
@@ -69,6 +75,96 @@ test('a failed account acceptance is explained and can be retried', async ({ pag
   await accept.click();
   await expect(accept).toHaveCount(0);
   expect(requests.bodies(`PUT /v2/users/${deputy.id}/acceptance`)).toHaveLength(2);
+});
+
+test('a user is deactivated, then deleted only after the deletion is confirmed', async ({
+  page,
+  network,
+  requests,
+}) => {
+  network.use(
+    getGetUsersMockHandler([cruiseManager()]),
+    getDeactivateUserMockHandler(() => network.use(getGetUsersMockHandler([cruiseManager({ accepted: false })]))),
+    getDeleteUserMockHandler(() => network.use(getGetUsersMockHandler([])))
+  );
+  await page.goto('/user-management');
+  const row = page.getByRole('row').filter({ hasText: deputy.email });
+  const dialog = page.getByRole('dialog', { name: 'Edytuj użytkownika' });
+  await row.getByRole('button', { name: 'Edytuj' }).click();
+  await dialog.getByRole('button', { name: 'Cofnij akceptację konta' }).click();
+  await expect(dialog).toBeHidden();
+  expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(1);
+
+  await row.getByRole('button', { name: 'Edytuj' }).click();
+  await expect(dialog.getByText('Niezaakceptowane', { exact: true })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Usuń', exact: true }).click();
+  expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(0);
+  await dialog.getByRole('button', { name: 'Czy na pewno?' }).click();
+  await expect(row).toHaveCount(0);
+  expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(1);
+});
+
+test('the last administrator cannot be deleted alone or in a group', async ({ page, network, requests }) => {
+  const onlyAdmin = cruiseManager({ ...outsider });
+  network.use(getGetUsersMockHandler([onlyAdmin, cruiseManager()]));
+  await page.goto('/user-management');
+  const dialog = page.getByRole('dialog');
+  await page.getByRole('row').filter({ hasText: onlyAdmin.email }).getByRole('button', { name: 'Edytuj' }).click();
+  await dialog.getByRole('button', { name: 'Usuń', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Czy na pewno?' }).click();
+  await expect(page.getByText('Musi istnieć co najmniej jeden admin', { exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+
+  await selectAll(page);
+  await page.getByRole('button', { name: 'Akcje Grupowe' }).click();
+  await dialog.getByRole('button', { name: 'Usuń zaznaczonych użytkowników' }).click();
+  await dialog.getByRole('button', { name: 'Na pewno?' }).click();
+  await expect(
+    page.getByText('Po usunięciu zaznaczonych użytkowników musi istnieć co najmniej jeden admin', { exact: true })
+  ).toBeVisible();
+  expect(requests.bodies(`DELETE /v2/users/${onlyAdmin.id}`)).toHaveLength(0);
+  expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(0);
+});
+
+test('a group deletion deletes every selected user and reports the ones that failed', async ({
+  page,
+  network,
+  requests,
+}) => {
+  const users = [cruiseManager(), cruiseManager({ ...outsider, roles: ['Guest'] })];
+  network.use(
+    getGetUsersMockHandler(users),
+    getDeleteUserMockHandler(({ params }) => {
+      if (params.userId === outsider.id) fail(503)();
+      network.use(getGetUsersMockHandler([users[1]]));
+    })
+  );
+  await page.goto('/user-management');
+  await selectAll(page);
+  await page.getByRole('button', { name: 'Akcje Grupowe' }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByRole('button', { name: 'Usuń zaznaczonych użytkowników' }).click();
+  expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(0);
+  await dialog.getByRole('button', { name: 'Na pewno?' }).click();
+  await expect(page.getByText('Usunięto część osób. Błąd przy 1 użytkownikach', { exact: true })).toBeVisible();
+  await expect(page.getByRole('row').filter({ hasText: deputy.email })).toHaveCount(0);
+  await expect(page.getByRole('row').filter({ hasText: outsider.email })).toBeVisible();
+  expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(1);
+  expect(requests.bodies(`DELETE /v2/users/${outsider.id}`)).toHaveLength(1);
+});
+
+test('a group deactivation sends requests only for accepted users', async ({ page, network, requests }) => {
+  network.use(
+    getGetUsersMockHandler([cruiseManager(), cruiseManager({ ...outsider, roles: ['Guest'], accepted: false })]),
+    getDeactivateUserMockHandler()
+  );
+  await page.goto('/user-management');
+  await selectAll(page);
+  await page.getByRole('button', { name: 'Akcje Grupowe' }).click();
+  await page.getByRole('button', { name: 'Usuń akceptację zaznaczonych użytkowników' }).click();
+  await expect(page.getByText('Pomyślnie usunięto akceptację wszystkich wybranych użytkowników')).toBeVisible();
+  expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(1);
+  expect(requests.bodies(`DELETE /v2/users/${outsider.id}/acceptance`)).toHaveLength(0);
 });
 
 for (const mobile of [false, true]) {
