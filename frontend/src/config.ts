@@ -3,6 +3,7 @@ export default {
 
   apiUrl: API_URL || 'http://localhost:3000',
   version: APP_VERSION,
+  repositoryUrl: APP_REPOSITORY_URL,
   environment: APP_ENVIRONMENT || 'local',
 
   sentryDsn: window.__SENTRY_DSN__ || SENTRY_DSN || '',

@@ -3,11 +3,11 @@ import BoxArrowRightIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
 import BroadcastIcon from 'bootstrap-icons/icons/broadcast.svg?react';
 import EnvelopeIcon from 'bootstrap-icons/icons/envelope.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
-import packageJson from '../../../../package.json';
 
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLink } from '@/components/shared/AppLink';
 import { SessionStatusBadge } from '@/components/shared/SessionStatusBadge';
+import config from '@/config';
 import { useAuthDetails, useCurrentUser, useSessionActions } from '@/integrations/tanstack/query/auth';
 
 export function AppNavbar() {
@@ -43,8 +43,8 @@ export function AppNavbar() {
           <AppLink href="/" title="Strona Główna" className="pr-4 text-white hover:no-underline sm:text-2xl">
             Portal rejsów badawczych R/V Oceanograf
           </AppLink>
-          <AppLink href={`${packageJson.repository}/releases/latest`} variant="white" className="text-xs">
-            {packageJson.version}
+          <AppLink href={`${config.repositoryUrl}/releases/latest`} variant="white" className="text-xs">
+            {config.version}
           </AppLink>
         </motion.div>
       </div>
