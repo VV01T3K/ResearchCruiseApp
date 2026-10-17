@@ -183,6 +183,16 @@ test('a new application can be created as an incomplete draft with a note', asyn
   ]);
 });
 
+test('form B names its crew-member button and research-area section correctly', async ({ page }) => {
+  await page.goto(`/applications/${applicationId}/formB?mode=edit`);
+
+  await page.getByRole('button', { name: 'Dodaj członka załogi' }).click();
+  await expect(page.getByText('Nie dodano żadnego członka załogi.')).toHaveCount(0);
+  // Only the permissions section adds a permission.
+  await expect(page.getByRole('button', { name: 'Dodaj pozwolenie' })).toHaveCount(1);
+  await expect(page.getByRole('button', { name: '5. Rejony prowadzenia badań' })).toBeVisible();
+});
+
 test('form B adds a permission, accepts only a PDF scan and submits the new row', async ({
   page,
   network,
