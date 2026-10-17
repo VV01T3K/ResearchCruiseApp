@@ -1,3 +1,4 @@
+import { useInputAria } from '@/components/inputs/useInputAria';
 import DashLgIcon from 'bootstrap-icons/icons/dash-lg.svg?react';
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
 import React from 'react';
@@ -10,12 +11,10 @@ import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
 import { useInputCursorPosition } from '@/hooks/shared/InputCursorPositionHook';
 import { cn, roundNumber } from '@/lib/utils';
 
-type Props = {
+type CommonProps = {
   name: string;
-  value: number;
 
   onBlur?: () => void;
-  onChange?: (value: number) => void;
   errors?: string[];
   label?: React.ReactNode;
   showRequiredAsterisk?: boolean;
@@ -38,9 +37,24 @@ type Props = {
       precision?: number;
     }
 );
+function roundToType(value: number, type: 'integer' | 'float', precision: number) {
+  // Round integers too, without adding trailing zeros.
+  return roundNumber(value, type === 'float' ? precision : 0);
+}
+
+function formatValue(value: number | null, type: 'integer' | 'float', precision: number) {
+  return value === null ? '' : String(roundToType(value, type, precision));
+}
+
+type Props = CommonProps &
+  (
+    | { nullable?: false; value: number; onChange?: (value: number) => void }
+    | { nullable: true; value: number | null; onChange?: (value: number | null) => void }
+  );
 export function AppNumberInput({
   name,
   value,
+  nullable,
   onBlur,
   onChange,
   errors,
@@ -58,20 +72,16 @@ export function AppNumberInput({
   'data-testid-input': inputTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
+  const aria = useInputAria(errors, helper);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const [stringValue, setStringValue] = React.useState(value.toString());
+  const [stringValue, setStringValue] = React.useState(value?.toString() ?? '');
   const setCursorPosition = useInputCursorPosition({ inputRef });
 
-  // Update the string value when the value changes
   React.useEffect(() => {
-    // We want to round even the integer values to the precision, if such value was provided, but we don't want to add zeros at the end
-    const roundedValue = roundNumber(value, type === 'float' ? precision : 0);
-    const newStringValue = roundedValue.toString();
-    if (newStringValue !== stringValue) {
-      // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-      setStringValue(newStringValue);
-    }
-  }, [precision, stringValue, type, value]);
+    // Synchronize external changes without erasing a decimal separator being typed.
+    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+    setStringValue(formatValue(value, type, precision));
+  }, [precision, type, value]);
 
   function handleInputChange(evt: React.ChangeEvent<HTMLInputElement>) {
     const stringInput = evt.target.value.replace(',', '.'); // float input require dot as the decimal separator
@@ -84,9 +94,8 @@ export function AppNumberInput({
     setCursorPosition(cursorPosition);
 
     if (stringInput === '') {
-      updateValue(0);
-      // Set the cursor after the zero
-      setCursorPosition(1);
+      updateValue(nullable ? null : 0);
+      if (!nullable) setCursorPosition(1);
       return;
     }
 
@@ -105,8 +114,14 @@ export function AppNumberInput({
     updateValue(parsedValue);
   }
 
-  function updateValue(newValue: number) {
-    newValue = roundNumber(newValue, type === 'float' ? precision! : 0);
+  function updateValue(newValue: number | null) {
+    if (newValue === null) {
+      setStringValue('');
+      if (nullable) onChange?.(null);
+      return;
+    }
+
+    newValue = roundToType(newValue, type, precision);
 
     if (minimum !== undefined && newValue < minimum) {
       newValue = minimum;
@@ -114,17 +129,17 @@ export function AppNumberInput({
       newValue = maximum;
     }
 
+    setStringValue(String(newValue));
     onChange?.(newValue);
-    onBlur?.();
   }
 
   return (
     <div className={cn(className, 'flex flex-col')} data-testid={testId}>
-      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+      <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div className="flex items-center">
         {!disabled && (
           <AppNumberInputButton
-            onClick={() => updateValue(value - step)}
+            onClick={() => updateValue((value ?? 0) - step)}
             side="left"
             disabled={false}
             inputToFocus={inputRef}
@@ -135,8 +150,12 @@ export function AppNumberInput({
             name={name}
             value={stringValue}
             onChange={handleInputChange}
-            onBlur={onBlur}
+            onBlur={() => {
+              setStringValue(formatValue(value, type, precision));
+              onBlur?.();
+            }}
             disabled={disabled}
+            {...aria.inputProps}
             className={cn(
               'block h-11 w-full border border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900',
               'transition duration-300 ease-in-out',
@@ -151,7 +170,7 @@ export function AppNumberInput({
         </div>
         {!disabled && (
           <AppNumberInputButton
-            onClick={() => updateValue(value + step)}
+            onClick={() => updateValue((value ?? 0) + step)}
             side="right"
             disabled={false}
             inputToFocus={inputRef}
@@ -159,8 +178,8 @@ export function AppNumberInput({
         )}
       </div>
       <div className="mt-2 flex flex-col justify-between text-sm">
-        <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
+        <AppInputHelper id={aria.helperId} helper={helper} />
+        <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
       </div>
     </div>
   );

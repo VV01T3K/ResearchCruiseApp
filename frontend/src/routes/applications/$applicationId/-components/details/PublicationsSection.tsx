@@ -1,0 +1,124 @@
+import { ColumnDef } from '@/integrations/tanstack/table/features';
+
+import { AppAccordion } from '@/components/shared/AppAccordion';
+import { AppInput } from '@/components/shared/inputs/AppInput';
+import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
+import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
+import { AppTable } from '@/components/shared/table/AppTable';
+import {
+  type ApplicationEvaluation,
+  useApplicationEvaluation,
+} from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
+import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+
+export function PublicationsSection() {
+  const evaluation = useApplicationEvaluation();
+
+  const columns: ColumnDef<ApplicationEvaluation['formAPublications'][number]>[] = [
+    {
+      header: 'Lp.',
+      cell: ({ row }) => `${row.index + 1}. `,
+      size: 5,
+    },
+    {
+      header: 'Kategoria',
+      accessorFn: (row) => row.publication.category,
+      enableColumnFilter: false,
+      enableSorting: false,
+      cell: ({ row }) => <div>{getPublicationCategoryLabel(row.original.publication.category)}</div>,
+      size: 10,
+    },
+    {
+      header: 'Informacje',
+      accessorFn: (row) =>
+        `${row.publication.doi}, ${row.publication.authors}, ${row.publication.title}, ${row.publication.magazine}`,
+      enableColumnFilter: false,
+      enableSorting: false,
+      cell: ({ row }) => (
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <AppInput
+            name={`publications[${row.index}].publication.doi`}
+            value={row.original.publication.doi}
+            label="DOI"
+            showRequiredAsterisk
+            disabled
+          />
+          <AppInput
+            name={`publications[${row.index}].publication.authors`}
+            value={row.original.publication.authors}
+            label="Autorzy"
+            showRequiredAsterisk
+            disabled
+          />
+          <AppInput
+            name={`publications[${row.index}].publication.title`}
+            value={row.original.publication.title}
+            label="Tytuł"
+            showRequiredAsterisk
+            disabled
+          />
+          <AppInput
+            name={`publications[${row.index}].publication.magazine`}
+            value={row.original.publication.magazine}
+            label="Czasopismo"
+            showRequiredAsterisk
+            disabled
+          />
+        </div>
+      ),
+      size: 50,
+    },
+    {
+      header: 'Rok wydania',
+      accessorFn: (row) => row.publication.year,
+      enableColumnFilter: false,
+      enableSorting: false,
+      cell: ({ row }) => (
+        <AppYearPickerInput
+          name={`publications[${row.index}].publication.year`}
+          value={row.original.publication.year ?? undefined}
+          showRequiredAsterisk
+          disabled
+        />
+      ),
+      size: 10,
+    },
+    {
+      header: 'Punkty ministerialne',
+      accessorFn: (row) => row.publication.ministerialPoints,
+      enableColumnFilter: false,
+      enableSorting: false,
+      cell: ({ row }) => (
+        <AppNumberInput
+          name={`publications[${row.index}].publication.ministerialPoints`}
+          value={row.original.publication.ministerialPoints}
+          minimum={0}
+          showRequiredAsterisk
+          disabled
+        />
+      ),
+      size: 10,
+    },
+    {
+      header: 'Punkty',
+      accessorFn: (row) => row.points,
+      enableColumnFilter: false,
+      enableSorting: false,
+      cell: ({ row }) => <div>{row.original.points}</div>,
+      size: 5,
+    },
+  ];
+
+  return (
+    <AppAccordion title="6. Publikacje" expandedByDefault>
+      <div className="pb-2">
+        <AppTable
+          data={evaluation.formAPublications}
+          columns={columns}
+          emptyTableMessage="Nie dodano żadnej publikacji."
+          disabled
+        />
+      </div>
+    </AppAccordion>
+  );
+}

@@ -1,4 +1,4 @@
-import { Role } from '@/models/shared/Role';
+import { Role } from '@/integrations/auth/types';
 
 export function getModifiableRoles(userRole?: Role) {
   if (!userRole) {

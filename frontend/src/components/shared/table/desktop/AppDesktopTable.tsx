@@ -1,23 +1,33 @@
 import { flexRender } from '@tanstack/react-table';
 
 import { AppTableClearFiltersButton } from '@/components/shared/table/common/AppTableClearFiltersButton';
+import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
 import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppDesktopTableHeader } from '@/components/shared/table/desktop/AppDesktopTableHeader';
+import { TableBody } from '@/integrations/tanstack/table/TableBody';
+import { TableCell } from '@/integrations/tanstack/table/TableCell';
 
-export function AppDesktopTable<T>({
+export function AppDesktopTable<T extends object>({
   table,
   buttons,
   emptyTableMessage,
   showRequiredAsterisk,
   errors,
+  infiniteScroll,
+  virtualized,
   'data-testid': testId,
 }: TableProps<T>) {
   const defaultButtons: React.ReactNode[] = [<AppTableClearFiltersButton key="clearFiltersBtn" table={table} />];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
+  const rows = table.getRowModel().rows;
+  const headerRowCount = table.getHeaderGroups().length + (allButtons.length > 0 ? 1 : 0);
 
   return (
     <div className="mt-4 w-full overflow-x-auto" data-testid={testId}>
-      <table className="min-w-full table-fixed border-collapse">
+      <table
+        className="min-w-full table-fixed border-collapse"
+        aria-rowcount={virtualized ? (infiniteScroll?.hasNextPage ? -1 : rows.length + headerRowCount) : undefined}
+      >
         <colgroup>
           {table.getAllColumns().map((column) => (
             <col key={column.id} style={{ width: `${column.columnDef.size}%` }} />
@@ -50,18 +60,22 @@ export function AppDesktopTable<T>({
             );
           })}
         </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="text-gray-800 odd:bg-gray-100">
-              {row.getVisibleCells().map((cell) => {
-                return (
-                  <td key={cell.id} className="px-3 py-3 text-center">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
+        <TableBody
+          table={table}
+          columnCount={table.getVisibleLeafColumns().length}
+          headerRowCount={headerRowCount}
+          virtualized={virtualized}
+          estimateRowHeight={120}
+          renderCells={(row) =>
+            row.getVisibleCells().map((cell) => {
+              return (
+                <td key={cell.id} className="px-2 py-3 text-center">
+                  <TableCell cell={cell} />
+                </td>
+              );
+            })
+          }
+        >
           {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
             <tr>
               <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
@@ -82,7 +96,14 @@ export function AppDesktopTable<T>({
               </td>
             </tr>
           )}
-        </tbody>
+          {infiniteScroll && (
+            <tr role="presentation">
+              <td role="presentation" colSpan={table.getAllColumns().length} className="p-0">
+                <AppTableInfiniteScrollTrigger {...infiniteScroll} />
+              </td>
+            </tr>
+          )}
+        </TableBody>
       </table>
     </div>
   );

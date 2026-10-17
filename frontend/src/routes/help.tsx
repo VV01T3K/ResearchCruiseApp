@@ -1,0 +1,114 @@
+import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { createFileRoute } from '@tanstack/react-router';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { allowOnly } from '@/lib/guards';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
+import BuildingFillIcon from 'bootstrap-icons/icons/building-fill.svg?react';
+import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
+import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
+import TelephoneFillIcon from 'bootstrap-icons/icons/telephone-fill.svg?react';
+import WindowStackIcon from 'bootstrap-icons/icons/window-stack.svg?react';
+import { z } from 'zod';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppLink } from '@/components/shared/AppLink';
+import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
+import config from '@/config';
+
+export const Route = createFileRoute('/help')({
+  component: HelpPage,
+  beforeLoad: allowOnly.authenticated(),
+});
+
+const validationSchema = z.object({
+  title: z.string().nonempty('Tytuł nie może być pusty'),
+  content: z.string().nonempty('Treść nie może być pusta'),
+});
+
+function HelpPage() {
+  const form = useAppForm({
+    defaultValues: {
+      title: '',
+      content: '',
+    },
+    validationLogic: formValidationLogic,
+    validators: {
+      onDynamic: validationSchema,
+    },
+    onSubmit: ({ value }) => {
+      window.open(
+        `mailto:rejsy.help@ug.edu.pl?subject=${encodeURIComponent(value.title)}&body=${encodeURIComponent(value.content)}`
+      );
+    },
+  });
+  const backendVersion = useSuspenseQuery({
+    queryKey: ['backendVersion'],
+    queryFn: async () => {
+      const response = await fetch(`${config.apiUrl}/version`);
+      if (!response.ok) throw new Error(`Backend version request failed with status ${response.status}`);
+      return response.json() as Promise<string>;
+    },
+    retry: false,
+  });
+
+  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    void form.handleSubmit();
+  }
+
+  return (
+    <AppLayout
+      title="Pomoc"
+      description="W razie problemów z aplikacją prosimy o kontakt przez maile lub formularz po lewej stronie."
+    >
+      <div className="mt-8 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <h2 className="text-center text-2xl font-semibold">Obsługa problemów związanych z aplikacją</h2>
+          <p className="mt-4 text-center">
+            W razie problemów związanych z aplikacją prosimy o maila na adres{' '}
+            <AppLink href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</AppLink>.
+          </p>
+          <form className="flex flex-col space-y-4 p-4" onSubmit={handleSubmit}>
+            <form.AppField name="title" children={(field) => <field.TextField type="text" label="Tytuł" />} />
+
+            <form.AppField
+              name="content"
+              children={(field) => <field.TextField label="Wiadomość" className="h-48" type="textarea" />}
+            />
+
+            <div className="mt-8">
+              <AppButton type="submit" className="w-full">
+                Otwórz maila z tytułem i wiadomością
+              </AppButton>
+            </div>
+          </form>
+        </div>
+        <div className="space-y-8">
+          <CompanyInfoCard icon={<BuildingFillIcon />} title="Biuro Armatora z jednostką r/v Oceanograf">
+            <p className="font-semibold">Wydział Oceanografii i Geografii</p>
+            <p>al. Marszałka Józefa Piłsudzkiego 46</p>
+            <p>81-378 Gdynia</p>
+          </CompanyInfoCard>
+          <CompanyInfoCard icon={<TelephoneFillIcon />} title="Telefon">
+            <AppLink href="tel:+48585236631">+48 58 523 66 31</AppLink>
+          </CompanyInfoCard>
+          <CompanyInfoCard icon={<GlobeAmericasIcon />} title="Strona WWW">
+            <AppLink href="https://oceanograf.ug.edu.pl">https://oceanograf.ug.edu.pl</AppLink>
+          </CompanyInfoCard>
+          <CompanyInfoCard icon={<EnvelopeFillIcon />} title="Email">
+            <AppLink href="mail:office.oceanograf@ug.edu.pl">office.oceanograf@ug.edu.pl</AppLink>
+          </CompanyInfoCard>
+          <CompanyInfoCard icon={<WindowStackIcon />} title="Wersja aplikacji">
+            <div className="grid grid-cols-2 gap-1 text-sm text-gray-500">
+              <div>Wersja frontendu:</div>
+              <div className="font-bold text-black">{APP_VERSION}</div>
+              <div>Wersja backendu:</div>
+              <div className="font-bold text-black">{backendVersion.data}</div>
+            </div>
+          </CompanyInfoCard>
+        </div>
+      </div>
+    </AppLayout>
+  );
+}

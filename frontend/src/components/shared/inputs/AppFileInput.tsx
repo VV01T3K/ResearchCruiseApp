@@ -1,3 +1,4 @@
+import { useInputAria } from '@/components/inputs/useInputAria';
 import CloudUploadIcon from 'bootstrap-icons/icons/cloud-upload.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
@@ -6,8 +7,12 @@ import { AppFileList } from '@/components/shared/inputs/parts/AppFileList';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
-import { FileDto } from '@/lib/types';
 import { cn } from '@/lib/utils';
+
+export type FileValue = {
+  name: string;
+  content: string;
+};
 
 type Props = {
   name: string;
@@ -31,14 +36,14 @@ type Props = {
 } & (
   | {
       allowMultiple: true;
-      value: FileDto[];
+      value: FileValue[];
 
-      onChange?: (value: FileDto[]) => void;
+      onChange?: (value: FileValue[]) => void;
     }
   | {
       allowMultiple?: false;
-      value?: FileDto;
-      onChange?: (value: FileDto) => void;
+      value?: FileValue;
+      onChange?: (value: FileValue | undefined) => void;
     }
 );
 
@@ -63,18 +68,18 @@ export function AppFileInput({
   'data-testid-input': inputTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
-  const [files, setFiles] = React.useState<FileDto[]>(allowMultiple ? value : value ? [value] : []);
+  const aria = useInputAria(errors, helper);
+  const files = allowMultiple ? value : value ? [value] : [];
   const [notifications, setNotifications] = React.useState<string[]>([]);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  function updateFiles(newFiles: FileDto[]) {
-    setFiles(newFiles);
+  function updateFiles(newFiles: FileValue[]) {
     if (allowMultiple) {
       onChange?.(newFiles);
     } else {
-      onChange?.(newFiles[0] ?? null);
+      onChange?.(newFiles[0]);
     }
-
+    // Drops and removals can change the files without the upload control losing focus.
     onBlur?.();
   }
 
@@ -106,7 +111,7 @@ export function AppFileInput({
     }
   }
 
-  async function loadFileList(files: FileList): Promise<FileDto[]> {
+  async function loadFileList(files: FileList): Promise<FileValue[]> {
     const newNotifications: string[] = [];
     const promises = Array.from(files)
       .filter((file) => {
@@ -130,56 +135,75 @@ export function AppFileInput({
     return await Promise.all(promises);
   }
 
-  function removeFile(file: FileDto) {
+  function removeFile(file: FileValue) {
     updateFiles(files.filter((f) => f !== file));
   }
 
   return (
     <div data-testid={testId}>
-      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+      <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div
         className="flex w-full items-center justify-center"
-        onClick={() => inputRef.current?.click()}
+        onClick={() => {
+          if (!disabled) inputRef.current?.click();
+        }}
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
       >
-        <label
+        <div
           className={cn(
             'flex w-full flex-col items-center justify-center border-2 border-gray-300 text-gray-500',
             'cursor-pointer overflow-x-auto rounded-lg border-dashed bg-gray-50 hover:bg-gray-100',
             'min-h-10 transition-all duration-200 ease-in-out',
             disabled ? 'cursor-pointer bg-gray-200 hover:bg-gray-200' : '',
-            errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : '',
+            errors ? 'border-danger ring-danger text-danger focus-within:text-gray-900' : '',
             className
           )}
-          data-testid={buttonTestId}
         >
-          <AnimatePresence>
-            {!disabled && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-              >
-                <div className="flex flex-col items-center justify-center pt-5 pb-4 text-sm">
-                  <CloudUploadIcon className="mb-4 h-8 w-8" />
-                  {uploadMessage}
-                  {notifications && notifications.length > 0 && (
-                    <div className="mx-2 mt-1 rounded bg-danger-100 p-1 text-danger-900">
-                      <ul className="list-inside list-disc">
-                        {notifications.map((notification) => (
-                          <li key={notification}>{notification}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          {<AppFileList files={files} onRemove={removeFile} disabled={disabled} className="my-1" />}
-          {files.length === 0 && disabled && <div>{emptyMessage}</div>}
-        </label>
+          {/* The file list has its own buttons, so it stays outside this button. */}
+          <div
+            {...aria.inputProps}
+            role="button"
+            aria-label={typeof label === 'string' ? label : uploadMessage}
+            aria-disabled={disabled}
+            onBlur={onBlur}
+            onKeyDown={(event) => {
+              if (!disabled && (event.key === 'Enter' || event.key === ' ')) {
+                event.preventDefault();
+                inputRef.current?.click();
+              }
+            }}
+            tabIndex={disabled ? -1 : 0}
+            className="w-full rounded-lg"
+            data-testid={buttonTestId}
+          >
+            <AnimatePresence>
+              {!disabled && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <div className="flex flex-col items-center justify-center pt-5 pb-4 text-sm">
+                    <CloudUploadIcon className="mb-4 h-8 w-8" />
+                    {uploadMessage}
+                    {notifications && notifications.length > 0 && (
+                      <div className="mx-2 mt-1 rounded bg-danger-100 p-1 text-danger-900">
+                        <ul className="list-inside list-disc">
+                          {notifications.map((notification) => (
+                            <li key={notification}>{notification}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {files.length === 0 && disabled && <div className="text-center">{emptyMessage}</div>}
+          </div>
+          <AppFileList files={files} onRemove={removeFile} disabled={disabled} className="my-1" />
+        </div>
       </div>
 
       <input
@@ -194,14 +218,14 @@ export function AppFileInput({
         data-testid={inputTestId}
       />
       <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
-        <AppInputHelper helper={helper} />
-        <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
+        <AppInputHelper id={aria.helperId} helper={helper} />
+        <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
       </div>
     </div>
   );
 }
 
-async function loadFile(file: File): Promise<FileDto> {
+async function loadFile(file: File): Promise<FileValue> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = () => {

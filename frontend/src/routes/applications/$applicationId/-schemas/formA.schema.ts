@@ -1,0 +1,781 @@
+import { submissionSchema } from '@/integrations/tanstack/form/schema';
+import { literal, z } from 'zod';
+
+import { groupBy } from '@/lib/utils';
+import { getPeriodEdgeDatePoint, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
+import {
+  ContractValuesInputSchema,
+  ContractValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+import {
+  CruiseGoal,
+  CruisePeriodValidationSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import {
+  GuestTeamValuesInputSchema,
+  GuestTeamValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+import {
+  PermissionValuesInputSchema,
+  PermissionValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
+import {
+  PublicationValuesInputSchema,
+  PublicationValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+import {
+  ResearchTaskValuesInputSchema,
+  ResearchTaskValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import {
+  SpubTaskValuesInputSchema,
+  SpubTaskValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
+import {
+  UgTeamValuesInputSchema,
+  UgTeamValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
+import {
+  FormAFields,
+  type BlockadeResponse as BlockadePeriod,
+  type ContractFields,
+  type FormAOptions,
+  type PublicationFields,
+  type ResearchTaskFields,
+  type SpubTaskFields,
+} from '@/api/generated/schemas';
+import {
+  getResearchAreaValuesSchema,
+  ResearchAreaValuesInputSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
+import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { PublicationCategory } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+
+const FormAInputSchema = z.object({
+  draft: z.boolean().optional(),
+  id: z.string().optional(),
+  cruiseManagerId: z.string(),
+  deputyManagerId: z.string(),
+  year: z.string(),
+  periodSelectionType: z.enum(['precise', 'period']),
+  acceptablePeriod: CruisePeriodValidationSchema,
+  optimalPeriod: CruisePeriodValidationSchema,
+  precisePeriodStart: z.string(),
+  precisePeriodEnd: z.string(),
+  cruiseDays: z.number(),
+  cruiseHours: z.number(),
+  periodNotes: z.string(),
+  shipUsage: z.string(),
+  differentUsage: z.string(),
+  permissions: PermissionValuesInputSchema.array(),
+  researchAreaDescriptions: ResearchAreaValuesInputSchema.array(),
+  cruiseGoal: z.union([z.enum([CruiseGoal.Research, CruiseGoal.Commercial, CruiseGoal.Educational]), z.literal('')]),
+  cruiseGoalDescription: z.string(),
+  researchTasks: ResearchTaskValuesInputSchema.array(),
+  contracts: ContractValuesInputSchema.array(),
+  ugTeams: UgTeamValuesInputSchema.array(),
+  guestTeams: GuestTeamValuesInputSchema.array(),
+  publications: PublicationValuesInputSchema.array(),
+  spubTasks: SpubTaskValuesInputSchema.array(),
+  supervisorEmail: z.string(),
+  note: z.string(),
+});
+
+export type FormAValues = z.input<typeof FormAInputSchema>;
+
+export const formADefaultValues: FormAValues = {
+  draft: false,
+  id: undefined,
+  cruiseManagerId: '',
+  deputyManagerId: '',
+  year: '',
+  acceptablePeriod: '',
+  optimalPeriod: '',
+  precisePeriodStart: '',
+  precisePeriodEnd: '',
+  periodSelectionType: 'period',
+  cruiseDays: 0,
+  cruiseHours: 0,
+  periodNotes: '',
+  shipUsage: '',
+  differentUsage: '',
+  permissions: [],
+  researchAreaDescriptions: [],
+  cruiseGoal: '',
+  cruiseGoalDescription: '',
+  researchTasks: [],
+  contracts: [],
+  ugTeams: [],
+  guestTeams: [],
+  publications: [],
+  spubTasks: [],
+  supervisorEmail: '',
+  note: '',
+} satisfies FormAValues;
+
+const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
+
+function hasEnoughDaysInPeriod(period: [string, string], year: number, cruiseDurationDays: number): boolean {
+  const startEdge = parseInt(period[0], 10);
+  const endEdge = parseInt(period[1], 10);
+
+  if (
+    Number.isNaN(startEdge) ||
+    Number.isNaN(endEdge) ||
+    startEdge < 0 ||
+    endEdge < 0 ||
+    startEdge > MAX_PERIOD_EDGE_VALUE ||
+    endEdge > MAX_PERIOD_EDGE_VALUE
+  ) {
+    return false;
+  }
+
+  const periodStart = getPeriodEdgeDatePoint(year, startEdge);
+  const periodEnd = getPeriodEdgeDatePoint(year, endEdge);
+  const periodDays = (periodEnd.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24);
+
+  return periodDays >= cruiseDurationDays;
+}
+
+const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
+  type OverlappingBlockade = {
+    title: string;
+    start: Date;
+    end: Date;
+  };
+
+  function getOverlappingBlockades(rangeStart: Date, rangeEnd: Date): OverlappingBlockade[] {
+    if (!blockades || blockades.length === 0) return [];
+
+    const overlappingBlockades = blockades
+      .map((b) => ({
+        title: b.title,
+        start: new Date(b.startDate),
+        end: new Date(b.endDate),
+      }))
+      .filter((b) => !Number.isNaN(b.start.getTime()) && !Number.isNaN(b.end.getTime()))
+      .filter((b) => b.end > rangeStart && b.start < rangeEnd)
+      .map((b) => ({
+        title: b.title,
+        start: b.start < rangeStart ? rangeStart : b.start,
+        end: b.end > rangeEnd ? rangeEnd : b.end,
+      }))
+      .sort((a, b) => a.start.getTime() - b.start.getTime());
+
+    return overlappingBlockades;
+  }
+
+  function getMergedOverlappingBlockades(
+    overlappingBlockades: OverlappingBlockade[]
+  ): Array<{ start: Date; end: Date }> {
+    if (overlappingBlockades.length === 0) return [];
+
+    const merged: Array<{ start: Date; end: Date }> = [];
+    for (const blockade of overlappingBlockades) {
+      if (merged.length === 0) {
+        merged.push(blockade);
+        continue;
+      }
+
+      const last = merged[merged.length - 1];
+      if (blockade.start <= last.end) {
+        if (blockade.end > last.end) {
+          last.end = blockade.end;
+        }
+      } else {
+        merged.push(blockade);
+      }
+    }
+
+    return merged;
+  }
+
+  function analyzeCruiseSlot(
+    rangeStart: Date,
+    rangeEnd: Date,
+    cruiseDurationDays: number
+  ): { canFitCruise: boolean; overlappingBlockades: OverlappingBlockade[] } {
+    if (Number.isNaN(rangeStart.getTime()) || Number.isNaN(rangeEnd.getTime()) || rangeEnd <= rangeStart) {
+      return { canFitCruise: true, overlappingBlockades: [] };
+    }
+    if (cruiseDurationDays <= 0) {
+      return { canFitCruise: true, overlappingBlockades: [] };
+    }
+    if (!blockades || blockades.length === 0) {
+      return { canFitCruise: true, overlappingBlockades: [] };
+    }
+    const overlappingBlockades = getOverlappingBlockades(rangeStart, rangeEnd);
+    const merged = getMergedOverlappingBlockades(overlappingBlockades);
+    if (merged.length === 0) {
+      return { canFitCruise: true, overlappingBlockades: [] };
+    }
+
+    let freeSlotStart = rangeStart;
+    for (const blockade of merged) {
+      const freeDays = (blockade.start.getTime() - freeSlotStart.getTime()) / DAY_IN_MILLISECONDS;
+      if (freeDays >= cruiseDurationDays) {
+        return { canFitCruise: true, overlappingBlockades };
+      }
+      if (blockade.end > freeSlotStart) freeSlotStart = blockade.end;
+    }
+
+    const remainingFreeDays = (rangeEnd.getTime() - freeSlotStart.getTime()) / DAY_IN_MILLISECONDS;
+    return { canFitCruise: remainingFreeDays >= cruiseDurationDays, overlappingBlockades };
+  }
+
+  function hasEnoughFreeSlotInPrecisePeriod(
+    precisePeriodStart: string,
+    precisePeriodEnd: string,
+    cruiseHours: number
+  ): { canFitCruise: boolean; overlappingBlockades: OverlappingBlockade[] } {
+    if (!precisePeriodStart || !precisePeriodEnd) return { canFitCruise: true, overlappingBlockades: [] };
+
+    if (cruiseHours <= 0) return { canFitCruise: true, overlappingBlockades: [] };
+
+    const start = new Date(precisePeriodStart);
+    const end = new Date(precisePeriodEnd);
+    const cruiseDurationDays = cruiseHours / 24;
+
+    return analyzeCruiseSlot(start, end, cruiseDurationDays);
+  }
+
+  function hasEnoughFreeSlotInPeriod(
+    year: string,
+    period: [string, string],
+    cruiseHours: number
+  ): { canFitCruise: boolean; overlappingBlockades: OverlappingBlockade[] } {
+    if (!period || period.length !== 2) {
+      return { canFitCruise: true, overlappingBlockades: [] };
+    }
+
+    const parsedYear = parseInt(year, 10);
+    const startEdge = parseInt(period[0], 10);
+    const endEdge = parseInt(period[1], 10);
+
+    if (
+      Number.isNaN(parsedYear) ||
+      Number.isNaN(startEdge) ||
+      Number.isNaN(endEdge) ||
+      startEdge < 0 ||
+      endEdge < 0 ||
+      startEdge > MAX_PERIOD_EDGE_VALUE ||
+      endEdge > MAX_PERIOD_EDGE_VALUE ||
+      cruiseHours <= 0
+    ) {
+      return { canFitCruise: true, overlappingBlockades: [] };
+    }
+
+    const start = getPeriodEdgeDatePoint(parsedYear, startEdge);
+    const end = getPeriodEdgeDatePoint(parsedYear, endEdge);
+    const cruiseDurationDays = cruiseHours / 24;
+
+    return analyzeCruiseSlot(start, end, cruiseDurationDays);
+  }
+
+  return (
+    {
+      periodSelectionType,
+      year,
+      acceptablePeriod,
+      optimalPeriod,
+      precisePeriodStart,
+      precisePeriodEnd,
+      cruiseDays,
+      cruiseHours,
+    }: FormAValues,
+    ctx: z.RefinementCtx
+  ) => {
+    const totalCruiseHours = cruiseDays * 24 + cruiseHours;
+    if (periodSelectionType === 'period') {
+      if (acceptablePeriod !== '') {
+        const acceptableAnalysis = hasEnoughFreeSlotInPeriod(year, acceptablePeriod, totalCruiseHours);
+        if (!acceptableAnalysis.canFitCruise) {
+          ctx.addIssue({
+            code: 'custom',
+            message:
+              'Rejs nie może się odbyć w podanym okresie. Czas pomiędzy blokadami jest krótszy niż wybrany czas trwania rejsu.',
+            path: ['acceptablePeriod'],
+          });
+        }
+      }
+
+      if (optimalPeriod !== '') {
+        const optimalAnalysis = hasEnoughFreeSlotInPeriod(year, optimalPeriod, totalCruiseHours);
+        if (!optimalAnalysis.canFitCruise) {
+          ctx.addIssue({
+            code: 'custom',
+            message:
+              'Rejs nie może się odbyć w podanym okresie. Czas pomiędzy blokadami jest krótszy niż wybrany czas trwania rejsu.',
+            path: ['optimalPeriod'],
+          });
+        }
+      }
+
+      return;
+    }
+    if (!precisePeriodStart || !precisePeriodEnd) return;
+
+    const start = new Date(precisePeriodStart);
+    const end = new Date(precisePeriodEnd);
+    const cruiseDurationDays = totalCruiseHours / 24;
+
+    if ((end.getTime() - start.getTime()) / DAY_IN_MILLISECONDS < cruiseDurationDays) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Wybrany czas trwania rejsu jest dłuższy niż okres pomiędzy wybranymi datami.',
+        path: ['precisePeriodEnd'],
+      });
+      return;
+    }
+
+    const slotAnalysis = hasEnoughFreeSlotInPrecisePeriod(precisePeriodStart, precisePeriodEnd, totalCruiseHours);
+
+    if (!slotAnalysis.canFitCruise) {
+      ctx.addIssue({
+        code: 'custom',
+        message:
+          'Rejs nie może się odbyć w podanym terminie. Czas pomiędzy blokadami jest krótszy niż wybrany czas trwania rejsu.',
+        path: ['precisePeriodEnd'],
+      });
+    }
+  };
+};
+
+export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: BlockadePeriod[]) =>
+  z
+    .object({
+      id: z.guid().optional(),
+      cruiseManagerId: z
+        .string()
+        .refine(
+          (val) => initValues.cruiseManagers.some((manager) => manager.id === val),
+          'Kierownik rejsu musi być jednym z dostępnych kierowników rejsu'
+        ),
+      deputyManagerId: z
+        .string()
+        .refine(
+          (val) => initValues.deputyManagers.some((manager) => manager.id === val),
+          'Zastępca kierownika rejsu musi być jednym z dostępnych zastępców kierownika rejsu'
+        ),
+      year: z
+        .string()
+        .refine(
+          (val) => initValues.years.includes(val),
+          'Rok musi być jednym z dostępnych lat: ' + initValues.years.join(', ')
+        ),
+      periodSelectionType: z.enum(['precise', 'period']),
+      acceptablePeriod: CruisePeriodValidationSchema.or(literal('')),
+      optimalPeriod: CruisePeriodValidationSchema.or(literal('')),
+      precisePeriodStart: z.string().or(literal('')),
+      precisePeriodEnd: z.string().or(literal('')),
+      cruiseDays: z.number().int().min(0).max(60),
+      cruiseHours: z.number().int().min(0).max(23),
+      periodNotes: z.string(),
+      shipUsage: z.enum(['0', '1', '2', '3', '4'], {
+        error: 'Wymagane jest wskazanie sposobu korzystania z statku',
+      }),
+      differentUsage: z.string(),
+      permissions: PermissionValuesSchema.array().refine(
+        (val) => val.every((x) => !x.scan),
+        'Skan nie może być dostarczony na tym etapie'
+      ),
+      researchAreaDescriptions: getResearchAreaValuesSchema(initValues)
+        .array()
+        .min(1, 'Co najmniej jeden rejon badań jest wymagany'),
+      cruiseGoal: z.enum([CruiseGoal.Research, CruiseGoal.Commercial, CruiseGoal.Educational], {
+        error: 'Cel rejsu musi być jednym z dostępnych celów rejsu',
+      }),
+      cruiseGoalDescription: z.string().max(10240, 'Opis celu rejsu nie może być dłuższy niż 10240 znaków'),
+      researchTasks: ResearchTaskValuesSchema.array().min(1, 'Co najmniej jedno zadanie badawcze jest wymagane'),
+      contracts: ContractValuesSchema.array(),
+      ugTeams: UgTeamValuesSchema.array()
+        .min(1, 'Co najmniej jeden zespół UG jest wymagany')
+        .refine(
+          (val) => val.every((x) => x.noOfEmployees + x.noOfStudents > 0),
+          'Zespół UG musi składać się z co najmniej jednej osoby'
+        )
+        .refine(
+          (val) => groupBy(val, (x) => x.ugUnitId).filter((x) => x[1].length > 1).length === 0,
+          'Nie można dodać dwóch zespołów UG z tego samego wydziału'
+        ),
+      guestTeams: GuestTeamValuesSchema.array(),
+      publications: PublicationValuesSchema.array(),
+      spubTasks: SpubTaskValuesSchema.array(),
+      supervisorEmail: z.email('Niepoprawny adres email'),
+      note: z.string(),
+    })
+    .superRefine((val, ctx) => {
+      if (val.cruiseManagerId && val.deputyManagerId && val.cruiseManagerId === val.deputyManagerId) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['deputyManagerId'],
+          message: 'Kierownik rejsu nie może być jednocześnie zastępcą kierownika rejsu',
+        });
+      }
+      if (val.shipUsage === '4' && !val.differentUsage) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['differentUsage'],
+          message: 'w przypadku wyboru "inne" należy podać informacje o sposobie korzystania z statku',
+        });
+      }
+      if (!val.cruiseGoalDescription) {
+        ctx.addIssue({ code: 'custom', path: ['cruiseGoalDescription'], message: 'Opis celu rejsu jest wymagany' });
+      }
+
+      const totalCruiseHours = val.cruiseDays * 24 + val.cruiseHours;
+      if (totalCruiseHours === 0 || totalCruiseHours > 1440) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['cruiseHours'],
+          message: 'Rejs musi trwać co najmniej godzinę i nie dłużej niż 60 dni',
+        });
+      }
+
+      const precisePeriodStart = val.precisePeriodStart;
+      const precisePeriodEnd = val.precisePeriodEnd;
+      const acceptablePeriod = val.acceptablePeriod;
+      const optimalPeriod = val.optimalPeriod;
+      const periodSelectionType = val.periodSelectionType;
+
+      if (
+        acceptablePeriod !== '' &&
+        optimalPeriod !== '' &&
+        (parseInt(optimalPeriod[0], 10) < parseInt(acceptablePeriod[0], 10) ||
+          parseInt(optimalPeriod[1], 10) > parseInt(acceptablePeriod[1], 10))
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['optimalPeriod'],
+          message: 'Okres optymalny musi zawierać się w okresie akceptowalnym',
+        });
+      }
+
+      const hasPrecise = precisePeriodStart !== '' || precisePeriodEnd !== '';
+      const hasPeriods = acceptablePeriod !== '' || optimalPeriod !== '';
+
+      let effectiveMode = periodSelectionType;
+      if (!effectiveMode) {
+        if (hasPrecise && !hasPeriods) {
+          effectiveMode = 'precise';
+        } else if (hasPeriods && !hasPrecise) {
+          effectiveMode = 'period';
+        }
+      }
+
+      if (effectiveMode === 'precise') {
+        if (!precisePeriodStart) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['precisePeriodStart'],
+            message: 'Dokładny termin rozpoczęcia rejsu jest wymagany',
+          });
+        }
+        if (!precisePeriodEnd) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['precisePeriodEnd'],
+            message: 'Dokładny termin zakończenia rejsu jest wymagany',
+          });
+        }
+        if (precisePeriodStart && precisePeriodEnd && precisePeriodStart > precisePeriodEnd) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['precisePeriodEnd'],
+            message: 'Data zakończenia musi być późniejsza niż data rozpoczęcia',
+          });
+        }
+      } else if (effectiveMode === 'period') {
+        if (acceptablePeriod === '') {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['acceptablePeriod'],
+            message: 'Dopuszczalny okres jest wymagany',
+          });
+        }
+        if (optimalPeriod === '') {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['optimalPeriod'],
+            message: 'Optymalny okres jest wymagany',
+          });
+        }
+
+        if (acceptablePeriod !== '' && optimalPeriod !== '') {
+          const year = parseInt(val.year, 10);
+
+          if (totalCruiseHours > 0 && !Number.isNaN(year)) {
+            const cruiseDurationDays = totalCruiseHours / 24;
+
+            if (!hasEnoughDaysInPeriod(acceptablePeriod, year, cruiseDurationDays)) {
+              ctx.addIssue({
+                code: 'custom',
+                path: ['acceptablePeriod'],
+                message: 'Wybrany okres czasu jest zbyt krótki dla planowanego czasu rejsu',
+              });
+            }
+
+            if (!hasEnoughDaysInPeriod(optimalPeriod, year, cruiseDurationDays)) {
+              ctx.addIssue({
+                code: 'custom',
+                path: ['optimalPeriod'],
+                message: 'Wybrany okres czasu jest zbyt krótki dla planowanego czasu rejsu',
+              });
+            }
+          }
+        }
+      } else if (hasPrecise && hasPeriods) {
+        // Mixed mode - user has values in both sections
+        ctx.addIssue({
+          code: 'custom',
+          path: ['precisePeriodStart'],
+          message: 'Musisz podać albo dokładny okres albo okres akceptowalny i optymalny',
+        });
+      }
+
+      BlockadeCollisionValidationSchema(blockades)(val, ctx);
+    });
+
+export function getFormAFieldsSchema(initValues: FormAOptions, blockades?: BlockadePeriod[], applicationId?: string) {
+  return buildFormAFieldsSchema(getFormAValidationSchema(initValues, blockades), applicationId);
+}
+
+export function getFormADraftFieldsSchema(applicationId?: string) {
+  return buildFormAFieldsSchema(FormAInputSchema, applicationId);
+}
+
+function buildFormAFieldsSchema(inputSchema: z.ZodType<FormAValues, FormAValues>, applicationId?: string) {
+  return inputSchema
+    .transform((form): z.input<typeof FormAFields> => mapFormAFields(form, applicationId))
+    .pipe(FormAFields);
+}
+
+function mapFormAFields(form: FormAValues, applicationId?: string) {
+  return {
+    id: applicationId ?? form.id ?? null,
+    cruiseManagerId: form.cruiseManagerId,
+    deputyManagerId: form.deputyManagerId || null,
+    year: form.year,
+    acceptablePeriod: form.acceptablePeriod || null,
+    optimalPeriod: form.optimalPeriod || null,
+    periodSelectionType: form.periodSelectionType ?? null,
+    precisePeriodStart: toApiDateTime(form.precisePeriodStart),
+    precisePeriodEnd: toApiDateTime(form.precisePeriodEnd),
+    cruiseHours: String(form.cruiseDays * 24 + form.cruiseHours),
+    periodNotes: form.periodNotes,
+    shipUsage: form.shipUsage || null,
+    differentUsage: form.differentUsage,
+    permissions: form.permissions.map((permission) => ({
+      description: permission.description || null,
+      executive: permission.executive || null,
+      scan: permission.scan ?? null,
+    })),
+    researchAreaDescriptions: form.researchAreaDescriptions,
+    cruiseGoal: form.cruiseGoal || null,
+    cruiseGoalDescription: form.cruiseGoalDescription,
+    researchTasks: form.researchTasks.map((task) => ({
+      type: task.type,
+      title: 'title' in task ? task.title : null,
+      magazine: 'magazine' in task ? task.magazine : null,
+      author: 'author' in task ? task.author : null,
+      institution: null,
+      date: 'date' in task ? task.date : null,
+      startDate: 'startDate' in task ? task.startDate : null,
+      endDate: 'endDate' in task ? task.endDate : null,
+      financingAmount: 'financingAmount' in task && task.financingAmount !== null ? String(task.financingAmount) : null,
+      financingApproved: 'financingApproved' in task ? String(task.financingApproved) : null,
+      description: 'description' in task ? task.description : null,
+      securedAmount: 'securedAmount' in task && task.securedAmount !== null ? String(task.securedAmount) : null,
+      ministerialPoints:
+        'ministerialPoints' in task && task.ministerialPoints !== null ? String(task.ministerialPoints) : null,
+    })),
+    contracts: form.contracts,
+    ugTeams: form.ugTeams.map((team) => ({
+      ...team,
+      noOfEmployees: String(team.noOfEmployees),
+      noOfStudents: String(team.noOfStudents),
+    })),
+    guestTeams: form.guestTeams.map((team) => ({ name: team.name || null, noOfPersons: String(team.noOfPersons) })),
+    publications: form.publications.map((publication) => ({
+      ...publication,
+      id: publication.id || '00000000-0000-0000-0000-000000000000',
+      doi: publication.doi || null,
+      authors: publication.authors || null,
+      title: publication.title || null,
+      magazine: publication.magazine || null,
+      year: publication.year === null ? null : String(publication.year),
+      ministerialPoints: String(publication.ministerialPoints),
+    })),
+    spubTasks: form.spubTasks.map((task) => ({
+      name: task.name || null,
+      yearFrom: task.yearFrom || null,
+      yearTo: task.yearTo || null,
+    })),
+    supervisorEmail: form.supervisorEmail,
+    note: form.note || null,
+  } satisfies Required<z.input<typeof FormAFields>>;
+}
+
+function toApiDateTime(value: string): string | null {
+  if (!value) return null;
+  if (/(?:Z|[+-]\d{2}:\d{2})$/.test(value)) return value;
+  return value.includes('T') ? `${value}Z` : `${value}T00:00:00Z`;
+}
+
+export function mapFormAToValues(form: FormAFields): FormAValues {
+  const acceptablePeriod = CruisePeriodValidationSchema.safeParse(form.acceptablePeriod ?? '').data ?? '';
+  const optimalPeriod = CruisePeriodValidationSchema.safeParse(form.optimalPeriod ?? '').data ?? '';
+
+  return {
+    id: form.id ?? undefined,
+    cruiseManagerId: form.cruiseManagerId ?? '',
+    deputyManagerId: form.deputyManagerId ?? '',
+    year: form.year ?? '',
+    acceptablePeriod,
+    optimalPeriod,
+    periodSelectionType:
+      form.periodSelectionType === 'precise' || form.periodSelectionType === 'period'
+        ? form.periodSelectionType
+        : form.precisePeriodStart || form.precisePeriodEnd
+          ? 'precise'
+          : 'period',
+    precisePeriodStart: form.precisePeriodStart ?? '',
+    precisePeriodEnd: form.precisePeriodEnd ?? '',
+    cruiseDays: Math.floor(toNumber(form.cruiseHours) / 24),
+    cruiseHours: toNumber(form.cruiseHours) % 24,
+    periodNotes: form.periodNotes ?? '',
+    shipUsage: form.shipUsage ?? '',
+    differentUsage: form.differentUsage ?? '',
+    permissions: (form.permissions ?? []).map((permission) => ({
+      description: permission.description ?? '',
+      executive: permission.executive ?? '',
+      scan: permission.scan ? { name: permission.scan.name ?? '', content: permission.scan.content ?? '' } : undefined,
+    })),
+    researchAreaDescriptions: (form.researchAreaDescriptions ?? []).map((area) => ({
+      areaId: area.areaId ?? null,
+      differentName: area.differentName ?? null,
+      info: area.info ?? '',
+    })),
+    cruiseGoal:
+      form.cruiseGoal === CruiseGoal.Research ||
+      form.cruiseGoal === CruiseGoal.Commercial ||
+      form.cruiseGoal === CruiseGoal.Educational
+        ? form.cruiseGoal
+        : '',
+    cruiseGoalDescription: form.cruiseGoalDescription ?? '',
+    researchTasks: (form.researchTasks ?? []).map(mapResearchTaskToValues),
+    contracts: (form.contracts ?? []).map(mapContractToValues),
+    ugTeams: (form.ugTeams ?? []).map((team) => ({
+      ...team,
+      ugUnitId: team.ugUnitId ?? '',
+      noOfEmployees: toNumber(team.noOfEmployees),
+      noOfStudents: toNumber(team.noOfStudents),
+    })),
+    guestTeams: (form.guestTeams ?? []).map((team) => ({
+      name: team.name ?? '',
+      noOfPersons: toNumber(team.noOfPersons),
+    })),
+    publications: (form.publications ?? []).map(mapPublicationToValues),
+    spubTasks: (form.spubTasks ?? []).map(mapSpubTaskToValues),
+    supervisorEmail: form.supervisorEmail ?? '',
+    note: form.note ?? '',
+  };
+}
+
+export function mapResearchTaskToValues(task: ResearchTaskFields): FormAValues['researchTasks'][number] {
+  switch (task.type) {
+    case ResearchTaskType.BachelorThesis:
+    case ResearchTaskType.MasterThesis:
+    case ResearchTaskType.DoctoralThesis:
+      return { type: task.type, author: task.author ?? '', title: task.title ?? '' };
+    case ResearchTaskType.ProjectPreparation:
+      return {
+        type: task.type,
+        title: task.title ?? '',
+        date: task.date ?? '',
+        financingApproved: task.financingApproved === 'true',
+      };
+    case ResearchTaskType.DomesticProject:
+    case ResearchTaskType.ForeignProject:
+    case ResearchTaskType.InternalUgProject:
+    case ResearchTaskType.OtherProject:
+    case ResearchTaskType.CommercialProject:
+      return {
+        type: task.type,
+        title: task.title ?? '',
+        financingAmount: toNullableNumber(task.financingAmount),
+        startDate: task.startDate ?? '',
+        endDate: task.endDate ?? '',
+        securedAmount: toNullableNumber(task.securedAmount),
+      };
+    case ResearchTaskType.Didactics:
+      return { type: task.type, description: task.description ?? '' };
+    case ResearchTaskType.OwnResearchTask:
+      return {
+        type: task.type,
+        title: task.title ?? '',
+        date: task.date ?? '',
+        magazine: task.magazine ?? '',
+        ministerialPoints: toNullableNumber(task.ministerialPoints),
+      };
+    default:
+      return { type: ResearchTaskType.OtherResearchTask, description: task.description ?? '' };
+  }
+}
+
+function toNumber(value: string | null | undefined): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function toNullableNumber(value: string | null | undefined): number | null {
+  if (value === null || value === undefined || value === '') return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+export function getFormASubmissionSchema(
+  initValues: FormAOptions,
+  blockades?: BlockadePeriod[],
+  applicationId?: string
+) {
+  return submissionSchema(
+    getFormAFieldsSchema(initValues, blockades, applicationId),
+    getFormADraftFieldsSchema(applicationId)
+  );
+}
+
+export function mapContractToValues(contract: ContractFields): FormAValues['contracts'][number] {
+  return {
+    category: contract.category === 'international' ? 'international' : 'domestic',
+    institutionName: contract.institutionName ?? '',
+    institutionUnit: contract.institutionUnit ?? '',
+    institutionLocalization: contract.institutionLocalization ?? '',
+    description: contract.description ?? '',
+    scans: (contract.scans ?? []).map((scan) => ({ name: scan.name ?? '', content: scan.content ?? '' })),
+  };
+}
+
+export function mapPublicationToValues(publication: PublicationFields): FormAValues['publications'][number] {
+  return {
+    id: publication.id ?? '',
+    category:
+      publication.category === PublicationCategory.Postscript
+        ? PublicationCategory.Postscript
+        : PublicationCategory.Subject,
+    doi: publication.doi ?? '',
+    authors: publication.authors ?? '',
+    title: publication.title ?? '',
+    magazine: publication.magazine ?? '',
+    year: toNullableNumber(publication.year),
+    ministerialPoints: toNumber(publication.ministerialPoints),
+  };
+}
+
+export function mapSpubTaskToValues(task: SpubTaskFields): FormAValues['spubTasks'][number] {
+  return {
+    name: task.name ?? '',
+    yearFrom: task.yearFrom ?? '',
+    yearTo: task.yearTo ?? '',
+  };
+}

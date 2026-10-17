@@ -1,15 +1,132 @@
-using ResearchCruiseApp.Application;
+using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
+using Asp.Versioning;
+using MailKit.Security;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi;
+using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Infrastructure;
+using ResearchCruiseApp.Infrastructure.Api;
+using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
+using ResearchCruiseApp.Infrastructure.Persistence.Initialization.DevData;
 using ResearchCruiseApp.Infrastructure.Sentry;
-using ResearchCruiseApp.Web.Configuration;
+using Scalar.AspNetCore;
+using Sentry;
 
 var builder = WebApplication.CreateBuilder(args);
+var isOpenApiGen = Assembly.GetEntryAssembly()?.GetName().Name == "GetDocument.Insider";
 
 builder.AddResearchCruiseAppSentry();
 
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddWeb(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration, enableEmailDelivery: !isOpenApiGen);
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.MaxDepth = 64;
+    options.SerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+    );
+});
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddProblemDetails(options =>
+    options.CustomizeProblemDetails = ProblemDetailsMessages.AddDefaultDetail
+);
+const string dotNetGuidPattern =
+    "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
+builder.Services.AddOpenApi(
+    "v2",
+    options =>
+    {
+        options.ShouldInclude = description =>
+            description.GroupName == "v2"
+            && (
+                description.RelativePath?.StartsWith("v2/", StringComparison.OrdinalIgnoreCase)
+                    == true
+                || description.RelativePath?.StartsWith(
+                    "v{version",
+                    StringComparison.OrdinalIgnoreCase
+                ) == true
+            );
+        options.AddSchemaTransformer(
+            (schema, context, _) =>
+            {
+                var type =
+                    Nullable.GetUnderlyingType(context.JsonTypeInfo.Type)
+                    ?? context.JsonTypeInfo.Type;
+                if (type == typeof(Guid))
+                {
+                    schema.Format = null;
+                    schema.Pattern = dotNetGuidPattern;
+                }
+
+                var strictNumber =
+                    context
+                        .JsonPropertyInfo?.AttributeProvider?.GetCustomAttributes(
+                            typeof(JsonNumberHandlingAttribute),
+                            true
+                        )
+                        .OfType<JsonNumberHandlingAttribute>()
+                        .Any(attribute => attribute.Handling == JsonNumberHandling.Strict) == true;
+                if (strictNumber)
+                {
+                    schema.Type &= ~JsonSchemaType.String;
+                    schema.Pattern = null;
+                }
+
+                return Task.CompletedTask;
+            }
+        );
+    }
+);
+builder
+    .Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(2, 0);
+        options.AssumeDefaultVersionWhenUnspecified = false;
+        options.ReportApiVersions = true;
+        options.ApiVersionReader = new UrlSegmentApiVersionReader();
+    })
+    .AddApiExplorer(options => options.SubstituteApiVersionInUrl = true);
+builder.Services.AddAuthorization(AuthorizationPolicies.AddApiAuthorizationPolicies);
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy(
+        RateLimitingPolicies.AuthSensitive,
+        httpContext =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                static _ => new FixedWindowRateLimiterOptions
+                {
+                    AutoReplenishment = true,
+                    PermitLimit = 10,
+                    QueueLimit = 0,
+                    Window = TimeSpan.FromMinutes(1),
+                }
+            )
+    );
+});
+builder.Services.AddHealthChecks();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "CustomPolicy",
+        policyBuilder =>
+        {
+            policyBuilder
+                .WithOrigins(builder.Configuration["FrontendUrl"] ?? "")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        }
+    );
+});
 
 builder
     .Configuration.AddJsonFile("users.json", optional: false, reloadOnChange: false)
@@ -22,6 +139,75 @@ builder.WebHost.ConfigureKestrel(options =>
 
 var app = builder.Build();
 
-await app.Configure();
+if (await app.RunSeedApplicationsCommand(args))
+    return;
+
+app.UseExceptionHandler(exceptionHandlerApp =>
+    exceptionHandlerApp.Run(async context =>
+    {
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+        var errorCode = context.TraceIdentifier;
+        if (exception is not null)
+        {
+            var hub = context.RequestServices.GetRequiredService<IHub>();
+            hub.ConfigureScope(scope => scope.SetTag("error.code", errorCode));
+            hub.CaptureException(exception);
+        }
+
+        await Results
+            .Problem(
+                detail: $"Wystąpił nieoczekiwany błąd. Kod błędu: {errorCode}",
+                statusCode: exception is AuthenticationException
+                    ? StatusCodes.Status503ServiceUnavailable
+                    : StatusCodes.Status500InternalServerError
+            )
+            .ExecuteAsync(context);
+    })
+);
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi("/openapi/{documentName}.json");
+    app.MapScalarApiReference(options =>
+    {
+        options
+            .WithTitle("ResearchCruiseApp API")
+            .WithOpenApiRoutePattern("/openapi/{documentName}.json")
+            .AddDocument("v2", "ResearchCruiseApp API v2");
+    });
+}
+
+app.UseHttpsRedirection();
+app.UseCors("CustomPolicy");
+
+// Turns bodiless errors (auth challenges, rate limits, unknown routes) into ProblemDetails.
+app.UseStatusCodePages();
+app.UseRateLimiter();
+app.UseAuthentication().UseAuthorization();
+app.UseMiddleware<SentryUserMiddleware>();
+
+app.MapApi();
+
+var version = typeof(Program)
+    .Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>()
+    ?.Version.Split('.')
+    .Take(3)
+    .Aggregate((current, next) => $"{current}.{next}");
+app.MapGet(
+        "/version",
+        IResult () => version is not null ? TypedResults.Ok(version) : TypedResults.NotFound()
+    )
+    .ExcludeFromDescription();
+
+app.MapHealthChecks("/health");
+
+if (!isOpenApiGen)
+{
+    // Fail before migrations/seeding or accepting requests; hosted-service validation is later.
+    _ = app.Services.GetRequiredService<IOptions<SmtpSettings>>().Value;
+    await app.InitializeDatabase();
+}
 
 app.Run();
+
+public partial class Program;

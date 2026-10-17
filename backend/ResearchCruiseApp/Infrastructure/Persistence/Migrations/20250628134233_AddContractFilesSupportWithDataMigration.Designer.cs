@@ -1626,7 +1626,7 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                     b.ToTable("UserPublications");
                 });
 
-            modelBuilder.Entity("ResearchCruiseApp.Infrastructure.Services.Identity.User", b =>
+            modelBuilder.Entity("ResearchCruiseApp.Infrastructure.Identity.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -1872,7 +1872,7 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("ResearchCruiseApp.Infrastructure.Services.Identity.User", null)
+                    b.HasOne("ResearchCruiseApp.Infrastructure.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1881,7 +1881,7 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("ResearchCruiseApp.Infrastructure.Services.Identity.User", null)
+                    b.HasOne("ResearchCruiseApp.Infrastructure.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1896,7 +1896,7 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ResearchCruiseApp.Infrastructure.Services.Identity.User", null)
+                    b.HasOne("ResearchCruiseApp.Infrastructure.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1905,7 +1905,7 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("ResearchCruiseApp.Infrastructure.Services.Identity.User", null)
+                    b.HasOne("ResearchCruiseApp.Infrastructure.Identity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

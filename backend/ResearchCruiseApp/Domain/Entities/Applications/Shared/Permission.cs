@@ -1,0 +1,79 @@
+﻿using System.Linq.Expressions;
+using ResearchCruiseApp.Domain;
+
+namespace ResearchCruiseApp.Domain.Entities;
+
+public class Permission : Entity, IEquatable<Permission>, IEquatableByExpression<Permission>
+{
+    private string? _scanName;
+    private byte[]? _scanContent;
+    public string? Description { get; init; }
+    public string? Executive { get; init; }
+    public string? ScanName
+    {
+        get => _scanName;
+        set
+        {
+            if (_scanName is not null)
+                throw new InvalidOperationException("ScanName can only be set once.");
+            _scanName = value;
+        }
+    }
+
+    public byte[]? ScanContent
+    {
+        get => _scanContent;
+        set
+        {
+            if (_scanContent is not null)
+                throw new InvalidOperationException("ScanContent can only be set once.");
+            _scanContent = value;
+        }
+    }
+
+    public List<FormA> FormsA { get; init; } = [];
+
+    public List<FormB> FormsB { get; init; } = [];
+
+    public List<FormC> FormsC { get; init; } = [];
+
+    public override bool Equals(object? obj) => Equals((Permission?)obj);
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Description, Executive, ScanName, ScanContent?.Length);
+    }
+
+    public bool Equals(Permission? other)
+    {
+        return other is not null
+            && other.Description == Description
+            && other.Executive == Executive
+            && other.ScanName == ScanName
+            && (
+                (other.ScanContent == null && ScanContent == null)
+                || (
+                    other.ScanContent != null
+                    && ScanContent != null
+                    && other.ScanContent.SequenceEqual(ScanContent)
+                )
+            );
+    }
+
+    public static Expression<Func<Permission, bool>> EqualsByExpression(Permission? other)
+    {
+        return permission =>
+            other != null
+            && other.Description == permission.Description
+            && other.Executive == permission.Executive
+            && other.ScanName == permission.ScanName
+            && (
+                (permission.ScanContent == null && other.ScanContent == null)
+                || (
+                    permission.ScanContent != null
+                    && other.ScanContent != null
+                    && other.ScanContent.SequenceEqual(permission.ScanContent)
+                )
+            );
+    }
+}

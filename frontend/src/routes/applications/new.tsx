@@ -1,0 +1,154 @@
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
+import { createFileRoute } from '@tanstack/react-router';
+import { allowOnly } from '@/lib/guards';
+import { Role } from '@/integrations/auth/types';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
+import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
+import { useState } from 'react';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppModal } from '@/components/shared/AppModal';
+import { toast } from '@/components/shared/layout/toast';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { INVALID_FORM_MESSAGE, navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
+import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
+import {
+  type FormAValues,
+  formADefaultValues,
+  getFormASubmissionSchema,
+} from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import {
+  useCreateApplication,
+  useGetApplicationFormAContextSuspense,
+} from '@/api/generated/endpoints/applications.gen';
+import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
+import { useCurrentUser } from '@/integrations/tanstack/query/auth';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
+import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
+import { getErrorMessage } from '@/api/errors';
+
+export const Route = createFileRoute('/applications/new')({
+  component: NewCruiseApplicationPage,
+  beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager),
+});
+
+function NewCruiseApplicationPage() {
+  const currentUser = useCurrentUser()!;
+  const initialStateQuery = useGetApplicationFormAContextSuspense();
+  const saveMutation = useCreateApplication({ mutation: { meta: { handlesError: true } } });
+
+  const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
+
+  const defaultValues: FormAValues = {
+    ...formADefaultValues,
+    cruiseManagerId: currentUser.id,
+    year: initialStateQuery.data.years[0],
+  } satisfies FormAValues;
+  const [selectedYear, setSelectedYear] = useState(defaultValues.year);
+  const blockadesQuery = useGetCruiseBlockades({ year: +selectedYear });
+  const schema = getFormASubmissionSchema(initialStateQuery.data, blockadesQuery.data);
+  const form = useAppForm({
+    canSubmitWhenInvalid: true,
+    defaultValues,
+    validationLogic: formValidationLogic,
+    validators: {
+      onDynamic: schema,
+    },
+    listeners: {
+      onChange: ({ fieldApi }) => {
+        if (fieldApi.name === 'year') setSelectedYear(String(fieldApi.state.value));
+      },
+    },
+    onSubmit: ({ value }) => saveForm(value),
+    onSubmitInvalid: () => {
+      if (!form.state.values.draft) trackFormSubmit('new-application', 'invalid', form.state);
+      setIsSaveDraftModalOpen(false);
+      toast.error(INVALID_FORM_MESSAGE);
+      navigateToFirstError();
+    },
+  });
+  const leaveAfterSave = useLeaveAfterSave(form);
+
+  const context = {
+    form,
+    initValues: initialStateQuery.data,
+    isReadonly: false,
+    blockades: blockadesQuery.data,
+    blockadesError: blockadesQuery.error,
+    onSaveDraft: () => setIsSaveDraftModalOpen(true),
+    actionsDisabled: saveMutation.isPending,
+  };
+
+  async function saveForm(values: FormAValues) {
+    if (!values.draft) trackFormSubmit('new-application', 'valid', form.state);
+    if (values.cruiseManagerId !== currentUser.id && values.deputyManagerId !== currentUser.id) {
+      setIsSaveDraftModalOpen(false);
+      const message = 'Jedynie kierownik lub jego zastępca mogą zapisać formularz';
+      toast.error(message);
+      throw new Error(message);
+    }
+    const loading = toast.loading(
+      values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
+    );
+    try {
+      await saveMutation.mutateAsync({ data: { form: schema.parse(values), draft: values.draft ?? false } });
+      toast.success(
+        values.draft
+          ? 'Formularz został zapisany jako wersja robocza'
+          : 'Formularz został zapisany i wysłany do potwierdzenia przez przełożonego'
+      );
+      await leaveAfterSave(values, { to: '/' });
+    } catch (error) {
+      setServerFormErrors(form, error);
+      toast.error(getErrorMessage(error, saveFailedMessage(values.draft)));
+      navigateToFirstError();
+      throw error;
+    } finally {
+      toast.dismiss(loading);
+      setIsSaveDraftModalOpen(false);
+    }
+  }
+
+  return (
+    <>
+      <AppLayout title="Formularz A">
+        <form.AppForm>
+          <FormView context={context} />
+        </form.AppForm>
+      </AppLayout>
+      <UnsavedChangesGuard form={form} />
+
+      <AppModal
+        title="Zapisz wersję roboczą Formularza A"
+        isOpen={isSaveDraftModalOpen}
+        onClose={() => setIsSaveDraftModalOpen(false)}
+      >
+        <div className="space-y-4">
+          <form.AppField
+            name="note"
+            children={(field) => (
+              <field.TextField
+                label="Notatka aktualnej wersji roboczej"
+                placeholder="Wpisz notatkę dot. aktualnej wersji roboczej"
+                autoFocus
+              />
+            )}
+          />
+
+          <div className="flex justify-center gap-4">
+            <AppButton
+              className="gap-4"
+              disabled={saveMutation.isPending}
+              onClick={() => void submitApplicationForm(form, true)}
+            >
+              <FloppyFillIcon className="h-4 w-4" />
+              Zapisz wersję roboczą
+            </AppButton>
+          </div>
+        </div>
+      </AppModal>
+    </>
+  );
+}

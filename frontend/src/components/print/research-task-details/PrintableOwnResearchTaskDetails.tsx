@@ -1,9 +1,9 @@
-import dayjs from 'dayjs';
+import { formatDate } from '@/lib/dateUtils';
 
-import { OwnResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
+import { OwnResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  data: OwnResearchTaskDto;
+  data: OwnResearchTaskValues;
 };
 export function PrintableOwnResearchTaskDetails({ data }: Props) {
   return (
@@ -14,7 +14,7 @@ export function PrintableOwnResearchTaskDetails({ data }: Props) {
       </div>
       <div className="flex items-center justify-between">
         <span>Przewidywany termin składania: </span>
-        <span>{dayjs(data.date).format('DD.MM.YYYY')}</span>
+        <span>{formatDate(data.date, 'date')}</span>
       </div>
       <div className="flex items-center justify-between">
         <span>Czasopismo: </span>

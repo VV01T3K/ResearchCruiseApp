@@ -4,15 +4,19 @@
   "scripts": {
     "dev": "dotnet watch run --project ResearchCruiseApp",
     "start": "dotnet run --project ResearchCruiseApp",
-    "build": "dotnet build ResearchCruiseApp.sln",
-    "fix": "true || (dotnet csharpier format . && dotnet format ResearchCruiseApp.sln --severity info --exclude-diagnostics IDE0130)",
-    "check": "true || (dotnet csharpier check . && dotnet format ResearchCruiseApp.sln --verify-no-changes --severity info --exclude-diagnostics IDE0130)",
-    "staged": "true || (dotnet csharpier format)",
+    "build": "dotnet build ResearchCruiseApp.slnx",
+    "audit": "dotnet restore ResearchCruiseApp.slnx --force -p:CI=true",
+    "fix": "dotnet csharpier format .",
+    "check": "dotnet csharpier check . && dotnet build ResearchCruiseApp.slnx -c Release --no-restore --no-incremental --warnaserror -p:GenerateApiContract=true",
+    "test": "dotnet test --solution ResearchCruiseApp.slnx -c Release --no-restore --no-build --fail-skips on",
+    "staged": "dotnet csharpier format",
     "seed": "mise run seed",
+    "seed:applications": "dotnet run --project ResearchCruiseApp -- seed-applications",
+    "seed:applications:remove": "dotnet run --project ResearchCruiseApp -- seed-applications remove",
     "ef:drop": "dotnet ef database drop --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext -f",
     "ef:update": "dotnet ef database update --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext",
     "ef:migration:add": "dotnet ef migrations add --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext -o Infrastructure/Persistence/Migrations",
     "ef:migration:remove": "dotnet ef migrations remove --project ResearchCruiseApp --startup-project ResearchCruiseApp --context ApplicationDbContext"
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "bun@1.3.11"
 }

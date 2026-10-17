@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0.401-alpine3.24 AS build
 
 ARG BUILD_CONFIGURATION=Release
 ARG SENTRY_ORG="cruiseteam"
@@ -9,10 +9,13 @@ ENV SENTRY_ORG=$SENTRY_ORG \
 
 WORKDIR /src
 
-COPY ["./ResearchCruiseApp/ResearchCruiseApp.csproj", "ResearchCruiseApp/"]
-RUN dotnet restore "ResearchCruiseApp/ResearchCruiseApp.csproj"
+COPY ["global.json", "Directory.Build.props", "./"]
+COPY ["ResearchCruiseApp/ResearchCruiseApp.csproj", "ResearchCruiseApp/packages.lock.json", "ResearchCruiseApp/"]
+RUN dotnet restore "ResearchCruiseApp/ResearchCruiseApp.csproj" --locked-mode
 
 COPY . .
+# The restore layer above may come from cache, so audit whenever the source changes.
+RUN dotnet restore "ResearchCruiseApp/ResearchCruiseApp.csproj" --force -p:CI=true
 WORKDIR "/src/ResearchCruiseApp"
 
 RUN --mount=type=secret,id=sentry_auth_token,required=false \
@@ -21,9 +24,9 @@ RUN --mount=type=secret,id=sentry_auth_token,required=false \
     -c $BUILD_CONFIGURATION \
     -o /app/publish \
     --no-restore \
-    /p:UseAppHost=false
+    /p:UseAppHost=false /p:OpenApiGenerateDocuments=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.12-alpine3.24
 
 RUN apk add --no-cache curl icu-libs tzdata
 

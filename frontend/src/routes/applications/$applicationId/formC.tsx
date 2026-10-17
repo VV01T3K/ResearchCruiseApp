@@ -1,0 +1,150 @@
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
+import { createFileRoute, notFound } from '@tanstack/react-router';
+import { z } from 'zod';
+import { allowOnly } from '@/lib/guards';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { toast } from '@/components/shared/layout/toast';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { INVALID_FORM_MESSAGE, navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
+import { FormView } from './-components/formC/FormView';
+import {
+  type FormCValues,
+  formCDefaultValues,
+  getFormCSubmissionSchema,
+} from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import { useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
+import {
+  useFormAQuery,
+  useFormBQuery,
+  useFormCQuery,
+} from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
+import {
+  useGetApplicationFormAContextSuspense,
+  useGetApplicationFormBContextSuspense,
+  useUpdateApplicationFormC,
+} from '@/api/generated/endpoints/applications.gen';
+import { getErrorMessage } from '@/api/errors';
+import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
+import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
+
+export const Route = createFileRoute('/applications/$applicationId/formC')({
+  component: FormCPage,
+  beforeLoad: allowOnly.authenticated(),
+  validateSearch: z.object({
+    mode: z.optional(z.enum(['edit', 'view'])),
+  }),
+});
+
+function FormCPage() {
+  const { applicationId } = Route.useParams();
+  const mode = Route.useSearch().mode ?? 'preview';
+
+  const formA = useFormAQuery(applicationId);
+  const formB = useFormBQuery(applicationId);
+  const formC = useFormCQuery(applicationId);
+  const formAInitValues = useGetApplicationFormAContextSuspense();
+  const formBInitValues = useGetApplicationFormBContextSuspense();
+  const cruise = useGetApplicationCruiseSuspense(applicationId);
+  const updateMutation = useUpdateApplicationFormC({ mutation: { meta: { handlesError: true } } });
+
+  if (!formB.data) throw notFound();
+
+  const defaultValues = (formC.data ?? {
+    ...formCDefaultValues,
+    shipUsage: formA.data.shipUsage ?? '', // Max length 1
+    differentUsage: formA.data.differentUsage,
+    permissions: formB.data.permissions,
+    researchAreaDescriptions: formA.data.researchAreaDescriptions,
+    ugTeams: formB.data.ugTeams,
+    guestTeams: formB.data.guestTeams,
+    researchTasksEffects: formA.data.researchTasks.map(
+      (task) =>
+        ({
+          ...task,
+          done: false,
+          managerConditionMet: false,
+          deputyConditionMet: false,
+        }) satisfies ResearchTaskEffectValues
+    ),
+    contracts: formA.data.contracts,
+    spubTasks: formA.data.spubTasks,
+    shortResearchEquipments: formB.data.shortResearchEquipments,
+    longResearchEquipments: formB.data.longResearchEquipments,
+    ports: formB.data.ports,
+    cruiseDaysDetails: formB.data.cruiseDaysDetails,
+    researchEquipments: formB.data.researchEquipments,
+    shipEquipmentsIds: formB.data.shipEquipmentsIds,
+  }) satisfies FormCValues;
+  const schema = getFormCSubmissionSchema(formAInitValues.data);
+  const form = useAppForm({
+    canSubmitWhenInvalid: true,
+    defaultValues,
+    validationLogic: formValidationLogic,
+    validators: {
+      onDynamic: schema,
+    },
+    onSubmit: async ({ value }) => handleValidSubmit(value),
+    onSubmitInvalid: () => {
+      if (!form.state.values.draft) trackFormSubmit('form-c', 'invalid', form.state);
+      toast.error(INVALID_FORM_MESSAGE);
+      navigateToFirstError();
+    },
+  });
+  const leaveAfterSave = useLeaveAfterSave(form);
+  const context = {
+    form,
+    formA: formA.data,
+    formB: formB.data,
+    formAInitValues: formAInitValues.data,
+    formBInitValues: formBInitValues.data,
+    cruise: cruise.data,
+    isReadonly: mode !== 'edit',
+    onSaveDraft: handleDraftSave,
+    actionsDisabled: updateMutation.isPending,
+  };
+
+  async function handleValidSubmit(values: FormCValues) {
+    if (!values.draft) trackFormSubmit('form-c', 'valid', form.state);
+
+    const loading = toast.loading(
+      values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
+    );
+    try {
+      await updateMutation.mutateAsync({
+        applicationId,
+        data: { form: schema.parse(values), draft: values.draft ?? false },
+      });
+      leaveAfterSave(values, { to: '/applications' });
+      toast.success(
+        values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
+      );
+    } catch (err) {
+      console.error(err);
+      setServerFormErrors(form, err);
+      toast.error(getErrorMessage(err, saveFailedMessage(values.draft)));
+      navigateToFirstError();
+      throw err;
+    } finally {
+      toast.dismiss(loading);
+    }
+  }
+
+  function handleDraftSave() {
+    void submitApplicationForm(form, true);
+  }
+
+  return (
+    <>
+      <AppLayout title="Formularz C">
+        <form.AppForm>
+          <FormView context={context} />
+        </form.AppForm>
+      </AppLayout>
+      <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} />
+    </>
+  );
+}

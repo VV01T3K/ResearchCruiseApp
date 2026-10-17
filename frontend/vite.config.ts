@@ -1,11 +1,12 @@
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { defineConfig } from 'vite-plus';
-// import viteReact, { reactCompilerPreset } from '@vitejs/plugin-react';
-import viteReact from '@vitejs/plugin-react';
+import viteReact, { reactCompilerPreset } from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import svgr from 'vite-plugin-svgr';
 import tailwindcss from '@tailwindcss/vite';
-// import babel from '@rolldown/plugin-babel';
+import babel from '@rolldown/plugin-babel';
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import { playwright } from 'vite-plus/test/browser-playwright';
 import { fmtConfig, lintConfig } from './vite.tool.config.ts';
 
 const {
@@ -33,6 +34,32 @@ export default defineConfig({
   },
   lint: lintConfig,
   fmt: fmtConfig,
+  test: {
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'unit',
+          include: ['tests/unit/**/*.test.{ts,tsx}'],
+          // Match the users' and the browser tests' timezone, whatever the machine's own is.
+          env: { TZ: 'Europe/Warsaw' },
+        },
+      },
+      {
+        extends: true,
+        plugins: [storybookTest({ configDir: '.storybook', storybookScript: 'vp run storybook --no-open' })],
+        test: {
+          name: 'storybook',
+          browser: {
+            enabled: true,
+            provider: playwright(),
+            headless: true,
+            instances: [{ browser: 'chromium' }],
+          },
+        },
+      },
+    ],
+  },
   server: {
     host: true, // TODO: set only for development, not for production build
   },
@@ -47,11 +74,9 @@ export default defineConfig({
     }),
     tanstackRouter(),
     viteReact(),
+    babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),
     sentryPlugin,
-    // babel({ // Breaks tests and some forms etc FIXME: Re-enable and fix
-    //   presets: [reactCompilerPreset()],
-    // }),
   ],
   define: {
     APP_VERSION: JSON.stringify(process.env.npm_package_version),

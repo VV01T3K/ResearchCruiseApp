@@ -2,14 +2,32 @@ name: Format & lint checks
 
 on:
   push:
+    branches-ignore: [staging, main]
     paths-ignore:
       - docs
+  workflow_call:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-checks
   cancel-in-progress: true
 
 jobs:
+  javascript-audit:
+    name: JavaScript dependency audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - name: Audit JavaScript dependencies
+        run: bun audit --audit-level=high
+
   frontend-checks:
     name: Frontend checks
     runs-on: ubuntu-latest
@@ -27,6 +45,7 @@ jobs:
         with:
           working-directory: frontend
           node-version-file: .node-version
+          run-install: false
           cache: true
 
       - name: Install dependencies
@@ -35,9 +54,21 @@ jobs:
       - name: Run checks
         run: vp check
 
+      - name: Run unit tests
+        run: vp run test:unit
+
+      - name: Check generated API
+        run: |
+          vp run gen
+          git diff --exit-code -- src/api/generated
+          test -z "$(git ls-files --others --exclude-standard -- src/api/generated)"
+
   backend-checks:
     name: Backend checks
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TESTINGPLATFORM_TELEMETRY_OPTOUT: 1
 
     defaults:
       run:
@@ -52,8 +83,25 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
+        with:
+          working-directory: backend
+          version-file: ../frontend/package.json
+          node-version-file: ../frontend/.node-version
+          cache: true
+
       - name: Restore .NET tools
         run: dotnet tool restore
 
-      - name: Check formatting
-        run: dotnet csharpier check .
+      - name: Restore dependencies
+        run: dotnet restore ResearchCruiseApp.slnx
+
+      - name: Run checks
+        run: vp run check
+
+      - name: Check OpenAPI spec
+        run: git diff --exit-code -- '*openapi*'
+
+      - name: Run tests
+        run: vp run test

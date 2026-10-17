@@ -1,9 +1,9 @@
-import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
 
 import { Grid } from '@/components/dashboard/Grid';
 import { GridCard } from '@/components/dashboard/GridCard';
+import AppBackground from '@/components/shared/layout/AppBackground';
 
 const meta = {
   component: GridCard,
@@ -41,16 +41,17 @@ export const WithLink: Story = {
     name: 'Grid card with link',
     href: '/link',
   },
-  decorators: [
-    (Story) => (
-      <MockRouterProvider>
-        <Story />
-      </MockRouterProvider>
-    ),
-  ],
 };
 
 export const WithBackground: Story = {
+  decorators: [
+    (Story) => (
+      <>
+        <AppBackground />
+        <Story />
+      </>
+    ),
+  ],
   args: {
     name: 'Grid card with background',
   },

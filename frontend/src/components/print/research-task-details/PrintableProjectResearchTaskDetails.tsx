@@ -1,9 +1,9 @@
-import dayjs from 'dayjs';
+import { formatDate } from '@/lib/dateUtils';
 
-import { ProjectResearchTaskDto } from '@/api/dto/applications/ResearchTaskDto';
+import { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
-  data: ProjectResearchTaskDto;
+  data: ProjectResearchTaskValues;
 };
 export function PrintableProjectResearchTaskDetails({ data }: Props) {
   return (
@@ -14,19 +14,19 @@ export function PrintableProjectResearchTaskDetails({ data }: Props) {
       </div>
       <div className="flex items-center justify-between">
         <span>Data rozpoczęcia: </span>
-        <span>{dayjs(data.startDate).format('DD.MM.YYYY')}</span>
+        <span>{formatDate(data.startDate, 'date')}</span>
       </div>
       <div className="flex items-center justify-between">
         <span>Data zakończenia: </span>
-        <span>{dayjs(data.endDate).format('DD.MM.YYYY')}</span>
+        <span>{formatDate(data.endDate, 'date')}</span>
       </div>
       <div className="flex items-center justify-between">
         <span>Kwota finansowania: </span>
-        <span>{parseFloat(data.financingAmount).toFixed(2)} zł</span>
+        <span>{data.financingAmount?.toFixed(2) ?? '-'} zł</span>
       </div>
       <div className="flex items-center justify-between">
         <span>Środki zabezpieczone na realizację rejsu: </span>
-        <span>{parseFloat(data.securedAmount).toFixed(2)} zł</span>
+        <span>{data.securedAmount?.toFixed(2) ?? '-'} zł</span>
       </div>
     </div>
   );

@@ -1,9 +1,5 @@
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-dayjs.extend(utc);
-
-import { CruiseApplicationDto } from '@/api/dto/applications/CruiseApplicationDto';
-import { CruisePeriodType } from '@/api/dto/applications/FormADto';
+import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { parseBackendDateTime } from '@/lib/dateUtils';
 
 export const MAX_PERIOD_EDGE_VALUE = 24;
 
@@ -62,11 +58,20 @@ export function convertPeriodNumberToDate(periodNumber: string, year: number): D
 }
 
 function parseBackendDateTimeType(value: string): Date {
-  const normalized = value.endsWith('Z') ? value : `${value}Z`;
-  return dayjs.utc(normalized).toDate();
+  return parseBackendDateTime(value);
 }
 
-export function getDisplayPeriod(row: CruiseApplicationDto) {
+type DisplayPeriodSource = {
+  year: number;
+  precisePeriodStart: string | null;
+  precisePeriodEnd: string | null;
+  optimalPeriodBeg: string | null;
+  optimalPeriodEnd: string | null;
+  acceptablePeriodBeg: string | null;
+  acceptablePeriodEnd: string | null;
+};
+
+export function getDisplayPeriod(row: DisplayPeriodSource) {
   let start, end;
   if (row.precisePeriodStart && row.precisePeriodEnd) {
     start = parseBackendDateTimeType(row.precisePeriodStart); // we receive date in UTC from backend but without Z on end

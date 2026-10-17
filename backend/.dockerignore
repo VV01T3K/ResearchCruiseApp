@@ -1,5 +1,7 @@
 ﻿**/.dockerignore
 **/.env
+**/.env.*
+**/fake-emails
 **/.git
 **/.gitignore
 **/.project
@@ -23,3 +25,6 @@
 **/values.dev.yaml
 LICENSE
 README.md
+
+artifacts
+**/TestResults

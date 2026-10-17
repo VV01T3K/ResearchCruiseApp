@@ -1,3 +1,5 @@
+import { getErrorMessage } from '@/api/errors';
+import { toast } from '@/components/shared/layout/toast';
 import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -8,8 +10,9 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { AppLoader } from '@/components/shared/layout/AppLoader';
-import { useConfirmEmailMutation } from '@/api/hooks/user/UserApiHooks';
-import { Result } from '@/models/user/Results';
+import { useMutation } from '@tanstack/react-query';
+import { confirmEmail } from '@/api/generated/endpoints/auth.gen';
+import { Result } from '@/integrations/auth/types';
 
 export const Route = createFileRoute('/(auth)/confirm-email')({
   component: ConfirmEmailPage,
@@ -23,7 +26,14 @@ export const Route = createFileRoute('/(auth)/confirm-email')({
 function ConfirmEmailPage() {
   const { userId, code } = Route.useSearch();
   const [result, setResult] = React.useState<Result | undefined>(undefined);
-  const { mutate } = useConfirmEmailMutation({ setResult });
+  const { mutate } = useMutation({
+    mutationFn: ({ userId, code }: { userId: string; code: string }) => confirmEmail({ userId, code }),
+    onSuccess: () => setResult('success'),
+    onError: (error) => {
+      setResult('error');
+      toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
+    },
+  });
 
   React.useEffect(() => {
     if (userId && code) {

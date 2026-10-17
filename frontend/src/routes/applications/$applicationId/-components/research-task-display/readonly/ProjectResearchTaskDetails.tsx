@@ -1,0 +1,56 @@
+import { AppInput } from '@/components/shared/inputs/AppInput';
+import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
+import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
+import type { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+
+type Props = {
+  data: ProjectResearchTaskValues;
+};
+export function ProjectResearchTaskDetails({ data }: Props) {
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <AppInput
+        name="researchTasks[].title"
+        value={data.title}
+        label="Tytuł"
+        placeholder="Wprowadź tytuł"
+        containerClassName="lg:col-span-2"
+        disabled={true}
+      />
+
+      <AppMonthPickerInput
+        name="researchTasks[].startDate"
+        value={data.startDate}
+        label="Data rozpoczęcia"
+        disabled={true}
+      />
+
+      <AppMonthPickerInput
+        name="researchTasks[].endDate"
+        value={data.endDate}
+        label="Data zakończenia"
+        disabled={true}
+      />
+
+      <AppNumberInput
+        nullable
+        name="researchTasks[].financingAmount"
+        value={data.financingAmount}
+        type="float"
+        minimum={0}
+        label="Kwota finansowania [zł]"
+        disabled={true}
+      />
+
+      <AppNumberInput
+        nullable
+        name="researchTasks[].securedAmount"
+        value={data.securedAmount}
+        type="float"
+        minimum={0}
+        label="Środki zabezpieczone na realizację rejsu [zł]"
+        disabled={true}
+      />
+    </div>
+  );
+}

@@ -1,5 +1,5 @@
 import { Popover } from '@base-ui/react/popover';
-import { Header } from '@tanstack/react-table';
+import { Header } from '@/integrations/tanstack/table/features';
 import React from 'react';
 
 import { AppTableFilterIcon } from '@/components/shared/table/common/AppTableFilterIcon';
@@ -8,17 +8,17 @@ import { getCapabilities } from '@/components/shared/table/common/utils';
 import { AppDesktopTableHeaderDropdown } from '@/components/shared/table/desktop/AppDesktopTableHeaderDropdown';
 import { cn } from '@/lib/utils';
 
-type Props<TData, TValue> = {
+type Props<TData extends object, TValue> = {
   header: Header<TData, TValue>;
   children: React.ReactNode;
 };
-export function AppDesktopTableHeader<TData, TValue>({ header, children }: Props<TData, TValue>) {
+export function AppDesktopTableHeader<TData extends object, TValue>({ header, children }: Props<TData, TValue>) {
   const [expanded, setExpanded] = React.useState(false);
 
   const { supportsDropdown, supportsFilter, supportsSort } = getCapabilities(header);
 
   return (
-    <th colSpan={header.colSpan} style={{ width: `${header.getSize()}px` }} className="px-3 py-3">
+    <th colSpan={header.colSpan} style={{ width: `${header.getSize()}px` }} className="px-2 py-3">
       <Popover.Root open={expanded} onOpenChange={setExpanded} modal={false}>
         <div className="relative inline-block">
           {supportsDropdown && (
@@ -28,7 +28,7 @@ export function AppDesktopTableHeader<TData, TValue>({ header, children }: Props
                   className={cn(
                     'text-default outline-none hover:cursor-pointer disabled:cursor-default',
                     supportsDropdown ? 'cursor-pointer' : '',
-                    'flex items-center justify-center gap-2 py-1'
+                    'flex items-center justify-center gap-1 py-1'
                   )}
                 />
               }

@@ -1,0 +1,211 @@
+import { submissionSchema } from '@/integrations/tanstack/form/schema';
+import { z } from 'zod';
+
+import { FormBFields } from '@/api/generated/schemas';
+import { groupBy } from '@/lib/utils';
+import {
+  CrewMemberValuesInputSchema,
+  CrewMemberValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/CrewMemberValues';
+import {
+  CruiseDayValuesInputSchema,
+  CruiseDayValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
+import {
+  GuestTeamValuesInputSchema,
+  GuestTeamValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+import {
+  LongResearchEquipmentValuesInputSchema,
+  LongResearchEquipmentValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
+import {
+  PermissionValuesInputSchema,
+  PermissionValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
+import {
+  PortCallValuesInputSchema,
+  PortCallValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
+import {
+  ResearchEquipmentValuesInputSchema,
+  ResearchEquipmentValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
+import {
+  ShortResearchEquipmentValuesInputSchema,
+  ShortResearchEquipmentValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
+import {
+  UgTeamValuesInputSchema,
+  UgTeamValuesSchema,
+} from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
+
+const FormBInputSchema = z.object({
+  draft: z.boolean().optional(),
+  isCruiseManagerPresent: z.boolean(),
+  permissions: PermissionValuesInputSchema.array(),
+  ugTeams: UgTeamValuesInputSchema.array(),
+  guestTeams: GuestTeamValuesInputSchema.array(),
+  crewMembers: CrewMemberValuesInputSchema.array(),
+  shortResearchEquipments: ShortResearchEquipmentValuesInputSchema.array(),
+  longResearchEquipments: LongResearchEquipmentValuesInputSchema.array(),
+  ports: PortCallValuesInputSchema.array(),
+  cruiseDaysDetails: CruiseDayValuesInputSchema.array(),
+  researchEquipments: ResearchEquipmentValuesInputSchema.array(),
+  shipEquipmentsIds: z.array(z.string()),
+});
+
+export type FormBValues = z.input<typeof FormBInputSchema>;
+
+export const formBDefaultValues: FormBValues = {
+  draft: false,
+  isCruiseManagerPresent: true,
+  permissions: [],
+  ugTeams: [],
+  guestTeams: [],
+  crewMembers: [],
+  shortResearchEquipments: [],
+  longResearchEquipments: [],
+  ports: [],
+  cruiseDaysDetails: [],
+  researchEquipments: [],
+  shipEquipmentsIds: [],
+} satisfies FormBValues;
+
+export function getFormBValidationSchema() {
+  return FormBInputSchema.extend({
+    permissions: PermissionValuesSchema.array().superRefine((permissions, ctx) => {
+      permissions.forEach((permission, index) => {
+        if (!permission.scan || !permission.scan.name.endsWith('.pdf')) {
+          ctx.addIssue({ code: 'custom', path: [index, 'scan'], message: 'Plik musi być w formacie PDF' });
+        }
+      });
+    }),
+    ugTeams: UgTeamValuesSchema.array()
+      .min(1, 'Co najmniej jeden zespół UG jest wymagany')
+      .refine(
+        (val) => val.every((x) => x.noOfEmployees + x.noOfStudents > 0),
+        'Zespół UG musi składać się z co najmniej jednej osoby'
+      )
+      .refine(
+        (val) => groupBy(val, (x) => x.ugUnitId).filter((x) => x[1].length > 1).length === 0,
+        'Nie można dodać dwóch zespołów UG z tego samego wydziału'
+      ),
+    guestTeams: GuestTeamValuesSchema.array(),
+    crewMembers: CrewMemberValuesSchema.array(),
+    shortResearchEquipments: ShortResearchEquipmentValuesSchema.array(),
+    longResearchEquipments: LongResearchEquipmentValuesSchema.array(),
+    ports: PortCallValuesSchema.array(),
+    cruiseDaysDetails: CruiseDayValuesSchema.array(),
+    researchEquipments: ResearchEquipmentValuesSchema.array(),
+  });
+}
+
+export function getFormBFieldsSchema() {
+  return buildFormBFieldsSchema(getFormBValidationSchema());
+}
+
+export function getFormBDraftFieldsSchema() {
+  return buildFormBFieldsSchema(FormBInputSchema);
+}
+
+function buildFormBFieldsSchema(inputSchema: z.ZodType<FormBValues, FormBValues>) {
+  return inputSchema
+    .transform(
+      (form): z.input<typeof FormBFields> =>
+        ({
+          ...form,
+          isCruiseManagerPresent: String(form.isCruiseManagerPresent),
+          permissions: form.permissions.map((permission) => ({
+            description: permission.description || null,
+            executive: permission.executive || null,
+            scan: permission.scan ?? null,
+          })),
+          ugTeams: form.ugTeams.map((team) => ({
+            ...team,
+            noOfEmployees: String(team.noOfEmployees),
+            noOfStudents: String(team.noOfStudents),
+          })),
+          guestTeams: form.guestTeams.map((team) => ({ ...team, noOfPersons: String(team.noOfPersons) })),
+          cruiseDaysDetails: form.cruiseDaysDetails.map((day) => ({
+            ...day,
+            number: String(day.number),
+            hours: String(day.hours),
+          })),
+          researchEquipments: form.researchEquipments.map((equipment) => ({
+            ...equipment,
+            permission: String(equipment.permission),
+          })),
+        }) satisfies Required<z.input<typeof FormBFields>>
+    )
+    .pipe(FormBFields);
+}
+
+export function mapFormBToValues(form: FormBFields): FormBValues {
+  return {
+    isCruiseManagerPresent: form.isCruiseManagerPresent === 'true',
+    permissions: (form.permissions ?? []).map((permission) => ({
+      description: permission.description ?? '',
+      executive: permission.executive ?? '',
+      scan: permission.scan ? { name: permission.scan.name ?? '', content: permission.scan.content ?? '' } : undefined,
+    })),
+    ugTeams: (form.ugTeams ?? []).map((team) => ({
+      ugUnitId: team.ugUnitId ?? '',
+      noOfEmployees: toNumber(team.noOfEmployees),
+      noOfStudents: toNumber(team.noOfStudents),
+    })),
+    guestTeams: (form.guestTeams ?? []).map((team) => ({
+      name: team.name ?? '',
+      noOfPersons: toNumber(team.noOfPersons),
+    })),
+    crewMembers: (form.crewMembers ?? []).map((member) => ({
+      title: member.title ?? '',
+      firstName: member.firstName ?? '',
+      lastName: member.lastName ?? '',
+      birthPlace: member.birthPlace ?? '',
+      birthDate: member.birthDate ?? '',
+      documentNumber: member.documentNumber ?? '',
+      documentExpiryDate: member.documentExpiryDate ?? '',
+      institution: member.institution ?? '',
+    })),
+    shortResearchEquipments: (form.shortResearchEquipments ?? []).map((equipment) => ({
+      name: equipment.name ?? '',
+      startDate: equipment.startDate ?? '',
+      endDate: equipment.endDate ?? '',
+    })),
+    longResearchEquipments: (form.longResearchEquipments ?? []).map((equipment) => ({
+      name: equipment.name ?? '',
+      action: equipment.action === 'Collect' ? 'Collect' : 'Put',
+      duration: equipment.duration ?? '',
+    })),
+    ports: (form.ports ?? []).map((port) => ({
+      name: port.name ?? '',
+      startTime: port.startTime ?? '',
+      endTime: port.endTime ?? '',
+    })),
+    cruiseDaysDetails: (form.cruiseDaysDetails ?? []).map((day) => ({
+      number: toNumber(day.number),
+      hours: toNumber(day.hours),
+      taskName: day.taskName ?? '',
+      region: day.region ?? '',
+      position: day.position ?? '',
+      comment: day.comment ?? '',
+    })),
+    researchEquipments: (form.researchEquipments ?? []).map((equipment) => ({
+      name: equipment.name ?? '',
+      insuranceStartDate: equipment.insuranceStartDate ?? null,
+      insuranceEndDate: equipment.insuranceEndDate ?? null,
+      permission: equipment.permission === 'true',
+    })),
+    shipEquipmentsIds: form.shipEquipmentsIds ?? [],
+  };
+}
+
+function toNumber(value: string | null | undefined): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+export function getFormBSubmissionSchema() {
+  return submissionSchema(getFormBFieldsSchema(), getFormBDraftFieldsSchema());
+}

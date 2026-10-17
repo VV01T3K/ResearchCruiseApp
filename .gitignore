@@ -201,6 +201,7 @@ node_modules/
 orleans.codegen.cs
 
 # Local environment secrets
+.env
 .env.*
 !.env.sentry.example
 
@@ -293,3 +294,10 @@ gen
 # Cursor-local config (skills symlink, MCP, hooks — not shared in git)
 .cursor/
 
+# Fake SMTP output (local development)
+fake-emails/
+
+backend/artifacts/
+**/TestResults/
+*.DotSettings.user
+.vs/

@@ -4,28 +4,39 @@ import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { AppModal } from '@/components/shared/AppModal';
-import { FileDto } from '@/lib/types';
+import type { FileContent } from '@/api/generated/schemas';
 import { cn, createModalPortal } from '@/lib/utils';
 
-type FileListProps = {
-  files: FileDto[];
+const fileKeys = new WeakMap<FileContent, number>();
+let nextFileKey = 0;
 
-  onRemove?: (file: FileDto) => void;
+function getFileKey(file: FileContent) {
+  let key = fileKeys.get(file);
+  if (key === undefined) {
+    key = nextFileKey++;
+    fileKeys.set(file, key);
+  }
+  return key;
+}
+
+type FileListProps<File extends FileContent> = {
+  files: File[];
+
+  onRemove?: (file: File) => void;
   disabled?: boolean;
   className?: string;
 };
 
-export function AppFileList({ files, onRemove, disabled, className }: FileListProps) {
-  const [fileInPreview, setFileInPreview] = React.useState<FileDto | undefined>(undefined);
+export function AppFileList<File extends FileContent>({ files, onRemove, disabled, className }: FileListProps<File>) {
+  const [fileInPreview, setFileInPreview] = React.useState<File | undefined>(undefined);
 
   return (
     <>
       <ul className={cn('w-full', className)} onClick={(e) => e.stopPropagation()}>
         <AnimatePresence>
-          {files.map((file, i) => (
+          {files.map((file) => (
             <motion.li
-              // oxlint-disable-next-line @eslint-react/no-array-index-key
-              key={file.name + i}
+              key={getFileKey(file)}
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -49,7 +60,7 @@ export function AppFileList({ files, onRemove, disabled, className }: FileListPr
           <div
             className={cn(
               'relative flex flex-col items-center justify-center p-4',
-              fileInPreview?.content.startsWith('data:application/pdf') ? 'h-220' : ''
+              fileInPreview?.content?.startsWith('data:application/pdf') ? 'h-220' : ''
             )}
           >
             <object data={fileInPreview?.content} className="flex h-full w-full items-center justify-center">
@@ -62,17 +73,20 @@ export function AppFileList({ files, onRemove, disabled, className }: FileListPr
   );
 }
 
-type FileListElementProps = {
-  file: FileDto;
-  setFileInPreview: (file: FileDto) => void;
+type FileListElementProps<File extends FileContent> = {
+  file: File;
+  setFileInPreview: (file: File) => void;
 
-  onRemove?: (file: FileDto) => void;
+  onRemove?: (file: File) => void;
   disabled?: boolean;
 };
 
-function AppFileListElement({ file, setFileInPreview, onRemove, disabled }: FileListElementProps) {
-  const linkRef = React.useRef<HTMLAnchorElement>(null);
-
+function AppFileListElement<File extends FileContent>({
+  file,
+  setFileInPreview,
+  onRemove,
+  disabled,
+}: FileListElementProps<File>) {
   return (
     <div
       className={cn(
@@ -80,16 +94,24 @@ function AppFileListElement({ file, setFileInPreview, onRemove, disabled }: File
         disabled ? 'bg-gray-100' : 'bg-white'
       )}
     >
-      <div className="truncate duration-300 ease-in-out hover:text-primary" onClick={() => setFileInPreview(file)}>
+      <button
+        type="button"
+        className="truncate text-left duration-300 ease-in-out hover:text-primary"
+        onClick={() => setFileInPreview(file)}
+      >
         {file.name}
-      </div>
+      </button>
 
       <div className="mr-2 flex flex-row items-center gap-2">
-        {onRemove && !disabled && <XIcon className="h-8 w-8" onClick={() => onRemove!(file)} />}
-        <DownloadIcon className="h-6 w-6" onClick={() => linkRef.current?.click()} />
+        {onRemove && !disabled && (
+          <button type="button" aria-label={`Usuń plik ${file.name ?? ''}`} onClick={() => onRemove(file)}>
+            <XIcon className="h-8 w-8" />
+          </button>
+        )}
+        <a download={file.name} href={file.content} aria-label={`Pobierz plik ${file.name ?? ''}`}>
+          <DownloadIcon className="h-6 w-6" />
+        </a>
       </div>
-
-      <a ref={linkRef} download={file.name} href={file.content} className="hidden" />
     </div>
   );
 }

@@ -1,14 +1,18 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.Infrastructure.Persistence.Configurations;
-using ResearchCruiseApp.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence;
 
 internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : IdentityDbContext<User>(options)
+    : IdentityDbContext<User>(options),
+        IDataProtectionKeyContext
 {
+    public DbSet<EmailOutboxMessage> EmailOutboxMessages { get; init; } = null!;
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
     public DbSet<CruiseApplication> CruiseApplications { get; init; } = null!;
     public DbSet<Cruise> Cruises { get; init; } = null!;
 
@@ -62,6 +66,7 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
         base.OnModelCreating(builder);
 
         EntityConfiguration.Apply(builder);
-        builder.ApplyConfiguration(new CruiseApplicationConfiguration());
+        StringLengthConfiguration.Apply(builder);
+        builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 }

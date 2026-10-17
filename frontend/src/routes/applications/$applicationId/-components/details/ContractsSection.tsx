@@ -1,0 +1,94 @@
+import { ColumnDef } from '@/integrations/tanstack/table/features';
+
+import { AppAccordion } from '@/components/shared/AppAccordion';
+import { AppFileList } from '@/components/shared/inputs/parts/AppFileList';
+import { AppInput } from '@/components/shared/inputs/AppInput';
+import { AppTable } from '@/components/shared/table/AppTable';
+import {
+  type ApplicationEvaluation,
+  useApplicationEvaluation,
+} from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
+import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+
+export function ContractsSection() {
+  const evaluation = useApplicationEvaluation();
+
+  const columns: ColumnDef<ApplicationEvaluation['formAContracts'][number]>[] = [
+    {
+      header: 'Lp.',
+      cell: ({ row }) => `${row.index + 1}. `,
+      size: 5,
+    },
+    {
+      header: 'Kategoria',
+      cell: ({ row }) => getContractCategoryName(row.original.contract.category),
+      size: 10,
+    },
+    {
+      header: 'Instytucja',
+      cell: ({ row }) => (
+        <>
+          <AppInput
+            name={`contracts[${row.index}].institutionName`}
+            value={row.original.contract.institutionName}
+            label="Nazwa instytucji"
+            disabled
+          />
+          <AppInput
+            name={`contracts[${row.index}].institutionUnit`}
+            value={row.original.contract.institutionUnit}
+            label="Jednostka"
+            disabled
+          />
+          <AppInput
+            name={`contracts[${row.index}].institutionLocalization`}
+            value={row.original.contract.institutionLocalization}
+            label="Lokalizacja instytucji"
+            disabled
+          />
+        </>
+      ),
+      size: 30,
+    },
+    {
+      header: 'Opis',
+      cell: ({ row }) => (
+        <AppInput
+          name={`contracts[${row.index}].description`}
+          value={row.original.contract.description}
+          label="Opis"
+          disabled
+        />
+      ),
+      size: 30,
+    },
+    {
+      header: 'Skany',
+      enableColumnFilter: false,
+      enableSorting: false,
+      cell: ({ row }) => <AppFileList files={row.original.contract.scans} disabled />,
+      size: 20,
+    },
+    {
+      header: 'Punkty',
+      cell: ({ row }) => row.original.points,
+      size: 5,
+    },
+  ];
+
+  return (
+    <AppAccordion
+      title="4. Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze"
+      expandedByDefault
+    >
+      <div className="pb-2">
+        <AppTable
+          data={evaluation.formAContracts}
+          columns={columns}
+          emptyTableMessage="Nie dodano żadnej umowy."
+          disabled
+        />
+      </div>
+    </AppAccordion>
+  );
+}

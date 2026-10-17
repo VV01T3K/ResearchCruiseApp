@@ -1,16 +1,13 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using ResearchCruiseApp.Application.ExternalServices;
-using ResearchCruiseApp.Application.ExternalServices.Persistence;
-using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
-using ResearchCruiseApp.Infrastructure.Persistence.Repositories;
-using ResearchCruiseApp.Infrastructure.Services;
-using ResearchCruiseApp.Infrastructure.Services.Identity;
 
 namespace ResearchCruiseApp.Infrastructure;
 
@@ -18,25 +15,49 @@ public static class DependencyInjection
 {
     public static void AddInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration
+        IConfiguration configuration,
+        bool enableEmailDelivery = true
     )
     {
         services.AddPersistence(configuration);
 
         services.AddCustomIdentity(configuration);
 
+        var smtpOptions = services
+            .AddOptions<SmtpSettings>()
+            .Bind(configuration.GetSection(SmtpSettings.SectionName));
+        services.AddSingleton<IValidateOptions<SmtpSettings>, SmtpSettingsValidator>();
+
+        if (enableEmailDelivery)
+        {
+            smtpOptions.ValidateOnStart();
+            services
+                .AddDataProtection()
+                .SetApplicationName("ResearchCruiseApp")
+                .PersistKeysToDbContext<ApplicationDbContext>();
+            services.AddHostedService<EmailOutboxWorker>();
+        }
+        services.AddSingleton(TimeProvider.System);
+        services.AddScoped<EmailOutbox>();
+        services.AddScoped<EmailOutboxDispatcher>();
+        services.AddScoped<IEmailTransport>(provider =>
+            provider.GetRequiredService<IOptions<SmtpSettings>>().Value.UseFakeSmtp
+                ? new FakeEmailTransport(provider.GetRequiredService<IOptions<SmtpSettings>>())
+                : new SmtpEmailTransport(provider.GetRequiredService<IOptions<SmtpSettings>>())
+        );
+
         services.AddHttpContextAccessor();
 
         services
-            .AddScoped<IFileInspector, FileInspector>()
-            .AddScoped<ICompressor, Compressor>()
-            .AddScoped<IRandomGenerator, RandomGenerator>()
-            .AddScoped<IEmailSender, EmailSender>()
-            .AddScoped<IYearBasedKeyGenerator, YearBasedKeyGenerator>()
-            .AddScoped<ITemplateFileReader, TemplateFileReader>()
-            .AddScoped<ICurrentUserService, CurrentUserService>()
-            .AddScoped<IGlobalizationService, GlobalizationService>()
-            .AddScoped<ICsvExporter, CsvExporter>();
+            .AddScoped<FileInspector>()
+            .AddScoped<Compressor>()
+            .AddScoped<RandomGenerator>()
+            .AddScoped<EmailSender>()
+            .AddScoped<YearBasedKeyGenerator>()
+            .AddScoped<TemplateFileReader>()
+            .AddScoped<CurrentUserService>()
+            .AddScoped<GlobalizationService>()
+            .AddScoped<CsvExporter>();
     }
 
     private static void AddCustomIdentity(
@@ -49,6 +70,7 @@ public static class DependencyInjection
                 options.SignIn.RequireConfirmedAccount = true
             )
             .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddErrorDescriber<PolishIdentityErrorDescriber>()
             .AddDefaultTokenProviders();
 
         services
@@ -84,7 +106,7 @@ public static class DependencyInjection
             options.Password.RequireNonAlphanumeric = false;
         });
 
-        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<IdentityService>();
     }
 
     private static void AddPersistence(
@@ -92,67 +114,25 @@ public static class DependencyInjection
         IConfiguration configuration
     )
     {
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("Database"))
+        services.AddDbContext<ApplicationDbContext>(
+            (provider, options) =>
+                options
+                    .UseSqlServer(configuration.GetConnectionString("Database"))
+                    // Keep all seeding under EF's migration lock across application replicas.
+                    .UseSeeding(
+                        (_, _) =>
+                            provider
+                                .GetRequiredService<ApplicationDbContextInitializer>()
+                                .Seed()
+                                .GetAwaiter()
+                                .GetResult()
+                    )
+                    .UseAsyncSeeding(
+                        (_, _, _) =>
+                            provider.GetRequiredService<ApplicationDbContextInitializer>().Seed()
+                    )
         );
 
         services.AddScoped<ApplicationDbContextInitializer>();
-
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services
-            .AddScoped<IFormsARepository, FormsARepository>()
-            .AddScoped<IPermissionsRepository, PermissionsRepository>()
-            .AddScoped<IResearchAreasRepository, ResearchAreasRepository>()
-            .AddScoped<IResearchAreaDescriptionsRepository, ResearchAreaDescriptionsRepository>()
-            .AddScoped<IContractsRepository, ContractsRepository>()
-            .AddScoped<IResearchTasksRepository, ResearchTasksRepository>()
-            .AddScoped<IPublicationsRepository, PublicationsRepository>()
-            .AddScoped<IUgUnitsRepository, UgUnitsRepository>()
-            .AddScoped<IGuestUnitsRepository, GuestUnitsRepository>()
-            .AddScoped<ISpubTasksRepository, SpubTasksRepository>()
-            .AddScoped<IFormAResearchTasksRepository, FormAResearchTasksRepository>()
-            .AddScoped<IFormAContractsRepository, FormAContractsRepository>()
-            .AddScoped<IFormAUgUnitsRepository, FormAUgUnitsRepository>()
-            .AddScoped<IFormAGuestUnitsRepository, FormAGuestUnitsRepository>()
-            .AddScoped<IFormAPublicationsRepository, FormAPublicationsRepository>()
-            .AddScoped<IFormASpubTasksRepository, FormASpubTasksRepository>()
-            .AddScoped<ICruiseApplicationsRepository, CruiseApplicationsRepository>()
-            .AddScoped<ICruisesRepository, CruisesRepository>()
-            .AddScoped<IFormsBRepository, FormsBRepository>()
-            .AddScoped<IFormBUgUnitsRepository, FormBUgUnitsRepository>()
-            .AddScoped<IFormBGuestUnitsRepository, FormBGuestUnitsRepository>()
-            .AddScoped<
-                IFormBShortResearchEquipmentsRepository,
-                FormBShortResearchEquipmentsRepository
-            >()
-            .AddScoped<
-                IFormBLongResearchEquipmentsRepository,
-                FormBLongResearchEquipmentsRepository
-            >()
-            .AddScoped<IFormBPortsRepository, FormBPortsRepository>()
-            .AddScoped<IFormBResearchEquipmentsRepository, FormBResearchEquipmentsRepository>()
-            .AddScoped<ICrewMembersRepository, CrewMembersRepository>()
-            .AddScoped<IResearchEquipmentsRepository, ResearchEquipmentsRepository>()
-            .AddScoped<IPortsRepository, PortsRepository>()
-            .AddScoped<ICruiseDaysDetailsRepository, CruiseDaysDetailsRepository>()
-            .AddScoped<IShipEquipmentsRepository, ShipEquipmentsRepository>()
-            .AddScoped<IFormsCRepository, FormsCRepository>()
-            .AddScoped<IFormCUgUnitsRepository, FormCUgUnitsRepository>()
-            .AddScoped<IFormCGuestUnitsRepository, FormCGuestUnitsRepository>()
-            .AddScoped<
-                IFormCShortResearchEquipmentsRepository,
-                FormCShortResearchEquipmentsRepository
-            >()
-            .AddScoped<
-                IFormCLongResearchEquipmentsRepository,
-                FormCLongResearchEquipmentsRepository
-            >()
-            .AddScoped<IFormCPortsRepository, FormCPortsRepository>()
-            .AddScoped<IFormCResearchEquipmentsRepository, FormCResearchEquipmentsRepository>()
-            .AddScoped<ICollectedSamplesRepository, CollectedSamplesRepository>()
-            .AddScoped<IPhotosRepository, PhotosRepository>()
-            .AddScoped<IResearchTaskEffectsRepository, ResearchTaskEffectsRepository>()
-            .AddScoped<IUserEffectsRepository, UserEffectsRepository>()
-            .AddScoped<IUserPublicationsRepository, UserPublicationsRepository>();
     }
 }

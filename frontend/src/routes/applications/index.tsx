@@ -1,0 +1,308 @@
+import { useGetApplicationManagersSuspense } from '@/api/generated/endpoints/applications.gen';
+import { createFileRoute } from '@tanstack/react-router';
+import { allowOnly } from '@/lib/guards';
+import { ColumnFiltersState, SortingState, functionalUpdate } from '@tanstack/react-table';
+import { ColumnDef } from '@/integrations/tanstack/table/features';
+import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
+import { useMemo, useState } from 'react';
+import { AppAvatar } from '@/components/shared/AppAvatar';
+import { AppBadge } from '@/components/shared/AppBadge';
+import { AppButton } from '@/components/shared/AppButton';
+import { AppGuard } from '@/components/shared/AppGuard';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { AppLink } from '@/components/shared/AppLink';
+import { AppLoader } from '@/components/shared/layout/AppLoader';
+import { AppTable } from '@/components/shared/table/AppTable';
+import { getDisplayPeriod } from '@/lib/applications/periodUtils';
+import { formatDate } from '@/lib/dateUtils';
+import {
+  CruiseApplicationsFilter,
+  CruiseApplicationsSort,
+  useCruiseApplicationsInfiniteQuery,
+} from '@/routes/applications/-hooks/useApplications';
+import { ApplicationResponse, CruiseApplicationStatus } from '@/api/generated/schemas';
+import { getApplicationStatusLabel } from '@/lib/applications/status';
+
+export const Route = createFileRoute('/applications/')({
+  component: ApplicationsPage,
+  beforeLoad: allowOnly.authenticated(),
+});
+
+const statusFilterOptions = CruiseApplicationStatus.options;
+
+const EARLIEST_APPLICATION_YEAR = 2024;
+const YEAR_FILTER_OPTIONS_AHEAD = 3;
+
+function columnFiltersToApiFilter(columnFilters: ColumnFiltersState): CruiseApplicationsFilter {
+  const getValues = (id: string) => columnFilters.find((filter) => filter.id === id)?.value as string[] | undefined;
+
+  return {
+    number: getValues('number')?.map(Number),
+    date: getValues('date'),
+    status: getValues('status'),
+    year: getValues('year')?.map(Number),
+    cruiseManager: getValues('cruiseManager'),
+  };
+}
+
+const DEFAULT_SORTING_STATE: SortingState = [{ id: 'number', desc: true }];
+
+function sortingStateToApiSort(sorting: SortingState): CruiseApplicationsSort {
+  const [sort] = sorting;
+  return sort ? { sortBy: sort.id, descending: sort.desc } : { sortBy: 'number', descending: true };
+}
+
+function ApplicationsPage() {
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const filter = useMemo(() => columnFiltersToApiFilter(columnFilters), [columnFilters]);
+  const [sorting, setSorting] = useState<SortingState>(DEFAULT_SORTING_STATE);
+  const sort = useMemo(() => sortingStateToApiSort(sorting), [sorting]);
+  const applicationsQuery = useCruiseApplicationsInfiniteQuery(filter, sort);
+  const applications = useMemo(
+    () => applicationsQuery.data?.pages.flatMap((page) => page.items) ?? [],
+    [applicationsQuery.data]
+  );
+  const currentYear = new Date().getFullYear();
+  const yearFilterOptions = Array.from(
+    { length: currentYear + YEAR_FILTER_OPTIONS_AHEAD - EARLIEST_APPLICATION_YEAR + 1 },
+    (_, index) => (EARLIEST_APPLICATION_YEAR + index).toString()
+  );
+  const cruiseManagersQuery = useGetApplicationManagersSuspense();
+  const cruiseManagerFilterOptions = cruiseManagersQuery.data.map((manager) => manager.id);
+  const managerLabels = new Map(
+    cruiseManagersQuery.data.map((manager) => [
+      manager.id,
+      `${manager.firstName} ${manager.lastName} (${manager.email})`,
+    ])
+  );
+
+  const columns: ColumnDef<ApplicationResponse>[] = [
+    {
+      id: 'number',
+      header: 'Nr',
+      accessorFn: (row) => row.number,
+      sortDescFirst: true,
+      meta: { filterInputType: 'number' },
+      size: 2,
+    },
+    {
+      id: 'date',
+      header: 'Data',
+      accessorFn: (row) => row.date,
+      cell: ({ row }) => <span className="whitespace-nowrap">{row.original.date}</span>,
+      sortDescFirst: true,
+      meta: { filterInputType: 'date' },
+      size: 5,
+    },
+    {
+      id: 'year',
+      header: 'Rok rejsu',
+      accessorFn: (row) => row.year.toString(),
+      sortDescFirst: true,
+      meta: { filterOptions: yearFilterOptions },
+      size: 5,
+    },
+    {
+      header: 'Liczba dni',
+      accessorFn: (row) => (row.cruiseDays !== null ? `${parseFloat(row.cruiseDays.toFixed(2))}` : '-'),
+      enableSorting: false,
+      enableColumnFilter: false,
+      size: 5,
+    },
+    {
+      header: 'Okres optymalny / dopuszczalny',
+      cell: ({ row }) => {
+        const { start, end } = getDisplayPeriod(row.original);
+        if (start && end) {
+          return (
+            <div className="text-sm whitespace-nowrap">
+              <div>od: {formatDate(start, 'date')}</div>
+              <div>do: {formatDate(end, 'date')}</div>
+            </div>
+          );
+        }
+        return '-';
+      },
+      enableColumnFilter: false,
+      enableSorting: false,
+      size: 15,
+    },
+    {
+      header: 'Data rejsu',
+      cell: ({ row }) => {
+        if (row.original.startDate && row.original.endDate) {
+          return (
+            <div className="text-sm whitespace-nowrap">
+              <div>od: {formatDate(row.original.startDate, 'date')}</div>
+              <div>do: {formatDate(row.original.endDate, 'date')}</div>
+            </div>
+          );
+        }
+        return '-';
+      },
+      enableColumnFilter: false,
+      enableSorting: false,
+      size: 20,
+    },
+    {
+      id: 'cruiseManager',
+      header: 'Kierownik',
+      accessorFn: (row) => `${row.mainManager.firstName} ${row.mainManager.lastName}`,
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <AppAvatar
+            fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
+            variant="small"
+          />
+          <span>{`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}</span>
+        </div>
+      ),
+      enableSorting: false,
+      meta: {
+        filterOptions: cruiseManagerFilterOptions,
+        getFilterOptionLabel: (value) => managerLabels.get(value) ?? value,
+      },
+      size: 20,
+    },
+    {
+      header: 'Formularze',
+      cell: ({ row }) => {
+        const isFormBReadOnly =
+          row.original.status !== CruiseApplicationStatus.enum.formBFilled &&
+          row.original.status !== CruiseApplicationStatus.enum.undertaken;
+        return (
+          <div className="flex flex-col gap-1">
+            <AppLink disabled={!row.original.hasFormA} href={`/applications/${row.original.id}/formA`}>
+              Formularz A
+            </AppLink>
+            <AppLink
+              disabled={!row.original.hasFormB}
+              href={`/applications/${row.original.id}/formB?mode=${isFormBReadOnly ? 'view' : 'preview'}`}
+            >
+              Formularz B
+            </AppLink>
+            <AppLink disabled={!row.original.hasFormC} href={`/applications/${row.original.id}/formC`}>
+              Formularz C
+            </AppLink>
+          </div>
+        );
+      },
+      size: 15,
+    },
+    {
+      header: 'Punkty',
+      accessorFn: (row) => `${row.points} pkt.`,
+      cell: ({ row }) => <AppBadge>{row.original.points} pkt.</AppBadge>,
+      enableSorting: false,
+      enableColumnFilter: false,
+      size: 5,
+    },
+    {
+      id: 'status',
+      header: 'Status',
+      accessorFn: (row) => row.status,
+      enableSorting: false,
+      meta: {
+        filterOptions: statusFilterOptions,
+        getFilterOptionLabel: (value) => getApplicationStatusLabel(value as CruiseApplicationStatus),
+      },
+      cell: ({ row }) => (
+        <>
+          <p className="mb-2 text-right italic sm:text-center">
+            {getApplicationStatusLabel(row.original.status)}
+            {row.original.status === CruiseApplicationStatus.enum.draft ? ` (${row.original.note})` : null}
+          </p>
+          {row.original.status === CruiseApplicationStatus.enum.draft && (
+            <AppButton
+              className="ml-auto sm:mx-auto"
+              size="sm"
+              type="link"
+              href={`/applications/${row.original.id}/formA?mode=edit`}
+            >
+              Kontynuuj wypełnianie
+            </AppButton>
+          )}
+          {row.original.status === CruiseApplicationStatus.enum.formBRequired && (
+            <AppGuard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
+              <AppButton
+                className="ml-auto sm:mx-auto"
+                size="sm"
+                type="link"
+                href={`/applications/${row.original.id}/formB?mode=edit`}
+              >
+                Wypełnij
+              </AppButton>
+            </AppGuard>
+          )}
+          {row.original.status === CruiseApplicationStatus.enum.undertaken && (
+            <div className="flex flex-col items-center gap-2">
+              <AppGuard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
+                <AppButton
+                  className="ml-auto sm:mx-auto"
+                  size="sm"
+                  type="link"
+                  href={`/applications/${row.original.id}/formC?mode=edit`}
+                >
+                  Wypełnij formularz C
+                </AppButton>
+              </AppGuard>
+              <div>
+                <AppBadge variant="success">{row.original.effectsDoneRate} efektów</AppBadge>
+              </div>
+            </div>
+          )}
+        </>
+      ),
+      size: 20,
+    },
+    {
+      header: 'Akcje',
+      cell: ({ row }) => (
+        <>
+          <AppButton type="link" size="sm" href={`/applications/${row.original.id}/details`} className="flex gap-2">
+            Szczegóły
+            <ZoomInIcon className="h-4 w-4" />
+          </AppButton>
+        </>
+      ),
+      size: 5,
+    },
+  ];
+
+  if (applicationsQuery.isPending) {
+    return <AppLoader />;
+  }
+
+  return (
+    <>
+      <AppLayout title="Zgłoszenia" variant="wide">
+        <AppTable
+          data={applications}
+          virtualized
+          getRowId={(application) => application.id}
+          columns={columns}
+          buttons={(defaultButtons) => [...defaultButtons]}
+          sortingState={sorting}
+          setSortingState={(updater) =>
+            setSorting((previous) => {
+              const next = functionalUpdate(updater, previous);
+              return next.length ? next : DEFAULT_SORTING_STATE;
+            })
+          }
+          enableMultiSort={false}
+          manualSorting
+          manualFiltering
+          columnFiltersState={columnFilters}
+          setColumnFiltersState={setColumnFilters}
+          infiniteScroll={{
+            hasNextPage: applicationsQuery.hasNextPage,
+            isFetchingNextPage: applicationsQuery.isFetchingNextPage,
+            isFetching: applicationsQuery.isFetching,
+            pageCount: applicationsQuery.data?.pages.length ?? 0,
+            fetchNextPage: applicationsQuery.fetchNextPage,
+          }}
+        />
+      </AppLayout>
+    </>
+  );
+}

@@ -1,17 +1,20 @@
 import { Popover } from '@base-ui/react/popover';
-import { Header } from '@tanstack/react-table';
+import { Header } from '@/integrations/tanstack/table/features';
 
 import { AppTableFilterList } from '@/components/shared/table/common/AppTableFilterList';
-import { AppTableListItem } from '@/components/shared/table/common/AppTableListItem';
 import { AppTableSortingToggle } from '@/components/shared/table/common/AppTableSortingToggle';
 import { cn } from '@/lib/utils';
 
-type Props<TData, TValue> = {
+type Props<TData extends object, TValue> = {
   header: Header<TData, TValue>;
   capabilities: { supportsDropdown: boolean; supportsFilter: boolean; supportsSort: boolean };
   expanded: boolean;
 };
-export function AppDesktopTableHeaderDropdown<TData, TValue>({ header, capabilities, expanded }: Props<TData, TValue>) {
+export function AppDesktopTableHeaderDropdown<TData extends object, TValue>({
+  header,
+  capabilities,
+  expanded,
+}: Props<TData, TValue>) {
   const { supportsDropdown, supportsFilter, supportsSort } = capabilities;
 
   if (!supportsDropdown) {
@@ -30,9 +33,7 @@ export function AppDesktopTableHeaderDropdown<TData, TValue>({ header, capabilit
       >
         <div className="py-1">
           {supportsSort && <p>Sortowanie</p>}
-          <AppTableListItem onClick={() => header.column.toggleSorting()} isRendered={supportsSort} expanded={expanded}>
-            <AppTableSortingToggle header={header} />
-          </AppTableListItem>
+          {supportsSort && <AppTableSortingToggle header={header} expanded={expanded} />}
 
           {supportsFilter && supportsSort && <hr className="my-0.5 h-px border-0 bg-gray-700" />}
 

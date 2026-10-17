@@ -1,16 +1,15 @@
+import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { z } from 'zod';
+import { loginValidationSchema } from '@/validation/auth';
 import { allowOnly } from '@/lib/guards';
-import { useForm } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
-import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
-import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors } from '@/lib/utils';
-import { useUserContext } from '@/providers/useUserContext';
-import { SignInResult } from '@/models/user/Results';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { useSignIn } from '@/integrations/tanstack/query/auth';
 
 export const Route = createFileRoute('/(auth)/login')({
   component: LoginPage,
@@ -18,51 +17,34 @@ export const Route = createFileRoute('/(auth)/login')({
   validateSearch: z.object({ redirect: z.string().optional() }),
 });
 
-const validationSchema = z.object({
-  email: z.email('Nieprawidłowy adres email').or(z.literal('')),
-  password: z.string().nonempty('Hasło nie może być puste').or(z.literal('')),
-});
-
-const errorMessages = {
-  success: '',
-  error: 'Wystąpił błąd podczas logowania. Sprawdź połączenie z internetem.',
-  invalid_credentials: 'Podano błędne hasło lub użytkownik nie istnieje.',
-};
-
 function LoginPage() {
-  const userContext = useUserContext();
+  const signIn = useSignIn();
   const router = useRouter();
   const { redirect } = Route.useSearch();
-  const [signInResult, setSignInResult] = React.useState<SignInResult | undefined>(undefined);
+  const [signInError, setSignInError] = React.useState<string | undefined>(undefined);
 
-  const form = useForm({
+  const form = useAppForm({
     defaultValues: {
       email: '',
       password: '',
     },
+    validationLogic: formValidationLogic,
     validators: {
-      onChange: validationSchema,
+      onDynamic: loginValidationSchema,
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('login', 'valid', formApi.state);
 
-      if (!value.email || !value.password) {
-        throw new Error('Not all fields are filled despite validation');
-      }
-
-      setSignInResult(undefined);
-      const result = await userContext?.signIn(value.email, value.password);
-      await router.invalidate();
+      setSignInError(undefined);
+      const result = await signIn(value.email, value.password);
 
       if (result !== 'success') {
-        setSignInResult(result);
+        setSignInError(result.error);
         return;
       }
 
-      // Delay redirection so that the user context has time to update
-      setTimeout(() => {
-        router.navigate({ to: redirect ?? '/' });
-      }, 50);
+      await router.invalidate();
+      await router.navigate({ to: redirect ?? '/' });
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('login', 'invalid', formApi.state);
@@ -72,40 +54,24 @@ function LoginPage() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    form.handleSubmit();
+    void form.handleSubmit();
   }
 
   return (
     <AppLayout title="Logowanie" variant="narrow" disableBackButton data-testid="login-page-title">
       <form onSubmit={handleSubmit} className="px-4">
         <div className="space-y-4">
-          <form.Field
+          <form.AppField
             name="email"
             children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="email"
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta)}
-                label="E-mail"
-                data-testid="login-email-input"
-              />
+              <field.FloatingTextField type="email" label="E-mail" data-testid="login-email-input" />
             )}
           />
 
-          <form.Field
+          <form.AppField
             name="password"
             children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="password"
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta)}
-                label="Hasło"
-                data-testid="login-password-input"
-              />
+              <field.FloatingTextField type="password" label="Hasło" data-testid="login-password-input" />
             )}
           />
 
@@ -128,9 +94,7 @@ function LoginPage() {
               )}
             />
 
-            {signInResult && (
-              <p className="mt-2 text-center text-sm font-semibold text-danger">{errorMessages[signInResult]}</p>
-            )}
+            {signInError && <p className="mt-2 text-center text-sm font-semibold text-danger">{signInError}</p>}
           </div>
 
           <p className="!mt-8">

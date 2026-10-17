@@ -1,50 +1,54 @@
+import { getErrorMessage } from '@/api/errors';
+import { toast } from '@/components/shared/layout/toast';
+import { RequestPasswordResetRequest } from '@/api/generated/schemas';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { useForm } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
-import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
-import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors } from '@/lib/utils';
-import { useForgotPasswordMutation } from '@/api/hooks/user/UserApiHooks';
-import { Result } from '@/models/user/Results';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
+import { Result } from '@/integrations/auth/types';
 
 export const Route = createFileRoute('/(auth)/forgot-password')({
   component: ForgotPasswordPage,
   beforeLoad: allowOnly.unauthenticated(),
 });
 
-const validationSchema = z.object({
-  email: z.email('Niepoprawny adres e-mail').or(z.literal('')),
-});
+const validationSchema = z
+  .object({
+    email: z.email('Niepoprawny adres e-mail'),
+  })
+  .pipe(RequestPasswordResetRequest);
 
 function ForgotPasswordPage() {
   const [result, setResult] = React.useState<Result | undefined>(undefined);
   const [email, setEmail] = React.useState<string | undefined>(undefined);
-  const { mutateAsync } = useForgotPasswordMutation({ setResult });
-  const form = useForm({
+  const { mutateAsync } = useRequestPasswordReset({ mutation: { meta: { handlesError: true } } });
+  const form = useAppForm({
     defaultValues: {
       email: '',
     },
+    validationLogic: formValidationLogic,
     validators: {
-      onChange: validationSchema,
+      onDynamic: validationSchema,
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('forgot-password', 'valid', formApi.state);
 
-      if (!value.email) {
-        throw new Error('Not all fields are filled despite validation');
-      }
-
       setResult(undefined);
-      await mutateAsync(value.email, {
-        onSuccess: async () => {
-          setEmail(value.email);
-        },
-      }).catch(() => {});
+      try {
+        await mutateAsync({ data: { email: value.email } });
+        setEmail(value.email);
+        setResult('success');
+      } catch (error) {
+        setResult('error');
+        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
+      }
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('forgot-password', 'invalid', formApi.state);
@@ -54,7 +58,7 @@ function ForgotPasswordPage() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    form.handleSubmit();
+    void form.handleSubmit();
   }
 
   if (result === 'success') {
@@ -74,20 +78,7 @@ function ForgotPasswordPage() {
     <AppLayout title="Przywracanie hasła" variant="narrow">
       <form className="px-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <form.Field
-            name="email"
-            children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="email"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta)}
-                label="E-mail"
-              />
-            )}
-          />
+          <form.AppField name="email" children={(field) => <field.FloatingTextField type="email" label="E-mail" />} />
         </div>
 
         <div className="mt-8">

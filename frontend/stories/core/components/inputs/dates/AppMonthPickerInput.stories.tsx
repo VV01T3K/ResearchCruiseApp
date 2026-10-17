@@ -1,9 +1,11 @@
+import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
 
 const meta = {
+  decorators: [withControlledValue],
   component: AppMonthPickerInput,
   args: {
     name: 'Month picker input',

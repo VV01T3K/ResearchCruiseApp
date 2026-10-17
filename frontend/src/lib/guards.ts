@@ -1,14 +1,12 @@
 import { ParsedLocation, redirect } from '@tanstack/react-router';
+import type { QueryClient } from '@tanstack/react-query';
 
-import { client } from '@/lib/api';
-import { Role } from '@/models/shared/Role';
-import { User } from '@/models/shared/User';
-import { UserContextType } from '@/providers/UserContext';
-import { getStoredAuthDetails } from '@/providers/StoredAuthDetails';
+import { Role } from '@/integrations/auth/types';
+import { currentUserQueryOptions } from '@/integrations/tanstack/query/auth';
 
 type GuardContextType = {
   context: {
-    userContext?: UserContextType | undefined;
+    queryClient: QueryClient;
   };
   location: ParsedLocation<object>;
 };
@@ -19,52 +17,10 @@ type GlobalGuardType = {
   unauthenticated: () => (context: GuardContextType) => Promise<void>;
 };
 
-async function resolveCurrentUser(userContext?: UserContextType): Promise<User | undefined> {
-  if (userContext?.currentUser) {
-    return userContext.currentUser;
-  }
-
-  const storedAuthDetails = getStoredAuthDetails();
-  if (!storedAuthDetails) {
-    return undefined;
-  }
-
-  if (storedAuthDetails.refreshTokenExpirationDate <= new Date()) {
-    return undefined;
-  }
-
-  let accessToken = storedAuthDetails.accessToken;
-
-  if (storedAuthDetails.accessTokenExpirationDate <= new Date() && userContext) {
-    try {
-      await userContext.refreshUser();
-      accessToken = getStoredAuthDetails()?.accessToken ?? '';
-    } catch {
-      return undefined;
-    }
-  }
-
-  if (!accessToken) {
-    return undefined;
-  }
-
-  try {
-    const response = await client.get('/account', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    return response.data as User;
-  } catch {
-    return undefined;
-  }
-}
-
 export const allowOnly: GlobalGuardType = {
   withRoles: (...roles: Role[]): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context, location }) => {
-      const currentUser = await resolveCurrentUser(context.userContext);
+      const currentUser = await context.queryClient.query(currentUserQueryOptions());
 
       if (!currentUser) {
         throw redirect({
@@ -84,7 +40,7 @@ export const allowOnly: GlobalGuardType = {
   },
   authenticated: (): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context, location }) => {
-      const currentUser = await resolveCurrentUser(context.userContext);
+      const currentUser = await context.queryClient.query(currentUserQueryOptions());
 
       if (!currentUser) {
         throw redirect({
@@ -98,7 +54,7 @@ export const allowOnly: GlobalGuardType = {
   },
   unauthenticated: (): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context }) => {
-      const currentUser = await resolveCurrentUser(context.userContext);
+      const currentUser = await context.queryClient.query(currentUserQueryOptions());
 
       if (currentUser) {
         throw redirect({

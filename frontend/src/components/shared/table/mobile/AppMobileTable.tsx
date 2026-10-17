@@ -1,20 +1,26 @@
-import { flexRender, Header } from '@tanstack/react-table';
+import { flexRender } from '@tanstack/react-table';
+import { Header } from '@/integrations/tanstack/table/features';
 import FunnelIcon from 'bootstrap-icons/icons/funnel.svg?react';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
 import { AppModal } from '@/components/shared/AppModal';
+import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
 import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppMobileTableFilterForm } from '@/components/shared/table/mobile/AppMobileTableFilterForm';
 import { cn, createModalPortal } from '@/lib/utils';
+import { TableBody } from '@/integrations/tanstack/table/TableBody';
+import { TableCell } from '@/integrations/tanstack/table/TableCell';
 
-export function AppMobileTable<T>({
+export function AppMobileTable<T extends object>({
   table,
   buttons,
   emptyTableMessage,
   variant,
   showRequiredAsterisk,
   errors,
+  infiniteScroll,
+  virtualized,
   'data-testid': testId,
 }: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
@@ -22,6 +28,7 @@ export function AppMobileTable<T>({
   const defaultButtons: React.ReactNode[] = [
     <AppButton key="openFilterModalBtn" onClick={() => setIsFilterModalOpen(true)} variant="primary">
       <FunnelIcon className="h-8 w-8" />
+      <span className="sr-only">Filtrowanie i sortowanie</span>
     </AppButton>,
   ];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
@@ -39,28 +46,36 @@ export function AppMobileTable<T>({
             ))}
           </div>
         )}
-        <table className="w-full table-fixed">
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="text-gray-800 odd:bg-gray-100">
-                <td className="flex flex-col items-center justify-center gap-2 py-3">
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <div key={cell.id} className={variants[variant ?? 'table']}>
-                        <div className="font-bold">
-                          {flexRender(cell.column.columnDef.header, {
-                            table,
-                            column: cell.column,
-                            header: { column: cell.column } as Header<T, unknown>,
-                          })}
-                        </div>
-                        <div>{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
+        <table
+          className="w-full table-fixed"
+          aria-rowcount={virtualized ? (infiniteScroll?.hasNextPage ? -1 : table.getRowModel().rows.length) : undefined}
+        >
+          <TableBody
+            table={table}
+            columnCount={1}
+            virtualized={virtualized}
+            estimateRowHeight={600}
+            renderCells={(row) => (
+              <td className="flex flex-col items-center justify-center gap-2 py-3">
+                {row.getVisibleCells().map((cell) => {
+                  return (
+                    <div key={cell.id} className={variants[variant ?? 'table']}>
+                      <div className="font-bold">
+                        {flexRender(cell.column.columnDef.header, {
+                          table,
+                          column: cell.column,
+                          header: { column: cell.column } as Header<T, unknown>,
+                        })}
                       </div>
-                    );
-                  })}
-                </td>
-              </tr>
-            ))}
+                      <div>
+                        <TableCell cell={cell} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </td>
+            )}
+          >
             {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
               <tr>
                 <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
@@ -81,7 +96,14 @@ export function AppMobileTable<T>({
                 </td>
               </tr>
             )}
-          </tbody>
+            {infiniteScroll && (
+              <tr role="presentation">
+                <td role="presentation" colSpan={table.getAllColumns().length} className="p-0">
+                  <AppTableInfiniteScrollTrigger {...infiniteScroll} />
+                </td>
+              </tr>
+            )}
+          </TableBody>
         </table>
       </div>
       {createModalPortal(

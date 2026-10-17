@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ResearchCruiseApp.Application.Common.Extensions;
-using ResearchCruiseApp.Application.ExternalServices;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
@@ -10,28 +8,25 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 internal class ApplicationDbContextInitializer(
     ApplicationDbContext applicationDbContext,
     RoleManager<IdentityRole> roleManager,
-    IIdentityService identityService,
-    IRandomGenerator randomGenerator,
-    IConfiguration configuration
+    IdentityService identityService,
+    RandomGenerator randomGenerator,
+    IConfiguration configuration,
+    ILogger<ApplicationDbContextInitializer> logger
 )
 {
-    public async Task Initialize()
-    {
-        await Migrate();
+    public Task Initialize() => applicationDbContext.Database.MigrateAsync();
 
-        if (configuration.GetSection("Database:SeedAutomatically").Value?.ToBool() ?? false)
+    public async Task Seed()
+    {
+        await SeedRoleData();
+        await SeedUgUnits();
+        await SeedResearchAreas();
+        await SeedShipEquipments();
+
+        if (configuration.GetValue<bool>("Database:SeedAccountsAutomatically"))
         {
-            await SeedRoleData();
             await SeedUsersData();
-            await SeedUgUnits();
-            await SeedResearchAreas();
-            await SeedShipEquipments();
         }
-    }
-
-    private Task Migrate()
-    {
-        return applicationDbContext.Database.MigrateAsync();
     }
 
     private async Task SeedUsersData()
@@ -44,20 +39,35 @@ internal class ApplicationDbContextInitializer(
         foreach (var user in users)
         {
             var password = randomGenerator.CreateSecurePassword();
-            await identityService.AddUserWithRole(user, password, user.Role!);
-            if (
-                configuration.GetSection("Database:LogUserPasswordsWhenSeeding").Value?.ToBool()
-                ?? false
-            )
+            var result = await identityService.EnsureSeedUserWithRole(
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                password,
+                user.Role!
+            );
+
+            if (!result.IsSuccess)
             {
-                Console.WriteLine($"Seed User Created: {user.Email} - {password}");
+                logger.LogWarning(
+                    "Seed user was not created: {Email} - {Error}",
+                    user.Email,
+                    result.Error?.Message
+                );
+                continue;
             }
+
+            if (
+                result.Data == SeedUserStatus.Created
+                && configuration.GetValue<bool>("Database:LogUserPasswordsWhenSeeding")
+            )
+                logger.LogWarning("Seed User Created: {Email} - {Password}", user.Email, password);
         }
     }
 
     private async Task SeedRoleData()
     {
-        var roleNames = InitialAdministrationData.RoleNames;
+        var roleNames = SeedAdministrationData.RoleNames;
 
         foreach (var roleName in roleNames)
         {
@@ -68,43 +78,59 @@ internal class ApplicationDbContextInitializer(
 
     private async Task SeedUgUnits()
     {
-        if (await applicationDbContext.UgUnits.AnyAsync())
+        var existingNames = (
+            await applicationDbContext.UgUnits.Select(ugUnit => ugUnit.Name).ToListAsync()
+        ).ToHashSet();
+
+        var newUgUnits = SeedUgUnitData
+            .UgUnitsNames.Where(existingNames.Add)
+            .Select(name => new UgUnit { Name = name, IsActive = true })
+            .ToList();
+
+        if (newUgUnits.Count == 0)
             return;
 
-        foreach (var ugUnitName in InitialUgUnitData.UgUnitsNames)
-        {
-            var newUgUnit = new UgUnit { Name = ugUnitName, IsActive = true };
-            await applicationDbContext.UgUnits.AddAsync(newUgUnit);
-        }
-
+        await applicationDbContext.UgUnits.AddRangeAsync(newUgUnits);
         await applicationDbContext.SaveChangesAsync();
     }
 
     private async Task SeedResearchAreas()
     {
-        if (await applicationDbContext.ResearchAreas.AnyAsync())
+        var existingNames = (
+            await applicationDbContext
+                .ResearchAreas.Select(researchArea => researchArea.Name)
+                .ToListAsync()
+        ).ToHashSet();
+
+        var newResearchAreas = SeedResearchAreaData
+            .ResearchAreaNames.Where(existingNames.Add)
+            .Select(name => new ResearchArea { Name = name, IsActive = true })
+            .ToList();
+
+        if (newResearchAreas.Count == 0)
             return;
 
-        foreach (var researchAreaName in InitialResearchAreaData.ResearchAreaNames)
-        {
-            var newResearchArea = new ResearchArea { Name = researchAreaName, IsActive = true };
-            await applicationDbContext.ResearchAreas.AddAsync(newResearchArea);
-        }
-
+        await applicationDbContext.ResearchAreas.AddRangeAsync(newResearchAreas);
         await applicationDbContext.SaveChangesAsync();
     }
 
     private async Task SeedShipEquipments()
     {
-        if (await applicationDbContext.ShipEquipments.AnyAsync())
+        var existingNames = (
+            await applicationDbContext
+                .ShipEquipments.Select(shipEquipment => shipEquipment.Name)
+                .ToListAsync()
+        ).ToHashSet();
+
+        var newShipEquipments = SeedShipEquipmentData
+            .ShipEquipmentsNames.Where(existingNames.Add)
+            .Select(name => new ShipEquipment { Name = name, IsActive = true })
+            .ToList();
+
+        if (newShipEquipments.Count == 0)
             return;
 
-        foreach (var shipEquipmentName in InitialShipEquipmentData.ShipEquipmentsNames)
-        {
-            var newShipEquipment = new ShipEquipment { Name = shipEquipmentName, IsActive = true };
-            await applicationDbContext.ShipEquipments.AddAsync(newShipEquipment);
-        }
-
+        await applicationDbContext.ShipEquipments.AddRangeAsync(newShipEquipments);
         await applicationDbContext.SaveChangesAsync();
     }
 }

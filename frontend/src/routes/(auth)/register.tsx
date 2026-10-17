@@ -1,16 +1,16 @@
+import { getProblemDetail } from '@/api/errors';
+import type { RegisterAccountRequest } from '@/api/generated/schemas';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { useForm } from '@tanstack/react-form';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
-import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
-import { trackFormSubmit } from '@/lib/sentry';
-import { getErrors } from '@/lib/utils';
-import { useRegisterMutation } from '@/api/hooks/user/UserApiHooks';
-import { Result } from '@/models/user/Results';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { useRegisterAccount } from '@/api/generated/endpoints/auth.gen';
 
 export const Route = createFileRoute('/(auth)/register')({
   component: RegisterPage,
@@ -20,8 +20,8 @@ export const Route = createFileRoute('/(auth)/register')({
 const validationSchema = z
   .object({
     email: z.email('Niepoprawny adres e-mail'),
-    firstname: z.string().min(2, 'Imię powinno zawierać co najmniej 2 znaki'),
-    lastname: z.string().min(2, 'Nazwisko powinno zawierać co najmniej 2 znaki'),
+    firstName: z.string().min(2, 'Imię powinno zawierać co najmniej 2 znaki'),
+    lastName: z.string().min(2, 'Nazwisko powinno zawierać co najmniej 2 znaki'),
     password: z
       .string()
       .min(8, 'Hasło powinno mieć co najmniej 8 znaków')
@@ -41,46 +41,34 @@ const validationSchema = z
     }
   });
 
-const errorMessages: Record<Result | 'username-taken', string> = {
-  success: '',
-  'username-taken': 'Podany adres e-mail jest już zajęty.',
-  error: 'Wystąpił błąd podczas rejestracji. Sprawdź połączenie z internetem.',
-};
-
 function RegisterPage() {
   const navigate = useNavigate();
-  const [result, setResult] = React.useState<(Result | 'username-taken') | undefined>(undefined);
-  const [hasFormBeenSubmitted, setHasFormBeenSubmitted] = React.useState(false);
-  const { mutateAsync } = useRegisterMutation({ setResult });
-  const form = useForm({
+  const [submitError, setSubmitError] = React.useState<string>();
+  const { mutateAsync } = useRegisterAccount({ mutation: { meta: { handlesError: true } } });
+  const form = useAppForm({
     defaultValues: {
       email: '',
-      firstname: '',
-      lastname: '',
+      firstName: '',
+      lastName: '',
       password: '',
       confirmPassword: '',
     },
+    validationLogic: formValidationLogic,
     validators: {
-      onChange: validationSchema,
+      onDynamic: validationSchema,
     },
     onSubmit: async ({ value }) => {
-      setHasFormBeenSubmitted(true);
-      await form.validate('change');
-      if (!form.state.isValid) {
-        return;
-      }
-
       trackFormSubmit('register', 'valid', form.state);
 
-      if (!value.email || !value.firstname || !value.lastname || !value.password) {
-        throw new Error('Not all fields are filled despite validation');
+      setSubmitError(undefined);
+      try {
+        const { email, firstName, lastName, password } = value;
+        await mutateAsync({ data: { email, firstName, lastName, password } satisfies RegisterAccountRequest });
+      } catch (error) {
+        setSubmitError(getProblemDetail(error, 'Rejestracja nie powiodła się. Spróbuj ponownie.'));
+        return;
       }
-
-      await mutateAsync(value, {
-        onSuccess: async () => {
-          await navigate({ to: '/login' });
-        },
-      }).catch(() => {});
+      await navigate({ to: '/login' });
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('register', 'invalid', formApi.state);
@@ -90,86 +78,30 @@ function RegisterPage() {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    form.handleSubmit();
+    void form.handleSubmit();
   }
 
   return (
     <AppLayout title="Rejestracja" variant="narrow">
       <form className="px-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <form.Field
-            name="email"
-            children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="email"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                label="E-mail"
-              />
-            )}
+          <form.AppField name="email" children={(field) => <field.FloatingTextField type="email" label="E-mail" />} />
+
+          <form.AppField name="firstName" children={(field) => <field.FloatingTextField type="text" label="Imię" />} />
+
+          <form.AppField
+            name="lastName"
+            children={(field) => <field.FloatingTextField type="text" label="Nazwisko" />}
           />
 
-          <form.Field
-            name="firstname"
-            children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="text"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                label="Imię"
-              />
-            )}
-          />
-
-          <form.Field
-            name="lastname"
-            children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="text"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                label="Nazwisko"
-              />
-            )}
-          />
-
-          <form.Field
+          <form.AppField
             name="password"
-            children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="password"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                label="Hasło"
-              />
-            )}
+            children={(field) => <field.FloatingTextField type="password" label="Hasło" />}
           />
 
-          <form.Field
+          <form.AppField
             name="confirmPassword"
-            children={(field) => (
-              <AppFloatingLabelInput
-                name={field.name}
-                value={field.state.value}
-                type="password"
-                onBlur={field.handleBlur}
-                onChange={field.handleChange}
-                errors={getErrors(field.state.meta, hasFormBeenSubmitted)}
-                label="Potwierdź hasło"
-              />
-            )}
+            children={(field) => <field.FloatingTextField type="password" label="Potwierdź hasło" />}
           />
 
           <div className="!mt-12">
@@ -182,7 +114,7 @@ function RegisterPage() {
               )}
             />
 
-            {result && <p className="mt-2 text-center text-sm font-semibold text-danger">{errorMessages[result]}</p>}
+            {submitError && <p className="mt-2 text-center text-sm font-semibold text-danger">{submitError}</p>}
           </div>
 
           <p className="!mt-8">

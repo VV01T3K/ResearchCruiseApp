@@ -1,4 +1,3 @@
-import { MockRouterProvider } from '@stories/mocks/MockRouterProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
@@ -140,13 +139,6 @@ export const RouterLink: Story = {
     children: 'Router Link',
     href: '/link',
   },
-  decorators: [
-    (Story) => (
-      <MockRouterProvider>
-        <Story />
-      </MockRouterProvider>
-    ),
-  ],
 };
 
 export const ExternalLink: Story = {

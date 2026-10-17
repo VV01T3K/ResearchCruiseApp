@@ -1,0 +1,136 @@
+import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { z } from 'zod';
+import { allowOnly } from '@/lib/guards';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
+import { AppLayout } from '@/components/shared/AppLayout';
+import { toast } from '@/components/shared/layout/toast';
+import { trackFormSubmit } from '@/integrations/sentry/client';
+import { INVALID_FORM_MESSAGE, navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
+import { FormView } from './-components/formB/FormView';
+import {
+  type FormBValues,
+  formBDefaultValues,
+  getFormBSubmissionSchema,
+} from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import { useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
+import { useFormAQuery, useFormBQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
+import {
+  useGetApplicationFormAContextSuspense,
+  useGetApplicationFormBContextSuspense,
+  useRefillApplicationFormB,
+  useUpdateApplicationFormB,
+} from '@/api/generated/endpoints/applications.gen';
+import { getErrorMessage } from '@/api/errors';
+import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
+import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
+
+export const Route = createFileRoute('/applications/$applicationId/formB')({
+  component: FormBPage,
+  beforeLoad: allowOnly.authenticated(),
+  validateSearch: z.object({
+    mode: z.optional(z.enum(['edit', 'view', 'preview'])),
+  }),
+});
+
+function FormBPage() {
+  const { applicationId } = Route.useParams();
+  const mode = Route.useSearch().mode ?? 'preview';
+
+  const navigate = useNavigate();
+
+  const formA = useFormAQuery(applicationId);
+  const formB = useFormBQuery(applicationId);
+  const formAInitValues = useGetApplicationFormAContextSuspense();
+  const formBInitValues = useGetApplicationFormBContextSuspense();
+  const cruise = useGetApplicationCruiseSuspense(applicationId);
+  const updateMutation = useUpdateApplicationFormB({ mutation: { meta: { handlesError: true } } });
+  const revertToEditMutation = useRefillApplicationFormB();
+
+  const defaultValues = (formB.data ?? {
+    ...formBDefaultValues,
+    permissions: formA.data.permissions,
+    ugTeams: formA.data.ugTeams,
+    guestTeams: formA.data.guestTeams,
+  }) satisfies FormBValues;
+  const schema = getFormBSubmissionSchema();
+  const form = useAppForm({
+    canSubmitWhenInvalid: true,
+    defaultValues,
+    validationLogic: formValidationLogic,
+    validators: {
+      onDynamic: schema,
+    },
+    onSubmit: async ({ value }) => handleValidSubmit(value),
+    onSubmitInvalid: () => {
+      if (!form.state.values.draft) trackFormSubmit('form-b', 'invalid', form.state);
+      toast.error(INVALID_FORM_MESSAGE);
+      navigateToFirstError();
+    },
+  });
+  const leaveAfterSave = useLeaveAfterSave(form);
+  const context = {
+    form,
+    formA: formA.data,
+    formAInitValues: formAInitValues.data,
+    formBInitValues: formBInitValues.data,
+    cruise: cruise.data,
+    isReadonly: mode !== 'edit',
+    onSaveDraft: handleDraftSave,
+    onRevertToEdit: mode === 'preview' ? handleRevertToEdit : undefined,
+    actionsDisabled: updateMutation.isPending || revertToEditMutation.isPending,
+  };
+
+  async function handleValidSubmit(values: FormBValues) {
+    if (!values.draft) trackFormSubmit('form-b', 'valid', form.state);
+
+    const loading = toast.loading(
+      values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
+    );
+    try {
+      await updateMutation.mutateAsync({
+        applicationId,
+        data: { form: schema.parse(values), draft: values.draft ?? false },
+      });
+      leaveAfterSave(values, { to: '/applications' });
+      toast.success(
+        values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
+      );
+    } catch (err) {
+      console.error(err);
+      setServerFormErrors(form, err);
+      toast.error(getErrorMessage(err, saveFailedMessage(values.draft)));
+      navigateToFirstError();
+      throw err;
+    } finally {
+      toast.dismiss(loading);
+    }
+  }
+
+  function handleDraftSave() {
+    void submitApplicationForm(form, true);
+  }
+
+  async function handleRevertToEdit() {
+    const loading = toast.loading('Cofanie formularza do edycji...');
+    try {
+      await revertToEditMutation.mutateAsync({ applicationId });
+      await navigate({ to: `/applications/${applicationId}/formB?mode=edit` });
+    } finally {
+      toast.dismiss(loading);
+    }
+  }
+
+  return (
+    <>
+      <AppLayout title="Formularz B">
+        <form.AppForm>
+          <FormView context={context} />
+        </form.AppForm>
+      </AppLayout>
+      <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} />
+    </>
+  );
+}
