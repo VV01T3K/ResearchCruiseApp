@@ -5,8 +5,7 @@ import { admin } from '../data/accounts';
 
 test.use({ account: admin });
 
-// The suite runs against a production build made without `bun run`, as in the Docker image, so
-// this fails if the version comes from an environment variable only a package manager sets.
+// Runs against a production build, so a blank build-time version fails here.
 const { version, repository } = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as {
   version: string;
   repository: string;

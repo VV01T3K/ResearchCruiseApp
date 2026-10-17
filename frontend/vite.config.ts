@@ -17,8 +17,6 @@ const {
   SENTRY_RELEASE: sentryRelease,
 } = process.env;
 
-// Read package.json directly: package managers set npm_package_version only for their own `run`,
-// so `vp run build` in the Docker image and `vp build` in the Playwright suite would leave it blank.
 const packageJson = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as {
   version?: unknown;
   repository?: unknown;
