@@ -8,6 +8,7 @@ import babel from '@rolldown/plugin-babel';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { playwright } from 'vite-plus/test/browser-playwright';
 import { fmtConfig, lintConfig } from './vite.tool.config.ts';
+import packageJson from './package.json' with { type: 'json' };
 
 const {
   SENTRY_AUTH_TOKEN: sentryAuthToken,
@@ -79,7 +80,7 @@ export default defineConfig({
     sentryPlugin,
   ],
   define: {
-    APP_VERSION: JSON.stringify(process.env.npm_package_version),
+    APP_VERSION: JSON.stringify(packageJson.version),
     API_URL: JSON.stringify(process.env.API_URL),
     APP_ENVIRONMENT: JSON.stringify(process.env.APP_ENVIRONMENT),
     SENTRY_DSN: JSON.stringify(process.env.SENTRY_DSN ?? ''),
