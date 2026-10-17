@@ -156,7 +156,6 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
 
   await button('Zakończ rejs').click();
   await dialog.getByRole('button', { name: `Oznacz rejs nr. ${item.number} jako zakończony` }).click();
-  // An ended cruise is read-only: only undoing its status is offered.
   await expectStatus('Zakończony', ['Cofnij status'], ['Edytuj', 'Zakończ rejs', 'Usuń rejs']);
 
   await button('Cofnij status').click();

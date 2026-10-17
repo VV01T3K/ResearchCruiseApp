@@ -4,11 +4,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace ResearchCruiseApp.IntegrationTests.Infrastructure;
 
-// Interleaves two requests deterministically. Once armed, it holds the first save that
-// matches: that request has read and checked its state but written nothing yet. The test
-// then sends a second request against the same state, and releases the first once the
-// second has finished or is waiting on the first one's locks. The held request is made the
-// one SQL Server keeps if the two deadlock, so the outcome does not depend on its choice.
+// Holds the first matching save so a second request can race it deterministically.
 internal sealed class SaveChangesGate : SaveChangesInterceptor
 {
     private Func<DbContext, bool>? _match;
@@ -40,7 +36,6 @@ internal sealed class SaveChangesGate : SaveChangesInterceptor
         return result;
     }
 
-    // Sends the second request while the first is held, and returns both responses.
     internal async Task<(HttpResponseMessage Held, HttpResponseMessage Other)> Race(
         string connectionString,
         Task<HttpResponseMessage> held,

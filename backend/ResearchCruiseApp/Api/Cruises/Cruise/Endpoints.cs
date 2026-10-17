@@ -187,8 +187,7 @@ public static class CruiseEndpoints
         var formBRequested = new List<CruiseApplication>();
         if (cruise.Status == CruiseStatus.Confirmed)
         {
-            // A removed application can be planned again, as when a confirmed cruise is
-            // deleted. Its Form B is kept but requested again on its next cruise.
+            // Removed applications can be planned again; Form B is kept.
             foreach (
                 var application in cruise.CruiseApplications.Where(application =>
                     !request.CruiseApplicationIds.Contains(application.Id)

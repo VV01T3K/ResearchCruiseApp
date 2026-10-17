@@ -4,8 +4,6 @@ namespace ResearchCruiseApp.Api.Cruises;
 
 internal static class CruiseConfirmationEmails
 {
-    // The message describes the cruise, not an application, so a manager or deputy of
-    // several of its applications receives it once.
     public static async Task Send(
         Cruise cruise,
         IEnumerable<CruiseApplication> applications,

@@ -5,10 +5,7 @@ namespace ResearchCruiseApp.Api.Cruises;
 
 public static class CruiseLifecycleRules
 {
-    // Applies when a cruise is confirmed or an application joins a confirmed cruise. Only
-    // accepted applications are asked for Form B; one already submitted for this cruise
-    // (for example before its confirmation was undone) is kept. Returns the applications
-    // that moved, whose managers are told about the confirmed cruise.
+    // Only accepted applications are asked for Form B; a submitted one is kept.
     public static List<CruiseApplication> RequestFormB(IEnumerable<CruiseApplication> applications)
     {
         var requested = applications

@@ -9,8 +9,6 @@ using DomainCruise = ResearchCruiseApp.Domain.Entities.Cruise;
 
 namespace ResearchCruiseApp.IntegrationTests.Cruises;
 
-// Two requests acting on the same cruise at once. The first is held after it has checked its
-// state; the second then checks the same state and must not commit on top of the first.
 public sealed partial class CruiseStatusTransitionTests
 {
     private const string ConcurrentChange =

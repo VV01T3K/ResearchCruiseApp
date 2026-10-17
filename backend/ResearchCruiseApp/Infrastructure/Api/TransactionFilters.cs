@@ -8,10 +8,7 @@ namespace ResearchCruiseApp.Infrastructure.Api;
 
 public static class TransactionFilters
 {
-    // For endpoints that check state and then change it, such as a cruise or application
-    // status. Serializable isolation keeps what the request read unchanged until it commits,
-    // so concurrent requests cannot both act on the same old state. SQL Server resolves the
-    // clash by aborting one of them as a deadlock victim, which is answered with a conflict.
+    // Concurrent check-then-write requests can't both act on old state; the deadlock victim gets 409.
     public static RouteHandlerBuilder WithSerializableTransaction(this RouteHandlerBuilder builder)
     {
         return builder
@@ -41,7 +38,6 @@ internal sealed class SerializableTransactionFilter(ApplicationDbContext dbConte
 
             var result = await next(context);
 
-            // Disposing the transaction rolls back whatever a rejected request saved.
             if (Succeeded(result))
             {
                 await dbContext.SaveChangesAsync(cancellationToken);

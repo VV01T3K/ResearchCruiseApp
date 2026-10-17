@@ -10,8 +10,6 @@ using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Cruises;
 
-// How editing and moving a cruise through its lifecycle changes its applications (#467,
-// #468, #469). Each test asserts the statuses, forms, points and emails stored in SQL.
 [Collection(SqlTestCollectionDefinition.Name)]
 public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IAsyncLifetime
 {
@@ -379,8 +377,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         );
         Assert.Equal(pendingBefore, await PendingEmails(app));
 
-        // Accepted by the product owner: reopening Form C first lifts the block, and the
-        // submitted Form C and its points stay.
+        // Accepted bypass: reopening Form C lifts the block; Form C and its points stay.
         using var refill = await office.PutAsync(
             $"/v2/applications/{reported.Id}/form-c/refill",
             null,
@@ -411,8 +408,6 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         var reported = await Accepted(app, "reported@example.invalid");
         var cruiseId = await PostCruise(app, office, "Confirmed", required.Id, reported.Id);
         Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
-        // Before this rule, undoing completion left reported applications on confirmed
-        // cruises; the API can no longer produce this state.
         await app.InDatabase(async db =>
         {
             (await db.CruiseApplications.SingleAsync(row => row.Id == reported.Id, ct)).Status =
@@ -667,8 +662,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
             TestContext.Current.CancellationToken
         );
 
-    // One finished doctoral effect with both conditions met: 200 points each for the
-    // manager and the deputy slot (the deputy is Guid.Empty unless seeded).
+    // 200 points each for the manager and the deputy slot.
     private static async Task<HttpStatusCode> SubmitFormC(TestApplication app, Seeded application)
     {
         using var manager = await TestApplications.Login(app, application.OwnerEmail);

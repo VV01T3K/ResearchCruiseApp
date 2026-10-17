@@ -172,7 +172,6 @@ function CruiseDetailsPage() {
           </>
         );
       case 'ended':
-        // An ended cruise is read-only; undoing its status makes it editable again.
         return (
           <AppButton
             className="w-36 !justify-center gap-4 lg:w-48"
@@ -304,7 +303,6 @@ function CruiseDetailsPage() {
             variant="dangerOutline"
             className="basis-2/3"
             onClick={() =>
-              // A rejected undo is reported by the shared mutation error toast.
               revertCruiseStatusMutation.mutate({ cruiseId }, { onSettled: () => setIsConfirmRevertModalOpen(false) })
             }
             disabled={revertCruiseStatusMutation.isPending}
