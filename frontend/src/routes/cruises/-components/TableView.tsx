@@ -9,6 +9,7 @@ import { AppGuard } from '@/components/shared/AppGuard';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { Role } from '@/integrations/auth/types';
 import { formatDate } from '@/lib/dateUtils';
+import { getPersonName, isUnassignedPerson } from '@/lib/applications/person';
 import { StatusBadge } from './StatusBadge';
 import { TitleBadge } from './TitleBadge';
 import type {
@@ -16,7 +17,6 @@ import type {
   CruiseResponse,
 } from '@/api/generated/schemas';
 
-const emptyGuid = '00000000-0000-0000-0000-000000000000';
 type Props = {
   cruises: CruiseResponse[];
   deleteCruise: (cruise: CruiseResponse) => void;
@@ -64,7 +64,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     {
       id: 'mainCruiseManagerAvatar',
       cell: ({ row }) =>
-        row.original.mainManager.id !== emptyGuid ? (
+        !isUnassignedPerson(row.original.mainManager) ? (
           <AppAvatar
             fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
             variant="small"
@@ -74,10 +74,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     },
     {
       header: 'Kierownik główny',
-      accessorFn: (row) =>
-        row.mainManager.id !== emptyGuid
-          ? `${row.mainManager.firstName} ${row.mainManager.lastName}`
-          : 'Nie przypisano',
+      accessorFn: (row) => getPersonName(row.mainManager) || 'Nie przypisano',
       size: 10,
     },
     {

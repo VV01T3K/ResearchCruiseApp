@@ -15,7 +15,7 @@ import {
 import { getGetAvailableCruiseManagersMockHandler } from '@/api/generated/mocks/users/users.msw.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
 import { test, expect, fail } from './fixtures';
-import { admin, deputy, manager, managerAccount } from '../data/accounts';
+import { admin, deputy, manager, managerAccount, outsider } from '../data/accounts';
 import { cruise } from '../data/cruises';
 
 test.use({ account: admin });
@@ -84,6 +84,60 @@ test('a new cruise is saved with Warsaw-midnight dates and the chosen managers',
         shipUnavailable: false,
       },
     ]);
+});
+
+test('a cruise manager who is no longer available keeps their name, without an empty email', async ({
+  page,
+  network,
+}) => {
+  const item = cruise();
+  network.use(getGetCruiseMockHandler(item), getGetAvailableCruiseManagersMockHandler([admin]));
+  await page.goto(`/cruises/${item.id}`);
+  const deputyManager = page.getByRole('combobox', { name: 'Zastępca kierownika głównego' });
+
+  await expect(deputyManager).toHaveText('Grace Hopper');
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await expect(deputyManager).toHaveText('Grace Hopper');
+});
+
+test('a cruise without assigned managers offers no blank manager choice', async ({ page, network }) => {
+  const unassigned = { id: '00000000-0000-0000-0000-000000000000', firstName: '', lastName: '' };
+  const item = { ...cruise(), mainManager: unassigned, deputyManager: unassigned };
+  network.use(getGetCruiseMockHandler(item));
+  await page.goto(`/cruises/${item.id}`);
+  const main = page.getByRole('combobox', { name: 'Kierownik główny' });
+
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await expect(main).toHaveText('Wybierz kierownika głównego');
+  await main.click();
+  await expect(page.getByRole('option')).toHaveCount(2);
+  await expect(page.getByRole('option', { name: 'Nieznany użytkownik' })).toHaveCount(0);
+});
+
+test('a saved manager change is labelled by the new id before the cruise is refetched', async ({
+  page,
+  network,
+  requests,
+}) => {
+  const item = cruise();
+  // The cruise response stays stale after the save, still naming the old deputy.
+  network.use(
+    getGetCruiseMockHandler(item),
+    getUpdateCruiseMockHandler(),
+    getGetAvailableCruiseManagersMockHandler([admin, deputy, outsider])
+  );
+  await page.goto(`/cruises/${item.id}`);
+  const deputyManager = page.getByRole('combobox', { name: 'Zastępca kierownika głównego' });
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await deputyManager.click();
+  await page.getByRole('option', { name: `${outsider.firstName} ${outsider.lastName}` }).click();
+  await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+
+  await expect(page.getByRole('button', { name: 'Edytuj', exact: true })).toBeVisible();
+  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toEqual([
+    expect.objectContaining({ mainManagerId: manager.id, deputyManagerId: outsider.id }),
+  ]);
+  await expect(deputyManager).toHaveText('Alan Turing (alan@example.com)');
 });
 
 test('rejected cruise edits show field and general errors, keep the edits and can be resaved', async ({

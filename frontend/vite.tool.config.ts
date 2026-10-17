@@ -53,6 +53,22 @@ export const lintConfig = {
         browser: true,
       },
     },
+    {
+      files: ['src/**'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              {
+                regex: '(^|/)package\\.json(\\?.*)?$',
+                message: 'Use the version and repository URL from `@/config` instead of importing package.json.',
+              },
+            ],
+          },
+        ],
+      },
+    },
   ],
 } satisfies NonNullable<UserConfig['lint']>;
 

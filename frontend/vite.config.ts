@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { defineConfig } from 'vite-plus';
 import viteReact, { reactCompilerPreset } from '@vitejs/plugin-react';
@@ -15,6 +16,17 @@ const {
   SENTRY_PROJECT: sentryProject,
   SENTRY_RELEASE: sentryRelease,
 } = process.env;
+
+const packageJson = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as {
+  version?: unknown;
+  repository?: unknown;
+};
+if (typeof packageJson.version !== 'string' || !packageJson.version) {
+  throw new Error('frontend/package.json has no version to show in the app');
+}
+if (typeof packageJson.repository !== 'string' || !packageJson.repository) {
+  throw new Error('frontend/package.json has no repository URL to link from the app');
+}
 
 const sentryPlugin =
   sentryAuthToken && sentryOrg && sentryProject
@@ -79,7 +91,8 @@ export default defineConfig({
     sentryPlugin,
   ],
   define: {
-    APP_VERSION: JSON.stringify(process.env.npm_package_version),
+    APP_VERSION: JSON.stringify(packageJson.version),
+    APP_REPOSITORY_URL: JSON.stringify(packageJson.repository),
     API_URL: JSON.stringify(process.env.API_URL),
     APP_ENVIRONMENT: JSON.stringify(process.env.APP_ENVIRONMENT),
     SENTRY_DSN: JSON.stringify(process.env.SENTRY_DSN ?? ''),

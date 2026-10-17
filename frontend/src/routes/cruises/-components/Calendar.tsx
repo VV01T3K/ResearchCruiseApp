@@ -6,6 +6,7 @@ import { toast } from '@/components/shared/layout/toast';
 import { AppCalendar } from '@/components/shared/calendar/AppCalendar';
 import { getGetCruisesQueryKey, useUpdateCruise } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
+import { getPersonName, isUnassignedPerson } from '@/lib/applications/person';
 import { CruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 
 type Props = {
@@ -25,9 +26,9 @@ export function Calendar({ cruises, buttons }: Props) {
     if (cruise.title || cruise.shipUnavailable) {
       return cruise.shipUnavailable ? `Blokada ${cruise.title}` : `Rejs ${cruise.title}`;
     }
-    return cruise.mainManager.firstName.length > 0
-      ? `Kierownik: ${cruise.mainManager.firstName} ${cruise.mainManager.lastName}`
-      : 'Rejs bez kierownika';
+    return isUnassignedPerson(cruise.mainManager)
+      ? 'Rejs bez kierownika'
+      : `Kierownik: ${getPersonName(cruise.mainManager)}`;
   }
 
   function getColor(title: string) {

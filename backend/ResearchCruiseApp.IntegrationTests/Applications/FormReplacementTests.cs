@@ -166,7 +166,7 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
                     Assert.Single(await db.Photos.ToListAsync(ct));
                     Assert.Single(await db.CollectedSamples.ToListAsync(ct));
                     Assert.Equal(
-                        status == CruiseApplicationStatus.Reported ? 2 : 0,
+                        status == CruiseApplicationStatus.Reported ? 1 : 0,
                         await db.UserEffects.CountAsync(ct)
                     );
                 }
