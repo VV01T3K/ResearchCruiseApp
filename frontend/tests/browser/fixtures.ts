@@ -39,7 +39,8 @@ class Requests {
     const body = request.postData();
     this.#sent.push({
       route: `${request.method()} ${pathname.slice('/api'.length)}`,
-      body: body ? JSON.parse(body) : undefined,
+      // null, not undefined: Playwright's toEqual skips undefined array items, so they would go uncounted.
+      body: body ? JSON.parse(body) : null,
       query: Object.fromEntries(searchParams),
     });
   }

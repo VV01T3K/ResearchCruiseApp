@@ -102,7 +102,7 @@ test.describe('authenticated session', () => {
     await page.reload();
     await expect(page.getByRole('button', { name: 'Dodaj użytkownika' })).toBeVisible();
     // The refresh token travels as a cookie, never in the body.
-    expect(requests.bodies('POST /v2/auth/refresh')).toEqual([undefined, undefined]);
+    expect(requests.bodies('POST /v2/auth/refresh')).toEqual([null, null]);
     expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain(session().accessToken);
   });
 

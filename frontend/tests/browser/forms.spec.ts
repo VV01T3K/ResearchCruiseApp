@@ -25,7 +25,7 @@ test('form A edits, validates and saves the entered value', async ({ page, netwo
   await expect(email).toBeFocused();
   await expect(email).toBeInViewport();
   await expect(email).toHaveAttribute('aria-invalid', 'true');
-  expect(requests.bodies(savedForm('form-a'))).toEqual([]);
+  expect(requests.bodies(savedForm('form-a'))).toHaveLength(0);
 
   await email.fill('new-supervisor@example.com');
   await send.click();
@@ -133,7 +133,7 @@ for (const { who, account, saves } of [
         expect(requests.bodies(savedForm('form-a'))).toHaveLength(1);
       } else {
         await expect(page.getByText('Jedynie kierownik lub jego zastępca mogą zapisać formularz')).toBeVisible();
-        expect(requests.bodies(savedForm('form-a'))).toEqual([]);
+        expect(requests.bodies(savedForm('form-a'))).toHaveLength(0);
       }
     });
   });
