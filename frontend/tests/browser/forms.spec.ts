@@ -139,6 +139,33 @@ for (const { who, account, saves } of [
   });
 }
 
+test('form A saves precise cruise dates on the days chosen in the calendar', async ({ page, network, requests }) => {
+  // Fix only the date; faked timers would also stall the dropdowns' transitions.
+  await page.clock.setFixedTime(new Date('2026-05-16T12:00:00Z'));
+  network.use(getUpdateApplicationFormAMockHandler());
+  await page.goto(formA);
+  await page.getByText('Okres dopuszczalny/optymalny', { exact: true }).click();
+  await page.getByRole('option', { name: 'Dokładny termin' }).click();
+  await page.getByRole('button', { name: 'Dokładny termin rozpoczęcia rejsu' }).click();
+  await page.getByText('17', { exact: true }).click();
+  await page.getByRole('button', { name: 'Dokładny termin zakończenia rejsu' }).click();
+  await page.getByText('19', { exact: true }).last().click();
+  await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+  await expect(page).toHaveURL('/');
+  expect(requests.bodies(savedForm('form-a'))).toEqual([
+    expect.objectContaining({
+      form: expect.objectContaining({
+        periodSelectionType: 'precise',
+        // Midnight in Warsaw on 17 and 19 May, and no period alongside the dates.
+        precisePeriodStart: '2026-05-16T22:00:00.000Z',
+        precisePeriodEnd: '2026-05-18T22:00:00.000Z',
+        acceptablePeriod: null,
+        optimalPeriod: null,
+      }),
+    }),
+  ]);
+});
+
 test('a new application can be created as an incomplete draft with a note', async ({ page, network, requests }) => {
   network.use(getCreateApplicationMockHandler());
   await page.goto('/applications/new');
