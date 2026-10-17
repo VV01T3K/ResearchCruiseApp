@@ -6,6 +6,7 @@ import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppAlert } from '@/components/shared/AppAlert';
 import { AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
 import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMappers';
+import { isUnassignedPerson } from '@/lib/applications/person';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
 import { UserOption } from '@/api/generated/schemas';
@@ -28,39 +29,15 @@ export function ManagerSelectionSection({
   const selectedCruiseManagerId = useSelector(form.store, (state) => state.values.mainManagerId);
   const selectedDeputyManagerId = useSelector(form.store, (state) => state.values.deputyManagerId);
 
+  const people = React.useMemo(() => withCruiseManagers(usersQuery.data ?? [], cruise), [cruise, usersQuery.data]);
+
   const users = React.useMemo(() => {
-    if (!isReadonly) return getAllUsersForDropdown(usersQuery.data ?? [], cruiseApplications, cruiseApplicationIds);
-    const options: AppDropdownInputOption[] = [];
-    if (cruise && selectedCruiseManagerId) {
-      options.push(
-        mapPersonToLabel({
-          id: selectedCruiseManagerId,
-          firstName: cruise.mainManager.firstName,
-          lastName: cruise.mainManager.lastName,
-          email: '',
-        })
-      );
-    }
-    if (cruise && selectedDeputyManagerId && selectedDeputyManagerId !== selectedCruiseManagerId) {
-      options.push(
-        mapPersonToLabel({
-          id: selectedDeputyManagerId,
-          firstName: cruise.deputyManager.firstName,
-          lastName: cruise.deputyManager.lastName,
-          email: '',
-        })
-      );
-    }
-    return options;
-  }, [
-    cruise,
-    cruiseApplications,
-    cruiseApplicationIds,
-    isReadonly,
-    selectedCruiseManagerId,
-    selectedDeputyManagerId,
-    usersQuery.data,
-  ]);
+    if (!isReadonly) return getAllUsersForDropdown(people, cruiseApplications, cruiseApplicationIds);
+    return [...new Set([selectedCruiseManagerId, selectedDeputyManagerId])]
+      .map((id) => people.find((person) => person.id === id))
+      .filter((person): person is UserOption => person !== undefined)
+      .map(mapPersonToLabel);
+  }, [cruiseApplications, cruiseApplicationIds, isReadonly, people, selectedCruiseManagerId, selectedDeputyManagerId]);
 
   const cruiseManagersNotAssignedToApplication = React.useMemo(
     () =>
@@ -163,18 +140,21 @@ function getCruiseManagersNotAssignedToApplication(
     .filter((user): user is CruiseManagerResponse => user !== undefined);
 }
 
+// The cruise response has no email, so prefer the managers list.
+function withCruiseManagers(users: CruiseManagerResponse[], cruise: CruiseResponse | undefined): UserOption[] {
+  if (!cruise) return users;
+  const missing = [cruise.mainManager, cruise.deputyManager]
+    .filter((person, index, all) => all.findIndex((other) => other.id === person.id) === index)
+    .filter((person) => !isUnassignedPerson(person) && !users.some((user) => user.id === person.id))
+    .map((person) => ({ ...person, email: '' }));
+  return [...users, ...missing];
+}
+
 function getAllUsersForDropdown(
-  users: CruiseManagerResponse[],
+  users: UserOption[],
   cruiseApplications: CruiseApplicationCandidateResponse[],
   selectedCruiseApplicationsIds: string[]
 ): AppDropdownInputOption[] {
-  const formUsers: UserOption[] = users.map((user) => ({
-    id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-  }));
-
   const assignedUserIds = new Set<string>();
   cruiseApplications.forEach((application) => {
     if (selectedCruiseApplicationsIds.includes(application.id)) {
@@ -187,8 +167,8 @@ function getAllUsersForDropdown(
     }
   });
 
-  const assignedUsers = formUsers.filter((user) => assignedUserIds.has(user.id));
-  const unassignedUsers = formUsers.filter((user) => !assignedUserIds.has(user.id));
+  const assignedUsers = users.filter((user) => assignedUserIds.has(user.id));
+  const unassignedUsers = users.filter((user) => !assignedUserIds.has(user.id));
 
   const sortedUsers = [...assignedUsers, ...unassignedUsers];
 
