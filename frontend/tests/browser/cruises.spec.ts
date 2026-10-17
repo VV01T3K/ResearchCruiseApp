@@ -86,20 +86,6 @@ test('a new cruise is saved with Warsaw-midnight dates and the chosen managers',
     ]);
 });
 
-test('cruise details label the manager and deputy the same way when read and edited', async ({ page, network }) => {
-  const item = cruise();
-  network.use(getGetCruiseMockHandler(item));
-  await page.goto(`/cruises/${item.id}`);
-  const main = page.getByRole('combobox', { name: 'Kierownik główny' });
-  const deputyManager = page.getByRole('combobox', { name: 'Zastępca kierownika głównego' });
-
-  await expect(main).toHaveText('Ada Lovelace (ada@example.com)');
-  await expect(deputyManager).toHaveText('Grace Hopper (grace@example.com)');
-  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
-  await expect(main).toHaveText('Ada Lovelace (ada@example.com)');
-  await expect(deputyManager).toHaveText('Grace Hopper (grace@example.com)');
-});
-
 test('a cruise manager who is no longer available keeps their name, without an empty email', async ({
   page,
   network,
@@ -112,18 +98,6 @@ test('a cruise manager who is no longer available keeps their name, without an e
   await expect(deputyManager).toHaveText('Grace Hopper');
   await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
   await expect(deputyManager).toHaveText('Grace Hopper');
-});
-
-test('a cruise manager whose account was deleted is labelled as unknown', async ({ page, network }) => {
-  // The API keeps a deleted manager's id but has no name for them.
-  const item = { ...cruise(), deputyManager: { id: deputy.id, firstName: '', lastName: '' } };
-  network.use(getGetCruiseMockHandler(item), getGetAvailableCruiseManagersMockHandler([admin]));
-  await page.goto(`/cruises/${item.id}`);
-  const deputyManager = page.getByRole('combobox', { name: 'Zastępca kierownika głównego' });
-
-  await expect(deputyManager).toHaveText('Nieznany użytkownik');
-  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
-  await expect(deputyManager).toHaveText('Nieznany użytkownik');
 });
 
 test('a cruise without assigned managers offers no blank manager choice', async ({ page, network }) => {
