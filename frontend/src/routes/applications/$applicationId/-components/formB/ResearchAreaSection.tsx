@@ -28,7 +28,7 @@ export function ResearchAreaSection({ context }: { context: FormBViewModel }) {
   ];
 
   return (
-    <AppAccordion title="5. Rejony prowadzanego badań" expandedByDefault data-testid="form-b-research-area-section">
+    <AppAccordion title="5. Rejony prowadzenia badań" expandedByDefault data-testid="form-b-research-area-section">
       <AppTable
         data={formA.researchAreaDescriptions}
         columns={columns}

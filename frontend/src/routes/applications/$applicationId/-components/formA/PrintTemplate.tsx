@@ -38,7 +38,7 @@ export function PrintTemplate({ ref, context, values }: Props) {
         </div>
       </PrintingPageSection>
 
-      <PrintingPageSection title="2. Zgłaszany rejs">
+      <PrintingPageSection title="2. Czas trwania zgłaszanego rejsu">
         <div className="grid grid-cols-2 gap-x-4 gap-y-1">
           {values.acceptablePeriod?.length !== 0 && (
             <>
@@ -82,7 +82,7 @@ export function PrintTemplate({ ref, context, values }: Props) {
         </div>
       </PrintingPageSection>
 
-      <PrintingPageSection title="3. Zgłaszany rejs">
+      <PrintingPageSection title="3. Dodatkowe pozwolenia do planowanych podczas rejsu badań">
         <div className="grid grid-cols-9 gap-x-8">
           <div className="col-span-1 mb-4 text-center font-semibold">Lp.</div>
           <div className="col-span-4 mb-4 text-center font-semibold">Treść pozwolenia</div>
@@ -127,7 +127,7 @@ export function PrintTemplate({ ref, context, values }: Props) {
         </div>
       </PrintingPageSection>
 
-      <PrintingPageSection title="6. Zgłaszane badania">
+      <PrintingPageSection title="6. Zadania do zrealizowania w trakcie rejsu">
         <div className="grid grid-cols-9 gap-x-8">
           <span className="col-span-1 mb-2 text-center font-semibold">Lp.</span>
           <span className="col-span-2 mb-2 text-center font-semibold">Zadanie</span>
@@ -283,7 +283,7 @@ export function PrintTemplate({ ref, context, values }: Props) {
         </div>
       </PrintingPageSection>
 
-      <PrintingPageSection title="11. Dane kontaktowe kierownika rejsu">
+      <PrintingPageSection title="11. Dane kontaktowe przełożonego">
         <div className="grid grid-cols-2 gap-x-4 gap-y-1">
           <span>Adres e-mail przełożonego: </span>
           <span>{values.supervisorEmail}</span>

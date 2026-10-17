@@ -97,7 +97,7 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                     disabled={isReadonly}
                     data-testid="form-a-add-research-task-btn"
                   >
-                    Dodaj nowe efekty rejsu
+                    Dodaj nowe zadanie badawcze
                   </DropdownElementSelectorButton>,
                   <DropdownElementSelectorButton
                     key="historical"
@@ -127,7 +127,7 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                     disabled={isReadonly}
                     data-testid="form-a-add-historical-research-task-btn"
                   >
-                    Dodaj historyczne efekty rejsu
+                    Dodaj historyczne zadanie badawcze
                   </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zadania."
