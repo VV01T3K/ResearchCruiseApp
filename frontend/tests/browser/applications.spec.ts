@@ -8,9 +8,9 @@ import {
   getUpdateApplicationSupervisorReviewDecisionMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
 import type { Page } from '@playwright/test';
-import type { ApplicationResponse } from '@/api/generated/schemas';
+import type { ApplicationResponse, ResearchTaskFields } from '@/api/generated/schemas';
 import { test, expect } from './fixtures';
-import { admin, managerAccount } from '../data/accounts';
+import { admin, managerAccount, publication } from '../data/accounts';
 import { application, evaluation } from '../data/cruises';
 import { applicationId, formA, formOptions } from '../data/forms';
 
@@ -52,7 +52,7 @@ test.describe('application table', () => {
       );
       await page.goto('/applications');
       await expect(page.getByRole('cell', { name: 'Last page', exact: true })).toBeVisible();
-      expect(requests.queries(listRequests).map((query) => query.cursor)).toEqual([undefined, 'empty', 'last']);
+      expect(requests.queries(listRequests).map((query) => query.cursor ?? null)).toEqual([null, 'empty', 'last']);
 
       await apply(page);
       await expect(page.getByRole('cell', { name: '2026/17', exact: true })).toBeVisible();
@@ -202,15 +202,103 @@ test.describe('application review', () => {
     await expect.poll(decisions).toEqual([{ accept: true }, { accept: false }]);
     await expect(page.getByRole('button', { name: 'Potwierdź odrzucenie' })).toHaveCount(0);
   });
-});
-test.describe(() => {
-  test.use({ account: managerAccount });
 
-  test('the cruise manager sees the application but cannot decide on it', async ({ page, network }) => {
-    network.use(getGetApplicationEvaluationMockHandler(evaluation()), getGetApplicationMockHandler(application()));
+  test('the evaluation shows every scored item with its details and points', async ({ page, network }) => {
+    const task = (points: string, researchTask: ResearchTaskFields) => ({ id: `t${points}`, points, researchTask });
+    network.use(
+      getGetApplicationMockHandler(application()),
+      getGetApplicationEvaluationMockHandler({
+        ...evaluation(),
+        formAResearchTasks: [
+          task('11', { type: '0', author: 'Anna Nowak', title: 'Praca o fokach' }),
+          task('12', { type: '3', title: 'Wniosek NCN', date: '2026-03-01', financingApproved: 'true' }),
+          task('13', {
+            type: '4',
+            title: 'Projekt krajowy',
+            startDate: '2026-01',
+            endDate: '2026-12',
+            financingAmount: '1500',
+            securedAmount: '200',
+          }),
+          task('14', { type: '9', description: 'Zajęcia terenowe' }),
+          task('15', {
+            type: '10',
+            title: 'Własne badania',
+            date: '2026-05-01',
+            magazine: 'Oceanologia',
+            ministerialPoints: '70',
+          }),
+          task('16', { type: '11', description: 'Inne badania' }),
+        ],
+        formAContracts: [
+          {
+            id: 'c1',
+            points: '21',
+            contract: {
+              category: 'international',
+              institutionName: 'Instytut Morski',
+              institutionUnit: 'Zakład Biologii',
+              institutionLocalization: 'Gdynia',
+              description: 'Umowa ramowa',
+              scans: [],
+            },
+          },
+        ],
+        formAPublications: [
+          {
+            id: 'p1',
+            points: '31',
+            publication: {
+              ...publication(),
+              doi: '10.1000/abc',
+              authors: 'Kowalski J.',
+              title: 'Bałtyk',
+              year: '2024',
+            },
+          },
+        ],
+        formASpubTasks: [
+          { id: 's1', points: '41', spubTask: { name: 'Monitoring', yearFrom: '2020', yearTo: '2025' } },
+        ],
+      })
+    );
+    // What each row shows, by the points awarded in it.
+    const rows = {
+      '11': ['Praca licencjacka', 'Anna Nowak', 'Praca o fokach'],
+      '12': ['Przygotowanie projektu naukowego', 'Wniosek NCN', 'Tak'],
+      '13': ['Realizacja projektu krajowego (NCN, NCBiR, itp.)', 'Projekt krajowy', '1500', '200'],
+      '14': ['Dydaktyka', 'Zajęcia terenowe'],
+      '15': ['Realizacja własnego zadania badawczego', 'Własne badania', 'Oceanologia', '70'],
+      '16': ['Inne zadanie', 'Inne badania'],
+      '21': ['Międzynarodowa', 'Instytut Morski', 'Zakład Biologii', 'Gdynia', 'Umowa ramowa'],
+      '31': ['10.1000/abc', 'Kowalski J.', 'Bałtyk', '2024', '100'],
+      '41': ['Monitoring', '2020', '2025'],
+    };
     await page.goto(`/applications/${applicationId}/details`);
-    await expect(page.getByLabel('Numer zgłoszenia:')).toHaveValue('2026/17');
-    await expect(page.getByRole('button', { name: /zgłoszenie$/ })).toHaveCount(0);
+
+    for (const [points, texts] of Object.entries(rows)) {
+      const row = page.getByRole('row').filter({ has: page.getByRole('cell', { name: points, exact: true }) });
+      await expect(row).toHaveCount(1);
+      for (const text of texts) {
+        const shown = row
+          .getByText(text, { exact: true })
+          .or(row.getByRole('button', { name: text, exact: true }))
+          // Dropdowns keep their value in a hidden input as well; only the visible control counts.
+          .or(row.locator(`[value="${text}"]:not([type="hidden"])`));
+        await expect(shown.first()).toBeVisible();
+      }
+    }
+  });
+
+  test.describe(() => {
+    test.use({ account: managerAccount });
+
+    test('the cruise manager sees the application but cannot decide on it', async ({ page, network }) => {
+      network.use(getGetApplicationEvaluationMockHandler(evaluation()), getGetApplicationMockHandler(application()));
+      await page.goto(`/applications/${applicationId}/details`);
+      await expect(page.getByLabel('Numer zgłoszenia:')).toHaveValue('2026/17');
+      await expect(page.getByRole('button', { name: /zgłoszenie$/ })).toHaveCount(0);
+    });
   });
 });
 
