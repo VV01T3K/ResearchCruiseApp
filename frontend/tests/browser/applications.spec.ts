@@ -181,6 +181,18 @@ test.describe('application table', () => {
 test.describe('application review', () => {
   test.use({ account: admin });
 
+  test('the details label a deleted deputy as unknown, without an empty email', async ({ page, network }) => {
+    const deleted = { id: application().deputyManager.id, email: '', firstName: '', lastName: '' };
+    network.use(
+      getGetApplicationEvaluationMockHandler(evaluation()),
+      getGetApplicationMockHandler({ ...application(), deputyManager: deleted })
+    );
+    await page.goto(`/applications/${applicationId}/details`);
+
+    await expect(page.locator('input[name="cruiseLeader"]')).toHaveValue('Ada Lovelace (ada@example.com)');
+    await expect(page.locator('input[name="deputyManager"]')).toHaveValue('Nieznany użytkownik');
+  });
+
   test('the office accepts or rejects an application after confirming the rejection', async ({
     page,
     network,
