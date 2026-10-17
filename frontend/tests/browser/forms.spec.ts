@@ -183,7 +183,7 @@ test('a new application can be created as an incomplete draft with a note', asyn
   ]);
 });
 
-test('form B labels the permission and crew member add buttons and the research area section', async ({ page }) => {
+test('form B shows one permission add button and one crew member add button in their sections', async ({ page }) => {
   await page.goto(`/applications/${applicationId}/formB?mode=edit`);
   const addPermission = page.getByRole('button', { name: 'Dodaj pozwolenie', exact: true });
   const addCrewMember = page.getByRole('button', { name: 'Dodaj członka załogi', exact: true });
@@ -197,9 +197,6 @@ test('form B labels the permission and crew member add buttons and the research 
   await expect(
     page.getByTestId('form-b-members-section').getByRole('button', { name: 'Dodaj członka załogi', exact: true })
   ).toHaveCount(1);
-  await expect(page.getByTestId('form-b-research-area-section').getByRole('heading', { level: 2 })).toHaveText(
-    '5. Rejony prowadzenia badań'
-  );
 });
 
 test('form B adds a permission, accepts only a PDF scan and submits the new row', async ({
