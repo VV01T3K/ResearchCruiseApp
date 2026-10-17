@@ -380,6 +380,53 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
         Assert.Empty(app.Transport.Messages);
     }
 
+    [Fact]
+    public async Task Effects_WhenApplicationHasNoDeputy_ScoreOnlyTheManager()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var application = await TestApplications.Create(app, CruiseApplicationStatus.Undertaken);
+        Guid managerId = default;
+        await app.InDatabase(async db =>
+        {
+            var stored = await db.CruiseApplications.Include(row => row.FormA).SingleAsync(ct);
+            managerId = stored.FormA!.CruiseManagerId;
+            Assert.Equal(Guid.Empty, stored.FormA.DeputyManagerId);
+        });
+        var fields = new FormCFields { ShipUsage = "0", DifferentUsage = "" };
+        fields.ResearchTasksEffects.Add(
+            new ResearchTaskEffectFields
+            {
+                Type = "2",
+                Title = "Doctoral both",
+                Done = "true",
+                ManagerConditionMet = "true",
+                DeputyConditionMet = "true",
+            }
+        );
+        using var manager = await TestApplications.Login(app, application.OwnerEmail);
+
+        using var submitted = await manager.PutAsJsonAsync(
+            $"/v2/applications/{application.Id}/form-c",
+            new FormCWriteRequest { Form = fields, Draft = false },
+            ct
+        );
+
+        Assert.Equal(HttpStatusCode.Created, submitted.StatusCode);
+        await AssertEffects(
+            app,
+            manager,
+            application.Id,
+            managerId,
+            new Dictionary<string, int> { ["Doctoral both"] = 200 }
+        );
+        await app.InDatabase(async db =>
+        {
+            Assert.False(await db.UserEffects.AnyAsync(effect => effect.UserId == Guid.Empty, ct));
+            Assert.Equal(1, await db.UserEffects.CountAsync(ct));
+        });
+    }
+
     private static async Task AssertEffects(
         TestApplication app,
         HttpClient client,
