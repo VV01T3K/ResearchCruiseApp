@@ -6,13 +6,13 @@ const UNKNOWN_PERSON = 'Nieznany użytkownik';
 
 type Person = { id: string; firstName: string; lastName: string };
 
-export function isUnassignedPerson(person: Person | undefined): person is undefined {
+export function isUnassignedPerson(person: Person | undefined): boolean {
   return !person || person.id === emptyGuid;
 }
 
 /** The person's full name, an empty string when nobody is assigned, or a placeholder for a deleted account. */
 export function getPersonName(person: Person | undefined): string {
-  if (isUnassignedPerson(person)) {
+  if (!person || isUnassignedPerson(person)) {
     return '';
   }
   return `${person.firstName} ${person.lastName}`.trim() || UNKNOWN_PERSON;
