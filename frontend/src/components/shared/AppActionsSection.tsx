@@ -24,15 +24,19 @@ export function AppActionsSection({ children }: Props) {
   }
 
   return (
-    <div
-      ref={popoverRef}
-      popover="manual"
-      className={cn(
-        'fixed inset-auto bottom-4 left-1/2 m-0 flex w-fit max-w-full -translate-x-1/2 gap-4 rounded-2xl px-6 py-4',
-        isSticky ? 'bg-white/30 shadow-2xl backdrop-blur-xs' : ''
-      )}
-    >
-      {children}
-    </div>
+    <>
+      <div className="h-(--actions-height)" />
+      <div
+        ref={popoverRef}
+        popover="manual"
+        data-actions-section
+        className={cn(
+          'fixed inset-auto bottom-4 left-1/2 m-0 flex w-fit max-w-full -translate-x-1/2 gap-4 rounded-2xl px-6 py-4',
+          isSticky ? 'bg-white/30 shadow-2xl backdrop-blur-xs' : ''
+        )}
+      >
+        {children}
+      </div>
+    </>
   );
 }
