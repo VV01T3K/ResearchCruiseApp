@@ -20,7 +20,7 @@ public static class EmailConfirmationEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .RequireRateLimiting(RateLimitingPolicies.AccountEmail)
             .AllowAnonymous();
     }
 
@@ -33,7 +33,7 @@ public static class EmailConfirmationEndpoints
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<ResendConfirmationEmailRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .RequireRateLimiting(RateLimitingPolicies.AccountEmail)
             .AllowAnonymous();
     }
 

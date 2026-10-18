@@ -42,6 +42,7 @@ services:
         condition: service_healthy
     environment:
       API_URL: http://backend:8080/
+      TRUSTED_PROXY: ${TRUSTED_PROXY:-172.16.0.0/12}
       SENTRY_DSN: ${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-1}
       SENTRY_REPLAYS_SESSION_SAMPLE_RATE: ${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-1}

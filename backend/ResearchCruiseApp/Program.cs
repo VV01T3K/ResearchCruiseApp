@@ -98,17 +98,13 @@ builder
 builder.Services.AddAuthorization(AuthorizationPolicies.AddApiAuthorizationPolicies);
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    var section = builder.Configuration.GetSection("ForwardedHeaders");
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    section.Bind(options);
-    foreach (var network in section.GetSection("TrustedNetworks").Get<string[]>() ?? [])
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
+    var networks = builder.Configuration.GetSection("ForwardedHeaders:TrustedNetworks");
+    foreach (var network in networks.Get<string[]>() ?? [])
         options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse(network));
 });
 builder.Services.AddRateLimiter(options =>
 {
-    var authLimit = builder
-        .Configuration.GetSection("RateLimiting:AuthSensitive")
-        .Get<FixedWindowRateLimiterOptions>()!;
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     options.OnRejected = (context, _) =>
     {
@@ -117,14 +113,22 @@ builder.Services.AddRateLimiter(options =>
                 .ToString(CultureInfo.InvariantCulture);
         return ValueTask.CompletedTask;
     };
-    options.AddPolicy(
-        RateLimitingPolicies.AuthSensitive,
-        httpContext =>
-            RateLimitPartition.GetFixedWindowLimiter(
-                httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-                _ => authLimit
-            )
-    );
+    foreach (
+        var policy in (string[])[RateLimitingPolicies.Login, RateLimitingPolicies.AccountEmail]
+    )
+    {
+        var limit = builder
+            .Configuration.GetSection($"RateLimiting:{policy}")
+            .Get<FixedWindowRateLimiterOptions>()!;
+        options.AddPolicy(
+            policy,
+            httpContext =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    _ => limit
+                )
+        );
+    }
 });
 builder.Services.AddHealthChecks();
 builder.Services.AddCors(options =>

@@ -1,9 +1,9 @@
+using System.Globalization;
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Auth;
@@ -11,73 +11,80 @@ namespace ResearchCruiseApp.IntegrationTests.Auth;
 [Collection(SqlTestCollectionDefinition.Name)]
 public sealed class RateLimitTests(SqlFixture fixture) : IAsyncLifetime
 {
+    private const string Nginx = "172.18.0.3";
+
     public async ValueTask InitializeAsync() => await fixture.ResetAsync();
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     [Fact]
-    public async Task Login_WhenAuthBudgetIsExhausted_ReturnsProblemWithRetryAfter()
+    public async Task Login_WhenBudgetIsExhausted_ReturnsProblemWithRetryAfter()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
-        var user = await TestUsers.Create(app, "limited@example.invalid");
-        using var client = app.CreateApiClient();
-        await ExhaustBudget(app, client, "203.0.113.10", ct);
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/v2/auth/login")
-        {
-            Content = JsonContent.Create(new LoginRequest(user.Email!, TestUsers.Password)),
-        };
-        request.Headers.Add("X-Forwarded-For", "203.0.113.10");
-        using var response = await client.SendAsync(request, ct);
-        Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
-        Assert.InRange(response.Headers.RetryAfter!.Delta!.Value.TotalSeconds, 1, 60);
-        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
-        var problem = await response.Content.ReadFromJsonAsync<JsonElement>(ct);
+        await ExhaustBudget(app, Nginx, _ => "203.0.113.10");
+        var response = (await Login(app, Nginx, "203.0.113.10")).Response;
+        Assert.Equal(StatusCodes.Status429TooManyRequests, response.StatusCode);
+        Assert.InRange(
+            int.Parse(response.Headers.RetryAfter!, CultureInfo.InvariantCulture),
+            1,
+            60
+        );
+        Assert.Equal("application/problem+json", response.ContentType);
+        var problem = await JsonSerializer.DeserializeAsync<JsonElement>(
+            response.Body,
+            cancellationToken: ct
+        );
         Assert.Equal(
             "Wysłano zbyt wiele żądań. Odczekaj chwilę i spróbuj ponownie.",
             problem.GetProperty("detail").GetString()
         );
-        Assert.False(response.Headers.Contains("Set-Cookie"));
+        Assert.False(response.Headers.ContainsKey("Set-Cookie"));
     }
 
     [Fact]
-    public async Task Refresh_FromDifferentForwardedClients_UsesSeparateBudgets()
+    public async Task Login_FromDifferentForwardedClients_UsesSeparateBudgets()
     {
-        var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
-        using var client = app.CreateApiClient();
-        await ExhaustBudget(app, client, "203.0.113.10", ct);
-        using var limited = await Refresh(client, "203.0.113.10", ct);
-        using var other = await Refresh(client, "203.0.113.20", ct);
-        Assert.Equal(HttpStatusCode.TooManyRequests, limited.StatusCode);
-        Assert.Equal(HttpStatusCode.Unauthorized, other.StatusCode);
+        await ExhaustBudget(app, Nginx, _ => "203.0.113.10");
+        var limited = await Login(app, Nginx, "203.0.113.10");
+        var other = await Login(app, Nginx, "203.0.113.20");
+        Assert.Equal(StatusCodes.Status429TooManyRequests, limited.Response.StatusCode);
+        Assert.NotEqual(StatusCodes.Status429TooManyRequests, other.Response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Login_FromUntrustedPeer_IgnoresForwardedFor()
+    {
+        await using var app = new TestApplication(fixture.ConnectionString);
+        await ExhaustBudget(app, "198.51.100.7", attempt => $"203.0.113.{attempt}");
+        var response = await Login(app, "198.51.100.7", "203.0.113.200");
+        Assert.Equal(StatusCodes.Status429TooManyRequests, response.Response.StatusCode);
     }
 
     private static async Task ExhaustBudget(
         TestApplication app,
-        HttpClient client,
-        string clientIp,
-        CancellationToken ct
+        string peer,
+        Func<int, string> clientIp
     )
     {
         var limit = app
             .Services.GetRequiredService<IConfiguration>()
-            .GetValue<int>("RateLimiting:AuthSensitive:PermitLimit");
+            .GetValue<int>("RateLimiting:Login:PermitLimit");
         for (var attempt = 0; attempt < limit; attempt++)
         {
-            using var allowed = await Refresh(client, clientIp, ct);
-            Assert.Equal(HttpStatusCode.Unauthorized, allowed.StatusCode);
+            var allowed = await Login(app, peer, clientIp(attempt));
+            Assert.NotEqual(StatusCodes.Status429TooManyRequests, allowed.Response.StatusCode);
         }
     }
 
-    private static Task<HttpResponseMessage> Refresh(
-        HttpClient client,
-        string clientIp,
-        CancellationToken ct
-    )
-    {
-        var request = new HttpRequestMessage(HttpMethod.Post, "/v2/auth/refresh");
-        request.Headers.Add("X-Forwarded-For", clientIp);
-        return client.SendAsync(request, ct);
-    }
+    private static Task<HttpContext> Login(TestApplication app, string peer, string clientIp) =>
+        app.Server.SendAsync(context =>
+        {
+            context.Request.Method = HttpMethods.Post;
+            context.Request.Scheme = "https";
+            context.Request.Path = "/v2/auth/login";
+            context.Request.Headers["X-Forwarded-For"] = clientIp;
+            context.Connection.RemoteIpAddress = IPAddress.Parse(peer);
+        });
 }

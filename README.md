@@ -17,6 +17,7 @@ and Dependabot.
 | Environment Variable                 | Description                            | Example               | Required |
 | ------------------------------------ | -------------------------------------- | --------------------- | -------- |
 | `API_URL`                            | The address of the backend service     | `http://backend:8080` | Yes      |
+| `TRUSTED_PROXY` | Address or CIDR of the reverse proxy in front of nginx whose `X-Forwarded-For` is trusted | `172.16.0.0/12` | No |
 | `SENTRY_DSN`                         | Frontend Sentry DSN; empty disables it |                       | No       |
 | `SENTRY_TRACES_SAMPLE_RATE`          | Frontend trace sampling rate           | `0.1`                 | No       |
 | `SENTRY_REPLAYS_SESSION_SAMPLE_RATE` | Frontend replay session sampling rate  | `0.1`                 | No       |
@@ -41,14 +42,15 @@ and Dependabot.
 | `JWT__AccessTokenLifetimeSeconds`       | JWT access token lifetime in seconds           | `3600`                                                                          | No       |
 | `JWT__RefreshTokenLifetimeSeconds`      | JWT refresh token lifetime in seconds          | `7200`                                                                          | No       |
 | `JWT__Secret`                           | JWT signing secret                             | `JWTp@ssw0rdTwoHundredFiftySixBitsAtLeast`                                      | Yes      |
-| `ForwardedHeaders__ForwardLimit` | Proxy hops whose `X-Forwarded-For` is applied | `2` | No |
-| `ForwardedHeaders__TrustedNetworks__0` | Proxy network trusted for forwarded headers | `172.16.0.0/12` | No |
-| `RateLimiting__AuthSensitive__PermitLimit` | Auth requests allowed per client IP and window | `60` | No |
-| `RateLimiting__AuthSensitive__Window` | Auth rate-limit window | `00:01:00` | No |
+| `ForwardedHeaders__TrustedNetworks__0` | Network of the frontend nginx, trusted for `X-Forwarded-For` | `172.16.0.0/12` | No |
+| `RateLimiting__Login__PermitLimit` | Login requests allowed per client IP and window | `60` | No |
+| `RateLimiting__Login__Window` | Login rate-limit window | `00:01:00` | No |
+| `RateLimiting__AccountEmail__PermitLimit` | Registration, password and email-confirmation requests allowed per client IP and window | `20` | No |
+| `RateLimiting__AccountEmail__Window` | Registration, password and email-confirmation rate-limit window | `00:01:00` | No |
 | `Identity__Lockout__MaxFailedAccessAttempts` | Wrong passwords before an account is locked | `5` | No |
 | `Identity__Lockout__DefaultLockoutTimeSpan` | Account lockout duration | `00:15:00` | No |
 
-Authentication is protected in two layers. Identity locks an account for `Identity__Lockout__DefaultLockoutTimeSpan` after `Identity__Lockout__MaxFailedAccessAttempts` wrong passwords, independent of the client IP. Registration, login, session, password and email-confirmation endpoints also share a fixed-window limit per client IP; a rejected request gets HTTP 429 with `Retry-After` and a Problem Details body. The client IP comes from `X-Forwarded-For`, applied only for hops from loopback or `ForwardedHeaders__TrustedNetworks` (Docker networks by default) and at most `ForwardedHeaders__ForwardLimit` hops, matching Caddy → frontend nginx → backend. Requests reaching the backend directly from other addresses keep their socket address. Add the proxy network if a deployment's proxy runs outside `172.16.0.0/12`.
+Authentication is protected in two layers. Identity locks an account for `Identity__Lockout__DefaultLockoutTimeSpan` after `Identity__Lockout__MaxFailedAccessAttempts` wrong passwords, independent of the client IP. Login and the registration, password and email-confirmation endpoints also have separate fixed-window limits per client IP; a rejected request gets HTTP 429 with `Retry-After` and a Problem Details body. Session restore, refresh and logout are not IP-limited because they only act on a valid refresh cookie. The frontend nginx decides the client IP: it reads `X-Forwarded-For` only from `TRUSTED_PROXY` (nothing by default, so a directly published frontend uses the socket address) and replaces the header with that single address. The backend applies only that one `X-Forwarded-For` hop, from `ForwardedHeaders__TrustedNetworks`, and ignores `X-Forwarded-Proto`. Keep the backend port unpublished or bound to loopback, because a published Docker port can reach it from a trusted address. Staging sets `TRUSTED_PROXY` to the Docker networks for Caddy; narrow it to the `caddy` network subnet where known.
 
 Database migrations and reference data seeding run on startup. Missing roles, UG units, research areas and ship equipment are added; existing reference rows, including inactive entries, are preserved. Seeding shares Entity Framework's migration lock so application replicas do not seed simultaneously.
 

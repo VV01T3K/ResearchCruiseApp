@@ -32,7 +32,8 @@ FROM nginxinc/nginx-unprivileged:stable-alpine-slim
 
 ARG API_URL="http://backend:8080/"
 
-ENV API_URL=$API_URL
+ENV API_URL=$API_URL \
+    TRUSTED_PROXY="127.0.0.1"
 
 WORKDIR /app
 COPY frontend/nginx.conf /etc/nginx/templates/default.conf.template

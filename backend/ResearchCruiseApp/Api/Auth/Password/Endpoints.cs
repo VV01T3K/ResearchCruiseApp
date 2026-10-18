@@ -21,7 +21,7 @@ public static class PasswordEndpoints
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<RequestPasswordResetRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .RequireRateLimiting(RateLimitingPolicies.AccountEmail)
             .AllowAnonymous();
     }
 
@@ -36,7 +36,7 @@ public static class PasswordEndpoints
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<ResetPasswordRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .RequireRateLimiting(RateLimitingPolicies.AccountEmail)
             .AllowAnonymous();
     }
 
