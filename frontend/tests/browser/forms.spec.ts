@@ -287,7 +287,7 @@ test('form C clears point awards for an unfinished task and saves attached photo
   ]);
 });
 
-for (const width of [1280, 1440]) {
+for (const width of [375, 1280, 1440]) {
   test(`the action bar leaves focused fields clear at ${width}×800`, async ({ page, network }) => {
     await page.setViewportSize({ width, height: 800 });
     const expectClearOfBar = async (field: Locator) => {
