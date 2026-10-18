@@ -1,4 +1,4 @@
-import { submissionSchema } from '@/integrations/tanstack/form/schema';
+import { submissionSchema, whenFieldsValid } from '@/integrations/tanstack/form/schema';
 import { z } from 'zod';
 
 import { FormCFields } from '@/api/generated/schemas';
@@ -65,6 +65,28 @@ import {
   mapResearchTaskToValues,
   mapSpubTaskToValues,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+
+export const FORM_C_SECTIONS = {
+  shipUsage: 3,
+  differentUsage: 3,
+  permissions: 4,
+  researchAreaDescriptions: 5,
+  researchTasksEffects: 7,
+  contracts: 8,
+  ugTeams: 9,
+  guestTeams: 9,
+  spubTasks: 11,
+  shortResearchEquipments: 12,
+  longResearchEquipments: 12,
+  ports: 12,
+  cruiseDaysDetails: 13,
+  researchEquipments: 14,
+  shipEquipmentsIds: 15,
+  collectedSamples: 16,
+  spubReportData: 17,
+  additionalDescription: 18,
+  photos: 18,
+} satisfies Partial<Record<keyof FormCValues, number>>;
 
 const FormCInputSchema = z.object({
   draft: z.boolean().optional(),
@@ -152,15 +174,18 @@ export function getFormCValidationSchema(formAInitValues: FormAOptions) {
     shipUsage: z.enum(['0', '1', '2', '3', '4'], {
       error: 'Wymagane jest wskazanie sposobu korzystania z statku',
     }),
-  }).superRefine(({ shipUsage, differentUsage }, ctx) => {
-    if (shipUsage === '4' && !differentUsage) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'w przypadku wyboru "inne" należy podać informacje o sposobie korzystania z statku',
-        path: ['differentUsage'],
-      });
-    }
-  });
+  }).superRefine(
+    ({ shipUsage, differentUsage }, ctx) => {
+      if (shipUsage === '4' && !differentUsage) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'w przypadku wyboru "inne" należy podać informacje o sposobie korzystania z statku',
+          path: ['differentUsage'],
+        });
+      }
+    },
+    whenFieldsValid('shipUsage', 'differentUsage')
+  );
 }
 
 export function getFormCFieldsSchema(formAInitValues: FormAOptions) {

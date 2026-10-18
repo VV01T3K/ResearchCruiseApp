@@ -1,7 +1,7 @@
 import type { AnyFieldMeta, AnyFormApi } from '@tanstack/react-form';
 import { ApiError, getProblemDetail } from '@/api/errors';
 
-export const INVALID_FORM_MESSAGE = 'Formularz zawiera błędy. Popraw zaznaczone pola.';
+const INVALID_FORM_MESSAGE = 'Formularz zawiera błędy. Popraw zaznaczone pola.';
 
 export function saveFailedMessage(draft: boolean | undefined): string {
   return draft ? 'Nie udało się zapisać wersji roboczej formularza' : 'Nie udało się wysłać formularza';
@@ -29,6 +29,43 @@ export function getFormLevelErrors(form: AnyFormApi, errorMap = form.state.error
       Array.isArray(issues) && !(path && form.getFieldInfo(path).instance) ? issues.map(getMessage) : []
     );
   });
+}
+
+/** Section number of each top-level field, listed in the order the form displays them. */
+export type FormSections = Record<string, number>;
+
+function getDisplayOrder(path: string, sections: FormSections): number[] {
+  const field = path.split(/[.[]/)[0];
+  const order = Object.keys(sections).indexOf(field);
+  if (order === -1) return [Infinity];
+  return [sections[field], order, ...Array.from(path.matchAll(/\[(\d+)]/g), (match) => Number(match[1]))];
+}
+
+function compareDisplayOrder(a: number[], b: number[]): number {
+  for (let i = 0; i < Math.min(a.length, b.length); i++) {
+    if (a[i] !== b[i]) return a[i] - b[i];
+  }
+  return a.length - b.length;
+}
+
+/** Names the section and reason of the first client validation error in display order. */
+export function getInvalidFormMessage(form: AnyFormApi, sections: FormSections): string {
+  const errors = Object.values(form.state.errorMap).flatMap((error) =>
+    error && typeof error === 'object' && !Array.isArray(error)
+      ? Object.entries(error).flatMap(([path, issues]) =>
+          Array.isArray(issues) && issues.length ? [{ path, message: getMessage(issues[0]) }] : []
+        )
+      : []
+  );
+  const first = errors
+    .map((error) => ({ ...error, order: getDisplayOrder(error.path, sections) }))
+    .sort((a, b) => compareDisplayOrder(a.order, b.order))
+    .find((error) => error.message);
+  if (!first) return INVALID_FORM_MESSAGE;
+  const section = first.order[0];
+  return Number.isFinite(section)
+    ? `Formularz błędny w sekcji nr ${section}:\n${first.message}`
+    : `Formularz zawiera błędy:\n${first.message}`;
 }
 
 export function navigateToFirstError(): void {

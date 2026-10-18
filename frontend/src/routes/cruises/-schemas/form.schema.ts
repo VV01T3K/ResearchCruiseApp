@@ -3,6 +3,16 @@ import { z } from 'zod';
 import { CreateRequest, type CruiseResponse } from '@/api/generated/schemas';
 import { emptyGuid } from '@/lib/applications/person';
 
+export const CRUISE_FORM_SECTIONS = {
+  title: 1,
+  shipUnavailable: 1,
+  startDate: 2,
+  endDate: 2,
+  mainManagerId: 3,
+  deputyManagerId: 3,
+  cruiseApplicationIds: 4,
+} satisfies Partial<Record<keyof CruiseFormValues, number>>;
+
 export const CruiseFormInputSchema = z
   .object({
     startDate: z.iso.datetime('Wymagane jest wskazanie daty rozpoczęcia rejsu'),

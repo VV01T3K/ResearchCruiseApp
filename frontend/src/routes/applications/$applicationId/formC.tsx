@@ -6,9 +6,10 @@ import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { INVALID_FORM_MESSAGE, navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
+import { getInvalidFormMessage, navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
 import { FormView } from './-components/formC/FormView';
 import {
+  FORM_C_SECTIONS,
   type FormCValues,
   formCDefaultValues,
   getFormCSubmissionSchema,
@@ -90,7 +91,7 @@ function FormCPage() {
     onSubmit: async ({ value }) => handleValidSubmit(value),
     onSubmitInvalid: () => {
       if (!form.state.values.draft) trackFormSubmit('form-c', 'invalid', form.state);
-      toast.error(INVALID_FORM_MESSAGE);
+      toast.error(getInvalidFormMessage(form, FORM_C_SECTIONS));
       navigateToFirstError();
     },
   });

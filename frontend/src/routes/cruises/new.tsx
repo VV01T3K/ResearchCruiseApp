@@ -10,10 +10,10 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { INVALID_FORM_MESSAGE, navigateToFirstError } from '@/integrations/tanstack/form/errors';
+import { getInvalidFormMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { FormView } from './-components/FormView';
-import { CruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
+import { CRUISE_FORM_SECTIONS, CruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 
@@ -43,7 +43,7 @@ function NewCruisePage() {
     validators: { onDynamic: CruiseFormSchema },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('new-cruise', 'invalid', formApi.state);
-      toast.error(INVALID_FORM_MESSAGE);
+      toast.error(getInvalidFormMessage(formApi, CRUISE_FORM_SECTIONS));
       navigateToFirstError();
     },
     onSubmit: async ({ value, formApi }) => {
