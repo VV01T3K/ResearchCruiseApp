@@ -131,9 +131,9 @@ export const useLogin = <TError = ErrorType<HttpValidationProblemDetails | Probl
 /**
  * @summary Refresh account tokens.
  */
-export const refreshTokens = async ( options?: Parameters<typeof customFetch>[1]): Promise<TokenResponse> => {
+export const refreshTokens = async ( options?: Parameters<typeof customFetch>[1]): Promise<TokenResponse | void> => {
 
-  return customFetch<TokenResponse>(getRefreshTokensUrl(),
+  return customFetch<TokenResponse | void>(getRefreshTokensUrl(),
   {
     ...options,
     method: 'POST'

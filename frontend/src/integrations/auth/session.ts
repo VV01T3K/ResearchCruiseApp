@@ -72,7 +72,7 @@ async function refresh(): Promise<TokenResponse | undefined> {
   const revisionBeforeRefresh = sessionRevision;
   const generationBeforeRefresh = authGeneration;
   try {
-    let details: TokenResponse;
+    let details: TokenResponse | void;
     try {
       details = await refreshTokens();
     } catch (error) {
@@ -92,6 +92,11 @@ async function refresh(): Promise<TokenResponse | undefined> {
     }
 
     if (logoutInProgress || authGeneration !== generationBeforeRefresh) return undefined;
+    if (!details) {
+      if (sessionRevision !== revisionBeforeRefresh && session) return session;
+      setSession(undefined);
+      return undefined;
+    }
     setSession(details);
     return details;
   } catch (error) {

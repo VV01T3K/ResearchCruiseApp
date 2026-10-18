@@ -75,14 +75,17 @@ public static class SessionsEndpoints
         return TypedResults.Ok(TokenResponse.From(result.Data!));
     }
 
-    private static async Task<Results<Ok<TokenResponse>, ProblemHttpResult>> Refresh(
+    private static async Task<Results<Ok<TokenResponse>, NoContent, ProblemHttpResult>> Refresh(
         IdentityService identityService,
         HttpContext context,
         IWebHostEnvironment environment
     )
     {
-        if (!context.Request.Cookies.TryGetValue(RefreshTokenCookie, out var refreshToken))
-            return Error.UnknownIdentity().ToProblemHttpResult();
+        if (
+            !context.Request.Cookies.TryGetValue(RefreshTokenCookie, out var refreshToken)
+            || string.IsNullOrEmpty(refreshToken)
+        )
+            return TypedResults.NoContent();
 
         var result = await identityService.RefreshUserTokens(refreshToken);
 

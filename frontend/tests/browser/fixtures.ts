@@ -66,7 +66,7 @@ export const test = base.extend<{
     context.on('request', (request) => requests.record(request));
     await use(requests);
   },
-  // The signed-in user. Without one, the session refresh is rejected as for a guest.
+  // The signed-in user. Without one, the session refresh finds no cookie, as for a guest.
   account: [null, { option: true }],
   network: [
     async ({ context, baseURL, account }, use) => {
@@ -78,7 +78,7 @@ export const test = base.extend<{
         handlers: [
           http.get('*/api/health', () => HttpResponse.json({ status: 'ok' })),
           http.get('*/api/version', () => HttpResponse.json('2.5.1')),
-          getRefreshTokensMockHandler(account ? session() : fail(401)),
+          getRefreshTokensMockHandler(account ? session() : () => undefined),
           getGetCurrentUserMockHandler(account ?? fail(401)),
         ],
         // The app's own pages and assets load normally; every API request needs a handler.

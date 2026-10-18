@@ -32,15 +32,15 @@ export const getLoginMockHandler = (overrideResponse?: TokenResponse | ((info: P
   }, options)
 }
 
-export const getRefreshTokensMockHandler = (overrideResponse?: TokenResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<TokenResponse> | TokenResponse), options?: RequestHandlerOptions) => {
+export const getRefreshTokensMockHandler = (overrideResponse?: TokenResponse | void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<TokenResponse | void> | TokenResponse | void), options?: RequestHandlerOptions) => {
   return http.post('*/v2/auth/refresh', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
 
-
-    return HttpResponse.json(overrideResponse !== undefined
+  const resolvedBody = overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getRefreshTokensResponseMock(),
-      { status: 200
-      })
+    : getRefreshTokensResponseMock();
+    return resolvedBody === undefined
+      ? new HttpResponse(null, { status: 204 })
+      : HttpResponse.json(resolvedBody, { status: 200 })
   }, options)
 }
 
