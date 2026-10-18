@@ -86,7 +86,16 @@ public static class SessionsEndpoints
         IWebHostEnvironment environment
     )
     {
-        if (!await identityService.CanUserLogin(request.Email, request.Password))
+        var signIn = await identityService.CanUserLogin(request.Email, request.Password);
+        if (signIn.IsLockedOut)
+        {
+            return Error
+                .UnknownIdentity(
+                    "Konto zostało tymczasowo zablokowane po zbyt wielu nieudanych próbach logowania. Spróbuj ponownie później."
+                )
+                .ToProblemHttpResult();
+        }
+        if (!signIn.Succeeded)
         {
             return Error
                 .UnknownIdentity("Podano błędne hasło lub użytkownik nie istnieje.")

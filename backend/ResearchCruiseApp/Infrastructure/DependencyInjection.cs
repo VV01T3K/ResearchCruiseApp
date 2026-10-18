@@ -105,6 +105,7 @@ public static class DependencyInjection
             options.Password.RequireUppercase = true;
             options.Password.RequireNonAlphanumeric = false;
         });
+        services.Configure<IdentityOptions>(configuration.GetSection("Identity"));
 
         services.AddScoped<IdentityService>();
     }

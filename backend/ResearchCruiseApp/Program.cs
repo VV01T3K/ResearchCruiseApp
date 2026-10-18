@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -5,6 +6,7 @@ using System.Threading.RateLimiting;
 using Asp.Versioning;
 using MailKit.Security;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
@@ -94,21 +96,33 @@ builder
     })
     .AddApiExplorer(options => options.SubstituteApiVersionInUrl = true);
 builder.Services.AddAuthorization(AuthorizationPolicies.AddApiAuthorizationPolicies);
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    var section = builder.Configuration.GetSection("ForwardedHeaders");
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    section.Bind(options);
+    foreach (var network in section.GetSection("TrustedNetworks").Get<string[]>() ?? [])
+        options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse(network));
+});
 builder.Services.AddRateLimiter(options =>
 {
+    var authLimit = builder
+        .Configuration.GetSection("RateLimiting:AuthSensitive")
+        .Get<FixedWindowRateLimiterOptions>()!;
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = (context, _) =>
+    {
+        if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+            context.HttpContext.Response.Headers.RetryAfter = Math.Ceiling(retryAfter.TotalSeconds)
+                .ToString(CultureInfo.InvariantCulture);
+        return ValueTask.CompletedTask;
+    };
     options.AddPolicy(
         RateLimitingPolicies.AuthSensitive,
         httpContext =>
             RateLimitPartition.GetFixedWindowLimiter(
                 httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-                static _ => new FixedWindowRateLimiterOptions
-                {
-                    AutoReplenishment = true,
-                    PermitLimit = 10,
-                    QueueLimit = 0,
-                    Window = TimeSpan.FromMinutes(1),
-                }
+                _ => authLimit
             )
     );
 });
@@ -141,6 +155,8 @@ var app = builder.Build();
 
 if (await app.RunSeedApplicationsCommand(args))
     return;
+
+app.UseForwardedHeaders();
 
 app.UseExceptionHandler(exceptionHandlerApp =>
     exceptionHandlerApp.Run(async context =>

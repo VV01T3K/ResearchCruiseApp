@@ -93,4 +93,36 @@ public sealed class LoginTests(SqlFixture fixture) : IAsyncLifetime
         });
         Assert.Empty(app.Transport.Messages);
     }
+
+    [Fact]
+    public async Task Login_AfterRepeatedWrongPasswords_LocksOutTheAccount()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var user = await TestUsers.Create(app, "lockout@example.invalid");
+        using var client = app.CreateApiClient();
+        for (var attempt = 0; attempt < 5; attempt++)
+        {
+            using var wrong = await client.PostAsJsonAsync(
+                "/v2/auth/login",
+                new { Email = user.Email, Password = "WrongPassword1!" },
+                cancellationToken
+            );
+            Assert.Equal(HttpStatusCode.Unauthorized, wrong.StatusCode);
+        }
+
+        using var response = await client.PostAsJsonAsync(
+            "/v2/auth/login",
+            new { Email = user.Email, Password = TestUsers.Password },
+            cancellationToken
+        );
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        var problem = await response.Content.ReadFromJsonAsync<JsonElement>(cancellationToken);
+        Assert.Equal(
+            "Konto zostało tymczasowo zablokowane po zbyt wielu nieudanych próbach logowania. Spróbuj ponownie później.",
+            problem.GetProperty("detail").GetString()
+        );
+        Assert.False(response.Headers.Contains("Set-Cookie"));
+    }
 }

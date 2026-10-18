@@ -41,6 +41,14 @@ and Dependabot.
 | `JWT__AccessTokenLifetimeSeconds`       | JWT access token lifetime in seconds           | `3600`                                                                          | No       |
 | `JWT__RefreshTokenLifetimeSeconds`      | JWT refresh token lifetime in seconds          | `7200`                                                                          | No       |
 | `JWT__Secret`                           | JWT signing secret                             | `JWTp@ssw0rdTwoHundredFiftySixBitsAtLeast`                                      | Yes      |
+| `ForwardedHeaders__ForwardLimit` | Proxy hops whose `X-Forwarded-For` is applied | `2` | No |
+| `ForwardedHeaders__TrustedNetworks__0` | Proxy network trusted for forwarded headers | `172.16.0.0/12` | No |
+| `RateLimiting__AuthSensitive__PermitLimit` | Auth requests allowed per client IP and window | `60` | No |
+| `RateLimiting__AuthSensitive__Window` | Auth rate-limit window | `00:01:00` | No |
+| `Identity__Lockout__MaxFailedAccessAttempts` | Wrong passwords before an account is locked | `5` | No |
+| `Identity__Lockout__DefaultLockoutTimeSpan` | Account lockout duration | `00:15:00` | No |
+
+Authentication is protected in two layers. Identity locks an account for `Identity__Lockout__DefaultLockoutTimeSpan` after `Identity__Lockout__MaxFailedAccessAttempts` wrong passwords, independent of the client IP. Registration, login, session, password and email-confirmation endpoints also share a fixed-window limit per client IP; a rejected request gets HTTP 429 with `Retry-After` and a Problem Details body. The client IP comes from `X-Forwarded-For`, applied only for hops from loopback or `ForwardedHeaders__TrustedNetworks` (Docker networks by default) and at most `ForwardedHeaders__ForwardLimit` hops, matching Caddy → frontend nginx → backend. Requests reaching the backend directly from other addresses keep their socket address. Add the proxy network if a deployment's proxy runs outside `172.16.0.0/12`.
 
 Database migrations and reference data seeding run on startup. Missing roles, UG units, research areas and ship equipment are added; existing reference rows, including inactive entries, are preserved. Seeding shares Entity Framework's migration lock so application replicas do not seed simultaneously.
 

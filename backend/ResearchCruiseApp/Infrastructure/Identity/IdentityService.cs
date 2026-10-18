@@ -23,6 +23,7 @@ internal enum SeedUserStatus
 
 internal class IdentityService(
     UserManager<User> userManager,
+    SignInManager<User> signInManager,
     RoleManager<IdentityRole> roleManager,
     EmailSender emailSender,
     RandomGenerator randomGenerator,
@@ -176,11 +177,12 @@ internal class IdentityService(
         return identityResult.ToApplicationResult();
     }
 
-    public async Task<bool> CanUserLogin(string email, string password)
+    public async Task<SignInResult> CanUserLogin(string email, string password)
     {
         var user = await userManager.FindByEmailAsync(email);
-        return user is { Accepted: true, EmailConfirmed: true }
-            && await userManager.CheckPasswordAsync(user, password);
+        if (user is not { Accepted: true, EmailConfirmed: true })
+            return SignInResult.Failed;
+        return await signInManager.CheckPasswordSignInAsync(user, password, lockoutOnFailure: true);
     }
 
     public async Task ResendEmailConfirmationEmail(string email, string roleName)
