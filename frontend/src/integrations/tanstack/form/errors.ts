@@ -57,9 +57,11 @@ export function getInvalidFormMessage(form: AnyFormApi, sections: FormSections):
         )
       : []
   );
+  const inputs = Array.from(document.querySelectorAll('[name]'), (input) => input.getAttribute('name'));
+  const inputOrder = (path: string) => (inputs.includes(path) ? inputs.indexOf(path) : Infinity);
   const first = errors
-    .map((error) => ({ ...error, order: getDisplayOrder(error.path, sections) }))
-    .sort((a, b) => compareDisplayOrder(a.order, b.order))
+    .map((error) => ({ ...error, order: getDisplayOrder(error.path, sections), input: inputOrder(error.path) }))
+    .sort((a, b) => compareDisplayOrder(a.order, b.order) || a.input - b.input || 0)
     .find((error) => error.message);
   if (!first) return INVALID_FORM_MESSAGE;
   const section = first.order[0];
