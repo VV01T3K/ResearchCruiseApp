@@ -525,6 +525,32 @@ internal class IdentityService(
         );
     }
 
+    public async Task<Result> ReplaceUserRoles(Guid userId, string roleName)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+            return Error.ResourceNotFound();
+
+        var currentRoles = await userManager.GetRolesAsync(user);
+        if (
+            roleName != RoleName.Administrator
+            && currentRoles.Contains(RoleName.Administrator)
+            && await GetUsersCountInRole(RoleName.Administrator) <= 1
+        )
+        {
+            return Error.Conflict("Nie można odebrać roli ostatniemu administratorowi");
+        }
+
+        var identityResult = await userManager.RemoveFromRolesAsync(
+            user,
+            currentRoles.Where(currentRole => currentRole != roleName)
+        );
+        if (identityResult.Succeeded && !currentRoles.Contains(roleName))
+            identityResult = await userManager.AddToRoleAsync(user, roleName);
+
+        return identityResult.ToApplicationResult();
+    }
+
     private async Task<Result> DeleteUserCore(Guid userId)
     {
         var user = await userManager.FindByIdAsync(userId.ToString());
