@@ -21,11 +21,10 @@ import { trackFormSubmit } from '@/integrations/sentry/client';
 import { getRoleLabel, Role } from '@/integrations/auth/types';
 import {
   useAcceptUser,
-  useAddUserRole,
   useCreateUser,
   useDeactivateUser,
   useDeleteUser,
-  useRemoveUserRole,
+  useReplaceUserRole,
   useUpdateUser,
 } from '@/api/generated/endpoints/users.gen';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
@@ -83,8 +82,11 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
       onError: (error) => setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas aktualizacji użytkownika')),
     },
   });
-  const addUserRoleMutation = useAddUserRole();
-  const removeUserRoleMutation = useRemoveUserRole();
+  const replaceUserRoleMutation = useReplaceUserRole({
+    mutation: {
+      onError: (error) => setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas zmiany roli użytkownika')),
+    },
+  });
   const deleteUserMutation = useDeleteUser({
     mutation: {
       onError: (error) => setSubmitError(getProblemDetail(error, 'Wystąpił błąd podczas usuwania użytkownika')),
@@ -129,10 +131,8 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
             userId: user.id,
             data: profile satisfies UpdateUserRequest,
           });
-          const currentRole = user.roles[0];
-          if (currentRole && currentRole !== value.role) {
-            await removeUserRoleMutation.mutateAsync({ userId: user.id, roleName: currentRole });
-            await addUserRoleMutation.mutateAsync({ userId: user.id, roleName: value.role });
+          if (user.roles[0] !== value.role) {
+            await replaceUserRoleMutation.mutateAsync({ userId: user.id, data: { roleName: value.role } });
           }
           toast.dismiss(loading);
           close();
