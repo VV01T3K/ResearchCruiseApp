@@ -544,16 +544,38 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
       BlockadeCollisionValidationSchema(blockades)(val, ctx);
     }, evenWithFieldErrors);
 
-export function getFormAFieldsSchema(initValues: FormAOptions, blockades?: BlockadePeriod[], applicationId?: string) {
-  return buildFormAFieldsSchema(getFormAValidationSchema(initValues, blockades), applicationId);
+export function getFormAFieldsSchema(
+  initValues: FormAOptions,
+  blockades?: BlockadePeriod[],
+  applicationId?: string,
+  currentUserId?: string
+) {
+  return buildFormAFieldsSchema(getFormAValidationSchema(initValues, blockades), applicationId, currentUserId);
 }
 
-export function getFormADraftFieldsSchema(applicationId?: string) {
-  return buildFormAFieldsSchema(FormAInputSchema, applicationId);
+export function getFormADraftFieldsSchema(applicationId?: string, currentUserId?: string) {
+  return buildFormAFieldsSchema(FormAInputSchema, applicationId, currentUserId);
 }
 
-function buildFormAFieldsSchema(inputSchema: z.ZodType<FormAValues, FormAValues>, applicationId?: string) {
+function buildFormAFieldsSchema(
+  inputSchema: z.ZodType<FormAValues, FormAValues>,
+  applicationId?: string,
+  currentUserId?: string
+) {
   return inputSchema
+    .superRefine(
+      (form, ctx) => {
+        if (!currentUserId || form.cruiseManagerId === currentUserId || form.deputyManagerId === currentUserId) return;
+        for (const path of ['cruiseManagerId', 'deputyManagerId']) {
+          ctx.addIssue({
+            code: 'custom',
+            path: [path],
+            message: 'Aby zapisać formularz, wybierz siebie jako kierownika rejsu lub zastępcę',
+          });
+        }
+      },
+      { when: () => true }
+    )
     .transform((form): z.input<typeof FormAFields> => mapFormAFields(form, applicationId))
     .pipe(FormAFields);
 }
@@ -748,12 +770,13 @@ function toNullableNumber(value: string | null | undefined): number | null {
 
 export function getFormASubmissionSchema(
   initValues: FormAOptions,
+  currentUserId: string,
   blockades?: BlockadePeriod[],
   applicationId?: string
 ) {
   return submissionSchema(
-    getFormAFieldsSchema(initValues, blockades, applicationId),
-    getFormADraftFieldsSchema(applicationId)
+    getFormAFieldsSchema(initValues, blockades, applicationId, currentUserId),
+    getFormADraftFieldsSchema(applicationId, currentUserId)
   );
 }
 
