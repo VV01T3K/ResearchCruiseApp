@@ -13,12 +13,12 @@ export function TitleBadge({ title, shipUnavailable }: Props) {
   return (
     <div
       onClick={() => setIsExpanded(!isExpanded)}
-      className="w-0 min-w-full cursor-pointer"
+      className="cursor-pointer md:w-0 md:min-w-full"
       title={!isExpanded ? 'Kliknij, aby rozwinąć' : 'Kliknij, aby zwinąć'}
     >
       <AppBadge
         variant={shipUnavailable ? 'danger' : 'primary'}
-        className={cn('!block max-w-[250px]', isExpanded ? 'break-words whitespace-normal' : 'truncate')}
+        className={cn('!block max-w-[250px]', isExpanded ? 'break-words !whitespace-normal' : 'truncate')}
       >
         {prefix + (title ?? '')}
       </AppBadge>

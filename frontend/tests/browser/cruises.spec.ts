@@ -318,6 +318,11 @@ for (const width of [1280, 1366]) {
       .getByRole('table')
       .evaluate((table) => table.parentElement!.scrollWidth - table.parentElement!.clientWidth);
     expect(overflow).toBeLessThanOrEqual(0);
+    const title = page.getByText('Rejs Badania osadów').first();
+    await title.click();
+    expect(await title.evaluate((badge) => badge.scrollWidth - badge.clientWidth)).toBeLessThanOrEqual(0);
+    await page.setViewportSize({ width: 390, height: 800 });
+    await expect.poll(() => title.evaluate((badge) => badge.parentElement!.clientWidth)).toBeGreaterThan(100);
   });
 }
 
