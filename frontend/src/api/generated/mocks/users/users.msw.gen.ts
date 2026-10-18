@@ -199,6 +199,16 @@ export const getRemoveUserRoleMockHandler = (overrideResponse?: void | ((info: P
       })
   }, options)
 }
+
+export const getReplaceUserRoleMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.put('*/v2/users/:userId/role', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
 export const getUsersMock = () => [
   getGetCurrentUserMockHandler(),
   getChangeCurrentUserPasswordMockHandler(),
@@ -215,5 +225,6 @@ export const getUsersMock = () => [
   getAcceptUserMockHandler(),
   getDeactivateUserMockHandler(),
   getAddUserRoleMockHandler(),
-  getRemoveUserRoleMockHandler()
+  getRemoveUserRoleMockHandler(),
+  getReplaceUserRoleMockHandler()
 ]
