@@ -57,8 +57,3 @@ public static class ApiComposition
         return app;
     }
 }
-
-public static class RateLimitingPolicies
-{
-    public const string AuthSensitive = nameof(AuthSensitive);
-}

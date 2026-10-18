@@ -30,8 +30,6 @@ public static class ProblemDetailsMessages
                 "Dane zmieniły się w międzyczasie. Odśwież stronę i spróbuj ponownie.",
             StatusCodes.Status413PayloadTooLarge =>
                 "Przesyłane dane są zbyt duże. Zmniejsz rozmiar załączników.",
-            StatusCodes.Status429TooManyRequests =>
-                "Wysłano zbyt wiele żądań. Odczekaj chwilę i spróbuj ponownie.",
             StatusCodes.Status503ServiceUnavailable =>
                 "Usługa jest chwilowo niedostępna. Spróbuj ponownie później.",
             >= 500 => "Wystąpił błąd serwera. Spróbuj ponownie później.",
