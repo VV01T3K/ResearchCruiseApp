@@ -70,7 +70,8 @@ Outbox tests run against a disposable SQL Server container through
 Monitor `EmailOutboxMessages` for old pending rows, rising `Attempts`, and non-null
 `FailedAt`. Delivery failure logs identify the message ID, attempt, exception type,
 and whether retries are exhausted, without printing SMTP responses or recipients.
-Database/worker failures are logged and retried on the next poll. `/health` remains
+Database/worker failures are logged and retried on the next poll; SQL failures
+include the exception and its SQL error numbers. `/health` remains
 a process health check and does not certify mail delivery.
 
 Fix the credential/network problem and recreate the backend if its environment

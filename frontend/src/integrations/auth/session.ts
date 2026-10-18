@@ -77,6 +77,12 @@ async function refresh(): Promise<TokenResponse | undefined> {
       details = await refreshTokens();
     } catch (error) {
       const status = typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
+      const sessionReplaced =
+        sessionRevision !== revisionBeforeRefresh &&
+        session !== undefined &&
+        !logoutInProgress &&
+        authGeneration === generationBeforeRefresh;
+      if (status === 401 && sessionReplaced) return session;
       if (status !== 409) throw error;
 
       const concurrentSession = await waitForConcurrentRefresh(revisionBeforeRefresh);
