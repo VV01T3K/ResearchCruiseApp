@@ -67,7 +67,34 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Session_WhenCookieContainerHandlesRotationAndLogout_FindsNoSessionAfterLogout()
+    public async Task Session_WithoutOrWithRefreshCookie_ReturnsNullOrRestoresSession()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var user = await TestUsers.Create(app, "session@example.invalid", RoleName.Guest);
+        using var client = app.CreateApiClient();
+
+        using var anonymous = await client.GetAsync("/v2/auth/session", ct);
+        Assert.Equal(HttpStatusCode.OK, anonymous.StatusCode);
+        Assert.Equal("null", await anonymous.Content.ReadAsStringAsync(ct));
+
+        var original = await Login(client, user.Email!);
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/v2/auth/session");
+        request.Headers.Add("Cookie", original.Cookie);
+        using var restored = await client.SendAsync(request, ct);
+        Assert.Equal(HttpStatusCode.OK, restored.StatusCode);
+        Assert.NotEqual(original.Cookie, ReadCookie(restored));
+        using var profileRequest = new HttpRequestMessage(HttpMethod.Get, "/v2/users/me");
+        profileRequest.Headers.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            await ReadAccessToken(restored)
+        );
+        using var profile = await client.SendAsync(profileRequest, ct);
+        Assert.Equal(HttpStatusCode.OK, profile.StatusCode);
+    }
+
+    [Fact]
+    public async Task Session_WhenCookieContainerHandlesRotationAndLogout_RejectsRefreshAfterLogout()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -91,9 +118,9 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
         );
         Assert.Equal("/", deletion.Path.Value);
         Assert.True(deletion.Expires < DateTimeOffset.UtcNow);
-        using var afterLogout = await client.PostAsync("/v2/auth/refresh", null, ct);
-        Assert.Equal(HttpStatusCode.NoContent, afterLogout.StatusCode);
-        Assert.False(afterLogout.Headers.Contains("Set-Cookie"));
+        using var rejected = await client.PostAsync("/v2/auth/refresh", null, ct);
+        Assert.Equal(HttpStatusCode.Unauthorized, rejected.StatusCode);
+        Assert.False(rejected.Headers.Contains("Set-Cookie"));
         await app.InDatabase(async db =>
         {
             var stored = await db.Users.SingleAsync(ct);
@@ -106,22 +133,7 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData(null)]
-    [InlineData("rca_refresh_token=")]
-    public async Task Refresh_WithoutSessionCookie_ReturnsNoContent(string? cookie)
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
-        using var client = app.CreateApiClient();
-
-        using var response = await SendCookie(client, "/v2/auth/refresh", cookie);
-
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        Assert.Empty(await response.Content.ReadAsByteArrayAsync(ct));
-        Assert.False(response.Headers.Contains("Set-Cookie"));
-    }
-
-    [Theory]
+    [InlineData("missing")]
     [InlineData("invalid")]
     [InlineData("expired")]
     [InlineData("unaccepted")]
@@ -157,6 +169,7 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
 
         var cookie = reason switch
         {
+            "missing" => null,
             "invalid" => "rca_refresh_token=not-a-valid-session",
             _ => session.Cookie,
         };

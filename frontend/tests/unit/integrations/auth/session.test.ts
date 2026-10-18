@@ -21,7 +21,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-it('coalesces concurrent bootstrap requests into one cookie-backed refresh', async () => {
+it('coalesces concurrent bootstrap requests into one cookie-backed session request', async () => {
   const response = Promise.withResolvers<Response>();
   fetchMock.mockReturnValue(response.promise);
   const first = auth.getValidAccessToken();
@@ -30,8 +30,8 @@ it('coalesces concurrent bootstrap requests into one cookie-backed refresh', asy
   await expect(Promise.all([first, second])).resolves.toEqual(['test-access-token', 'test-access-token']);
   expect(fetchMock).toHaveBeenCalledTimes(1);
   const [url, options] = fetchMock.mock.calls[0];
-  expect(url).toBe('https://api.test/v2/auth/refresh');
-  expect(options).toMatchObject({ method: 'POST', credentials: 'include' });
+  expect(url).toBe('https://api.test/v2/auth/session');
+  expect(options).toMatchObject({ method: 'GET', credentials: 'include' });
   expect(options?.body).toBeUndefined();
   expect(new Headers(options?.headers).has('Authorization')).toBe(false);
 });
@@ -53,13 +53,13 @@ it.each([401, 500])('refresh failure %s clears the session only for unauthorized
   expect(auth.getSession()?.accessToken).toBe(status === 401 ? undefined : 'test-access-token');
 });
 
-it.each([401, 204])('keeps a newer session when a pending refresh gets %s for the old cookie', async (status) => {
+it('keeps a newer session when a pending refresh rejects the already-rotated cookie', async () => {
   auth.setSession(session());
   const response = Promise.withResolvers<Response>();
   fetchMock.mockReturnValue(response.promise);
   const refresh = auth.refreshSession();
   auth.setSession({ ...session(), accessToken: 'other-tab' });
-  response.resolve(new Response(null, { status }));
+  response.resolve(new Response(null, { status: 401 }));
   await expect(refresh).resolves.toMatchObject({ accessToken: 'other-tab' });
   await expect(auth.getValidAccessToken()).resolves.toBe('other-tab');
 });

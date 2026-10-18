@@ -23,8 +23,8 @@ public sealed class RateLimitTests(SqlFixture fixture) : IAsyncLifetime
         using var client = app.CreateApiClient();
         for (var attempt = 0; attempt < 10; attempt++)
         {
-            using var probe = await client.PostAsync("/v2/auth/refresh", null, ct);
-            Assert.Equal(HttpStatusCode.NoContent, probe.StatusCode);
+            using var denied = await client.PostAsync("/v2/auth/refresh", null, ct);
+            Assert.Equal(HttpStatusCode.Unauthorized, denied.StatusCode);
         }
         using var response = await client.PostAsJsonAsync(
             "/v2/auth/login",

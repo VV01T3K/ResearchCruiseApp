@@ -3,6 +3,7 @@ import {
   getConfirmEmailMockHandler,
   getLoginMockHandler,
   getLogoutMockHandler,
+  getGetCurrentSessionMockHandler,
   getRefreshTokensMockHandler,
   getRegisterAccountMockHandler,
   getRequestPasswordResetMockHandler,
@@ -83,10 +84,10 @@ test.describe('authenticated session', () => {
   test.use({ account: admin });
   test.beforeEach(({ network }) => network.use(getGetUsersMockHandler([])));
 
-  for (const failing of ['profile', 'refresh'] as const) {
+  for (const failing of ['profile', 'session'] as const) {
     test(`a server error from the ${failing} request does not log the user out`, async ({ page, network }) => {
       network.use(
-        failing === 'profile' ? getGetCurrentUserMockHandler(fail(500)) : getRefreshTokensMockHandler(fail(500))
+        failing === 'profile' ? getGetCurrentUserMockHandler(fail(500)) : getGetCurrentSessionMockHandler(fail(500))
       );
       await page.goto('/user-management');
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
@@ -94,7 +95,7 @@ test.describe('authenticated session', () => {
     });
   }
 
-  test('reload restores access through refresh without persisting the token in localStorage', async ({
+  test('reload restores access through the session cookie without persisting the token in localStorage', async ({
     page,
     requests,
   }) => {
@@ -103,7 +104,7 @@ test.describe('authenticated session', () => {
     await page.reload();
     await expect(page.getByRole('button', { name: 'Dodaj użytkownika' })).toBeVisible();
     // The refresh token travels as a cookie, never in the body.
-    expect(requests.bodies('POST /v2/auth/refresh')).toEqual([null, null]);
+    expect(requests.bodies('GET /v2/auth/session')).toEqual([null, null]);
     expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain(session().accessToken);
   });
 
@@ -137,7 +138,7 @@ test.describe('authenticated session', () => {
   for (const outcome of ['extended', 'rejected'] as const) {
     test(`an expiring session warning, when refreshed, is ${outcome}`, async ({ page, network }) => {
       network.use(
-        getRefreshTokensMockHandler(session(60_000), { once: true }),
+        getGetCurrentSessionMockHandler(session(60_000)),
         getRefreshTokensMockHandler(outcome === 'extended' ? session() : fail(401))
       );
       await page.goto('/user-management');

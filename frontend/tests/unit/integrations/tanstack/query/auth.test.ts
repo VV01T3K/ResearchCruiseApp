@@ -16,9 +16,9 @@ beforeEach(async () => {
 const loadCurrentUser = () => new QueryClient().query({ ...auth.currentUserQueryOptions(), retry: false });
 const requestedUrls = () => fetchMock.mock.calls.map(([url]) => url);
 
-it('resolves a signed-out startup to no user with only a successful refresh probe', async () => {
-  fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
+it('resolves a signed-out startup to no user with only the session request', async () => {
+  fetchMock.mockResolvedValue(Response.json(null));
   await expect(loadCurrentUser()).resolves.toBeNull();
   await expect(loadCurrentUser()).resolves.toBeNull();
-  expect(requestedUrls()).toEqual(['https://api.test/v2/auth/refresh']);
+  expect(requestedUrls()).toEqual(['https://api.test/v2/auth/session']);
 });

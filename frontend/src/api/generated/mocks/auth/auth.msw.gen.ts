@@ -19,6 +19,10 @@ export const getLoginResponseMock = (overrideResponse: Partial<Extract<TokenResp
 
 export const getRefreshTokensResponseMock = (overrideResponse: Partial<Extract<TokenResponse, object>> = {}): TokenResponse => ({accessToken: faker.string.alpha({length: {min: 10, max: 20}}), accessTokenExpirationDate: faker.date.past().toISOString().slice(0, 19) + 'Z', refreshTokenExpirationDate: faker.date.past().toISOString().slice(0, 19) + 'Z', ...overrideResponse})
 
+export const getGetCurrentSessionResponseTokenResponseMock = (overrideResponse: Partial<TokenResponse> = {}): TokenResponse => ({...{accessToken: faker.string.alpha({length: {min: 10, max: 20}}), accessTokenExpirationDate: faker.date.past().toISOString().slice(0, 19) + 'Z', refreshTokenExpirationDate: faker.date.past().toISOString().slice(0, 19) + 'Z'}, ...overrideResponse});
+
+export const getGetCurrentSessionResponseMock = (): null | TokenResponse => (faker.helpers.arrayElement([null,{...getGetCurrentSessionResponseTokenResponseMock()},]))
+
 
 export const getLoginMockHandler = (overrideResponse?: TokenResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<TokenResponse> | TokenResponse), options?: RequestHandlerOptions) => {
   return http.post('*/v2/auth/login', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
@@ -32,15 +36,27 @@ export const getLoginMockHandler = (overrideResponse?: TokenResponse | ((info: P
   }, options)
 }
 
-export const getRefreshTokensMockHandler = (overrideResponse?: TokenResponse | void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<TokenResponse | void> | TokenResponse | void), options?: RequestHandlerOptions) => {
+export const getRefreshTokensMockHandler = (overrideResponse?: TokenResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<TokenResponse> | TokenResponse), options?: RequestHandlerOptions) => {
   return http.post('*/v2/auth/refresh', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
 
-  const resolvedBody = overrideResponse !== undefined
+
+    return HttpResponse.json(overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getRefreshTokensResponseMock();
-    return resolvedBody === undefined
-      ? new HttpResponse(null, { status: 204 })
-      : HttpResponse.json(resolvedBody, { status: 200 })
+    : getRefreshTokensResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getGetCurrentSessionMockHandler = (overrideResponse?: null | TokenResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<null | TokenResponse> | null | TokenResponse), options?: RequestHandlerOptions) => {
+  return http.get('*/v2/auth/session', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetCurrentSessionResponseMock(),
+      { status: 200
+      })
   }, options)
 }
 
@@ -106,6 +122,7 @@ export const getResetPasswordMockHandler = (overrideResponse?: void | ((info: Pa
 export const getAuthMock = () => [
   getLoginMockHandler(),
   getRefreshTokensMockHandler(),
+  getGetCurrentSessionMockHandler(),
   getLogoutMockHandler(),
   getRegisterAccountMockHandler(),
   getConfirmEmailMockHandler(),
