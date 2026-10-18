@@ -6,7 +6,7 @@ import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { INVALID_FORM_MESSAGE, navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
+import { navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
 import { FormView } from './-components/formB/FormView';
 import {
   type FormBValues,
@@ -66,8 +66,7 @@ function FormBPage() {
     onSubmit: async ({ value }) => handleValidSubmit(value),
     onSubmitInvalid: () => {
       if (!form.state.values.draft) trackFormSubmit('form-b', 'invalid', form.state);
-      toast.error(INVALID_FORM_MESSAGE);
-      navigateToFirstError();
+      navigateToFirstError({ toast: true });
     },
   });
   const leaveAfterSave = useLeaveAfterSave(form);

@@ -228,6 +228,17 @@ test('form B adds a permission, accepts only a PDF scan and submits the new row'
   ]);
 });
 
+test('an invalid form B names the section and reason of the first error in an empty row', async ({ page }) => {
+  await page.goto(`/applications/${applicationId}/formB?mode=edit`);
+  await page.getByTestId('form-b-add-short-equipment-btn').click();
+  await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+
+  await expect(page.getByTestId('toast-error')).toHaveText(
+    'Formularz błędny w sekcji nr 12:\nData rozpoczęcia jest wymagana'
+  );
+  await expect(page.getByTestId('short-equipment-from-button')).toBeFocused();
+});
+
 test('form C clears point awards for an unfinished task and saves attached photos', async ({
   page,
   network,
