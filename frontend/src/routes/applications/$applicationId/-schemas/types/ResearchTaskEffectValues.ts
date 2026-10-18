@@ -9,6 +9,7 @@ const effectFields = {
   done: z.boolean(),
   managerConditionMet: z.boolean(),
   deputyConditionMet: z.boolean(),
+  publicationMinisterialPoints: z.string().nullable().optional(),
 };
 
 const withEffectFields = (

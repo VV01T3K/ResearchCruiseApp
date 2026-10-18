@@ -3,12 +3,16 @@ import { z } from 'zod';
 import { CreateRequest, type CruiseResponse } from '@/api/generated/schemas';
 import { emptyGuid } from '@/lib/applications/person';
 
+function managerIdSchema(message: string) {
+  return z.union([z.literal(''), z.guid(message)]).transform((id) => id || emptyGuid);
+}
+
 export const CruiseFormInputSchema = z
   .object({
     startDate: z.iso.datetime('Wymagane jest wskazanie daty rozpoczęcia rejsu'),
     endDate: z.iso.datetime('Wymagane jest wskazanie daty zakończenia rejsu'),
-    mainManagerId: z.guid('Wymagane jest wskazanie kierownika rejsu'),
-    deputyManagerId: z.guid('Wymagane jest wskazanie zastępcy kierownika rejsu'),
+    mainManagerId: managerIdSchema('Nieprawidłowy identyfikator kierownika rejsu'),
+    deputyManagerId: managerIdSchema('Nieprawidłowy identyfikator zastępcy kierownika rejsu'),
     cruiseApplicationIds: z.array(z.guid()),
     title: z.string().optional(),
     shipUnavailable: z.boolean(),
