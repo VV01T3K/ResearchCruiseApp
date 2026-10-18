@@ -10,10 +10,14 @@ namespace ResearchCruiseApp.IntegrationTests.Persistence;
 [Collection(SqlTestCollectionDefinition.Name)]
 public sealed class EmailWorkerDiagnosticsTests(SqlFixture fixture)
 {
-    [Fact(Timeout = 30_000)]
+    [Fact]
     public async Task Worker_WhenOutboxTableIsMissing_LogsSqlError()
     {
-        var ct = TestContext.Current.CancellationToken;
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(
+            TestContext.Current.CancellationToken
+        );
+        cts.CancelAfter(TimeSpan.FromSeconds(30));
+        var ct = cts.Token;
         await using var app = new TestApplication(fixture.ConnectionString);
         await using var db = fixture.CreateDbContext();
         var logger = new FakeLogger<EmailOutboxWorker>();
