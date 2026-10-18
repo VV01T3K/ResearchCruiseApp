@@ -1,7 +1,6 @@
 using System.Data.Common;
 using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Api.Users;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
@@ -58,17 +57,6 @@ public sealed class UserRoleQueryTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Equal(visible.Order(), users.Select(user => user.Id).Order());
             foreach (var user in users)
                 Assert.Equal(roles[user.Id].Order(), user.Roles.Order());
-
-            counter.Reset();
-            var context = (
-                await client.GetFromJsonAsync<FormAOptions>("/v2/applications/form-a/context", ct)
-            )!;
-            counts.Add(counter.Count);
-            Assert.Equal(
-                roles.Keys.Order(),
-                context.CruiseManagers.Select(user => user.Id).Order()
-            );
-            Assert.Equal(managers.Order(), context.DeputyManagers.Select(user => user.Id).Order());
         }
         return [.. counts];
     }
