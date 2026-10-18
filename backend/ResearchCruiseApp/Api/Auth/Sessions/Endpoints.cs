@@ -127,6 +127,7 @@ public static class SessionsEndpoints
         IWebHostEnvironment environment
     )
     {
+        context.Response.Headers.CacheControl = "no-store";
         var result = await identityService.RefreshUserTokens(
             context.Request.Cookies[RefreshTokenCookie] ?? ""
         );

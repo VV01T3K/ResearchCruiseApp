@@ -77,6 +77,7 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
         using var anonymous = await client.GetAsync("/v2/auth/session", ct);
         Assert.Equal(HttpStatusCode.OK, anonymous.StatusCode);
         Assert.Equal("null", await anonymous.Content.ReadAsStringAsync(ct));
+        Assert.True(anonymous.Headers.CacheControl?.NoStore);
 
         var original = await Login(client, user.Email!);
         using var request = new HttpRequestMessage(HttpMethod.Get, "/v2/auth/session");
@@ -84,6 +85,7 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
         using var restored = await client.SendAsync(request, ct);
         Assert.Equal(HttpStatusCode.OK, restored.StatusCode);
         Assert.NotEqual(original.Cookie, ReadCookie(restored));
+        Assert.True(restored.Headers.CacheControl?.NoStore);
         using var profileRequest = new HttpRequestMessage(HttpMethod.Get, "/v2/users/me");
         profileRequest.Headers.Authorization = new AuthenticationHeaderValue(
             "Bearer",
