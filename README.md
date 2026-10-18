@@ -186,6 +186,8 @@ For configuration and ongoing operation:
 | Set URLs, database, authentication, and telemetry | [Configuration](docs/configuration.md) |
 | Take over services or diagnose staging and automation | [Operations](docs/operations.md) |
 | Configure SMTP or diagnose missing mail | [SMTP setup](docs/smtp-configuration.md) and [email delivery](docs/email-delivery.md) |
+| Run backend checks and test suites | [Backend development](docs/backend-development.md) |
+| Update dependencies or handle audit findings | [Dependency maintenance](docs/dependency-maintenance.md) |
 | Investigate Sentry reports and build uploads | [Sentry operations](docs/sentry/operations.md) |
 
 ## Contributing

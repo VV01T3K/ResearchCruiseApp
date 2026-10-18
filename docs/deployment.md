@@ -258,10 +258,8 @@ rollback procedure.
 
 ## Other deployment files
 
-Staging's `compose.staging-app.yaml` expects external Docker networks and
-Komodo/Caddy configuration. It has different defaults for seeding and logging.
-The Kubernetes manifests also enable seeding and password logging and expect
-external secrets. Neither is part of this server procedure.
+Staging's `compose.staging.yaml` runs its own SQL Server and expects an external
+Caddy network and deployment environment. It is not part of this server procedure.
 
 The [Sentry infrastructure migration](sentry/sentry-on-prem-migration.md) remains
 a separate plan. Empty DSNs let the application run without Sentry.

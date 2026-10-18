@@ -13,9 +13,9 @@ PowerShell scripts.
 Install [Vite+](https://www.viteplus.dev/guide/) to get the `vp` command, and
 [mise](https://mise.jdx.dev/getting-started.html) to install repository tools.
 Open a new terminal and check that both commands work. The repository pins
-Node.js in [.node-version](.node-version), and .NET 10, pnpm, and Bun in
+Node.js in [.node-version](.node-version), and .NET 10 and Bun in
 [mise.toml](../mise.toml). Install JavaScript dependencies from the root, where
-the pnpm lockfile and workspace configuration live.
+the Bun lockfile and workspace configuration live.
 
 From the repository root:
 
@@ -24,7 +24,7 @@ mise trust
 mise install
 vp install --frozen-lockfile
 cd backend
-dotnet restore ResearchCruiseApp.sln
+dotnet restore ResearchCruiseApp.slnx
 dotnet tool restore
 cd ..
 ```
@@ -86,23 +86,25 @@ Run the checks for the component you changed. These match the scripts and
 [CI workflows](../.github/workflows/). Frontend browser tests mock the API;
 they do not prove that a real backend or SMTP server works.
 
-| Directory   | Command                                           | Purpose                                              |
-| ----------- | ------------------------------------------------- | ---------------------------------------------------- |
-| `frontend/` | `vp run check`                                    | Frontend checks configured in Vite+.                 |
-| `frontend/` | `vp run build`                                    | Type check and production bundle.                    |
-| `frontend/` | `vp run test:unit`                                | Schema and other unit tests.                         |
-| `frontend/` | `vp exec playwright install --with-deps chromium` | Install the browser needed by Playwright.            |
-| `frontend/` | `vp run test`                                     | Browser tests; starts its own frontend on port 5174. |
-| `backend/`  | `dotnet restore ResearchCruiseApp.sln`            | Restore application and test dependencies.           |
-| `backend/`  | `dotnet tool restore`                             | Restore the formatter and EF tooling.                |
-| `backend/`  | `vp run check`                                    | Format check and build with warnings as errors.      |
-| `backend/`  | `vp run test`                                     | Run backend tests after the build above.             |
+| Directory   | Command                                           | Purpose                                            |
+| ----------- | ------------------------------------------------- | -------------------------------------------------- |
+| `frontend/` | `vp run check`                                    | Frontend checks configured in Vite+.               |
+| `frontend/` | `vp run build`                                    | Type check and production bundle.                  |
+| `frontend/` | `vp run test:unit`                                | Schema and other unit tests.                       |
+| `frontend/` | `vp run test:storybook`                           | Component and accessibility tests for every story. |
+| `frontend/` | `vp exec playwright install --with-deps chromium` | Install the browser needed by Playwright.          |
+| `frontend/` | `vp run test:browser`                             | Browser journeys against a production test build.  |
+| `frontend/` | `vp run test`                                     | All three frontend test layers.                    |
+| `backend/`  | `dotnet restore ResearchCruiseApp.slnx`           | Restore application and test dependencies.         |
+| `backend/`  | `dotnet tool restore`                             | Restore the formatter and EF tooling.              |
+| `backend/`  | `vp run check`                                    | Format check and build with warnings as errors.    |
+| `backend/`  | `vp run test`                                     | Run backend tests after the build above.           |
 
 The backend test script uses `--no-restore --no-build`; it needs those preceding
-steps. Its email outbox tests use isolated SQLite databases by default. See
-[email delivery](../docs/email-delivery.md) for the optional SQL Server test mode.
+steps. Its integration tests run SQL Server in a disposable container. See
+[backend development](../docs/backend-development.md) for the backend suites.
 
-See [TESTING.md](TESTING.md) for frontend fixtures and test design.
+See [TESTING.md](TESTING.md) for what each frontend layer covers and how to add tests.
 
 ## Regenerate the API client
 
