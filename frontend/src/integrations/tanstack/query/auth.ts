@@ -1,4 +1,4 @@
-import { queryOptions, useQuery, useQueryClient } from '@tanstack/react-query';
+import { hashKey, queryOptions, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { QueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -41,14 +41,20 @@ export function currentUserQueryOptions() {
   });
 }
 
+export function clearAccountQueries(queryClient: QueryClient, user: UserResponse | null = null) {
+  const currentUserQueryHash = hashKey(getGetCurrentUserQueryKey());
+  queryClient.removeQueries({ predicate: (query) => query.queryHash !== currentUserQueryHash });
+  queryClient.setQueryData(getGetCurrentUserQueryKey(), user);
+}
+
 function clearSession(queryClient: QueryClient) {
   setSession(undefined);
-  queryClient.setQueryData(getGetCurrentUserQueryKey(), null);
+  clearAccountQueries(queryClient);
 }
 
 function clearSessionEverywhere(queryClient: QueryClient) {
   completeLogout();
-  queryClient.setQueryData(getGetCurrentUserQueryKey(), null);
+  clearAccountQueries(queryClient);
 }
 
 export function useCurrentUser() {
@@ -84,7 +90,7 @@ export function useSignIn() {
       // Fetched outside the query cache: sign-in reports this failure itself.
       const user = await fetchCurrentUser();
       if (!user) throw new Error('Nie udało się wczytać profilu konta.');
-      queryClient.setQueryData(getGetCurrentUserQueryKey(), user);
+      clearAccountQueries(queryClient, user);
       return 'success';
     } catch (error) {
       await prepareForLogout();

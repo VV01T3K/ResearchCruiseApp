@@ -3,10 +3,14 @@ import { useRouter } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
 import { refreshSession, subscribeAuthDetails } from '@/integrations/auth/session';
-import { getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
 import { setSentryUser } from '@/integrations/sentry/client';
-import { useAuthDetails, useCurrentUser, useSessionActions } from '@/integrations/tanstack/query/auth';
+import {
+  clearAccountQueries,
+  useAuthDetails,
+  useCurrentUser,
+  useSessionActions,
+} from '@/integrations/tanstack/query/auth';
 
 export function AuthSession() {
   const router = useRouter();
@@ -19,7 +23,7 @@ export function AuthSession() {
     () =>
       subscribeAuthDetails((details) => {
         if (!details) {
-          queryClient.setQueryData(getGetCurrentUserQueryKey(), null);
+          clearAccountQueries(queryClient);
           void router.invalidate();
         }
       }),

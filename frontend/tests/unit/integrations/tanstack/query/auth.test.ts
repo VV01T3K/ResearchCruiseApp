@@ -22,3 +22,16 @@ it('resolves a signed-out startup to no user with only the session request', asy
   await expect(loadCurrentUser()).resolves.toBeNull();
   expect(requestedUrls()).toEqual(['https://api.test/v2/auth/session']);
 });
+
+it('drops cached and in-flight account data when the session ends', async () => {
+  const queryClient = new QueryClient();
+  const response = Promise.withResolvers<string>();
+  const fetchDraft = () => response.promise;
+  queryClient.setQueryData(['v2', 'applications', 'cached'], 'private draft');
+  const pending = queryClient.query({ queryKey: ['v2', 'applications', 'pending'], queryFn: fetchDraft });
+  auth.clearAccountQueries(queryClient);
+  response.resolve('previous account draft');
+  await pending.catch(() => {});
+  const cache = queryClient.getQueryCache().getAll();
+  expect(cache.map((query) => [query.queryKey, query.state.data])).toEqual([[['v2', 'users', 'me'], null]]);
+});
