@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
 namespace ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
@@ -24,6 +25,14 @@ internal class UserPermissionVerifier(
 
         var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
         return RolePermissionRules.CanAccessUser(currentUserRoles, otherUserRoles);
+    }
+
+    public async Task<List<UserDto>> FilterAccessibleUsers(IEnumerable<UserDto> users)
+    {
+        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        return users
+            .Where(user => RolePermissionRules.CanAccessUser(currentUserRoles, user.Roles))
+            .ToList();
     }
 
     public async Task<bool> CanCurrentUserViewCruiseApplication(CruiseApplication cruiseApplication)
