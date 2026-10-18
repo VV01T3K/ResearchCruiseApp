@@ -3,7 +3,7 @@ import { defineNetworkFixture, type NetworkFixture } from '@msw/playwright';
 import { http, HttpResponse } from 'msw';
 import { HttpNetworkFrame } from 'msw/experimental';
 import type { CurrentUserResponse } from '@/api/generated/schemas';
-import { getRefreshTokensMockHandler } from '@/api/generated/mocks/auth/auth.msw.gen';
+import { getGetCurrentSessionMockHandler, getRefreshTokensMockHandler } from '@/api/generated/mocks/auth/auth.msw.gen';
 import { getGetCurrentUserMockHandler } from '@/api/generated/mocks/users/users.msw.gen';
 import {
   getGetApplicationCruiseMockHandler,
@@ -66,7 +66,7 @@ export const test = base.extend<{
     context.on('request', (request) => requests.record(request));
     await use(requests);
   },
-  // The signed-in user. Without one, the session refresh is rejected as for a guest.
+  // The signed-in user. Without one, the startup session lookup finds none, as for a guest.
   account: [null, { option: true }],
   network: [
     async ({ context, baseURL, account }, use) => {
@@ -78,6 +78,7 @@ export const test = base.extend<{
         handlers: [
           http.get('*/api/health', () => HttpResponse.json({ status: 'ok' })),
           http.get('*/api/version', () => HttpResponse.json('2.5.1')),
+          getGetCurrentSessionMockHandler(account ? session() : null),
           getRefreshTokensMockHandler(account ? session() : fail(401)),
           getGetCurrentUserMockHandler(account ?? fail(401)),
         ],

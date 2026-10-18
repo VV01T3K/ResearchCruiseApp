@@ -1,5 +1,5 @@
 import type { TokenResponse } from '@/api/generated/schemas';
-import { refreshTokens } from '@/api/generated/endpoints/auth.gen';
+import { getCurrentSession, refreshTokens } from '@/api/generated/endpoints/auth.gen';
 
 const subscribers = new Set<(details: TokenResponse | undefined) => void>();
 const concurrentRefreshWaiters = new Set<(details: TokenResponse) => void>();
@@ -72,9 +72,9 @@ async function refresh(): Promise<TokenResponse | undefined> {
   const revisionBeforeRefresh = sessionRevision;
   const generationBeforeRefresh = authGeneration;
   try {
-    let details: TokenResponse;
+    let details: TokenResponse | null;
     try {
-      details = await refreshTokens();
+      details = sessionState === 'unknown' ? await getCurrentSession() : await refreshTokens();
     } catch (error) {
       const status = typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
       const sessionReplaced =
@@ -92,6 +92,11 @@ async function refresh(): Promise<TokenResponse | undefined> {
     }
 
     if (logoutInProgress || authGeneration !== generationBeforeRefresh) return undefined;
+    if (!details) {
+      if (sessionRevision !== revisionBeforeRefresh && session) return session;
+      setSession(undefined);
+      return undefined;
+    }
     setSession(details);
     return details;
   } catch (error) {
