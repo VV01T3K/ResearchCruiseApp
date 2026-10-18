@@ -210,18 +210,115 @@ public sealed class StartupTests(SqlFixture fixture) : IAsyncLifetime
         {
             await first.InDatabase(db => db.Database.EnsureDeletedAsync(cancellationToken));
         }
+    }
 
-        static async Task<Exception?> Initialize(IServiceProvider services)
+    [Fact]
+    public async Task Initialize_WhenCreatedDatabaseStaysUnreachable_FailsWithinTimeout()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var connectionString = new SqlConnectionStringBuilder(fixture.ConnectionString)
         {
-            try
-            {
-                await services.GetRequiredService<ApplicationDbContextInitializer>().Initialize();
-                return null;
-            }
-            catch (Exception exception)
-            {
-                return exception;
-            }
+            InitialCatalog = $"StartupRace_{Guid.NewGuid():N}",
+        }.ConnectionString;
+        var barrier = new CreateDatabaseBarrier();
+        var timeProvider = new AcceleratedTimeProvider();
+        await using var first = new TestApplication(
+            connectionString,
+            interceptor: new UnreachableAfterLosingRace(barrier)
+        );
+        await using var second = new TestApplication(
+            connectionString,
+            interceptor: new UnreachableAfterLosingRace(barrier)
+        );
+        try
+        {
+            await using var firstScope = first.Services.CreateAsyncScope();
+            await using var secondScope = second.Services.CreateAsyncScope();
+            var results = await Task.WhenAll(
+                    Initialize(firstScope.ServiceProvider, timeProvider),
+                    Initialize(secondScope.ServiceProvider, timeProvider)
+                )
+                .WaitAsync(TimeSpan.FromSeconds(30), cancellationToken);
+
+            Assert.Single(results, result => result is null);
+            Assert.Single(results, result => result is TimeoutException);
+        }
+        finally
+        {
+            await using var cleanup = new TestApplication(connectionString);
+            await cleanup.InDatabase(db => db.Database.EnsureDeletedAsync(cancellationToken));
+        }
+    }
+
+    private static async Task<Exception?> Initialize(
+        IServiceProvider services,
+        TimeProvider? timeProvider = null
+    )
+    {
+        try
+        {
+            var initializer = timeProvider is null
+                ? services.GetRequiredService<ApplicationDbContextInitializer>()
+                : ActivatorUtilities.CreateInstance<ApplicationDbContextInitializer>(
+                    services,
+                    timeProvider
+                );
+            await initializer.Initialize();
+            return null;
+        }
+        catch (Exception exception)
+        {
+            return exception;
+        }
+    }
+
+    private sealed class AcceleratedTimeProvider : TimeProvider
+    {
+        public override ITimer CreateTimer(
+            TimerCallback callback,
+            object? state,
+            TimeSpan dueTime,
+            TimeSpan period
+        ) => System.CreateTimer(callback, state, Accelerate(dueTime), Accelerate(period));
+
+        private static TimeSpan Accelerate(TimeSpan duration) =>
+            duration == Timeout.InfiniteTimeSpan ? duration : duration / 600;
+    }
+
+    private sealed class UnreachableAfterLosingRace(CreateDatabaseBarrier barrier)
+        : DbCommandInterceptor,
+            IDbConnectionInterceptor
+    {
+        private volatile bool _lostRace;
+
+        public override ValueTask<InterceptionResult<int>> NonQueryExecutingAsync(
+            DbCommand command,
+            CommandEventData eventData,
+            InterceptionResult<int> result,
+            CancellationToken cancellationToken = default
+        ) => barrier.NonQueryExecutingAsync(command, eventData, result, cancellationToken);
+
+        public override Task CommandFailedAsync(
+            DbCommand command,
+            CommandErrorEventData eventData,
+            CancellationToken cancellationToken = default
+        )
+        {
+            if (eventData.Exception is SqlException { Number: 1801 })
+                _lostRace = true;
+            return Task.CompletedTask;
+        }
+
+        public async ValueTask<InterceptionResult> ConnectionOpeningAsync(
+            DbConnection connection,
+            ConnectionEventData eventData,
+            InterceptionResult result,
+            CancellationToken cancellationToken = default
+        )
+        {
+            if (_lostRace)
+                await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
+            return result;
         }
     }
 

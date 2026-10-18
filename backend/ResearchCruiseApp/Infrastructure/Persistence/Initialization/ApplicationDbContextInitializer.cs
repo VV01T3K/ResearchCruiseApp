@@ -12,11 +12,12 @@ internal class ApplicationDbContextInitializer(
     IdentityService identityService,
     RandomGenerator randomGenerator,
     IConfiguration configuration,
+    TimeProvider timeProvider,
     ILogger<ApplicationDbContextInitializer> logger
 )
 {
     private const int DatabaseAlreadyExists = 1801;
-    private const int DatabaseCreationPollAttempts = 120;
+    private static readonly TimeSpan DatabaseCreationTimeout = TimeSpan.FromSeconds(60);
     private static readonly TimeSpan DatabaseCreationPollInterval = TimeSpan.FromMilliseconds(500);
 
     public async Task Initialize()
@@ -30,13 +31,19 @@ internal class ApplicationDbContextInitializer(
             logger.LogInformation(
                 "Database is being created by another instance; migrating once it is available"
             );
-            for (
-                var attempt = 0;
-                attempt < DatabaseCreationPollAttempts
-                    && !await applicationDbContext.Database.CanConnectAsync();
-                attempt++
-            )
-                await Task.Delay(DatabaseCreationPollInterval);
+            using var timeout = new CancellationTokenSource(DatabaseCreationTimeout, timeProvider);
+            try
+            {
+                while (!await applicationDbContext.Database.CanConnectAsync(timeout.Token))
+                    await Task.Delay(DatabaseCreationPollInterval, timeProvider, timeout.Token);
+            }
+            catch (OperationCanceledException cancellation) when (timeout.IsCancellationRequested)
+            {
+                throw new TimeoutException(
+                    $"Database created by another instance did not become available within {DatabaseCreationTimeout.TotalSeconds} seconds",
+                    cancellation
+                );
+            }
 
             await applicationDbContext.Database.MigrateAsync();
         }
