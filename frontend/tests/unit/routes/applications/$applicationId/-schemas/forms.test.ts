@@ -140,6 +140,13 @@ describe('application submission', () => {
     expect(schemaA.safeParse({ ...a(), cruiseDays, cruiseHours }).success).toBe(valid);
   });
 
+  it('reports a zero duration while an unrelated choice is still empty', () => {
+    expect(schemaA.safeParse({ ...a(), cruiseDays: 0, cruiseHours: 0, cruiseGoal: '' })).toMatchObject(
+      issueAt(['cruiseHours'])
+    );
+    expect(schemaA.safeParse({}).success).toBe(false);
+  });
+
   it.each([
     ['deputyManagerId', manager.id],
     ['deputyManagerId', 'unknown'],
