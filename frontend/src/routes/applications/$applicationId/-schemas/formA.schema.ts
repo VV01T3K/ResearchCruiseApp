@@ -342,7 +342,12 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
 };
 
 // Zod skips object refinements after a field's type or enum error (#488).
-const evenWithFieldErrors = { when: ({ value }: z.core.ParsePayload) => typeof value === 'object' && value !== null };
+const isPeriod = (period: unknown) => typeof period === 'string' || Array.isArray(period);
+const evenWithFieldErrors = {
+  when: ({ value }: z.core.ParsePayload) =>
+    isPeriod((value as Partial<FormAValues>)?.acceptablePeriod) &&
+    isPeriod((value as Partial<FormAValues>)?.optimalPeriod),
+};
 
 export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: BlockadePeriod[]) =>
   z

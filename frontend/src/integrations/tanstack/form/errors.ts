@@ -34,7 +34,7 @@ export function getFormLevelErrors(form: AnyFormApi, errorMap = form.state.error
 
 function getInvalidFormMessage(): string {
   const error = document.querySelector('[data-error="true"]');
-  const reason = (error?.querySelector('li') ?? error)?.textContent;
+  const reason = (error?.querySelector('li, p') ?? error)?.textContent;
   if (!error || !reason) return INVALID_FORM_MESSAGE;
   const section = error
     .closest(':has(> h2)')

@@ -144,6 +144,7 @@ describe('application submission', () => {
     expect(schemaA.safeParse({ ...a(), cruiseDays: 0, cruiseHours: 0, cruiseGoal: '' })).toMatchObject(
       issueAt(['cruiseHours'])
     );
+    expect(schemaA.safeParse({}).success).toBe(false);
   });
 
   it.each([
