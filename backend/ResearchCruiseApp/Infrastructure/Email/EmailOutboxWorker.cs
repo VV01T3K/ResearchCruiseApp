@@ -1,3 +1,5 @@
+using Microsoft.Data.SqlClient;
+
 namespace ResearchCruiseApp.Infrastructure.Email;
 
 internal sealed class EmailOutboxWorker(
@@ -20,6 +22,14 @@ internal sealed class EmailOutboxWorker(
             {
                 return;
             }
+            catch (Exception exception) when (FindSqlException(exception) is { } sqlException)
+            {
+                logger.LogError(
+                    exception,
+                    "Email outbox database operation failed (SQL errors {SqlErrorNumbers}); processing will retry",
+                    sqlException.Errors.Cast<SqlError>().Select(error => error.Number).ToArray()
+                );
+            }
             catch (Exception exception)
             {
                 logger.LogError(
@@ -30,5 +40,13 @@ internal sealed class EmailOutboxWorker(
 
             await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
         }
+    }
+
+    private static SqlException? FindSqlException(Exception? exception)
+    {
+        for (; exception is not null; exception = exception.InnerException)
+            if (exception is SqlException sqlException)
+                return sqlException;
+        return null;
     }
 }
