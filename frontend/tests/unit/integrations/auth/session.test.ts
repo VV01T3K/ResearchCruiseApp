@@ -21,7 +21,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-it('coalesces concurrent bootstrap requests into one cookie-backed refresh', async () => {
+it('coalesces concurrent bootstrap requests into one cookie-backed session request', async () => {
   const response = Promise.withResolvers<Response>();
   fetchMock.mockReturnValue(response.promise);
   const first = auth.getValidAccessToken();
@@ -30,8 +30,8 @@ it('coalesces concurrent bootstrap requests into one cookie-backed refresh', asy
   await expect(Promise.all([first, second])).resolves.toEqual(['test-access-token', 'test-access-token']);
   expect(fetchMock).toHaveBeenCalledTimes(1);
   const [url, options] = fetchMock.mock.calls[0];
-  expect(url).toBe('https://api.test/v2/auth/refresh');
-  expect(options).toMatchObject({ method: 'POST', credentials: 'include' });
+  expect(url).toBe('https://api.test/v2/auth/session');
+  expect(options).toMatchObject({ method: 'GET', credentials: 'include' });
   expect(options?.body).toBeUndefined();
   expect(new Headers(options?.headers).has('Authorization')).toBe(false);
 });

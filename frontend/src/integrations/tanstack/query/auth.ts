@@ -3,6 +3,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 
 import {
+  getValidAccessToken,
   refreshSession,
   prepareForLogout,
   completeLogout,
@@ -19,6 +20,7 @@ import { getCurrentUser, getGetCurrentUserQueryKey } from '@/api/generated/endpo
 
 async function fetchCurrentUser(): Promise<UserResponse | null> {
   try {
+    if (!(await getValidAccessToken())) return null;
     return await getCurrentUser();
   } catch (error) {
     if (
