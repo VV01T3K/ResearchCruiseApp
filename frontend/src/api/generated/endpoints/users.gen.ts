@@ -26,6 +26,7 @@ import type {
   ImportPublicationRequest,
   ProblemDetails,
   PublicationResponse,
+  ReplaceUserRoleRequest,
   UpdateUserRequest,
   UserResponse
 } from '../schemas';
@@ -1379,4 +1380,92 @@ export const useRemoveUserRole = <TError = ErrorType<ProblemDetails>,
         TContext
       > => {
       return useMutation(getRemoveUserRoleMutationOptions(options), queryClient);
+    }
+    export const getReplaceUserRoleUrl = (userId: string,) => {
+
+
+
+
+  return `/v2/users/${userId}/role`
+}
+
+/**
+ * @summary Replace all roles of a managed user with a single role.
+ */
+export const replaceUserRole = async (userId: string,
+    replaceUserRoleRequest: ReplaceUserRoleRequest, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<void>(getReplaceUserRoleUrl(userId),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(replaceUserRoleRequest)
+  }
+);}
+
+
+
+
+
+export const getReplaceUserRoleMutationKey = () => ['replaceUserRole'] as const;
+
+export const getReplaceUserRoleMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof replaceUserRole>>, TError,ReplaceUserRoleMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof replaceUserRole>>, TError,ReplaceUserRoleMutationVariables, TContext> => {
+
+const mutationKey = getReplaceUserRoleMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof replaceUserRole>>, ReplaceUserRoleMutationVariables> = (props) => {
+          const {userId,data} = props ?? {};
+
+          return  replaceUserRole(userId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ReplaceUserRoleMutationResult = NonNullable<Awaited<ReturnType<typeof replaceUserRole>>>
+    export type ReplaceUserRoleMutationBody = ReplaceUserRoleRequest
+    export type ReplaceUserRoleMutationError = ErrorType<ProblemDetails>
+    export type ReplaceUserRoleMutationVariables = {userId: string;data: ReplaceUserRoleRequest}
+
+    /**
+ * @summary Replace all roles of a managed user with a single role.
+ */
+export const useReplaceUserRole = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof replaceUserRole>>, TError,ReplaceUserRoleMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof replaceUserRole>>,
+        TError,
+        ReplaceUserRoleMutationVariables,
+        TContext
+      > => {
+      return useMutation(getReplaceUserRoleMutationOptions(options), queryClient);
     }
