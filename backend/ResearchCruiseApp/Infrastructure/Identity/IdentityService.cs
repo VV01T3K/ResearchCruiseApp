@@ -41,14 +41,24 @@ internal class IdentityService(
     public async Task<List<UserDto>> GetAllUsersDtos(CancellationToken cancellationToken)
     {
         var users = await userManager.Users.ToListAsync(cancellationToken);
-        var usersDtos = new List<UserDto>();
+        var userRoles = await (
+            from userRole in dbContext.UserRoles
+            join role in dbContext.Roles on userRole.RoleId equals role.Id
+            select new { userRole.UserId, role.Name }
+        ).ToListAsync(cancellationToken);
+        var rolesByUserId = userRoles.ToLookup(
+            userRole => userRole.UserId,
+            userRole => userRole.Name!
+        );
 
-        foreach (var user in users)
-        {
-            usersDtos.Add(await CreateUserDto(user));
-        }
-
-        return usersDtos;
+        return users
+            .Select(user =>
+            {
+                var userDto = UserMappings.ToUserDto(user);
+                userDto.Roles = rolesByUserId[user.Id].ToList();
+                return userDto;
+            })
+            .ToList();
     }
 
     public async Task<List<CruiseManagerOptionDto>> GetAllCruiseManagersDtos(

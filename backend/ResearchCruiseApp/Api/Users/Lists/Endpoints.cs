@@ -40,17 +40,8 @@ public static class ListsEndpoints
     )
     {
         var users = await identityService.GetAllUsersDtos(cancellationToken);
-        var permittedUsers = new List<UserResponse>();
-
-        foreach (var user in users)
-        {
-            if (await userPermissionVerifier.CanCurrentUserAccess(user.Id))
-            {
-                permittedUsers.Add(UserResponse.From(user));
-            }
-        }
-
-        return TypedResults.Ok(permittedUsers);
+        var permittedUsers = await userPermissionVerifier.FilterAccessibleUsers(users);
+        return TypedResults.Ok(permittedUsers.Select(UserResponse.From).ToList());
     }
 
     private static async Task<Ok<List<CruiseManagerResponse>>> GetAvailableCruiseManagers(
