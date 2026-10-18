@@ -1,4 +1,7 @@
+using System.Data.Common;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ResearchCruiseApp.Domain.Entities;
@@ -173,5 +176,77 @@ public sealed class StartupTests(SqlFixture fixture) : IAsyncLifetime
                 StringComparer.Ordinal
             )
         );
+    }
+
+    [Fact]
+    public async Task Initialize_WhenTwoHostsCreateAbsentDatabase_BothMigrateIt()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var connectionString = new SqlConnectionStringBuilder(fixture.ConnectionString)
+        {
+            InitialCatalog = $"StartupRace_{Guid.NewGuid():N}",
+        }.ConnectionString;
+        var barrier = new CreateDatabaseBarrier();
+        await using var first = new TestApplication(connectionString, interceptor: barrier);
+        await using var second = new TestApplication(connectionString, interceptor: barrier);
+        try
+        {
+            await using var firstScope = first.Services.CreateAsyncScope();
+            await using var secondScope = second.Services.CreateAsyncScope();
+            var results = await Task.WhenAll(
+                    Initialize(firstScope.ServiceProvider),
+                    Initialize(secondScope.ServiceProvider)
+                )
+                .WaitAsync(TimeSpan.FromMinutes(2), cancellationToken);
+
+            Assert.All(results, Assert.Null);
+            await first.InDatabase(async db =>
+            {
+                Assert.Empty(await db.Database.GetPendingMigrationsAsync(cancellationToken));
+                Assert.NotEmpty(await db.Roles.ToListAsync(cancellationToken));
+            });
+        }
+        finally
+        {
+            await first.InDatabase(db => db.Database.EnsureDeletedAsync(cancellationToken));
+        }
+
+        static async Task<Exception?> Initialize(IServiceProvider services)
+        {
+            try
+            {
+                await services.GetRequiredService<ApplicationDbContextInitializer>().Initialize();
+                return null;
+            }
+            catch (Exception exception)
+            {
+                return exception;
+            }
+        }
+    }
+
+    private sealed class CreateDatabaseBarrier : DbCommandInterceptor
+    {
+        private readonly TaskCompletionSource _bothReached = new(
+            TaskCreationOptions.RunContinuationsAsynchronously
+        );
+        private int _arrivals;
+
+        public override async ValueTask<InterceptionResult<int>> NonQueryExecutingAsync(
+            DbCommand command,
+            CommandEventData eventData,
+            InterceptionResult<int> result,
+            CancellationToken cancellationToken = default
+        )
+        {
+            if (command.CommandText.Contains("CREATE DATABASE", StringComparison.Ordinal))
+            {
+                if (Interlocked.Increment(ref _arrivals) == 2)
+                    _bothReached.TrySetResult();
+                await _bothReached.Task.WaitAsync(TimeSpan.FromSeconds(30), cancellationToken);
+            }
+
+            return result;
+        }
     }
 }

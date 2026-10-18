@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
@@ -14,7 +15,32 @@ internal class ApplicationDbContextInitializer(
     ILogger<ApplicationDbContextInitializer> logger
 )
 {
-    public Task Initialize() => applicationDbContext.Database.MigrateAsync();
+    private const int DatabaseAlreadyExists = 1801;
+    private const int DatabaseCreationPollAttempts = 120;
+    private static readonly TimeSpan DatabaseCreationPollInterval = TimeSpan.FromMilliseconds(500);
+
+    public async Task Initialize()
+    {
+        try
+        {
+            await applicationDbContext.Database.MigrateAsync();
+        }
+        catch (SqlException exception) when (exception.Number == DatabaseAlreadyExists)
+        {
+            logger.LogInformation(
+                "Database is being created by another instance; migrating once it is available"
+            );
+            for (
+                var attempt = 0;
+                attempt < DatabaseCreationPollAttempts
+                    && !await applicationDbContext.Database.CanConnectAsync();
+                attempt++
+            )
+                await Task.Delay(DatabaseCreationPollInterval);
+
+            await applicationDbContext.Database.MigrateAsync();
+        }
+    }
 
     public async Task Seed()
     {
