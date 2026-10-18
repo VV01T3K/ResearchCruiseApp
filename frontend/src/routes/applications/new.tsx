@@ -10,7 +10,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { INVALID_FORM_MESSAGE, navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
+import { navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   type FormAValues,
@@ -65,8 +65,7 @@ function NewCruiseApplicationPage() {
     onSubmitInvalid: () => {
       if (!form.state.values.draft) trackFormSubmit('new-application', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
-      toast.error(INVALID_FORM_MESSAGE);
-      navigateToFirstError();
+      navigateToFirstError({ toast: true });
     },
   });
   const leaveAfterSave = useLeaveAfterSave(form);

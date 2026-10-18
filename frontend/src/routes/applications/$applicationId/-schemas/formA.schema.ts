@@ -341,6 +341,14 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
   };
 };
 
+// Zod skips object refinements after a field's type or enum error (#488).
+const isPeriod = (period: unknown) => typeof period === 'string' || Array.isArray(period);
+const evenWithFieldErrors = {
+  when: ({ value }: z.core.ParsePayload) =>
+    isPeriod((value as Partial<FormAValues>)?.acceptablePeriod) &&
+    isPeriod((value as Partial<FormAValues>)?.optimalPeriod),
+};
+
 export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: BlockadePeriod[]) =>
   z
     .object({
@@ -534,7 +542,7 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
       }
 
       BlockadeCollisionValidationSchema(blockades)(val, ctx);
-    });
+    }, evenWithFieldErrors);
 
 export function getFormAFieldsSchema(initValues: FormAOptions, blockades?: BlockadePeriod[], applicationId?: string) {
   return buildFormAFieldsSchema(getFormAValidationSchema(initValues, blockades), applicationId);

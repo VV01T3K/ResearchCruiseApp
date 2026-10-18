@@ -10,7 +10,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { INVALID_FORM_MESSAGE, navigateToFirstError } from '@/integrations/tanstack/form/errors';
+import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { FormView } from './-components/FormView';
 import { CruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
@@ -43,8 +43,7 @@ function NewCruisePage() {
     validators: { onDynamic: CruiseFormSchema },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('new-cruise', 'invalid', formApi.state);
-      toast.error(INVALID_FORM_MESSAGE);
-      navigateToFirstError();
+      navigateToFirstError({ toast: true });
     },
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('new-cruise', 'valid', formApi.state);
