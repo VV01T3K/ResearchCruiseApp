@@ -53,6 +53,17 @@ it.each([401, 500])('refresh failure %s clears the session only for unauthorized
   expect(auth.getSession()?.accessToken).toBe(status === 401 ? undefined : 'test-access-token');
 });
 
+it('keeps a newer session when a pending refresh rejects the already-rotated cookie', async () => {
+  auth.setSession(session());
+  const response = Promise.withResolvers<Response>();
+  fetchMock.mockReturnValue(response.promise);
+  const refresh = auth.refreshSession();
+  auth.setSession({ ...session(), accessToken: 'other-tab' });
+  response.resolve(new Response(null, { status: 401 }));
+  await expect(refresh).resolves.toMatchObject({ accessToken: 'other-tab' });
+  await expect(auth.getValidAccessToken()).resolves.toBe('other-tab');
+});
+
 it('waits for an in-flight refresh before completing logout without restoring the session', async () => {
   auth.setSession(session());
   const response = Promise.withResolvers<Response>();
