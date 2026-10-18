@@ -160,6 +160,8 @@ test.describe('application table', () => {
       startDate: '2026-06-20T08:00:00Z',
       endDate: '2026-06-30T16:00:00Z',
     }));
+    items[0].mainManager = { ...admin, firstName: 'Aleksandra', lastName: 'Brzęczyszczykiewicz' };
+    items[0].note = 'https://example.com/applications/drafts/very-long-unbroken-reference-to-the-note';
     network.use(getGetApplicationsMockHandler(listPage(items)));
     await page.goto('/applications');
     const actions = ['Kontynuuj wypełnianie', 'Wypełnij', 'Wypełnij formularz C'].map((name) =>
@@ -170,6 +172,14 @@ test.describe('application table', () => {
       await action.scrollIntoViewIfNeeded();
       await expect(action).toBeInViewport({ ratio: 1 });
     }
+    const spill = await page.locator('tbody td').evaluateAll((cells) =>
+      cells.map((cell) => {
+        const range = document.createRange();
+        range.selectNodeContents(cell);
+        return range.getBoundingClientRect().right - cell.getBoundingClientRect().right;
+      })
+    );
+    expect(Math.max(...spill), 'cell content past its right edge').toBeLessThanOrEqual(0);
     const overflow = await page.getByRole('table').evaluate((table) => {
       const container = table.parentElement!;
       return container.scrollWidth - container.clientWidth;
