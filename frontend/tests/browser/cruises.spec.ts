@@ -16,7 +16,7 @@ import { getGetAvailableCruiseManagersMockHandler } from '@/api/generated/mocks/
 import type { CruiseResponse } from '@/api/generated/schemas';
 import { test, expect, fail } from './fixtures';
 import { admin, deputy, manager, managerAccount, outsider } from '../data/accounts';
-import { cruise } from '../data/cruises';
+import { application, cruise } from '../data/cruises';
 
 test.use({ account: admin });
 test.beforeEach(({ network }) =>
@@ -285,6 +285,41 @@ test('the export downloads the CSV file of the chosen year', async ({ page, netw
   expect((await readFile(await file.path())).toString()).toBe(csv);
   expect(requests.queries('GET /v2/cruises/export')).toEqual([{ year: '2025' }]);
 });
+
+for (const width of [1280, 1366]) {
+  test(`the cruises list fits ${width}px with row actions and the filter reset visible`, async ({ page, network }) => {
+    await page.setViewportSize({ width, height: 800 });
+    const items = Array.from({ length: 4 }, (_, i) => ({
+      ...cruise(),
+      id: `bbbbbbbb-bbbb-4bbb-8bbb-00000000000${i}`,
+      number: `2026/${i + 1}`,
+      title: 'Badania osadów dennych Zatoki Gdańskiej',
+      mainManager: { ...manager, firstName: 'Małgorzata', lastName: 'Wiśniewska-Kowalczyk' },
+      applications: [
+        {
+          id: application().id,
+          cruiseManagerId: manager.id,
+          deputyManagerId: deputy.id,
+          number: '2026/17',
+          points: '100',
+        },
+      ],
+    }));
+    network.use(getGetCruisesMockHandler(items));
+    await page.goto('/cruises');
+    for (const action of [
+      page.getByRole('button', { name: 'Wyczyść filtry' }),
+      page.getByRole('link', { name: 'Szczegóły' }).first(),
+    ]) {
+      await action.scrollIntoViewIfNeeded();
+      await expect(action).toBeInViewport({ ratio: 1 });
+    }
+    const overflow = await page
+      .getByRole('table')
+      .evaluate((table) => table.parentElement!.scrollWidth - table.parentElement!.clientWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+}
 
 test.describe(() => {
   test.use({ account: managerAccount });
