@@ -10,10 +10,9 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { getInvalidFormMessage, navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
+import { navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
-  FORM_A_SECTIONS,
   type FormAValues,
   formADefaultValues,
   getFormASubmissionSchema,
@@ -77,8 +76,7 @@ function FormAPage() {
     onSubmitInvalid: () => {
       if (!form.state.values.draft) trackFormSubmit('form-a', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
-      toast.error(getInvalidFormMessage(form, FORM_A_SECTIONS));
-      navigateToFirstError();
+      navigateToFirstError({ toast: true });
     },
   });
   const leaveAfterSave = useLeaveAfterSave(form);

@@ -1,4 +1,4 @@
-import { submissionSchema, whenFieldsValid } from '@/integrations/tanstack/form/schema';
+import { submissionSchema } from '@/integrations/tanstack/form/schema';
 import { literal, z } from 'zod';
 
 import { groupBy } from '@/lib/utils';
@@ -50,34 +50,6 @@ import {
 } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
 import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 import { PublicationCategory } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
-
-export const FORM_A_SECTIONS = {
-  cruiseManagerId: 1,
-  deputyManagerId: 1,
-  year: 1,
-  periodSelectionType: 2,
-  precisePeriodStart: 2,
-  precisePeriodEnd: 2,
-  acceptablePeriod: 2,
-  optimalPeriod: 2,
-  cruiseDays: 2,
-  cruiseHours: 2,
-  periodNotes: 2,
-  shipUsage: 2,
-  differentUsage: 2,
-  permissions: 3,
-  researchAreaDescriptions: 4,
-  cruiseGoal: 5,
-  cruiseGoalDescription: 5,
-  researchTasks: 6,
-  contracts: 7,
-  ugTeams: 8,
-  guestTeams: 8,
-  publications: 9,
-  spubTasks: 10,
-  supervisorEmail: 11,
-  note: 11,
-} satisfies Partial<Record<keyof FormAValues, number>>;
 
 const FormAInputSchema = z.object({
   draft: z.boolean().optional(),
@@ -369,6 +341,9 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
   };
 };
 
+// Zod skips object refinements after a field's type or enum error (#488).
+const evenWithFieldErrors = { when: ({ value }: z.core.ParsePayload) => typeof value === 'object' && value !== null };
+
 export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: BlockadePeriod[]) =>
   z
     .object({
@@ -413,10 +388,7 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
       cruiseGoal: z.enum([CruiseGoal.Research, CruiseGoal.Commercial, CruiseGoal.Educational], {
         error: 'Cel rejsu musi być jednym z dostępnych celów rejsu',
       }),
-      cruiseGoalDescription: z
-        .string()
-        .min(1, 'Opis celu rejsu jest wymagany')
-        .max(10240, 'Opis celu rejsu nie może być dłuższy niż 10240 znaków'),
+      cruiseGoalDescription: z.string().max(10240, 'Opis celu rejsu nie może być dłuższy niż 10240 znaków'),
       researchTasks: ResearchTaskValuesSchema.array().min(1, 'Co najmniej jedno zadanie badawcze jest wymagane'),
       contracts: ContractValuesSchema.array(),
       ugTeams: UgTeamValuesSchema.array()
@@ -435,158 +407,137 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
       supervisorEmail: z.email('Niepoprawny adres email'),
       note: z.string(),
     })
-    .superRefine(
-      (val, ctx) => {
-        if (val.cruiseManagerId && val.deputyManagerId && val.cruiseManagerId === val.deputyManagerId) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['deputyManagerId'],
-            message: 'Kierownik rejsu nie może być jednocześnie zastępcą kierownika rejsu',
-          });
+    .superRefine((val, ctx) => {
+      if (val.cruiseManagerId && val.deputyManagerId && val.cruiseManagerId === val.deputyManagerId) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['deputyManagerId'],
+          message: 'Kierownik rejsu nie może być jednocześnie zastępcą kierownika rejsu',
+        });
+      }
+      if (val.shipUsage === '4' && !val.differentUsage) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['differentUsage'],
+          message: 'w przypadku wyboru "inne" należy podać informacje o sposobie korzystania z statku',
+        });
+      }
+      if (!val.cruiseGoalDescription) {
+        ctx.addIssue({ code: 'custom', path: ['cruiseGoalDescription'], message: 'Opis celu rejsu jest wymagany' });
+      }
+
+      const totalCruiseHours = val.cruiseDays * 24 + val.cruiseHours;
+      if (totalCruiseHours === 0 || totalCruiseHours > 1440) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['cruiseHours'],
+          message: 'Rejs musi trwać co najmniej godzinę i nie dłużej niż 60 dni',
+        });
+      }
+
+      const precisePeriodStart = val.precisePeriodStart;
+      const precisePeriodEnd = val.precisePeriodEnd;
+      const acceptablePeriod = val.acceptablePeriod;
+      const optimalPeriod = val.optimalPeriod;
+      const periodSelectionType = val.periodSelectionType;
+
+      if (
+        acceptablePeriod !== '' &&
+        optimalPeriod !== '' &&
+        (parseInt(optimalPeriod[0], 10) < parseInt(acceptablePeriod[0], 10) ||
+          parseInt(optimalPeriod[1], 10) > parseInt(acceptablePeriod[1], 10))
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['optimalPeriod'],
+          message: 'Okres optymalny musi zawierać się w okresie akceptowalnym',
+        });
+      }
+
+      const hasPrecise = precisePeriodStart !== '' || precisePeriodEnd !== '';
+      const hasPeriods = acceptablePeriod !== '' || optimalPeriod !== '';
+
+      let effectiveMode = periodSelectionType;
+      if (!effectiveMode) {
+        if (hasPrecise && !hasPeriods) {
+          effectiveMode = 'precise';
+        } else if (hasPeriods && !hasPrecise) {
+          effectiveMode = 'period';
         }
-      },
-      whenFieldsValid('cruiseManagerId', 'deputyManagerId')
-    )
-    .superRefine(
-      (val, ctx) => {
-        if (val.shipUsage === '4' && !val.differentUsage) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['differentUsage'],
-            message: 'w przypadku wyboru "inne" należy podać informacje o sposobie korzystania z statku',
-          });
-        }
-      },
-      whenFieldsValid('shipUsage', 'differentUsage')
-    )
-    .superRefine(
-      (val, ctx) => {
-        const totalCruiseHours = val.cruiseDays * 24 + val.cruiseHours;
-        if (totalCruiseHours === 0 || totalCruiseHours > 1440) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['cruiseHours'],
-            message: 'Rejs musi trwać co najmniej godzinę i nie dłużej niż 60 dni',
-          });
-        }
-      },
-      whenFieldsValid('cruiseDays', 'cruiseHours')
-    )
-    .superRefine(
-      (val, ctx) => {
-        const totalCruiseHours = val.cruiseDays * 24 + val.cruiseHours;
-        const precisePeriodStart = val.precisePeriodStart;
-        const precisePeriodEnd = val.precisePeriodEnd;
-        const acceptablePeriod = val.acceptablePeriod;
-        const optimalPeriod = val.optimalPeriod;
-        const periodSelectionType = val.periodSelectionType;
+      }
 
-        if (
-          acceptablePeriod !== '' &&
-          optimalPeriod !== '' &&
-          (parseInt(optimalPeriod[0], 10) < parseInt(acceptablePeriod[0], 10) ||
-            parseInt(optimalPeriod[1], 10) > parseInt(acceptablePeriod[1], 10))
-        ) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['optimalPeriod'],
-            message: 'Okres optymalny musi zawierać się w okresie akceptowalnym',
-          });
-        }
-
-        const hasPrecise = precisePeriodStart !== '' || precisePeriodEnd !== '';
-        const hasPeriods = acceptablePeriod !== '' || optimalPeriod !== '';
-
-        let effectiveMode = periodSelectionType;
-        if (!effectiveMode) {
-          if (hasPrecise && !hasPeriods) {
-            effectiveMode = 'precise';
-          } else if (hasPeriods && !hasPrecise) {
-            effectiveMode = 'period';
-          }
-        }
-
-        if (effectiveMode === 'precise') {
-          if (!precisePeriodStart) {
-            ctx.addIssue({
-              code: 'custom',
-              path: ['precisePeriodStart'],
-              message: 'Dokładny termin rozpoczęcia rejsu jest wymagany',
-            });
-          }
-          if (!precisePeriodEnd) {
-            ctx.addIssue({
-              code: 'custom',
-              path: ['precisePeriodEnd'],
-              message: 'Dokładny termin zakończenia rejsu jest wymagany',
-            });
-          }
-          if (precisePeriodStart && precisePeriodEnd && precisePeriodStart > precisePeriodEnd) {
-            ctx.addIssue({
-              code: 'custom',
-              path: ['precisePeriodEnd'],
-              message: 'Data zakończenia musi być późniejsza niż data rozpoczęcia',
-            });
-          }
-        } else if (effectiveMode === 'period') {
-          if (acceptablePeriod === '') {
-            ctx.addIssue({
-              code: 'custom',
-              path: ['acceptablePeriod'],
-              message: 'Dopuszczalny okres jest wymagany',
-            });
-          }
-          if (optimalPeriod === '') {
-            ctx.addIssue({
-              code: 'custom',
-              path: ['optimalPeriod'],
-              message: 'Optymalny okres jest wymagany',
-            });
-          }
-
-          if (acceptablePeriod !== '' && optimalPeriod !== '') {
-            const year = parseInt(val.year, 10);
-
-            if (totalCruiseHours > 0 && !Number.isNaN(year)) {
-              const cruiseDurationDays = totalCruiseHours / 24;
-
-              if (!hasEnoughDaysInPeriod(acceptablePeriod, year, cruiseDurationDays)) {
-                ctx.addIssue({
-                  code: 'custom',
-                  path: ['acceptablePeriod'],
-                  message: 'Wybrany okres czasu jest zbyt krótki dla planowanego czasu rejsu',
-                });
-              }
-
-              if (!hasEnoughDaysInPeriod(optimalPeriod, year, cruiseDurationDays)) {
-                ctx.addIssue({
-                  code: 'custom',
-                  path: ['optimalPeriod'],
-                  message: 'Wybrany okres czasu jest zbyt krótki dla planowanego czasu rejsu',
-                });
-              }
-            }
-          }
-        } else if (hasPrecise && hasPeriods) {
-          // Mixed mode - user has values in both sections
+      if (effectiveMode === 'precise') {
+        if (!precisePeriodStart) {
           ctx.addIssue({
             code: 'custom',
             path: ['precisePeriodStart'],
-            message: 'Musisz podać albo dokładny okres albo okres akceptowalny i optymalny',
+            message: 'Dokładny termin rozpoczęcia rejsu jest wymagany',
+          });
+        }
+        if (!precisePeriodEnd) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['precisePeriodEnd'],
+            message: 'Dokładny termin zakończenia rejsu jest wymagany',
+          });
+        }
+        if (precisePeriodStart && precisePeriodEnd && precisePeriodStart > precisePeriodEnd) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['precisePeriodEnd'],
+            message: 'Data zakończenia musi być późniejsza niż data rozpoczęcia',
+          });
+        }
+      } else if (effectiveMode === 'period') {
+        if (acceptablePeriod === '') {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['acceptablePeriod'],
+            message: 'Dopuszczalny okres jest wymagany',
+          });
+        }
+        if (optimalPeriod === '') {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['optimalPeriod'],
+            message: 'Optymalny okres jest wymagany',
           });
         }
 
-        BlockadeCollisionValidationSchema(blockades)(val, ctx);
-      },
-      whenFieldsValid(
-        'year',
-        'periodSelectionType',
-        'acceptablePeriod',
-        'optimalPeriod',
-        'precisePeriodStart',
-        'precisePeriodEnd'
-      )
-    );
+        if (acceptablePeriod !== '' && optimalPeriod !== '') {
+          const year = parseInt(val.year, 10);
+
+          if (totalCruiseHours > 0 && !Number.isNaN(year)) {
+            const cruiseDurationDays = totalCruiseHours / 24;
+
+            if (!hasEnoughDaysInPeriod(acceptablePeriod, year, cruiseDurationDays)) {
+              ctx.addIssue({
+                code: 'custom',
+                path: ['acceptablePeriod'],
+                message: 'Wybrany okres czasu jest zbyt krótki dla planowanego czasu rejsu',
+              });
+            }
+
+            if (!hasEnoughDaysInPeriod(optimalPeriod, year, cruiseDurationDays)) {
+              ctx.addIssue({
+                code: 'custom',
+                path: ['optimalPeriod'],
+                message: 'Wybrany okres czasu jest zbyt krótki dla planowanego czasu rejsu',
+              });
+            }
+          }
+        }
+      } else if (hasPrecise && hasPeriods) {
+        // Mixed mode - user has values in both sections
+        ctx.addIssue({
+          code: 'custom',
+          path: ['precisePeriodStart'],
+          message: 'Musisz podać albo dokładny okres albo okres akceptowalny i optymalny',
+        });
+      }
+
+      BlockadeCollisionValidationSchema(blockades)(val, ctx);
+    }, evenWithFieldErrors);
 
 export function getFormAFieldsSchema(initValues: FormAOptions, blockades?: BlockadePeriod[], applicationId?: string) {
   return buildFormAFieldsSchema(getFormAValidationSchema(initValues, blockades), applicationId);

@@ -15,11 +15,11 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
-import { getInvalidFormMessage, navigateToFirstError } from '@/integrations/tanstack/form/errors';
+import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 import { FormView } from '../-components/FormView';
-import { CRUISE_FORM_SECTIONS, CruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
+import { CruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 import {
   getGetCruiseQueryKey,
   getGetCruisesQueryKey,
@@ -69,8 +69,7 @@ function CruiseDetailsPage() {
     validationLogic: formValidationLogic,
     validators: { onDynamic: CruiseFormSchema },
     onSubmitInvalid: () => {
-      toast.error(getInvalidFormMessage(form, CRUISE_FORM_SECTIONS));
-      navigateToFirstError();
+      navigateToFirstError({ toast: true });
     },
     onSubmit: async ({ value }) => {
       try {

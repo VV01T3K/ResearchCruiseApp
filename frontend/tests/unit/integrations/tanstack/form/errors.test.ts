@@ -1,18 +1,8 @@
 import { FieldApi, FormApi } from '@tanstack/react-form';
 import { z } from 'zod';
-import { afterEach, expect, it, vi } from 'vite-plus/test';
-import { getFormLevelErrors, getInvalidFormMessage, setServerFormErrors } from '@/integrations/tanstack/form/errors';
+import { expect, it } from 'vite-plus/test';
+import { getFormLevelErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { ApiError, getErrorMessage, responseErrorMessage } from '@/api/errors';
-
-function renderInputs(...names: string[]) {
-  vi.stubGlobal('document', {
-    querySelectorAll: () => names.map((name) => ({ getAttribute: () => name })),
-  });
-}
-
-afterEach(() => {
-  vi.unstubAllGlobals();
-});
 
 function apiError(status: number, problem: ConstructorParameters<typeof ApiError>[2]) {
   return new ApiError(responseErrorMessage(status, problem), status, problem);
@@ -85,49 +75,4 @@ it('ignores form-level values that are not issue lists', () => {
   expect(
     getFormLevelErrors(form, { onServer: ['Serwer'], onDynamic: { name: 'nie lista', '': [{ message: 'Formularz' }] } })
   ).toEqual(['Serwer', 'Formularz']);
-});
-
-it('describes the first client error in section order, including nested and unmapped fields', async () => {
-  renderInputs();
-  const schema = z.object({
-    unmapped: z.string().min(1, 'Pole bez sekcji'),
-    items: z.array(z.object({ title: z.string().min(1, 'Tytuł jest wymagany') })),
-    name: z.string().min(1, 'Nazwa jest wymagana'),
-  });
-  async function messageFor(values: z.input<typeof schema>) {
-    const form = new FormApi({ defaultValues: values, validators: { onSubmit: schema }, onSubmitMeta: undefined });
-    await form.handleSubmit();
-    return getInvalidFormMessage(form, { name: 1, items: 2 });
-  }
-  const items = [{ title: 'Rejs' }, { title: '' }];
-
-  expect(await messageFor({ unmapped: '', items, name: '' })).toBe(
-    'Formularz błędny w sekcji nr 1:\nNazwa jest wymagana'
-  );
-  expect(await messageFor({ unmapped: '', items, name: 'Rejs' })).toBe(
-    'Formularz błędny w sekcji nr 2:\nTytuł jest wymagany'
-  );
-  expect(await messageFor({ unmapped: '', items: [], name: 'Rejs' })).toBe('Formularz zawiera błędy:\nPole bez sekcji');
-});
-
-it('describes the first error of a row in the order its inputs are displayed', async () => {
-  const schema = z.object({
-    equipments: z.array(
-      z.object({
-        name: z.string().min(1, 'Nazwa sprzętu jest wymagana'),
-        startDate: z.string().min(1, 'Data rozpoczęcia jest wymagana'),
-      })
-    ),
-  });
-  const form = new FormApi({
-    defaultValues: { equipments: [{ name: '', startDate: '' }] },
-    validators: { onSubmit: schema },
-    onSubmitMeta: undefined,
-  });
-  renderInputs('equipments[0].startDate', 'equipments[0].name');
-  await form.handleSubmit();
-
-  expect(getInvalidFormMessage(form, { equipments: 12 })).toBe(
-    'Formularz błędny w sekcji nr 12:\nData rozpoczęcia jest wymagana'
-  );
 });

@@ -1,5 +1,6 @@
 import type { AnyFieldMeta, AnyFormApi } from '@tanstack/react-form';
 import { ApiError, getProblemDetail } from '@/api/errors';
+import { toast } from '@/components/shared/layout/toast';
 
 const INVALID_FORM_MESSAGE = 'Formularz zawiera błędy. Popraw zaznaczone pola.';
 
@@ -31,47 +32,20 @@ export function getFormLevelErrors(form: AnyFormApi, errorMap = form.state.error
   });
 }
 
-/** Section number of each top-level field, listed in the order the form displays them. */
-export type FormSections = Record<string, number>;
-
-function getDisplayOrder(path: string, sections: FormSections): number[] {
-  const field = path.split(/[.[]/)[0];
-  const order = Object.keys(sections).indexOf(field);
-  if (order === -1) return [Infinity];
-  return [sections[field], order, ...Array.from(path.matchAll(/\[(\d+)]/g), (match) => Number(match[1]))];
+function getInvalidFormMessage(): string {
+  const error = document.querySelector('[data-error="true"]');
+  const reason = (error?.querySelector('li') ?? error)?.textContent;
+  if (!error || !reason) return INVALID_FORM_MESSAGE;
+  const section = error
+    .closest(':has(> h2)')
+    ?.querySelector(':scope > h2')
+    ?.textContent.match(/^(\d+)\./)?.[1];
+  return section ? `Formularz błędny w sekcji nr ${section}:\n${reason}` : `Formularz zawiera błędy:\n${reason}`;
 }
 
-function compareDisplayOrder(a: number[], b: number[]): number {
-  for (let i = 0; i < Math.min(a.length, b.length); i++) {
-    if (a[i] !== b[i]) return a[i] - b[i];
-  }
-  return a.length - b.length;
-}
-
-/** Names the section and reason of the first client validation error in display order. */
-export function getInvalidFormMessage(form: AnyFormApi, sections: FormSections): string {
-  const errors = Object.values(form.state.errorMap).flatMap((error) =>
-    error && typeof error === 'object' && !Array.isArray(error)
-      ? Object.entries(error).flatMap(([path, issues]) =>
-          Array.isArray(issues) && issues.length ? [{ path, message: getMessage(issues[0]) }] : []
-        )
-      : []
-  );
-  const inputs = Array.from(document.querySelectorAll('[name]'), (input) => input.getAttribute('name'));
-  const inputOrder = (path: string) => (inputs.includes(path) ? inputs.indexOf(path) : Infinity);
-  const first = errors
-    .map((error) => ({ ...error, order: getDisplayOrder(error.path, sections), input: inputOrder(error.path) }))
-    .sort((a, b) => compareDisplayOrder(a.order, b.order) || a.input - b.input || 0)
-    .find((error) => error.message);
-  if (!first) return INVALID_FORM_MESSAGE;
-  const section = first.order[0];
-  return Number.isFinite(section)
-    ? `Formularz błędny w sekcji nr ${section}:\n${first.message}`
-    : `Formularz zawiera błędy:\n${first.message}`;
-}
-
-export function navigateToFirstError(): void {
+export function navigateToFirstError({ toast: showToast = false } = {}): void {
   requestAnimationFrame(() => {
+    if (showToast) toast.error(getInvalidFormMessage());
     const target = document.querySelector<HTMLElement>('[aria-invalid="true"], [data-error="true"]');
     if (!target) return;
 
