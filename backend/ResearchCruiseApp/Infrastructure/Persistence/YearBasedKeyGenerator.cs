@@ -4,7 +4,7 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence;
 
-internal class YearBasedKeyGenerator
+internal class YearBasedKeyGenerator(ApplicationDbContext dbContext)
 {
     public async Task<string> GenerateKey<T>(
         IQueryable<T> entities,
@@ -20,6 +20,16 @@ internal class YearBasedKeyGenerator
     )
         where T : Entity, IYearBasedNumbered
     {
+        var resource = $"{typeof(T).Name}.Number";
+        // Held until the caller's transaction ends, so allocation and insert are serialized.
+        await dbContext.Database.ExecuteSqlAsync(
+            $"""
+            DECLARE @result int;
+            EXEC @result = sp_getapplock @Resource = {resource}, @LockMode = 'Exclusive', @LockOwner = 'Transaction';
+            IF @result < 0 THROW 50000, 'Could not lock year-based numbering.', 1;
+            """,
+            cancellationToken
+        );
         var currentYear = DateTime.Now.Year.ToString();
         var ordinalNumberStartIdx = currentYear.Length + 1;
         var existingEntities = await entities.ToListAsync(cancellationToken);

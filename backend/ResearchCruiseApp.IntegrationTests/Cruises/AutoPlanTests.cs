@@ -90,7 +90,7 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
         });
     }
 
-    private static CruiseApplication Application(
+    internal static CruiseApplication Application(
         Guid managerId,
         CruiseApplicationStatus status,
         string optimalPeriodBeg
