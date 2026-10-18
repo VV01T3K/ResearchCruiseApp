@@ -10,6 +10,14 @@ internal class YearBasedKeyGenerator
         IQueryable<T> entities,
         CancellationToken cancellationToken
     )
+        where T : Entity, IYearBasedNumbered =>
+        (await GenerateKeys(entities, 1, cancellationToken))[0];
+
+    public async Task<List<string>> GenerateKeys<T>(
+        IQueryable<T> entities,
+        int count,
+        CancellationToken cancellationToken
+    )
         where T : Entity, IYearBasedNumbered
     {
         var currentYear = DateTime.Now.Year.ToString();
@@ -22,6 +30,9 @@ internal class YearBasedKeyGenerator
                 ?.Number[ordinalNumberStartIdx..]
             ?? "0";
 
-        return $"{currentYear}/{int.Parse(maxCurrentYearOrdinalNumber) + 1}";
+        return Enumerable
+            .Range(int.Parse(maxCurrentYearOrdinalNumber) + 1, count)
+            .Select(ordinalNumber => $"{currentYear}/{ordinalNumber}")
+            .ToList();
     }
 }

@@ -17,6 +17,7 @@ public static class SentryConfiguration
 
     public static void AddResearchCruiseAppSentry(this WebApplicationBuilder builder)
     {
+        builder.Services.AddSingleton<ISentryEventProcessor, AbortedRequestEventProcessor>();
         builder.WebHost.UseSentry(options =>
         {
             options.SendDefaultPii = true;

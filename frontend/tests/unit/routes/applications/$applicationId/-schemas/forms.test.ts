@@ -62,6 +62,33 @@ describe('saved applications', () => {
   });
 });
 
+describe('research task metadata without an editor', () => {
+  const savedA = () => {
+    const form = filledFormA();
+    return { ...form, researchTasks: form.researchTasks?.map((task) => ({ ...task, institution: 'IO PAN' })) };
+  };
+  const savedC = () => {
+    const form = filledFormC();
+    return {
+      ...form,
+      researchTasksEffects: form.researchTasksEffects?.map((task) => ({
+        ...task,
+        institution: 'IO PAN',
+        publicationMinisterialPoints: '140',
+      })),
+    };
+  };
+
+  it.each([
+    ['A final', savedA(), mapFormAToValues(savedA()), getFormAFieldsSchema(options)],
+    ['A draft', savedA(), mapFormAToValues(savedA()), getFormADraftFieldsSchema()],
+    ['C final', savedC(), mapFormCToValues(savedC()), getFormCFieldsSchema(options)],
+    ['C draft', savedC(), mapFormCToValues(savedC()), getFormCDraftFieldsSchema()],
+  ] as const)('form %s saves back populated institution and publication points', (_, saved, values, fields) => {
+    expect(fields.parse(values)).toEqual(saved);
+  });
+});
+
 describe('application submission', () => {
   it('loads editable values and serializes all three forms to API fields', () => {
     expect(getFormAFieldsSchema(options).parse(a())).toMatchObject({

@@ -630,7 +630,7 @@ function mapFormAFields(form: FormAValues, applicationId?: string) {
       title: 'title' in task ? task.title : null,
       magazine: 'magazine' in task ? task.magazine : null,
       author: 'author' in task ? task.author : null,
-      institution: null,
+      institution: task.institution ?? null,
       date: 'date' in task ? task.date : null,
       startDate: 'startDate' in task ? task.startDate : null,
       endDate: 'endDate' in task ? task.endDate : null,
@@ -735,6 +735,10 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
 }
 
 export function mapResearchTaskToValues(task: ResearchTaskFields): FormAValues['researchTasks'][number] {
+  return { ...mapResearchTaskTypeFieldsToValues(task), institution: task.institution ?? null };
+}
+
+function mapResearchTaskTypeFieldsToValues(task: ResearchTaskFields): FormAValues['researchTasks'][number] {
   switch (task.type) {
     case ResearchTaskType.BachelorThesis:
     case ResearchTaskType.MasterThesis:

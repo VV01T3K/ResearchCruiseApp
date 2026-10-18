@@ -228,7 +228,7 @@ function buildFormCFieldsSchema(inputSchema: z.ZodType<FormCValues, FormCValues>
             title: 'title' in task ? task.title : null,
             magazine: 'magazine' in task ? task.magazine : null,
             author: 'author' in task ? task.author : null,
-            institution: null,
+            institution: task.institution ?? null,
             date: 'date' in task ? task.date : null,
             startDate: 'startDate' in task ? task.startDate : null,
             endDate: 'endDate' in task ? task.endDate : null,
@@ -239,7 +239,7 @@ function buildFormCFieldsSchema(inputSchema: z.ZodType<FormCValues, FormCValues>
             securedAmount: 'securedAmount' in task && task.securedAmount !== null ? String(task.securedAmount) : null,
             ministerialPoints:
               'ministerialPoints' in task && task.ministerialPoints !== null ? String(task.ministerialPoints) : null,
-            publicationMinisterialPoints: null,
+            publicationMinisterialPoints: task.publicationMinisterialPoints ?? null,
             done: String(task.done),
             managerConditionMet: String(task.managerConditionMet),
             deputyConditionMet: String(task.deputyConditionMet),
@@ -291,6 +291,7 @@ export function mapFormCToValues(form: FormCFields): FormCValues {
       done: task.done === 'true',
       managerConditionMet: task.managerConditionMet === 'true',
       deputyConditionMet: task.deputyConditionMet === 'true',
+      publicationMinisterialPoints: task.publicationMinisterialPoints ?? null,
     })),
     ports: (form.ports ?? []).map((port) => ({
       name: port.name ?? '',
