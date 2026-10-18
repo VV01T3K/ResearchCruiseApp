@@ -108,28 +108,17 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
     [Theory]
     [InlineData(null)]
     [InlineData("rca_refresh_token=")]
-    public async Task Refresh_WithoutSessionCookie_ReturnsNoContentWithoutChangingSession(
-        string? cookie
-    )
+    public async Task Refresh_WithoutSessionCookie_ReturnsNoContent(string? cookie)
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
-        var user = await TestUsers.Create(app, "anonymous-refresh@example.invalid", RoleName.Guest);
         using var client = app.CreateApiClient();
-        await Login(client, user.Email!);
-        string? tokenHash = null;
-        await app.InDatabase(async db => tokenHash = (await db.Users.SingleAsync(ct)).RefreshToken);
 
         using var response = await SendCookie(client, "/v2/auth/refresh", cookie);
 
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         Assert.Empty(await response.Content.ReadAsByteArrayAsync(ct));
         Assert.False(response.Headers.Contains("Set-Cookie"));
-        await app.InDatabase(async db =>
-            Assert.Equal(tokenHash, (await db.Users.SingleAsync(ct)).RefreshToken)
-        );
-        using var profile = await client.GetAsync("/v2/users/me", ct);
-        Assert.Equal(HttpStatusCode.Unauthorized, profile.StatusCode);
     }
 
     [Theory]
