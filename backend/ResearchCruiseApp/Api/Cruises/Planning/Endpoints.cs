@@ -66,6 +66,9 @@ public static class PlanningEndpoints
             return TypedResults.NoContent();
         }
 
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(
+            cancellationToken
+        );
         var numbers = await yearBasedKeyGenerator.GenerateKeys(
             dbContext.Cruises,
             newCruises.Count,
@@ -79,6 +82,7 @@ public static class PlanningEndpoints
 
         await dbContext.Cruises.AddRangeAsync(newCruises, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
 
         return TypedResults.NoContent();
     }
