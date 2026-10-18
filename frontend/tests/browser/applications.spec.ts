@@ -176,6 +176,48 @@ test.describe('application table', () => {
     });
     expect(overflow, 'horizontal scrolling inside the table container').toBeLessThanOrEqual(0);
   });
+
+  for (const [width, height] of [
+    [1280, 800],
+    [1920, 1080],
+  ]) {
+    test(`columns keep their positions while mixed rows scroll past at ${width}px`, async ({ page, network }) => {
+      await page.setViewportSize({ width, height });
+      const kinds = ['draft', 'formBRequired', 'undertaken', 'denied'] as const;
+      const items = Array.from({ length: 60 }, (_, i) => ({
+        ...application(),
+        id: `00000000-0000-4000-8000-${String(i).padStart(12, '0')}`,
+        number: `Application ${i}`,
+        ...(i >= 10 && {
+          status: kinds[i % kinds.length],
+          note: 'Wersja z poprawkami po konsultacji',
+          points: 100,
+          hasFormB: true,
+          startDate: '2026-06-20T08:00:00Z',
+          endDate: '2026-06-30T16:00:00Z',
+          mainManager: { ...admin, firstName: 'Małgorzata', lastName: 'Wiśniewska-Kowalczyk' },
+        }),
+      }));
+      network.use(getGetApplicationsMockHandler(listPage(items)));
+      await page.goto('/applications');
+      const rows = page.locator('tbody tr[data-index]');
+      await expect(rows.first()).toBeVisible();
+      for (const y of [400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 2800, 2400, 2000, 1600, 1200, 800, 400, 0]) {
+        // The middle mounted row stays mounted across a 400px scroll in either direction.
+        const row = page.locator(
+          `tbody tr[data-index="${await rows.nth((await rows.count()) >> 1).getAttribute('data-index')}"]`
+        );
+        const lefts = () =>
+          row.locator('td').evaluateAll((cells) => cells.map((cell) => cell.getBoundingClientRect().left));
+        const before = await lefts();
+        await page.evaluate((top) => scrollTo(0, top), y);
+        await page.evaluate(
+          () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+        );
+        expect(await lefts(), `scrolled to ${y}`).toEqual(before);
+      }
+    });
+  }
 });
 
 test.describe('application review', () => {

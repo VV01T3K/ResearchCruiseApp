@@ -80,7 +80,7 @@ function ApplicationsPage() {
       accessorFn: (row) => row.number,
       sortDescFirst: true,
       meta: { filterInputType: 'number' },
-      size: 2,
+      size: 78,
     },
     {
       id: 'date',
@@ -89,7 +89,7 @@ function ApplicationsPage() {
       cell: ({ row }) => <span className="whitespace-nowrap">{row.original.date}</span>,
       sortDescFirst: true,
       meta: { filterInputType: 'date' },
-      size: 5,
+      size: 98,
     },
     {
       id: 'year',
@@ -97,14 +97,14 @@ function ApplicationsPage() {
       accessorFn: (row) => row.year.toString(),
       sortDescFirst: true,
       meta: { filterOptions: yearFilterOptions },
-      size: 5,
+      size: 99,
     },
     {
       header: 'Liczba dni',
       accessorFn: (row) => (row.cruiseDays !== null ? `${parseFloat(row.cruiseDays.toFixed(2))}` : '-'),
       enableSorting: false,
       enableColumnFilter: false,
-      size: 5,
+      size: 74,
     },
     {
       header: 'Okres optymalny / dopuszczalny',
@@ -122,7 +122,7 @@ function ApplicationsPage() {
       },
       enableColumnFilter: false,
       enableSorting: false,
-      size: 15,
+      size: 129,
     },
     {
       header: 'Data rejsu',
@@ -139,7 +139,7 @@ function ApplicationsPage() {
       },
       enableColumnFilter: false,
       enableSorting: false,
-      size: 20,
+      size: 110,
     },
     {
       id: 'cruiseManager',
@@ -159,7 +159,7 @@ function ApplicationsPage() {
         filterOptions: cruiseManagerFilterOptions,
         getFilterOptionLabel: (value) => managerLabels.get(value) ?? value,
       },
-      size: 20,
+      size: 155,
     },
     {
       header: 'Formularze',
@@ -184,7 +184,7 @@ function ApplicationsPage() {
           </div>
         );
       },
-      size: 15,
+      size: 112,
     },
     {
       header: 'Punkty',
@@ -192,7 +192,7 @@ function ApplicationsPage() {
       cell: ({ row }) => <AppBadge>{row.original.points} pkt.</AppBadge>,
       enableSorting: false,
       enableColumnFilter: false,
-      size: 5,
+      size: 87,
     },
     {
       id: 'status',
@@ -252,7 +252,7 @@ function ApplicationsPage() {
           )}
         </>
       ),
-      size: 20,
+      size: 129,
     },
     {
       header: 'Akcje',
@@ -264,7 +264,7 @@ function ApplicationsPage() {
           </AppButton>
         </>
       ),
-      size: 5,
+      size: 128,
     },
   ];
 
