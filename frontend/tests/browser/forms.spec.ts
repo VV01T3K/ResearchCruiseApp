@@ -9,7 +9,7 @@ import { getGetCruiseMockHandler } from '@/api/generated/mocks/cruises/cruises.m
 import { getGetAvailableCruiseManagersMockHandler } from '@/api/generated/mocks/users/users.msw.gen';
 import type { Locator } from '@playwright/test';
 import { test, expect, applicationForms, dropFile, fail } from './fixtures';
-import { admin, deputy, deputyAccount, outsider } from '../data/accounts';
+import { admin, deputy, deputyAccount, managerAccount, outsider } from '../data/accounts';
 import { cruise } from '../data/cruises';
 import { applicationId, formB } from '../data/forms';
 
@@ -137,12 +137,34 @@ for (const { who, account, saves } of [
         await expect(page).toHaveURL('/');
         expect(requests.bodies(savedForm('form-a'))).toHaveLength(1);
       } else {
-        await expect(page.getByText('Jedynie kierownik lub jego zastępca mogą zapisać formularz')).toBeVisible();
+        const manager = page.getByLabel('Kierownik rejsu');
+        await expect(manager).toBeFocused();
+        await expect(manager).toHaveAttribute('aria-invalid', 'true');
         expect(requests.bodies(savedForm('form-a'))).toHaveLength(0);
       }
     });
   });
 }
+
+test.describe(() => {
+  test.use({ account: managerAccount });
+
+  test('form A points to the assignment until the user is manager or deputy again', async ({ page, network }) => {
+    network.use(getUpdateApplicationFormAMockHandler());
+    await page.goto(formA);
+    const manager = page.getByLabel('Kierownik rejsu');
+    const deputy = page.getByLabel('Zastępca kierownika rejsu');
+    await manager.click();
+    await page.getByRole('option', { name: /Grace Hopper/ }).click();
+    await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+    await expect(manager).toBeFocused();
+    await expect(manager).toHaveAttribute('aria-invalid', 'true');
+
+    await deputy.click();
+    await page.getByRole('option', { name: /Ada Lovelace/ }).click();
+    await expect(page.locator('[aria-invalid="true"]')).toHaveCount(0);
+  });
+});
 
 test('form A saves precise cruise dates on the days chosen in the calendar', async ({ page, network, requests }) => {
   // Fix only the date; faked timers would also stall the dropdowns' transitions.
