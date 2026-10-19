@@ -121,11 +121,12 @@ function FormAPage() {
   return (
     <>
       <AppLayout title="Formularz A">
-        <form.AppForm>
-          <FormView context={context} />
-        </form.AppForm>
+        <UnsavedChangesGuard form={form} disabled={!editMode}>
+          <form.AppForm>
+            <FormView context={context} />
+          </form.AppForm>
+        </UnsavedChangesGuard>
       </AppLayout>
-      <UnsavedChangesGuard form={form} disabled={!editMode} />
 
       <AppModal
         title="Zapisz wersję roboczą Formularza A"

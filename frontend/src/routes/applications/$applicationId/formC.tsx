@@ -139,11 +139,12 @@ function FormCPage() {
   return (
     <>
       <AppLayout title="Formularz C">
-        <form.AppForm>
-          <FormView context={context} />
-        </form.AppForm>
+        <UnsavedChangesGuard form={form} disabled={mode !== 'edit'}>
+          <form.AppForm>
+            <FormView context={context} />
+          </form.AppForm>
+        </UnsavedChangesGuard>
       </AppLayout>
-      <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} />
     </>
   );
 }
