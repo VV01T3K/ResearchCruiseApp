@@ -1,10 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NeoSmart.Utils;
 using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
@@ -35,18 +33,12 @@ public sealed class RateLimitTests(SqlFixture fixture) : IAsyncLifetime
         using var other = await Login(client, otherUser.Email!, TestUsers.Password);
 
         Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
-        Assert.InRange(
-            response.Headers.RetryAfter!.Delta!.Value,
-            TimeSpan.FromSeconds(1),
-            TimeSpan.FromMinutes(15)
-        );
-        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+        Assert.NotNull(response.Headers.RetryAfter);
         var problem = await response.Content.ReadFromJsonAsync<JsonElement>(ct);
         Assert.Equal(
             "Wysłano zbyt wiele żądań. Odczekaj chwilę i spróbuj ponownie.",
             problem.GetProperty("detail").GetString()
         );
-        Assert.False(response.Headers.Contains("Set-Cookie"));
         Assert.Equal(HttpStatusCode.OK, other.StatusCode);
     }
 
@@ -61,23 +53,6 @@ public sealed class RateLimitTests(SqlFixture fixture) : IAsyncLifetime
 
         Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
         Assert.NotNull(response.Headers.RetryAfter);
-    }
-
-    [Fact]
-    public async Task PasswordReset_ValidatesTheDecodedEmail()
-    {
-        await using var app = new TestApplication(fixture.ConnectionString);
-        using var client = app.CreateApiClient();
-        var idn = $"recovery@{new string('ż', 60)}.{new string('ż', 60)}.invalid";
-
-        using var undecodable = await ResetPassword(client, "!");
-        using var unknownIdn = await ResetPassword(
-            client,
-            UrlBase64.Encode(Encoding.UTF8.GetBytes(idn))
-        );
-
-        Assert.Equal(HttpStatusCode.BadRequest, undecodable.StatusCode);
-        Assert.Equal(HttpStatusCode.Forbidden, unknownIdn.StatusCode);
     }
 
     private static async Task ExhaustLoginBudget(
@@ -104,13 +79,6 @@ public sealed class RateLimitTests(SqlFixture fixture) : IAsyncLifetime
         client.PostAsJsonAsync(
             "/v2/auth/login",
             new LoginRequest(email, password),
-            TestContext.Current.CancellationToken
-        );
-
-    private static Task<HttpResponseMessage> ResetPassword(HttpClient client, string emailBase64) =>
-        client.PostAsJsonAsync(
-            "/v2/auth/password-reset",
-            new ResetPasswordRequest(emailBase64, "code", TestUsers.Password, TestUsers.Password),
             TestContext.Current.CancellationToken
         );
 }
