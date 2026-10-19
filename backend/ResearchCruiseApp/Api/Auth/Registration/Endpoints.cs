@@ -13,9 +13,7 @@ public static class RegistrationEndpoints
             .WithName("RegisterAccount")
             .WithSummary("Register a new account.")
             .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<RegisterAccountRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
             .AllowAnonymous();
     }
 
