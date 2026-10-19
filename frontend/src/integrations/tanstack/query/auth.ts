@@ -35,13 +35,7 @@ async function fetchCurrentUser(): Promise<UserResponse | null> {
 export function currentUserQueryOptions() {
   return queryOptions({
     queryKey: getGetCurrentUserQueryKey(),
-    queryFn: async ({ client, queryKey }) => {
-      const previousUser = client.getQueryData<UserResponse | null>(queryKey);
-      const user = await fetchCurrentUser();
-      const unchanged = client.getQueryData(queryKey) === previousUser;
-      if (unchanged && user && previousUser && user.id !== previousUser.id) clearAccountQueries(client, user);
-      return user;
-    },
+    queryFn: fetchCurrentUser,
     refetchOnWindowFocus: true,
     staleTime: 60_000,
   });

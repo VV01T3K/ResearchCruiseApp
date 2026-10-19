@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
-import { refreshSession, subscribeAuthDetails } from '@/integrations/auth/session';
+import { accountId, refreshSession, subscribeAuthDetails } from '@/integrations/auth/session';
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
 import { setSentryUser } from '@/integrations/sentry/client';
 import {
@@ -21,10 +21,13 @@ export function AuthSession() {
 
   useEffect(
     () =>
-      subscribeAuthDetails((details) => {
+      subscribeAuthDetails((details, previous) => {
         if (!details) {
           clearAccountQueries(queryClient);
           void router.invalidate();
+        } else if (previous && accountId(previous) !== accountId(details)) {
+          queryClient.clear();
+          location.reload();
         }
       }),
     [queryClient, router]

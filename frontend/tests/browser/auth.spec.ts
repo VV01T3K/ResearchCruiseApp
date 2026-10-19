@@ -16,7 +16,7 @@ import {
   getGetUsersMockHandler,
 } from '@/api/generated/mocks/users/users.msw.gen';
 import { test, expect, fail } from './fixtures';
-import { admin, session } from '../data/accounts';
+import { admin, deputy, deputyAccount, outsider, session } from '../data/accounts';
 
 // The icon-only sign-out button has no accessible name yet (#491).
 const signOut = (page: Page) => page.getByTestId('sign-out-btn').click();
@@ -118,6 +118,29 @@ test.describe('authenticated session', () => {
     await signOut(page);
     await expect(other).toHaveURL(/\/login/);
     await expect(other.getByRole('button', { name: 'Dodaj użytkownika' })).toHaveCount(0);
+  });
+
+  test('a refresh into another account reloads without the previous account data', async ({
+    page,
+    network,
+    requests,
+  }) => {
+    const claim = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier';
+    const payload = (id: string) => Buffer.from(JSON.stringify({ [claim]: id, jti: '?>~' })).toString('base64url');
+    const tokens = (id: string) => ({ ...session(), accessToken: `header.${payload(id)}.signature` });
+    network.use(getGetCurrentSessionMockHandler(tokens(admin.id)), getGetUsersMockHandler([deputyAccount]));
+    await page.clock.install();
+    await page.goto('/user-management');
+    await expect(page.getByText(deputy.email)).toBeVisible();
+    network.use(
+      getGetCurrentSessionMockHandler(tokens(outsider.id)),
+      getRefreshTokensMockHandler(tokens(outsider.id)),
+      getGetCurrentUserMockHandler(outsider),
+      getGetUsersMockHandler([])
+    );
+    await page.clock.fastForward(30 * 60_000);
+    await expect.poll(() => requests.bodies('GET /v2/auth/session')).toHaveLength(2);
+    await expect(page.getByText(deputy.email)).toHaveCount(0);
   });
 
   test('the administrator screen rechecks a role that changed since it was loaded', async ({ page, network }) => {
