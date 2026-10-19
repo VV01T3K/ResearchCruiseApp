@@ -1,3 +1,4 @@
+using System.Text;
 using FluentValidation;
 using NeoSmart.Utils;
 
@@ -34,7 +35,8 @@ public sealed class ResetPasswordValidator : AbstractValidator<ResetPasswordRequ
     {
         try
         {
-            return emailBase64 is null || UrlBase64.Decode(emailBase64).Length <= 256;
+            return emailBase64 is null
+                || Encoding.UTF8.GetString(UrlBase64.Decode(emailBase64)).Length <= 256;
         }
         catch (FormatException)
         {

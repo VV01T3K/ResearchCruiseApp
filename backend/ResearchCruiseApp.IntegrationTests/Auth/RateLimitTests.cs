@@ -1,8 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NeoSmart.Utils;
 using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
@@ -62,18 +64,20 @@ public sealed class RateLimitTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
-    public async Task PasswordReset_WithUndecodableEmail_ReturnsValidationProblem()
+    public async Task PasswordReset_ValidatesTheDecodedEmail()
     {
         await using var app = new TestApplication(fixture.ConnectionString);
         using var client = app.CreateApiClient();
+        var idn = $"recovery@{new string('ż', 60)}.{new string('ż', 60)}.invalid";
 
-        using var response = await client.PostAsJsonAsync(
-            "/v2/auth/password-reset",
-            new ResetPasswordRequest("!", "code", TestUsers.Password, TestUsers.Password),
-            TestContext.Current.CancellationToken
+        using var undecodable = await ResetPassword(client, "!");
+        using var unknownIdn = await ResetPassword(
+            client,
+            UrlBase64.Encode(Encoding.UTF8.GetBytes(idn))
         );
 
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, undecodable.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, unknownIdn.StatusCode);
     }
 
     private static async Task ExhaustLoginBudget(
@@ -100,6 +104,13 @@ public sealed class RateLimitTests(SqlFixture fixture) : IAsyncLifetime
         client.PostAsJsonAsync(
             "/v2/auth/login",
             new LoginRequest(email, password),
+            TestContext.Current.CancellationToken
+        );
+
+    private static Task<HttpResponseMessage> ResetPassword(HttpClient client, string emailBase64) =>
+        client.PostAsJsonAsync(
+            "/v2/auth/password-reset",
+            new ResetPasswordRequest(emailBase64, "code", TestUsers.Password, TestUsers.Password),
             TestContext.Current.CancellationToken
         );
 }
