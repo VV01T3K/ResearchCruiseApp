@@ -101,7 +101,14 @@ public sealed class UpgradeTests(SqlFixture fixture)
                 SupervisorCode = [1, 2, 3, 4],
             };
             db.CruiseApplications.Add(application);
+            // The current model assigns Number itself; the pre-upgrade column is still IDENTITY.
+            await db.Database.OpenConnectionAsync(cancellationToken);
+            await db.Database.ExecuteSqlRawAsync(
+                "SET IDENTITY_INSERT [CruiseApplications] ON",
+                cancellationToken
+            );
             await db.SaveChangesAsync(cancellationToken);
+            await db.Database.CloseConnectionAsync();
             var applicationId = application.Id;
             var number = application.Number;
 
@@ -140,6 +147,19 @@ public sealed class UpgradeTests(SqlFixture fixture)
             );
             Assert.Empty(await verification.Database.GetPendingMigrationsAsync(cancellationToken));
             Assert.Empty(await verification.EmailOutboxMessages.ToListAsync(cancellationToken));
+
+            await using (await verification.Database.BeginTransactionAsync(cancellationToken))
+            {
+                verification.CruiseApplications.Add(
+                    new CruiseApplication { Status = CruiseApplicationStatus.Draft }
+                );
+                await verification.SaveChangesAsync(cancellationToken);
+            }
+            verification.ChangeTracker.Clear();
+            var next = new CruiseApplication { Status = CruiseApplicationStatus.Draft };
+            verification.CruiseApplications.Add(next);
+            await verification.SaveChangesAsync(cancellationToken);
+            Assert.Equal(number + 1, next.Number);
         }
         finally
         {

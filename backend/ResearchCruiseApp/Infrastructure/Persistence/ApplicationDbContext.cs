@@ -61,6 +61,45 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
     public DbSet<UserEffect> UserEffects { get; init; } = null!;
     public DbSet<UserPublication> UserPublications { get; init; } = null!;
 
+    public override async Task<int> SaveChangesAsync(
+        bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var newApplications = ChangeTracker
+            .Entries<CruiseApplication>()
+            .Where(entry => entry.State == EntityState.Added)
+            .Select(entry => entry.Entity)
+            .ToList();
+        if (newApplications.Count == 0)
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+
+        // The lock is held until commit, so numbers are consecutive and a rollback leaves no gap.
+        await using var transaction = Database.CurrentTransaction is null
+            ? await Database.BeginTransactionAsync(cancellationToken)
+            : null;
+        await Database.ExecuteSqlAsync(
+            $"""
+            DECLARE @result int;
+            EXEC @result = sp_getapplock @Resource = 'CruiseApplication.Number', @LockMode = 'Exclusive', @LockOwner = 'Transaction';
+            IF @result < 0 THROW 50000, 'Could not lock application numbering.', 1;
+            """,
+            cancellationToken
+        );
+        var number =
+            await CruiseApplications.MaxAsync(
+                application => (int?)application.Number,
+                cancellationToken
+            ) ?? 0;
+        foreach (var application in newApplications)
+            application.Number = ++number;
+
+        var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        if (transaction is not null)
+            await transaction.CommitAsync(cancellationToken);
+        return result;
+    }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
