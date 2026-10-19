@@ -130,10 +130,13 @@ test('signing out forgets unsaved edits', async ({ page, network, requests }) =>
   await notes(page).fill(UNSAVED);
   await page.getByTestId('sign-out-btn').click();
   await expect.poll(() => requests.bodies('POST /v2/auth/logout')).toHaveLength(1);
-  await page.getByLabel('E-mail').fill(admin.email);
-  await page.getByLabel('Hasło', { exact: true }).fill('Password1!');
-  await page.getByRole('button', { name: 'Zaloguj', exact: true }).click();
-  await expect(page).toHaveURL(formA);
+  // The login page re-renders once logout settles, which can clear the fields.
+  await expect(async () => {
+    await page.getByLabel('E-mail').fill(admin.email);
+    await page.getByLabel('Hasło', { exact: true }).fill('Password1!');
+    await page.getByRole('button', { name: 'Zaloguj', exact: true }).click({ timeout: 1000 });
+    await expect(page).toHaveURL(formA, { timeout: 2000 });
+  }).toPass();
   await expect(notes(page)).toHaveValue(saved);
 });
 
