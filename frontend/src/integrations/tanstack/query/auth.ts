@@ -35,16 +35,23 @@ async function fetchCurrentUser(): Promise<UserResponse | null> {
 export function currentUserQueryOptions() {
   return queryOptions({
     queryKey: getGetCurrentUserQueryKey(),
-    queryFn: fetchCurrentUser,
+    queryFn: async ({ client, queryKey }) => {
+      const previousUser = client.getQueryData<UserResponse | null>(queryKey);
+      const user = await fetchCurrentUser();
+      const unchanged = client.getQueryData(queryKey) === previousUser;
+      if (unchanged && user && previousUser && user.id !== previousUser.id) clearAccountQueries(client, user);
+      return user;
+    },
     refetchOnWindowFocus: true,
     staleTime: 60_000,
   });
 }
 
 export function clearAccountQueries(queryClient: QueryClient, user: UserResponse | null = null) {
-  const currentUserQueryHash = hashKey(getGetCurrentUserQueryKey());
-  queryClient.removeQueries({ predicate: (query) => query.queryHash !== currentUserQueryHash });
-  queryClient.setQueryData(getGetCurrentUserQueryKey(), user);
+  const currentUserQueryKey = getGetCurrentUserQueryKey();
+  void queryClient.cancelQueries({ queryKey: currentUserQueryKey, exact: true });
+  queryClient.removeQueries({ predicate: (query) => query.queryHash !== hashKey(currentUserQueryKey) });
+  queryClient.setQueryData(currentUserQueryKey, user);
 }
 
 function clearSession(queryClient: QueryClient) {
@@ -89,7 +96,7 @@ export function useSignIn() {
     try {
       // Fetched outside the query cache: sign-in reports this failure itself.
       const user = await fetchCurrentUser();
-      if (!user) throw new Error('Nie udało się wczytać profilu konta.');
+      if (!user || !getSession()) throw new Error('Nie udało się wczytać profilu konta.');
       clearAccountQueries(queryClient, user);
       return 'success';
     } catch (error) {
