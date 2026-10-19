@@ -1,30 +1,33 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 
-import { refreshSession, subscribeAuthDetails } from '@/integrations/auth/session';
-import { getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
+import { refreshSession } from '@/integrations/auth/session';
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
 import { setSentryUser } from '@/integrations/sentry/client';
 import { useAuthDetails, useCurrentUser, useSessionActions } from '@/integrations/tanstack/query/auth';
 
-export function AuthSession() {
-  const router = useRouter();
-  const queryClient = useQueryClient();
+let hideForReload: ((hidden: boolean) => void) | undefined;
+
+export function reloadForAccountChange() {
+  if (hideForReload) hideForReload(true);
+  else location.reload();
+}
+
+export function AuthSession({ children }: { children: ReactNode }) {
   const currentUser = useCurrentUser();
   const { refresh, signOut } = useSessionActions();
   const authDetails = useAuthDetails();
+  const [accountChanged, setAccountChanged] = useState(false);
 
-  useEffect(
-    () =>
-      subscribeAuthDetails((details) => {
-        if (!details) {
-          queryClient.setQueryData(getGetCurrentUserQueryKey(), null);
-          void router.invalidate();
-        }
-      }),
-    [queryClient, router]
-  );
+  useEffect(() => {
+    hideForReload = setAccountChanged;
+    return () => {
+      hideForReload = undefined;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (accountChanged) location.reload();
+  }, [accountChanged]);
 
   useEffect(() => {
     const interval = setInterval(
@@ -51,13 +54,18 @@ export function AuthSession() {
     return () => clearInterval(interval);
   }, [authDetails?.refreshTokenExpirationDate, signOut]);
 
-  if (!authDetails?.refreshTokenExpirationDate) return null;
+  if (accountChanged) return null;
 
   return (
-    <SessionExpirationWarning
-      expirationDate={new Date(authDetails.refreshTokenExpirationDate)}
-      onRefreshSession={refresh}
-      onSignOut={signOut}
-    />
+    <>
+      {children}
+      {authDetails?.refreshTokenExpirationDate && (
+        <SessionExpirationWarning
+          expirationDate={new Date(authDetails.refreshTokenExpirationDate)}
+          onRefreshSession={refresh}
+          onSignOut={signOut}
+        />
+      )}
+    </>
   );
 }
