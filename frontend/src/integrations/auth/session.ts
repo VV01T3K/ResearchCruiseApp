@@ -1,7 +1,7 @@
 import type { TokenResponse } from '@/api/generated/schemas';
 import { getCurrentSession, refreshTokens } from '@/api/generated/endpoints/auth.gen';
 
-const subscribers = new Set<(details: TokenResponse | undefined) => void>();
+const subscribers = new Set<(details: TokenResponse | undefined, previous: TokenResponse | undefined) => void>();
 const concurrentRefreshWaiters = new Set<(details: TokenResponse) => void>();
 let refreshPromise: Promise<TokenResponse | undefined> | undefined;
 let session: TokenResponse | undefined;
@@ -38,11 +38,21 @@ export class SessionRefreshError extends Error {
   }
 }
 
+export function accountId(details: TokenResponse) {
+  try {
+    const payload = JSON.parse(atob(details.accessToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    return payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+  } catch {
+    return undefined;
+  }
+}
+
 function updateSession(details: TokenResponse | undefined, broadcast: boolean) {
+  const previous = session;
   session = details;
   sessionState = details ? 'authenticated' : 'anonymous';
   sessionRevision += 1;
-  subscribers.forEach((subscriber) => subscriber(details));
+  subscribers.forEach((subscriber) => subscriber(details, previous));
   if (details) concurrentRefreshWaiters.forEach((waiter) => waiter(details));
   if (details && broadcast) {
     authChannel?.postMessage({
@@ -61,7 +71,9 @@ export function getSession() {
   return session;
 }
 
-export function subscribeAuthDetails(subscriber: (details: TokenResponse | undefined) => void) {
+export function subscribeAuthDetails(
+  subscriber: (details: TokenResponse | undefined, previous: TokenResponse | undefined) => void
+) {
   subscribers.add(subscriber);
   return () => {
     subscribers.delete(subscriber);
