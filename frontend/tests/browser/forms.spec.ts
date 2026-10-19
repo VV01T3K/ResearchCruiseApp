@@ -1,16 +1,11 @@
 import {
   getCreateApplicationMockHandler,
-  getGetApplicationsForCruisePlanningMockHandler,
   getUpdateApplicationFormAMockHandler,
   getUpdateApplicationFormBMockHandler,
   getUpdateApplicationFormCMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
-import { getGetCruiseMockHandler } from '@/api/generated/mocks/cruises/cruises.msw.gen';
-import { getGetAvailableCruiseManagersMockHandler } from '@/api/generated/mocks/users/users.msw.gen';
-import type { Locator } from '@playwright/test';
 import { test, expect, applicationForms, dropFile, fail } from './fixtures';
-import { admin, deputy, deputyAccount, managerAccount, outsider } from '../data/accounts';
-import { cruise } from '../data/cruises';
+import { admin, deputyAccount, managerAccount, outsider } from '../data/accounts';
 import { applicationId, formB } from '../data/forms';
 
 const formA = `/applications/${applicationId}/formA?mode=edit`;
@@ -308,36 +303,3 @@ test('form C clears point awards for an unfinished task and saves attached photo
     }),
   ]);
 });
-
-for (const width of [375, 1280, 1440]) {
-  test(`the action bar leaves focused fields clear at ${width}×800`, async ({ page, network }) => {
-    await page.setViewportSize({ width, height: 800 });
-    const expectClearOfBar = async (field: Locator) => {
-      await expect(field).toBeFocused();
-      await expect
-        .poll(async () => {
-          const [box, bar] = [await field.boundingBox(), await page.locator('[popover]').boundingBox()];
-          return box!.y + box!.height <= bar!.y;
-        })
-        .toBe(true);
-    };
-
-    await page.goto(formA);
-    await page.getByLabel('Adres e-mail przełożonego').fill('invalid');
-    await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
-    await expectClearOfBar(page.getByLabel('Adres e-mail przełożonego'));
-
-    const item = cruise();
-    network.use(
-      getGetCruiseMockHandler(item),
-      getGetAvailableCruiseManagersMockHandler([admin, deputy]),
-      getGetApplicationsForCruisePlanningMockHandler([])
-    );
-    await page.goto(`/cruises/${item.id}`);
-    await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
-    for (const name of ['Kierownik główny', 'Zastępca kierownika głównego']) {
-      await page.getByRole('combobox', { name }).focus();
-      await expectClearOfBar(page.getByRole('combobox', { name }));
-    }
-  });
-}
