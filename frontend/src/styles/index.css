@@ -14,5 +14,10 @@
 
   :root {
     --header-height: 4.5rem;
+    --actions-height: 6rem;
+  }
+
+  html:has([data-actions-section]) {
+    scroll-padding-bottom: calc(var(--actions-height) + 2rem);
   }
 }
