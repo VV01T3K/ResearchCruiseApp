@@ -48,7 +48,7 @@ function NewCruiseApplicationPage() {
   } satisfies FormAValues;
   const [selectedYear, setSelectedYear] = useState(defaultValues.year);
   const blockadesQuery = useGetCruiseBlockades({ year: +selectedYear });
-  const schema = getFormASubmissionSchema(initialStateQuery.data, blockadesQuery.data);
+  const schema = getFormASubmissionSchema(initialStateQuery.data, currentUser.id, blockadesQuery.data);
   const form = useAppForm({
     canSubmitWhenInvalid: true,
     defaultValues,
@@ -82,12 +82,6 @@ function NewCruiseApplicationPage() {
 
   async function saveForm(values: FormAValues) {
     if (!values.draft) trackFormSubmit('new-application', 'valid', form.state);
-    if (values.cruiseManagerId !== currentUser.id && values.deputyManagerId !== currentUser.id) {
-      setIsSaveDraftModalOpen(false);
-      const message = 'Jedynie kierownik lub jego zastępca mogą zapisać formularz';
-      toast.error(message);
-      throw new Error(message);
-    }
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
