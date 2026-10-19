@@ -161,6 +161,7 @@ test.describe('application table', () => {
       endDate: '2026-06-30T16:00:00Z',
     }));
     items[0].mainManager = { ...admin, firstName: 'Aleksandra', lastName: 'Brzęczyszczykiewicz' };
+    items[0].number = '2026/1234';
     items[0].note = 'https://example.com/applications/drafts/very-long-unbroken-reference-to-the-note';
     network.use(getGetApplicationsMockHandler(listPage(items)));
     await page.goto('/applications');
@@ -180,6 +181,12 @@ test.describe('application table', () => {
       })
     );
     expect(Math.max(...spill), 'cell content past its right edge').toBeLessThanOrEqual(0);
+    const numberLines = await page.getByRole('cell', { name: '2026/1234', exact: true }).evaluate((cell) => {
+      const range = document.createRange();
+      range.selectNodeContents(cell);
+      return new Set([...range.getClientRects()].map((rect) => rect.top)).size;
+    });
+    expect(numberLines, 'application number lines').toBe(1);
     const overflow = await page.getByRole('table').evaluate((table) => {
       const container = table.parentElement!;
       return container.scrollWidth - container.clientWidth;

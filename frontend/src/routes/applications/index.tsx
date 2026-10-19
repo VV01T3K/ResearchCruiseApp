@@ -78,9 +78,10 @@ function ApplicationsPage() {
       id: 'number',
       header: 'Nr',
       accessorFn: (row) => row.number,
+      cell: ({ row }) => <span className="whitespace-nowrap">{row.original.number}</span>,
       sortDescFirst: true,
       meta: { filterInputType: 'number' },
-      size: 78,
+      size: 83,
     },
     {
       id: 'date',
@@ -97,7 +98,7 @@ function ApplicationsPage() {
       accessorFn: (row) => row.year.toString(),
       sortDescFirst: true,
       meta: { filterOptions: yearFilterOptions },
-      size: 99,
+      size: 94,
     },
     {
       header: 'Liczba dni',
