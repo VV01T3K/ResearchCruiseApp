@@ -94,11 +94,20 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
         foreach (var application in newApplications)
             application.Number = ++number;
 
-        var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        if (transaction is not null)
-            await transaction.CommitAsync(cancellationToken);
+        if (transaction is null)
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+
+        var result = await base.SaveChangesAsync(false, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        if (acceptAllChangesOnSuccess)
+            ChangeTracker.AcceptAllChanges();
         return result;
     }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess) =>
+        ChangeTracker.Entries<CruiseApplication>().Any(entry => entry.State == EntityState.Added)
+            ? throw new NotSupportedException("Save new applications with SaveChangesAsync.")
+            : base.SaveChanges(acceptAllChangesOnSuccess);
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
