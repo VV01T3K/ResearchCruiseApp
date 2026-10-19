@@ -149,7 +149,7 @@ test.describe('application table', () => {
     page,
     network,
   }) => {
-    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.setViewportSize({ width: 1263, height: 800 });
     const items = (['draft', 'formBRequired', 'undertaken'] as const).map((status, i) => ({
       ...application(),
       id: `00000000-0000-4000-8000-00000000000${i}`,
@@ -180,7 +180,7 @@ test.describe('application table', () => {
         return range.getBoundingClientRect().right - cell.getBoundingClientRect().right;
       })
     );
-    expect(Math.max(...spill), 'cell content past its right edge').toBeLessThanOrEqual(0);
+    expect(Math.max(...spill), 'cell content past its right edge').toBeLessThanOrEqual(-1);
     const numberLines = await page.getByRole('cell', { name: '2026/1234', exact: true }).evaluate((cell) => {
       const range = document.createRange();
       range.selectNodeContents(cell);
