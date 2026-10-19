@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 
 import { accountId, refreshSession, subscribeAuthDetails } from '@/integrations/auth/session';
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
@@ -12,12 +12,13 @@ import {
   useSessionActions,
 } from '@/integrations/tanstack/query/auth';
 
-export function AuthSession() {
+export function AuthSession({ children }: { children: ReactNode }) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const currentUser = useCurrentUser();
   const { refresh, signOut } = useSessionActions();
   const authDetails = useAuthDetails();
+  const [accountChanged, setAccountChanged] = useState(false);
 
   useEffect(
     () =>
@@ -27,11 +28,15 @@ export function AuthSession() {
           void router.invalidate();
         } else if (previous && accountId(previous) !== accountId(details)) {
           queryClient.clear();
-          location.reload();
+          setAccountChanged(true);
         }
       }),
     [queryClient, router]
   );
+
+  useEffect(() => {
+    if (accountChanged) location.reload();
+  }, [accountChanged]);
 
   useEffect(() => {
     const interval = setInterval(
@@ -58,13 +63,18 @@ export function AuthSession() {
     return () => clearInterval(interval);
   }, [authDetails?.refreshTokenExpirationDate, signOut]);
 
-  if (!authDetails?.refreshTokenExpirationDate) return null;
+  if (accountChanged) return null;
 
   return (
-    <SessionExpirationWarning
-      expirationDate={new Date(authDetails.refreshTokenExpirationDate)}
-      onRefreshSession={refresh}
-      onSignOut={signOut}
-    />
+    <>
+      {children}
+      {authDetails?.refreshTokenExpirationDate && (
+        <SessionExpirationWarning
+          expirationDate={new Date(authDetails.refreshTokenExpirationDate)}
+          onRefreshSession={refresh}
+          onSignOut={signOut}
+        />
+      )}
+    </>
   );
 }

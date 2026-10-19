@@ -15,8 +15,10 @@ import {
   getGetCurrentUserMockHandler,
   getGetUsersMockHandler,
 } from '@/api/generated/mocks/users/users.msw.gen';
-import { test, expect, fail } from './fixtures';
-import { admin, deputy, deputyAccount, outsider, session } from '../data/accounts';
+import { getGetApplicationFormAMockHandler } from '@/api/generated/mocks/applications/applications.msw.gen';
+import { test, expect, fail, applicationForms } from './fixtures';
+import { admin, outsider, session } from '../data/accounts';
+import { applicationId } from '../data/forms';
 
 // The icon-only sign-out button has no accessible name yet (#491).
 const signOut = (page: Page) => page.getByTestId('sign-out-btn').click();
@@ -120,7 +122,7 @@ test.describe('authenticated session', () => {
     await expect(other.getByRole('button', { name: 'Dodaj użytkownika' })).toHaveCount(0);
   });
 
-  test('a refresh into another account reloads without the previous account data', async ({
+  test('a refresh into another account reloads without the previous account form or its unsaved edits', async ({
     page,
     network,
     requests,
@@ -128,19 +130,20 @@ test.describe('authenticated session', () => {
     const claim = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier';
     const payload = (id: string) => Buffer.from(JSON.stringify({ [claim]: id, jti: '?>~' })).toString('base64url');
     const tokens = (id: string) => ({ ...session(), accessToken: `header.${payload(id)}.signature` });
-    network.use(getGetCurrentSessionMockHandler(tokens(admin.id)), getGetUsersMockHandler([deputyAccount]));
+    network.use(getGetCurrentSessionMockHandler(tokens(admin.id)), ...applicationForms());
     await page.clock.install();
-    await page.goto('/user-management');
-    await expect(page.getByText(deputy.email)).toBeVisible();
+    await page.goto(`/applications/${applicationId}/formA?mode=edit`);
+    await page.getByLabel('Uwagi dotyczące terminu').fill('Niezapisana notatka');
     network.use(
       getGetCurrentSessionMockHandler(tokens(outsider.id)),
       getRefreshTokensMockHandler(tokens(outsider.id)),
       getGetCurrentUserMockHandler(outsider),
-      getGetUsersMockHandler([])
+      getGetApplicationFormAMockHandler(fail(403))
     );
+    page.on('dialog', (dialog) => dialog.dismiss());
     await page.clock.fastForward(30 * 60_000);
     await expect.poll(() => requests.bodies('GET /v2/auth/session')).toHaveLength(2);
-    await expect(page.getByText(deputy.email)).toHaveCount(0);
+    await expect(page.getByLabel('Uwagi dotyczące terminu')).toHaveCount(0);
   });
 
   test('the administrator screen rechecks a role that changed since it was loaded', async ({ page, network }) => {
