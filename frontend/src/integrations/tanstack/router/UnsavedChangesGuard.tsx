@@ -9,7 +9,7 @@ import { accountId, getSession } from '@/integrations/auth/session';
 import { unsavedValues } from '@/integrations/tanstack/form/unsavedValues';
 
 type Props = {
-  form: Pick<AnyFormApi, 'state' | 'setFieldValue'>;
+  form: Pick<AnyFormApi, 'state' | 'getFieldValue' | 'setFieldValue'>;
   disabled?: boolean;
   children: ReactNode;
 };
@@ -37,17 +37,16 @@ export function UnsavedChangesGuard({ form, disabled = false, children }: Props)
   useLayoutEffect(() => {
     setRestoredFor(disabled);
     if (disabled) return;
-    const saved = Object.entries(unsavedValues.get(pathname) ?? {});
+    // Parents first, so a restored array's rows exist before their edited cells.
+    const saved = Object.entries(unsavedValues.get(pathname) ?? {}).sort(([a], [b]) => a.length - b.length);
     saved.forEach(([name, value]) => form.setFieldValue(name, value, { dontValidate: true }));
     if (saved.length > 0) toast.success('Przywrócono niezapisane zmiany');
     const account = currentAccount();
     return () => {
       if (!getSession() || currentAccount() !== account) return;
-      const edited = Object.entries(form.state.fieldMeta)
-        .filter(([, meta]) => meta?.isDirty)
-        .map(([name]) => name.split(/[.[]/)[0]);
+      const edited = Object.keys(form.state.fieldMeta).filter((name) => form.state.fieldMeta[name]?.isDirty);
       if (edited.length > 0)
-        unsavedValues.set(pathname, Object.fromEntries(edited.map((name) => [name, form.state.values[name]])));
+        unsavedValues.set(pathname, Object.fromEntries(edited.map((name) => [name, form.getFieldValue(name)])));
       else unsavedValues.delete(pathname);
     };
   }, [form, disabled, pathname]);
