@@ -1,5 +1,7 @@
 using System.Globalization;
+using System.Text;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Identity;
 
 namespace ResearchCruiseApp.Infrastructure.Api;
 
@@ -15,13 +17,19 @@ public static class RateLimitFilters
             .AddEndpointFilter(
                 async (context, next) =>
                 {
-                    var limiter = context.HttpContext.RequestServices.GetRequiredKeyedService<
-                        PartitionedRateLimiter<string>
-                    >(policy);
-                    var request = context.Arguments.OfType<TRequest>().First();
-                    using var lease = limiter.AttemptAcquire(
-                        account(request).Trim().ToUpperInvariant()
-                    );
+                    var services = context.HttpContext.RequestServices;
+                    var email = account(context.Arguments.OfType<TRequest>().First());
+                    var user = await services
+                        .GetRequiredService<UserManager<User>>()
+                        .FindByEmailAsync(email);
+                    var key =
+                        user?.Id
+                        ?? services
+                            .GetRequiredService<ILookupNormalizer>()
+                            .NormalizeEmail(email.Trim().Normalize(NormalizationForm.FormKC))!;
+                    using var lease = services
+                        .GetRequiredKeyedService<PartitionedRateLimiter<string>>(policy)
+                        .AttemptAcquire(key);
                     if (lease.IsAcquired)
                         return await next(context);
 

@@ -6,7 +6,11 @@ public sealed class RegisterAccountValidator : AbstractValidator<RegisterAccount
 {
     public RegisterAccountValidator()
     {
-        RuleFor(request => request.Email).NotEmpty().WithName("Adres e-mail").EmailAddress();
+        RuleFor(request => request.Email)
+            .NotEmpty()
+            .WithName("Adres e-mail")
+            .EmailAddress()
+            .MaximumLength(256);
         RuleFor(request => request.Password).NotEmpty().WithName("Hasło");
         RuleFor(request => request.FirstName).NotEmpty().WithName("Imię");
         RuleFor(request => request.LastName).NotEmpty().WithName("Nazwisko");

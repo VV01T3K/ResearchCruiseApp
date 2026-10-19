@@ -7,6 +7,10 @@ public sealed class ResendConfirmationEmailValidator
 {
     public ResendConfirmationEmailValidator()
     {
-        RuleFor(request => request.Email).NotEmpty().WithName("Adres e-mail").EmailAddress();
+        RuleFor(request => request.Email)
+            .NotEmpty()
+            .WithName("Adres e-mail")
+            .EmailAddress()
+            .MaximumLength(256);
     }
 }

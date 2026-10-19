@@ -20,12 +20,16 @@ public sealed class RateLimitTests(SqlFixture fixture) : IAsyncLifetime
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
-        var user = await TestUsers.Create(app, "limited@example.invalid");
+        var user = await TestUsers.Create(app, "kelvin@example.invalid");
         var otherUser = await TestUsers.Create(app, "other@example.invalid");
         using var client = app.CreateApiClient();
         await ExhaustLoginBudget(app, client, user.Email!);
 
-        using var response = await Login(client, "LIMITED@example.invalid", TestUsers.Password);
+        using var response = await Login(
+            client,
+            "\u212AELVIN@ｅxample.invalid",
+            TestUsers.Password
+        );
         using var other = await Login(client, otherUser.Email!, TestUsers.Password);
 
         Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
@@ -51,10 +55,25 @@ public sealed class RateLimitTests(SqlFixture fixture) : IAsyncLifetime
         using var client = app.CreateApiClient();
         await ExhaustLoginBudget(app, client, "nobody@example.invalid");
 
-        using var response = await Login(client, "nobody@example.invalid", TestUsers.Password);
+        using var response = await Login(client, "ＮOBODY@example.invalid", TestUsers.Password);
 
         Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
         Assert.NotNull(response.Headers.RetryAfter);
+    }
+
+    [Fact]
+    public async Task PasswordReset_WithUndecodableEmail_ReturnsValidationProblem()
+    {
+        await using var app = new TestApplication(fixture.ConnectionString);
+        using var client = app.CreateApiClient();
+
+        using var response = await client.PostAsJsonAsync(
+            "/v2/auth/password-reset",
+            new ResetPasswordRequest("!", "code", TestUsers.Password, TestUsers.Password),
+            TestContext.Current.CancellationToken
+        );
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     private static async Task ExhaustLoginBudget(
