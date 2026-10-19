@@ -10,7 +10,11 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            // SQL Server cannot drop IDENTITY in place, so copy the numbers into a new column.
+            // Block inserts from a running instance until the migration commits. SQL Server cannot
+            // drop IDENTITY in place, so copy the numbers into a new column.
+            migrationBuilder.Sql(
+                "SELECT TOP (0) [Id] FROM [CruiseApplications] WITH (TABLOCKX, HOLDLOCK)"
+            );
             migrationBuilder.DropIndex(
                 name: "IX_CruiseApplications_Number_Id",
                 table: "CruiseApplications"
@@ -26,7 +30,9 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 type: "int",
                 nullable: true
             );
-            migrationBuilder.Sql("UPDATE [CruiseApplications] SET [Number] = [IdentityNumber]");
+            migrationBuilder.Sql(
+                "EXEC('UPDATE [CruiseApplications] SET [Number] = [IdentityNumber]')"
+            );
             migrationBuilder.AlterColumn<int>(
                 name: "Number",
                 table: "CruiseApplications",
