@@ -2,6 +2,9 @@ services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-CU23-ubuntu-22.04
     container_name: researchcruiseapp-db
+    # Trace flag 272 disables identity caching: Docker force-kills SQL Server on every stop,
+    # which otherwise skips ~1000 application numbers (#466).
+    command: [/opt/mssql/bin/sqlservr, -T272]
     restart: unless-stopped
     mem_limit: 3g
     environment:
