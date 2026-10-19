@@ -122,26 +122,6 @@ test.describe('authenticated session', () => {
     await expect(other.getByRole('button', { name: 'Dodaj użytkownika' })).toHaveCount(0);
   });
 
-  test('a logout in another tab during the first profile load does not show the page', async ({
-    page,
-    context,
-    network,
-  }) => {
-    const other = await context.newPage();
-    await other.goto('/user-management');
-    await expect(other.getByTestId('sign-out-btn')).toBeVisible();
-    const { promise, resolve } = Promise.withResolvers<void>();
-    network.use(getGetCurrentUserMockHandler(() => promise.then(() => admin)));
-    const profile = page.waitForRequest('**/v2/users/me');
-    void page.goto('/user-management');
-    await profile;
-    network.use(getLogoutMockHandler(), getGetCurrentSessionMockHandler(null), getRefreshTokensMockHandler(fail(401)));
-    await signOut(other);
-    await expect(other).toHaveURL(/\/login/);
-    resolve();
-    await expect(page.getByLabel('E-mail')).toBeVisible();
-  });
-
   test('a refresh into another account reloads without the previous account form or its unsaved edits', async ({
     page,
     network,

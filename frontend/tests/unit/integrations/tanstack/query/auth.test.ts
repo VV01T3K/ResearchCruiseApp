@@ -24,26 +24,20 @@ it('resolves a signed-out startup to no user with only the session request', asy
   expect(requestedUrls()).toEqual(['https://api.test/v2/auth/session']);
 });
 
-it('drops cached and in-flight account data when the session ends', async () => {
+it('drops cached and in-flight account data, including a late profile, when the session ends', async () => {
   const queryClient = new QueryClient();
-  const response = Promise.withResolvers<string>();
-  const fetchDraft = () => response.promise;
+  const draft = Promise.withResolvers<string>();
+  const profile = Promise.withResolvers<typeof admin>();
+  const fetchDraft = () => draft.promise;
+  const fetchProfile = () => profile.promise;
   queryClient.setQueryData(['v2', 'applications', 'cached'], 'private draft');
-  const pending = queryClient.query({ queryKey: ['v2', 'applications', 'pending'], queryFn: fetchDraft });
+  const pendingDraft = queryClient.query({ queryKey: ['v2', 'applications', 'pending'], queryFn: fetchDraft });
+  const pendingProfile = queryClient.query({ queryKey: ['v2', 'users', 'me'], queryFn: fetchProfile });
   auth.clearAccountQueries(queryClient);
-  response.resolve('previous account draft');
-  await pending.catch(() => {});
+  draft.resolve('previous account draft');
+  profile.resolve(admin);
+  await pendingDraft.catch(() => {});
+  await expect(pendingProfile).resolves.toBeNull();
   const cache = queryClient.getQueryCache().getAll();
   expect(cache.map((query) => [query.queryKey, query.state.data])).toEqual([[['v2', 'users', 'me'], null]]);
-});
-
-it('ignores a profile response that arrives after the session ends', async () => {
-  const queryClient = new QueryClient();
-  const profile = Promise.withResolvers<typeof admin>();
-  const fetchProfile = () => profile.promise;
-  const pending = queryClient.query({ queryKey: ['v2', 'users', 'me'], queryFn: fetchProfile });
-  auth.clearAccountQueries(queryClient);
-  profile.resolve(admin);
-  await expect(pending).resolves.toBeNull();
-  expect(queryClient.getQueryData(['v2', 'users', 'me'])).toBeNull();
 });
