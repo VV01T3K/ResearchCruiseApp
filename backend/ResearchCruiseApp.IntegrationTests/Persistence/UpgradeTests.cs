@@ -140,6 +140,18 @@ public sealed class UpgradeTests(SqlFixture fixture)
             );
             Assert.Empty(await verification.Database.GetPendingMigrationsAsync(cancellationToken));
             Assert.Empty(await verification.EmailOutboxMessages.ToListAsync(cancellationToken));
+
+            var next = new CruiseApplication { Status = CruiseApplicationStatus.Draft };
+            verification.CruiseApplications.Add(next);
+            await verification.SaveChangesAsync(cancellationToken);
+            Assert.Equal(number + 1, next.Number);
+            Assert.False(
+                await verification
+                    .Database.SqlQuery<bool>(
+                        $"SELECT is_cached AS Value FROM sys.sequences WHERE name = 'CruiseApplicationNumbers'"
+                    )
+                    .SingleAsync(cancellationToken)
+            );
         }
         finally
         {

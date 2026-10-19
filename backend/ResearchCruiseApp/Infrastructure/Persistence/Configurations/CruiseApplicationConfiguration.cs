@@ -13,7 +13,10 @@ public class CruiseApplicationConfiguration : IEntityTypeConfiguration<CruiseApp
             .WithOne(formC => formC.CruiseApplication)
             .HasForeignKey<CruiseApplication>("FormCId");
 
-        builder.Property(nameof(CruiseApplication.Number)).ValueGeneratedOnAdd();
+        // The sequence is created with NO CACHE in a migration, so an engine crash cannot skip ~1000 numbers.
+        builder
+            .Property(nameof(CruiseApplication.Number))
+            .HasDefaultValueSql("NEXT VALUE FOR [CruiseApplicationNumbers]");
 
         builder
             .HasIndex(cruiseApplication => new { cruiseApplication.Number, cruiseApplication.Id })
