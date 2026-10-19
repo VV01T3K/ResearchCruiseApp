@@ -12,7 +12,19 @@ export function AppActionsSection({ children }: Props) {
   const { scrollYProgress } = useScroll();
 
   React.useEffect(() => {
-    popoverRef.current?.showPopover();
+    const popover = popoverRef.current;
+    if (!popover) {
+      return;
+    }
+    popover.showPopover();
+    const observer = new ResizeObserver(() => {
+      document.documentElement.style.setProperty('--actions-height', `${popover.offsetHeight + 16}px`);
+    });
+    observer.observe(popover);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--actions-height');
+    };
   }, []);
 
   scrollYProgress.on('change', (latestValue) => {
@@ -24,15 +36,19 @@ export function AppActionsSection({ children }: Props) {
   }
 
   return (
-    <div
-      ref={popoverRef}
-      popover="manual"
-      className={cn(
-        'fixed inset-auto bottom-4 left-1/2 m-0 flex w-fit max-w-full -translate-x-1/2 gap-4 rounded-2xl px-6 py-4',
-        isSticky ? 'bg-white/30 shadow-2xl backdrop-blur-xs' : ''
-      )}
-    >
-      {children}
-    </div>
+    <>
+      <div className="h-(--actions-height)" />
+      <div
+        ref={popoverRef}
+        popover="manual"
+        data-actions-section
+        className={cn(
+          'fixed inset-auto bottom-4 left-1/2 m-0 flex w-fit max-w-full -translate-x-1/2 gap-4 rounded-2xl px-6 py-4',
+          isSticky ? 'bg-white/30 shadow-2xl backdrop-blur-xs' : ''
+        )}
+      >
+        {children}
+      </div>
+    </>
   );
 }
