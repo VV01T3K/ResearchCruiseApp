@@ -9,7 +9,7 @@ import { toast } from '@/components/shared/layout/toast';
 import { accountId, getSession } from '@/integrations/auth/session';
 
 type Props = {
-  form: Pick<AnyFormApi, 'state' | 'setFieldValue'>;
+  form: Pick<AnyFormApi, 'state' | 'getFieldValue' | 'setFieldValue'>;
   disabled?: boolean;
   children: ReactNode;
 };
@@ -40,17 +40,18 @@ export function UnsavedChangesGuard({ form, disabled = false, children }: Props)
     if (disabled) return;
     // Kept in the query cache so that ending the session clears them with the account's data.
     const queryKey = ['unsaved-form', pathname];
-    const saved = Object.entries(queryClient.getQueryData<Record<string, unknown>>(queryKey) ?? {});
+    // Parents first, so a restored array's rows exist before their edited cells.
+    const saved = Object.entries(queryClient.getQueryData<Record<string, unknown>>(queryKey) ?? {}).sort(
+      ([a], [b]) => a.length - b.length
+    );
     saved.forEach(([name, value]) => form.setFieldValue(name, value, { dontValidate: true }));
     if (saved.length > 0) toast.success('Przywrócono niezapisane zmiany');
     const account = currentAccount();
     return () => {
       if (!getSession() || currentAccount() !== account) return;
-      const edited = Object.entries(form.state.fieldMeta)
-        .filter(([, meta]) => meta?.isDirty)
-        .map(([name]) => name.split(/[.[]/)[0]);
+      const edited = Object.keys(form.state.fieldMeta).filter((name) => form.state.fieldMeta[name]?.isDirty);
       if (edited.length > 0)
-        queryClient.setQueryData(queryKey, Object.fromEntries(edited.map((name) => [name, form.state.values[name]])));
+        queryClient.setQueryData(queryKey, Object.fromEntries(edited.map((name) => [name, form.getFieldValue(name)])));
       else queryClient.removeQueries({ queryKey, exact: true });
     };
   }, [form, disabled, pathname, queryClient]);
