@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
+import { useSelector } from '@tanstack/react-form';
 import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -67,11 +68,6 @@ function FormAPage() {
     validators: {
       onDynamic: schema,
     },
-    listeners: {
-      onChange: ({ fieldApi }) => {
-        if (fieldApi.name === 'year') setSelectedYear(String(fieldApi.state.value));
-      },
-    },
     onSubmit: ({ value }) => saveForm(value),
     onSubmitInvalid: () => {
       if (!form.state.values.draft) trackFormSubmit('form-a', 'invalid', form.state);
@@ -79,6 +75,8 @@ function FormAPage() {
       navigateToFirstError({ toast: true });
     },
   });
+  const year = useSelector(form.store, (state) => String(state.values.year));
+  if (year !== selectedYear) setSelectedYear(year);
   const leaveAfterSave = useLeaveAfterSave(form);
 
   const context = {
