@@ -132,13 +132,13 @@ type ActionsCellProps = {
 function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
   return (
     <div className="grid min-w-30 grid-cols-1 gap-2">
-      <AppButton variant="primary" type="link" href={`/cruises/${cruise.id}`}>
+      <AppButton variant="primary" type="link" size="sm" href={`/cruises/${cruise.id}`}>
         Szczegóły
         <ZoomInIcon className="ml-2 h-4 w-4" />
       </AppButton>
       <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
         {cruise.status === 'new' && (
-          <AppButton variant="dangerOutline" onClick={() => deleteCruise(cruise)}>
+          <AppButton variant="dangerOutline" size="sm" onClick={() => deleteCruise(cruise)}>
             Usuń
             <TrashIcon className="h-4 w-4" />
           </AppButton>
