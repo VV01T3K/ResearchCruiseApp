@@ -2,7 +2,7 @@ import { type AnyFormApi, evaluate } from '@tanstack/react-form';
 import { type NavigateOptions, useNavigate } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 
-export function useLeaveAfterSave(form: Pick<AnyFormApi, 'state'>) {
+export function useLeaveAfterSave(form: Pick<AnyFormApi, 'state' | 'reset'>) {
   const navigate = useNavigate();
   const isMounted = useRef(false);
 
@@ -15,6 +15,8 @@ export function useLeaveAfterSave(form: Pick<AnyFormApi, 'state'>) {
 
   return async (savedValues: unknown, options: NavigateOptions) => {
     if (!isMounted.current) return;
-    await navigate({ ...options, ignoreBlocker: evaluate(form.state.values, savedValues) });
+    const unchanged = evaluate(form.state.values, savedValues);
+    if (unchanged) form.reset(form.state.values);
+    await navigate({ ...options, ignoreBlocker: unchanged });
   };
 }

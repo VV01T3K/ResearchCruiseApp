@@ -95,6 +95,17 @@ test('an in-app link asks before discarding edits, and staying keeps them', asyn
   await expect(page).toHaveURL('/');
 });
 
+test('edits left without saving come back on return', async ({ page }) => {
+  await page.goto(formA);
+  await notes(page).fill(UNSAVED);
+  await goHome(page);
+  await dialog(page).getByRole('button', { name: 'Opuść bez zapisywania' }).click();
+  await page.goBack();
+  await expect(notes(page)).toHaveValue(UNSAVED);
+  await goHome(page);
+  await expect(dialog(page)).toBeVisible();
+});
+
 test('browser Back asks before discarding edits on a new application', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('link', { name: /Nowe zgłoszenie/ }).click();

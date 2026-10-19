@@ -18,6 +18,7 @@ export const queryClient = new QueryClient({
     },
   }),
 });
+queryClient.setQueryDefaults(['unsaved-form'], { gcTime: Infinity });
 
 export function TanStackQueryProvider({ children }: { children: React.ReactNode }) {
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
