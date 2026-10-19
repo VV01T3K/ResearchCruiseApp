@@ -41,6 +41,12 @@ and Dependabot.
 | `JWT__AccessTokenLifetimeSeconds`       | JWT access token lifetime in seconds           | `3600`                                                                          | No       |
 | `JWT__RefreshTokenLifetimeSeconds`      | JWT refresh token lifetime in seconds          | `7200`                                                                          | No       |
 | `JWT__Secret`                           | JWT signing secret                             | `JWTp@ssw0rdTwoHundredFiftySixBitsAtLeast`                                      | Yes      |
+| `RateLimiting__Login__PermitLimit`        | Login attempts allowed per email and window                                  | `10`       | No       |
+| `RateLimiting__Login__Window`             | Login rate-limit window                                                      | `00:15:00` | No       |
+| `RateLimiting__AccountEmail__PermitLimit` | Registration, password reset and confirmation-resend requests per email and window | `5`        | No       |
+| `RateLimiting__AccountEmail__Window`      | Registration, password reset and confirmation-resend rate-limit window       | `00:15:00` | No       |
+
+Login and the registration, password reset and confirmation-resend endpoints are limited per submitted email (trimmed, case-insensitive), whether or not the account exists, and never per client IP. A rejected request gets HTTP 429 with `Retry-After` and a Problem Details body. Session restore, refresh and logout are not limited because they only act on a valid refresh cookie, and email confirmation is not limited because its token cannot be guessed.
 
 Database migrations and reference data seeding run on startup. Missing roles, UG units, research areas and ship equipment are added; existing reference rows, including inactive entries, are preserved. Seeding shares Entity Framework's migration lock so application replicas do not seed simultaneously.
 

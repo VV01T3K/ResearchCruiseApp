@@ -1,4 +1,6 @@
+using System.Text;
 using Microsoft.AspNetCore.Http.HttpResults;
+using NeoSmart.Utils;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
@@ -19,9 +21,11 @@ public static class PasswordEndpoints
             .WithName("RequestPasswordReset")
             .WithSummary("Request a password reset email.")
             .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<RequestPasswordResetRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .WithAccountRateLimit<RequestPasswordResetRequest>(
+                RateLimitingPolicies.AccountEmail,
+                request => request.Email
+            )
             .AllowAnonymous();
     }
 
@@ -34,9 +38,11 @@ public static class PasswordEndpoints
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<ResetPasswordRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .WithAccountRateLimit<ResetPasswordRequest>(
+                RateLimitingPolicies.AccountEmail,
+                request => Encoding.UTF8.GetString(UrlBase64.Decode(request.EmailBase64) ?? [])
+            )
             .AllowAnonymous();
     }
 

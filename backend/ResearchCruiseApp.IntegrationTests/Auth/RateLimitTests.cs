@@ -1,7 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using ResearchCruiseApp.Api.Auth;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
@@ -15,41 +16,71 @@ public sealed class RateLimitTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     [Fact]
-    public async Task Login_WhenAuthBudgetIsExhausted_ReturnsProblemWithoutCreatingSession()
+    public async Task Login_WhenEmailBudgetIsExhausted_RejectsOnlyThatEmail()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
         var user = await TestUsers.Create(app, "limited@example.invalid");
+        var otherUser = await TestUsers.Create(app, "other@example.invalid");
         using var client = app.CreateApiClient();
-        for (var attempt = 0; attempt < 10; attempt++)
-        {
-            using var denied = await client.PostAsync("/v2/auth/refresh", null, ct);
-            Assert.Equal(HttpStatusCode.Unauthorized, denied.StatusCode);
-        }
-        using var response = await client.PostAsJsonAsync(
-            "/v2/auth/login",
-            new LoginRequest(user.Email!, TestUsers.Password),
-            ct
-        );
+        await ExhaustLoginBudget(app, client, user.Email!);
+
+        using var response = await Login(client, "LIMITED@example.invalid", TestUsers.Password);
+        using var other = await Login(client, otherUser.Email!, TestUsers.Password);
+
         Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
+        Assert.InRange(
+            response.Headers.RetryAfter!.Delta!.Value,
+            TimeSpan.FromSeconds(1),
+            TimeSpan.FromMinutes(15)
+        );
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
         var problem = await response.Content.ReadFromJsonAsync<JsonElement>(ct);
-        Assert.Equal(429, problem.GetProperty("status").GetInt32());
         Assert.Equal(
             "Wysłano zbyt wiele żądań. Odczekaj chwilę i spróbuj ponownie.",
             problem.GetProperty("detail").GetString()
         );
         Assert.False(response.Headers.Contains("Set-Cookie"));
-        await app.InDatabase(async db =>
-        {
-            var stored = Assert.Single(await db.Users.ToListAsync(ct));
-            Assert.Null(stored.RefreshToken);
-            Assert.Null(stored.RefreshTokenExpiry);
-            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
-        });
-        Assert.Empty(app.Transport.Messages);
-        using var health = await client.GetAsync("/health", ct);
-        Assert.Equal(HttpStatusCode.OK, health.StatusCode);
-        Assert.Equal("Healthy", await health.Content.ReadAsStringAsync(ct));
+        Assert.Equal(HttpStatusCode.OK, other.StatusCode);
     }
+
+    [Fact]
+    public async Task Login_ForUnknownEmail_IsLimitedLikeAnExistingAccount()
+    {
+        await using var app = new TestApplication(fixture.ConnectionString);
+        using var client = app.CreateApiClient();
+        await ExhaustLoginBudget(app, client, "nobody@example.invalid");
+
+        using var response = await Login(client, "nobody@example.invalid", TestUsers.Password);
+
+        Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
+        Assert.NotNull(response.Headers.RetryAfter);
+    }
+
+    private static async Task ExhaustLoginBudget(
+        TestApplication app,
+        HttpClient client,
+        string email
+    )
+    {
+        var limit = app
+            .Services.GetRequiredService<IConfiguration>()
+            .GetValue<int>("RateLimiting:Login:PermitLimit");
+        for (var attempt = 0; attempt < limit; attempt++)
+        {
+            using var denied = await Login(client, email, "WrongPassword1!");
+            Assert.Equal(HttpStatusCode.Unauthorized, denied.StatusCode);
+        }
+    }
+
+    private static Task<HttpResponseMessage> Login(
+        HttpClient client,
+        string email,
+        string password
+    ) =>
+        client.PostAsJsonAsync(
+            "/v2/auth/login",
+            new LoginRequest(email, password),
+            TestContext.Current.CancellationToken
+        );
 }

@@ -60,5 +60,6 @@ public static class ApiComposition
 
 public static class RateLimitingPolicies
 {
-    public const string AuthSensitive = nameof(AuthSensitive);
+    public const string Login = nameof(Login);
+    public const string AccountEmail = nameof(AccountEmail);
 }

@@ -27,9 +27,11 @@ public static class SessionsEndpoints
             .WithSummary("Sign in with an account.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<LoginRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .WithAccountRateLimit<LoginRequest>(
+                RateLimitingPolicies.Login,
+                request => request.Email
+            )
             .AllowAnonymous();
     }
 
@@ -41,8 +43,6 @@ public static class SessionsEndpoints
             .WithSummary("Refresh account tokens.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status429TooManyRequests)
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
             .AllowAnonymous();
     }
 
@@ -64,8 +64,6 @@ public static class SessionsEndpoints
                 }
             )
             .ProducesProblem(StatusCodes.Status409Conflict)
-            .ProducesProblem(StatusCodes.Status429TooManyRequests)
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
             .AllowAnonymous();
     }
 
