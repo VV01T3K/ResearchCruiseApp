@@ -1,12 +1,10 @@
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.RateLimiting;
 using Asp.Versioning;
 using MailKit.Security;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using ResearchCruiseApp.Api;
@@ -94,24 +92,6 @@ builder
     })
     .AddApiExplorer(options => options.SubstituteApiVersionInUrl = true);
 builder.Services.AddAuthorization(AuthorizationPolicies.AddApiAuthorizationPolicies);
-builder.Services.AddRateLimiter(options =>
-{
-    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-    options.AddPolicy(
-        RateLimitingPolicies.AuthSensitive,
-        httpContext =>
-            RateLimitPartition.GetFixedWindowLimiter(
-                httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-                static _ => new FixedWindowRateLimiterOptions
-                {
-                    AutoReplenishment = true,
-                    PermitLimit = 10,
-                    QueueLimit = 0,
-                    Window = TimeSpan.FromMinutes(1),
-                }
-            )
-    );
-});
 builder.Services.AddHealthChecks();
 builder.Services.AddCors(options =>
 {
@@ -180,9 +160,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("CustomPolicy");
 
-// Turns bodiless errors (auth challenges, rate limits, unknown routes) into ProblemDetails.
+// Turns bodiless errors (auth challenges, unknown routes) into ProblemDetails.
 app.UseStatusCodePages();
-app.UseRateLimiter();
 app.UseAuthentication().UseAuthorization();
 app.UseMiddleware<SentryUserMiddleware>();
 

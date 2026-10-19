@@ -6,6 +6,7 @@ import { TableProps } from '@/components/shared/table/common/tableProps';
 import { AppDesktopTableHeader } from '@/components/shared/table/desktop/AppDesktopTableHeader';
 import { TableBody } from '@/integrations/tanstack/table/TableBody';
 import { TableCell } from '@/integrations/tanstack/table/TableCell';
+import { cn } from '@/lib/utils';
 
 export function AppDesktopTable<T extends object>({
   table,
@@ -25,12 +26,15 @@ export function AppDesktopTable<T extends object>({
   return (
     <div className="mt-4 w-full overflow-x-auto" data-testid={testId}>
       <table
-        className="min-w-full table-fixed border-collapse"
+        className={cn('min-w-full table-fixed border-collapse', virtualized && 'w-full')}
         aria-rowcount={virtualized ? (infiniteScroll?.hasNextPage ? -1 : rows.length + headerRowCount) : undefined}
       >
         <colgroup>
           {table.getAllColumns().map((column) => (
-            <col key={column.id} style={{ width: `${column.columnDef.size}%` }} />
+            <col
+              key={column.id}
+              style={{ width: virtualized ? `${column.getSize()}px` : `${column.columnDef.size}%` }}
+            />
           ))}
         </colgroup>
         <thead>
@@ -69,7 +73,7 @@ export function AppDesktopTable<T extends object>({
           renderCells={(row) =>
             row.getVisibleCells().map((cell) => {
               return (
-                <td key={cell.id} className="px-2 py-3 text-center">
+                <td key={cell.id} className={cn('px-2 py-3 text-center', virtualized && '[overflow-wrap:anywhere]')}>
                   <TableCell cell={cell} />
                 </td>
               );

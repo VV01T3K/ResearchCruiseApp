@@ -145,36 +145,56 @@ test.describe('application table', () => {
     });
   }
 
-  test('a laptop-width table needs no horizontal scrolling and keeps row actions visible', async ({
+  test('a laptop-width table fits without scrolling and keeps columns still while rows mount', async ({
     page,
     network,
   }) => {
-    await page.setViewportSize({ width: 1280, height: 800 });
-    const items = (['draft', 'formBRequired', 'undertaken'] as const).map((status, i) => ({
+    await page.setViewportSize({ width: 1263, height: 800 });
+    const kinds = ['draft', 'formBRequired', 'undertaken', 'denied'] as const;
+    const items = Array.from({ length: 60 }, (_, i) => ({
       ...application(),
-      id: `00000000-0000-4000-8000-00000000000${i}`,
-      mainManager: { ...admin, firstName: 'Małgorzata', lastName: 'Wiśniewska-Kowalczyk' },
-      hasFormB: true,
-      points: 100,
-      status,
-      startDate: '2026-06-20T08:00:00Z',
-      endDate: '2026-06-30T16:00:00Z',
+      id: `00000000-0000-4000-8000-${String(i).padStart(12, '0')}`,
+      number: `2026/${1000 + i}`,
+      ...((i < 4 || i >= 20) && {
+        status: kinds[i % kinds.length],
+        note: 'https://example.com/applications/drafts/very-long-unbroken-reference-to-the-note',
+        points: 100,
+        hasFormB: true,
+        startDate: '2026-06-20T08:00:00Z',
+        endDate: '2026-06-30T16:00:00Z',
+        mainManager: { ...admin, firstName: 'Aleksandra', lastName: 'Brzęczyszczykiewicz' },
+      }),
     }));
     network.use(getGetApplicationsMockHandler(listPage(items)));
     await page.goto('/applications');
-    const actions = ['Kontynuuj wypełnianie', 'Wypełnij', 'Wypełnij formularz C'].map((name) =>
-      page.getByRole('link', { name, exact: true })
-    );
-    for (const action of [...actions, page.getByRole('link', { name: /Szczegóły/ }).first()]) {
+    for (const name of ['Kontynuuj wypełnianie', 'Wypełnij', 'Wypełnij formularz C', 'Szczegóły']) {
+      const action = page.getByRole('link', { name, exact: name !== 'Szczegóły' }).first();
       // Scrolling it into view vertically leaves only horizontal clipping to hide part of it.
       await action.scrollIntoViewIfNeeded();
       await expect(action).toBeInViewport({ ratio: 1 });
     }
-    const overflow = await page.getByRole('table').evaluate((table) => {
-      const container = table.parentElement!;
-      return container.scrollWidth - container.clientWidth;
-    });
-    expect(overflow, 'horizontal scrolling inside the table container').toBeLessThanOrEqual(0);
+    const container = page.getByRole('table').locator('..');
+    expect(await container.evaluate((el) => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(0);
+    const lefts = await page
+      .locator('tbody tr[data-index]')
+      .first()
+      .locator('td')
+      .evaluateAll((cells) => cells.map((c) => c.getBoundingClientRect().left));
+    for (let y = 0; y <= 3200; y += 400) {
+      await page.evaluate((top) => scrollTo(0, top), y);
+      await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      const cells = await page.locator('tbody tr[data-index]').evaluateAll((rows) =>
+        rows.map((row) =>
+          [...(row as HTMLTableRowElement).cells].map((cell) => {
+            const range = document.createRange();
+            range.selectNodeContents(cell);
+            const { left, right } = cell.getBoundingClientRect();
+            return [left, range.getBoundingClientRect().right - right <= -1];
+          })
+        )
+      );
+      expect(cells, `scrolled to ${y}`).toEqual(cells.map(() => lefts.map((left) => [left, true])));
+    }
   });
 });
 

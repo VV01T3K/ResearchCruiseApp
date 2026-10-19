@@ -41,9 +41,8 @@ function RootLayout() {
   const routerState = useRouterState();
 
   return (
-    <>
+    <AuthSession>
       <AppToaster />
-      <AuthSession />
       <div className="sticky top-0 z-100">
         <div className="relative z-100">
           <AppNavbar />
@@ -70,7 +69,7 @@ function RootLayout() {
           <TanStackQueryDevtools />
         </Suspense>
       </div>
-    </>
+    </AuthSession>
   );
 }
 
