@@ -107,11 +107,12 @@ function NewCruiseApplicationPage() {
   return (
     <>
       <AppLayout title="Formularz A">
-        <form.AppForm>
-          <FormView context={context} />
-        </form.AppForm>
+        <UnsavedChangesGuard form={form}>
+          <form.AppForm>
+            <FormView context={context} />
+          </form.AppForm>
+        </UnsavedChangesGuard>
       </AppLayout>
-      <UnsavedChangesGuard form={form} />
 
       <AppModal
         title="Zapisz wersję roboczą Formularza A"

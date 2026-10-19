@@ -1,9 +1,10 @@
 import type { Page } from '@playwright/test';
 import type { NetworkFixture } from '@msw/playwright';
 import { getUpdateApplicationFormAMockHandler } from '@/api/generated/mocks/applications/applications.msw.gen';
+import { getLoginMockHandler, getLogoutMockHandler } from '@/api/generated/mocks/auth/auth.msw.gen';
 import { HttpResponse } from 'msw';
 import { test, expect, applicationForms, dropFile } from './fixtures';
-import { admin } from '../data/accounts';
+import { admin, session } from '../data/accounts';
 import { applicationId } from '../data/forms';
 
 const UNSAVED = 'Notatka, której nie zapisano';
@@ -104,6 +105,36 @@ test('edits left without saving come back on return', async ({ page }) => {
   await expect(notes(page)).toHaveValue(UNSAVED);
   await goHome(page);
   await expect(dialog(page)).toBeVisible();
+});
+
+test('a restored past period keeps its dates', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-10-15T12:00:00'));
+  await page.goto('/applications/new');
+  await page.getByText('Zezwól na wybór dat z przeszłości').click();
+  await page.getByRole('slider').first().press('Home');
+  const period = page.getByText(/Wybrano okres:/).first();
+  const chosen = (await period.textContent()) ?? '';
+  await goHome(page);
+  await dialog(page).getByRole('button', { name: 'Opuść bez zapisywania' }).click();
+  await page.goBack();
+  await expect(period).toHaveText(chosen);
+});
+
+test('signing out forgets unsaved edits', async ({ page, network, requests }) => {
+  network.use(
+    getLogoutMockHandler(),
+    getLoginMockHandler(() => session())
+  );
+  await page.goto(formA);
+  const saved = await notes(page).inputValue();
+  await notes(page).fill(UNSAVED);
+  await page.getByTestId('sign-out-btn').click();
+  await expect.poll(() => requests.bodies('POST /v2/auth/logout')).toHaveLength(1);
+  await page.getByLabel('E-mail').fill(admin.email);
+  await page.getByLabel('Hasło', { exact: true }).fill('Password1!');
+  await page.getByRole('button', { name: 'Zaloguj', exact: true }).click();
+  await expect(page).toHaveURL(formA);
+  await expect(notes(page)).toHaveValue(saved);
 });
 
 test('browser Back asks before discarding edits on a new application', async ({ page }) => {
