@@ -1,28 +1,29 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useState } from 'react';
 
-import { accountId, refreshSession, subscribeAuthDetails } from '@/integrations/auth/session';
+import { refreshSession } from '@/integrations/auth/session';
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
 import { setSentryUser } from '@/integrations/sentry/client';
 import { useAuthDetails, useCurrentUser, useSessionActions } from '@/integrations/tanstack/query/auth';
 
+let hideForReload: ((hidden: boolean) => void) | undefined;
+
+export function reloadForAccountChange() {
+  if (hideForReload) hideForReload(true);
+  else location.reload();
+}
+
 export function AuthSession({ children }: { children: ReactNode }) {
-  const queryClient = useQueryClient();
   const currentUser = useCurrentUser();
   const { refresh, signOut } = useSessionActions();
   const authDetails = useAuthDetails();
   const [accountChanged, setAccountChanged] = useState(false);
 
-  useEffect(
-    () =>
-      subscribeAuthDetails((details, previous) => {
-        if (details && previous && accountId(previous) !== accountId(details)) {
-          queryClient.clear();
-          setAccountChanged(true);
-        }
-      }),
-    [queryClient]
-  );
+  useEffect(() => {
+    hideForReload = setAccountChanged;
+    return () => {
+      hideForReload = undefined;
+    };
+  }, []);
 
   useEffect(() => {
     if (accountChanged) location.reload();
