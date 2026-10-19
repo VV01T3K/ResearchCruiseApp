@@ -1,19 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import { type ReactNode, useEffect, useState } from 'react';
 
 import { accountId, refreshSession, subscribeAuthDetails } from '@/integrations/auth/session';
 import { SessionExpirationWarning } from '@/components/shared/SessionExpirationWarning';
 import { setSentryUser } from '@/integrations/sentry/client';
-import {
-  clearAccountQueries,
-  useAuthDetails,
-  useCurrentUser,
-  useSessionActions,
-} from '@/integrations/tanstack/query/auth';
+import { useAuthDetails, useCurrentUser, useSessionActions } from '@/integrations/tanstack/query/auth';
 
 export function AuthSession({ children }: { children: ReactNode }) {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const currentUser = useCurrentUser();
   const { refresh, signOut } = useSessionActions();
@@ -23,15 +16,12 @@ export function AuthSession({ children }: { children: ReactNode }) {
   useEffect(
     () =>
       subscribeAuthDetails((details, previous) => {
-        if (!details) {
-          clearAccountQueries(queryClient);
-          void router.invalidate();
-        } else if (previous && accountId(previous) !== accountId(details)) {
+        if (details && previous && accountId(previous) !== accountId(details)) {
           queryClient.clear();
           setAccountChanged(true);
         }
       }),
-    [queryClient, router]
+    [queryClient]
   );
 
   useEffect(() => {
