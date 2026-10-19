@@ -12,14 +12,18 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
         {
             migrationBuilder.Sql(
                 """
-                DECLARE @start int = (SELECT ISNULL(MAX([Number]), 0) + 1 FROM [CruiseApplications]);
+                DECLARE @start int = (
+                    SELECT ISNULL(MAX([Number]), 0) + 1 FROM [CruiseApplications] WITH (TABLOCKX, HOLDLOCK)
+                );
                 DECLARE @sql nvarchar(200) = N'CREATE SEQUENCE [CruiseApplicationNumbers] AS int START WITH '
                     + CONVERT(nvarchar(11), @start) + N' NO CACHE';
                 EXEC(@sql);
                 """
             );
 
-            // SQL Server cannot drop IDENTITY in place, so copy the numbers into a new column.
+            // The table lock from the MAX read is held until the migration commits, so no insert
+            // can slip in before the sequence takes over. SQL Server cannot drop IDENTITY in place,
+            // so copy the numbers into a new column.
             migrationBuilder.DropIndex(
                 name: "IX_CruiseApplications_Number_Id",
                 table: "CruiseApplications"
@@ -35,7 +39,9 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 type: "int",
                 nullable: true
             );
-            migrationBuilder.Sql("UPDATE [CruiseApplications] SET [Number] = [IdentityNumber]");
+            migrationBuilder.Sql(
+                "EXEC('UPDATE [CruiseApplications] SET [Number] = [IdentityNumber]')"
+            );
             migrationBuilder.AlterColumn<int>(
                 name: "Number",
                 table: "CruiseApplications",
