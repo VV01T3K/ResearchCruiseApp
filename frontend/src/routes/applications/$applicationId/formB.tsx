@@ -125,11 +125,12 @@ function FormBPage() {
   return (
     <>
       <AppLayout title="Formularz B">
-        <form.AppForm>
-          <FormView context={context} />
-        </form.AppForm>
+        <UnsavedChangesGuard form={form} disabled={mode !== 'edit'}>
+          <form.AppForm>
+            <FormView context={context} />
+          </form.AppForm>
+        </UnsavedChangesGuard>
       </AppLayout>
-      <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} />
     </>
   );
 }

@@ -1,19 +1,27 @@
-import { type AnyFormApi, evaluate } from '@tanstack/react-form';
+import type { AnyFormApi } from '@tanstack/react-form';
 import { useBlocker, useLocation } from '@tanstack/react-router';
-import { useLayoutEffect } from 'react';
+import { type ReactNode, useLayoutEffect, useState } from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
+import { accountId, getSession } from '@/integrations/auth/session';
 import { unsavedValues } from '@/integrations/tanstack/form/unsavedValues';
 
 type Props = {
   form: Pick<AnyFormApi, 'state' | 'setFieldValue'>;
   disabled?: boolean;
+  children: ReactNode;
 };
 
-export function UnsavedChangesGuard({ form, disabled = false }: Props) {
+function currentAccount() {
+  const session = getSession();
+  return session && accountId(session);
+}
+
+export function UnsavedChangesGuard({ form, disabled = false, children }: Props) {
   const pathname = useLocation({ select: (location) => location.pathname });
+  const [restoredFor, setRestoredFor] = useState<boolean>();
   const hasUnsavedChanges = () => !disabled && form.state.isDirty;
 
   const blocker = useBlocker({
@@ -25,15 +33,21 @@ export function UnsavedChangesGuard({ form, disabled = false }: Props) {
     withResolver: true,
   });
 
+  // Restores before the form renders, so sections initialise from the restored values.
   useLayoutEffect(() => {
+    setRestoredFor(disabled);
     if (disabled) return;
-    const changed = Object.entries(unsavedValues.get(pathname) ?? {}).filter(
-      ([name, value]) => !evaluate(value, form.state.values[name])
-    );
-    changed.forEach(([name, value]) => form.setFieldValue(name, value, { dontValidate: true }));
-    if (changed.length > 0) toast.success('Przywrócono niezapisane zmiany');
+    const saved = Object.entries(unsavedValues.get(pathname) ?? {});
+    saved.forEach(([name, value]) => form.setFieldValue(name, value, { dontValidate: true }));
+    if (saved.length > 0) toast.success('Przywrócono niezapisane zmiany');
+    const account = currentAccount();
     const save = () => {
-      if (form.state.isDirty) unsavedValues.set(pathname, form.state.values);
+      if (!getSession() || currentAccount() !== account) return;
+      const edited = Object.entries(form.state.fieldMeta)
+        .filter(([, meta]) => meta?.isDirty)
+        .map(([name]) => name.split(/[.[]/)[0]);
+      if (edited.length > 0)
+        unsavedValues.set(pathname, Object.fromEntries(edited.map((name) => [name, form.state.values[name]])));
       else unsavedValues.delete(pathname);
     };
     window.addEventListener('pagehide', save);
@@ -44,18 +58,21 @@ export function UnsavedChangesGuard({ form, disabled = false }: Props) {
   }, [form, disabled, pathname]);
 
   return (
-    <AppModal title="Niezapisane zmiany" isOpen={blocker.status === 'blocked'} onClose={() => blocker.reset?.()}>
-      <div className="space-y-4">
-        <p>Formularz zawiera niezapisane zmiany. Jeśli opuścisz stronę, mogą zostać utracone.</p>
-        <div className="flex flex-wrap justify-end gap-4">
-          <AppButton variant="primaryOutline" onClick={() => blocker.reset?.()}>
-            Zostań na stronie
-          </AppButton>
-          <AppButton variant="danger" onClick={() => blocker.proceed?.()}>
-            Opuść bez zapisywania
-          </AppButton>
+    <>
+      {restoredFor === disabled && children}
+      <AppModal title="Niezapisane zmiany" isOpen={blocker.status === 'blocked'} onClose={() => blocker.reset?.()}>
+        <div className="space-y-4">
+          <p>Formularz zawiera niezapisane zmiany. Jeśli opuścisz stronę, mogą zostać utracone.</p>
+          <div className="flex flex-wrap justify-end gap-4">
+            <AppButton variant="primaryOutline" onClick={() => blocker.reset?.()}>
+              Zostań na stronie
+            </AppButton>
+            <AppButton variant="danger" onClick={() => blocker.proceed?.()}>
+              Opuść bez zapisywania
+            </AppButton>
+          </div>
         </div>
-      </div>
-    </AppModal>
+      </AppModal>
+    </>
   );
 }
