@@ -12,7 +12,12 @@ export const Route = createFileRoute('/priority-information')({
 function PriorityInformationPage() {
   return (
     <AppLayout title="Informacje o priorytetyzacji">
-      <div className="relative flex h-full w-full flex-col bg-clip-border px-5 text-gray-700">
+      <div
+        role="region"
+        aria-label="Tabela punktacji priorytetyzacji"
+        tabIndex={0}
+        className="relative flex h-full w-full flex-col overflow-x-auto bg-clip-border px-5 text-gray-700"
+      >
         <table className="w-full table-auto text-left">
           <thead>
             <tr>
