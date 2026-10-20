@@ -2,14 +2,12 @@ import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react'
 import ClockIcon from 'bootstrap-icons/icons/clock.svg?react';
 import React from 'react';
 
+import { useSessionRemainingMs } from '@/integrations/auth/useSessionClock';
+
 type Props = {
   refreshTokenExpirationDate: Date;
   onRefresh: () => Promise<void>;
 };
-
-function getRemainingMs(expirationDate: Date): number {
-  return expirationDate.getTime() - Date.now();
-}
 
 function formatTimeRemaining(remainingMs: number): string {
   if (remainingMs <= 0) {
@@ -31,20 +29,10 @@ function formatTimeRemaining(remainingMs: number): string {
 }
 
 export function SessionStatusBadge({ refreshTokenExpirationDate, onRefresh }: Props) {
-  const [nowTs, setNowTs] = React.useState(() => Date.now());
+  const remainingMs = useSessionRemainingMs(refreshTokenExpirationDate, (remaining) =>
+    remaining > 1000 * 60 * 60 ? 1000 * 30 : 1000
+  );
   const [isRefreshing, setIsRefreshing] = React.useState(false);
-
-  React.useEffect(() => {
-    const remainingMs = refreshTokenExpirationDate.getTime() - nowTs;
-    if (remainingMs <= 0) {
-      return;
-    }
-
-    const refreshEveryMs = remainingMs > 1000 * 60 * 60 ? 1000 * 30 : 1000;
-    const timeoutId = setTimeout(() => setNowTs(Date.now()), refreshEveryMs);
-
-    return () => clearTimeout(timeoutId);
-  }, [refreshTokenExpirationDate, nowTs]);
 
   async function handleRefresh() {
     setIsRefreshing(true);
@@ -57,7 +45,6 @@ export function SessionStatusBadge({ refreshTokenExpirationDate, onRefresh }: Pr
     }
   }
 
-  const remainingMs = getRemainingMs(refreshTokenExpirationDate);
   const isWarning = remainingMs <= 1000 * 60 * 5;
 
   return (

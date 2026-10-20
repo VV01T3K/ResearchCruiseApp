@@ -1,6 +1,7 @@
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
+import { captureMutationFailure } from '@/integrations/sentry/mutations';
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -12,6 +13,7 @@ export const queryClient = new QueryClient({
   }),
   mutationCache: new MutationCache({
     onError: (error, _variables, _context, mutation) => {
+      if (!mutation.meta?.skipsErrorReport) captureMutationFailure(error, mutation.options.mutationKey);
       if (!mutation.options.onError && !mutation.meta?.handlesError) {
         toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
       }
