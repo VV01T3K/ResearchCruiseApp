@@ -119,7 +119,7 @@ function FormAPage() {
   return (
     <>
       <AppLayout title="Formularz A">
-        <UnsavedChangesGuard form={form} disabled={!editMode}>
+        <UnsavedChangesGuard form={form} defaultValues={defaultValues} disabled={!editMode}>
           <form.AppForm>
             <FormView context={context} />
           </form.AppForm>
