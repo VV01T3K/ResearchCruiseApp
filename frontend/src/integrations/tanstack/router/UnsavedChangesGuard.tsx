@@ -1,7 +1,7 @@
-import type { AnyFormApi } from '@tanstack/react-form';
+import { type AnyFormApi, evaluate } from '@tanstack/react-form';
 import { useQueryClient } from '@tanstack/react-query';
 import { useBlocker, useLocation } from '@tanstack/react-router';
-import { type ReactNode, useLayoutEffect, useState } from 'react';
+import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
 import { AppModal } from '@/components/shared/AppModal';
@@ -10,6 +10,7 @@ import { accountId, getSession } from '@/integrations/auth/session';
 
 type Props = {
   form: Pick<AnyFormApi, 'state' | 'getFieldValue' | 'setFieldValue'>;
+  defaultValues: Record<string, unknown>;
   disabled?: boolean;
   children: ReactNode;
 };
@@ -19,10 +20,11 @@ function currentAccount() {
   return session && accountId(session);
 }
 
-export function UnsavedChangesGuard({ form, disabled = false, children }: Props) {
+export function UnsavedChangesGuard({ form, defaultValues, disabled = false, children }: Props) {
   const pathname = useLocation({ select: (location) => location.pathname });
   const queryClient = useQueryClient();
   const [restoredFor, setRestoredFor] = useState<boolean>();
+  const appliedDefaults = useRef(defaultValues);
   const hasUnsavedChanges = () => !disabled && form.state.isDirty;
 
   const blocker = useBlocker({
@@ -55,6 +57,21 @@ export function UnsavedChangesGuard({ form, disabled = false, children }: Props)
       else queryClient.removeQueries({ queryKey, exact: true });
     };
   }, [form, disabled, pathname, queryClient]);
+
+  // TanStack stops applying newer server values once a field is touched, as a restore does.
+  // Fields not edited here keep following them.
+  useEffect(() => {
+    if (evaluate(appliedDefaults.current, defaultValues)) return;
+    appliedDefaults.current = defaultValues;
+    const edited = new Set(
+      Object.keys(form.state.fieldMeta)
+        .filter((name) => form.state.fieldMeta[name]?.isDirty)
+        .map((name) => name.split(/[.[]/)[0])
+    );
+    Object.entries(defaultValues)
+      .filter(([name, value]) => !edited.has(name) && !evaluate(value, form.state.values[name]))
+      .forEach(([name, value]) => form.setFieldValue(name, value, { dontUpdateMeta: true }));
+  });
 
   return (
     <>

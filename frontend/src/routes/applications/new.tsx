@@ -105,7 +105,7 @@ function NewCruiseApplicationPage() {
   return (
     <>
       <AppLayout title="Formularz A">
-        <UnsavedChangesGuard form={form}>
+        <UnsavedChangesGuard form={form} defaultValues={defaultValues}>
           <form.AppForm>
             <FormView context={context} />
           </form.AppForm>
