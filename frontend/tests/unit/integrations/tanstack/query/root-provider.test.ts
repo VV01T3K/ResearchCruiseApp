@@ -17,9 +17,12 @@ it('reports failed actions that have no local error handler', async () => {
     },
   });
   await expect(mutation.execute(undefined)).rejects.toThrow('Brak uprawnień');
-  expect(showError).toHaveBeenCalledExactlyOnceWith('Operacja nie powiodła się: Brak uprawnień do eksportu', {
-    operation: 'exportCruises',
-  });
+  expect(showError).toHaveBeenCalledExactlyOnceWith(
+    'Operacja nie powiodła się: Brak uprawnień do eksportu',
+    expect.objectContaining({
+      props: expect.objectContaining({ context: { origin: 'toast', operation: 'exportCruises' } }),
+    })
+  );
 });
 
 it('leaves form errors to the form without a duplicate notification', async () => {

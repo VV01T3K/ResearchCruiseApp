@@ -2,8 +2,7 @@ import { Toast } from '@base-ui/react/toast';
 import CheckCircleIcon from 'bootstrap-icons/icons/check-circle-fill.svg?react';
 import ExclamationCircleIcon from 'bootstrap-icons/icons/exclamation-circle-fill.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
-
-import { FeedbackButton } from '@/integrations/sentry/FeedbackButton';
+import type { ReactNode } from 'react';
 
 import { type ToastData, toastManager } from './toast';
 
@@ -20,7 +19,7 @@ function ToastIcon({ type }: { type?: string }) {
   return null;
 }
 
-function ToastList() {
+function ToastList({ errorAction }: { errorAction?: ReactNode }) {
   const { toasts } = Toast.useToastManager<ToastData>();
 
   return toasts.map((t) => (
@@ -35,9 +34,7 @@ function ToastList() {
           <ToastIcon type={t.type} />
           <div className="flex flex-1 flex-col items-start gap-1">
             <Toast.Description className="text-sm" />
-            {t.type === 'error' && t.data?.report && (
-              <FeedbackButton context={{ ...t.data.report, origin: 'toast' }} className="text-primary" />
-            )}
+            {t.type === 'error' && (t.data?.action ?? errorAction)}
           </div>
           {t.type !== 'loading' && (
             <Toast.Close
@@ -53,7 +50,7 @@ function ToastList() {
   ));
 }
 
-export function AppToaster() {
+export function AppToaster({ errorAction }: { errorAction?: ReactNode }) {
   return (
     <Toast.Provider toastManager={toastManager} limit={5}>
       <Toast.Portal>
@@ -61,7 +58,7 @@ export function AppToaster() {
           data-testid="toast-container"
           className="fixed top-4 right-4 z-[1000] flex w-[350px] flex-col items-end"
         >
-          <ToastList />
+          <ToastList errorAction={errorAction} />
         </Toast.Viewport>
       </Toast.Portal>
     </Toast.Provider>
