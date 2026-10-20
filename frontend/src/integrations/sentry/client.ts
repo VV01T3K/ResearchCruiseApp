@@ -1,16 +1,21 @@
 import * as Sentry from '@sentry/react';
+import type { RegisteredRouter } from '@tanstack/react-router';
 
 import config from '@/config';
-import { setFeedbackEmail } from '@/integrations/sentry/feedback';
+import { closeFeedback } from '@/integrations/sentry/feedback';
 import { createFormBreadcrumb, parseSampleRate, scrubSensitiveUrls } from '@/integrations/sentry/utils';
 import type { UserResponse } from '@/api/generated/schemas';
 
 type FieldMeta = { errors: Array<unknown> };
 
-export function initializeSentry(router: unknown): void {
+function hasSensitiveUrl(url: string): boolean {
+  return scrubSensitiveUrls(url) !== url;
+}
+
+export function initializeSentry(router: RegisteredRouter): void {
   if (!config.sentryDsn) return;
-  // Replay records the landing URL without an SDK hook to filter it, so emailed token links are not recorded.
-  const recordReplay = scrubSensitiveUrls(window.location.href) === window.location.href;
+  // Replay snapshots record the page URL without an SDK hook to filter it, so token pages are never recorded.
+  const recordReplay = !hasSensitiveUrl(window.location.href);
 
   Sentry.init({
     dsn: config.sentryDsn,
@@ -35,11 +40,36 @@ export function initializeSentry(router: unknown): void {
     replaysSessionSampleRate: parseSampleRate(config.sentryReplaysSessionSampleRate, 0.1),
     replaysOnErrorSampleRate: 1,
   });
+  if (recordReplay) pauseReplayOnSensitiveUrls(router);
+}
+
+function pauseReplayOnSensitiveUrls(router: RegisteredRouter): void {
+  let pausedMode: 'session' | 'buffer' | undefined;
+  const resume = () => {
+    const replay = Sentry.getReplay();
+    if (!replay || !pausedMode || hasSensitiveUrl(window.location.href)) return;
+    if (pausedMode === 'session') replay.start();
+    else replay.startBuffering();
+    pausedMode = undefined;
+  };
+  const sync = (url: string) => {
+    const replay = Sentry.getReplay();
+    if (!replay) return;
+    if (hasSensitiveUrl(url)) {
+      pausedMode ??= replay.getRecordingMode();
+      void replay.stop();
+    } else if (pausedMode) {
+      setTimeout(resume);
+    }
+  };
+  // Router pushes notify before the URL changes, so pausing precedes it and resuming waits for it.
+  router.history.subscribe(({ location }) => sync(location.href));
+  window.addEventListener('popstate', () => sync(window.location.href));
 }
 
 export function setSentryUser(user: UserResponse | undefined): void {
-  setFeedbackEmail(user?.email);
   if (!user) {
+    closeFeedback();
     Sentry.setUser(null);
     Sentry.setTag('user.roles', undefined);
     Sentry.setTag('user.multiple_roles', undefined);

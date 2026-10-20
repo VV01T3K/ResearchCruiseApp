@@ -3,6 +3,8 @@ import { ApiError } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { queryClient } from '@/integrations/tanstack/query/root-provider';
 
+vi.mock('@/config', () => ({ default: { apiUrl: 'https://api.test' } }));
+
 afterEach(() => {
   queryClient.clear();
   vi.restoreAllMocks();

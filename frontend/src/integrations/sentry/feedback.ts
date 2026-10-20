@@ -1,89 +1,73 @@
 import * as Sentry from '@sentry/react';
+import { useSyncExternalStore } from 'react';
 
-import { toast } from '@/components/shared/layout/toast';
+import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 
 export type FeedbackContext = { origin: 'layout' | 'help' | 'toast' | 'form'; operation?: string; eventId?: string };
 
-type FeedbackWidget = ReturnType<typeof import('./feedback-widget').addFeedbackWidget>;
+const CONFIRMATION_TIMEOUT = 30_000;
 
-let contactEmail: string | undefined;
-let widget: Promise<FeedbackWidget> | undefined;
-let openContext: FeedbackContext | undefined;
+type FeedbackState = { open: boolean; context: FeedbackContext };
 
-export function isFeedbackAvailable(): boolean {
-  return Sentry.getClient() !== undefined;
+let state: FeedbackState = { open: false, context: { origin: 'layout' } };
+const listeners = new Set<() => void>();
+
+export function useCanSendFeedback(): boolean {
+  return useCurrentUser() !== null && Sentry.getClient() !== undefined;
 }
 
-export function setFeedbackEmail(email: string | undefined): void {
-  contactEmail = email;
+function setState(next: FeedbackState): void {
+  state = next;
+  listeners.forEach((listener) => listener());
 }
 
-function loadWidget(): Promise<FeedbackWidget> {
-  widget ??= import('./feedback-widget').then(({ addFeedbackWidget }) => {
-    Sentry.getClient()?.on('beforeSendFeedback', (event) => {
-      if (!openContext) return;
-      const { origin, operation, eventId } = openContext;
-      event.tags = { ...event.tags, 'feedback.origin': origin, ...(operation && { 'feedback.operation': operation }) };
-      if (eventId) event.contexts.feedback.associated_event_id = eventId;
+export function openFeedback(context: FeedbackContext): void {
+  setState({ open: true, context });
+}
+
+export function closeFeedback(): void {
+  if (state.open) setState({ ...state, open: false });
+}
+
+export function useFeedbackState(): FeedbackState {
+  return useSyncExternalStore(
+    (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+    () => state
+  );
+}
+
+export function sendFeedback(
+  { origin, operation, eventId: associatedEventId }: FeedbackContext,
+  feedback: { message: string; email: string }
+): Promise<void> {
+  const client = Sentry.getClient();
+  if (!client) return Promise.reject(new Error('Sentry is not initialized'));
+
+  const eventId = Sentry.captureFeedback(
+    {
+      ...feedback,
+      url: window.location.href,
+      source: 'api',
+      associatedEventId,
+      tags: { 'feedback.origin': origin, ...(operation && { 'feedback.operation': operation }) },
+    },
+    { includeReplay: true }
+  );
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      unsubscribe();
+      reject(new Error('Feedback delivery was not confirmed'));
+    }, CONFIRMATION_TIMEOUT);
+    const unsubscribe = client.on('afterSendEvent', (event, response) => {
+      if (event.event_id !== eventId) return;
+      clearTimeout(timeout);
+      unsubscribe();
+      const status = response.statusCode ?? 0;
+      if (status >= 200 && status < 300) resolve();
+      else reject(new Error(`Feedback delivery failed with status ${status}`));
     });
-    return addFeedbackWidget();
   });
-  widget.catch(() => (widget = undefined));
-  return widget;
-}
-
-export async function openFeedback(context: FeedbackContext): Promise<void> {
-  if (openContext || !isFeedbackAvailable()) return;
-  openContext = context;
-  let form: Awaited<ReturnType<FeedbackWidget['createForm']>> | undefined;
-  let host: HTMLElement | undefined;
-  let background: HTMLElement[] = [];
-  const opener = document.activeElement;
-  const onKeyDown = (event: KeyboardEvent) => event.key === 'Escape' && close();
-  const close = () => {
-    form?.removeFromDom();
-    host?.hidePopover();
-    document.removeEventListener('keydown', onKeyDown);
-    background.forEach((el) => (el.inert = false));
-    if (opener instanceof HTMLElement) opener.focus();
-    openContext = undefined;
-  };
-  try {
-    const feedback = await loadWidget();
-    // The form reads its default email from the scope user when created; a forked scope keeps it off other events.
-    const { created } = Sentry.withScope((scope) => {
-      if (contactEmail) scope.setUser({ email: contactEmail });
-      return {
-        created: feedback.createForm({
-          useSentryUser: { email: 'email', name: 'username' },
-          onFormClose: close,
-          onFormSubmitted: close,
-        }),
-      };
-    });
-    form = await created;
-    form.appendToDom();
-    host = topLayerHost(form.el);
-    form.open();
-    background = [...document.body.children].filter(
-      (el): el is HTMLElement => el instanceof HTMLElement && el !== host && !el.inert
-    );
-    background.forEach((el) => (el.inert = true));
-    document.addEventListener('keydown', onKeyDown);
-    (form.el as HTMLElement).querySelector('textarea')?.focus();
-  } catch {
-    close();
-    toast.error('Nie udało się otworzyć formularza zgłoszenia. Napisz na rejsy.help@ug.edu.pl.', false);
-  }
-}
-
-// The form action bar is a top-layer popover, which would otherwise cover the form.
-function topLayerHost(el: unknown): HTMLElement | undefined {
-  const root = el instanceof Node ? el.getRootNode() : undefined;
-  if (!(root instanceof ShadowRoot) || !(root.host instanceof HTMLElement)) return undefined;
-  const host = root.host;
-  host.popover = 'manual';
-  Object.assign(host.style, { border: '0', padding: '0', background: 'transparent', overflow: 'visible' });
-  host.showPopover();
-  return host;
 }

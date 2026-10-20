@@ -14,7 +14,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
 import config from '@/config';
-import { isFeedbackAvailable, openFeedback } from '@/integrations/sentry/feedback';
+import { openFeedback, useCanSendFeedback } from '@/integrations/sentry/feedback';
 
 export const Route = createFileRoute('/help')({
   component: HelpPage,
@@ -27,6 +27,7 @@ const validationSchema = z.object({
 });
 
 function HelpPage() {
+  const canSendFeedback = useCanSendFeedback();
   const form = useAppForm({
     defaultValues: {
       title: '',
@@ -70,10 +71,10 @@ function HelpPage() {
             W razie problemów związanych z aplikacją prosimy o maila na adres{' '}
             <AppLink href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</AppLink>.
           </p>
-          {isFeedbackAvailable() && (
+          {canSendFeedback && (
             <div className="mt-4 mb-4 flex flex-col items-center gap-2 px-4 text-center">
               <p>Możesz też zgłosić problem bezpośrednio z aplikacji, bez otwierania programu pocztowego.</p>
-              <AppButton variant="primaryOutline" onClick={() => void openFeedback({ origin: 'help' })}>
+              <AppButton variant="primaryOutline" onClick={() => openFeedback({ origin: 'help' })}>
                 Zgłoś problem
               </AppButton>
             </div>
