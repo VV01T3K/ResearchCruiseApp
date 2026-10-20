@@ -19,4 +19,5 @@ it('the Sentry proxy authenticates as the configured DSN', () => {
   const conf = readFileSync(join(dir, 'runtime.conf'), 'utf8');
   expect(conf).toContain('"https://sentry.example.org/api/42/envelope/"');
   expect(conf).toContain('proxy_set_header X-Sentry-Auth "Sentry sentry_key=abc123, sentry_version=7";');
+  expect(conf).toContain(`proxy_ssl_trusted_certificate ${dir}/sentry-ca.crt;`);
 });

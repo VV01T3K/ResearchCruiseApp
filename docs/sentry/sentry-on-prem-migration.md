@@ -87,12 +87,19 @@ therefore proxies browser events to Sentry (Sentry's docs call this the
   the server's address rather than the user's.
 - The frontend container must be able to resolve and reach the Sentry hostname. If the DSN is
   malformed the proxy is skipped and a warning is logged at startup.
-- nginx verifies Sentry's TLS certificate against the image's CA bundle. The instance must serve
-  its full chain: as of 2026-09-30 it sends the leaf without its issuer, `GEANT TLS RSA 1`
-  (HARICA). Browsers, Windows and .NET (also on Linux) download the missing issuer themselves,
-  so the backend is unaffected, but nginx, curl and Node do not: the proxy answers `502` with
-  `upstream SSL certificate verify error: (21:unable to verify the first certificate)`. Fix the
-  chain on the server rather than disabling verification.
+- nginx verifies Sentry's TLS certificate (hostname and chain). As of 2026-09-30 the instance
+  sends its leaf without the issuer, `GEANT TLS RSA 1` (HARICA). Browsers, Windows and .NET (also
+  on Linux) download the missing issuer themselves, so the backend is unaffected, but nginx, curl
+  and Node do not: the proxy would answer `502` with
+  `upstream SSL certificate verify error: (21:unable to verify the first certificate)`.
+  As a workaround, the image ships that public intermediate in `frontend/sentry-ca/` and the
+  proxy trusts `/etc/nginx/sentry-ca.crt`, built at image build time from the system CA bundle
+  plus every `*.pem` there. Verification stays on, and other chains (Sentry Cloud on staging)
+  verify through the system CAs as before. Remove the workaround once the server sends its full
+  chain (leaf plus `GEANT TLS RSA 1`; check with `openssl s_client -connect <host>:443 -showcerts`)
+  or moves to another CA: delete `frontend/sentry-ca/` and its bundle step in
+  `frontend/Dockerfile`, and point `proxy_ssl_trusted_certificate` in `90-runtime-config.sh` back
+  at `/etc/ssl/certs/ca-certificates.crt`.
 
 The endpoint is public, like any browser DSN: anyone can post events to that one project, but
 nothing can be read through it. It is deliberately not behind login, since errors on the login,

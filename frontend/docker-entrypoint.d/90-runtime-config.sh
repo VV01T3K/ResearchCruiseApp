@@ -69,7 +69,7 @@ location = $sentry_proxy {
     proxy_ssl_server_name on;
     proxy_ssl_verify on;
     proxy_ssl_verify_depth 3;
-    proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+    proxy_ssl_trusted_certificate /etc/nginx/sentry-ca.crt;
     proxy_set_header Cookie "";
     proxy_set_header Authorization "";
     # Without request auth, Sentry takes the project from the envelope body instead of the URL.
