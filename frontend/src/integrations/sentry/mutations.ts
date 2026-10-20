@@ -31,3 +31,31 @@ export function captureMutationFailure(error: unknown, mutationKey: readonly unk
     },
   });
 }
+
+const reportedRefusalsKey = 'sentry.reportedRefusals';
+
+const reportedRefusals = new Set<string>();
+
+function markFirstReport(key: string): boolean {
+  if (reportedRefusals.has(key)) return false;
+  reportedRefusals.add(key);
+  try {
+    const reported = JSON.parse(sessionStorage.getItem(reportedRefusalsKey) ?? '[]') as string[];
+    if (reported.includes(key)) return false;
+    sessionStorage.setItem(reportedRefusalsKey, JSON.stringify([...reported, key]));
+  } catch {
+    return true;
+  }
+  return true;
+}
+
+export function captureHandledRefusal(operation: string, error: unknown): void {
+  const cause = rootCause(error);
+  if (!(cause instanceof ApiError) || cause.status < 400 || cause.status >= 500) return;
+  if (!markFirstReport(`${operation}:${cause.status}`)) return;
+  Sentry.captureMessage(`Handled ${operation} refusal (HTTP ${cause.status})`, {
+    level: 'warning',
+    fingerprint: ['handled-refusal', operation, String(cause.status)],
+    tags: { operation, 'http.status_code': cause.status },
+  });
+}
