@@ -3,6 +3,37 @@
   "extends": ["config:recommended"],
   "packageRules": [
     {
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "other dependencies"
+    },
+    {
+      "matchManagers": ["bun"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm packages"
+    },
+    {
+      "matchManagers": ["nuget"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": ".NET packages"
+    },
+    {
+      "matchPackageNames": ["mcr.microsoft.com/dotnet/**"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": ".NET packages"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions"
+    },
+    {
+      "matchDepNames": ["bun"],
+      "groupName": "npm packages"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
       "matchManagers": ["bun"],
       "minimumReleaseAge": "7 days"
     }
