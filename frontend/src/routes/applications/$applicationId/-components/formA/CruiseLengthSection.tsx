@@ -97,8 +97,12 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   const precisePeriodStart = useSelector(form.store, (state) => state.values.precisePeriodStart);
   const precisePeriodEnd = useSelector(form.store, (state) => state.values.precisePeriodEnd);
 
-  // Initialize checkbox state based on whether saved start date is in the past
-  const [allowPastDates, setAllowPastDates] = useState(() => {
+  // Follows the current values, including restored or refreshed ones, until the user toggles it.
+  const [pastDatesChoice, setPastDatesChoice] = useState<boolean>();
+  const hasToggledPastDates = pastDatesChoice !== undefined;
+  const allowPastDates = pastDatesChoice ?? hasPastStart();
+
+  function hasPastStart() {
     const currentFortnight = getCurrentFortnight(year);
 
     // Check if precisePeriodStart is in the past
@@ -120,9 +124,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
     }
 
     return false;
-  });
-
-  const [hasToggledPastDates, setHasToggledPastDates] = useState(false);
+  }
 
   const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
 
@@ -332,8 +334,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                 name="allowPastDates"
                 checked={allowPastDates}
                 onChange={(checked) => {
-                  setAllowPastDates(checked);
-                  setHasToggledPastDates(true);
+                  setPastDatesChoice(checked);
                 }}
                 label="Zezwól na wybór dat z przeszłości"
               />
