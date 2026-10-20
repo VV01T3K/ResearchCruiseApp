@@ -1,11 +1,14 @@
 import type { Page } from '@playwright/test';
 import type { NetworkFixture } from '@msw/playwright';
-import { getUpdateApplicationFormAMockHandler } from '@/api/generated/mocks/applications/applications.msw.gen';
+import {
+  getGetApplicationFormAMockHandler,
+  getUpdateApplicationFormAMockHandler,
+} from '@/api/generated/mocks/applications/applications.msw.gen';
 import { getLoginMockHandler, getLogoutMockHandler } from '@/api/generated/mocks/auth/auth.msw.gen';
 import { HttpResponse } from 'msw';
 import { test, expect, applicationForms, dropFile } from './fixtures';
 import { admin, session } from '../data/accounts';
-import { applicationId } from '../data/forms';
+import { applicationId, formA as formAFields } from '../data/forms';
 
 const UNSAVED = 'Notatka, której nie zapisano';
 const formA = `/applications/${applicationId}/formA?mode=edit`;
@@ -105,6 +108,26 @@ test('edits left without saving come back on return', async ({ page }) => {
   await expect(notes(page)).toHaveValue(UNSAVED);
   await goHome(page);
   await expect(dialog(page)).toBeVisible();
+});
+
+test('restored edits keep newer server values in other fields', async ({ page, network, requests }) => {
+  await page.clock.install();
+  await page.goto(formA);
+  await notes(page).fill(UNSAVED);
+  await goHome(page);
+  await dialog(page).getByRole('button', { name: 'Opuść bez zapisywania' }).click();
+  network.use(
+    getGetApplicationFormAMockHandler({ ...formAFields(), cruiseHours: '99' }),
+    getUpdateApplicationFormAMockHandler()
+  );
+  // Suspense queries stay fresh for a second; returning later refetches the form.
+  await page.clock.fastForward(2000);
+  await page.goBack();
+  await expect(page.getByLabel('Liczba planowanych godzin rejsowych')).toHaveValue('99');
+  await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+  await expect
+    .poll(() => requests.bodies(`PUT /v2/applications/${applicationId}/form-a`))
+    .toMatchObject([{ form: { cruiseHours: '99', periodNotes: UNSAVED } }]);
 });
 
 test('a restored past period keeps its dates', async ({ page }) => {
