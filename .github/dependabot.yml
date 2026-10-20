@@ -1,14 +1,5 @@
 version: 2
 updates:
-  - package-ecosystem: bun
-    directory: /
-    target-branch: staging
-    schedule:
-      interval: weekly
-    # Matches minimumReleaseAge in bunfig.toml.
-    cooldown:
-      default-days: 7
-
   - package-ecosystem: nuget
     directory: /backend
     target-branch: staging
