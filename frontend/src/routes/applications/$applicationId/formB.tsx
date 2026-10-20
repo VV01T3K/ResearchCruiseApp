@@ -6,6 +6,7 @@ import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
+import { captureHandledRefusal } from '@/integrations/sentry/mutations';
 import { navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
 import { FormView } from './-components/formB/FormView';
 import {
@@ -99,6 +100,7 @@ function FormBPage() {
       );
     } catch (err) {
       console.error(err);
+      captureHandledRefusal(values.draft ? 'form-b.draft' : 'form-b.submit', err);
       setServerFormErrors(form, err);
       toast.error(getErrorMessage(err, saveFailedMessage(values.draft)));
       navigateToFirstError();

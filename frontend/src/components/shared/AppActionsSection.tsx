@@ -37,7 +37,6 @@ export function AppActionsSection({ children }: Props) {
 
   return (
     <>
-      <div className="h-(--actions-height)" />
       <div
         ref={popoverRef}
         popover="manual"
@@ -49,6 +48,7 @@ export function AppActionsSection({ children }: Props) {
       >
         {children}
       </div>
+      <div className="mt-8 h-(--actions-height)" />
     </>
   );
 }
