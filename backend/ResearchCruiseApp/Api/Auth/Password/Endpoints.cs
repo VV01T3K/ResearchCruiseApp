@@ -19,9 +19,7 @@ public static class PasswordEndpoints
             .WithName("RequestPasswordReset")
             .WithSummary("Request a password reset email.")
             .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<RequestPasswordResetRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
             .AllowAnonymous();
     }
 
@@ -34,9 +32,7 @@ public static class PasswordEndpoints
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<ResetPasswordRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
             .AllowAnonymous();
     }
 

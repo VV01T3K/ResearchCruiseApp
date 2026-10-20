@@ -41,14 +41,24 @@ internal class IdentityService(
     public async Task<List<UserDto>> GetAllUsersDtos(CancellationToken cancellationToken)
     {
         var users = await userManager.Users.ToListAsync(cancellationToken);
-        var usersDtos = new List<UserDto>();
+        var userRoles = await (
+            from userRole in dbContext.UserRoles
+            join role in dbContext.Roles on userRole.RoleId equals role.Id
+            select new { userRole.UserId, role.Name }
+        ).ToListAsync(cancellationToken);
+        var rolesByUserId = userRoles.ToLookup(
+            userRole => userRole.UserId,
+            userRole => userRole.Name!
+        );
 
-        foreach (var user in users)
-        {
-            usersDtos.Add(await CreateUserDto(user));
-        }
-
-        return usersDtos;
+        return users
+            .Select(user =>
+            {
+                var userDto = UserMappings.ToUserDto(user);
+                userDto.Roles = rolesByUserId[user.Id].ToList();
+                return userDto;
+            })
+            .ToList();
     }
 
     public async Task<List<CruiseManagerOptionDto>> GetAllCruiseManagersDtos(
@@ -523,6 +533,32 @@ internal class IdentityService(
             () => RemoveUserRoleCore(userId, roleName),
             cancellationToken
         );
+    }
+
+    public async Task<Result> ReplaceUserRoles(Guid userId, string roleName)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+            return Error.ResourceNotFound();
+
+        var currentRoles = await userManager.GetRolesAsync(user);
+        if (
+            roleName != RoleName.Administrator
+            && currentRoles.Contains(RoleName.Administrator)
+            && await GetUsersCountInRole(RoleName.Administrator) <= 1
+        )
+        {
+            return Error.Conflict("Nie można odebrać roli ostatniemu administratorowi");
+        }
+
+        var identityResult = await userManager.RemoveFromRolesAsync(
+            user,
+            currentRoles.Where(currentRole => currentRole != roleName)
+        );
+        if (identityResult.Succeeded && !currentRoles.Contains(roleName))
+            identityResult = await userManager.AddToRoleAsync(user, roleName);
+
+        return identityResult.ToApplicationResult();
     }
 
     private async Task<Result> DeleteUserCore(Guid userId)

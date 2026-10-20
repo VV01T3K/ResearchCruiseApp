@@ -10,7 +10,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { INVALID_FORM_MESSAGE, navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
+import { navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   type FormAValues,
@@ -48,7 +48,7 @@ function NewCruiseApplicationPage() {
   } satisfies FormAValues;
   const [selectedYear, setSelectedYear] = useState(defaultValues.year);
   const blockadesQuery = useGetCruiseBlockades({ year: +selectedYear });
-  const schema = getFormASubmissionSchema(initialStateQuery.data, blockadesQuery.data);
+  const schema = getFormASubmissionSchema(initialStateQuery.data, currentUser.id, blockadesQuery.data);
   const form = useAppForm({
     canSubmitWhenInvalid: true,
     defaultValues,
@@ -65,8 +65,7 @@ function NewCruiseApplicationPage() {
     onSubmitInvalid: () => {
       if (!form.state.values.draft) trackFormSubmit('new-application', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
-      toast.error(INVALID_FORM_MESSAGE);
-      navigateToFirstError();
+      navigateToFirstError({ toast: true });
     },
   });
   const leaveAfterSave = useLeaveAfterSave(form);
@@ -83,12 +82,6 @@ function NewCruiseApplicationPage() {
 
   async function saveForm(values: FormAValues) {
     if (!values.draft) trackFormSubmit('new-application', 'valid', form.state);
-    if (values.cruiseManagerId !== currentUser.id && values.deputyManagerId !== currentUser.id) {
-      setIsSaveDraftModalOpen(false);
-      const message = 'Jedynie kierownik lub jego zastępca mogą zapisać formularz';
-      toast.error(message);
-      throw new Error(message);
-    }
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );

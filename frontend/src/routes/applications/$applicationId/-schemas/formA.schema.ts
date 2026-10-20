@@ -341,6 +341,14 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
   };
 };
 
+// Zod skips object refinements after a field's type or enum error (#488).
+const isPeriod = (period: unknown) => typeof period === 'string' || Array.isArray(period);
+const evenWithFieldErrors = {
+  when: ({ value }: z.core.ParsePayload) =>
+    isPeriod((value as Partial<FormAValues>)?.acceptablePeriod) &&
+    isPeriod((value as Partial<FormAValues>)?.optimalPeriod),
+};
+
 export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: BlockadePeriod[]) =>
   z
     .object({
@@ -534,18 +542,40 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
       }
 
       BlockadeCollisionValidationSchema(blockades)(val, ctx);
-    });
+    }, evenWithFieldErrors);
 
-export function getFormAFieldsSchema(initValues: FormAOptions, blockades?: BlockadePeriod[], applicationId?: string) {
-  return buildFormAFieldsSchema(getFormAValidationSchema(initValues, blockades), applicationId);
+export function getFormAFieldsSchema(
+  initValues: FormAOptions,
+  blockades?: BlockadePeriod[],
+  applicationId?: string,
+  currentUserId?: string
+) {
+  return buildFormAFieldsSchema(getFormAValidationSchema(initValues, blockades), applicationId, currentUserId);
 }
 
-export function getFormADraftFieldsSchema(applicationId?: string) {
-  return buildFormAFieldsSchema(FormAInputSchema, applicationId);
+export function getFormADraftFieldsSchema(applicationId?: string, currentUserId?: string) {
+  return buildFormAFieldsSchema(FormAInputSchema, applicationId, currentUserId);
 }
 
-function buildFormAFieldsSchema(inputSchema: z.ZodType<FormAValues, FormAValues>, applicationId?: string) {
+function buildFormAFieldsSchema(
+  inputSchema: z.ZodType<FormAValues, FormAValues>,
+  applicationId?: string,
+  currentUserId?: string
+) {
   return inputSchema
+    .superRefine(
+      (form, ctx) => {
+        if (!currentUserId || form.cruiseManagerId === currentUserId || form.deputyManagerId === currentUserId) return;
+        for (const path of ['cruiseManagerId', 'deputyManagerId']) {
+          ctx.addIssue({
+            code: 'custom',
+            path: [path],
+            message: 'Aby zapisać formularz, wybierz siebie jako kierownika rejsu lub zastępcę',
+          });
+        }
+      },
+      { when: () => true }
+    )
     .transform((form): z.input<typeof FormAFields> => mapFormAFields(form, applicationId))
     .pipe(FormAFields);
 }
@@ -578,7 +608,7 @@ function mapFormAFields(form: FormAValues, applicationId?: string) {
       title: 'title' in task ? task.title : null,
       magazine: 'magazine' in task ? task.magazine : null,
       author: 'author' in task ? task.author : null,
-      institution: null,
+      institution: task.institution ?? null,
       date: 'date' in task ? task.date : null,
       startDate: 'startDate' in task ? task.startDate : null,
       endDate: 'endDate' in task ? task.endDate : null,
@@ -683,6 +713,10 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
 }
 
 export function mapResearchTaskToValues(task: ResearchTaskFields): FormAValues['researchTasks'][number] {
+  return { ...mapResearchTaskTypeFieldsToValues(task), institution: task.institution ?? null };
+}
+
+function mapResearchTaskTypeFieldsToValues(task: ResearchTaskFields): FormAValues['researchTasks'][number] {
   switch (task.type) {
     case ResearchTaskType.BachelorThesis:
     case ResearchTaskType.MasterThesis:
@@ -736,12 +770,13 @@ function toNullableNumber(value: string | null | undefined): number | null {
 
 export function getFormASubmissionSchema(
   initValues: FormAOptions,
+  currentUserId: string,
   blockades?: BlockadePeriod[],
   applicationId?: string
 ) {
   return submissionSchema(
-    getFormAFieldsSchema(initValues, blockades, applicationId),
-    getFormADraftFieldsSchema(applicationId)
+    getFormAFieldsSchema(initValues, blockades, applicationId, currentUserId),
+    getFormADraftFieldsSchema(applicationId, currentUserId)
   );
 }
 

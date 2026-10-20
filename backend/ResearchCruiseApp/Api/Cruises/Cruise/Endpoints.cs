@@ -106,6 +106,9 @@ public static class CruiseEndpoints
             )
             .ToListAsync(cancellationToken);
 
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(
+            cancellationToken
+        );
         newCruise.Number = await yearBasedKeyGenerator.GenerateKey(
             dbContext.Cruises,
             cancellationToken
@@ -114,6 +117,7 @@ public static class CruiseEndpoints
         await dbContext.Cruises.AddAsync(newCruise, cancellationToken);
         await ClearUnavailableManagers(affectedCruises, dbContext, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
 
         return TypedResults.Created();
     }

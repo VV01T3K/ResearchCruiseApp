@@ -10,7 +10,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { INVALID_FORM_MESSAGE, navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
+import { navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
 import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
 import {
   type FormAValues,
@@ -59,7 +59,7 @@ function FormAPage() {
   }) satisfies FormAValues;
   const [selectedYear, setSelectedYear] = useState(defaultValues.year);
   const blockadesQuery = useGetCruiseBlockades({ year: +selectedYear });
-  const schema = getFormASubmissionSchema(initialStateQuery.data, blockadesQuery.data, applicationId);
+  const schema = getFormASubmissionSchema(initialStateQuery.data, currentUser.id, blockadesQuery.data, applicationId);
   const form = useAppForm({
     canSubmitWhenInvalid: true,
     defaultValues,
@@ -76,8 +76,7 @@ function FormAPage() {
     onSubmitInvalid: () => {
       if (!form.state.values.draft) trackFormSubmit('form-a', 'invalid', form.state);
       setIsSaveDraftModalOpen(false);
-      toast.error(INVALID_FORM_MESSAGE);
-      navigateToFirstError();
+      navigateToFirstError({ toast: true });
     },
   });
   const leaveAfterSave = useLeaveAfterSave(form);
@@ -94,12 +93,6 @@ function FormAPage() {
 
   async function saveForm(values: FormAValues) {
     if (!values.draft) trackFormSubmit('form-a', 'valid', form.state);
-    if (values.cruiseManagerId !== currentUser.id && values.deputyManagerId !== currentUser.id) {
-      setIsSaveDraftModalOpen(false);
-      const message = 'Jedynie kierownik lub jego zastępca mogą zapisać formularz';
-      toast.error(message);
-      throw new Error(message);
-    }
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );

@@ -1,7 +1,8 @@
 import type { AnyFieldMeta, AnyFormApi } from '@tanstack/react-form';
 import { ApiError, getProblemDetail } from '@/api/errors';
+import { toast } from '@/components/shared/layout/toast';
 
-export const INVALID_FORM_MESSAGE = 'Formularz zawiera błędy. Popraw zaznaczone pola.';
+const INVALID_FORM_MESSAGE = 'Formularz zawiera błędy. Popraw zaznaczone pola.';
 
 export function saveFailedMessage(draft: boolean | undefined): string {
   return draft ? 'Nie udało się zapisać wersji roboczej formularza' : 'Nie udało się wysłać formularza';
@@ -31,8 +32,20 @@ export function getFormLevelErrors(form: AnyFormApi, errorMap = form.state.error
   });
 }
 
-export function navigateToFirstError(): void {
+function getInvalidFormMessage(): string {
+  const error = document.querySelector('[data-error="true"]');
+  const reason = (error?.querySelector('li, p') ?? error)?.textContent;
+  if (!error || !reason) return INVALID_FORM_MESSAGE;
+  const section = error
+    .closest(':has(> h2)')
+    ?.querySelector(':scope > h2')
+    ?.textContent.match(/^(\d+)\./)?.[1];
+  return section ? `Formularz błędny w sekcji nr ${section}:\n${reason}` : `Formularz zawiera błędy:\n${reason}`;
+}
+
+export function navigateToFirstError({ toast: showToast = false } = {}): void {
   requestAnimationFrame(() => {
+    if (showToast) toast.error(getInvalidFormMessage());
     const target = document.querySelector<HTMLElement>('[aria-invalid="true"], [data-error="true"]');
     if (!target) return;
 

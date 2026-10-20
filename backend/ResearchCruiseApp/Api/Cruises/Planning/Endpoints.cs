@@ -53,27 +53,36 @@ public static class PlanningEndpoints
             .Cruises.IncludeCruiseApplications()
             .ToListAsync(cancellationToken);
 
-        foreach (var application in applications)
-        {
-            if (
-                application.Status != CruiseApplicationStatus.Accepted
-                || cruises.Any(cruise => cruise.CruiseApplications.Contains(application))
+        var newCruises = applications
+            .Where(application =>
+                application.Status == CruiseApplicationStatus.Accepted
+                && !cruises.Any(cruise => cruise.CruiseApplications.Contains(application))
             )
-            {
-                continue;
-            }
-
-            var cruise = CreateCruise(application, globalizationService);
-            if (cruise is not null)
-            {
-                cruise.Number = await yearBasedKeyGenerator.GenerateKey(
-                    dbContext.Cruises,
-                    cancellationToken
-                );
-                cruise.Status = CruiseStatus.New;
-                await dbContext.Cruises.AddAsync(cruise, cancellationToken);
-            }
+            .Select(application => CreateCruise(application, globalizationService))
+            .OfType<DomainCruise>()
+            .ToList();
+        if (newCruises.Count == 0)
+        {
+            return TypedResults.NoContent();
         }
+
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(
+            cancellationToken
+        );
+        var numbers = await yearBasedKeyGenerator.GenerateKeys(
+            dbContext.Cruises,
+            newCruises.Count,
+            cancellationToken
+        );
+        foreach (var (cruise, number) in newCruises.Zip(numbers))
+        {
+            cruise.Number = number;
+            cruise.Status = CruiseStatus.New;
+        }
+
+        await dbContext.Cruises.AddRangeAsync(newCruises, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
 
         return TypedResults.NoContent();
     }

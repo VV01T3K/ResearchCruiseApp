@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
@@ -64,6 +65,65 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NoContent, removed.StatusCode);
         await AssertRoles(app, target.Id, [RoleName.CruiseManager]);
         Assert.Empty(app.Transport.Messages);
+    }
+
+    [Theory]
+    [InlineData(
+        RoleName.Shipowner,
+        RoleName.CruiseManager,
+        RoleName.Guest,
+        HttpStatusCode.NoContent
+    )]
+    [InlineData(
+        RoleName.Administrator,
+        RoleName.CruiseManager,
+        RoleName.Guest,
+        HttpStatusCode.NoContent
+    )]
+    [InlineData(RoleName.Administrator, "self+admin", RoleName.Guest, HttpStatusCode.NoContent)]
+    [InlineData(RoleName.Administrator, "self", RoleName.Guest, HttpStatusCode.Conflict)]
+    [InlineData(
+        RoleName.Shipowner,
+        RoleName.CruiseManager,
+        RoleName.Administrator,
+        HttpStatusCode.Forbidden
+    )]
+    [InlineData(
+        RoleName.Shipowner,
+        "CruiseManager,Shipowner",
+        RoleName.Guest,
+        HttpStatusCode.Forbidden
+    )]
+    public async Task Replace_ChecksAccessBeforeSwappingRolesAtomically(
+        string actorRole,
+        string target,
+        string requestedRole,
+        HttpStatusCode expected
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var actor = await TestUsers.Create(app, "actor@example.invalid", actorRole);
+        await TestUsers.Create(app, "role-holder@example.invalid", requestedRole);
+        if (target == "self+admin")
+            await TestUsers.Create(app, "other-admin@example.invalid", RoleName.Administrator);
+        var self = target is "self" or "self+admin";
+        var originalRoles = self ? [actorRole] : target.Split(',');
+        var targetUser = self
+            ? actor
+            : await TestUsers.Create(app, "target@example.invalid", originalRoles);
+        using var client = await TestApplications.Login(app, "actor@example.invalid");
+        using var response = await client.PutAsJsonAsync(
+            $"/v2/users/{targetUser.Id}/role",
+            new { roleName = requestedRole },
+            ct
+        );
+        Assert.Equal(expected, response.StatusCode);
+        await AssertRoles(
+            app,
+            targetUser.Id,
+            expected == HttpStatusCode.NoContent ? [requestedRole] : originalRoles
+        );
     }
 
     private static async Task AssertRoles(TestApplication app, string userId, string[] expected)

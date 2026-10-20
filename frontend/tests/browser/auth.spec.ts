@@ -3,6 +3,7 @@ import {
   getConfirmEmailMockHandler,
   getLoginMockHandler,
   getLogoutMockHandler,
+  getGetCurrentSessionMockHandler,
   getRefreshTokensMockHandler,
   getRegisterAccountMockHandler,
   getRequestPasswordResetMockHandler,
@@ -14,8 +15,10 @@ import {
   getGetCurrentUserMockHandler,
   getGetUsersMockHandler,
 } from '@/api/generated/mocks/users/users.msw.gen';
-import { test, expect, fail } from './fixtures';
-import { admin, session } from '../data/accounts';
+import { getGetApplicationFormAMockHandler } from '@/api/generated/mocks/applications/applications.msw.gen';
+import { test, expect, fail, applicationForms } from './fixtures';
+import { admin, outsider, session } from '../data/accounts';
+import { applicationId } from '../data/forms';
 
 // The icon-only sign-out button has no accessible name yet (#491).
 const signOut = (page: Page) => page.getByTestId('sign-out-btn').click();
@@ -83,10 +86,10 @@ test.describe('authenticated session', () => {
   test.use({ account: admin });
   test.beforeEach(({ network }) => network.use(getGetUsersMockHandler([])));
 
-  for (const failing of ['profile', 'refresh'] as const) {
+  for (const failing of ['profile', 'session'] as const) {
     test(`a server error from the ${failing} request does not log the user out`, async ({ page, network }) => {
       network.use(
-        failing === 'profile' ? getGetCurrentUserMockHandler(fail(500)) : getRefreshTokensMockHandler(fail(500))
+        failing === 'profile' ? getGetCurrentUserMockHandler(fail(500)) : getGetCurrentSessionMockHandler(fail(500))
       );
       await page.goto('/user-management');
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
@@ -94,7 +97,7 @@ test.describe('authenticated session', () => {
     });
   }
 
-  test('reload restores access through refresh without persisting the token in localStorage', async ({
+  test('reload restores access through the session cookie without persisting the token in localStorage', async ({
     page,
     requests,
   }) => {
@@ -103,7 +106,7 @@ test.describe('authenticated session', () => {
     await page.reload();
     await expect(page.getByRole('button', { name: 'Dodaj użytkownika' })).toBeVisible();
     // The refresh token travels as a cookie, never in the body.
-    expect(requests.bodies('POST /v2/auth/refresh')).toEqual([null, null]);
+    expect(requests.bodies('GET /v2/auth/session')).toEqual([null, null]);
     expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain(session().accessToken);
   });
 
@@ -117,6 +120,30 @@ test.describe('authenticated session', () => {
     await signOut(page);
     await expect(other).toHaveURL(/\/login/);
     await expect(other.getByRole('button', { name: 'Dodaj użytkownika' })).toHaveCount(0);
+  });
+
+  test('a refresh into another account reloads without the previous account form or its unsaved edits', async ({
+    page,
+    network,
+    requests,
+  }) => {
+    const claim = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier';
+    const payload = (id: string) => Buffer.from(JSON.stringify({ [claim]: id, jti: '?>~' })).toString('base64url');
+    const tokens = (id: string) => ({ ...session(), accessToken: `header.${payload(id)}.signature` });
+    network.use(getGetCurrentSessionMockHandler(tokens(admin.id)), ...applicationForms());
+    await page.clock.install();
+    await page.goto(`/applications/${applicationId}/formA?mode=edit`);
+    await page.getByLabel('Uwagi dotyczące terminu').fill('Niezapisana notatka');
+    network.use(
+      getGetCurrentSessionMockHandler(tokens(outsider.id)),
+      getRefreshTokensMockHandler(tokens(outsider.id)),
+      getGetCurrentUserMockHandler(outsider),
+      getGetApplicationFormAMockHandler(fail(403))
+    );
+    page.on('dialog', (dialog) => dialog.dismiss());
+    await page.clock.fastForward(30 * 60_000);
+    await expect.poll(() => requests.bodies('GET /v2/auth/session')).toHaveLength(2);
+    await expect(page.getByLabel('Uwagi dotyczące terminu')).toHaveCount(0);
   });
 
   test('the administrator screen rechecks a role that changed since it was loaded', async ({ page, network }) => {
@@ -137,7 +164,7 @@ test.describe('authenticated session', () => {
   for (const outcome of ['extended', 'rejected'] as const) {
     test(`an expiring session warning, when refreshed, is ${outcome}`, async ({ page, network }) => {
       network.use(
-        getRefreshTokensMockHandler(session(60_000), { once: true }),
+        getGetCurrentSessionMockHandler(session(60_000)),
         getRefreshTokensMockHandler(outcome === 'extended' ? session() : fail(401))
       );
       await page.goto('/user-management');

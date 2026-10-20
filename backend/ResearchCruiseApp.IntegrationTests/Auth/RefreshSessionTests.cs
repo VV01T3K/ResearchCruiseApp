@@ -67,6 +67,35 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Session_WithoutOrWithRefreshCookie_ReturnsNullOrRestoresSession()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var user = await TestUsers.Create(app, "session@example.invalid", RoleName.Guest);
+        using var client = app.CreateApiClient();
+
+        using var anonymous = await client.GetAsync("/v2/auth/session", ct);
+        Assert.Equal(HttpStatusCode.OK, anonymous.StatusCode);
+        Assert.Equal("null", await anonymous.Content.ReadAsStringAsync(ct));
+        Assert.True(anonymous.Headers.CacheControl?.NoStore);
+
+        var original = await Login(client, user.Email!);
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/v2/auth/session");
+        request.Headers.Add("Cookie", original.Cookie);
+        using var restored = await client.SendAsync(request, ct);
+        Assert.Equal(HttpStatusCode.OK, restored.StatusCode);
+        Assert.NotEqual(original.Cookie, ReadCookie(restored));
+        Assert.True(restored.Headers.CacheControl?.NoStore);
+        using var profileRequest = new HttpRequestMessage(HttpMethod.Get, "/v2/users/me");
+        profileRequest.Headers.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            await ReadAccessToken(restored)
+        );
+        using var profile = await client.SendAsync(profileRequest, ct);
+        Assert.Equal(HttpStatusCode.OK, profile.StatusCode);
+    }
+
+    [Fact]
     public async Task Session_WhenCookieContainerHandlesRotationAndLogout_RejectsRefreshAfterLogout()
     {
         var ct = TestContext.Current.CancellationToken;

@@ -1,4 +1,6 @@
+using System.Net.Mime;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.OpenApi;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
@@ -13,6 +15,7 @@ public static class SessionsEndpoints
     {
         MapLogin(group);
         MapRefresh(group);
+        MapSession(group);
         MapLogout(group);
     }
 
@@ -24,9 +27,7 @@ public static class SessionsEndpoints
             .WithSummary("Sign in with an account.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status429TooManyRequests)
             .WithRequestValidation<LoginRequest>()
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
             .AllowAnonymous();
     }
 
@@ -38,8 +39,27 @@ public static class SessionsEndpoints
             .WithSummary("Refresh account tokens.")
             .ProducesValidationProblem()
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status429TooManyRequests)
-            .RequireRateLimiting(RateLimitingPolicies.AuthSensitive)
+            .AllowAnonymous();
+    }
+
+    private static void MapSession(RouteGroupBuilder group)
+    {
+        group
+            .MapGet("/session", GetSession)
+            .WithName("GetCurrentSession")
+            .WithSummary("Restore the current session, or return null without one.")
+            .AddOpenApiOperationTransformer(
+                (operation, _, _) =>
+                {
+                    var content = operation.Responses!["200"].Content!["application/json"];
+                    content.Schema = new OpenApiSchema
+                    {
+                        OneOf = [new OpenApiSchema { Type = JsonSchemaType.Null }, content.Schema!],
+                    };
+                    return Task.CompletedTask;
+                }
+            )
+            .ProducesProblem(StatusCodes.Status409Conflict)
             .AllowAnonymous();
     }
 
@@ -86,6 +106,27 @@ public static class SessionsEndpoints
 
         var result = await identityService.RefreshUserTokens(refreshToken);
 
+        if (!result.IsSuccess)
+            return result.Error!.ToProblemHttpResult();
+
+        WriteRefreshTokenCookie(context, environment, result.Data!);
+        return TypedResults.Ok(TokenResponse.From(result.Data!));
+    }
+
+    private static async Task<
+        Results<Ok<TokenResponse>, ContentHttpResult, ProblemHttpResult>
+    > GetSession(
+        IdentityService identityService,
+        HttpContext context,
+        IWebHostEnvironment environment
+    )
+    {
+        context.Response.Headers.CacheControl = "no-store";
+        var result = await identityService.RefreshUserTokens(
+            context.Request.Cookies[RefreshTokenCookie] ?? ""
+        );
+        if (result.Error?.Type == ErrorType.UnknownIdentity)
+            return TypedResults.Text("null", MediaTypeNames.Application.Json);
         if (!result.IsSuccess)
             return result.Error!.ToProblemHttpResult();
 
