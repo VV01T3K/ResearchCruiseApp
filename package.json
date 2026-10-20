@@ -27,7 +27,7 @@
     "js-yaml": "^4.3.2",
     "typescript": "~5.9.3",
     "undici": "^7.29.1",
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.1.24",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
     "vitest": "npm:@voidzero-dev/vite-plus-test@0.1.24",
     "tinypool": "~2.1.1",
     "seroval": "^1.6.7",
