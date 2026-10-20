@@ -28,6 +28,7 @@ services:
         condition: service_healthy
     environment:
       ConnectionStrings__Database: ${DB_CONNECTION_STRING:?Preserve the deployed connection string}
+      Database__ApplyMigrations: ${DATABASE_APPLY_MIGRATIONS:-true}
       Database__SeedAccountsAutomatically: ${DATABASE_SEED_ACCOUNTS_AUTOMATICALLY:-false}
       Database__LogUserPasswordsWhenSeeding: ${DATABASE_LOG_USER_PASSWORDS_WHEN_SEEDING:-false}
       FrontendUrl: ${FRONTEND_URL:-https://cruise.wsiwiec.com}

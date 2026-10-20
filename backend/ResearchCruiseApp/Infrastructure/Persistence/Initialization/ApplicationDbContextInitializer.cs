@@ -14,7 +14,23 @@ internal class ApplicationDbContextInitializer(
     ILogger<ApplicationDbContextInitializer> logger
 )
 {
-    public Task Initialize() => applicationDbContext.Database.MigrateAsync();
+    public async Task Initialize()
+    {
+        if (!configuration.GetValue<bool>("Database:ApplyMigrations"))
+        {
+            var pending = (
+                await applicationDbContext.Database.GetPendingMigrationsAsync()
+            ).ToList();
+            if (pending.Count > 0)
+                throw new InvalidOperationException(
+                    $"The database has pending migrations: {string.Join(", ", pending)}. "
+                        + "Back up the database, then start once with Database__ApplyMigrations=true "
+                        + "(DATABASE_APPLY_MIGRATIONS=true in Docker Compose)."
+                );
+        }
+
+        await applicationDbContext.Database.MigrateAsync();
+    }
 
     public async Task Seed()
     {
