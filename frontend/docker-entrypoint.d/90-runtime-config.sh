@@ -7,23 +7,6 @@ sanitize() { printf '%s' "${1:-}" | tr -d '\\"\r\n'; }
 runtime_conf=/etc/nginx/runtime.conf
 : > "$runtime_conf"
 
-trusted_proxies=$(sanitize "${TRUSTED_PROXIES:-}")
-case "$trusted_proxies" in
-  *[!0-9A-Fa-f.:/\ ]*)
-    echo "90-runtime-config.sh: ignoring invalid TRUSTED_PROXIES" >&2
-    trusted_proxies=""
-    ;;
-esac
-if [ -n "$trusted_proxies" ]; then
-  for cidr in $trusted_proxies; do
-    echo "set_real_ip_from $cidr;" >> "$runtime_conf"
-  done
-  cat >> "$runtime_conf" <<EOF
-real_ip_header X-Forwarded-For;
-real_ip_recursive on;
-EOF
-fi
-
 sentry_proxy=""
 dsn=$(sanitize "${SENTRY_DSN:-}")
 if [ -n "$dsn" ]; then
@@ -50,8 +33,6 @@ if [ -n "$dsn" ]; then
     cat >> "$runtime_conf" <<EOF
 location = $sentry_proxy {
     limit_except POST { deny all; }
-    limit_req zone=sentry_proxy burst=50 nodelay;
-    limit_req_status 429;
     client_max_body_size 20m;
     client_body_buffer_size 1m;
     resolver $resolvers valid=300s;

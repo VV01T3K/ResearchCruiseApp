@@ -103,19 +103,9 @@ therefore proxies browser events to Sentry (Sentry's docs call this the
 
 The endpoint is public, like any browser DSN: anyone can post events to that one project, but
 nothing can be read through it. It is deliberately not behind login, since errors on the login,
-registration and password-reset pages matter most. Abuse is contained instead:
-
-- nginx allows `POST` only, 20 MB per request, and 10 requests/s per client (burst 50), answering
-  `429` so the SDK backs off. The limit is generous because campus NAT can put many users behind
-  one address.
-- Behind a reverse proxy, set `TRUSTED_PROXIES` (space-separated CIDRs) on the frontend container
-  so nginx rate-limits by the real client from `X-Forwarded-For`; otherwise every user shares the
-  proxy's limit. Staging trusts the private ranges, since only Caddy can reach the container;
-  production leaves it empty while port 8080 is exposed directly. Never trust addresses that
-  clients can connect from, or they can spoof their way past the limit.
-- On the Sentry side, set a rate limit on the project's client key (Project Settings → Client
-  Keys) to cap total intake, and restrict Allowed Domains (Project Settings → Security & Privacy)
-  to the app's domain.
+registration and password-reset pages matter most. nginx accepts `POST` only, up to 20 MB per
+request. Abuse is limited on the Sentry side via the client key's rate limit (Project Settings →
+Client Keys) and Allowed Domains (Project Settings → Security & Privacy).
 
 ## Step 4 — connect production at deploy time
 
