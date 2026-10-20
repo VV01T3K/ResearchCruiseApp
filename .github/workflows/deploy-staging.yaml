@@ -43,7 +43,7 @@ jobs:
               SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: docker/setup-buildx-action@v3
 
@@ -85,7 +85,7 @@ jobs:
       contents: read
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Sync configuration and deploy
         env:
           STAGING_SYNC_URL: ${{ vars.STAGING_SYNC_URL }}
