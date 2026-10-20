@@ -10,7 +10,7 @@ See [backend development and checks](docs/backend-development.md) for setup, wor
 ## Configuration
 
 See [dependency maintenance](docs/dependency-maintenance.md) for installs, audits
-and Dependabot.
+and Renovate.
 
 ### Frontend
 
@@ -25,6 +25,7 @@ and Dependabot.
 
 | Environment Variable                    | Description                                    | Example                                                                         | Required |
 | --------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------- | -------- |
+| `Database__ApplyMigrations`             | Apply pending database migrations on startup   | `false`                                                                         | No       |
 | `Database__SeedAccountsAutomatically`   | Create or repair configured seed accounts      | `false`                                                                         | No       |
 | `Database__LogUserPasswordsWhenSeeding` | Log user passwords when seeding                | `true`                                                                          | No       |
 | `ConnectionStrings__Database`           | Database connection string                     | `db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False` | Yes      |
@@ -42,7 +43,11 @@ and Dependabot.
 | `JWT__RefreshTokenLifetimeSeconds`      | JWT refresh token lifetime in seconds          | `7200`                                                                          | No       |
 | `JWT__Secret`                           | JWT signing secret                             | `JWTp@ssw0rdTwoHundredFiftySixBitsAtLeast`                                      | Yes      |
 
-Database migrations and reference data seeding run on startup. Missing roles, UG units, research areas and ship equipment are added; existing reference rows, including inactive entries, are preserved. Seeding shares Entity Framework's migration lock so application replicas do not seed simultaneously.
+Database migrations run on startup only when `Database__ApplyMigrations` is `true`. It defaults to off in the backend and production Compose (`DATABASE_APPLY_MIGRATIONS`), and is on in development and staging. With it off, the backend refuses to start while migrations are pending and logs their names.
+
+To upgrade production, back up the database, then start the new version once with `DATABASE_APPLY_MIGRATIONS=true`. Unset it again after the upgrade.
+
+Reference data seeding runs on every startup once the schema is current. Missing roles, UG units, research areas and ship equipment are added; existing reference rows, including inactive entries, are preserved. Seeding shares Entity Framework's migration lock so application replicas do not seed simultaneously.
 
 `Database__SeedAccountsAutomatically` controls only the accounts configured in `users.json`. It replaces `Database__SeedAutomatically`; `Database__MigrateAutomatically` has been removed. Account seeding defaults to off in the backend, staging and production Compose, and is enabled in development Compose. For staging, rename `DATABASE_SEED_AUTOMATICALLY` to `DATABASE_SEED_ACCOUNTS_AUTOMATICALLY` in the deployment environment.
 

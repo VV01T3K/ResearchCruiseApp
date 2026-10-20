@@ -1,0 +1,64 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "mergeConfidence:all-badges"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "other dependencies"
+    },
+    {
+      "matchManagers": ["bun"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm packages"
+    },
+    {
+      "matchManagers": ["nuget"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": ".NET packages"
+    },
+    {
+      "matchPackageNames": ["mcr.microsoft.com/dotnet/**"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": ".NET packages"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions"
+    },
+    {
+      "matchDepNames": ["bun"],
+      "groupName": "npm packages"
+    },
+    {
+      "matchPackageNames": ["vite-plus", "vite", "vitest", "@voidzero-dev/**"],
+      "groupName": "Vite+",
+      "dependencyDashboardApproval": true
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "matchManagers": ["bun"],
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "matchManagers": ["bun"],
+      "addLabels": ["javascript"]
+    },
+    {
+      "matchManagers": ["nuget"],
+      "addLabels": [".NET"]
+    },
+    {
+      "matchManagers": ["dockerfile", "docker-compose", "devcontainer"],
+      "addLabels": ["docker"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "addLabels": ["github_actions"]
+    }
+  ],
+  "labels": ["dependencies"],
+  "prHourlyLimit": 15
+}
