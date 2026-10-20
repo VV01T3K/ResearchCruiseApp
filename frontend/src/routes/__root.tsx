@@ -20,6 +20,7 @@ import AppBackground from '@/components/shared/layout/AppBackground';
 import { AppNavbar } from '@/components/shared/layout/AppNavbar';
 import { AppNetworkDisconnectAlert } from '@/components/shared/layout/AppNetworkDisconnectAlert';
 import { AppToaster } from '@/components/shared/layout/AppToaster';
+import { FeedbackTab } from '@/integrations/sentry/FeedbackTab';
 import { TanStackQueryDevtools } from '@/integrations/tanstack/query/devtools';
 import { AuthSession } from '@/integrations/tanstack/query/AuthSession';
 
@@ -52,6 +53,7 @@ function RootLayout() {
         </div>
       </div>
       <AppBackground />
+      <FeedbackTab />
       <main className="flex-1" id="modal-root" data-testid="main-content">
         <motion.div
           key={routerState.location.pathname}
@@ -76,6 +78,7 @@ function RootLayout() {
 function AppErrorHandler({ error }: ErrorComponentProps) {
   return (
     <>
+      <AppToaster />
       <div className="sticky top-0 z-100">
         <div className="relative z-100">
           <AppNavbar />
@@ -85,6 +88,7 @@ function AppErrorHandler({ error }: ErrorComponentProps) {
         </div>
       </div>
       <AppBackground />
+      <FeedbackTab />
       <AppLayout title={'Wystąpił nieoczekiwany błąd'} variant="narrow">
         <div className="space-y-8">
           <div className="h-60">

@@ -29,3 +29,26 @@ export function createFormBreadcrumb(
     },
   };
 }
+
+const queryParam = /(^|[?&])([^?&=#\s"']+)=[^?&#\s"']*/g;
+const sensitiveParams = new Set(['code', 'resetcode', 'supervisorcode', 'emailbase64']);
+
+function isSensitiveParam(name: string): boolean {
+  const [decoded = ''] = new URLSearchParams(`${name}=`).keys();
+  return sensitiveParams.has(decoded.toLowerCase());
+}
+
+export function scrubSensitiveUrls<T>(value: T): T {
+  if (typeof value === 'string') {
+    return value.replace(queryParam, (param, separator: string, name: string) =>
+      isSensitiveParam(name) ? `${separator}${name}=[Filtered]` : param
+    ) as T;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => (value[index] = scrubSensitiveUrls(item)));
+  } else if (value && Object.getPrototypeOf(value) === Object.prototype) {
+    const record = value as Record<string, unknown>;
+    for (const key of Object.keys(record)) record[key] = scrubSensitiveUrls(record[key]);
+  }
+  return value;
+}
