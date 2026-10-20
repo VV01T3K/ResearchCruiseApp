@@ -3,6 +3,7 @@ import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
 import { AppModal } from '@/components/shared/AppModal';
+import { useSessionRemainingMs } from '@/integrations/auth/useSessionClock';
 
 type Props = {
   expirationDate: Date;
@@ -25,20 +26,7 @@ function formatTimeRemaining(remainingMs: number): string {
 
 export function SessionExpirationWarning({ expirationDate, onRefreshSession, onSignOut }: Props) {
   const [isRefreshing, setIsRefreshing] = React.useState(false);
-  const [nowTs, setNowTs] = React.useState(() => Date.now());
-
-  // Tick every second when tracking remaining time
-  React.useEffect(() => {
-    const remainingMs = expirationDate.getTime() - nowTs;
-    if (remainingMs <= 0) {
-      return;
-    }
-
-    const timeoutId = setTimeout(() => setNowTs(Date.now()), 1000);
-    return () => clearTimeout(timeoutId);
-  }, [expirationDate, nowTs]);
-
-  const remainingMs = expirationDate.getTime() - nowTs;
+  const remainingMs = useSessionRemainingMs(expirationDate, () => 1000);
   const shouldWarn = remainingMs > 0 && remainingMs <= WARNING_THRESHOLD_MS;
   const isOpen = shouldWarn;
 
