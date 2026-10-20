@@ -30,6 +30,11 @@
       "groupName": "npm packages"
     },
     {
+      "matchPackageNames": ["vite-plus", "vite", "vitest", "@voidzero-dev/**"],
+      "groupName": "Vite+",
+      "dependencyDashboardApproval": true
+    },
+    {
       "matchUpdateTypes": ["major"],
       "dependencyDashboardApproval": true
     },
