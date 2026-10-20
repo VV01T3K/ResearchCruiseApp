@@ -29,3 +29,16 @@ export function createFormBreadcrumb(
     },
   };
 }
+
+const sensitiveQueryParam = /(^|[?&])(code|resetCode|supervisorCode|emailBase64)=[^&#\s"']*/gi;
+
+export function scrubSensitiveUrls<T>(value: T): T {
+  if (typeof value === 'string') return value.replace(sensitiveQueryParam, '$1$2=[Filtered]') as T;
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => (value[index] = scrubSensitiveUrls(item)));
+  } else if (value && Object.getPrototypeOf(value) === Object.prototype) {
+    const record = value as Record<string, unknown>;
+    for (const key of Object.keys(record)) record[key] = scrubSensitiveUrls(record[key]);
+  }
+  return value;
+}
