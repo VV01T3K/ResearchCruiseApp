@@ -20,6 +20,12 @@ function currentAccount() {
   return session && accountId(session);
 }
 
+// An edited cell whose row no longer exists (e.g. deleted on the server) is dropped, not recreated partially.
+function hasParent(values: unknown, name: string) {
+  const parent = name.replace(/(\.[^.[\]]+|\[\d+\])$/, '');
+  return parent === name || getBy(values, parent) !== undefined;
+}
+
 export function UnsavedChangesGuard({ form, defaultValues, disabled = false, children }: Props) {
   const pathname = useLocation({ select: (location) => location.pathname });
   const queryClient = useQueryClient();
@@ -46,7 +52,9 @@ export function UnsavedChangesGuard({ form, defaultValues, disabled = false, chi
     const saved = Object.entries(queryClient.getQueryData<Record<string, unknown>>(queryKey) ?? {}).sort(
       ([a], [b]) => a.length - b.length
     );
-    saved.forEach(([name, value]) => form.setFieldValue(name, value, { dontValidate: true }));
+    saved.forEach(([name, value]) => {
+      if (hasParent(form.state.values, name)) form.setFieldValue(name, value, { dontValidate: true });
+    });
     if (saved.length > 0) toast.success('Przywrócono niezapisane zmiany');
     const account = currentAccount();
     return () => {
@@ -67,7 +75,10 @@ export function UnsavedChangesGuard({ form, defaultValues, disabled = false, chi
     const merged: Record<string, unknown> = Object.keys(form.state.fieldMeta)
       .filter((name) => form.state.fieldMeta[name]?.isDirty)
       .sort((a, b) => a.length - b.length)
-      .reduce((values, name) => setBy(values, name, getBy(form.state.values, name)), defaultValues);
+      .reduce(
+        (values, name) => (hasParent(values, name) ? setBy(values, name, getBy(form.state.values, name)) : values),
+        defaultValues
+      );
     Object.entries(merged)
       .filter(([name, value]) => !evaluate(value, form.state.values[name]))
       .forEach(([name, value]) => form.setFieldValue(name, value, { dontUpdateMeta: true }));
