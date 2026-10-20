@@ -32,12 +32,18 @@ it('reports failing field names without leaking their values or error text', () 
 it('filters token query parameters from URLs anywhere in an event', () => {
   const event = {
     request: { url: 'https://app/reset-password?emailBase64=YUBi&resetCode=SECRET' },
+    contexts: { feedback: { url: 'https://app/reset-password?%65mailBase64=YUBi&%72esetCode=SECRET&lang=pl' } },
+    transaction: 'GET /confirm-email?%63ode=Z',
     breadcrumbs: [
       { data: { from: '/cruise-approval?cruiseApplicationId=7&supervisorCode=X', to: '/confirm-email?code=Y' } },
     ],
   };
   expect(scrubSensitiveUrls(event)).toEqual({
     request: { url: 'https://app/reset-password?emailBase64=[Filtered]&resetCode=[Filtered]' },
+    contexts: {
+      feedback: { url: 'https://app/reset-password?%65mailBase64=[Filtered]&%72esetCode=[Filtered]&lang=pl' },
+    },
+    transaction: 'GET /confirm-email?%63ode=[Filtered]',
     breadcrumbs: [
       {
         data: {
