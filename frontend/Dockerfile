@@ -37,7 +37,6 @@ ENV API_URL=$API_URL
 WORKDIR /app
 COPY frontend/nginx.conf /etc/nginx/templates/default.conf.template
 COPY --chmod=755 frontend/docker-entrypoint.d/90-runtime-config.sh /docker-entrypoint.d/90-runtime-config.sh
-# The self-hosted Sentry omits its intermediate; see docs/sentry/sentry-on-prem-migration.md.
 COPY frontend/sentry-ca/ /etc/nginx/sentry-ca/
 RUN cat /etc/ssl/certs/ca-certificates.crt /etc/nginx/sentry-ca/*.pem > /etc/nginx/sentry-ca.crt
 COPY --from=build --chown=nginx:nginx /app/frontend/dist /app/

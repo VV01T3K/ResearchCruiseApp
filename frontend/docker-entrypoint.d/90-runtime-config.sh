@@ -4,12 +4,9 @@ set -eu
 
 sanitize() { printf '%s' "${1:-}" | tr -d '\\"\r\n'; }
 
-# Server-level nginx config generated at startup; included by nginx.conf.
 runtime_conf=/etc/nginx/runtime.conf
 : > "$runtime_conf"
 
-# Behind a reverse proxy, take the client address from X-Forwarded-For so the
-# per-client rate limit below does not treat every user as the proxy.
 trusted_proxies=$(sanitize "${TRUSTED_PROXIES:-}")
 case "$trusted_proxies" in
   *[!0-9A-Fa-f.:/\ ]*)
@@ -27,9 +24,6 @@ real_ip_recursive on;
 EOF
 fi
 
-# Browsers may not reach the Sentry instance (e.g. self-hosted on an internal
-# network), so the frontend sends envelopes to this container, which forwards
-# them to the DSN's project only.
 sentry_proxy=""
 dsn=$(sanitize "${SENTRY_DSN:-}")
 if [ -n "$dsn" ]; then
@@ -56,13 +50,10 @@ if [ -n "$dsn" ]; then
     cat >> "$runtime_conf" <<EOF
 location = $sentry_proxy {
     limit_except POST { deny all; }
-    # 429 makes the Sentry SDK back off instead of retrying immediately.
     limit_req zone=sentry_proxy burst=50 nodelay;
     limit_req_status 429;
     client_max_body_size 20m;
-    # Keep typical envelopes (replay segments are ~20 KB) in memory instead of temp files.
     client_body_buffer_size 1m;
-    # Resolve at request time so an unreachable Sentry never stops nginx from starting.
     resolver $resolvers valid=300s;
     set \$sentry_envelope_url "$scheme://$base/api/$project_id/envelope/";
     proxy_pass \$sentry_envelope_url;
@@ -72,7 +63,6 @@ location = $sentry_proxy {
     proxy_ssl_trusted_certificate /etc/nginx/sentry-ca.crt;
     proxy_set_header Cookie "";
     proxy_set_header Authorization "";
-    # Without request auth, Sentry takes the project from the envelope body instead of the URL.
     proxy_set_header X-Sentry-Auth "Sentry sentry_key=$public_key, sentry_version=7";
     proxy_set_header X-Forwarded-For "";
 }

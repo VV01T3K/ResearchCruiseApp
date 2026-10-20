@@ -76,8 +76,5 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ matrix.build-args }}
-          # No Sentry upload token: production reports to a self-hosted Sentry that
-          # CI cannot reach, so it ships without source maps — see
-          # docs/sentry/sentry-on-prem-migration.md.
           cache-from: type=gha,scope=${{ matrix.component }}
           cache-to: type=gha,scope=${{ matrix.component }},mode=max
