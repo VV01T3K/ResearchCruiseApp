@@ -9,18 +9,25 @@ type Props = {
 export function AppActionsSection({ children }: Props) {
   const [isSticky, setIsSticky] = React.useState(false);
   const popoverRef = React.useRef<HTMLDivElement>(null);
+  const spacerRef = React.useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
 
   React.useEffect(() => {
     const popover = popoverRef.current;
-    if (!popover) {
+    const spacer = spacerRef.current;
+    if (!popover || !spacer) {
       return;
     }
     popover.showPopover();
     const observer = new ResizeObserver(() => {
-      document.documentElement.style.setProperty('--actions-height', `${popover.offsetHeight + 16}px`);
+      const height = popover.offsetHeight + 16;
+      const belowSpacer =
+        document.documentElement.scrollHeight - spacer.getBoundingClientRect().bottom - window.scrollY;
+      document.documentElement.style.setProperty('--actions-height', `${height}px`);
+      spacer.style.height = `${Math.max(0, height - belowSpacer)}px`;
     });
     observer.observe(popover);
+    observer.observe(spacer.parentElement ?? document.body);
     return () => {
       observer.disconnect();
       document.documentElement.style.removeProperty('--actions-height');
@@ -37,7 +44,7 @@ export function AppActionsSection({ children }: Props) {
 
   return (
     <>
-      <div className="h-(--actions-height)" />
+      <div ref={spacerRef} className="flow-root h-(--actions-height)" />
       <div
         ref={popoverRef}
         popover="manual"

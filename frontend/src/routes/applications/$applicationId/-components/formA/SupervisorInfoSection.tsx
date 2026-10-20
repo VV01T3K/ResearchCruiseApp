@@ -10,7 +10,7 @@ export function SupervisorInfoSection({ context }: { context: FormAViewModel }) 
 
   return (
     <AppAccordion title="11. Dane kontaktowe przełożonego" expandedByDefault data-testid="form-a-supervisor-section">
-      <div className="mx-auto max-w-180 space-y-4">
+      <div className="mx-auto max-w-180 space-y-4 pt-4">
         <AppAlert variant="warning">
           <span className="text-center text-sm">
             Użytkownik odpowiada za podanie prawidłowego adresu e-mail przełożonego, a w przypadku fałszywych danych
