@@ -139,7 +139,8 @@ app.UseExceptionHandler(exceptionHandlerApp =>
                 detail: $"Wystąpił nieoczekiwany błąd. Kod błędu: {errorCode}",
                 statusCode: exception is AuthenticationException
                     ? StatusCodes.Status503ServiceUnavailable
-                    : StatusCodes.Status500InternalServerError
+                    : StatusCodes.Status500InternalServerError,
+                extensions: new Dictionary<string, object?> { ["errorCode"] = errorCode }
             )
             .ExecuteAsync(context);
     })
