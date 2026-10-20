@@ -37,9 +37,15 @@ export async function openFeedback(context: FeedbackContext): Promise<void> {
   openContext = context;
   let form: Awaited<ReturnType<FeedbackWidget['createForm']>> | undefined;
   let host: HTMLElement | undefined;
+  let background: HTMLElement[] = [];
+  const opener = document.activeElement;
+  const onKeyDown = (event: KeyboardEvent) => event.key === 'Escape' && close();
   const close = () => {
     form?.removeFromDom();
     host?.hidePopover();
+    document.removeEventListener('keydown', onKeyDown);
+    background.forEach((el) => (el.inert = false));
+    if (opener instanceof HTMLElement) opener.focus();
     openContext = undefined;
   };
   try {
@@ -59,6 +65,12 @@ export async function openFeedback(context: FeedbackContext): Promise<void> {
     form.appendToDom();
     host = topLayerHost(form.el);
     form.open();
+    background = [...document.body.children].filter(
+      (el): el is HTMLElement => el instanceof HTMLElement && el !== host && !el.inert
+    );
+    background.forEach((el) => (el.inert = true));
+    document.addEventListener('keydown', onKeyDown);
+    (form.el as HTMLElement).querySelector('textarea')?.focus();
   } catch {
     close();
     toast.error('Nie udało się otworzyć formularza zgłoszenia. Napisz na rejsy.help@ug.edu.pl.', false);

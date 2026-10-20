@@ -1,5 +1,5 @@
 import { expect, it } from 'vite-plus/test';
-import { createFormBreadcrumb, parseSampleRate } from '@/integrations/sentry/utils';
+import { createFormBreadcrumb, parseSampleRate, scrubSensitiveUrls } from '@/integrations/sentry/utils';
 
 it.each(['', 'Infinity', 'invalid', '10%'])('falls back for unusable sample rate %j', (value) => {
   expect(parseSampleRate(value, 0.1)).toBe(0.1);
@@ -27,5 +27,24 @@ it('reports failing field names without leaking their values or error text', () 
       form_error_fields: 'supervisorEmail',
       form_error_count: 1,
     },
+  });
+});
+it('filters token query parameters from URLs anywhere in an event', () => {
+  const event = {
+    request: { url: 'https://app/reset-password?emailBase64=YUBi&resetCode=SECRET' },
+    breadcrumbs: [
+      { data: { from: '/cruise-approval?cruiseApplicationId=7&supervisorCode=X', to: '/confirm-email?code=Y' } },
+    ],
+  };
+  expect(scrubSensitiveUrls(event)).toEqual({
+    request: { url: 'https://app/reset-password?emailBase64=[Filtered]&resetCode=[Filtered]' },
+    breadcrumbs: [
+      {
+        data: {
+          from: '/cruise-approval?cruiseApplicationId=7&supervisorCode=[Filtered]',
+          to: '/confirm-email?code=[Filtered]',
+        },
+      },
+    ],
   });
 });

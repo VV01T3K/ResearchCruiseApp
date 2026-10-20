@@ -2,13 +2,15 @@ import * as Sentry from '@sentry/react';
 
 import config from '@/config';
 import { setFeedbackEmail } from '@/integrations/sentry/feedback';
-import { createFormBreadcrumb, parseSampleRate } from '@/integrations/sentry/utils';
+import { createFormBreadcrumb, parseSampleRate, scrubSensitiveUrls } from '@/integrations/sentry/utils';
 import type { UserResponse } from '@/api/generated/schemas';
 
 type FieldMeta = { errors: Array<unknown> };
 
 export function initializeSentry(router: unknown): void {
   if (!config.sentryDsn) return;
+  // Replay records the landing URL without an SDK hook to filter it, so emailed token links are not recorded.
+  const recordReplay = scrubSensitiveUrls(window.location.href) === window.location.href;
 
   Sentry.init({
     dsn: config.sentryDsn,
@@ -16,11 +18,17 @@ export function initializeSentry(router: unknown): void {
     release: config.sentryRelease || `research-cruise-app-frontend@${config.version}`,
     integrations: [
       Sentry.tanstackRouterBrowserTracingIntegration(router),
-      Sentry.replayIntegration({
-        maskAllText: false,
-        maskAllInputs: false,
-        blockAllMedia: false,
-      }),
+      ...(recordReplay
+        ? [
+            Sentry.replayIntegration({
+              maskAllText: false,
+              maskAllInputs: false,
+              blockAllMedia: false,
+              beforeAddRecordingEvent: scrubSensitiveUrls,
+            }),
+          ]
+        : []),
+      { name: 'ScrubSensitiveUrls', processEvent: scrubSensitiveUrls },
     ],
     tracesSampleRate: parseSampleRate(config.sentryTracesSampleRate, 0.1),
     tracePropagationTargets: [config.apiUrl],
