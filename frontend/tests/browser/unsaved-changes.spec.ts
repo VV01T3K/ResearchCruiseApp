@@ -2,13 +2,14 @@ import type { Page } from '@playwright/test';
 import type { NetworkFixture } from '@msw/playwright';
 import {
   getGetApplicationFormAMockHandler,
+  getGetApplicationFormBMockHandler,
   getUpdateApplicationFormAMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
 import { getLoginMockHandler, getLogoutMockHandler } from '@/api/generated/mocks/auth/auth.msw.gen';
 import { HttpResponse } from 'msw';
 import { test, expect, applicationForms, dropFile } from './fixtures';
 import { admin, session } from '../data/accounts';
-import { applicationId, formA as formAFields } from '../data/forms';
+import { applicationId, formA as formAFields, formB as formBFields } from '../data/forms';
 
 const UNSAVED = 'Notatka, której nie zapisano';
 const formA = `/applications/${applicationId}/formA?mode=edit`;
@@ -128,6 +129,21 @@ test('restored edits keep newer server values in other fields', async ({ page, n
   await expect
     .poll(() => requests.bodies(`PUT /v2/applications/${applicationId}/form-a`))
     .toMatchObject([{ form: { cruiseHours: '99', periodNotes: UNSAVED } }]);
+});
+
+test('a restored table cell keeps newer server values in its row', async ({ page, network }) => {
+  await page.clock.install();
+  await page.goto(`/applications/${applicationId}/formB?mode=edit`);
+  const cell = (name: string) => page.locator(`input[name="ugTeams[0].${name}"]`);
+  await cell('noOfEmployees').fill('7');
+  await goHome(page);
+  await dialog(page).getByRole('button', { name: 'Opuść bez zapisywania' }).click();
+  const ugTeams = (formBFields().ugTeams ?? []).map((team) => ({ ...team, noOfStudents: '5' }));
+  network.use(getGetApplicationFormBMockHandler({ ...formBFields(), ugTeams }));
+  await page.clock.fastForward(2000);
+  await page.goBack();
+  await expect(cell('noOfStudents')).toHaveValue('5');
+  await expect(cell('noOfEmployees')).toHaveValue('7');
 });
 
 test('a restored past period keeps its dates', async ({ page }) => {
