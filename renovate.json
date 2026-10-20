@@ -1,6 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "enabledManagers": ["bun"],
-  "minimumReleaseAge": "7 days"
+  "packageRules": [
+    {
+      "matchManagers": ["bun"],
+      "minimumReleaseAge": "7 days"
+    }
+  ]
 }
