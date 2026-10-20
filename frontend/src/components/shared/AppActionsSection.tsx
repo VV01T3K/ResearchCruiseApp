@@ -37,8 +37,6 @@ export function AppActionsSection({ children }: Props) {
 
   return (
     <>
-      {/* The negative margin cancels AppLayout's bottom padding, so the page ends at the bar. */}
-      <div className="mt-8 -mb-4 h-(--actions-height) md:-mb-16" />
       <div
         ref={popoverRef}
         popover="manual"
@@ -50,6 +48,7 @@ export function AppActionsSection({ children }: Props) {
       >
         {children}
       </div>
+      <div className="mt-8 h-(--actions-height)" />
     </>
   );
 }

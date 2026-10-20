@@ -25,7 +25,7 @@ export function AppLayout({
   return (
     <motion.div
       className={cn(
-        'relative min-h-[calc(100vh-var(--header-height))] w-full will-change-transform',
+        'relative min-h-[calc(100vh-var(--header-height))] w-full will-change-transform has-data-actions-section:pb-0',
         useWidePadding ? outerPaddingVariants[variant] : 'md:p-8'
       )}
       initial={{ opacity: 0 }}
@@ -34,7 +34,7 @@ export function AppLayout({
     >
       <div
         className={cn(
-          'mx-auto rounded-xl bg-gray-50',
+          'mx-auto rounded-xl bg-gray-50 has-data-actions-section:pb-0',
           useWidePadding ? innerPaddingVariants[variant] : 'pb-4 md:p-8',
           variants[variant]
         )}
