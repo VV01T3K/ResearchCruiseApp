@@ -1,13 +1,16 @@
+import * as Sentry from '@sentry/react';
 import { afterEach, expect, it, vi } from 'vite-plus/test';
 import { ApiError } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { queryClient } from '@/integrations/tanstack/query/root-provider';
 
 vi.mock('@/config', () => ({ default: { apiUrl: 'https://api.test' } }));
+vi.mock('@sentry/react', () => ({ captureException: vi.fn() }));
 
 afterEach(() => {
   queryClient.clear();
   vi.restoreAllMocks();
+  vi.mocked(Sentry.captureException).mockClear();
 });
 
 it('reports failed actions that have no local error handler', async () => {
@@ -36,6 +39,28 @@ it('leaves form errors to the form without a duplicate notification', async () =
     },
   });
   await expect(mutation.execute(undefined)).rejects.toThrow('Brakuje skanu');
+  expect(showError).not.toHaveBeenCalled();
+});
+
+it('captures a locally handled failure once after retries without its variables', async () => {
+  const showError = vi.spyOn(toast, 'error').mockReturnValue('test');
+  const onError = vi.fn();
+  const error = new ApiError('Błąd serwera (502)', 502);
+  const mutation = queryClient.getMutationCache().build(queryClient, {
+    mutationKey: ['updateApplicationFormA'],
+    meta: { handlesError: true },
+    onError,
+    retry: 1,
+    retryDelay: 0,
+    mutationFn: async (_: { email: string }) => {
+      throw error;
+    },
+  });
+  await expect(mutation.execute({ email: 'private@example.com' })).rejects.toBe(error);
+  expect(Sentry.captureException).toHaveBeenCalledExactlyOnceWith(error, {
+    tags: { 'mutation.key': 'updateApplicationFormA', 'http.status_code': 502 },
+  });
+  expect(onError).toHaveBeenCalledOnce();
   expect(showError).not.toHaveBeenCalled();
 });
 

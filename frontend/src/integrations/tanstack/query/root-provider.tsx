@@ -2,6 +2,7 @@ import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@ta
 import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { FeedbackButton } from '@/integrations/sentry/FeedbackButton';
+import { captureMutationFailure } from '@/integrations/sentry/mutations';
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -13,6 +14,7 @@ export const queryClient = new QueryClient({
   }),
   mutationCache: new MutationCache({
     onError: (error, _variables, _context, mutation) => {
+      if (!mutation.meta?.skipsErrorReport) captureMutationFailure(error, mutation.options.mutationKey);
       if (!mutation.options.onError && !mutation.meta?.handlesError) {
         const operation = mutation.options.mutationKey?.[0];
         toast.error(

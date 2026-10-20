@@ -45,9 +45,12 @@ export function initializeSentry(router: RegisteredRouter): void {
 
 function pauseReplayOnSensitiveUrls(router: RegisteredRouter): void {
   let pausedMode: 'session' | 'buffer' | undefined;
-  const resume = () => {
+  let stopping = Promise.resolve();
+  const resume = async () => {
+    const stop = stopping;
+    await stop;
     const replay = Sentry.getReplay();
-    if (!replay || !pausedMode || hasSensitiveUrl(window.location.href)) return;
+    if (stop !== stopping || !replay || !pausedMode || hasSensitiveUrl(window.location.href)) return;
     if (pausedMode === 'session') replay.start();
     else replay.startBuffering();
     pausedMode = undefined;
@@ -56,10 +59,11 @@ function pauseReplayOnSensitiveUrls(router: RegisteredRouter): void {
     const replay = Sentry.getReplay();
     if (!replay) return;
     if (hasSensitiveUrl(url)) {
-      pausedMode ??= replay.getRecordingMode();
-      void replay.stop();
+      if (pausedMode) return;
+      pausedMode = replay.getRecordingMode();
+      stopping = replay.stop().catch(() => undefined);
     } else if (pausedMode) {
-      setTimeout(resume);
+      setTimeout(() => void resume());
     }
   };
   // Router pushes notify before the URL changes, so pausing precedes it and resuming waits for it.

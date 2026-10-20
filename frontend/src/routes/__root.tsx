@@ -79,6 +79,7 @@ function RootLayout() {
 function AppErrorHandler({ error }: ErrorComponentProps) {
   return (
     <>
+      <AppToaster />
       <div className="sticky top-0 z-100">
         <div className="relative z-100">
           <AppNavbar />
