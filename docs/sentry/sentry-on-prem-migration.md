@@ -114,7 +114,7 @@ In the production compose/host environment set:
 ```
 SENTRY_DSN_FRONTEND=<frontend-production DSN>
 SENTRY_DSN_BACKEND=<backend-production DSN>
-SENTRY_TRACES_SAMPLE_RATE=0.2
+SENTRY_TRACES_SAMPLE_RATE=0.4
 ```
 
 then restart the containers. Both application environments are already set by their production

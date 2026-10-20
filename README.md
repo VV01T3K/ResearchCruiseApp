@@ -12,8 +12,8 @@ See [backend development and checks](docs/backend-development.md) for setup, wor
 See [dependency maintenance](docs/dependency-maintenance.md) for installs, audits
 and Renovate.
 
-Production defaults sample 20% of traces (`SENTRY_TRACES_SAMPLE_RATE=0.2`, shared by frontend and
-backend) and 20% of replay sessions (`SENTRY_REPLAYS_SESSION_SAMPLE_RATE=0.2`); sessions with an
+Production defaults sample 40% of traces (`SENTRY_TRACES_SAMPLE_RATE=0.4`, shared by frontend and
+backend) and 40% of replay sessions (`SENTRY_REPLAYS_SESSION_SAMPLE_RATE=0.4`); sessions with an
 error are always replayed. Staging samples everything.
 
 ### Frontend
@@ -22,8 +22,8 @@ error are always replayed. Staging samples everything.
 | ------------------------------------ | -------------------------------------- | --------------------- | -------- |
 | `API_URL`                            | The address of the backend service     | `http://backend:8080` | Yes      |
 | `SENTRY_DSN`                         | Frontend Sentry DSN; empty disables it |                       | No       |
-| `SENTRY_TRACES_SAMPLE_RATE`          | Frontend trace sampling rate           | `0.2`                 | No       |
-| `SENTRY_REPLAYS_SESSION_SAMPLE_RATE` | Frontend replay session sampling rate  | `0.2`                 | No       |
+| `SENTRY_TRACES_SAMPLE_RATE`          | Frontend trace sampling rate           | `0.4`                 | No       |
+| `SENTRY_REPLAYS_SESSION_SAMPLE_RATE` | Frontend replay session sampling rate  | `0.4`                 | No       |
 
 ### Backend
 
@@ -35,7 +35,7 @@ error are always replayed. Staging samples everything.
 | `ConnectionStrings__Database`           | Database connection string                     | `db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False` | Yes      |
 | `FrontendUrl`                           | Frontend URL - for CORS and email verification | `http://localhost:3000`                                                         | Yes      |
 | `Sentry__Dsn`                           | Backend Sentry DSN; empty disables it          |                                                                                 | No       |
-| `Sentry__TracesSampleRate`              | Backend trace sampling rate                    | `0.2`                                                                           | No       |
+| `Sentry__TracesSampleRate`              | Backend trace sampling rate                    | `0.4`                                                                           | No       |
 | `SmtpSettings__SmtpServer`              | SMTP server address                            | `smtp.gmail.com`                                                                | Yes      |
 | `SmtpSettings__SmtpPort`                | SMTP server port                               | `465`                                                                           | No       |
 | `SmtpSettings__SmtpUsername`            | SMTP mailbox address                 | `example@gmail.com`                                                             | Yes      |
