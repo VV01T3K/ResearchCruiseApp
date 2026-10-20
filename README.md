@@ -10,7 +10,7 @@ See [backend development and checks](docs/backend-development.md) for setup, wor
 ## Configuration
 
 See [dependency maintenance](docs/dependency-maintenance.md) for installs, audits
-and Dependabot.
+and Renovate.
 
 ### Frontend
 
