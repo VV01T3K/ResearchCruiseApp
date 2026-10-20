@@ -9,25 +9,18 @@ type Props = {
 export function AppActionsSection({ children }: Props) {
   const [isSticky, setIsSticky] = React.useState(false);
   const popoverRef = React.useRef<HTMLDivElement>(null);
-  const spacerRef = React.useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
 
   React.useEffect(() => {
     const popover = popoverRef.current;
-    const spacer = spacerRef.current;
-    if (!popover || !spacer) {
+    if (!popover) {
       return;
     }
     popover.showPopover();
     const observer = new ResizeObserver(() => {
-      const height = popover.offsetHeight + 16;
-      const belowSpacer =
-        document.documentElement.scrollHeight - spacer.getBoundingClientRect().bottom - window.scrollY;
-      document.documentElement.style.setProperty('--actions-height', `${height}px`);
-      spacer.style.height = `${Math.max(0, height - belowSpacer)}px`;
+      document.documentElement.style.setProperty('--actions-height', `${popover.offsetHeight + 16}px`);
     });
     observer.observe(popover);
-    observer.observe(spacer.parentElement ?? document.body);
     return () => {
       observer.disconnect();
       document.documentElement.style.removeProperty('--actions-height');
@@ -44,7 +37,8 @@ export function AppActionsSection({ children }: Props) {
 
   return (
     <>
-      <div ref={spacerRef} className="flow-root h-(--actions-height)" />
+      {/* The negative margin cancels AppLayout's bottom padding, so the page ends at the bar. */}
+      <div className="mt-8 -mb-4 h-(--actions-height) md:-mb-16" />
       <div
         ref={popoverRef}
         popover="manual"
