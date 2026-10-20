@@ -112,7 +112,10 @@ test('edits left without saving come back on return', async ({ page }) => {
 });
 
 test('restored edits keep newer server values in other fields', async ({ page, network, requests }) => {
-  await page.clock.install();
+  await page.clock.install({ time: new Date('2026-10-15T12:00:00') });
+  // Loaded with a future period; the server later moves it into the past.
+  const future: [string, string] = ['22', '24'];
+  network.use(getGetApplicationFormAMockHandler({ ...formAFields(), acceptablePeriod: future, optimalPeriod: future }));
   await page.goto(formA);
   await notes(page).fill(UNSAVED);
   await goHome(page);
@@ -128,7 +131,7 @@ test('restored edits keep newer server values in other fields', async ({ page, n
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
   await expect
     .poll(() => requests.bodies(`PUT /v2/applications/${applicationId}/form-a`))
-    .toMatchObject([{ form: { cruiseHours: '99', periodNotes: UNSAVED } }]);
+    .toMatchObject([{ form: { cruiseHours: '99', acceptablePeriod: ['0', '24'], periodNotes: UNSAVED } }]);
 });
 
 test('a restored table cell keeps newer server values in its row', async ({ page, network }) => {
