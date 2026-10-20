@@ -34,7 +34,11 @@ export function captureMutationFailure(error: unknown, mutationKey: readonly unk
 
 const reportedRefusalsKey = 'sentry.reportedRefusals';
 
+const reportedRefusals = new Set<string>();
+
 function markFirstReport(key: string): boolean {
+  if (reportedRefusals.has(key)) return false;
+  reportedRefusals.add(key);
   try {
     const reported = JSON.parse(sessionStorage.getItem(reportedRefusalsKey) ?? '[]') as string[];
     if (reported.includes(key)) return false;

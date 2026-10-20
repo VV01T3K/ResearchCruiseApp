@@ -3,11 +3,20 @@ import { expect, it, vi } from 'vite-plus/test';
 import { ApiError } from '@/api/errors';
 import { captureHandledRefusal, isUnexplainedFailure } from '@/integrations/sentry/mutations';
 
-vi.mock('@sentry/react', () => ({ captureException: vi.fn(), captureMessage: vi.fn() }));
+vi.mock('@sentry/react', () => ({
+  captureException: vi.fn(),
+  captureMessage: vi.fn(),
+}));
 
 it.each([
   ['network rejection', new TypeError('Failed to fetch'), true],
-  ['wrapped network rejection', new Error('Session refresh failed', { cause: new TypeError('Failed to fetch') }), true],
+  [
+    'wrapped network rejection',
+    new Error('Session refresh failed', {
+      cause: new TypeError('Failed to fetch'),
+    }),
+    true,
+  ],
   ['proxy 502', new ApiError('Błąd serwera (502)', 502), true],
   ['proxy 503', new ApiError('Błąd serwera (503)', 503, {}), true],
   ['proxy 504', new ApiError('Błąd serwera (504)', 504), true],
@@ -15,17 +24,28 @@ it.each([
   ['unexpected exception', new Error('boom'), true],
   [
     '500 with generic fallback detail',
-    new ApiError('Wystąpił błąd serwera.', 500, { detail: 'Wystąpił błąd serwera.' }),
+    new ApiError('Wystąpił błąd serwera.', 500, {
+      detail: 'Wystąpił błąd serwera.',
+    }),
     true,
   ],
   [
     '500 with support code',
-    new ApiError('Kod błędu: 0HN1', 500, { detail: 'Kod błędu: 0HN1', errorCode: '0HN1' } as never),
+    new ApiError('Kod błędu: 0HN1', 500, {
+      detail: 'Kod błędu: 0HN1',
+      errorCode: '0HN1',
+    } as never),
     false,
   ],
   ['500 with field errors', new ApiError('Zły plik', 500, { errors: { file: ['Zły plik'] } }), false],
   ['unexplained 4xx', new ApiError('Żądanie nie powiodło się (HTTP 404)', 404), false],
-  ['wrapped 401', new Error('Session refresh failed', { cause: new ApiError('Sesja wygasła', 401) }), false],
+  [
+    'wrapped 401',
+    new Error('Session refresh failed', {
+      cause: new ApiError('Sesja wygasła', 401),
+    }),
+    false,
+  ],
   ['abort', new DOMException('The user aborted a request.', 'AbortError'), false],
 ] as const)('classifies %s', (_, error, expected) => {
   expect(isUnexplainedFailure(error)).toBe(expected);
@@ -49,5 +69,29 @@ it('reports each handled refusal once per operation and status in a session', ()
     ['handled-refusal', 'form-b.submit', '400'],
     ['handled-refusal', 'form-b.draft', '403'],
   ]);
+  vi.unstubAllGlobals();
+});
+
+it('keeps the refusal limit when session storage throws', () => {
+  vi.mocked(Sentry.captureMessage).mockClear();
+  vi.stubGlobal('sessionStorage', {
+    getItem: () => {
+      throw new DOMException('Blocked', 'SecurityError');
+    },
+    setItem: () => {
+      throw new DOMException('Full', 'QuotaExceededError');
+    },
+  });
+  captureHandledRefusal('form-b.blocked', new ApiError('Odmowa', 403));
+  captureHandledRefusal('form-b.blocked', new ApiError('Odmowa', 403));
+  vi.stubGlobal('sessionStorage', {
+    getItem: () => null,
+    setItem: () => {
+      throw new DOMException('Full', 'QuotaExceededError');
+    },
+  });
+  captureHandledRefusal('form-b.quota', new ApiError('Odmowa', 403));
+  captureHandledRefusal('form-b.quota', new ApiError('Odmowa', 403));
+  expect(vi.mocked(Sentry.captureMessage)).toHaveBeenCalledTimes(2);
   vi.unstubAllGlobals();
 });
