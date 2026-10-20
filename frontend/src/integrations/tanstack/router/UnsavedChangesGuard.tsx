@@ -1,4 +1,4 @@
-import { type AnyFormApi, evaluate } from '@tanstack/react-form';
+import { type AnyFormApi, evaluate, getBy, setBy } from '@tanstack/react-form';
 import { useBlocker, useLocation } from '@tanstack/react-router';
 import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
@@ -59,17 +59,17 @@ export function UnsavedChangesGuard({ form, defaultValues, disabled = false, chi
   }, [form, disabled, pathname]);
 
   // TanStack stops applying newer server values once a field is touched, as a restore does.
-  // Fields not edited here keep following them.
+  // Fields and cells not edited here keep following them.
   useEffect(() => {
     if (evaluate(appliedDefaults.current, defaultValues)) return;
     appliedDefaults.current = defaultValues;
-    const edited = new Set(
-      Object.keys(form.state.fieldMeta)
-        .filter((name) => form.state.fieldMeta[name]?.isDirty)
-        .map((name) => name.split(/[.[]/)[0])
-    );
-    Object.entries(defaultValues)
-      .filter(([name, value]) => !edited.has(name) && !evaluate(value, form.state.values[name]))
+    // Newer server values with the local edits laid over them, parents first.
+    const merged: Record<string, unknown> = Object.keys(form.state.fieldMeta)
+      .filter((name) => form.state.fieldMeta[name]?.isDirty)
+      .sort((a, b) => a.length - b.length)
+      .reduce((values, name) => setBy(values, name, getBy(form.state.values, name)), defaultValues);
+    Object.entries(merged)
+      .filter(([name, value]) => !evaluate(value, form.state.values[name]))
       .forEach(([name, value]) => form.setFieldValue(name, value, { dontUpdateMeta: true }));
   });
 
