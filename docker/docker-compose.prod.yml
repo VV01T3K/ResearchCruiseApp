@@ -10,7 +10,7 @@ services:
       - SmtpSettings__SmtpUsername=${SMTP_USERNAME:?Set SMTP_USERNAME in the deployment environment}
       - SmtpSettings__SmtpPassword=${SMTP_PASSWORD:?Set SMTP_PASSWORD in the deployment environment}
       - Sentry__Dsn=${SENTRY_DSN_BACKEND:-${SENTRY_DSN:-}}
-      - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
+      - Sentry__TracesSampleRate=${SENTRY_TRACES_SAMPLE_RATE:-0.2}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
@@ -20,7 +20,7 @@ services:
     image: ghcr.io/vv01t3k/researchcruiseapp/frontend
     environment:
       - SENTRY_DSN=${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
-      - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-0.1}
-      - SENTRY_REPLAYS_SESSION_SAMPLE_RATE=${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-0.1}
+      - SENTRY_TRACES_SAMPLE_RATE=${SENTRY_TRACES_SAMPLE_RATE:-0.2}
+      - SENTRY_REPLAYS_SESSION_SAMPLE_RATE=${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-0.2}
     ports:
       - 8080:8080

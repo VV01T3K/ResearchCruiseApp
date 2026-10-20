@@ -21,9 +21,9 @@ export function initializeSentry(router: unknown): void {
         blockAllMedia: false,
       }),
     ],
-    tracesSampleRate: parseSampleRate(config.sentryTracesSampleRate, 0.1),
+    tracesSampleRate: parseSampleRate(config.sentryTracesSampleRate, 0.2),
     tracePropagationTargets: [config.apiUrl],
-    replaysSessionSampleRate: parseSampleRate(config.sentryReplaysSessionSampleRate, 0.1),
+    replaysSessionSampleRate: parseSampleRate(config.sentryReplaysSessionSampleRate, 0.2),
     replaysOnErrorSampleRate: 1,
   });
 }
