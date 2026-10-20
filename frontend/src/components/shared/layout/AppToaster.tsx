@@ -3,7 +3,9 @@ import CheckCircleIcon from 'bootstrap-icons/icons/check-circle-fill.svg?react';
 import ExclamationCircleIcon from 'bootstrap-icons/icons/exclamation-circle-fill.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 
-import { toastManager } from './toast';
+import { FeedbackButton } from '@/integrations/sentry/FeedbackButton';
+
+import { type ToastData, toastManager } from './toast';
 
 function ToastIcon({ type }: { type?: string }) {
   if (type === 'success') {
@@ -19,7 +21,7 @@ function ToastIcon({ type }: { type?: string }) {
 }
 
 function ToastList() {
-  const { toasts } = Toast.useToastManager();
+  const { toasts } = Toast.useToastManager<ToastData>();
 
   return toasts.map((t) => (
     <Toast.Root
@@ -31,7 +33,12 @@ function ToastList() {
       <Toast.Content className="overflow-hidden transition-opacity [transition-duration:250ms] data-[behind]:pointer-events-none data-[behind]:opacity-0 data-[expanded]:pointer-events-auto data-[expanded]:opacity-100">
         <div className="flex items-center gap-4" data-testid={`toast-${t.type}`}>
           <ToastIcon type={t.type} />
-          <Toast.Description className="flex-1 text-sm" />
+          <div className="flex flex-1 flex-col items-start gap-1">
+            <Toast.Description className="text-sm" />
+            {t.type === 'error' && t.data?.report && (
+              <FeedbackButton context={{ ...t.data.report, origin: 'toast' }} className="text-primary" />
+            )}
+          </div>
           {t.type !== 'loading' && (
             <Toast.Close
               className="flex h-6 w-6 items-center justify-center rounded-md text-gray-500 hover:cursor-pointer hover:bg-black/5 hover:text-gray-700"

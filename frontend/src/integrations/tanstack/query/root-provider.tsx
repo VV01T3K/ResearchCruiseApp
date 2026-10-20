@@ -13,7 +13,10 @@ export const queryClient = new QueryClient({
   mutationCache: new MutationCache({
     onError: (error, _variables, _context, mutation) => {
       if (!mutation.options.onError && !mutation.meta?.handlesError) {
-        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
+        const operation = mutation.options.mutationKey?.[0];
+        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'), {
+          operation: typeof operation === 'string' ? operation : undefined,
+        });
       }
     },
   }),
