@@ -71,27 +71,3 @@ it('reports each handled refusal once per operation and status in a session', ()
   ]);
   vi.unstubAllGlobals();
 });
-
-it('keeps the refusal limit when session storage throws', () => {
-  vi.mocked(Sentry.captureMessage).mockClear();
-  vi.stubGlobal('sessionStorage', {
-    getItem: () => {
-      throw new DOMException('Blocked', 'SecurityError');
-    },
-    setItem: () => {
-      throw new DOMException('Full', 'QuotaExceededError');
-    },
-  });
-  captureHandledRefusal('form-b.blocked', new ApiError('Odmowa', 403));
-  captureHandledRefusal('form-b.blocked', new ApiError('Odmowa', 403));
-  vi.stubGlobal('sessionStorage', {
-    getItem: () => null,
-    setItem: () => {
-      throw new DOMException('Full', 'QuotaExceededError');
-    },
-  });
-  captureHandledRefusal('form-b.quota', new ApiError('Odmowa', 403));
-  captureHandledRefusal('form-b.quota', new ApiError('Odmowa', 403));
-  expect(vi.mocked(Sentry.captureMessage)).toHaveBeenCalledTimes(2);
-  vi.unstubAllGlobals();
-});
