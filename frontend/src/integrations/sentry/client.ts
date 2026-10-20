@@ -11,6 +11,8 @@ export function initializeSentry(router: unknown): void {
 
   Sentry.init({
     dsn: config.sentryDsn,
+    // Sentry calls this option `tunnel`: events go to our own nginx proxy instead of the DSN host.
+    tunnel: config.sentryProxy || undefined,
     environment: config.environment,
     release: config.sentryRelease || `research-cruise-app-frontend@${config.version}`,
     integrations: [
