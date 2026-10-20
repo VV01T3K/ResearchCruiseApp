@@ -4,11 +4,15 @@
   "tools": {
     "csharpier": {
       "version": "1.3.0",
-      "commands": ["csharpier"]
+      "commands": [
+        "csharpier"
+      ]
     },
     "dotnet-ef": {
-      "version": "10.0.12",
-      "commands": ["dotnet-ef"]
+      "version": "10.0.13",
+      "commands": [
+        "dotnet-ef"
+      ]
     }
   }
 }
