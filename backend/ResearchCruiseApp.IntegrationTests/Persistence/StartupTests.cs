@@ -1,7 +1,11 @@
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Persistence;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
@@ -173,5 +177,51 @@ public sealed class StartupTests(SqlFixture fixture) : IAsyncLifetime
                 StringComparer.Ordinal
             )
         );
+    }
+
+    [Fact]
+    public async Task Initialize_WhenMigrationsArePending_AppliesThemOnlyWhenEnabled()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var connection = new SqlConnectionStringBuilder(fixture.ConnectionString);
+        connection.InitialCatalog += "_Pending";
+        await using var db = new ApplicationDbContext(
+            new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseSqlServer(connection.ConnectionString)
+                .Options
+        );
+        try
+        {
+            var migrations = db.Database.GetMigrations().ToArray();
+            await db.GetService<IMigrator>().MigrateAsync(migrations[^2], ct);
+            await using var app = new TestApplication(connection.ConnectionString);
+            async Task Initialize(bool applyMigrations)
+            {
+                await using var scope = app.Services.CreateAsyncScope();
+                var configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
+                configuration["Database:ApplyMigrations"] = applyMigrations.ToString();
+                await ActivatorUtilities
+                    .CreateInstance<ApplicationDbContextInitializer>(
+                        scope.ServiceProvider,
+                        configuration
+                    )
+                    .Initialize();
+            }
+
+            var error = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                Initialize(false)
+            );
+            Assert.Contains(migrations[^1], error.Message, StringComparison.Ordinal);
+            Assert.Equal(migrations[..^1], await db.Database.GetAppliedMigrationsAsync(ct));
+            Assert.Empty(await db.UgUnits.ToListAsync(ct));
+
+            await Initialize(true);
+            Assert.Equal(migrations, await db.Database.GetAppliedMigrationsAsync(ct));
+            Assert.NotEmpty(await db.UgUnits.ToListAsync(ct));
+        }
+        finally
+        {
+            await db.Database.EnsureDeletedAsync(CancellationToken.None);
+        }
     }
 }
