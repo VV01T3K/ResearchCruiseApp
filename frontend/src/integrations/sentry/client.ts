@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/react';
 
 import config from '@/config';
+import { setFeedbackEmail } from '@/integrations/sentry/feedback';
 import { createFormBreadcrumb, parseSampleRate } from '@/integrations/sentry/utils';
 import type { UserResponse } from '@/api/generated/schemas';
 
@@ -29,6 +30,7 @@ export function initializeSentry(router: unknown): void {
 }
 
 export function setSentryUser(user: UserResponse | undefined): void {
+  setFeedbackEmail(user?.email);
   if (!user) {
     Sentry.setUser(null);
     Sentry.setTag('user.roles', undefined);
