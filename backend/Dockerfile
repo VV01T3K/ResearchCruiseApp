@@ -26,7 +26,7 @@ RUN --mount=type=secret,id=sentry_auth_token,required=false \
     --no-restore \
     /p:UseAppHost=false /p:OpenApiGenerateDocuments=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0.12-alpine3.24
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.13-alpine3.24
 
 RUN apk add --no-cache curl icu-libs tzdata
 
