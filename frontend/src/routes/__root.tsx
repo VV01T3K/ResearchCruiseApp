@@ -39,12 +39,14 @@ const TanStackRouterDevtools = config.dev
   ? lazy(() => import('@tanstack/react-router-devtools').then((module) => ({ default: module.TanStackRouterDevtools })))
   : () => null;
 
+const toastFeedbackAction = <FeedbackButton context={{ origin: 'toast' }} className="text-primary" />;
+
 function RootLayout() {
   const routerState = useRouterState();
 
   return (
     <AuthSession>
-      <AppToaster errorAction={<FeedbackButton context={{ origin: 'toast' }} className="text-primary" />} />
+      <AppToaster errorAction={toastFeedbackAction} />
       <div className="sticky top-0 z-100">
         <div className="relative z-100">
           <AppNavbar />
@@ -79,7 +81,7 @@ function RootLayout() {
 function AppErrorHandler({ error }: ErrorComponentProps) {
   return (
     <>
-      <AppToaster />
+      <AppToaster errorAction={toastFeedbackAction} />
       <div className="sticky top-0 z-100">
         <div className="relative z-100">
           <AppNavbar />
