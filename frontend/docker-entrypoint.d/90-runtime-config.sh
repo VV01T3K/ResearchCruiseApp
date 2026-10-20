@@ -35,6 +35,7 @@ dsn=$(sanitize "${SENTRY_DSN:-}")
 if [ -n "$dsn" ]; then
   scheme=${dsn%%://*}
   host_and_path=${dsn#*://}
+  public_key=${host_and_path%%[:@]*}
   host_and_path=${host_and_path#*@}
   project_id=${host_and_path##*/}
   base=${host_and_path%/*}
@@ -44,6 +45,8 @@ if [ -n "$dsn" ]; then
     http:* | https:*) valid=true ;;
     *) valid=false ;;
   esac
+  case "$dsn" in *://*@*) ;; *) valid=false ;; esac
+  case "$public_key" in '' | *[!A-Za-z0-9]*) valid=false ;; esac
   case "$project_id" in '' | *[!0-9]*) valid=false ;; esac
   case "$base" in '' | *[!A-Za-z0-9.:/_-]*) valid=false ;; esac
   [ -n "$resolvers" ] || valid=false
@@ -69,6 +72,8 @@ location = $sentry_proxy {
     proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
     proxy_set_header Cookie "";
     proxy_set_header Authorization "";
+    # Without request auth, Sentry takes the project from the envelope body instead of the URL.
+    proxy_set_header X-Sentry-Auth "Sentry sentry_key=$public_key, sentry_version=7";
     proxy_set_header X-Forwarded-For "";
 }
 EOF

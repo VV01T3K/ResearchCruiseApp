@@ -79,6 +79,10 @@ therefore proxies browser events to Sentry (Sentry's docs call this the
   `SENTRY_DSN` and adds `POST /monitoring` to nginx, which forwards only to that project.
   The SDK sends to `/monitoring` instead of the DSN host. Staging uses the same path to cloud,
   which also keeps ad blockers from dropping events.
+- nginx authenticates every request with the DSN's public key. Without that, Sentry would route an
+  envelope to whichever project its own `dsn` header names; with it, Sentry rejects envelopes
+  naming another project (`400`). Client-supplied keys, in headers or the query string, are
+  replaced.
 - nginx strips cookies, `Authorization`, and `X-Forwarded-For` before forwarding, so Sentry sees
   the server's address rather than the user's.
 - The frontend container must be able to resolve and reach the Sentry hostname. If the DSN is
