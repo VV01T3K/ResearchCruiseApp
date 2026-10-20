@@ -10,7 +10,16 @@ it.each([
   ['proxy 504', new ApiError('Błąd serwera (504)', 504), true],
   ['unexplained 500', new ApiError('Błąd serwera (500)', 500, { detail: ' ' }), true],
   ['unexpected exception', new Error('boom'), true],
-  ['500 with support code', new ApiError('Kod błędu: 0HN1', 500, { detail: 'Kod błędu: 0HN1' }), false],
+  [
+    '500 with generic fallback detail',
+    new ApiError('Wystąpił błąd serwera.', 500, { detail: 'Wystąpił błąd serwera.' }),
+    true,
+  ],
+  [
+    '500 with support code',
+    new ApiError('Kod błędu: 0HN1', 500, { detail: 'Kod błędu: 0HN1', errorCode: '0HN1' } as never),
+    false,
+  ],
   ['500 with field errors', new ApiError('Zły plik', 500, { errors: { file: ['Zły plik'] } }), false],
   ['unexplained 4xx', new ApiError('Żądanie nie powiodło się (HTTP 404)', 404), false],
   ['wrapped 401', new Error('Session refresh failed', { cause: new ApiError('Sesja wygasła', 401) }), false],

@@ -9,8 +9,12 @@ function rootCause(error: unknown): unknown {
 export function isUnexplainedFailure(error: unknown): boolean {
   const cause = rootCause(error);
   if (cause instanceof ApiError) {
-    const { detail, errors } = cause.problem ?? {};
-    const explained = [detail, ...Object.values(errors ?? {}).flat()].some((message) => message?.trim());
+    const problem = cause.problem ?? {};
+    const explained =
+      'errorCode' in problem ||
+      Object.values(problem.errors ?? {})
+        .flat()
+        .some((message) => message.trim());
     return cause.status >= 500 && !explained;
   }
   return !(cause instanceof Error && cause.name === 'AbortError');
