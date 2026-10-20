@@ -54,5 +54,6 @@
       "addLabels": ["github_actions"]
     }
   ],
-  "labels": ["dependencies"]
+  "labels": ["dependencies"],
+  "prHourlyLimit": 15
 }
