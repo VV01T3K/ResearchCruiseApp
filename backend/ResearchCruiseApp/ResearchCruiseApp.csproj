@@ -7,7 +7,7 @@
     <RootNamespace>ResearchCruiseApp</RootNamespace>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <UserSecretsId>36dfba4d-eec1-47b9-ab0e-59344a3424a8</UserSecretsId>
-    <Version>2.5.1</Version>
+    <Version>3.0.0</Version>
     <!--
       Keep the single v2 OpenAPI document instead of Asp.Versioning.OpenApi: its transformer turns
       string parameter defaults into single-value enums and titles build-time documents
