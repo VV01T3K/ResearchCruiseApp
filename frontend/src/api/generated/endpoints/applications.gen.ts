@@ -45,10 +45,6 @@ import { customFetch } from '../../fetch.ts';
 import type { ErrorType } from '../../fetch.ts';
 
 
-type AwaitedInput<T> = PromiseLike<T> | T;
-
-      type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
-
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
