@@ -143,6 +143,7 @@ type Props = {
   enableDragAndDrop: boolean;
   dayDropId: string;
   isDropPreview: boolean;
+  isToday: boolean;
   activeDragEventId?: string;
 };
 export function AppCalendarTile({
@@ -153,11 +154,10 @@ export function AppCalendarTile({
   enableDragAndDrop,
   dayDropId,
   isDropPreview,
+  isToday,
   activeDragEventId,
 }: Props) {
   const isCurrentMonth = date.getMonth() === currentMonth.month;
-  const [todayUtc] = React.useState(() => dateToUtcDay(new Date()));
-  const isToday = dateToUtcDay(date) === todayUtc;
   const isSunday = date.getDay() === 0;
   const { isOver, setNodeRef } = useDroppable({ id: dayDropId, disabled: !enableDragAndDrop });
 
