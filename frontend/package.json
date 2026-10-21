@@ -35,7 +35,7 @@
     "@tanstack/react-virtual": "^3.14.13",
     "bootstrap-icons": "^1.13.1",
     "clsx": "^2.1.1",
-    "motion": "^12.43.0",
+    "motion": "^14.0.0",
     "papaparse": "^5.7.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
