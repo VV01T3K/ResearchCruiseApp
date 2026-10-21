@@ -35,7 +35,7 @@ type Props = {
 };
 export function AppDatePickerTimeInput({
   name,
-  value,
+  value: time,
   onChange,
   onBlur,
   errors,
@@ -47,16 +47,10 @@ export function AppDatePickerTimeInput({
   maximalTime,
   minuteStep = 1,
 }: Props) {
-  const [time, setTime] = React.useState<Time | undefined>(value);
   const [expanded, setExpanded] = React.useState(false);
 
   const inputRef = React.useRef<HTMLDivElement>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-    setTime(value);
-  }, [value]);
 
   useOutsideClickDetection({
     refs: [inputRef, dropdownRef],

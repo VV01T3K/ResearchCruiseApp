@@ -39,13 +39,13 @@ it('captures a locally handled failure once after retries without its variables'
   const showError = vi.spyOn(toast, 'error').mockReturnValue('test');
   const onError = vi.fn();
   const error = new ApiError('Błąd serwera (502)', 502);
-  const mutation = queryClient.getMutationCache().build(queryClient, {
+  const mutation = queryClient.getMutationCache().build<unknown, Error, { email: string }, unknown>(queryClient, {
     mutationKey: ['updateApplicationFormA'],
     meta: { handlesError: true },
     onError,
     retry: 1,
     retryDelay: 0,
-    mutationFn: async (_: { email: string }) => {
+    mutationFn: async () => {
       throw error;
     },
   });

@@ -47,9 +47,9 @@ type Props = {
 export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   const DAY_MS = 24 * 60 * 60 * 1000;
   const DRAG_CURSOR_Y_NUDGE = 4;
-  const [currentMonth, setCurrentMonth] = React.useState({
-    month: new Date().getMonth(),
-    year: new Date().getFullYear(),
+  const [currentMonth, setCurrentMonth] = React.useState(() => {
+    const now = new Date();
+    return { month: now.getMonth(), year: now.getFullYear() };
   });
   const [previousMonth, setPreviousMonth] = React.useState(currentMonth);
   const [dropPreviewDays, setDropPreviewDays] = React.useState<number[]>([]);
@@ -340,25 +340,16 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
     }
   }
 
-  React.useEffect(() => {
-    if (!pendingDrop) {
-      return;
-    }
-
-    const updatedEvent = events.find((calendarEvent) => calendarEvent.id === pendingDrop.eventId);
-    if (!updatedEvent) {
-      return;
-    }
-
-    if (
-      updatedEvent.start.getTime() === pendingDrop.nextStartMs &&
-      updatedEvent.end.getTime() === pendingDrop.nextEndMs
-    ) {
-      setActiveDragEventId(undefined);
-      setDropPreviewDays([]);
-      setPendingDrop(undefined);
-    }
-  }, [events, pendingDrop]);
+  const droppedEvent = pendingDrop && events.find((calendarEvent) => calendarEvent.id === pendingDrop.eventId);
+  if (
+    droppedEvent &&
+    droppedEvent.start.getTime() === pendingDrop.nextStartMs &&
+    droppedEvent.end.getTime() === pendingDrop.nextEndMs
+  ) {
+    setActiveDragEventId(undefined);
+    setDropPreviewDays([]);
+    setPendingDrop(undefined);
+  }
 
   const eventsWithRows = React.useMemo(() => assignEventsToRows(events), [events]);
   const displayedMonthDays = React.useMemo(() => getDaysInMonth(currentMonth), [currentMonth]);
