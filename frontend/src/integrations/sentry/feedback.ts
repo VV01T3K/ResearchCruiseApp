@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/react';
 import { useSyncExternalStore } from 'react';
 
+import type { FeedbackAttachment } from '@/integrations/sentry/attachments';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 
 export type FeedbackContext = { origin: 'layout' | 'help' | 'toast' | 'form'; operation?: string; eventId?: string };
@@ -41,7 +42,7 @@ export function useFeedbackState(): FeedbackState {
 
 export function sendFeedback(
   { origin, operation, eventId: associatedEventId }: FeedbackContext,
-  feedback: { message: string; email: string }
+  { attachments, ...feedback }: { message: string; email?: string; attachments: FeedbackAttachment[] }
 ): Promise<void> {
   const client = Sentry.getClient();
   if (!client) return Promise.reject(new Error('Sentry is not initialized'));
@@ -54,7 +55,10 @@ export function sendFeedback(
       associatedEventId,
       tags: { 'feedback.origin': origin, ...(operation && { 'feedback.operation': operation }) },
     },
-    { includeReplay: true }
+    {
+      includeReplay: true,
+      attachments: attachments.map(({ filename, contentType, data }) => ({ filename, contentType, data })),
+    }
   );
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
