@@ -70,7 +70,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
     return { month: now.getMonth(), year: now.getFullYear() };
   });
   const [previousMonth, setPreviousMonth] = React.useState(currentMonth);
-  const todayUtc = React.useSyncExternalStore(subscribeToDayChange, getTodayUtc);
+  const todayUtc = React.useSyncExternalStore(subscribeToDayChange, getTodayUtc, getTodayUtc);
   const [dropPreviewDays, setDropPreviewDays] = React.useState<number[]>([]);
   const [activeDragEventId, setActiveDragEventId] = React.useState<string | undefined>(undefined);
   const [pendingDrop, setPendingDrop] = React.useState<
