@@ -31,9 +31,9 @@
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Http" Version="10.2.3" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="10.2.1" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />
     <PackageReference Include="MailKit" Version="4.18.1" />
-    <PackageReference Include="MimeKit" Version="4.18.1" />
+    <PackageReference Include="MimeKit" Version="4.18.2" />
     <!-- MimeKit resolves 10.0.0, affected by GHSA-846f-f764-76mx; pin the patched release. -->
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.13" />
@@ -51,7 +51,7 @@
       Version="10.0.13"
       PrivateAssets="all"
     />
-    <PackageReference Include="Microsoft.OpenApi" Version="2.12.2" />
+    <PackageReference Include="Microsoft.OpenApi" Version="2.13.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.13">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -64,8 +64,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
     <PackageReference Include="NuGet.Packaging" Version="6.14.3" />
     <PackageReference Include="NuGet.Protocol" Version="6.14.3" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.17.10" />
-    <PackageReference Include="Sentry.AspNetCore" Version="6.11.1" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.18.2" />
+    <PackageReference Include="Sentry.AspNetCore" Version="6.12.1" />
     <PackageReference Include="UrlBase64" Version="2.0.0" />
   </ItemGroup>
 
