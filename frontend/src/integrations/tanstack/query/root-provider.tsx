@@ -14,13 +14,15 @@ export const queryClient = new QueryClient({
   }),
   mutationCache: new MutationCache({
     onError: (error, _variables, _context, mutation) => {
-      if (!mutation.meta?.skipsErrorReport) captureMutationFailure(error, mutation.options.mutationKey);
+      const eventId = mutation.meta?.skipsErrorReport
+        ? undefined
+        : captureMutationFailure(error, mutation.options.mutationKey);
       if (!mutation.options.onError && !mutation.meta?.handlesError) {
         const operation = mutation.options.mutationKey?.[0];
         toast.error(
           getErrorMessage(error, 'Operacja nie powiodła się'),
           <FeedbackButton
-            context={{ origin: 'toast', operation: typeof operation === 'string' ? operation : undefined }}
+            context={{ origin: 'toast', operation: typeof operation === 'string' ? operation : undefined, eventId }}
             className="text-primary"
           />
         );

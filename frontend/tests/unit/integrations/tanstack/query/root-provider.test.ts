@@ -15,17 +15,18 @@ afterEach(() => {
 
 it('reports failed actions that have no local error handler', async () => {
   const showError = vi.spyOn(toast, 'error').mockReturnValue('test');
+  vi.mocked(Sentry.captureException).mockReturnValueOnce('event-1');
   const mutation = queryClient.getMutationCache().build(queryClient, {
     mutationKey: ['exportCruises'],
     mutationFn: async () => {
-      throw new ApiError('Brak uprawnień do eksportu', 403);
+      throw new ApiError('Eksport nie powiódł się', 502);
     },
   });
-  await expect(mutation.execute(undefined)).rejects.toThrow('Brak uprawnień');
+  await expect(mutation.execute(undefined)).rejects.toThrow('Eksport nie powiódł się');
   expect(showError).toHaveBeenCalledExactlyOnceWith(
-    'Operacja nie powiodła się: Brak uprawnień do eksportu',
+    'Operacja nie powiodła się: Eksport nie powiódł się',
     expect.objectContaining({
-      props: expect.objectContaining({ context: { origin: 'toast', operation: 'exportCruises' } }),
+      props: expect.objectContaining({ context: { origin: 'toast', operation: 'exportCruises', eventId: 'event-1' } }),
     })
   );
 });
