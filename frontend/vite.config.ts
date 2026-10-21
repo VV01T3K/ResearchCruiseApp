@@ -42,7 +42,7 @@ const sentryPlugin =
 export default defineConfig({
   staged: {
     // TODO: put in the tool.config like the rest
-    '*.{js,jsx,ts,tsx,css,html,json,md,yml,yaml}': 'vp fmt --write',
+    '*.{js,jsx,ts,tsx,css,html,json,md,yml,yaml}': 'vp fmt --write --no-error-on-unmatched-pattern',
   },
   lint: lintConfig,
   fmt: fmtConfig,

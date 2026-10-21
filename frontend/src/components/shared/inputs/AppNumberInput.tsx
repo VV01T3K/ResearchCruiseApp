@@ -74,14 +74,18 @@ export function AppNumberInput({
 }: Props) {
   const aria = useInputAria(errors, helper);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const [stringValue, setStringValue] = React.useState(value?.toString() ?? '');
+  const [stringValue, setStringValue] = React.useState(() => formatValue(value, type, precision));
+  const [syncedProps, setSyncedProps] = React.useState({ value, type, precision });
   const setCursorPosition = useInputCursorPosition({ inputRef });
 
-  React.useEffect(() => {
-    // Synchronize external changes without erasing a decimal separator being typed.
-    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
+  if (
+    !Object.is(syncedProps.value, value) ||
+    !Object.is(syncedProps.type, type) ||
+    !Object.is(syncedProps.precision, precision)
+  ) {
+    setSyncedProps({ value, type, precision });
     setStringValue(formatValue(value, type, precision));
-  }, [precision, type, value]);
+  }
 
   function handleInputChange(evt: React.ChangeEvent<HTMLInputElement>) {
     const stringInput = evt.target.value.replace(',', '.'); // float input require dot as the decimal separator

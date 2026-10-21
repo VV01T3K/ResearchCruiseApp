@@ -49,6 +49,11 @@ export function AppYearPickerInput({
   'data-testid-errors': errorsTestId,
 }: Props) {
   const [selectedYear, setSelectedYear] = React.useState<number | undefined>(value);
+  const [syncedValue, setSyncedValue] = React.useState(value);
+  if (syncedValue !== value) {
+    setSyncedValue(value);
+    setSelectedYear(value);
+  }
   const [visibleDecade, setVisibleDecade] = React.useState<{ from: number; to: number }>(() => {
     const now = new Date().getFullYear();
     const from = Math.floor(now / 10) * 10;
@@ -61,11 +66,6 @@ export function AppYearPickerInput({
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(null);
   const portalContainerRef = useCallback((node: HTMLDivElement | null) => setPortalContainer(node), []);
-
-  React.useEffect(() => {
-    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-    setSelectedYear(value);
-  }, [value]);
 
   useOutsideClickDetection({
     refs: [elementRef, dropdownRef],
