@@ -71,3 +71,10 @@ export const ResyncsDraftOnValueChange: Story = {
     await expect(input).toHaveValue('1');
   },
 };
+
+export const NotANumberValue: Story = {
+  args: { value: NaN },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('textbox')).toHaveValue('NaN');
+  },
+};

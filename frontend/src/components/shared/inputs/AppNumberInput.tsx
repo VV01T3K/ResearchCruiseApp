@@ -78,7 +78,11 @@ export function AppNumberInput({
   const [syncedProps, setSyncedProps] = React.useState({ value, type, precision });
   const setCursorPosition = useInputCursorPosition({ inputRef });
 
-  if (syncedProps.value !== value || syncedProps.type !== type || syncedProps.precision !== precision) {
+  if (
+    !Object.is(syncedProps.value, value) ||
+    !Object.is(syncedProps.type, type) ||
+    !Object.is(syncedProps.precision, precision)
+  ) {
     setSyncedProps({ value, type, precision });
     setStringValue(formatValue(value, type, precision));
   }
