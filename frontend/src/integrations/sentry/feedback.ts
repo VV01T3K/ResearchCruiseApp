@@ -4,7 +4,7 @@ import { useSyncExternalStore } from 'react';
 import type { FeedbackAttachment } from '@/integrations/sentry/attachments';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 
-export type FeedbackContext = { origin: 'layout' | 'help' | 'toast' | 'form'; operation?: string; eventId?: string };
+export type FeedbackContext = { origin: 'layout' | 'help' | 'form' };
 
 const CONFIRMATION_TIMEOUT = 30_000;
 
@@ -41,7 +41,7 @@ export function useFeedbackState(): FeedbackState {
 }
 
 export function sendFeedback(
-  { origin, operation, eventId: associatedEventId }: FeedbackContext,
+  context: FeedbackContext,
   { attachments, ...feedback }: { message: string; email?: string; attachments: FeedbackAttachment[] }
 ): Promise<void> {
   const client = Sentry.getClient();
@@ -52,8 +52,7 @@ export function sendFeedback(
       ...feedback,
       url: window.location.href,
       source: 'api',
-      associatedEventId,
-      tags: { 'feedback.origin': origin, ...(operation && { 'feedback.operation': operation }) },
+      tags: { 'feedback.origin': context.origin },
     },
     {
       includeReplay: true,
