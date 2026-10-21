@@ -14,11 +14,13 @@ export function FeedbackTab() {
       <button
         type="button"
         onClick={() => openFeedback({ origin: 'layout' })}
-        className="fixed right-4 bottom-4 z-40 flex items-center gap-2 rounded-full border border-primary/20 bg-white/80 px-3 py-2 text-sm font-medium text-primary shadow-md backdrop-blur-sm transition-colors hover:cursor-pointer hover:bg-primary hover:text-white focus-visible:bg-primary focus-visible:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [html:has([data-actions-section])_&]:bottom-[calc(var(--actions-height)+1rem)]"
+        className="group fixed right-4 bottom-4 z-40 flex items-center rounded-full bg-primary/80 p-2.5 text-sm font-medium text-white shadow-md transition-colors hover:cursor-pointer hover:bg-primary focus-visible:bg-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none [html:has([data-actions-section])_&]:bottom-[calc(var(--actions-height)+1rem)]"
         data-testid="feedback-tab"
       >
-        <SentryIcon className="h-4 w-4" aria-hidden />
-        Zgłoś problem
+        <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-300 ease-out group-hover:max-w-32 group-hover:pr-2 group-hover:pl-1 group-hover:opacity-100 group-focus-visible:max-w-32 group-focus-visible:pr-2 group-focus-visible:pl-1 group-focus-visible:opacity-100 motion-reduce:transition-none">
+          Zgłoś problem
+        </span>
+        <SentryIcon className="h-4 w-4 shrink-0" aria-hidden />
       </button>
       <Dialog.Root open={open} onOpenChange={(next) => !next && closeFeedback()}>
         <Dialog.Portal>
