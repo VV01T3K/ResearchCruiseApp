@@ -7,7 +7,6 @@ export function useVirtualTableRows<T extends { id: string }>(rows: T[], enabled
 
   const bodyRef = useRef<HTMLTableSectionElement>(null);
   const [scrollMargin, setScrollMargin] = useState(0);
-  // oxlint-disable-next-line react/incompatible-library
   const virtualizer = useWindowVirtualizer({
     count: rows.length,
     enabled,

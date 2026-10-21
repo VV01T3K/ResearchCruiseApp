@@ -35,24 +35,6 @@ function assignEventsToRows(events: CalendarEvent[]): CalendarEventWithRow[] {
   return eventsWithRows;
 }
 
-function getTodayUtc() {
-  return dateToUtcDay(new Date());
-}
-
-function subscribeToDayChange(onChange: () => void) {
-  let timeoutId: ReturnType<typeof setTimeout>;
-  const scheduleNextDay = () => {
-    const now = new Date();
-    const nextDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    timeoutId = setTimeout(() => {
-      onChange();
-      scheduleNextDay();
-    }, nextDay.getTime() - now.getTime());
-  };
-  scheduleNextDay();
-  return () => clearTimeout(timeoutId);
-}
-
 function isOverlapping(a: CalendarEvent, b: CalendarEvent): boolean {
   return dateToUtcDay(a.start) <= dateToUtcDay(b.end) && dateToUtcDay(a.end) >= dateToUtcDay(b.start);
 }
@@ -65,12 +47,11 @@ type Props = {
 export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   const DAY_MS = 24 * 60 * 60 * 1000;
   const DRAG_CURSOR_Y_NUDGE = 4;
-  const [currentMonth, setCurrentMonth] = React.useState(() => {
-    const now = new Date();
-    return { month: now.getMonth(), year: now.getFullYear() };
+  const [currentMonth, setCurrentMonth] = React.useState({
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
   });
   const [previousMonth, setPreviousMonth] = React.useState(currentMonth);
-  const todayUtc = React.useSyncExternalStore(subscribeToDayChange, getTodayUtc, getTodayUtc);
   const [dropPreviewDays, setDropPreviewDays] = React.useState<number[]>([]);
   const [activeDragEventId, setActiveDragEventId] = React.useState<string | undefined>(undefined);
   const [pendingDrop, setPendingDrop] = React.useState<
@@ -359,16 +340,25 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
     }
   }
 
-  const droppedEvent = pendingDrop && events.find((calendarEvent) => calendarEvent.id === pendingDrop.eventId);
-  if (
-    droppedEvent &&
-    droppedEvent.start.getTime() === pendingDrop.nextStartMs &&
-    droppedEvent.end.getTime() === pendingDrop.nextEndMs
-  ) {
-    setActiveDragEventId(undefined);
-    setDropPreviewDays([]);
-    setPendingDrop(undefined);
-  }
+  React.useEffect(() => {
+    if (!pendingDrop) {
+      return;
+    }
+
+    const updatedEvent = events.find((calendarEvent) => calendarEvent.id === pendingDrop.eventId);
+    if (!updatedEvent) {
+      return;
+    }
+
+    if (
+      updatedEvent.start.getTime() === pendingDrop.nextStartMs &&
+      updatedEvent.end.getTime() === pendingDrop.nextEndMs
+    ) {
+      setActiveDragEventId(undefined);
+      setDropPreviewDays([]);
+      setPendingDrop(undefined);
+    }
+  }, [events, pendingDrop]);
 
   const eventsWithRows = React.useMemo(() => assignEventsToRows(events), [events]);
   const displayedMonthDays = React.useMemo(() => getDaysInMonth(currentMonth), [currentMonth]);
@@ -507,7 +497,6 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
                   enableDragAndDrop={Boolean(onEventDrop)}
                   dayDropId={`calendar-day-${dateToUtcDay(date)}`}
                   isDropPreview={dropPreviewDays.includes(dateToUtcDay(date))}
-                  isToday={dateToUtcDay(date) === todayUtc}
                   activeDragEventId={activeDragEventId}
                   key={date.toString()}
                 />

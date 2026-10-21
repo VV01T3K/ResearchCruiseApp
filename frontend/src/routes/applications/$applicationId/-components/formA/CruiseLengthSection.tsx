@@ -123,7 +123,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   });
 
   const [hasToggledPastDates, setHasToggledPastDates] = useState(false);
-  const [now] = useState(() => new Date());
 
   const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
 
@@ -228,7 +227,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     type="date"
                     showRequiredAsterisk
                     disabled={isReadonly}
-                    minimalDate={allowPastDates ? undefined : now}
+                    minimalDate={allowPastDates ? undefined : new Date()}
                   />
                 )}
               />

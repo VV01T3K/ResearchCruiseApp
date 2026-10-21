@@ -24,10 +24,10 @@ export function ExportForm({ cruises, onDone }: Props) {
       .sort((a, b) => parseInt(b) - parseInt(a));
   }, [cruises]);
 
-  const [selectedYear, setSelectedYear] = React.useState<string>(() => {
-    const currentYear = new Date().getFullYear().toString();
-    return possibleYears.includes(currentYear) ? currentYear : (possibleYears[0] ?? '');
-  });
+  const currentYear = new Date().getFullYear().toString();
+  const [selectedYear, setSelectedYear] = React.useState<string>(
+    possibleYears.includes(currentYear) ? currentYear : (possibleYears[0] ?? '')
+  );
 
   const anchorRef = React.useRef<HTMLAnchorElement>(null);
   const cruiseCsvExportMutation = useMutation({
