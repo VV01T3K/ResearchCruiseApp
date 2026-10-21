@@ -27,7 +27,7 @@ export function FeedbackForm({ context, close }: Props) {
         close();
         toast.success('Dziękujemy za zgłoszenie!');
       } catch {
-        toast.error('Nie udało się wysłać zgłoszenia. Spróbuj ponownie lub napisz na rejsy.help@ug.edu.pl.');
+        toast.error('Nie udało się wysłać zgłoszenia. Spróbuj ponownie lub napisz na rejsy.help@ug.edu.pl.', false);
       }
     },
   });

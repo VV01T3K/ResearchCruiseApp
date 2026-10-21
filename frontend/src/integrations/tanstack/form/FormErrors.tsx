@@ -1,5 +1,6 @@
 import { useSelector } from '@tanstack/react-form';
 import { AppAlert } from '@/components/shared/AppAlert';
+import { FeedbackButton } from '@/integrations/sentry/FeedbackButton';
 import { useFormContext } from './context';
 import { getFormLevelErrors } from './errors';
 
@@ -14,16 +15,19 @@ export function FormErrors() {
   return (
     <div data-error="true" data-testid="form-errors">
       <AppAlert variant="danger">
-        {errors.length === 1 ? (
-          <p>{errors[0]}</p>
-        ) : (
-          <ul className="list-disc ps-4">
-            {errors.map((error, index) => (
-              // oxlint-disable-next-line @eslint-react/no-array-index-key
-              <li key={index}>{error}</li>
-            ))}
-          </ul>
-        )}
+        <div className="flex-1">
+          {errors.length === 1 ? (
+            <p>{errors[0]}</p>
+          ) : (
+            <ul className="list-disc ps-4">
+              {errors.map((error, index) => (
+                // oxlint-disable-next-line @eslint-react/no-array-index-key
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <FeedbackButton context={{ origin: 'form' }} className="ms-4" />
       </AppAlert>
     </div>
   );
