@@ -35,7 +35,7 @@ export function initializeSentry(router: RegisteredRouter): void {
             }),
           ]
         : []),
-      { name: 'ScrubSensitiveUrls', processEvent: scrubSensitiveUrls },
+      { name: 'ScrubSensitiveUrls', processEvent: scrubSensitiveUrls, processSpan: scrubSensitiveUrls },
     ],
     tracesSampleRate: parseSampleRate(config.sentryTracesSampleRate, 0.4),
     tracePropagationTargets: [config.apiUrl],
