@@ -1,7 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
@@ -102,7 +100,6 @@ public class ScoredSpubTask
     public required string Points { get; init; }
 }
 
-[JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
 public class FormAOptions
 {
     public required List<UserOption> CruiseManagers { get; set; }
@@ -402,7 +399,6 @@ public class SpubTaskFields
     public string? YearTo { get; init; }
 }
 
-[JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
 public class ResearchAreaOption(Guid id, string name)
 {
     public Guid Id { get; set; } = id;
@@ -605,7 +601,6 @@ public class FileContent
     public string Content { get; init; } = null!;
 }
 
-[JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
 public class UserOption
 {
     public required Guid Id { get; set; }
