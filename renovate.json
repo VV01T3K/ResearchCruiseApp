@@ -57,6 +57,38 @@
     {
       "matchManagers": ["github-actions"],
       "addLabels": ["GitHub Actions"]
+    },
+    {
+      "matchPackageNames": ["mcr.microsoft.com/mssql/server"],
+      "versioning": "regex:^(?<major>\\d+)-CU(?<minor>\\d+)(-GDR(?<patch>\\d+))?-(?<compatibility>.+)$",
+      "allowedVersions": "/^2022-/",
+      "groupName": "SQL Server"
+    },
+    {
+      "matchPackageNames": ["dotnet-sdk", "mcr.microsoft.com/dotnet/**"],
+      "allowedVersions": "/^10\\./"
+    },
+    {
+      "matchPackageNames": [
+        "dotnet-ef",
+        "Microsoft.AspNetCore.*",
+        "Microsoft.EntityFrameworkCore.*",
+        "Microsoft.Extensions.ApiDescription.Server",
+        "System.Security.Cryptography.Pkcs"
+      ],
+      "allowedVersions": "<11.0.0"
+    },
+    {
+      "matchPackageNames": ["Microsoft.OpenApi"],
+      "allowedVersions": "<3.0.0"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^backend/.+\\.cs$/"],
+      "matchStrings": ["\"(?<depName>mcr\\.microsoft\\.com/mssql/server):(?<currentValue>[^\"]+)\""],
+      "datasourceTemplate": "docker"
     }
   ],
   "labels": ["dependencies"],
