@@ -52,11 +52,11 @@
     },
     {
       "matchManagers": ["dockerfile", "docker-compose", "devcontainer"],
-      "addLabels": ["docker"]
+      "addLabels": ["Docker"]
     },
     {
       "matchManagers": ["github-actions"],
-      "addLabels": ["github_actions"]
+      "addLabels": ["GitHub Actions"]
     }
   ],
   "labels": ["dependencies"],
