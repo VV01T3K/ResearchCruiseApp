@@ -48,7 +48,8 @@ export function FeedbackTab() {
               </Dialog.Close>
             </header>
             <Dialog.Description className="mb-4 text-sm text-gray-600">
-              Opis, adres strony i nagranie sesji trafią do programistów, aby pomóc naprawić problem.
+              Opis, załączniki, adres strony, nagranie sesji i adres e-mail konta trafią do programistów, aby pomóc
+              naprawić problem.
             </Dialog.Description>
             <FeedbackForm context={context} close={closeFeedback} />
           </Dialog.Popup>
