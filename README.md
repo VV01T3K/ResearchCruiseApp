@@ -63,7 +63,7 @@ The application can be run using Docker compose. Multiple configuration files ar
 
 - `docker-compose.dev.yml` - Development configuration
 - `docker-compose.infra.yml` - MS SQL Database configuration
-- `docker-compose.prod.yml` - Production configuration
+- `compose.production.yaml` - Production configuration (settings in `.env.production.template`)
 - `compose.staging.yaml` - Staging application and database
 
 See [the Sentry on-prem migration notes](docs/sentry/sentry-on-prem-migration.md) for the planned move to a self-hosted Sentry instance.
