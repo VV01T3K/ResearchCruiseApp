@@ -18,7 +18,6 @@ export function useSessionRemainingMs(expirationDate: Date, getTickMs: (remainin
   const remainingMs = expiresAt - nowTs;
   const tickMs = remainingMs > 0 ? getTickMs(remainingMs) : undefined;
 
-  // oxlint-disable-next-line react/set-state-in-effect
   React.useLayoutEffect(() => setNowTs(Date.now()), [expiresAt]);
 
   React.useEffect(() => subscribeToPageResume(() => setNowTs(Date.now())), []);
