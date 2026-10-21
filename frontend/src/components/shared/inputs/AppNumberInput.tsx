@@ -74,14 +74,13 @@ export function AppNumberInput({
 }: Props) {
   const aria = useInputAria(errors, helper);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const formattedValue = formatValue(value, type, precision);
-  const [stringValue, setStringValue] = React.useState(formattedValue);
-  const [syncedValue, setSyncedValue] = React.useState(formattedValue);
+  const [stringValue, setStringValue] = React.useState(() => formatValue(value, type, precision));
+  const [syncedProps, setSyncedProps] = React.useState({ value, type, precision });
   const setCursorPosition = useInputCursorPosition({ inputRef });
 
-  if (syncedValue !== formattedValue) {
-    setSyncedValue(formattedValue);
-    setStringValue(formattedValue);
+  if (syncedProps.value !== value || syncedProps.type !== type || syncedProps.precision !== precision) {
+    setSyncedProps({ value, type, precision });
+    setStringValue(formatValue(value, type, precision));
   }
 
   function handleInputChange(evt: React.ChangeEvent<HTMLInputElement>) {
