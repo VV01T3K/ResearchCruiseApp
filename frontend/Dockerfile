@@ -1,4 +1,4 @@
-FROM node:25-alpine AS build
+FROM node:24-alpine AS build
 
 ARG APP_ENVIRONMENT="local"
 
@@ -6,7 +6,7 @@ ENV API_URL="/api" \
     APP_ENVIRONMENT=$APP_ENVIRONMENT
 
 WORKDIR /app
-RUN npm install --global vite-plus@0.1.24
+RUN npm install --global vite-plus@1.1.0
 
 ARG SENTRY_RELEASE
 ARG SENTRY_ORG="cruiseteam"
