@@ -25,7 +25,7 @@ export function FeedbackTab() {
         <SentryIcon className="h-4 w-4 shrink-0" aria-hidden />
         <span
           aria-hidden
-          className="max-w-0 overflow-hidden whitespace-nowrap transition-[max-width,padding] duration-300 ease-out group-hover:max-w-32 group-hover:pl-2 group-focus-visible:max-w-32 group-focus-visible:pl-2 motion-reduce:transition-none"
+          className={`max-w-0 overflow-hidden whitespace-nowrap transition-[max-width,padding] duration-300 ease-out motion-reduce:transition-none ${open ? '' : 'group-hover:max-w-32 group-hover:pl-2 group-focus-visible:max-w-32 group-focus-visible:pl-2'}`}
         >
           Zgłoś problem
         </span>
