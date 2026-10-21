@@ -1,0 +1,36 @@
+# Copy .env.production.template to .env, fill it in, then: docker compose -f compose.production.yaml --env-file .env up -d
+services:
+  backend:
+    image: ghcr.io/vv01t3k/researchcruiseapp/backend:${APP_VERSION:?Set APP_VERSION, e.g. v3.0.0}
+    container_name: researchcruiseapp-backend
+    restart: unless-stopped
+    environment:
+      ConnectionStrings__Database: ${DB_CONNECTION_STRING:?Set DB_CONNECTION_STRING}
+      Database__ApplyMigrations: ${DATABASE_APPLY_MIGRATIONS:-false}
+      Database__SeedAccountsAutomatically: "false"
+      Database__LogUserPasswordsWhenSeeding: "false"
+      FrontendUrl: ${FRONTEND_URL:-https://rejsy.ug.edu.pl}
+      JWT__Secret: ${JWT_SECRET:?Set JWT_SECRET (at least 32 random characters)}
+      SmtpSettings__SmtpUsername: ${SMTP_USERNAME:?Set SMTP_USERNAME}
+      SmtpSettings__SmtpPassword: ${SMTP_PASSWORD:?Set SMTP_PASSWORD}
+      Sentry__Dsn: ${SENTRY_DSN_BACKEND:-}
+      Sentry__TracesSampleRate: ${SENTRY_TRACES_SAMPLE_RATE:-0.4}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - 3000:8080
+
+  frontend:
+    image: ghcr.io/vv01t3k/researchcruiseapp/frontend:${APP_VERSION:?Set APP_VERSION, e.g. v3.0.0}
+    container_name: researchcruiseapp-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      API_URL: http://backend:8080/
+      SENTRY_DSN: ${SENTRY_DSN_FRONTEND:-}
+      SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0.4}
+      SENTRY_REPLAYS_SESSION_SAMPLE_RATE: ${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-0.4}
+    ports:
+      - 8080:8080
