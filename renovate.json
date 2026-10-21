@@ -57,6 +57,20 @@
     {
       "matchManagers": ["github-actions"],
       "addLabels": ["GitHub Actions"]
+    },
+    {
+      "matchPackageNames": ["mcr.microsoft.com/mssql/server"],
+      "versioning": "regex:^(?<major>\\d+)-CU(?<minor>\\d+)(-GDR(?<patch>\\d+))?-(?<compatibility>.+)$",
+      "allowedVersions": "/^2022-/",
+      "groupName": "SQL Server"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^backend/.+\\.cs$/"],
+      "matchStrings": ["\"(?<depName>mcr\\.microsoft\\.com/mssql/server):(?<currentValue>[^@\"]+)@(?<currentDigest>sha256:[a-f0-9]+)\""],
+      "datasourceTemplate": "docker"
     }
   ],
   "labels": ["dependencies"],
