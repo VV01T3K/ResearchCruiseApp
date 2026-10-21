@@ -13,19 +13,23 @@ export function FeedbackTab() {
     <>
       <button
         type="button"
+        aria-label="Zgłoś problem"
         onClick={() => openFeedback({ origin: 'layout' })}
-        className="group fixed right-4 bottom-4 z-40 flex items-center rounded-full bg-primary/80 p-2.5 text-sm font-medium text-white shadow-md transition-colors hover:cursor-pointer hover:bg-primary focus-visible:bg-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none [html:has([data-actions-section])_&]:bottom-[calc(var(--actions-height)+1rem)]"
+        className="group fixed right-0 bottom-[25dvh] z-40 flex items-center rounded-l-md bg-primary/80 py-2.5 pr-2 pl-2.5 text-sm font-medium text-white shadow-md transition-colors hover:cursor-pointer hover:bg-primary focus-visible:bg-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none [html:has([data-actions-section])_&]:bottom-[max(25dvh,calc(var(--actions-height)+1rem))]"
         data-testid="feedback-tab"
       >
-        <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-300 ease-out group-hover:max-w-32 group-hover:pr-2 group-hover:pl-1 group-hover:opacity-100 group-focus-visible:max-w-32 group-focus-visible:pr-2 group-focus-visible:pl-1 group-focus-visible:opacity-100 motion-reduce:transition-none">
+        <SentryIcon className="h-4 w-4 shrink-0" aria-hidden />
+        <span
+          aria-hidden
+          className="max-w-0 overflow-hidden whitespace-nowrap transition-[max-width,padding] duration-300 ease-out group-hover:max-w-32 group-hover:pl-2 group-focus-visible:max-w-32 group-focus-visible:pl-2 motion-reduce:transition-none"
+        >
           Zgłoś problem
         </span>
-        <SentryIcon className="h-4 w-4 shrink-0" aria-hidden />
       </button>
       <Dialog.Root open={open} onOpenChange={(next) => !next && closeFeedback()}>
         <Dialog.Portal>
           <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/10 transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
-          <Dialog.Popup className="fixed right-4 bottom-4 z-50 max-h-[calc(100dvh-var(--header-height)-2rem)] w-[calc(100vw-2rem)] max-w-sm origin-bottom-right overflow-y-auto rounded-lg bg-white p-4 shadow-xl transition-all duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 [html:has([data-actions-section])_&]:bottom-[calc(var(--actions-height)+1rem)] [html:has([data-actions-section])_&]:max-h-[calc(100dvh-var(--header-height)-var(--actions-height)-2rem)]">
+          <Dialog.Popup className="fixed right-14 bottom-[25dvh] z-50 max-h-[calc(75dvh-var(--header-height)-1rem)] w-[calc(100vw-4.5rem)] max-w-sm origin-bottom-right overflow-y-auto rounded-lg bg-white p-4 shadow-xl transition-all duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 motion-reduce:transition-none [html:has([data-actions-section])_&]:bottom-[max(25dvh,calc(var(--actions-height)+1rem))] [html:has([data-actions-section])_&]:max-h-[calc(100dvh-var(--header-height)-max(25dvh,calc(var(--actions-height)+1rem))-1rem)]">
             <header className="flex items-center justify-between">
               <Dialog.Title className="text-lg font-bold">Zgłoś problem</Dialog.Title>
               <Dialog.Close
