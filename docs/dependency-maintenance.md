@@ -7,7 +7,7 @@
 - Commit `bun.lock` and the `packages.lock.json` files with dependency changes.
 - Root `overrides` pin TypeScript to 5.9 (for `@tanstack/eslint-plugin-query`) and
   `js-yaml` to a patched release (for Orval). Remove them once upstream catches up.
-- Renovate (`renovate.json`) opens version updates against `staging`. Enable
-  Dependabot alerts, which Renovate reads for security updates, and the
+- Renovate (`.github/renovate.json`) opens version updates against `staging`.
+  Enable Dependabot alerts, which Renovate reads for security updates, and the
   [Socket GitHub app](https://github.com/apps/socket-security) in the repository
   settings. Leave Dependabot security updates off so only Renovate opens PRs.
