@@ -12,8 +12,9 @@ export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {
   const cruiseStartDate = cruiseStart !== '' ? new Date(cruiseStart) : undefined;
 
   const [allowPastDates, setAllowPastDates] = useState(false);
+  const [now] = useState(() => new Date());
 
-  const minimalDateForStartDate = allowPastDates ? undefined : new Date();
+  const minimalDateForStartDate = allowPastDates ? undefined : now;
 
   return (
     <AppAccordion title="2. Termin rejsu" expandedByDefault>

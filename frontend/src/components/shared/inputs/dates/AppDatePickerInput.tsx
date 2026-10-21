@@ -71,9 +71,9 @@ export function AppDatePickerInput({
   const selectedDate = getDateFromValue(value);
   const [hoveredDate, setHoveredDate] = React.useState<Date | undefined>(undefined);
   const [expanded, setExpanded] = React.useState(false);
-  const [visibleMonth, setVisibleMonth] = React.useState({
-    month: new Date().getMonth(),
-    year: new Date().getFullYear(),
+  const [visibleMonth, setVisibleMonth] = React.useState(() => {
+    const now = new Date();
+    return { month: now.getMonth(), year: now.getFullYear() };
   });
 
   const inputRef = React.useRef<HTMLDivElement>(null);
