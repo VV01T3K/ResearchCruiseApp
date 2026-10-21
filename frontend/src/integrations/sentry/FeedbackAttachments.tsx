@@ -1,7 +1,8 @@
+import FileEarmarkImageIcon from 'bootstrap-icons/icons/file-earmark-image.svg?react';
 import FileEarmarkPdfIcon from 'bootstrap-icons/icons/file-earmark-pdf.svg?react';
 import PaperclipIcon from 'bootstrap-icons/icons/paperclip.svg?react';
 import XIcon from 'bootstrap-icons/icons/x.svg?react';
-import { useCallback, useId, useRef } from 'react';
+import { useCallback, useId, useRef, useState } from 'react';
 
 import {
   ACCEPTED_ATTACHMENTS,
@@ -82,6 +83,7 @@ export function FeedbackAttachments({ attachments, errors, onAdd, onRemove }: Pr
 }
 
 function AttachmentThumbnail({ attachment }: { attachment: FeedbackAttachment }) {
+  const [broken, setBroken] = useState(false);
   const showPreview = useCallback(
     (img: HTMLImageElement | null) => {
       if (!img) return;
@@ -92,10 +94,18 @@ function AttachmentThumbnail({ attachment }: { attachment: FeedbackAttachment })
     [attachment]
   );
 
+  if (broken) return <FileEarmarkImageIcon className="h-8 w-8 shrink-0 p-1 text-gray-500" aria-hidden />;
   if (!isImageAttachment(attachment)) {
     return <FileEarmarkPdfIcon className="h-8 w-8 shrink-0 p-1 text-red-600" aria-hidden />;
   }
-  return <img ref={showPreview} alt="" className="h-8 w-8 shrink-0 rounded-sm bg-gray-100 object-cover" />;
+  return (
+    <img
+      ref={showPreview}
+      alt=""
+      onError={() => setBroken(true)}
+      className="h-8 w-8 shrink-0 rounded-sm bg-gray-100 object-cover"
+    />
+  );
 }
 
 function formatSize(bytes: number): string {

@@ -60,8 +60,8 @@ export function FeedbackForm({ context, close }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} onPaste={handlePaste}>
-      <div className="space-y-4">
+    <form onSubmit={handleSubmit} onPaste={handlePaste} className="flex min-h-0 flex-1 flex-col">
+      <div className="-mx-1 min-h-0 space-y-4 overflow-y-auto px-1 pb-1">
         <form.AppField
           name="message"
           children={(field) => (
@@ -92,7 +92,7 @@ export function FeedbackForm({ context, close }: Props) {
       <form.Subscribe
         selector={(state) => state.isSubmitting}
         children={(isSubmitting) => (
-          <AppButton type="submit" className="mt-4 w-full" disabled={isSubmitting}>
+          <AppButton type="submit" className="mt-3 w-full shrink-0" disabled={isSubmitting}>
             {isSubmitting ? 'Wysyłanie...' : 'Wyślij zgłoszenie'}
           </AppButton>
         )}
