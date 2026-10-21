@@ -44,7 +44,7 @@
     },
     {
       "matchManagers": ["bun"],
-      "addLabels": ["JS"]
+      "addLabels": ["JavaScript"]
     },
     {
       "matchManagers": ["nuget"],
