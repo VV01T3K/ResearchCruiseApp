@@ -79,14 +79,16 @@ export function setSentryUser(user: UserResponse | undefined): void {
     Sentry.setUser(null);
     Sentry.setTag('user.roles', undefined);
     Sentry.setTag('user.multiple_roles', undefined);
+    Sentry.getIsolationScope().removeAttribute('user.roles').removeAttribute('user.multiple_roles');
     return;
   }
 
   const roles = user.roles ?? [];
-  Sentry.setUser({ id: String(user.id), roles });
-  Sentry.setTag('user.roles', roles.join(','));
   // Flags the anomaly where a user unexpectedly holds more than one role.
-  Sentry.setTag('user.multiple_roles', roles.length > 1);
+  const roleTags = { 'user.roles': roles.join(','), 'user.multiple_roles': roles.length > 1 };
+  Sentry.setUser({ id: String(user.id), roles });
+  Sentry.setTags(roleTags);
+  Sentry.setAttributes(roleTags);
 }
 
 export function trackFormSubmit(
