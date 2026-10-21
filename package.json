@@ -27,7 +27,7 @@
   },
   "overrides": {
     "js-yaml": "^4.3.2",
-    "typescript": "~5.9.3",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "undici": "^7.29.1",
     "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
     "vitest": "5.0.3",
