@@ -87,7 +87,7 @@
     {
       "customType": "regex",
       "managerFilePatterns": ["/^backend/.+\\.cs$/"],
-      "matchStrings": ["\"(?<depName>mcr\\.microsoft\\.com/mssql/server):(?<currentValue>[^@\"]+)@(?<currentDigest>sha256:[a-f0-9]+)\""],
+      "matchStrings": ["\"(?<depName>mcr\\.microsoft\\.com/mssql/server):(?<currentValue>[^\"]+)\""],
       "datasourceTemplate": "docker"
     }
   ],

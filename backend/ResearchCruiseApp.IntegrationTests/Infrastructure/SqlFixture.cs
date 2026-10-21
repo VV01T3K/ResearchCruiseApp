@@ -15,8 +15,8 @@ public sealed class SqlTestCollectionDefinition : ICollectionFixture<SqlFixture>
 
 public sealed class SqlFixture : IAsyncLifetime
 {
-    public const string Image =
-        "mcr.microsoft.com/mssql/server:2022-CU23-ubuntu-22.04@sha256:0ec7739e1c5ec2f57861facbe1f2b74f1d3e147c7c97edf91eeea920c5944d9c";
+    // Matches the staging SQL Server version in docker/compose.staging.yaml.
+    public const string Image = "mcr.microsoft.com/mssql/server:2022-CU23-ubuntu-22.04";
     private readonly MsSqlContainer _container = new MsSqlBuilder(Image)
         .WithPassword($"Test!{Guid.NewGuid():N}")
         .Build();
