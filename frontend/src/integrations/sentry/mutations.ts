@@ -20,11 +20,14 @@ export function isUnexplainedFailure(error: unknown): boolean {
   return !(cause instanceof Error && cause.name === 'AbortError');
 }
 
-export function captureMutationFailure(error: unknown, mutationKey: readonly unknown[] | undefined): void {
-  if (!isUnexplainedFailure(error)) return;
+export function captureMutationFailure(
+  error: unknown,
+  mutationKey: readonly unknown[] | undefined
+): string | undefined {
+  if (!isUnexplainedFailure(error)) return undefined;
   const operation = mutationKey?.[0];
   const cause = rootCause(error);
-  Sentry.captureException(error, {
+  return Sentry.captureException(error, {
     tags: {
       'mutation.key': typeof operation === 'string' ? operation : undefined,
       'http.status_code': cause instanceof ApiError ? cause.status : undefined,
