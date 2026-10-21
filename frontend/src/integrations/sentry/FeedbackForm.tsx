@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { z } from 'zod';
 
 import { AppButton } from '@/components/shared/AppButton';
@@ -22,6 +22,8 @@ type Props = {
 export function FeedbackForm({ context, close }: Props) {
   const email = useCurrentUser()?.email;
   const [attachmentErrors, setAttachmentErrors] = useState<string[]>([]);
+  const [pendingReads, setPendingReads] = useState(0);
+  const draft = useRef(0);
   const form = useAppForm({
     defaultValues: { message: '', attachments: [] as FeedbackAttachment[] },
     validationLogic: formValidationLogic,
@@ -30,6 +32,7 @@ export function FeedbackForm({ context, close }: Props) {
       try {
         await sendFeedback(context, { message: value.message, email, attachments: value.attachments });
         close();
+        draft.current++;
         form.reset();
         setAttachmentErrors([]);
         toast.success('Dziękujemy za zgłoszenie!');
@@ -41,7 +44,12 @@ export function FeedbackForm({ context, close }: Props) {
 
   async function addAttachments(files: File[]) {
     if (files.length === 0) return;
-    const { attachments, errors } = await readAttachments(files, form.getFieldValue('attachments').length);
+    const readDraft = draft.current;
+    setPendingReads((count) => count + 1);
+    const { attachments, errors } = await readAttachments(files, form.getFieldValue('attachments').length).finally(() =>
+      setPendingReads((count) => count - 1)
+    );
+    if (draft.current !== readDraft) return;
     setAttachmentErrors(errors);
     form.setFieldValue('attachments', (current) => [...current, ...attachments].slice(0, MAX_ATTACHMENTS));
   }
@@ -92,7 +100,7 @@ export function FeedbackForm({ context, close }: Props) {
       <form.Subscribe
         selector={(state) => state.isSubmitting}
         children={(isSubmitting) => (
-          <AppButton type="submit" className="mt-3 w-full shrink-0" disabled={isSubmitting}>
+          <AppButton type="submit" className="mt-3 w-full shrink-0" disabled={isSubmitting || pendingReads > 0}>
             {isSubmitting ? 'Wysyłanie...' : 'Wyślij zgłoszenie'}
           </AppButton>
         )}
