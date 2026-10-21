@@ -24,3 +24,11 @@ it.each([
   expect(attachments.map((attachment) => attachment.contentType)).toEqual(contentType ? [contentType] : []);
   expect(errors.join()).toContain(error ?? '');
 });
+
+it('keeps readable files when another file fails to load', async () => {
+  const broken = file('gone.png', png);
+  broken.arrayBuffer = () => Promise.reject(new DOMException('', 'NotReadableError'));
+  const { attachments, errors } = await readAttachments([file('shot.png', png), broken], 0);
+  expect(attachments.map((attachment) => attachment.filename)).toEqual(['shot.png']);
+  expect(errors).toEqual(['Nie udało się odczytać pliku „gone.png”.']);
+});

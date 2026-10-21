@@ -46,7 +46,12 @@ export async function readAttachments(
       errors.push(`Plik „${file.name}” jest większy niż 5 MB.`);
       continue;
     }
-    const data = new Uint8Array(await file.arrayBuffer());
+    const buffer = await file.arrayBuffer().catch(() => undefined);
+    if (!buffer) {
+      errors.push(`Nie udało się odczytać pliku „${file.name}”.`);
+      continue;
+    }
+    const data = new Uint8Array(buffer);
     const contentType = detectContentType(data);
     if (!contentType) {
       errors.push(`Plik „${file.name}” nie jest obrazem PNG, JPEG, WebP ani plikiem PDF.`);
