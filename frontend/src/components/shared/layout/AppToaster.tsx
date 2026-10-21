@@ -2,9 +2,8 @@ import { Toast } from '@base-ui/react/toast';
 import CheckCircleIcon from 'bootstrap-icons/icons/check-circle-fill.svg?react';
 import ExclamationCircleIcon from 'bootstrap-icons/icons/exclamation-circle-fill.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
-import type { ReactNode } from 'react';
 
-import { type ToastData, toastManager } from './toast';
+import { toastManager } from './toast';
 
 function ToastIcon({ type }: { type?: string }) {
   if (type === 'success') {
@@ -19,8 +18,8 @@ function ToastIcon({ type }: { type?: string }) {
   return null;
 }
 
-function ToastList({ errorAction }: { errorAction?: ReactNode }) {
-  const { toasts } = Toast.useToastManager<ToastData>();
+function ToastList() {
+  const { toasts } = Toast.useToastManager();
 
   return toasts.map((t) => (
     <Toast.Root
@@ -32,10 +31,7 @@ function ToastList({ errorAction }: { errorAction?: ReactNode }) {
       <Toast.Content className="overflow-hidden transition-opacity [transition-duration:250ms] data-[behind]:pointer-events-none data-[behind]:opacity-0 data-[expanded]:pointer-events-auto data-[expanded]:opacity-100">
         <div className="flex items-center gap-4" data-testid={`toast-${t.type}`}>
           <ToastIcon type={t.type} />
-          <div className="flex flex-1 flex-col items-start gap-1">
-            <Toast.Description className="text-sm" />
-            {t.type === 'error' && (t.data?.action ?? errorAction)}
-          </div>
+          <Toast.Description className="flex-1 text-sm" />
           {t.type !== 'loading' && (
             <Toast.Close
               className="flex h-6 w-6 items-center justify-center rounded-md text-gray-500 hover:cursor-pointer hover:bg-black/5 hover:text-gray-700"
@@ -50,7 +46,7 @@ function ToastList({ errorAction }: { errorAction?: ReactNode }) {
   ));
 }
 
-export function AppToaster({ errorAction }: { errorAction?: ReactNode }) {
+export function AppToaster() {
   return (
     <Toast.Provider toastManager={toastManager} limit={5}>
       <Toast.Portal>
@@ -58,7 +54,7 @@ export function AppToaster({ errorAction }: { errorAction?: ReactNode }) {
           data-testid="toast-container"
           className="fixed top-4 right-4 z-[1000] flex w-[350px] flex-col items-end"
         >
-          <ToastList errorAction={errorAction} />
+          <ToastList />
         </Toast.Viewport>
       </Toast.Portal>
     </Toast.Provider>

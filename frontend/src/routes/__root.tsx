@@ -20,7 +20,6 @@ import AppBackground from '@/components/shared/layout/AppBackground';
 import { AppNavbar } from '@/components/shared/layout/AppNavbar';
 import { AppNetworkDisconnectAlert } from '@/components/shared/layout/AppNetworkDisconnectAlert';
 import { AppToaster } from '@/components/shared/layout/AppToaster';
-import { FeedbackButton } from '@/integrations/sentry/FeedbackButton';
 import { FeedbackTab } from '@/integrations/sentry/FeedbackTab';
 import { TanStackQueryDevtools } from '@/integrations/tanstack/query/devtools';
 import { AuthSession } from '@/integrations/tanstack/query/AuthSession';
@@ -39,14 +38,12 @@ const TanStackRouterDevtools = config.dev
   ? lazy(() => import('@tanstack/react-router-devtools').then((module) => ({ default: module.TanStackRouterDevtools })))
   : () => null;
 
-const toastFeedbackAction = <FeedbackButton context={{ origin: 'toast' }} className="text-primary" />;
-
 function RootLayout() {
   const routerState = useRouterState();
 
   return (
     <AuthSession>
-      <AppToaster errorAction={toastFeedbackAction} />
+      <AppToaster />
       <div className="sticky top-0 z-100">
         <div className="relative z-100">
           <AppNavbar />
@@ -81,7 +78,7 @@ function RootLayout() {
 function AppErrorHandler({ error }: ErrorComponentProps) {
   return (
     <>
-      <AppToaster errorAction={toastFeedbackAction} />
+      <AppToaster />
       <div className="sticky top-0 z-100">
         <div className="relative z-100">
           <AppNavbar />
