@@ -87,5 +87,5 @@ Unit and browser tests both run in `Europe/Warsaw`, the users' timezone.
 - `@storybook/tanstack-react@10.6.0` is incompatible with our `@tanstack/router-core`, so stories
   use `@storybook/react-vite`.
 
-`vitest` is pinned in the root `package.json` catalog to the version Vite+ bundles. Run tests
+`vitest` and `@vitest/browser-playwright` are pinned to the Vitest version Vite+ bundles. Run tests
 through `vp test`, and import test APIs from `vite-plus/test`.
