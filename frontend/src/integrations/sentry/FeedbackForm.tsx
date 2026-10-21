@@ -8,7 +8,7 @@ import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 
 const validationSchema = z.object({
-  email: z.email('Niepoprawny adres e-mail'),
+  email: z.literal('').or(z.email('Niepoprawny adres e-mail')),
   message: z.string().trim().nonempty('Opis problemu nie może być pusty'),
 });
 
@@ -23,7 +23,7 @@ export function FeedbackForm({ context, close }: Props) {
     validators: { onDynamic: validationSchema },
     onSubmit: async ({ value }) => {
       try {
-        await sendFeedback(context, value);
+        await sendFeedback(context, { message: value.message, email: value.email || undefined });
         close();
         toast.success('Dziękujemy za zgłoszenie!');
       } catch {
@@ -48,20 +48,20 @@ export function FeedbackForm({ context, close }: Props) {
               type="textarea"
               label="Opis problemu"
               placeholder="Co się stało? Czego się spodziewano?"
-              className="h-40"
+              className="h-28"
               showRequiredAsterisk
             />
           )}
         />
         <form.AppField
           name="email"
-          children={(field) => <field.TextField type="email" label="Adres e-mail do kontaktu" showRequiredAsterisk />}
+          children={(field) => <field.TextField type="email" label="Adres e-mail do kontaktu" />}
         />
       </div>
       <form.Subscribe
         selector={(state) => state.isSubmitting}
         children={(isSubmitting) => (
-          <AppButton type="submit" className="mt-8 w-full" disabled={isSubmitting}>
+          <AppButton type="submit" className="mt-4 w-full" disabled={isSubmitting}>
             {isSubmitting ? 'Wysyłanie...' : 'Wyślij zgłoszenie'}
           </AppButton>
         )}

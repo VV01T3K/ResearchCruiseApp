@@ -1,8 +1,9 @@
-import ChatLeftTextIcon from 'bootstrap-icons/icons/chat-left-text.svg?react';
+import { Dialog } from '@base-ui/react/dialog';
+import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 
-import { AppModal } from '@/components/shared/AppModal';
 import { closeFeedback, openFeedback, useCanSendFeedback, useFeedbackState } from '@/integrations/sentry/feedback';
 import { FeedbackForm } from '@/integrations/sentry/FeedbackForm';
+import SentryIcon from '@/integrations/sentry/sentry.svg?react';
 
 export function FeedbackTab() {
   const { open, context } = useFeedbackState();
@@ -13,15 +14,32 @@ export function FeedbackTab() {
       <button
         type="button"
         onClick={() => openFeedback({ origin: 'layout' })}
-        className="fixed top-1/2 right-0 z-40 flex -translate-y-1/2 rotate-180 items-center gap-1.5 rounded-r-md bg-primary/80 px-1 py-2 text-xs text-white shadow-md [writing-mode:vertical-rl] hover:cursor-pointer hover:bg-primary focus-visible:bg-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="fixed right-4 bottom-4 z-40 flex items-center gap-2 rounded-full bg-primary px-3 py-2 text-sm text-white opacity-60 shadow-md transition-opacity hover:cursor-pointer hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [html:has([data-actions-section])_&]:bottom-[calc(var(--actions-height)+1rem)]"
         data-testid="feedback-tab"
       >
-        <ChatLeftTextIcon className="h-3 w-3 rotate-90" aria-hidden />
+        <SentryIcon className="h-4 w-4" aria-hidden />
         Zgłoś problem
       </button>
-      <AppModal title="Zgłoś problem" isOpen={open} onClose={closeFeedback}>
-        <FeedbackForm context={context} close={closeFeedback} />
-      </AppModal>
+      <Dialog.Root open={open} onOpenChange={(next) => !next && closeFeedback()}>
+        <Dialog.Portal>
+          <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/10 transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
+          <Dialog.Popup className="fixed right-4 bottom-4 z-50 max-h-[calc(100dvh-var(--header-height)-2rem)] w-[calc(100vw-2rem)] max-w-sm origin-bottom-right overflow-y-auto rounded-lg bg-white p-4 shadow-xl transition-all duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 [html:has([data-actions-section])_&]:bottom-[calc(var(--actions-height)+1rem)] [html:has([data-actions-section])_&]:max-h-[calc(100dvh-var(--header-height)-var(--actions-height)-2rem)]">
+            <header className="flex items-center justify-between">
+              <Dialog.Title className="text-lg font-bold">Zgłoś problem</Dialog.Title>
+              <Dialog.Close
+                aria-label="Zamknij"
+                className="rounded-md p-1.5 text-gray-500 hover:cursor-pointer hover:bg-black/5 hover:text-gray-700"
+              >
+                <XLgIcon className="h-4 w-4" />
+              </Dialog.Close>
+            </header>
+            <Dialog.Description className="mb-4 text-sm text-gray-600">
+              Opis, adres strony i nagranie sesji trafią do programistów, aby pomóc naprawić problem.
+            </Dialog.Description>
+            <FeedbackForm context={context} close={closeFeedback} />
+          </Dialog.Popup>
+        </Dialog.Portal>
+      </Dialog.Root>
     </>
   );
 }

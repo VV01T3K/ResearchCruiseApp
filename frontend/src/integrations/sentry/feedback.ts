@@ -39,7 +39,7 @@ export function useFeedbackState(): FeedbackState {
   );
 }
 
-export function sendFeedback(context: FeedbackContext, feedback: { message: string; email: string }): Promise<void> {
+export function sendFeedback(context: FeedbackContext, feedback: { message: string; email?: string }): Promise<void> {
   const client = Sentry.getClient();
   if (!client) return Promise.reject(new Error('Sentry is not initialized'));
 
