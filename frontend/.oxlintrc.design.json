@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [],
+  "jsPlugins": ["@shadcn/lint"],
+  "categories": {
+    "correctness": "off"
+  },
+  "settings": {
+    "shadcn": {
+      "ui": "@/components/shared"
+    }
+  },
+  "rules": {},
+  "ignorePatterns": ["dist", "src/routeTree.gen.ts", "src/api/generated", ".storybook"]
+}
