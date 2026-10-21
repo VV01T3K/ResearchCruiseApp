@@ -16,7 +16,7 @@ public sealed class SqlTestCollectionDefinition : ICollectionFixture<SqlFixture>
 public sealed class SqlFixture : IAsyncLifetime
 {
     public const string Image =
-        "mcr.microsoft.com/mssql/server:2022-latest@sha256:4402d880dd4c34bfa7d8705e56a86cd6c88da80a1f6bbbe741f999e76264a090";
+        "mcr.microsoft.com/mssql/server:2022-CU23-ubuntu-22.04@sha256:0ec7739e1c5ec2f57861facbe1f2b74f1d3e147c7c97edf91eeea920c5944d9c";
     private readonly MsSqlContainer _container = new MsSqlBuilder(Image)
         .WithPassword($"Test!{Guid.NewGuid():N}")
         .Build();
