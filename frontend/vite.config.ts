@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
-import { defineConfig } from 'vite-plus';
+import { defineConfig, lazyPlugins } from 'vite-plus';
 import viteReact, { reactCompilerPreset } from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import svgr from 'vite-plugin-svgr';
@@ -78,7 +78,7 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
-  plugins: [
+  plugins: lazyPlugins(() => [
     svgr({
       svgrOptions: {
         icon: '100%',
@@ -89,7 +89,7 @@ export default defineConfig({
     babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),
     sentryPlugin,
-  ],
+  ]),
   define: {
     APP_VERSION: JSON.stringify(packageJson.version),
     APP_REPOSITORY_URL: JSON.stringify(packageJson.repository),

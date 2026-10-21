@@ -90,7 +90,7 @@ export default defineConfig({
           useGetQueryData: false,
           shouldExportMutatorHooks: true,
           shouldExportHttpClient: true,
-          shouldExportQueryKey: true,
+          shouldExportKeys: true,
           shouldFilterQueryKey: false,
           shouldSplitQueryKey: true,
           useOperationIdAsQueryKey: false,
