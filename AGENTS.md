@@ -28,7 +28,7 @@ patterns to extend. Do not prefix new components with `App`.
 
 Follow the label scheme in #565:
 
-- Type, exactly one: `bug`, `enhancement`, or `refactor` (no user-visible change, including CI and tooling).
+- Type: `bug`, `enhancement`, or `refactor` (no user-visible change, including CI and tooling). Exactly one once triaged; a `needs-triage` issue may have several.
 - Status: `needs-triage` (the issue needs evidence, scope, or acceptance criteria), `needs-discussion` (people must decide first), `blocked` (waiting on something outside the repo). An issue is ready when it has a type and no status label; an issue without a type is implicitly `needs-triage`.
 - Priority: `next` (next batch), `deferred` (later).
 - Topic, optional: `ui-ux`, `ci-cd`, `security`, `sentry`, `docs`.
