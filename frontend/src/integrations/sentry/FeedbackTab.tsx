@@ -14,7 +14,7 @@ export function FeedbackTab() {
       <button
         type="button"
         onClick={() => openFeedback({ origin: 'layout' })}
-        className="fixed right-4 bottom-4 z-40 flex items-center gap-2 rounded-full bg-primary px-3 py-2 text-sm text-white opacity-60 shadow-md transition-opacity hover:cursor-pointer hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [html:has([data-actions-section])_&]:bottom-[calc(var(--actions-height)+1rem)]"
+        className="fixed right-4 bottom-4 z-40 flex items-center gap-2 rounded-full border border-primary/20 bg-white/80 px-3 py-2 text-sm font-medium text-primary shadow-md backdrop-blur-sm transition-colors hover:cursor-pointer hover:bg-primary hover:text-white focus-visible:bg-primary focus-visible:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [html:has([data-actions-section])_&]:bottom-[calc(var(--actions-height)+1rem)]"
         data-testid="feedback-tab"
       >
         <SentryIcon className="h-4 w-4" aria-hidden />
