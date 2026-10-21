@@ -1,5 +1,6 @@
 import { Dialog } from '@base-ui/react/dialog';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import { useRef } from 'react';
 
 import { closeFeedback, openFeedback, useCanSendFeedback, useFeedbackState } from '@/integrations/sentry/feedback';
 import { FeedbackForm } from '@/integrations/sentry/FeedbackForm';
@@ -7,11 +8,14 @@ import SentryIcon from '@/integrations/sentry/sentry.svg?react';
 
 export function FeedbackTab() {
   const { open, context } = useFeedbackState();
+  const tabRef = useRef<HTMLButtonElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
   if (!useCanSendFeedback()) return null;
 
   return (
     <>
       <button
+        ref={tabRef}
         type="button"
         aria-label="Zgłoś problem"
         onClick={() => openFeedback({ origin: 'layout' })}
@@ -26,10 +30,14 @@ export function FeedbackTab() {
           Zgłoś problem
         </span>
       </button>
-      <Dialog.Root open={open} onOpenChange={(next) => !next && closeFeedback()}>
-        <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/10 transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
-          <Dialog.Popup className="fixed right-14 bottom-[25dvh] z-50 max-h-[calc(75dvh-var(--header-height)-1rem)] w-[calc(100vw-4.5rem)] max-w-sm origin-bottom-right overflow-y-auto rounded-lg bg-white p-4 shadow-xl transition-all duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 motion-reduce:transition-none [html:has([data-actions-section])_&]:bottom-[max(25dvh,calc(var(--actions-height)+1rem))] [html:has([data-actions-section])_&]:max-h-[calc(100dvh-var(--header-height)-max(25dvh,calc(var(--actions-height)+1rem))-1rem)]">
+      <Dialog.Root open={open} onOpenChange={(next) => !next && closeFeedback()} modal={false} disablePointerDismissal>
+        <Dialog.Portal keepMounted>
+          <Dialog.Popup
+            ref={popupRef}
+            initialFocus={() => popupRef.current?.querySelector('textarea')}
+            finalFocus={tabRef}
+            className="fixed right-14 bottom-[25dvh] z-50 max-h-[calc(75dvh-var(--header-height)-1rem)] w-[calc(100vw-4.5rem)] max-w-sm origin-bottom-right overflow-y-auto rounded-lg bg-white p-4 shadow-xl transition-all duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 motion-reduce:transition-none [html:has([data-actions-section])_&]:bottom-[max(25dvh,calc(var(--actions-height)+1rem))] [html:has([data-actions-section])_&]:max-h-[calc(100dvh-var(--header-height)-max(25dvh,calc(var(--actions-height)+1rem))-1rem)]"
+          >
             <header className="flex items-center justify-between">
               <Dialog.Title className="text-lg font-bold">Zgłoś problem</Dialog.Title>
               <Dialog.Close

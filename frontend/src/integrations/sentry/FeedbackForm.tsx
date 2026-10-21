@@ -25,6 +25,7 @@ export function FeedbackForm({ context, close }: Props) {
       try {
         await sendFeedback(context, { message: value.message, email: value.email || undefined });
         close();
+        form.reset();
         toast.success('Dziękujemy za zgłoszenie!');
       } catch {
         toast.error('Nie udało się wysłać zgłoszenia. Spróbuj ponownie lub napisz na rejsy.help@ug.edu.pl.');
