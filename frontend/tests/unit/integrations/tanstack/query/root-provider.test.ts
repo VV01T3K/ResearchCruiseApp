@@ -4,6 +4,7 @@ import { ApiError } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { queryClient } from '@/integrations/tanstack/query/root-provider';
 
+vi.mock('@/config', () => ({ default: { apiUrl: 'https://api.test' } }));
 vi.mock('@sentry/react', () => ({ captureException: vi.fn() }));
 
 afterEach(() => {
@@ -15,12 +16,18 @@ afterEach(() => {
 it('reports failed actions that have no local error handler', async () => {
   const showError = vi.spyOn(toast, 'error').mockReturnValue('test');
   const mutation = queryClient.getMutationCache().build(queryClient, {
+    mutationKey: ['exportCruises'],
     mutationFn: async () => {
       throw new ApiError('Brak uprawnień do eksportu', 403);
     },
   });
   await expect(mutation.execute(undefined)).rejects.toThrow('Brak uprawnień');
-  expect(showError).toHaveBeenCalledExactlyOnceWith('Operacja nie powiodła się: Brak uprawnień do eksportu');
+  expect(showError).toHaveBeenCalledExactlyOnceWith(
+    'Operacja nie powiodła się: Brak uprawnień do eksportu',
+    expect.objectContaining({
+      props: expect.objectContaining({ context: { origin: 'toast', operation: 'exportCruises' } }),
+    })
+  );
 });
 
 it('leaves form errors to the form without a duplicate notification', async () => {

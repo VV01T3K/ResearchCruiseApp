@@ -3,7 +3,7 @@ import { useSyncExternalStore } from 'react';
 
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 
-export type FeedbackContext = { origin: 'layout' | 'help' };
+export type FeedbackContext = { origin: 'layout' | 'help' | 'toast' | 'form'; operation?: string; eventId?: string };
 
 const CONFIRMATION_TIMEOUT = 30_000;
 
@@ -39,7 +39,10 @@ export function useFeedbackState(): FeedbackState {
   );
 }
 
-export function sendFeedback(context: FeedbackContext, feedback: { message: string; email: string }): Promise<void> {
+export function sendFeedback(
+  { origin, operation, eventId: associatedEventId }: FeedbackContext,
+  feedback: { message: string; email: string }
+): Promise<void> {
   const client = Sentry.getClient();
   if (!client) return Promise.reject(new Error('Sentry is not initialized'));
 
@@ -48,7 +51,8 @@ export function sendFeedback(context: FeedbackContext, feedback: { message: stri
       ...feedback,
       url: window.location.href,
       source: 'api',
-      tags: { 'feedback.origin': context.origin },
+      associatedEventId,
+      tags: { 'feedback.origin': origin, ...(operation && { 'feedback.operation': operation }) },
     },
     { includeReplay: true }
   );
