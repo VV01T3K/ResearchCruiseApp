@@ -57,6 +57,8 @@ jobs:
           git merge-base --is-ancestor "$previous" "$sha" || fail "$previous is not an ancestor of $sha."
           [[ $sha != "$(git rev-parse origin/main)" ]] || fail "$sha is already released."
           git merge-base --is-ancestor "$sha" origin/staging || fail "$REF is not a commit on staging."
+          git cat-file -e "$sha:.github/workflows/build-production.yaml" 2> /dev/null \
+            || fail "$sha predates tag-based releases (it has no build-production.yaml); release a later staging commit."
 
           {
             echo "sha=$sha"
@@ -117,22 +119,19 @@ jobs:
           fetch-depth: 0
           ssh-key: ${{ secrets.VERSION_RELEASE_DEPLOYMENT_KEY }}
 
-      # The approval may come much later than the plan, so check the commit again just before the push.
-      - name: Check the commit again
+      # The approval may come much later than the plan, so check CI again before the push.
+      - name: Check CI again
         id: current
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ needs.plan.outputs.sha }}
           VERSION: ${{ needs.plan.outputs.version }}
         run: |
-          fail() { echo "::error::$*"; exit 1; }
           if [[ $(git rev-parse --verify --quiet "refs/tags/v$VERSION^{commit}") == "$SHA" && $(git rev-parse origin/main) == "$SHA" ]]; then
             echo "v$VERSION is already tagged and on main; publishing only its GitHub Release."
             echo "pushed=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          git merge-base --is-ancestor origin/main "$SHA" || fail "main moved; plan the release again."
-          git merge-base --is-ancestor "$SHA" origin/staging || fail "$SHA is no longer on staging."
           .github/scripts/check-ci.sh "$SHA"
 
       # Deploy-key pushes bypass the rulesets and, unlike GITHUB_TOKEN ones, trigger the tag's image build.
@@ -142,6 +141,10 @@ jobs:
           SHA: ${{ needs.plan.outputs.sha }}
           VERSION: ${{ needs.plan.outputs.version }}
         run: |
+          fail() { echo "::error::$*"; exit 1; }
+          git fetch --quiet origin
+          git merge-base --is-ancestor "$SHA" origin/staging || fail "$SHA is no longer on staging."
+          git merge-base --is-ancestor origin/main "$SHA" || fail "main moved; plan the release again."
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git tag -a "v$VERSION" -m "v$VERSION" "$SHA"
