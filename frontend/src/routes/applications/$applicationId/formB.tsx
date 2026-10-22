@@ -1,5 +1,5 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -15,11 +15,7 @@ import {
   formBDefaultValues,
   getFormBSubmissionSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import {
-  getApplication,
-  getGetApplicationQueryKey,
-  useGetApplicationCruiseSuspense,
-} from '@/api/generated/endpoints/applications.gen';
+import { getGetApplicationQueryKey, useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
 import { useFormAQuery, useFormBQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
   useGetApplicationFormAContextSuspense,
@@ -33,6 +29,7 @@ import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChang
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
+import { useApplicationQuery } from '@/integrations/tanstack/query/applications';
 import { Role } from '@/integrations/auth/types';
 import { canRevertFormB } from '@/lib/applications/status';
 
@@ -46,7 +43,7 @@ export const Route = createFileRoute('/applications/$applicationId/formB')({
 
 function FormBPage() {
   const { applicationId } = Route.useParams();
-  const mode = Route.useSearch().mode ?? 'preview';
+  const mode = Route.useSearch().mode ?? 'view';
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -60,9 +57,7 @@ function FormBPage() {
   const updateMutation = useUpdateApplicationFormB({ mutation: { meta: { handlesError: true } } });
   const revertToEditMutation = useRefillApplicationFormB({ mutation: { meta: { handlesError: true } } });
   const applicationQueryKey = getGetApplicationQueryKey(applicationId);
-  const application = useQuery({
-    queryKey: applicationQueryKey,
-    queryFn: ({ signal }) => getApplication(applicationId, { signal }),
+  const application = useApplicationQuery(applicationId, {
     enabled: mode === 'preview' && isInRole(currentUser, [Role.Administrator, Role.ShipOwner]),
   });
   const canRevertToEdit = mode === 'preview' && !!application.data && canRevertFormB(application.data.status);

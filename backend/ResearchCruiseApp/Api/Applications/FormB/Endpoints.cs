@@ -160,7 +160,7 @@ public static class FormBEndpoints
         status switch
         {
             CruiseApplicationStatus.FormBRequired =>
-                "Formularz B jest już cofnięty do edycji i czeka na uzupełnienie przez kierownika rejsu.",
+                "Formularz B jest już dostępny do edycji i czeka na wysłanie przez kierownika rejsu.",
             CruiseApplicationStatus.Reported =>
                 "Rejs został już rozliczony formularzem C, więc formularza B nie można cofnąć do edycji.",
             _ =>

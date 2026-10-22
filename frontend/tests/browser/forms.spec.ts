@@ -270,7 +270,7 @@ test('form B offers going back to editing only while eligible and explains a sta
   network,
 }) => {
   let status: CruiseApplicationStatus = 'formBRequired';
-  const refusal = 'Formularz B jest już cofnięty do edycji i czeka na uzupełnienie przez kierownika rejsu.';
+  const refusal = 'Formularz B jest już dostępny do edycji i czeka na wysłanie przez kierownika rejsu.';
   network.use(
     getGetApplicationMockHandler(() => ({ ...application(), status })),
     getRefillApplicationFormBMockHandler(fail(403, { status: 403, detail: refusal }))
@@ -282,7 +282,10 @@ test('form B offers going back to editing only while eligible and explains a sta
   await expect(revert).toHaveCount(0);
 
   status = 'formBFilled';
-  await page.reload();
+  await page.goto(`/applications/${applicationId}/formB`);
+  await expect(page.getByRole('button', { name: 'Wydrukuj' })).toBeVisible();
+  await expect(revert).toHaveCount(0);
+  await page.goto(`/applications/${applicationId}/formB?mode=preview`);
   await expect(revert).toBeVisible();
   status = 'formBRequired';
   await revert.click();
