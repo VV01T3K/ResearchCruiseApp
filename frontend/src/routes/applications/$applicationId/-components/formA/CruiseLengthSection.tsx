@@ -275,6 +275,11 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     showRequiredAsterisk
                     disabled={isReadonly}
                     minPeriodValue={minPeriodValue}
+                    helper={
+                      !isReadonly &&
+                      minPeriodValue > 0 &&
+                      'Okresy z przeszłości są niedostępne. Aby je wybrać, zaznacz „Zezwól na wybór dat z przeszłości”.'
+                    }
                   />
                 )}
               />

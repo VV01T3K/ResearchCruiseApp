@@ -11,10 +11,17 @@ type Props = {
 
   onClose?: () => void;
   variant?: keyof typeof variants;
+  iconAlign?: 'center' | 'start';
   'data-testid'?: string;
 };
 
-export function AppAlert({ children, onClose, variant = 'primary', 'data-testid': testId }: Props) {
+export function AppAlert({
+  children,
+  onClose,
+  variant = 'primary',
+  iconAlign = 'center',
+  'data-testid': testId,
+}: Props) {
   const Icon = variants[variant].icon;
 
   return (
@@ -23,7 +30,7 @@ export function AppAlert({ children, onClose, variant = 'primary', 'data-testid'
       role="alert"
       data-testid={testId}
     >
-      <Icon className="mr-4 h-6 w-6" />
+      <Icon className={cn('mr-4 h-6 w-6', iconAlign === 'start' && 'shrink-0 self-start')} />
       <span className="sr-only">{variants[variant].screenReaderMessage}</span>
       {children}
       {onClose && (

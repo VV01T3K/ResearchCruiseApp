@@ -1,3 +1,4 @@
+import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import DashLgIcon from 'bootstrap-icons/icons/dash-lg.svg?react';
 import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
@@ -161,7 +162,7 @@ export function AppNumberInput({
               'transition duration-300 ease-in-out',
               'focus:ring-primary focus:border-primary transform:scale-105 focus:shadow focus:outline-none',
               disabled ? 'rounded-lg bg-gray-200' : '',
-              errors?.length ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
+              hasErrors(errors) && invalidInputClassName
             )}
             ref={inputRef}
             data-testid={inputTestId}
@@ -177,7 +178,7 @@ export function AppNumberInput({
           />
         )}
       </div>
-      <div className="mt-2 flex flex-col justify-between text-sm">
+      <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <AppInputHelper id={aria.helperId} helper={helper} />
         <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
       </div>

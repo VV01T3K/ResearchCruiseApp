@@ -3,13 +3,14 @@ import type { RegisterAccountRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { formValidationLogic } from '@/integrations/tanstack/form/validation';
+import { formValidationLogic, selectCanSubmit } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { trackFormSubmit } from '@/integrations/sentry/client';
+import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useRegisterAccount } from '@/api/generated/endpoints/auth.gen';
 
 export const Route = createFileRoute('/(auth)/register')({
@@ -72,6 +73,7 @@ function RegisterPage() {
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('register', 'invalid', formApi.state);
+      navigateToFirstError();
     },
   });
 
@@ -83,7 +85,7 @@ function RegisterPage() {
 
   return (
     <AppLayout title="Rejestracja" variant="narrow">
-      <form className="px-4" onSubmit={handleSubmit}>
+      <form noValidate className="px-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
           <form.AppField name="email" children={(field) => <field.FloatingTextField type="email" label="E-mail" />} />
 
@@ -106,7 +108,7 @@ function RegisterPage() {
 
           <div className="!mt-12">
             <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
                 <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
                   Zarejestruj się

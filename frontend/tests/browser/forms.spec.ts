@@ -1,12 +1,17 @@
+import type { CruiseApplicationStatus } from '@/api/generated/schemas';
 import {
   getCreateApplicationMockHandler,
+  getGetApplicationFormAMockHandler,
+  getGetApplicationMockHandler,
+  getRefillApplicationFormBMockHandler,
   getUpdateApplicationFormAMockHandler,
   getUpdateApplicationFormBMockHandler,
   getUpdateApplicationFormCMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
 import { test, expect, applicationForms, dropFile, fail } from './fixtures';
 import { admin, deputyAccount, managerAccount, outsider } from '../data/accounts';
-import { applicationId, formB } from '../data/forms';
+import { application } from '../data/cruises';
+import { applicationId, formA as formAFields, formB } from '../data/forms';
 
 const formA = `/applications/${applicationId}/formA?mode=edit`;
 const savedForm = (form: string) => `PUT /v2/applications/${applicationId}/${form}`;
@@ -188,6 +193,31 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
   ]);
 });
 
+test('past fortnights are greyed out up to where the acceptable period is clamped', async ({ page, network }) => {
+  await page.clock.setFixedTime(new Date('2026-07-16T12:00:00'));
+  network.use(
+    getGetApplicationFormAMockHandler({ ...formAFields(), acceptablePeriod: ['13', '24'], optimalPeriod: ['13', '24'] })
+  );
+  await page.goto(formA);
+  const start = page.getByRole('slider').first();
+  const pastRange = page.getByTestId('period-unavailable-before').first();
+  const pastShare = () => pastRange.evaluate((el: HTMLElement) => el.offsetWidth / el.parentElement!.offsetWidth);
+  const pastDatesHelp = page.getByText('Okresy z przeszłości są niedostępne.', { exact: false });
+
+  await start.focus();
+  await page.keyboard.press('Home');
+  await expect(start).toHaveAttribute('aria-valuenow', '13');
+  expect(await pastShare()).toBeCloseTo(13 / 24, 2);
+  await expect(pastDatesHelp).toBeVisible();
+
+  await page.getByText('Zezwól na wybór dat z przeszłości', { exact: true }).click();
+  await start.focus();
+  await page.keyboard.press('Home');
+  await expect(start).toHaveAttribute('aria-valuenow', '0');
+  await expect(page.getByTestId('period-unavailable-before')).toHaveCount(0);
+  await expect(pastDatesHelp).toHaveCount(0);
+});
+
 test('a new application can be created as an incomplete draft with a note', async ({ page, network, requests }) => {
   network.use(getCreateApplicationMockHandler());
   await page.goto('/applications/new');
@@ -259,6 +289,34 @@ test('an invalid form B names the section and reason of the first error in an em
     'Formularz błędny w sekcji nr 12:\nData rozpoczęcia jest wymagana'
   );
   await expect(page.getByTestId('short-equipment-from-button')).toBeFocused();
+});
+
+test('form B offers going back to editing only while eligible and explains a stale refusal', async ({
+  page,
+  network,
+}) => {
+  let status: CruiseApplicationStatus = 'formBRequired';
+  const refusal = 'Formularz B jest już dostępny do edycji i czeka na wysłanie przez kierownika rejsu.';
+  network.use(
+    getGetApplicationMockHandler(() => ({ ...application(), status })),
+    getRefillApplicationFormBMockHandler(fail(403, { status: 403, detail: refusal }))
+  );
+  const revert = page.getByRole('button', { name: 'Cofnij do edycji' });
+
+  await page.goto(`/applications/${applicationId}/formB?mode=preview`);
+  await expect(page.getByRole('button', { name: 'Wydrukuj' })).toBeVisible();
+  await expect(revert).toHaveCount(0);
+
+  status = 'formBFilled';
+  await page.goto(`/applications/${applicationId}/formB`);
+  await expect(page.getByRole('button', { name: 'Wydrukuj' })).toBeVisible();
+  await expect(revert).toHaveCount(0);
+  await page.goto(`/applications/${applicationId}/formB?mode=preview`);
+  await expect(revert).toBeVisible();
+  status = 'formBRequired';
+  await revert.click();
+  await expect(page.getByTestId('toast-error')).toHaveText(`Nie udało się cofnąć formularza B do edycji: ${refusal}`);
+  await expect(revert).toHaveCount(0);
 });
 
 test('form C clears point awards for an unfinished task and saves attached photos', async ({

@@ -1,5 +1,6 @@
 import ExclamationTriangleIcon from 'bootstrap-icons/icons/exclamation-triangle.svg?react';
 
+import { hasErrors } from '@/components/inputs/invalidInput';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
   mode?: 'absolute' | 'inline';
 };
 export function AppInputErrorTriangle({ errors, mode = 'inline' }: Props) {
-  if (!errors) {
+  if (!hasErrors(errors)) {
     return null;
   }
 

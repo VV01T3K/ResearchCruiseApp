@@ -28,6 +28,7 @@ type WithoutFieldProps<T> = T extends unknown
   ? Omit<T, 'name' | 'value' | 'checked' | 'onBlur' | 'onChange' | 'errors' | 'nullable'>
   : never;
 
+// Typed values validate on submit, not blur: an error shown on mousedown moves the button being clicked (#667).
 function TextField({ value, onChange, ...props }: TextProps) {
   const field = useFieldContext<string>();
   return (
@@ -35,7 +36,6 @@ function TextField({ value, onChange, ...props }: TextProps) {
       {...props}
       name={field.name}
       value={value ?? field.state.value}
-      onBlur={field.handleBlur}
       onChange={onChange ?? field.handleChange}
       errors={useErrors()}
     />
@@ -54,7 +54,6 @@ function NumberField({ value, onChange, ...props }: NumberProps) {
       {...props}
       name={field.name}
       value={value ?? field.state.value}
-      onBlur={field.handleBlur}
       onChange={onChange ?? field.handleChange}
       errors={useErrors()}
     />
@@ -71,7 +70,6 @@ function NullableNumberField(
       nullable
       name={field.name}
       value={field.state.value}
-      onBlur={field.handleBlur}
       onChange={field.handleChange}
       errors={useErrors()}
     />
@@ -226,7 +224,6 @@ function FloatingTextField(props: WithoutFieldProps<React.ComponentProps<typeof 
       {...props}
       name={field.name}
       value={field.state.value}
-      onBlur={field.handleBlur}
       onChange={field.handleChange}
       errors={useErrors()}
     />

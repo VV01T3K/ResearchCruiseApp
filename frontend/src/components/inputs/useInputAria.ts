@@ -1,5 +1,7 @@
 import { useId, type ReactNode } from 'react';
 
+import { hasErrors } from '@/components/inputs/invalidInput';
+
 export function useInputAria(errors: string[] | undefined, helper: ReactNode) {
   const id = useId();
   const errorId = `${id}-errors`;
@@ -10,9 +12,9 @@ export function useInputAria(errors: string[] | undefined, helper: ReactNode) {
     helperId,
     inputProps: {
       id,
-      'aria-invalid': Boolean(errors?.length),
+      'aria-invalid': hasErrors(errors),
       'aria-describedby':
-        [helper ? helperId : '', errors?.length ? errorId : ''].filter(Boolean).join(' ') || undefined,
+        [helper ? helperId : '', hasErrors(errors) ? errorId : ''].filter(Boolean).join(' ') || undefined,
     },
   };
 }
