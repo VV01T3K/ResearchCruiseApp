@@ -105,7 +105,11 @@ export function CruiseApplicationPeriodInput({
         <Slider.Control className="relative flex w-full items-center">
           <Slider.Track className="relative h-1 w-full rounded-sm bg-black/5">
             {!disabled && minBound > 0 && (
-              <span className="absolute h-1 rounded-l-sm bg-gray-300" style={{ width: `${(minBound / 24) * 100}%` }} />
+              <span
+                data-testid="period-unavailable-before"
+                className="absolute h-1 rounded-l-sm bg-gray-300"
+                style={{ width: `${(minBound / 24) * 100}%` }}
+              />
             )}
             {!disabled && maxBound < 24 && (
               <span
