@@ -51,6 +51,8 @@ Database migrations run on startup only when `Database__ApplyMigrations` is `tru
 
 To upgrade production, back up the database, then start the new version once with `DATABASE_APPLY_MIGRATIONS=true`. Unset it again after the upgrade.
 
+See [Releasing](docs/releasing.md) for cutting a release or a hotfix.
+
 Reference data seeding runs on every startup once the schema is current. Missing roles, UG units, research areas and ship equipment are added; existing reference rows, including inactive entries, are preserved. Seeding shares Entity Framework's migration lock so application replicas do not seed simultaneously.
 
 `Database__SeedAccountsAutomatically` controls only the accounts configured in `users.json`. It replaces `Database__SeedAutomatically`; `Database__MigrateAutomatically` has been removed. Account seeding defaults to off in the backend, staging and production Compose, and is enabled in development Compose. For staging, rename `DATABASE_SEED_AUTOMATICALLY` to `DATABASE_SEED_ACCOUNTS_AUTOMATICALLY` in the deployment environment.

@@ -55,7 +55,7 @@ once the production projects are configured the same way.
 ## Step 3 — no source maps in production (for now)
 
 GitHub-hosted runners cannot reach the on-prem instance, so the production pipeline
-(`build-and-deploy.yaml`) uploads nothing to Sentry and builds no source maps. Staging keeps
+(`build-production.yaml`) uploads nothing to Sentry and builds no source maps. Staging keeps
 uploading to cloud.
 
 - **Backend:** little is lost. The published image ships `ResearchCruiseApp.pdb`, so the SDK

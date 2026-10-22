@@ -1,3 +1,5 @@
+Releases after 3.0.0 are published as [GitHub Releases](https://github.com/VV01T3K/ResearchCruiseApp/releases) (see [Releasing](docs/releasing.md)). This file is kept as history.
+
 ## 3.0.0 - 2026-10-21
 #### Changes since *2.5.1*:
 * fix(deploy): require production secrets and report to self-hosted Sentry (#634)
