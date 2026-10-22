@@ -77,22 +77,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ steps.target.outputs.sha }}
-        run: |
-          runs() {
-            gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$SHA&per_page=100" --jq \
-              '.workflow_runs[] | select(.event == "push" or .event == "pull_request") | [.status, .conclusion // "", .name, .html_url] | @tsv'
-          }
-          while runs | grep -qv '^completed'; do
-            echo "Waiting for CI on $SHA..."
-            sleep 30
-          done
-          all=$(runs)
-          [[ -n $all ]] || { echo "::error::No CI runs found for $SHA."; exit 1; }
-          echo "$all"
-          if awk -F '\t' '$2 !~ /^(success|skipped|neutral)$/ { bad = 1 } END { exit !bad }' <<< "$all"; then
-            echo "::error::CI did not pass for $SHA."
-            exit 1
-          fi
+        run: .github/scripts/check-ci.sh "$SHA"
 
       - name: Summarize
         env:
@@ -134,6 +119,7 @@ jobs:
       url: ${{ github.server_url }}/${{ github.repository }}/releases/tag/v${{ needs.plan.outputs.version }}
     permissions:
       contents: write
+      actions: read
 
     steps:
       - uses: actions/checkout@v7
@@ -141,14 +127,33 @@ jobs:
           fetch-depth: 0
           ssh-key: ${{ secrets.VERSION_RELEASE_DEPLOYMENT_KEY }}
 
+      # The approval may come much later than the plan, so check the commit again just before the push.
+      - name: Check the commit again
+        id: current
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ needs.plan.outputs.sha }}
+          HOTFIX: ${{ needs.plan.outputs.hotfix }}
+          VERSION: ${{ needs.plan.outputs.version }}
+        run: |
+          fail() { echo "::error::$*"; exit 1; }
+          if [[ $(git rev-parse --verify --quiet "refs/tags/v$VERSION^{commit}") == "$SHA" && $(git rev-parse origin/main) == "$SHA" ]]; then
+            echo "v$VERSION is already tagged and on main; publishing only its GitHub Release."
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git merge-base --is-ancestor origin/main "$SHA" || fail "main moved; plan the release again."
+          [[ $HOTFIX == true ]] || git merge-base --is-ancestor "$SHA" origin/staging || fail "$SHA is no longer on staging."
+          .github/scripts/check-ci.sh "$SHA"
+
       # Deploy-key pushes bypass the rulesets and, unlike GITHUB_TOKEN ones, trigger the tag's image build.
       - name: Tag and fast-forward main
+        if: steps.current.outputs.pushed != 'true'
         env:
           SHA: ${{ needs.plan.outputs.sha }}
           HOTFIX: ${{ needs.plan.outputs.hotfix }}
           VERSION: ${{ needs.plan.outputs.version }}
         run: |
-          git merge-base --is-ancestor origin/main "$SHA" || { echo "::error::main moved; plan the release again."; exit 1; }
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           refs=("$SHA:refs/heads/main" "refs/tags/v$VERSION")
