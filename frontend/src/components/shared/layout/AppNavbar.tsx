@@ -36,13 +36,10 @@ export function AppNavbar() {
       transition={{ duration: 0.3 }}
     >
       <div className="min-w-0">
-        <motion.div
-          whileHover={{ scale: 1.1, translateX: '5%' }}
-          className="flex-col items-end sm:flex sm:flex-row sm:font-thin"
-        >
+        <div className="flex-col items-end transition-transform duration-300 sm:flex sm:flex-row sm:gap-1 sm:font-thin lg:hover:translate-x-[5%] lg:hover:scale-110">
           <AppLink
             href="/"
-            title="Strona Główna"
+            title="Portal rejsów badawczych R/V Oceanograf – strona główna"
             className="pr-4 text-white hover:no-underline sm:truncate sm:text-2xl"
           >
             Portal rejsów badawczych R/V Oceanograf
@@ -50,7 +47,7 @@ export function AppNavbar() {
           <AppLink href={`${config.repositoryUrl}/releases/latest`} variant="white" className="shrink-0 text-xs">
             {config.version}
           </AppLink>
-        </motion.div>
+        </div>
       </div>
       <div className="flex shrink-0 gap-6">
         <motion.div className="w-4" whileHover={{ scale: 1.3 }}>
