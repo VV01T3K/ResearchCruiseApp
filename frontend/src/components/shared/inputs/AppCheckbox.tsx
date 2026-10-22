@@ -1,3 +1,4 @@
+import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import { Checkbox } from '@base-ui/react/checkbox';
 import CheckIcon from 'bootstrap-icons/icons/check-lg.svg?react';
@@ -55,7 +56,8 @@ export function AppCheckbox({
             sizes[size],
             checked && variants[variant][disabled ? 'disabled' : 'enabled'],
             !checked && (disabled ? 'bg-gray-100' : 'bg-white hover:border-gray-400'),
-            disabled ? 'cursor-default' : 'cursor-pointer'
+            disabled ? 'cursor-default' : 'cursor-pointer',
+            hasErrors(errors) && 'border-danger hover:border-danger'
           )}
         >
           <Checkbox.Indicator>
@@ -64,7 +66,7 @@ export function AppCheckbox({
         </Checkbox.Root>
       </div>
 
-      <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
+      <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <AppInputHelper id={aria.helperId} helper={helper} />
         <AppInputErrorsList id={aria.errorId} errors={errors} />
       </div>

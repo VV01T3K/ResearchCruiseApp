@@ -1,3 +1,4 @@
+import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import CloudUploadIcon from 'bootstrap-icons/icons/cloud-upload.svg?react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -156,7 +157,7 @@ export function AppFileInput({
             'cursor-pointer overflow-x-auto rounded-lg border-dashed bg-gray-50 hover:bg-gray-100',
             'min-h-10 transition-all duration-200 ease-in-out',
             disabled ? 'cursor-pointer bg-gray-200 hover:bg-gray-200' : '',
-            errors ? 'border-danger ring-danger text-danger focus-within:text-gray-900' : '',
+            hasErrors(errors) && 'border-danger text-danger',
             className
           )}
         >
@@ -217,7 +218,7 @@ export function AppFileInput({
         accept={acceptedMimeTypes?.join(',')}
         data-testid={inputTestId}
       />
-      <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
+      <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <AppInputHelper id={aria.helperId} helper={helper} />
         <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
       </div>

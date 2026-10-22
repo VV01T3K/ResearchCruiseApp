@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppInputErrorTriangle } from '@/components/shared/inputs/parts/AppInputErrorTriangle';
@@ -111,7 +112,7 @@ export function AppYearPickerInput({
             className={cn(
               'relative inline-flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
               disabled ? 'bg-gray-200 hover:cursor-default' : '',
-              errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
+              hasErrors(errors) && invalidInputClassName
             )}
             data-testid={buttonTestId}
           >
@@ -129,7 +130,7 @@ export function AppYearPickerInput({
             onResetSelection={handleResetSelection}
           />
         </div>
-        <div className={cn('flex flex-row justify-between text-sm', errors || helper ? 'mt-2' : '')}>
+        <div className={cn('flex flex-row justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper helper={helper} />
           <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
         </div>

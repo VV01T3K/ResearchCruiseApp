@@ -165,3 +165,15 @@ test('form C reports a missing form B as not found', async ({ page, network }) =
   await page.goto(`/applications/${applicationId}/formC?mode=edit`);
   await expect(page.getByText('Strona nie znaleziona')).toBeVisible();
 });
+
+test('an invalid select keeps its error border while focused', async ({ page, network }) => {
+  network.use(getGetApplicationFormAMockHandler({ ...formA(), deputyManagerId: '' }));
+  await page.goto(`/applications/${applicationId}/formA?mode=edit`);
+  const select = page.getByTestId('form-a-deputy-manager-button');
+  await select.click();
+  await expect(page.getByRole('listbox')).toBeVisible();
+  await page.keyboard.press('Escape');
+  const errors = page.getByTestId('form-a-deputy-manager-errors');
+  await expect(select).toBeFocused();
+  await expect(select).toHaveCSS('border-top-color', await errors.evaluate((e) => getComputedStyle(e).color));
+});

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
+import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper';
@@ -93,13 +94,13 @@ export function AppDatePickerTimeInput({
             className={cn(
               'relative inline-flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900',
               disabled ? 'bg-gray-200' : '',
-              errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
+              hasErrors(errors) && invalidInputClassName
             )}
           >
             <span className="w-full">{time ? formatTime(time) : placeholder}</span>
           </AppButton>
         </div>
-        <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
+        <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper helper={helper} />
           <AppInputErrorsList errors={errors} />
         </div>

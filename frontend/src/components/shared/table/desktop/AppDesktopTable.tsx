@@ -1,5 +1,6 @@
 import { flexRender } from '@tanstack/react-table';
 
+import { hasErrors } from '@/components/inputs/invalidInput';
 import { AppTableClearFiltersButton } from '@/components/shared/table/common/AppTableClearFiltersButton';
 import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
 import { TableProps } from '@/components/shared/table/common/tableProps';
@@ -85,7 +86,7 @@ export function AppDesktopTable<T extends object>({
               <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
                 <div
                   className={`rounded-lg border bg-gray-100 p-2.5 ${
-                    errors ? 'border-danger bg-gray-50 text-danger ring-danger' : 'border-gray-300'
+                    hasErrors(errors) ? 'border-danger bg-gray-50 text-danger ring-danger' : 'border-gray-300'
                   }`}
                 >
                   <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>

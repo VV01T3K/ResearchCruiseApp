@@ -1,10 +1,12 @@
+import { hasErrors } from '@/components/inputs/invalidInput';
+
 type Props = {
   id?: string;
   errors: string[] | undefined;
   'data-testid'?: string;
 };
 export function AppInputErrorsList({ id, errors, 'data-testid': testId }: Props) {
-  if (!errors?.length) {
+  if (!hasErrors(errors)) {
     return null;
   }
 
