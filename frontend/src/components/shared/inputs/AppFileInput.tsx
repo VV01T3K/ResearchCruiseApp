@@ -178,7 +178,7 @@ export function AppFileInput({
             tabIndex={disabled ? -1 : 0}
             className={cn(
               'w-full rounded-lg',
-              hasErrors(errors) && 'focus:ring-danger focus:ring-2 focus:outline-none'
+              hasErrors(errors) && 'focus:ring-danger focus:ring-2 focus:outline-none focus:ring-inset'
             )}
             data-testid={buttonTestId}
           >
