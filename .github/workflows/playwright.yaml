@@ -44,7 +44,10 @@ jobs:
         run: vp run test:storybook
 
       - name: Run Playwright tests
-        run: vp run test:browser
+        run: |
+          seed=$((RANDOM * 32768 + RANDOM))
+          echo "Playwright shuffle seed \`$seed\`: reproduce with \`vp run test:browser:shuffle $seed --workers=1\`" >> "$GITHUB_STEP_SUMMARY"
+          vp run test:browser:shuffle "$seed"
 
       - uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
