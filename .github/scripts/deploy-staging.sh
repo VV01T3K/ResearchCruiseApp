@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+{ set +x; } 2>/dev/null
 set -euo pipefail
 
 : "${STAGING_SYNC_URL:?Set the staging Git sync URL}"
@@ -24,7 +25,7 @@ fail() {
   exit 1
 }
 
-post "$STAGING_SYNC_URL" '{}' | jq --exit-status '.success == true and .data.success == true' >/dev/null \
+post "$STAGING_SYNC_URL" '{}' | jq --exit-status '.success == true and .data.success == true' >/dev/null 2>&1 \
   || fail "Staging configuration sync failed"
 echo "Staging configuration synced"
 
@@ -37,18 +38,27 @@ activity_id=$(
 [[ $activity_id =~ ^[A-Za-z0-9-]+$ ]] || fail "Staging deployment did not start"
 echo "Staging deployment $activity_id started"
 
+budget() {
+  left=$((deadline - SECONDS))
+  ((left > 0)) || fail "Timed out waiting for staging deployment"
+  ((left < $1)) || left=$1
+}
+
+misses=0
 while :; do
+  budget 30
   status=$(
-    request --max-time 30 --retry 3 "${STAGING_DEPLOY_URL%/projects/*}/activities/$activity_id?limit=1" \
+    request --max-time "$left" "${STAGING_DEPLOY_URL%/projects/*}/activities/$activity_id?limit=1" \
       | jq --raw-output --arg id "$activity_id" \
-        'select(.success == true and .data.activity.id == $id) | .data.activity.status'
+        'select(.success == true and .data.activity.id == $id) | .data.activity.status' 2>/dev/null
   ) || status=
+  budget 1
   case $status in
     success) echo "Staging deployment succeeded"; exit 0 ;;
     failed | cancelled) fail "Staging deployment $status" ;;
-    queued | running) ;;
-    *) fail "Staging deployment status unavailable" ;;
+    queued | running) misses=0 ;;
+    *) ((++misses < 4)) || fail "Staging deployment status unavailable" ;;
   esac
-  ((SECONDS < deadline)) || fail "Timed out waiting for staging deployment"
-  sleep 5
+  budget 5
+  sleep "$left"
 done
