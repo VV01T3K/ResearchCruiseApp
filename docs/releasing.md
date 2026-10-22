@@ -66,8 +66,10 @@ it without the unreleased work on `staging`:
 3. Approve the `production` deployment. In one push, the workflow tags the hotfix commit,
    fast-forwards `main` to it and merges it into `staging`. Delete the branch afterwards.
 
-The run refuses a hotfix that conflicts with `staging`; ship that fix as a pull request into
-`staging` instead. If `staging` or the hotfix branch changes before the push, run the release again.
+The run refuses a hotfix that does not branch from the latest release tag or that conflicts with
+`staging`; ship such a fix as a pull request into `staging` instead. The push fails as a whole if
+`staging` or the hotfix branch changed since planning, or if `main` no longer fast-forwards to the
+hotfix; run the release again.
 
 ## Repository settings
 
