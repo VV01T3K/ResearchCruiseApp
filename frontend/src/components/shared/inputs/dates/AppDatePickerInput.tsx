@@ -1,3 +1,4 @@
+import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
 import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
@@ -154,7 +155,7 @@ export function AppDatePickerInput({
             className={cn(
               'relative inline-flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
               disabled ? 'bg-gray-200 hover:cursor-default' : '',
-              errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
+              hasErrors(errors) && invalidInputClassName
             )}
             data-testid={buttonTestId}
           >
@@ -180,7 +181,7 @@ export function AppDatePickerInput({
             onResetSelection={handleResetSelection}
           />
         </div>
-        <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
+        <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper id={aria.helperId} helper={helper} />
           <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
         </div>
