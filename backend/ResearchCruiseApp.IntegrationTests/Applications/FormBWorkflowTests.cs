@@ -30,7 +30,11 @@ public sealed class FormBWorkflowTests(SqlFixture fixture) : IAsyncLifetime
             await db.SaveChangesAsync(ct);
         });
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
+        using var admin = await TestApplications.Login(app, office.Email!);
         var route = $"/v2/applications/{application.Id}/form-b";
+        using var unsentRefill = await admin.PutAsync(route + "/refill", null, ct);
+        Assert.Equal(HttpStatusCode.Forbidden, unsentRefill.StatusCode);
+        Assert.Contains("już dostępny do edycji", await unsentRefill.Content.ReadAsStringAsync(ct));
         var first = Fields(unit.Id, "2");
 
         using var saved = await manager.PutAsJsonAsync(
@@ -71,10 +75,12 @@ public sealed class FormBWorkflowTests(SqlFixture fixture) : IAsyncLifetime
 
         using var deniedRefill = await manager.PutAsync(route + "/refill", null, ct);
         Assert.Equal(HttpStatusCode.Forbidden, deniedRefill.StatusCode);
-        using var admin = await TestApplications.Login(app, office.Email!);
         using var reopened = await admin.PutAsync(route + "/refill", null, ct);
         Assert.Equal(HttpStatusCode.NoContent, reopened.StatusCode);
         await AssertState(app, CruiseApplicationStatus.FormBRequired, "3");
+        using var staleRefill = await admin.PutAsync(route + "/refill", null, ct);
+        Assert.Equal(HttpStatusCode.Forbidden, staleRefill.StatusCode);
+        Assert.Contains("już dostępny do edycji", await staleRefill.Content.ReadAsStringAsync(ct));
         Assert.Empty(app.Transport.Messages);
     }
 

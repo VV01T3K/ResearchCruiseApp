@@ -90,7 +90,7 @@ public static class FormBEndpoints
             return Error.ResourceNotFound().ToProblemHttpResult();
         if (application.Status != CruiseApplicationStatus.FormBRequired)
             return Error
-                .ForbiddenOperation("Obecnie nie można przesłać formularza B.")
+                .ForbiddenOperation(UpdateRefusal(application.Status))
                 .ToProblemHttpResult();
 
         var oldFormB = application.FormB;
@@ -126,7 +126,7 @@ public static class FormBEndpoints
             return Error.ResourceNotFound().ToProblemHttpResult();
         if (!CanRefillFormB(application.Status))
             return Error
-                .ForbiddenOperation("Obecnie nie można umożliwić edycji formularza B")
+                .ForbiddenOperation(RefillRefusal(application.Status))
                 .ToProblemHttpResult();
 
         application.Status = CruiseApplicationStatus.FormBRequired;
@@ -144,4 +144,26 @@ public static class FormBEndpoints
 
     private static bool CanRefillFormB(CruiseApplicationStatus status) =>
         status is CruiseApplicationStatus.Undertaken or CruiseApplicationStatus.FormBFilled;
+
+    private static string UpdateRefusal(CruiseApplicationStatus status) =>
+        status switch
+        {
+            CruiseApplicationStatus.FormBFilled or CruiseApplicationStatus.Undertaken =>
+                "Formularz B został już wysłany. Aby go zmienić, poproś Biuro Armatora o cofnięcie go do edycji.",
+            CruiseApplicationStatus.Reported =>
+                "Rejs został już rozliczony formularzem C, więc formularza B nie można zmienić.",
+            _ =>
+                "Formularz B można wysłać dopiero, gdy Biuro Armatora poprosi o jego uzupełnienie.",
+        };
+
+    private static string RefillRefusal(CruiseApplicationStatus status) =>
+        status switch
+        {
+            CruiseApplicationStatus.FormBRequired =>
+                "Formularz B jest już dostępny do edycji i czeka na wysłanie przez kierownika rejsu.",
+            CruiseApplicationStatus.Reported =>
+                "Rejs został już rozliczony formularzem C, więc formularza B nie można cofnąć do edycji.",
+            _ =>
+                "Formularz B można cofnąć do edycji dopiero po jego wysłaniu przez kierownika rejsu.",
+        };
 }
