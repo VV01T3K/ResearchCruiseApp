@@ -68,7 +68,7 @@ result=$(jq --null-input --raw-input --raw-output '
   | ($frames[0] | if type == "object" and .type == "activity" and (.activityId | type == "string" and test("^[A-Za-z0-9-]+$"))
       then .activityId else "" end) as $id
   | if any($frames[]; type == "object" and has("error")) then "failed"
-    elif $id != "" and all($frames[]; type == "object") and $frames[-1] == {done: true} then "succeeded"
+    elif $id != "" and all($frames[1:-1][]; type == "object" and keys == ["log"]) and $frames[-1] == {done: true} then "succeeded"
     else "unknown" end
   | "\(.) \($id)"' "$body" 2>/dev/null) || result=unknown
 read -r outcome activity_id <<<"$result"
