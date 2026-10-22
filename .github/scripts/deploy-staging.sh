@@ -48,7 +48,7 @@ post "$STAGING_DEPLOY_URL" \
   '{"pullPolicy":"always","forceRecreate":false,"recreateVolumes":false}' \
   application/x-json-stream || fail "Staging deployment failed ($why)"
 
-activity_id=$(jq -sre '
+activity_id=$(jq -Rsre 'rtrimstr("\n") | split("\n") | map(fromjson) |
   if length >= 2
     and (.[0].type == "activity")
     and (.[0].activityId | type == "string" and test("^[A-Za-z0-9-]+$"))
