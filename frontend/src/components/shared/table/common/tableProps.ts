@@ -20,5 +20,6 @@ export type TableProps<T extends object> = {
   showRequiredAsterisk?: boolean;
   infiniteScroll?: InfiniteScrollProps;
   virtualized?: boolean;
+  className?: string;
   'data-testid'?: string;
 };

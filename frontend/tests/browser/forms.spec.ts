@@ -1,12 +1,13 @@
 import {
   getCreateApplicationMockHandler,
+  getGetApplicationFormAMockHandler,
   getUpdateApplicationFormAMockHandler,
   getUpdateApplicationFormBMockHandler,
   getUpdateApplicationFormCMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
 import { test, expect, applicationForms, dropFile, fail } from './fixtures';
 import { admin, deputyAccount, managerAccount, outsider } from '../data/accounts';
-import { applicationId, formB } from '../data/forms';
+import { applicationId, formA as formAFields, formB } from '../data/forms';
 
 const formA = `/applications/${applicationId}/formA?mode=edit`;
 const savedForm = (form: string) => `PUT /v2/applications/${applicationId}/${form}`;
@@ -186,6 +187,31 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
       }),
     }),
   ]);
+});
+
+test('past fortnights are greyed out up to where the acceptable period is clamped', async ({ page, network }) => {
+  await page.clock.setFixedTime(new Date('2026-07-16T12:00:00'));
+  network.use(
+    getGetApplicationFormAMockHandler({ ...formAFields(), acceptablePeriod: ['13', '24'], optimalPeriod: ['13', '24'] })
+  );
+  await page.goto(formA);
+  const start = page.getByRole('slider').first();
+  const pastRange = page.getByTestId('period-unavailable-before').first();
+  const pastShare = () => pastRange.evaluate((el: HTMLElement) => el.offsetWidth / el.parentElement!.offsetWidth);
+  const pastDatesHelp = page.getByText('Okresy z przeszłości są niedostępne.', { exact: false });
+
+  await start.focus();
+  await page.keyboard.press('Home');
+  await expect(start).toHaveAttribute('aria-valuenow', '13');
+  expect(await pastShare()).toBeCloseTo(13 / 24, 2);
+  await expect(pastDatesHelp).toBeVisible();
+
+  await page.getByText('Zezwól na wybór dat z przeszłości', { exact: true }).click();
+  await start.focus();
+  await page.keyboard.press('Home');
+  await expect(start).toHaveAttribute('aria-valuenow', '0');
+  await expect(page.getByTestId('period-unavailable-before')).toHaveCount(0);
+  await expect(pastDatesHelp).toHaveCount(0);
 });
 
 test('a new application can be created as an incomplete draft with a note', async ({ page, network, requests }) => {

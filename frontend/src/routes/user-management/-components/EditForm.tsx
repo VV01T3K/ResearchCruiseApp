@@ -18,6 +18,7 @@ import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
+import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { getRoleLabel, Role } from '@/integrations/auth/types';
 import {
   useAcceptUser,
@@ -160,6 +161,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit(editMode ? 'edit-user' : 'add-user', 'invalid', formApi.state);
+      navigateToFirstError();
     },
   });
 
@@ -251,7 +253,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form noValidate onSubmit={handleSubmit}>
       <div className="flex h-14 justify-around">
         <form.Subscribe
           selector={(state) => [state.values.firstName, state.values.lastName]}
