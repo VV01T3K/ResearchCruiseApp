@@ -2,6 +2,7 @@ import { Popover } from '@base-ui/react/popover';
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 import React from 'react';
 
+import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
 import { AppButtonVariant } from '@/components/shared/AppButton';
 import { cn } from '@/lib/utils';
 
@@ -37,7 +38,11 @@ export function AppPopover({ children, modal, className, variant = 'plain' }: Pr
       </Popover.Trigger>
 
       <Popover.Portal>
-        <Popover.Positioner className="z-50 min-w-[var(--anchor-width)]" sideOffset={4}>
+        <Popover.Positioner
+          className="z-50 min-w-[var(--anchor-width)]"
+          sideOffset={4}
+          collisionPadding={stickyBarsCollisionPadding}
+        >
           <Popover.Popup
             className={cn(
               'w-full origin-[var(--transform-origin)] rounded-lg bg-white shadow-xl ring-1 ring-black/10',
