@@ -36,7 +36,8 @@ export function AppAccordion({
         className="overflow-hidden px-4 transition-all duration-300 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0"
         data-testid={contentTestId}
       >
-        {children}
+        {/* A margin, not padding, so a leading child's own top margin merges into this gap. */}
+        <div className="mt-4">{children}</div>
       </Collapsible.Panel>
     </Collapsible.Root>
   );
