@@ -190,14 +190,6 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
         mode="array"
         children={(field) => (
           <>
-            <input
-              type="file"
-              accept=".csv,.txt,.xlsx"
-              onChange={handleFileImport}
-              ref={fileInputRef}
-              disabled={isReadonly}
-              className="hidden"
-            />
             <AppTable
               data={field.state.value}
               columns={cruiseDayDetailsColumns(
@@ -265,6 +257,14 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
                 return buttons;
               }}
               variant="form"
+            />
+            <input
+              type="file"
+              accept=".csv,.txt,.xlsx"
+              onChange={handleFileImport}
+              ref={fileInputRef}
+              disabled={isReadonly}
+              className="hidden"
             />
           </>
         )}
