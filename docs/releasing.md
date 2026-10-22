@@ -27,14 +27,28 @@ as history up to 3.0.0.
 
 ## Release
 
+A release takes two steps:
+
 1. In **Actions → Release → Run workflow**, keep the branch `staging`, pick the bump (`major`, `minor`
    or `patch`) and the commit (`staging`, or the SHA of a `staging` commit). The run waits for that
    commit's CI and lists the version, its commits and the bump suggested by their Conventional
    Commits in the run summary.
-2. Approve the `production` deployment. The workflow tags the commit `vX.Y.Z`, fast-forwards `main`
-   to it and publishes the GitHub Release. The tag push runs **Build production images**.
+2. Approve the `production` deployment. The workflow checks the commit again, tags it `vX.Y.Z`,
+   fast-forwards `main` to it and publishes the GitHub Release. The tag push runs **Build production
+   images**.
 
-Then deploy on the production server: set `APP_VERSION=vX.Y.Z` in `docker/.env` and run
+The commit must be on `staging`, and the latest CI run of each workflow on that exact commit must
+pass, including the frontend, backend and dependency checks, both image builds and the Playwright
+tests. A commit whose CI was skipped or cancelled, such as a docs-only commit, cannot be released;
+choose a commit whose CI passed.
+
+If publishing the GitHub Release fails after the push, use **Re-run failed jobs** on the same run and
+approve it again. It finds the tag and `main` already in place and only creates the Release.
+
+## Deploying to production
+
+Deploying is a separate operations step on the production server, outside the release procedure:
+set `APP_VERSION=vX.Y.Z` in `docker/.env` and run
 `docker compose -f compose.production.yaml --env-file .env up -d` (see
 [Deployment](../README.md#deployment) for database migrations).
 
