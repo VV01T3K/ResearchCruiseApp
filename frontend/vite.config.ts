@@ -10,20 +10,12 @@ import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { playwright } from 'vite-plus/test/browser-playwright';
 import { fmtConfig, lintConfig } from './vite.tool.config.ts';
 
-const {
-  SENTRY_AUTH_TOKEN: sentryAuthToken,
-  SENTRY_ORG: sentryOrg,
-  SENTRY_PROJECT: sentryProject,
-  SENTRY_RELEASE: sentryRelease,
-} = process.env;
+const { SENTRY_AUTH_TOKEN: sentryAuthToken, SENTRY_ORG: sentryOrg, SENTRY_PROJECT: sentryProject } = process.env;
+const appVersion = process.env.APP_VERSION || '0.0.0';
 
 const packageJson = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as {
-  version?: unknown;
   repository?: unknown;
 };
-if (typeof packageJson.version !== 'string' || !packageJson.version) {
-  throw new Error('frontend/package.json has no version to show in the app');
-}
 if (typeof packageJson.repository !== 'string' || !packageJson.repository) {
   throw new Error('frontend/package.json has no repository URL to link from the app');
 }
@@ -34,7 +26,7 @@ const sentryPlugin =
         authToken: sentryAuthToken,
         org: sentryOrg,
         project: sentryProject,
-        release: { name: sentryRelease },
+        release: { name: `research-cruise-app-frontend@${appVersion}` },
         sourcemaps: { filesToDeleteAfterUpload: ['./dist/**/*.map'] },
       })
     : undefined;
@@ -91,12 +83,11 @@ export default defineConfig({
     sentryPlugin,
   ]),
   define: {
-    APP_VERSION: JSON.stringify(packageJson.version),
+    APP_VERSION: JSON.stringify(appVersion),
     APP_REPOSITORY_URL: JSON.stringify(packageJson.repository),
     API_URL: JSON.stringify(process.env.API_URL),
     APP_ENVIRONMENT: JSON.stringify(process.env.APP_ENVIRONMENT),
     SENTRY_DSN: JSON.stringify(process.env.SENTRY_DSN ?? ''),
-    SENTRY_RELEASE: JSON.stringify(sentryRelease ?? ''),
     SENTRY_TRACES_SAMPLE_RATE: JSON.stringify(process.env.SENTRY_TRACES_SAMPLE_RATE ?? ''),
     SENTRY_REPLAYS_SESSION_SAMPLE_RATE: JSON.stringify(process.env.SENTRY_REPLAYS_SESSION_SAMPLE_RATE ?? ''),
   },

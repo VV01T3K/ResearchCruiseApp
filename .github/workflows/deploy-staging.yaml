@@ -32,18 +32,18 @@ jobs:
           - component: frontend
             context: .
             dockerfile: frontend/Dockerfile
-            build-args: |
-              APP_ENVIRONMENT=staging
-              SENTRY_RELEASE=research-cruise-app-frontend@${{ github.sha }}
           - component: backend
             context: backend
             dockerfile: backend/Dockerfile
-            build-args: |
-              APP_ENVIRONMENT=staging
-              SENTRY_RELEASE=research-cruise-app-backend@${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Read version
+        id: version
+        run: echo "version=$(.github/scripts/version.sh)" >> "$GITHUB_OUTPUT"
 
       - uses: docker/setup-buildx-action@v4
 
@@ -70,7 +70,9 @@ jobs:
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ matrix.build-args }}
+          build-args: |
+            APP_ENVIRONMENT=staging
+            APP_VERSION=${{ steps.version.outputs.version }}
           secrets: |
             sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
           cache-from: type=gha,scope=${{ matrix.component }}

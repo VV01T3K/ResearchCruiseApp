@@ -169,10 +169,8 @@ app.UseMiddleware<SentryUserMiddleware>();
 app.MapApi();
 
 var version = typeof(Program)
-    .Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>()
-    ?.Version.Split('.')
-    .Take(3)
-    .Aggregate((current, next) => $"{current}.{next}");
+    .Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+    ?.InformationalVersion;
 app.MapGet(
         "/version",
         IResult () => version is not null ? TypedResults.Ok(version) : TypedResults.NotFound()
