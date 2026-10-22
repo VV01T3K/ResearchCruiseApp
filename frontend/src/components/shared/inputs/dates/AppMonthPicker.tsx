@@ -11,7 +11,7 @@ type Props = {
   onSelectMonth: (date: Date) => void;
 };
 export function AppMonthPicker({ selectedDate, onSelectMonth }: Props) {
-  const [visibleYear, setVisibleYear] = React.useState<number>(() => new Date().getFullYear());
+  const [visibleYear, setVisibleYear] = React.useState<number>(() => (selectedDate ?? new Date()).getFullYear());
 
   function handleSelectMonth(index: number) {
     const date = new Date(visibleYear, index);
