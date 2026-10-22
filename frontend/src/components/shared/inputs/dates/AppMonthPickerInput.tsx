@@ -1,13 +1,10 @@
 import { Popover } from '@base-ui/react/popover';
-import { PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
+import { PickerClearButton, PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
 import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
-import React, { useCallback, useState } from 'react';
-import { createPortal } from 'react-dom';
+import React from 'react';
 
-import { AppButton } from '@/components/shared/AppButton';
 import { AppMonthPicker } from '@/components/shared/inputs/dates/AppMonthPicker';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppInputErrorTriangle } from '@/components/shared/inputs/parts/AppInputErrorTriangle';
@@ -42,9 +39,6 @@ export function AppMonthPickerInput({
   const selectedDate = getDateFromValue(value);
   const [expanded, setExpanded] = React.useState(false);
 
-  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(null);
-  const portalContainerRef = useCallback((node: HTMLDivElement | null) => setPortalContainer(node), []);
-
   function handleOpenChange(open: boolean) {
     setExpanded(open);
     if (!open) onBlur?.();
@@ -68,7 +62,7 @@ export function AppMonthPickerInput({
     <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
       <div className="flex flex-col">
         <AppInputLabel name={aria.id} value={label} />
-        <div>
+        <div className="relative">
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
           <Popover.Trigger
             name={name}
@@ -81,16 +75,13 @@ export function AppMonthPickerInput({
               : placeholder}
             <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
-              <div ref={portalContainerRef}></div>
+              {selectedDate && !disabled && <span className="w-4" />}
               {!selectedDate && <CalendarEventIcon className="h-4 w-4" />}
             </span>
           </Popover.Trigger>
-          <RemoveSelectedDatePortal
-            selectedDate={selectedDate}
-            disabled={disabled}
-            portalContainer={portalContainer}
-            onResetSelection={handleResetSelection}
-          />
+          {selectedDate && !disabled && (
+            <PickerClearButton aria-label="Wyczyść miesiąc" onClick={handleResetSelection} />
+          )}
         </div>
         <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper id={aria.helperId} helper={helper} />
@@ -118,27 +109,4 @@ function getValueFromDate(date: Date | undefined): string | undefined {
   }
 
   return date.toISOString();
-}
-
-function RemoveSelectedDatePortal({
-  selectedDate,
-  disabled,
-  portalContainer,
-  onResetSelection,
-}: {
-  selectedDate: Date | undefined;
-  disabled?: boolean;
-  portalContainer: HTMLDivElement | null;
-  onResetSelection: (evt: React.MouseEvent) => void;
-}) {
-  if (!selectedDate || !portalContainer || disabled) {
-    return null;
-  }
-
-  return createPortal(
-    <AppButton variant="plain" onClick={onResetSelection} className="inline-block p-0 hover:text-red-500">
-      <XLgIcon className="h-4 w-4" />
-    </AppButton>,
-    portalContainer
-  );
 }

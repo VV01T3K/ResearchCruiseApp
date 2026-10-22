@@ -1,3 +1,4 @@
+import { navbarCollisionPadding } from '@/components/layout/navbarCollisionPadding';
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import { Select } from '@base-ui/react/select';
@@ -121,7 +122,12 @@ export function AppDropdownInput({
         </Select.Trigger>
 
         <Select.Portal>
-          <Select.Positioner className="z-50 w-[var(--anchor-width)]" sideOffset={4} alignItemWithTrigger={false}>
+          <Select.Positioner
+            className="z-50 w-[var(--anchor-width)]"
+            sideOffset={4}
+            collisionPadding={navbarCollisionPadding()}
+            alignItemWithTrigger={false}
+          >
             <Select.Popup
               className={cn(
                 'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg bg-white shadow-xl ring-1 ring-black/10',

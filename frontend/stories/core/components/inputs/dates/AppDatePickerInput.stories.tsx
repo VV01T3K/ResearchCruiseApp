@@ -50,6 +50,16 @@ export const Default: Story = {
   },
 };
 
+export const Clearable: Story = {
+  args: { value: '2026-01-15T00:00:00.000Z' },
+  play: async ({ canvas, userEvent }) => {
+    const clear = canvas.getByRole('button', { name: 'Wyczyść datę' });
+    await expect(clear.parentElement?.closest('button')).toBeNull();
+    await userEvent.click(clear);
+    await expect(canvas.queryByRole('button', { name: 'Wyczyść datę' })).not.toBeInTheDocument();
+  },
+};
+
 export const WithLabel: Story = {
   args: {
     label: 'Date picker',

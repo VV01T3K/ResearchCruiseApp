@@ -1,13 +1,11 @@
 import { Popover } from '@base-ui/react/popover';
-import { PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
+import { PickerClearButton, PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
 import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
 import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
 import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
-import React, { useCallback, useState } from 'react';
-import { createPortal } from 'react-dom';
+import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { parseBackendDateTime } from '@/lib/dateUtils';
 import { AppMonthPickerPopover } from '@/components/shared/inputs/dates/AppMonthPickerPopover';
@@ -76,9 +74,6 @@ export function AppDatePickerInput({
     year: new Date().getFullYear(),
   });
 
-  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(null);
-  const portalContainerRef = useCallback((node: HTMLDivElement | null) => setPortalContainer(node), []);
-
   function handleOpenChange(open: boolean) {
     if (open && selectedDate) {
       setVisibleMonth({ month: selectedDate.getMonth(), year: selectedDate.getFullYear() });
@@ -132,7 +127,7 @@ export function AppDatePickerInput({
     <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
       <div className="flex flex-col" data-testid={testId}>
         <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
-        <div>
+        <div className="relative">
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
           <Popover.Trigger
             name={name}
@@ -152,16 +147,11 @@ export function AppDatePickerInput({
               : placeholder}
             <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
-              <div ref={portalContainerRef}></div>
+              {selectedDate && !disabled && <span className="w-4" />}
               {!selectedDate && <CalendarEventIcon className="h-4 w-4" />}
             </span>
           </Popover.Trigger>
-          <RemoveSelectedDatePortal
-            selectedDate={selectedDate}
-            disabled={disabled}
-            portalContainer={portalContainer}
-            onResetSelection={handleResetSelection}
-          />
+          {selectedDate && !disabled && <PickerClearButton aria-label="Wyczyść datę" onClick={handleResetSelection} />}
         </div>
         <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper id={aria.helperId} helper={helper} />
@@ -337,28 +327,5 @@ function CalendarDateTile({
         {date.getDate()}
       </AppButton>
     </div>
-  );
-}
-
-function RemoveSelectedDatePortal({
-  selectedDate,
-  disabled,
-  portalContainer,
-  onResetSelection,
-}: {
-  selectedDate: Date | undefined;
-  disabled?: boolean;
-  portalContainer: HTMLDivElement | null;
-  onResetSelection: (evt: React.MouseEvent) => void;
-}) {
-  if (!selectedDate || !portalContainer || disabled) {
-    return null;
-  }
-
-  return createPortal(
-    <AppButton variant="plain" onClick={onResetSelection} className="inline-block p-0 hover:text-red-500">
-      <XLgIcon className="h-4 w-4" />
-    </AppButton>,
-    portalContainer
   );
 }

@@ -4,11 +4,9 @@ import { Popover } from '@base-ui/react/popover';
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
 import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
 import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
-import React, { useCallback, useState } from 'react';
-import { createPortal } from 'react-dom';
+import React from 'react';
 
-import { PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
+import { PickerClearButton, PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
 import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import { AppButton } from '@/components/shared/AppButton';
@@ -54,9 +52,6 @@ export function AppYearPickerInput({
   const [visibleDecade, setVisibleDecade] = React.useState(() => decadeOf(new Date().getFullYear()));
   const [expanded, setExpanded] = React.useState(false);
 
-  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(null);
-  const portalContainerRef = useCallback((node: HTMLDivElement | null) => setPortalContainer(node), []);
-
   React.useEffect(() => {
     // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
     setSelectedYear(value);
@@ -90,7 +85,7 @@ export function AppYearPickerInput({
     <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
       <div className="flex flex-col" data-testid={testId}>
         <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
-        <div>
+        <div className="relative">
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
           <Popover.Trigger
             disabled={disabled}
@@ -101,16 +96,11 @@ export function AppYearPickerInput({
             {selectedYear ?? placeholder}
             <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
-              <div ref={portalContainerRef}></div>
+              {selectedYear && !disabled && <span className="w-4" />}
               {!selectedYear && <CalendarEventIcon className="h-4 w-4" />}
             </span>
           </Popover.Trigger>
-          <RemoveSelectedYearPortal
-            selectedYear={selectedYear}
-            disabled={disabled}
-            portalContainer={portalContainer}
-            onResetSelection={handleResetSelection}
-          />
+          {selectedYear && !disabled && <PickerClearButton aria-label="Wyczyść rok" onClick={handleResetSelection} />}
         </div>
         <div className={cn('flex flex-row justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper id={aria.helperId} helper={helper} />
@@ -161,27 +151,4 @@ export function AppYearPickerInput({
 function decadeOf(year: number) {
   const from = Math.floor(year / 10) * 10;
   return { from, to: from + 11 };
-}
-
-function RemoveSelectedYearPortal({
-  selectedYear,
-  disabled,
-  portalContainer,
-  onResetSelection,
-}: {
-  selectedYear: number | undefined;
-  disabled?: boolean;
-  portalContainer: HTMLDivElement | null;
-  onResetSelection: (evt: React.MouseEvent) => void;
-}) {
-  if (!selectedYear || !portalContainer || disabled) {
-    return null;
-  }
-
-  return createPortal(
-    <AppButton variant="plain" onClick={(evt) => onResetSelection(evt)} className="inline-block p-0 hover:text-red-500">
-      <XLgIcon className="h-4 w-4" />
-    </AppButton>,
-    portalContainer
-  );
 }

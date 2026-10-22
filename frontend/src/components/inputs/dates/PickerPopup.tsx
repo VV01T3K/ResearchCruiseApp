@@ -1,6 +1,8 @@
 import { Popover } from '@base-ui/react/popover';
+import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import React from 'react';
 
+import { navbarCollisionPadding } from '@/components/layout/navbarCollisionPadding';
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { cn } from '@/lib/utils';
 
@@ -31,7 +33,12 @@ type Props = {
 export function PickerPopup({ 'aria-label': ariaLabel, children }: Props) {
   return (
     <Popover.Portal>
-      <Popover.Positioner className="z-50" sideOffset={4} collisionPadding={8}>
+      <Popover.Positioner
+        className="z-50"
+        sideOffset={4}
+        collisionPadding={navbarCollisionPadding()}
+        collisionAvoidance={{ fallbackAxisSide: 'none' }}
+      >
         <Popover.Popup
           aria-label={ariaLabel}
           className={cn(
@@ -46,5 +53,24 @@ export function PickerPopup({ 'aria-label': ariaLabel, children }: Props) {
         </Popover.Popup>
       </Popover.Positioner>
     </Popover.Portal>
+  );
+}
+
+export function PickerClearButton({
+  'aria-label': ariaLabel,
+  onClick,
+}: {
+  'aria-label': string;
+  onClick: (evt: React.MouseEvent) => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={ariaLabel}
+      onClick={onClick}
+      className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded outline-none hover:text-red-500 focus-visible:ring-2 focus-visible:ring-blue-500"
+    >
+      <XLgIcon className="h-4 w-4" />
+    </button>
   );
 }

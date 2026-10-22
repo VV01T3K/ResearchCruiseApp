@@ -99,7 +99,10 @@ for (const picker of [
     network.use(getGetApplicationFormAMockHandler({ ...formA(), researchTasks: [picker.task] }));
     await page.goto(`/applications/${applicationId}/formA?mode=edit`);
     const control = page.locator(`button[name="researchTasks[0].${picker.field}"]`);
-    await control.getByRole('button').click();
+    await control
+      .locator('..')
+      .getByRole('button', { name: /^Wyczyść/ })
+      .click();
     await page.locator('input[name="researchTasks[0].title"]').click();
     await expect(control).toHaveAttribute('aria-invalid', 'true');
     await expect(control).toHaveAccessibleDescription(new RegExp(picker.message));
@@ -109,6 +112,27 @@ for (const picker of [
     await expect(control).not.toHaveAttribute('aria-invalid', 'true');
   });
 }
+
+test('a picker that flips up near the top stays below the navbar', async ({ page, network }) => {
+  network.use(
+    getGetApplicationFormAMockHandler({
+      ...formA(),
+      researchTasks: [{ type: '3', title: 'Projekt', date: '2026-09-01', financingApproved: 'false' }],
+    })
+  );
+  await page.setViewportSize({ width: 1380, height: 700 });
+  await page.goto(`/applications/${applicationId}/formA?mode=edit`);
+  const control = page.locator('button[name="researchTasks[0].date"]');
+  await control.scrollIntoViewIfNeeded();
+  const { y } = (await control.boundingBox())!;
+  await page.evaluate((dy) => window.scrollBy(0, dy), y - 360);
+  await control.click();
+  const dialog = page.getByRole('dialog');
+  await dialog.evaluate((el) => Promise.all(el.getAnimations().map((a) => a.finished)));
+  const navbar = (await page.locator('#header').boundingBox())!;
+  const popup = (await dialog.boundingBox())!;
+  expect(popup.y).toBeGreaterThanOrEqual(navbar.y + navbar.height);
+});
 
 test('an invalid select keeps its error border while focused', async ({ page, network }) => {
   network.use(getGetApplicationFormAMockHandler({ ...formA(), deputyManagerId: '' }));
