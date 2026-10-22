@@ -9,6 +9,7 @@ import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
+import { useInputAria } from '@/components/inputs/useInputAria';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppInputErrorTriangle } from '@/components/shared/inputs/parts/AppInputErrorTriangle';
@@ -49,6 +50,7 @@ export function AppYearPickerInput({
   'data-testid-button': buttonTestId,
   'data-testid-errors': errorsTestId,
 }: Props) {
+  const aria = useInputAria(errors, helper);
   const [selectedYear, setSelectedYear] = React.useState<number | undefined>(value);
   const [visibleDecade, setVisibleDecade] = React.useState<{ from: number; to: number }>(() => {
     const now = new Date().getFullYear();
@@ -103,10 +105,11 @@ export function AppYearPickerInput({
   return (
     <>
       <div className="flex flex-col" data-testid={testId}>
-        <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+        <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div className={cn()} ref={elementRef}>
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
           <AppButton
+            {...aria.inputProps}
             variant="plain"
             onClick={() => handleInputClick()}
             className={cn(
@@ -131,8 +134,8 @@ export function AppYearPickerInput({
           />
         </div>
         <div className={cn('flex flex-row justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
-          <AppInputHelper helper={helper} />
-          <AppInputErrorsList errors={errors} data-testid={errorsTestId} />
+          <AppInputHelper id={aria.helperId} helper={helper} />
+          <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
         </div>
       </div>
 

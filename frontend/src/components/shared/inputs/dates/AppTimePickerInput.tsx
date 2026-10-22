@@ -2,8 +2,10 @@ import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
+import { useInputAria } from '@/components/inputs/useInputAria';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
+import { AppInputErrorTriangle } from '@/components/shared/inputs/parts/AppInputErrorTriangle';
 import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
 import { useDropdown } from '@/hooks/shared/DropdownHook';
@@ -48,6 +50,7 @@ export function AppDatePickerTimeInput({
   maximalTime,
   minuteStep = 1,
 }: Props) {
+  const aria = useInputAria(errors, helper);
   const [time, setTime] = React.useState<Time | undefined>(value);
   const [expanded, setExpanded] = React.useState(false);
 
@@ -85,10 +88,11 @@ export function AppDatePickerTimeInput({
   return (
     <>
       <div className="flex flex-col">
-        <AppInputLabel name={name} value={label} />
+        <AppInputLabel name={aria.id} value={label} />
         <div ref={inputRef}>
           <input type="hidden" name={name} value={time ? formatTime(time) : ''} disabled={disabled} />
           <AppButton
+            {...aria.inputProps}
             variant="plain"
             onClick={handleInputClick}
             className={cn(
@@ -98,11 +102,12 @@ export function AppDatePickerTimeInput({
             )}
           >
             <span className="w-full">{time ? formatTime(time) : placeholder}</span>
+            <AppInputErrorTriangle errors={errors} />
           </AppButton>
         </div>
         <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
-          <AppInputHelper helper={helper} />
-          <AppInputErrorsList errors={errors} />
+          <AppInputHelper id={aria.helperId} helper={helper} />
+          <AppInputErrorsList id={aria.errorId} errors={errors} />
         </div>
       </div>
       <AnimatePresence>
