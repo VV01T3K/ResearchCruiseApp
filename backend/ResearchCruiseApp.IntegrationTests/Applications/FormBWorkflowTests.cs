@@ -75,6 +75,9 @@ public sealed class FormBWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         using var reopened = await admin.PutAsync(route + "/refill", null, ct);
         Assert.Equal(HttpStatusCode.NoContent, reopened.StatusCode);
         await AssertState(app, CruiseApplicationStatus.FormBRequired, "3");
+        using var staleRefill = await admin.PutAsync(route + "/refill", null, ct);
+        Assert.Equal(HttpStatusCode.Forbidden, staleRefill.StatusCode);
+        Assert.Contains("już cofnięty do edycji", await staleRefill.Content.ReadAsStringAsync(ct));
         Assert.Empty(app.Transport.Messages);
     }
 

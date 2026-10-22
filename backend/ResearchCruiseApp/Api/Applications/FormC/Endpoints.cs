@@ -92,7 +92,7 @@ public static class FormCEndpoints
             return Error.ResourceNotFound().ToProblemHttpResult();
         if (application.Status != CruiseApplicationStatus.Undertaken)
             return Error
-                .ForbiddenOperation("Obecnie nie można wysłać Formularza C.")
+                .ForbiddenOperation(UpdateRefusal(application.Status))
                 .ToProblemHttpResult();
 
         var oldFormC = application.FormC;
@@ -133,12 +133,20 @@ public static class FormCEndpoints
         if (application is null)
             return Error.ResourceNotFound().ToProblemHttpResult();
         if (application.Status != CruiseApplicationStatus.Reported)
-            return Error
-                .InvalidArgument("Obecnie nie można umożliwić edycji formularza C")
-                .ToProblemHttpResult();
+            return Error.InvalidArgument(RefillRefusal(application.Status)).ToProblemHttpResult();
 
         application.Status = CruiseApplicationStatus.Undertaken;
         await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
+
+    private static string UpdateRefusal(CruiseApplicationStatus status) =>
+        status == CruiseApplicationStatus.Reported
+            ? "Formularz C został już wysłany."
+            : "Formularz C można wysłać dopiero po zakończeniu rejsu.";
+
+    private static string RefillRefusal(CruiseApplicationStatus status) =>
+        status == CruiseApplicationStatus.Undertaken
+            ? "Formularz C jest już cofnięty do edycji."
+            : "Formularz C można cofnąć do edycji dopiero po jego wysłaniu.";
 }
