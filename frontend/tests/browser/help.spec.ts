@@ -5,9 +5,9 @@ import { admin } from '../data/accounts';
 
 test.use({ account: admin });
 
-// Runs against a production build, so a blank build-time version fails here.
-const { version, repository } = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as {
-  version: string;
+// The APP_VERSION that playwright.config.ts passes to the build.
+const version = '3.1.0-staging.4+a1b2c3d';
+const { repository } = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as {
   repository: string;
 };
 
