@@ -1,6 +1,6 @@
 import type { CreateUserRequest, UpdateUserRequest, UserResponse } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { formValidationLogic } from '@/integrations/tanstack/form/validation';
+import { formValidationLogic, selectCanSubmit } from '@/integrations/tanstack/form/validation';
 import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
 import ExclamationTriangleFill from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
@@ -18,6 +18,7 @@ import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
+import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { getRoleLabel, Role } from '@/integrations/auth/types';
 import {
   useAcceptUser,
@@ -160,6 +161,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit(editMode ? 'edit-user' : 'add-user', 'invalid', formApi.state);
+      navigateToFirstError();
     },
   });
 
@@ -251,7 +253,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form noValidate onSubmit={handleSubmit}>
       <div className="flex h-14 justify-around">
         <form.Subscribe
           selector={(state) => [state.values.firstName, state.values.lastName]}
@@ -319,7 +321,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         )}
 
         <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
+          selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
             <>
               <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting || !!submitError}>

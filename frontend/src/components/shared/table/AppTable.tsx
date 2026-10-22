@@ -28,6 +28,7 @@ type Props<T extends object> = {
   errors?: string[];
   infiniteScroll?: InfiniteScrollProps;
   virtualized?: boolean;
+  className?: string;
   'data-testid'?: string;
 };
 
@@ -53,6 +54,7 @@ export function AppTable<T extends object>({
   errors,
   infiniteScroll,
   virtualized = false,
+  className,
   'data-testid': testId,
 }: Props<T>) {
   const { width } = useWindowSize();
@@ -97,6 +99,7 @@ export function AppTable<T extends object>({
       errors={errors}
       infiniteScroll={infiniteScroll}
       virtualized={virtualized}
+      className={className}
       data-testid={testId}
     />
   );

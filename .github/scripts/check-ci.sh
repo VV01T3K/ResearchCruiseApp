@@ -22,7 +22,7 @@ while docs_only "${commits[-1]}"; do commits+=("$(git rev-parse "${commits[-1]}^
 # The newest push run on the branch of each workflow, as "id status conclusion url".
 runs() {
   for commit in "${commits[@]}"; do
-    gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$commit&per_page=100" || return
+    gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$commit&branch=$branch&event=push&per_page=100" --paginate || return
   done | jq -rs --arg sha "$sha" --arg branch "$branch" '
     [.[].workflow_runs[] | select(.event == "push" and .head_branch == $branch)
       | select(.path == ".github/workflows/deploy-staging.yaml"
@@ -41,7 +41,7 @@ echo "$runs"
 awk -F '\t' '$3 != "success" { exit 1 }' <<< "$runs" || fail "CI did not pass for $sha."
 
 passed=$(cut -f1 <<< "$runs" | while read -r id; do
-  gh api "repos/$GITHUB_REPOSITORY/actions/runs/$id/jobs?per_page=100" --jq '.jobs[] | select(.conclusion == "success") | .name'
+  gh api "repos/$GITHUB_REPOSITORY/actions/runs/$id/jobs?per_page=100" --paginate --jq '.jobs[] | select(.conclusion == "success") | .name'
 done)
 for job in "${required[@]}"; do
   grep -qxF "$job" <<< "$passed" || fail "Required job \"$job\" did not pass on $sha."

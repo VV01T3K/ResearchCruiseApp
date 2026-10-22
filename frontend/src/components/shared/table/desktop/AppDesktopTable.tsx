@@ -1,5 +1,6 @@
 import { flexRender } from '@tanstack/react-table';
 
+import { hasErrors } from '@/components/inputs/invalidInput';
 import { AppTableClearFiltersButton } from '@/components/shared/table/common/AppTableClearFiltersButton';
 import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
 import { TableProps } from '@/components/shared/table/common/tableProps';
@@ -16,6 +17,7 @@ export function AppDesktopTable<T extends object>({
   errors,
   infiniteScroll,
   virtualized,
+  className,
   'data-testid': testId,
 }: TableProps<T>) {
   const defaultButtons: React.ReactNode[] = [<AppTableClearFiltersButton key="clearFiltersBtn" table={table} />];
@@ -24,7 +26,11 @@ export function AppDesktopTable<T extends object>({
   const headerRowCount = table.getHeaderGroups().length + (allButtons.length > 0 ? 1 : 0);
 
   return (
-    <div className="mt-4 w-full overflow-x-auto" data-testid={testId}>
+    <div
+      className={cn('mt-4 w-full overflow-x-auto', className)}
+      data-toolbarless-table={allButtons.length === 0 || undefined}
+      data-testid={testId}
+    >
       <table
         className={cn('min-w-full table-fixed border-collapse', virtualized && 'w-full')}
         aria-rowcount={virtualized ? (infiniteScroll?.hasNextPage ? -1 : rows.length + headerRowCount) : undefined}
@@ -85,7 +91,7 @@ export function AppDesktopTable<T extends object>({
               <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
                 <div
                   className={`rounded-lg border bg-gray-100 p-2.5 ${
-                    errors ? 'border-danger bg-gray-50 text-danger ring-danger' : 'border-gray-300'
+                    hasErrors(errors) ? 'border-danger bg-gray-50 text-danger ring-danger' : 'border-gray-300'
                   }`}
                 >
                   <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>

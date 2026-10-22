@@ -118,18 +118,16 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
           <form.AppField
             name={`publications[${row.index}].year`}
             children={(field) => (
-              <div>
-                <AppYearPickerInput
-                  name={field.name}
-                  value={field.state.value ?? undefined}
-                  onChange={(value) => field.handleChange(value ?? null)}
-                  onBlur={field.handleBlur}
-                  label="Rok"
-                  disabled={isReadonly}
-                  data-testid-button="form-a-publication-year-button"
-                />
-                <field.FieldErrors />
-              </div>
+              <AppYearPickerInput
+                name={field.name}
+                value={field.state.value ?? undefined}
+                onChange={(value) => field.handleChange(value ?? null)}
+                onBlur={field.handleBlur}
+                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
+                label="Rok"
+                disabled={isReadonly}
+                data-testid-button="form-a-publication-year-button"
+              />
             )}
           />
         ),

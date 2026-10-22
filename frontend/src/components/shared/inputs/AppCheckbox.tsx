@@ -1,9 +1,11 @@
+import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import { Checkbox } from '@base-ui/react/checkbox';
 import CheckIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 import React from 'react';
 
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
+import { AppInputErrorTriangle } from '@/components/shared/inputs/parts/AppInputErrorTriangle';
 import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
 import { cn } from '@/lib/utils';
@@ -55,16 +57,18 @@ export function AppCheckbox({
             sizes[size],
             checked && variants[variant][disabled ? 'disabled' : 'enabled'],
             !checked && (disabled ? 'bg-gray-100' : 'bg-white hover:border-gray-400'),
-            disabled ? 'cursor-default' : 'cursor-pointer'
+            disabled ? 'cursor-default' : 'cursor-pointer',
+            hasErrors(errors) && 'border-danger hover:border-danger focus:ring-danger focus:ring-1 focus:outline-none'
           )}
         >
           <Checkbox.Indicator>
             <CheckIcon />
           </Checkbox.Indicator>
         </Checkbox.Root>
+        <AppInputErrorTriangle errors={errors} />
       </div>
 
-      <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
+      <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <AppInputHelper id={aria.helperId} helper={helper} />
         <AppInputErrorsList id={aria.errorId} errors={errors} />
       </div>

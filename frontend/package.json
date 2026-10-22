@@ -17,6 +17,7 @@
     "test:unit": "vp test run --project unit",
     "test:storybook": "vp test run --project storybook",
     "test:browser": "playwright test",
+    "test:browser:shuffle": "playwright test --shuffle",
     "test:ui": "playwright test --ui",
     "lint": "vp check && vp run type"
   },
@@ -79,5 +80,5 @@
     "vite-plus": "1.3.0",
     "vitest": "5.0.5"
   },
-  "packageManager": "bun@1.4.3"
+  "packageManager": "bun@1.4.4"
 }

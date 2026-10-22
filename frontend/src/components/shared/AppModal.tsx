@@ -20,7 +20,7 @@ export function AppModal({ title, children, isOpen, onClose, className, dismissi
         <Dialog.Backdrop className="fixed inset-0 z-50 backdrop-blur-md transition-opacity duration-300 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
         <Dialog.Popup
           className={cn(
-            'fixed top-1/2 left-1/2 z-50 max-h-[calc(100vh-var(--header-height))] w-full max-w-screen-sm -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg bg-white p-4 shadow-lg',
+            'fixed top-[calc(50%+var(--header-height)/2)] left-1/2 z-50 max-h-[calc(100dvh-var(--header-height)-2rem)] w-[calc(100%-2rem)] max-w-screen-sm -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg bg-white p-4 shadow-lg',
             'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
             'data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
             'data-[ending-style]:scale-90 data-[ending-style]:opacity-0',

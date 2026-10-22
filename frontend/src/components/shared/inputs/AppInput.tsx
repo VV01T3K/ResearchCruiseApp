@@ -1,3 +1,4 @@
+import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import React from 'react';
 
@@ -76,7 +77,7 @@ export function AppInput({
             'resize-none transition duration-300 ease-in-out',
             'focus:border-blue-500 focus:shadow focus:ring-blue-500 focus:outline-none',
             disabled ? 'bg-gray-200' : '',
-            errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
+            hasErrors(errors) && invalidInputClassName
           )}
           ref={elementRef}
           data-testid={testId}
@@ -84,7 +85,7 @@ export function AppInput({
         <AppInputErrorTriangle errors={errors} mode="absolute" />
       </div>
 
-      <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
+      <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <AppInputHelper id={aria.helperId} helper={helper} />
         <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
       </div>

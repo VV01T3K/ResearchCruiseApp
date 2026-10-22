@@ -21,3 +21,15 @@
     scroll-padding-bottom: calc(var(--actions-height) + 2rem);
   }
 }
+
+@layer utilities {
+  /* A toolbarless table that opens an accordion section starts at the section's content gap. */
+  [data-accordion-content]
+    [data-toolbarless-table]:is(:first-child, .grid > *):not([data-accordion-content] :not(:first-child, .grid > *) *)
+    > table
+    > thead
+    > tr:first-child
+    > th {
+    padding-top: 0;
+  }
+}

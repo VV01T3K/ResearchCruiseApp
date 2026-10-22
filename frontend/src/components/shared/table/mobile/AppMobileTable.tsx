@@ -3,6 +3,7 @@ import { Header } from '@/integrations/tanstack/table/features';
 import FunnelIcon from 'bootstrap-icons/icons/funnel.svg?react';
 import React from 'react';
 
+import { hasErrors } from '@/components/inputs/invalidInput';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppModal } from '@/components/shared/AppModal';
 import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
@@ -21,6 +22,7 @@ export function AppMobileTable<T extends object>({
   errors,
   infiniteScroll,
   virtualized,
+  className,
   'data-testid': testId,
 }: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
@@ -35,7 +37,10 @@ export function AppMobileTable<T extends object>({
 
   return (
     <>
-      <div className={cn('flex flex-col flex-wrap', variant === 'form' ? 'text-center' : '')} data-testid={testId}>
+      <div
+        className={cn('flex flex-col flex-wrap', variant === 'form' ? 'text-center' : '', className)}
+        data-testid={testId}
+      >
         {allButtons.length > 0 && (
           <div className="m-4 flex flex-col gap-4">
             {allButtons.map((x, id) => (
@@ -81,7 +86,7 @@ export function AppMobileTable<T extends object>({
                 <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
                   <div
                     className={`rounded-lg border bg-gray-100 p-2.5 ${
-                      errors ? 'border-danger bg-gray-50 text-danger ring-danger' : 'border-gray-300'
+                      hasErrors(errors) ? 'border-danger bg-gray-50 text-danger ring-danger' : 'border-gray-300'
                     }`}
                   >
                     <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>

@@ -61,6 +61,8 @@ export function CruiseApplicationPeriodInput({
   helper,
 }: Props) {
   const [minBound, maxBound] = parsePeriod(maxValues, [minPeriodValue, 24]);
+  const helperId = React.useId();
+  const isUnavailable = (step: number) => !disabled && (step < minBound || step > maxBound);
 
   const sliderValues = React.useMemo((): [number, number] => {
     const parsed = parsePeriod(value, [minBound, maxBound]);
@@ -102,15 +104,28 @@ export function CruiseApplicationPeriodInput({
       >
         <Slider.Control className="relative flex w-full items-center">
           <Slider.Track className="relative h-1 w-full rounded-sm bg-black/5">
+            {!disabled && minBound > 0 && (
+              <span
+                data-testid="period-unavailable-before"
+                className="absolute h-1 rounded-l-sm bg-gray-300"
+                style={{ width: `${(minBound / 24) * 100}%` }}
+              />
+            )}
+            {!disabled && maxBound < 24 && (
+              <span
+                className="absolute right-0 h-1 rounded-r-sm bg-gray-300"
+                style={{ width: `${((24 - maxBound) / 24) * 100}%` }}
+              />
+            )}
             <Slider.Indicator className={cn('absolute h-1 rounded-sm', !disabled ? 'bg-primary-800' : 'bg-gray-400')} />
             {stepPositions
               .filter((_, i) => i % 2 === 0)
-              .map((position) => (
+              .map((position, idx) => (
                 <span
                   key={`step-${position}`}
                   className={cn(
                     'absolute top-1/2 z-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full border bg-white outline-none',
-                    !disabled ? 'border-primary-800' : 'border-gray-500'
+                    disabled ? 'border-gray-500' : isUnavailable(idx * 2) ? 'border-gray-300' : 'border-primary-800'
                   )}
                   style={{ left: `${position}%` }}
                 />
@@ -120,7 +135,10 @@ export function CruiseApplicationPeriodInput({
               .map((position, idx) => (
                 <span
                   key={`step-${position}-text`}
-                  className="absolute top-1/2 z-0 -translate-x-1/2 translate-y-8 rotate-60 transform text-sm text-gray-800"
+                  className={cn(
+                    'absolute top-1/2 z-0 -translate-x-1/2 translate-y-8 rotate-60 transform text-sm',
+                    isUnavailable(idx * 2 + 1) ? 'text-gray-400' : 'text-gray-800'
+                  )}
                   style={{ left: `${position}%` }}
                 >
                   {months[idx]}
@@ -129,6 +147,7 @@ export function CruiseApplicationPeriodInput({
           </Slider.Track>
           <Slider.Thumb
             index={0}
+            aria-describedby={helper ? helperId : undefined}
             className={cn(
               'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none',
               !disabled ? 'bg-primary-800 cursor-pointer' : 'bg-gray-400',
@@ -137,6 +156,7 @@ export function CruiseApplicationPeriodInput({
           />
           <Slider.Thumb
             index={1}
+            aria-describedby={helper ? helperId : undefined}
             className={cn(
               'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none',
               !disabled ? 'bg-primary-800 cursor-pointer' : 'bg-gray-400',
@@ -148,7 +168,7 @@ export function CruiseApplicationPeriodInput({
 
       <p className="text-center">Wybrano okres: {getExplanationForPeriod(sliderValues[0], sliderValues[1])}</p>
       <div className="mt-2 flex flex-col justify-between text-sm">
-        <AppInputHelper helper={helper} />
+        <AppInputHelper id={helperId} helper={helper} />
         <AppInputErrorsList errors={errors} />
       </div>
     </div>

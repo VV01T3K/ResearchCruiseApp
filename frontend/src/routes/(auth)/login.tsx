@@ -3,12 +3,13 @@ import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { z } from 'zod';
 import { loginValidationSchema } from '@/validation/auth';
 import { allowOnly } from '@/lib/guards';
-import { formValidationLogic } from '@/integrations/tanstack/form/validation';
+import { formValidationLogic, selectCanSubmit } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { trackFormSubmit } from '@/integrations/sentry/client';
+import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useSignIn } from '@/integrations/tanstack/query/auth';
 
 export const Route = createFileRoute('/(auth)/login')({
@@ -48,6 +49,7 @@ function LoginPage() {
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('login', 'invalid', formApi.state);
+      navigateToFirstError();
     },
   });
 
@@ -59,7 +61,7 @@ function LoginPage() {
 
   return (
     <AppLayout title="Logowanie" variant="narrow" disableBackButton data-testid="login-page-title">
-      <form onSubmit={handleSubmit} className="px-4">
+      <form noValidate onSubmit={handleSubmit} className="px-4">
         <div className="space-y-4">
           <form.AppField
             name="email"
@@ -81,7 +83,7 @@ function LoginPage() {
 
           <div className="mt-8">
             <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
                 <AppButton
                   type="submit"

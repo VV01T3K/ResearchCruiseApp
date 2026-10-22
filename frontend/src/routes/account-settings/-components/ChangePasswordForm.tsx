@@ -2,7 +2,7 @@ import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import type { ChangePasswordRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { formValidationLogic } from '@/integrations/tanstack/form/validation';
+import { formValidationLogic, selectCanSubmit } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
 
@@ -93,7 +93,7 @@ export function ChangePasswordForm() {
 
         <div className="mt-8">
           <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
+            selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
             key={result}
             children={([canSubmit, isSubmitting]) => (
               <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
