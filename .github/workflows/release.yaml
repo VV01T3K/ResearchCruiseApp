@@ -63,6 +63,8 @@ jobs:
           elif [[ $REF == hotfix/* ]]; then
             branch=$REF
             [[ $BUMP == patch ]] || fail "A hotfix must be a patch release."
+            [[ $(git merge-base --all origin/staging "$sha") == "$(git rev-parse "$previous^{commit}")" ]] \
+              || fail "$REF must branch from $previous, so that it ships no unreleased staging commits."
             git merge-tree --write-tree origin/staging "$sha" > /dev/null \
               || fail "$REF conflicts with staging. Ship the fix as a pull request into staging and release it from there."
           else
@@ -163,11 +165,12 @@ jobs:
           VERSION: ${{ needs.plan.outputs.version }}
         run: |
           fail() { echo "::error::$*"; exit 1; }
-          git fetch --quiet origin
+          git fetch --prune --quiet origin
           git merge-base --is-ancestor origin/main "$SHA" || fail "main moved; plan the release again."
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           refs=("$SHA:refs/heads/main" "refs/tags/v$VERSION")
+          lease=()
           if [[ $BRANCH == staging ]]; then
             git merge-base --is-ancestor "$SHA" origin/staging || fail "$SHA is no longer on staging."
           else
@@ -175,10 +178,11 @@ jobs:
             [[ $(git rev-parse --verify --quiet "refs/remotes/origin/$BRANCH") == "$SHA" ]] || fail "$BRANCH moved; plan the release again."
             tree=$(git merge-tree --write-tree origin/staging "$SHA") || fail "$BRANCH conflicts with staging."
             merge=$(git commit-tree "$tree" -p origin/staging -p "$SHA" -m "chore(release): merge hotfix v$VERSION into staging")
-            refs+=("$merge:refs/heads/staging")
+            refs+=("$merge:refs/heads/staging" "$SHA:refs/heads/$BRANCH")
+            lease=("--force-with-lease=refs/heads/$BRANCH:$SHA")
           fi
           git tag -a "v$VERSION" -m "v$VERSION" "$SHA"
-          git push --atomic origin "${refs[@]}"
+          git push --atomic "${lease[@]}" origin "${refs[@]}"
 
       - name: Publish GitHub Release
         env:
