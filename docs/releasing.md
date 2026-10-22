@@ -39,10 +39,10 @@ A release takes two steps:
 
 The commit must be on `staging`, and the latest CI run of each workflow on that exact commit must
 pass, including the frontend, backend and dependency checks, both image builds and the Playwright
-tests. A commit that only changes paths the image builds ignore (`docs/`, `*.md`, `.gitignore`) also
-counts the CI of its parents, back to the last commit that changed anything else. A commit whose CI
-failed or was cancelled cannot be released, and neither can one from before this release process
-(without `build-production.yaml`).
+tests. A commit that only changes paths the image builds ignore (`docs/`, `*.md`, `.gitignore`)
+takes its checks and image builds from its parents, back to the last commit that changed anything
+else, but its own Playwright run must pass. A commit whose CI failed or was cancelled cannot be
+released, and neither can one from before this release process (without `build-production.yaml`).
 
 If publishing the GitHub Release fails after the push, use **Re-run failed jobs** on the same run and
 approve it again. It finds the tag and `main` already in place and only creates the Release.
