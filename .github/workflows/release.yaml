@@ -31,73 +31,50 @@ jobs:
       contents: read
       actions: read
     outputs:
-      sha: ${{ steps.target.outputs.sha }}
-      branch: ${{ steps.target.outputs.branch }}
-      staging: ${{ steps.target.outputs.staging }}
-      previous: ${{ steps.target.outputs.previous }}
-      version: ${{ steps.target.outputs.version }}
+      sha: ${{ steps.plan.outputs.sha }}
+      branch: ${{ steps.plan.outputs.branch }}
+      staging: ${{ steps.plan.outputs.staging }}
+      previous: ${{ steps.plan.outputs.previous }}
+      version: ${{ steps.plan.outputs.version }}
 
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - name: Resolve commit and version
-        id: target
+      - name: Plan
+        id: plan
         env:
           REF: ${{ inputs.ref }}
           BUMP: ${{ inputs.bump }}
         run: |
-          fail() { echo "::error::$*"; exit 1; }
+          fail() { echo "::error::$1"; exit 1; }
           [[ $GITHUB_REF == refs/heads/staging ]] || fail "Run this workflow from staging."
           sha=$(git rev-parse --verify --quiet "origin/$REF^{commit}" || git rev-parse --verify --quiet "$REF^{commit}") \
             || fail "Unknown ref: $REF"
           previous=$(.github/scripts/version.sh latest)
           version=$(.github/scripts/version.sh next "$BUMP")
+          range=$previous..$sha
+          staging=$(git rev-parse origin/staging)
 
-          git merge-base --is-ancestor origin/main "$sha" || fail "main is not an ancestor of $sha, so it cannot be fast-forwarded."
-          git merge-base --is-ancestor "$previous" "$sha" || fail "$previous is not an ancestor of $sha."
-          [[ $sha != "$(git rev-parse origin/main)" ]] || fail "$sha is already released."
-          if git merge-base --is-ancestor "$sha" origin/staging; then
+          if git merge-base --is-ancestor "$sha" "$staging"; then
             branch=staging
           elif [[ $REF == hotfix/* ]]; then
             branch=$REF
             [[ $BUMP == patch ]] || fail "A hotfix must be a patch release."
-            [[ $(git merge-base --all origin/staging "$sha") == "$(git rev-parse "$previous^{commit}")" ]] \
+            [[ $(git merge-base --all "$staging" "$sha") == "$(git rev-parse "$previous^{commit}")" ]] \
               || fail "$REF must branch from $previous, so that it ships no unreleased staging commits."
-            git merge-tree --write-tree origin/staging "$sha" > /dev/null \
+            git merge-tree --write-tree "$staging" "$sha" > /dev/null \
               || fail "$REF conflicts with staging. Ship the fix as a pull request into staging and release it from there."
           else
             fail "$REF is not a commit on staging or a hotfix/* branch."
           fi
+          git merge-base --is-ancestor origin/main "$sha" || fail "main cannot fast-forward to $sha."
+          git merge-base --is-ancestor "$previous" "$sha" || fail "$previous is not an ancestor of $sha."
+          [[ $sha != "$(git rev-parse origin/main)" ]] || fail "$sha is already released."
           git cat-file -e "$sha:.github/workflows/build-production.yaml" 2> /dev/null \
-            || fail "$sha predates tag-based releases (it has no build-production.yaml); release a later staging commit."
+            || fail "$sha predates tag-based releases (no build-production.yaml)."
 
-          {
-            echo "sha=$sha"
-            echo "branch=$branch"
-            echo "staging=$(git rev-parse origin/staging)"
-            echo "previous=$previous"
-            echo "version=$version"
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Wait for CI on the commit
-        env:
-          GH_TOKEN: ${{ github.token }}
-          SHA: ${{ steps.target.outputs.sha }}
-          BRANCH: ${{ steps.target.outputs.branch }}
-        run: .github/scripts/check-ci.sh "$SHA" "$BRANCH"
-
-      - name: Summarize
-        env:
-          BUMP: ${{ inputs.bump }}
-          SHA: ${{ steps.target.outputs.sha }}
-          BRANCH: ${{ steps.target.outputs.branch }}
-          STAGING: ${{ steps.target.outputs.staging }}
-          PREVIOUS: ${{ steps.target.outputs.previous }}
-          VERSION: ${{ steps.target.outputs.version }}
-        run: |
-          range="$PREVIOUS..$SHA"
           if grep -qE '^[a-z]+(\([^)]*\))?!:|^BREAKING CHANGE:' <<< "$(git log --format=%B "$range")"; then
             hint='major'
           elif grep -qE '^feat(\(|:)' <<< "$(git log --format=%s "$range")"; then
@@ -105,21 +82,29 @@ jobs:
           else
             hint='patch'
           fi
-          url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
-          {
-            echo "## v$VERSION"
-            echo
-            echo "- Commit: [\`${SHA::8}\`]($url/commit/$SHA)"
-            [[ $BRANCH == staging ]] || echo "- Hotfix: \`$BRANCH\`, merged into \`staging\` at [\`${STAGING::8}\`]($url/commit/$STAGING) on release"
-            echo "- Bump: $BUMP from $PREVIOUS (Conventional Commits suggest $hint)"
-            echo "- Changes: [$PREVIOUS...${SHA::8}]($url/compare/$PREVIOUS...$SHA)"
-            echo
-            echo "<details><summary>$(git rev-list --count "$range") commits</summary>"
-            echo
-            git log --format='- %s' "$range"
-            echo
-            echo "</details>"
-          } >> "$GITHUB_STEP_SUMMARY"
+          url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY
+          [[ $branch == staging ]] || note=" from \`$branch\`, merged into \`staging\` at [\`${staging::8}\`]($url/commit/$staging)"
+          cat >> "$GITHUB_STEP_SUMMARY" <<EOF
+          ## v$version
+
+          - Commit: [\`${sha::8}\`]($url/commit/$sha)${note:-}
+          - Bump: $BUMP from $previous (Conventional Commits suggest $hint)
+          - Changes: [$previous...${sha::8}]($url/compare/$previous...$sha)
+
+          <details><summary>$(git rev-list --count "$range") commits</summary>
+
+          $(git log --format='- %s' "$range")
+
+          </details>
+          EOF
+          printf '%s\n' "sha=$sha" "branch=$branch" "staging=$staging" "previous=$previous" "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for CI on the commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.plan.outputs.sha }}
+          BRANCH: ${{ steps.plan.outputs.branch }}
+        run: .github/scripts/check-ci.sh "$SHA" "$BRANCH"
 
   release:
     name: Release v${{ needs.plan.outputs.version }}
@@ -138,35 +123,24 @@ jobs:
           fetch-depth: 0
           ssh-key: ${{ secrets.VERSION_RELEASE_DEPLOYMENT_KEY }}
 
-      # The approval may come much later than the plan, so check CI again before the push.
-      - name: Check CI again
-        id: current
-        env:
-          GH_TOKEN: ${{ github.token }}
-          SHA: ${{ needs.plan.outputs.sha }}
-          BRANCH: ${{ needs.plan.outputs.branch }}
-          VERSION: ${{ needs.plan.outputs.version }}
-        run: |
-          if [[ $(git rev-parse --verify --quiet "refs/tags/v$VERSION^{commit}") == "$SHA" && $(git rev-parse origin/main) == "$SHA" ]] \
-            && git merge-base --is-ancestor "$SHA" origin/staging; then
-            echo "v$VERSION is already tagged and on main and staging; publishing only its GitHub Release."
-            echo "pushed=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          .github/scripts/check-ci.sh "$SHA" "$BRANCH"
-
       # Deploy-key pushes bypass the rulesets and, unlike GITHUB_TOKEN ones, trigger the tag's image build.
       - name: Tag and fast-forward main
-        if: steps.current.outputs.pushed != 'true'
         env:
+          GH_TOKEN: ${{ github.token }}
           SHA: ${{ needs.plan.outputs.sha }}
           BRANCH: ${{ needs.plan.outputs.branch }}
           STAGING: ${{ needs.plan.outputs.staging }}
           VERSION: ${{ needs.plan.outputs.version }}
         run: |
-          fail() { echo "::error::$*"; exit 1; }
+          fail() { echo "::error::$1"; exit 1; }
+          if [[ $(git rev-parse --verify --quiet "refs/tags/v$VERSION^{commit}") == "$SHA" && $(git rev-parse origin/main) == "$SHA" ]] \
+            && git merge-base --is-ancestor "$SHA" origin/staging; then
+            echo "v$VERSION is already tagged and on main and staging; publishing only its GitHub Release."
+            exit 0
+          fi
+          # Approval can come long after planning, so check CI and staging again right before the push.
+          .github/scripts/check-ci.sh "$SHA" "$BRANCH"
           git fetch --prune --quiet origin
-          git merge-base --is-ancestor origin/main "$SHA" || fail "main moved; plan the release again."
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           refs=("$SHA:refs/heads/main" "refs/tags/v$VERSION")
@@ -176,8 +150,9 @@ jobs:
           else
             [[ $(git rev-parse origin/staging) == "$STAGING" ]] || fail "staging moved; plan the release again."
             [[ $(git rev-parse --verify --quiet "refs/remotes/origin/$BRANCH") == "$SHA" ]] || fail "$BRANCH moved; plan the release again."
-            tree=$(git merge-tree --write-tree origin/staging "$SHA") || fail "$BRANCH conflicts with staging."
-            merge=$(git commit-tree "$tree" -p origin/staging -p "$SHA" -m "chore(release): merge hotfix v$VERSION into staging")
+            tree=$(git merge-tree --write-tree "$STAGING" "$SHA") || fail "$BRANCH conflicts with staging."
+            merge=$(git commit-tree "$tree" -p "$STAGING" -p "$SHA" -m "chore(release): merge hotfix v$VERSION into staging")
+            # The hotfix branch is pushed unchanged under a lease, so the push fails if it moved or was deleted.
             refs+=("$merge:refs/heads/staging" "$SHA:refs/heads/$BRANCH")
             lease=("--force-with-lease=refs/heads/$BRANCH:$SHA")
           fi
