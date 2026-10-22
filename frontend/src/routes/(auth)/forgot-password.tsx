@@ -11,6 +11,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { trackFormSubmit } from '@/integrations/sentry/client';
+import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
 import { Result } from '@/integrations/auth/types';
 
@@ -52,6 +53,7 @@ function ForgotPasswordPage() {
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('forgot-password', 'invalid', formApi.state);
+      navigateToFirstError();
     },
   });
 

@@ -73,6 +73,9 @@ test('an invalid email submitted with Enter shows the app error instead of the b
 }) => {
   await page.goto('/login');
   const email = page.getByLabel('E-mail');
+  await page.getByLabel('Hasło').fill('x');
+  await page.getByLabel('Hasło').press('Enter');
+  await expect(email).toBeFocused();
   await email.fill('asds@');
   await email.press('Enter');
   await expect(page.getByText('Nieprawidłowy adres email')).toBeVisible();

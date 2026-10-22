@@ -10,6 +10,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { trackFormSubmit } from '@/integrations/sentry/client';
+import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useRegisterAccount } from '@/api/generated/endpoints/auth.gen';
 
 export const Route = createFileRoute('/(auth)/register')({
@@ -72,6 +73,7 @@ function RegisterPage() {
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('register', 'invalid', formApi.state);
+      navigateToFirstError();
     },
   });
 

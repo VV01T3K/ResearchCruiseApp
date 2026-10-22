@@ -9,6 +9,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppLink } from '@/components/shared/AppLink';
 import { trackFormSubmit } from '@/integrations/sentry/client';
+import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useSignIn } from '@/integrations/tanstack/query/auth';
 
 export const Route = createFileRoute('/(auth)/login')({
@@ -48,6 +49,7 @@ function LoginPage() {
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('login', 'invalid', formApi.state);
+      navigateToFirstError();
     },
   });
 
