@@ -11,7 +11,7 @@ on:
         default: patch
         required: true
       ref:
-        description: Commit to release (staging, a staging commit SHA, or a hotfix/* branch)
+        description: Commit to release (staging or the SHA of a staging commit)
         type: string
         default: staging
         required: true
@@ -32,7 +32,6 @@ jobs:
       actions: read
     outputs:
       sha: ${{ steps.target.outputs.sha }}
-      hotfix: ${{ steps.target.outputs.hotfix }}
       previous: ${{ steps.target.outputs.previous }}
       version: ${{ steps.target.outputs.version }}
 
@@ -57,18 +56,10 @@ jobs:
           git merge-base --is-ancestor origin/main "$sha" || fail "main is not an ancestor of $sha, so it cannot be fast-forwarded."
           git merge-base --is-ancestor "$previous" "$sha" || fail "$previous is not an ancestor of $sha."
           [[ $sha != "$(git rev-parse origin/main)" ]] || fail "$sha is already released."
-          if git merge-base --is-ancestor "$sha" origin/staging; then
-            hotfix=false
-          elif [[ $REF == hotfix/* ]]; then
-            hotfix=true
-            git merge-tree --write-tree origin/staging "$sha" > /dev/null || fail "$REF conflicts with staging."
-          else
-            fail "$REF is not on staging or a hotfix/* branch."
-          fi
+          git merge-base --is-ancestor "$sha" origin/staging || fail "$REF is not a commit on staging."
 
           {
             echo "sha=$sha"
-            echo "hotfix=$hotfix"
             echo "previous=$previous"
             echo "version=$version"
           } >> "$GITHUB_OUTPUT"
@@ -83,7 +74,6 @@ jobs:
         env:
           BUMP: ${{ inputs.bump }}
           SHA: ${{ steps.target.outputs.sha }}
-          HOTFIX: ${{ steps.target.outputs.hotfix }}
           PREVIOUS: ${{ steps.target.outputs.previous }}
           VERSION: ${{ steps.target.outputs.version }}
         run: |
@@ -99,7 +89,7 @@ jobs:
           {
             echo "## v$VERSION"
             echo
-            echo "- Commit: [\`${SHA::8}\`]($url/commit/$SHA)$([[ $HOTFIX == true ]] && echo ' (hotfix, merged into staging on release)')"
+            echo "- Commit: [\`${SHA::8}\`]($url/commit/$SHA)"
             echo "- Bump: $BUMP from $PREVIOUS (Conventional Commits suggest $hint)"
             echo "- Changes: [$PREVIOUS...${SHA::8}]($url/compare/$PREVIOUS...$SHA)"
             echo
@@ -133,7 +123,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ needs.plan.outputs.sha }}
-          HOTFIX: ${{ needs.plan.outputs.hotfix }}
           VERSION: ${{ needs.plan.outputs.version }}
         run: |
           fail() { echo "::error::$*"; exit 1; }
@@ -143,7 +132,7 @@ jobs:
             exit 0
           fi
           git merge-base --is-ancestor origin/main "$SHA" || fail "main moved; plan the release again."
-          [[ $HOTFIX == true ]] || git merge-base --is-ancestor "$SHA" origin/staging || fail "$SHA is no longer on staging."
+          git merge-base --is-ancestor "$SHA" origin/staging || fail "$SHA is no longer on staging."
           .github/scripts/check-ci.sh "$SHA"
 
       # Deploy-key pushes bypass the rulesets and, unlike GITHUB_TOKEN ones, trigger the tag's image build.
@@ -151,19 +140,12 @@ jobs:
         if: steps.current.outputs.pushed != 'true'
         env:
           SHA: ${{ needs.plan.outputs.sha }}
-          HOTFIX: ${{ needs.plan.outputs.hotfix }}
           VERSION: ${{ needs.plan.outputs.version }}
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          refs=("$SHA:refs/heads/main" "refs/tags/v$VERSION")
-          if [[ $HOTFIX == true ]]; then
-            git switch --detach origin/staging
-            git merge --no-ff -m "chore(release): merge hotfix v$VERSION into staging" "$SHA"
-            refs+=("HEAD:refs/heads/staging")
-          fi
           git tag -a "v$VERSION" -m "v$VERSION" "$SHA"
-          git push --atomic origin "${refs[@]}"
+          git push --atomic origin "$SHA:refs/heads/main" "refs/tags/v$VERSION"
 
       - name: Publish GitHub Release
         env:
