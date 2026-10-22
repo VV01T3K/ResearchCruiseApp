@@ -121,6 +121,16 @@ test('a user is deactivated, then deleted only after the deletion is confirmed',
   expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(1);
 });
 
+test('the edit dialog stays below the navbar on a short desktop viewport', async ({ page, network }) => {
+  await page.setViewportSize({ width: 1024, height: 640 });
+  network.use(getGetUsersMockHandler([cruiseManager()]));
+  await page.goto('/user-management');
+  await page.getByRole('row').filter({ hasText: deputy.email }).getByRole('button', { name: 'Edytuj' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Edytuj użytkownika' });
+  await dialog.getByRole('button', { name: 'Zamknij' }).click();
+  await expect(dialog).toBeHidden();
+});
+
 test('the last administrator cannot be deleted alone or in a group', async ({ page, network, requests }) => {
   const onlyAdmin = cruiseManager({ ...outsider });
   network.use(getGetUsersMockHandler([onlyAdmin, cruiseManager()]));
