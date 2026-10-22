@@ -28,7 +28,10 @@ runs() {
     | group_by(.path)[] | max_by(.id) | [.id, .status, .conclusion // "", .html_url] | @tsv'
 }
 
-while runs=$(runs) && awk -F '\t' '$2 && $2 != "completed" { found = 1 } END { exit !found }' <<< "$runs"; do
+pending() { awk -F '\t' '$2 && $2 != "completed" { found = 1 } END { exit !found }' <<< "$runs"; }
+
+# A failed query must fail the gate: the runs it would have returned may include a newer failure.
+while runs=$(runs) || fail "Could not query CI for $sha."; pending; do
   echo "Waiting for CI on $sha..."
   sleep 30
 done
