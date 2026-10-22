@@ -18,15 +18,20 @@ fail() {
 body=$(mktemp)
 trap 'rm -f "$body"' EXIT
 
-# Saves the response to $body; on an unusable response sets $why and returns 1.
+# Saves the response to $body; on an unusable response sets $why and returns 1, or 2 if only the transfer was cut short.
 fetch() {
-  local want=$1 meta code type
+  local want="^($1)[[:space:]]*(;.*)?$" meta code type rc=0
   shift
   meta=$(curl --silent --proto '=https' --connect-timeout 15 --output "$body" \
-    --write-out '%{http_code} %{content_type}' "$@" 2>/dev/null) || true
+    --write-out '%{http_code} %{content_type}' "$@" 2>/dev/null) || rc=$?
   code=${meta%% *} type=${meta#* }
   case $code in
-    200) [[ ${type,,} =~ $want ]] && return 0; why="unexpected content type" ;;
+    200)
+      [[ ${type,,} =~ $want ]] || { why="unexpected content type"; return 1; }
+      ((rc == 0)) && return 0
+      why="incomplete response"
+      return 2
+      ;;
     000 | '') why="no response" ;;
     3??) why="redirected" ;;
     *) why="HTTP $code" ;;
@@ -35,7 +40,7 @@ fetch() {
 }
 
 arcane() {
-  fetch '^application/.*json' \
+  fetch 'application/json|application/x-json-stream' \
     --header "X-Api-Key: $STAGING_DEPLOY_API_KEY" \
     --header "X-Cloudflare-Secret: $CLOUDFLARE_WEBHOOK_SECRET" \
     "$@"
@@ -58,7 +63,7 @@ echo "Staging configuration synced"
 
 deadline=$((SECONDS + 1100))
 post "$STAGING_DEPLOY_URL" '{"pullPolicy":"always","forceRecreate":false,"recreateVolumes":false}' \
-  || fail "Staging deployment start not confirmed ($why)"
+  || (($? == 2)) || fail "Staging deployment start not confirmed ($why)"
 activity_id=$(jq --null-input --raw-input --raw-output \
   '[inputs | fromjson? | objects | select(.type == "activity") | .activityId | strings] | first // empty' "$body")
 [[ $activity_id =~ ^[A-Za-z0-9-]+$ ]] || fail "Staging deployment start not confirmed"
@@ -86,9 +91,10 @@ done
 deadline=$((SECONDS + 120))
 while :; do
   budget "Staging smoke check failed" 15
-  if fetch '^text/plain' --max-time "$left" "${STAGING_APP_URL%/}/api/health" && [[ $(<"$body") == Healthy ]]; then
+  if fetch 'text/plain' --max-time "$left" "${STAGING_APP_URL%/}/api/health" && [[ $(<"$body") == Healthy ]]; then
     budget "Staging smoke check failed" 15
-    if fetch '^text/html' --max-time "$left" "${STAGING_APP_URL%/}/" && grep -q 'id="root"' "$body"; then
+    if fetch 'text/html' --max-time "$left" "${STAGING_APP_URL%/}/" && grep -q 'id="root"' "$body"; then
+      budget "Staging smoke check failed" 1
       echo "Staging smoke check passed"
       exit 0
     fi
