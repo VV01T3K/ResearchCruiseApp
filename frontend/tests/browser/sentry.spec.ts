@@ -39,4 +39,16 @@ test.describe('signed in', () => {
 
     await expect.poll(sent).toContain('"user.multiple_roles":{"value":true,"type":"boolean"}');
   });
+
+  test('one click closes the feedback form while its description is empty', async ({ page }) => {
+    await captureEnvelopes(page);
+    await page.goto('/help');
+    await page.getByTestId('feedback-tab').click();
+    const dialog = page.getByRole('dialog', { name: 'Zgłoś problem' });
+    await expect(dialog.getByRole('textbox')).toBeFocused();
+
+    await dialog.getByRole('button', { name: 'Zamknij' }).click();
+
+    await expect(dialog).toBeHidden();
+  });
 });
