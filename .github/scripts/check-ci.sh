@@ -7,12 +7,25 @@ required=("checks / Frontend checks" "checks / Backend checks" "checks / JavaScr
   "Build frontend" "Build backend" "test")
 fail() { echo "::error::$*"; exit 1; }
 
+# A commit that only changes paths deploy-staging.yaml ignores gets no image builds, so its parents back
+# to the last commit that changed anything else count as well.
+commits=("$sha")
+while files=$(git diff-tree --no-commit-id --name-only -r "${commits[-1]}") && [[ -n $files ]] \
+  && ! grep -qvE '^docs/|\.md$|^\.gitignore$' <<< "$files"; do
+  commits+=("$(git rev-parse "${commits[-1]}^")")
+done
+(( ${#commits[@]} == 1 )) || echo "Using the CI of ${commits[*]}"
+
 # The newest staging push run of each CI workflow, so a superseded run neither counts nor blocks.
 latest_runs() {
-  gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$sha&per_page=100" | jq -r --argjson workflows "$workflows" '
-    [.workflow_runs[] | select(.event == "push" and .head_branch == "staging"
+  local commit json=
+  for commit in "${commits[@]}"; do
+    json+=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$commit&per_page=100") || return
+  done
+  jq -rs --argjson workflows "$workflows" '
+    [.[].workflow_runs[] | select(.event == "push" and .head_branch == "staging"
       and (.path | ltrimstr(".github/workflows/") | IN($workflows[])))]
-    | group_by(.workflow_id)[] | max_by(.id) | [.id, .status, .conclusion // "", .name, .html_url] | @tsv'
+    | group_by(.workflow_id)[] | max_by(.id) | [.id, .status, .conclusion // "", .name, .html_url] | @tsv' <<< "$json"
 }
 
 while runs=$(latest_runs); [[ -n $runs ]] && awk -F '\t' '$2 != "completed" { pending = 1 } END { exit !pending }' <<< "$runs"; do
