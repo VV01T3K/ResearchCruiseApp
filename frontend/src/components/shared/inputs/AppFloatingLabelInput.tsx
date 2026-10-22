@@ -41,7 +41,8 @@ export function AppFloatingLabelInput({
         {...aria.inputProps}
         className={cn(
           'focus:border-primary peer block w-full appearance-none border-0 border-b-2 border-gray-600 bg-transparent px-0 py-2.5 focus:ring-0 focus:outline-none',
-          hasErrors(errors) && 'border-danger text-danger focus:border-danger'
+          hasErrors(errors) &&
+            'border-danger text-danger focus:border-danger focus:shadow-[0_1px_0_var(--color-danger)]'
         )}
         placeholder={''}
         value={value}
@@ -60,7 +61,7 @@ export function AppFloatingLabelInput({
       >
         {label}
       </label>
-      <div className="mt-2 flex flex-col justify-between text-sm">
+      <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <AppInputHelper id={aria.helperId} helper={helper} />
         <AppInputErrorsList id={aria.errorId} errors={errors} />
       </div>

@@ -178,7 +178,7 @@ export function AppNumberInput({
           />
         )}
       </div>
-      <div className="mt-2 flex flex-col justify-between text-sm">
+      <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <AppInputHelper id={aria.helperId} helper={helper} />
         <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
       </div>

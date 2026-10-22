@@ -6,6 +6,7 @@ import React from 'react';
 
 import { AppFileList } from '@/components/shared/inputs/parts/AppFileList';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
+import { AppInputErrorTriangle } from '@/components/shared/inputs/parts/AppInputErrorTriangle';
 import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
 import { cn } from '@/lib/utils';
@@ -153,7 +154,7 @@ export function AppFileInput({
       >
         <div
           className={cn(
-            'flex w-full flex-col items-center justify-center border-2 border-gray-300 text-gray-500',
+            'relative flex w-full flex-col items-center justify-center border-2 border-gray-300 text-gray-500',
             'cursor-pointer overflow-x-auto rounded-lg border-dashed bg-gray-50 hover:bg-gray-100',
             'min-h-10 transition-all duration-200 ease-in-out',
             disabled ? 'cursor-pointer bg-gray-200 hover:bg-gray-200' : '',
@@ -175,7 +176,10 @@ export function AppFileInput({
               }
             }}
             tabIndex={disabled ? -1 : 0}
-            className="w-full rounded-lg"
+            className={cn(
+              'w-full rounded-lg',
+              hasErrors(errors) && 'focus:ring-danger focus:ring-2 focus:outline-none'
+            )}
             data-testid={buttonTestId}
           >
             <AnimatePresence>
@@ -204,6 +208,7 @@ export function AppFileInput({
             {files.length === 0 && disabled && <div className="text-center">{emptyMessage}</div>}
           </div>
           <AppFileList files={files} onRemove={removeFile} disabled={disabled} className="my-1" />
+          <AppInputErrorTriangle errors={errors} mode="absolute" />
         </div>
       </div>
 
