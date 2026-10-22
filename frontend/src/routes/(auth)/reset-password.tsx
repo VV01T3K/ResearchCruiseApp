@@ -5,7 +5,7 @@ import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { formValidationLogic } from '@/integrations/tanstack/form/validation';
+import { formValidationLogic, selectCanSubmit } from '@/integrations/tanstack/form/validation';
 import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import React from 'react';
@@ -132,7 +132,7 @@ function ResetPasswordPage() {
         />
 
         <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
+          selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
             <AppButton type="submit" className="mt-6 w-full" disabled={!canSubmit || isSubmitting}>
               Zmień hasło

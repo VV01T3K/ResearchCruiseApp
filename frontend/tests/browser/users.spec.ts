@@ -94,6 +94,26 @@ for (const { action, accepted, button, route, handler } of [
   });
 }
 
+test('a role picked beside an invalid email leaves Add enabled, and submitting shows the email error', async ({
+  page,
+  network,
+}) => {
+  network.use(getGetUsersMockHandler([]));
+  await page.goto('/user-management');
+  await page.getByRole('button', { name: 'Dodaj użytkownika' }).click();
+  await page.getByLabel('Imię', { exact: true }).fill(deputy.firstName);
+  await page.getByLabel('Nazwisko', { exact: true }).fill(deputy.lastName);
+  const email = page.getByLabel('Email', { exact: true });
+  await email.fill('x');
+  await page.getByRole('combobox').click();
+  await page.getByRole('option', { name: 'Kierownik' }).click();
+
+  await page.getByRole('button', { name: 'Dodaj', exact: true }).click();
+
+  await expect(email).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.getByText('Niepoprawny adres email')).toBeVisible();
+});
+
 test('a user is deactivated, then deleted only after the deletion is confirmed', async ({
   page,
   network,

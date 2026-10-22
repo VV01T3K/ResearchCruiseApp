@@ -4,7 +4,7 @@ import { RequestPasswordResetRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { formValidationLogic } from '@/integrations/tanstack/form/validation';
+import { formValidationLogic, selectCanSubmit } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
@@ -85,7 +85,7 @@ function ForgotPasswordPage() {
 
         <div className="mt-8">
           <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
+            selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
             children={([canSubmit, isSubmitting]) => (
               <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
                 Przypomnij hasło

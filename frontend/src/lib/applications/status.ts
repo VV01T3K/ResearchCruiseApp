@@ -24,3 +24,7 @@ export function getApplicationStatusLabel(status: CruiseApplicationStatus): stri
       return 'Rozliczone';
   }
 }
+
+export function canRevertFormB(status: CruiseApplicationStatus): boolean {
+  return status === CruiseApplicationStatus.enum.formBFilled || status === CruiseApplicationStatus.enum.undertaken;
+}
