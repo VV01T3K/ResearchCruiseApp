@@ -1,6 +1,6 @@
 import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { expect, fn } from 'storybook/test';
 
 import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
 
@@ -45,6 +45,10 @@ export const WithHelper: Story = {
 export const Disabled: Story = {
   args: {
     disabled: true,
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.tab();
+    await expect(canvas.getByRole('button')).not.toHaveFocus();
   },
 };
 
