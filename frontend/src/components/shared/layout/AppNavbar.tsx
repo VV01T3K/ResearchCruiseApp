@@ -30,25 +30,29 @@ export function AppNavbar() {
   return (
     <motion.header
       id="header"
-      className="z-50 flex h-[var(--header-height)] items-center justify-between bg-primary px-2 py-4 sm:px-4 md:px-6 lg:px-8"
+      className="z-50 flex h-[var(--header-height)] items-center justify-between gap-4 bg-primary px-2 py-4 sm:px-4 md:px-6 lg:px-8"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div>
+      <div className="min-w-0">
         <motion.div
           whileHover={{ scale: 1.1, translateX: '5%' }}
           className="flex-col items-end sm:flex sm:flex-row sm:font-thin"
         >
-          <AppLink href="/" title="Strona Główna" className="pr-4 text-white hover:no-underline sm:text-2xl">
+          <AppLink
+            href="/"
+            title="Strona Główna"
+            className="pr-4 text-white hover:no-underline sm:truncate sm:text-2xl"
+          >
             Portal rejsów badawczych R/V Oceanograf
           </AppLink>
-          <AppLink href={`${config.repositoryUrl}/releases/latest`} variant="white" className="text-xs">
+          <AppLink href={`${config.repositoryUrl}/releases/latest`} variant="white" className="shrink-0 text-xs">
             {config.version}
           </AppLink>
         </motion.div>
       </div>
-      <div className="flex gap-6">
+      <div className="flex shrink-0 gap-6">
         <motion.div className="w-4" whileHover={{ scale: 1.3 }}>
           <AppLink href="https://ug.edu.pl" target="_blank" title="Uniwersytet Gdański" className="text-white">
             <UGLogoIcon />
