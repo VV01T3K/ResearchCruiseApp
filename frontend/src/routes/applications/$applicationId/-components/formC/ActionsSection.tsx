@@ -19,7 +19,7 @@ export function ActionsSection({ onSaveDraft, onPrint, disabled, context }: Prop
     <AppActionsSection>
       {!isReadonly && (
         <AppButton
-          className="w-36 !justify-center gap-4 lg:w-48"
+          className="w-64 !justify-center gap-4"
           variant="primaryOutline"
           onClick={onSaveDraft}
           disabled={disabled}
@@ -29,13 +29,13 @@ export function ActionsSection({ onSaveDraft, onPrint, disabled, context }: Prop
         </AppButton>
       )}
       {!isReadonly && (
-        <AppButton type="submit" className="w-36 !justify-center gap-4 lg:w-48" disabled={disabled}>
+        <AppButton type="submit" className="w-64 !justify-center gap-4" disabled={disabled}>
           <SendFillIcon className="h-4 w-4" />
           Wyślij
         </AppButton>
       )}
       {isReadonly && (
-        <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={onPrint} disabled={disabled}>
+        <AppButton className="w-64 !justify-center gap-4" onClick={onPrint} disabled={disabled}>
           <PrinterFillIcon className="h-4 w-4" />
           Wydrukuj
         </AppButton>
