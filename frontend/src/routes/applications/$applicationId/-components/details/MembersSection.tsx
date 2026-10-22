@@ -105,6 +105,7 @@ export function MembersSection() {
           data={evaluation.ugTeams}
           emptyTableMessage="Nie dodano żadnego zespołu."
           disabled
+          className="mt-0"
         />
 
         <AppTable
@@ -112,6 +113,7 @@ export function MembersSection() {
           data={evaluation.guestTeams}
           emptyTableMessage="Nie dodano żadnego zespołu."
           disabled
+          className="mt-0"
         />
 
         <div className="col-span-2">

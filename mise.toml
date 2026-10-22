@@ -8,7 +8,7 @@ experimental = true
 npm.package_manager = "bun"
 
 [tools]
-bun = "1.4.3"
+bun = "1.4.4"
 dotnet = '''{{ read_file(path=config_root ~ '/backend/global.json') | regex_replace(pattern='(?s).*"version"[[:space:]]*:[[:space:]]*"([^"]+)".*', rep='$1') | trim }}'''
 
 

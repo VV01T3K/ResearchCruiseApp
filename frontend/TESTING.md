@@ -8,13 +8,14 @@
 
 ## Commands
 
-| Command                 | Runs                                   |
-| ----------------------- | -------------------------------------- |
-| `vp run test`           | All three layers                       |
-| `vp run test:unit`      | Unit tests, about a second             |
-| `vp run test:storybook` | Every story in Chromium                |
-| `vp run test:browser`   | Builds the app once, then the journeys |
-| `vp run test:ui`        | Playwright's interactive runner        |
+| Command                       | Runs                                   |
+| ----------------------------- | -------------------------------------- |
+| `vp run test`                 | All three layers                       |
+| `vp run test:unit`            | Unit tests, about a second             |
+| `vp run test:storybook`       | Every story in Chromium                |
+| `vp run test:browser`         | Builds the app once, then the journeys |
+| `vp run test:browser:shuffle` | The journeys in a random order         |
+| `vp run test:ui`              | Playwright's interactive runner        |
 
 First-time browser setup: `vp exec playwright install --with-deps chromium`.
 
@@ -67,6 +68,10 @@ test('a failed save can be retried', async ({ page, network, requests }) => {
 The suite runs against `vp build --mode test` served by `vp preview` on a port the system picks,
 so suites in different worktrees can run at the same time. CI runs one worker; locally Playwright
 uses a quarter of the CPUs it may use.
+
+CI runs the journeys in a random order, so a test that depends on another test's state fails
+there. The run prints its seed (`Running … shuffle seed 123`) and the job summary repeats it.
+Replay the same order with `vp run test:browser:shuffle 123 --workers=1`.
 
 Unit and browser tests both run in `Europe/Warsaw`, the users' timezone.
 
