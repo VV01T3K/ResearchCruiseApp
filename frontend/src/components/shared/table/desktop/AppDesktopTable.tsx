@@ -25,7 +25,11 @@ export function AppDesktopTable<T extends object>({
   const headerRowCount = table.getHeaderGroups().length + (allButtons.length > 0 ? 1 : 0);
 
   return (
-    <div className={cn('mt-4 w-full overflow-x-auto', className)} data-testid={testId}>
+    <div
+      className={cn('mt-4 w-full overflow-x-auto', className)}
+      data-toolbarless-table={allButtons.length === 0 || undefined}
+      data-testid={testId}
+    >
       <table
         className={cn('min-w-full table-fixed border-collapse', virtualized && 'w-full')}
         aria-rowcount={virtualized ? (infiniteScroll?.hasNextPage ? -1 : rows.length + headerRowCount) : undefined}
@@ -53,9 +57,9 @@ export function AppDesktopTable<T extends object>({
               </th>
             </tr>
           )}
-          {table.getHeaderGroups().map((headerGroup, index) => {
+          {table.getHeaderGroups().map((headerGroup) => {
             return (
-              <tr key={headerGroup.id} className={cn(index === 0 && allButtons.length === 0 && '*:pt-0')}>
+              <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <AppDesktopTableHeader key={header.id} header={header}>
                     {flexRender(header.column.columnDef.header, header.getContext())}

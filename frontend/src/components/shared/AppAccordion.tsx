@@ -37,7 +37,9 @@ export function AppAccordion({
         data-testid={contentTestId}
       >
         {/* A margin, not padding, so a leading child's own top margin merges into this gap. */}
-        <div className="mt-4">{children}</div>
+        <div className="mt-4" data-accordion-content>
+          {children}
+        </div>
       </Collapsible.Panel>
     </Collapsible.Root>
   );
