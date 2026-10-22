@@ -1,0 +1,168 @@
+name: Release
+run-name: Release ${{ inputs.bump }} from ${{ inputs.ref }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version increment
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+        required: true
+      ref:
+        description: Commit to release (staging, a staging commit SHA, or a hotfix/* branch)
+        type: string
+        default: staging
+        required: true
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  plan:
+    name: Plan release
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      sha: ${{ steps.target.outputs.sha }}
+      hotfix: ${{ steps.target.outputs.hotfix }}
+      previous: ${{ steps.target.outputs.previous }}
+      version: ${{ steps.target.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Resolve commit and version
+        id: target
+        env:
+          REF: ${{ inputs.ref }}
+          BUMP: ${{ inputs.bump }}
+        run: |
+          fail() { echo "::error::$*"; exit 1; }
+          [[ $GITHUB_REF == refs/heads/staging ]] || fail "Run this workflow from staging."
+          sha=$(git rev-parse --verify --quiet "origin/$REF^{commit}" || git rev-parse --verify --quiet "$REF^{commit}") \
+            || fail "Unknown ref: $REF"
+          previous=$(.github/scripts/version.sh latest)
+          version=$(.github/scripts/version.sh next "$BUMP")
+
+          git merge-base --is-ancestor origin/main "$sha" || fail "main is not an ancestor of $sha, so it cannot be fast-forwarded."
+          git merge-base --is-ancestor "$previous" "$sha" || fail "$previous is not an ancestor of $sha."
+          [[ $sha != "$(git rev-parse origin/main)" ]] || fail "$sha is already released."
+          if git merge-base --is-ancestor "$sha" origin/staging; then
+            hotfix=false
+          elif [[ $REF == hotfix/* ]]; then
+            hotfix=true
+            git merge-tree --write-tree origin/staging "$sha" > /dev/null || fail "$REF conflicts with staging."
+          else
+            fail "$REF is not on staging or a hotfix/* branch."
+          fi
+
+          {
+            echo "sha=$sha"
+            echo "hotfix=$hotfix"
+            echo "previous=$previous"
+            echo "version=$version"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Wait for CI on the commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.target.outputs.sha }}
+        run: |
+          runs() {
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$SHA&per_page=100" --jq \
+              '.workflow_runs[] | select(.event == "push" or .event == "pull_request") | [.status, .conclusion // "", .name, .html_url] | @tsv'
+          }
+          while runs | grep -qv '^completed'; do
+            echo "Waiting for CI on $SHA..."
+            sleep 30
+          done
+          all=$(runs)
+          [[ -n $all ]] || { echo "::error::No CI runs found for $SHA."; exit 1; }
+          echo "$all"
+          if awk -F '\t' '$2 !~ /^(success|skipped|neutral)$/ { bad = 1 } END { exit !bad }' <<< "$all"; then
+            echo "::error::CI did not pass for $SHA."
+            exit 1
+          fi
+
+      - name: Summarize
+        env:
+          BUMP: ${{ inputs.bump }}
+          SHA: ${{ steps.target.outputs.sha }}
+          HOTFIX: ${{ steps.target.outputs.hotfix }}
+          PREVIOUS: ${{ steps.target.outputs.previous }}
+          VERSION: ${{ steps.target.outputs.version }}
+        run: |
+          range="$PREVIOUS..$SHA"
+          if grep -qE '^[a-z]+(\([^)]*\))?!:|^BREAKING CHANGE:' <<< "$(git log --format=%B "$range")"; then
+            hint='major'
+          elif grep -qE '^feat(\(|:)' <<< "$(git log --format=%s "$range")"; then
+            hint='minor'
+          else
+            hint='patch'
+          fi
+          url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+          {
+            echo "## v$VERSION"
+            echo
+            echo "- Commit: [\`${SHA::8}\`]($url/commit/$SHA)$([[ $HOTFIX == true ]] && echo ' (hotfix, merged into staging on release)')"
+            echo "- Bump: $BUMP from $PREVIOUS (Conventional Commits suggest $hint)"
+            echo "- Changes: [$PREVIOUS...${SHA::8}]($url/compare/$PREVIOUS...$SHA)"
+            echo
+            echo "<details><summary>$(git rev-list --count "$range") commits</summary>"
+            echo
+            git log --format='- %s' "$range"
+            echo
+            echo "</details>"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  release:
+    name: Release v${{ needs.plan.outputs.version }}
+    needs: plan
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ github.server_url }}/${{ github.repository }}/releases/tag/v${{ needs.plan.outputs.version }}
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ssh-key: ${{ secrets.VERSION_RELEASE_DEPLOYMENT_KEY }}
+
+      # Deploy-key pushes bypass the rulesets and, unlike GITHUB_TOKEN ones, trigger the tag's image build.
+      - name: Tag and fast-forward main
+        env:
+          SHA: ${{ needs.plan.outputs.sha }}
+          HOTFIX: ${{ needs.plan.outputs.hotfix }}
+          VERSION: ${{ needs.plan.outputs.version }}
+        run: |
+          git merge-base --is-ancestor origin/main "$SHA" || { echo "::error::main moved; plan the release again."; exit 1; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          refs=("$SHA:refs/heads/main" "refs/tags/v$VERSION")
+          if [[ $HOTFIX == true ]]; then
+            git switch --detach origin/staging
+            git merge --no-ff -m "chore(release): merge hotfix v$VERSION into staging" "$SHA"
+            refs+=("HEAD:refs/heads/staging")
+          fi
+          git tag -a "v$VERSION" -m "v$VERSION" "$SHA"
+          git push --atomic origin "${refs[@]}"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREVIOUS: ${{ needs.plan.outputs.previous }}
+          VERSION: ${{ needs.plan.outputs.version }}
+        run: gh release create "v$VERSION" --verify-tag --title "v$VERSION" --generate-notes --notes-start-tag "$PREVIOUS"
