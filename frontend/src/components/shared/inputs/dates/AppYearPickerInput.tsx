@@ -1,22 +1,21 @@
 'use client';
 
+import { Popover } from '@base-ui/react/popover';
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
 import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
 import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
-import { AnimatePresence, motion } from 'motion/react';
 import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
+import { PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
+import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppInputErrorTriangle } from '@/components/shared/inputs/parts/AppInputErrorTriangle';
 import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
-import { useDropdown } from '@/hooks/shared/DropdownHook';
-import { useOutsideClickDetection } from '@/hooks/shared/OutsideClickDetectionHook';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -52,16 +51,9 @@ export function AppYearPickerInput({
 }: Props) {
   const aria = useInputAria(errors, helper);
   const [selectedYear, setSelectedYear] = React.useState<number | undefined>(value);
-  const [visibleDecade, setVisibleDecade] = React.useState<{ from: number; to: number }>(() => {
-    const now = new Date().getFullYear();
-    const from = Math.floor(now / 10) * 10;
-    const to = from + 11;
-    return { from, to };
-  });
+  const [visibleDecade, setVisibleDecade] = React.useState(() => decadeOf(new Date().getFullYear()));
   const [expanded, setExpanded] = React.useState(false);
 
-  const elementRef = React.useRef<HTMLDivElement>(null);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(null);
   const portalContainerRef = useCallback((node: HTMLDivElement | null) => setPortalContainer(node), []);
 
@@ -70,20 +62,12 @@ export function AppYearPickerInput({
     setSelectedYear(value);
   }, [value]);
 
-  useOutsideClickDetection({
-    refs: [elementRef, dropdownRef],
-    onOutsideClick: () => {
-      setExpanded(false);
-      onBlur?.();
-    },
-  });
-
-  function handleInputClick() {
-    if (disabled) {
-      return;
+  function handleOpenChange(open: boolean) {
+    if (open && selectedYear) {
+      setVisibleDecade(decadeOf(selectedYear));
     }
-
-    setExpanded(!expanded);
+    setExpanded(open);
+    if (!open) onBlur?.();
   }
 
   function handleResetSelection(evt: React.MouseEvent) {
@@ -103,20 +87,15 @@ export function AppYearPickerInput({
   }
 
   return (
-    <>
+    <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
       <div className="flex flex-col" data-testid={testId}>
         <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
-        <div className={cn()} ref={elementRef}>
+        <div>
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
-          <AppButton
+          <Popover.Trigger
+            disabled={disabled}
             {...aria.inputProps}
-            variant="plain"
-            onClick={() => handleInputClick()}
-            className={cn(
-              'relative inline-flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
-              disabled ? 'bg-gray-200 hover:cursor-default' : '',
-              hasErrors(errors) && invalidInputClassName
-            )}
+            className={pickerTriggerClassName({ disabled, errors })}
             data-testid={buttonTestId}
           >
             {selectedYear ?? placeholder}
@@ -125,7 +104,7 @@ export function AppYearPickerInput({
               <div ref={portalContainerRef}></div>
               {!selectedYear && <CalendarEventIcon className="h-4 w-4" />}
             </span>
-          </AppButton>
+          </Popover.Trigger>
           <RemoveSelectedYearPortal
             selectedYear={selectedYear}
             disabled={disabled}
@@ -139,81 +118,49 @@ export function AppYearPickerInput({
         </div>
       </div>
 
-      <AnimatePresence>
-        {expanded && (
-          <Modal dropdownRef={dropdownRef} elementRef={elementRef}>
-            <div className="grid grid-cols-5 items-center px-2 py-2">
+      <PickerPopup aria-label="Wybierz rok">
+        <div className="grid grid-cols-5 items-center px-2 py-2">
+          <AppButton
+            variant="plain"
+            onClick={() => setVisibleDecade((prev) => ({ from: prev.from - 11, to: prev.to - 11 }))}
+            className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+          >
+            <ChevronLeftIcon className="h-5 w-5" />
+          </AppButton>
+          <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">{`${visibleDecade.from}-${visibleDecade.to}`}</span>
+          <AppButton
+            variant="plain"
+            onClick={() => setVisibleDecade((prev) => ({ from: prev.from + 11, to: prev.to + 11 }))}
+            className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+          >
+            <ChevronRightIcon className="h-5 w-5" />
+          </AppButton>
+        </div>
+        <div className="grid grid-cols-3 gap-4 px-4 py-2">
+          {Array.from({ length: visibleDecade.to - visibleDecade.from + 1 })
+            .map((_, index) => visibleDecade.from + index)
+            .map((year) => (
               <AppButton
+                key={year}
                 variant="plain"
-                onClick={() => setVisibleDecade((prev) => ({ from: prev.from - 11, to: prev.to - 11 }))}
-                className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+                onClick={() => handleSelectYear(year)}
+                className={cn(
+                  'grid place-items-center rounded-lg hover:bg-gray-100',
+                  year === selectedYear ? 'text-primary-500 font-bold' : ''
+                )}
               >
-                <ChevronLeftIcon className="h-5 w-5" />
+                {year}
               </AppButton>
-              <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">{`${visibleDecade.from}-${visibleDecade.to}`}</span>
-              <AppButton
-                variant="plain"
-                onClick={() => setVisibleDecade((prev) => ({ from: prev.from + 11, to: prev.to + 11 }))}
-                className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
-              >
-                <ChevronRightIcon className="h-5 w-5" />
-              </AppButton>
-            </div>
-            <div className="grid grid-cols-3 gap-4 px-4 py-2">
-              {Array.from({ length: visibleDecade.to - visibleDecade.from + 1 })
-                .map((_, index) => visibleDecade.from + index)
-                .map((year) => (
-                  <AppButton
-                    key={year}
-                    variant="plain"
-                    onClick={() => handleSelectYear(year)}
-                    className={cn(
-                      'grid place-items-center rounded-lg hover:bg-gray-100',
-                      year === selectedYear ? 'text-primary-500 font-bold' : ''
-                    )}
-                  >
-                    {year}
-                  </AppButton>
-                ))}
-            </div>
-          </Modal>
-        )}
-      </AnimatePresence>
-    </>
+            ))}
+        </div>
+      </PickerPopup>
+    </Popover.Root>
   );
 }
 
-type ModalProps = {
-  dropdownRef: React.RefObject<HTMLDivElement | null>;
-  elementRef: React.RefObject<HTMLDivElement | null>;
-
-  children: React.ReactNode;
-};
-function Modal({ dropdownRef, elementRef, children }: ModalProps) {
-  const { top, left, direction } = useDropdown({
-    openingItemRef: elementRef,
-    dropdownRef,
-    dropdownPosition: 'center',
-  });
-
-  return (
-    <motion.div
-      style={{ top: top, left: left }}
-      className={cn(
-        'fixed z-50 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden'
-      )}
-      initial={{ opacity: 0, translateY: '-10%' }}
-      animate={{ opacity: 1, translateY: '0' }}
-      exit={{ opacity: 0, translateY: direction === 'up' ? '10%' : '-10%' }}
-      transition={{ ease: 'easeOut', duration: 0.2 }}
-      role="menu"
-      aria-orientation="vertical"
-      aria-labelledby="menu-button"
-      ref={dropdownRef}
-    >
-      {children}
-    </motion.div>
-  );
+function decadeOf(year: number) {
+  const from = Math.floor(year / 10) * 10;
+  return { from, to: from + 11 };
 }
 
 function RemoveSelectedYearPortal({

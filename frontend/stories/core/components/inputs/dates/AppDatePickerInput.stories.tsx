@@ -1,6 +1,6 @@
 import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { expect, fn, waitFor, within } from 'storybook/test';
 
 import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
 
@@ -22,7 +22,33 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvas, canvasElement, userEvent }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Wybierz datę' });
+    await userEvent.click(trigger);
+    const calendar = await page.findByRole('dialog', { name: 'Wybierz datę' });
+
+    await userEvent.click(within(calendar).getByRole('button', { name: /^\d\d\.\d{4}$/ }));
+    await page.findByRole('dialog', { name: 'Wybierz miesiąc' });
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(page.queryByRole('dialog', { name: 'Wybierz miesiąc' })).not.toBeInTheDocument());
+    await expect(calendar).toBeVisible();
+    await userEvent.click(within(calendar).getByRole('button', { name: /^\d\d\.\d{4}$/ }));
+    await userEvent.click(await page.findByRole('button', { name: 'Marzec' }));
+    await expect(within(calendar).getByRole('button', { name: /^03\.\d{4}$/ })).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
+    await expect(trigger).toHaveFocus();
+
+    await userEvent.click(trigger);
+    await page.findByRole('dialog', { name: 'Wybierz datę' });
+    await userEvent.click(canvasElement.ownerDocument.body);
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
+    await expect(trigger).toHaveFocus();
+  },
+};
 
 export const WithLabel: Story = {
   args: {

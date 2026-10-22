@@ -1,10 +1,11 @@
-import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
+import { Popover } from '@base-ui/react/popover';
+import { PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
+import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
 import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
 import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
-import { AnimatePresence, motion } from 'motion/react';
 import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AppButton } from '@/components/shared/AppButton';
@@ -15,8 +16,6 @@ import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErr
 import { AppInputErrorTriangle } from '@/components/shared/inputs/parts/AppInputErrorTriangle';
 import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
-import { useDropdown } from '@/hooks/shared/DropdownHook';
-import { useOutsideClickDetection } from '@/hooks/shared/OutsideClickDetectionHook';
 import { dateToUtcDay, getDaysInMonth, shortWeekDays } from '@/lib/calendarUtils';
 import { cn } from '@/lib/utils';
 
@@ -77,26 +76,15 @@ export function AppDatePickerInput({
     year: new Date().getFullYear(),
   });
 
-  const inputRef = React.useRef<HTMLDivElement>(null);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(null);
   const portalContainerRef = useCallback((node: HTMLDivElement | null) => setPortalContainer(node), []);
 
-  useOutsideClickDetection({
-    refs: [inputRef, dropdownRef],
-    onOutsideClick: () => {
-      setExpanded(false);
-      if (expanded) onBlur?.();
-    },
-  });
-
-  function handleInputClick() {
-    if (disabled) {
-      return;
+  function handleOpenChange(open: boolean) {
+    if (open && selectedDate) {
+      setVisibleMonth({ month: selectedDate.getMonth(), year: selectedDate.getFullYear() });
     }
-
-    setExpanded(!expanded);
-    if (expanded) onBlur?.();
+    setExpanded(open);
+    if (!open) onBlur?.();
   }
 
   function handleResetSelection(evt: React.MouseEvent) {
@@ -141,22 +129,16 @@ export function AppDatePickerInput({
   }
 
   return (
-    <>
+    <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
       <div className="flex flex-col" data-testid={testId}>
         <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
-        <div ref={inputRef}>
+        <div>
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
-          <AppButton
+          <Popover.Trigger
             name={name}
             disabled={disabled}
             {...aria.inputProps}
-            variant="plain"
-            onClick={handleInputClick}
-            className={cn(
-              'relative inline-flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
-              disabled ? 'bg-gray-200 hover:cursor-default' : '',
-              hasErrors(errors) && invalidInputClassName
-            )}
+            className={pickerTriggerClassName({ disabled, errors })}
             data-testid={buttonTestId}
           >
             {selectedDate
@@ -173,7 +155,7 @@ export function AppDatePickerInput({
               <div ref={portalContainerRef}></div>
               {!selectedDate && <CalendarEventIcon className="h-4 w-4" />}
             </span>
-          </AppButton>
+          </Popover.Trigger>
           <RemoveSelectedDatePortal
             selectedDate={selectedDate}
             disabled={disabled}
@@ -186,93 +168,89 @@ export function AppDatePickerInput({
           <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
         </div>
       </div>
-      <AnimatePresence>
-        {expanded && (
-          <Modal dropdownRef={dropdownRef} inputRef={inputRef}>
-            <div className="grid grid-cols-5 items-center px-2 py-2">
-              <AppButton
-                variant="plain"
-                onClick={() => handleMonthChange(-1)}
-                className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
-              >
-                <ChevronLeftIcon className="h-5 w-5" />
-              </AppButton>
+      <PickerPopup aria-label="Wybierz datę">
+        <div className="grid grid-cols-5 items-center px-2 py-2">
+          <AppButton
+            variant="plain"
+            onClick={() => handleMonthChange(-1)}
+            className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+          >
+            <ChevronLeftIcon className="h-5 w-5" />
+          </AppButton>
 
-              <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">
-                <AppMonthPickerPopover value={visibleMonth} onChange={setVisibleMonth} />
-              </span>
+          <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">
+            <AppMonthPickerPopover value={visibleMonth} onChange={setVisibleMonth} />
+          </span>
 
-              <AppButton
-                variant="plain"
-                onClick={() => handleMonthChange(1)}
-                className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
-              >
-                <ChevronRightIcon className="h-5 w-5" />
-              </AppButton>
+          <AppButton
+            variant="plain"
+            onClick={() => handleMonthChange(1)}
+            className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+          >
+            <ChevronRightIcon className="h-5 w-5" />
+          </AppButton>
+        </div>
+        <div className="grid grid-cols-7 p-2" onMouseLeave={() => setHoveredDate(undefined)}>
+          {shortWeekDays.map((day) => (
+            <div key={day} className="pb-2 text-center font-semibold">
+              {day}
             </div>
-            <div className="grid grid-cols-7 p-2" onMouseLeave={() => setHoveredDate(undefined)}>
-              {shortWeekDays.map((day) => (
-                <div key={day} className="pb-2 text-center font-semibold">
-                  {day}
-                </div>
-              ))}
-              {getDaysInMonth(visibleMonth).map((date) => (
-                <CalendarDateTile
-                  key={date.getTime()}
-                  date={date}
-                  selectedDate={selectedDate}
-                  selectionStartDate={selectionStartDate}
-                  hoveredDate={hoveredDate}
-                  minimalDate={minimalDate}
-                  maximalDate={maximalDate}
-                  visibleMonth={visibleMonth}
-                  setHoveredDate={setHoveredDate}
-                  handleDateSelection={handleDateSelection}
-                />
-              ))}
-            </div>
-            {type === 'datetime' && (
-              <div className="p-2">
-                <AppDatePickerTimeInput
-                  name={name}
-                  value={
-                    selectedDate && {
-                      hours: selectedDate?.getHours(),
-                      minutes: selectedDate?.getMinutes(),
+          ))}
+          {getDaysInMonth(visibleMonth).map((date) => (
+            <CalendarDateTile
+              key={date.getTime()}
+              date={date}
+              selectedDate={selectedDate}
+              selectionStartDate={selectionStartDate}
+              hoveredDate={hoveredDate}
+              minimalDate={minimalDate}
+              maximalDate={maximalDate}
+              visibleMonth={visibleMonth}
+              setHoveredDate={setHoveredDate}
+              handleDateSelection={handleDateSelection}
+            />
+          ))}
+        </div>
+        {type === 'datetime' && (
+          <div className="p-2">
+            <AppDatePickerTimeInput
+              name={name}
+              value={
+                selectedDate && {
+                  hours: selectedDate?.getHours(),
+                  minutes: selectedDate?.getMinutes(),
+                }
+              }
+              placeholder="Wybierz godzinę"
+              onChange={(x) => {
+                const newDate = new Date(selectedDate ?? new Date());
+                newDate.setHours(x?.hours ?? 0);
+                newDate.setMinutes(x?.minutes ?? 0);
+                onChange?.(getValueFromDate(newDate));
+              }}
+              onBlur={onBlur}
+              minuteStep={minuteStep}
+              minimalTime={
+                minimalDate && selectedDate && dateToUtcDay(minimalDate) === dateToUtcDay(selectedDate)
+                  ? {
+                      hours: minimalDate?.getHours(),
+                      minutes: minimalDate?.getMinutes(),
                     }
-                  }
-                  placeholder="Wybierz godzinę"
-                  onChange={(x) => {
-                    const newDate = new Date(selectedDate ?? new Date());
-                    newDate.setHours(x?.hours ?? 0);
-                    newDate.setMinutes(x?.minutes ?? 0);
-                    onChange?.(getValueFromDate(newDate));
-                  }}
-                  onBlur={onBlur}
-                  minuteStep={minuteStep}
-                  minimalTime={
-                    minimalDate && selectedDate && dateToUtcDay(minimalDate) === dateToUtcDay(selectedDate)
-                      ? {
-                          hours: minimalDate?.getHours(),
-                          minutes: minimalDate?.getMinutes(),
-                        }
-                      : undefined
-                  }
-                  maximalTime={
-                    maximalDate && selectedDate && dateToUtcDay(maximalDate) === dateToUtcDay(selectedDate)
-                      ? {
-                          hours: maximalDate?.getHours(),
-                          minutes: maximalDate?.getMinutes(),
-                        }
-                      : undefined
-                  }
-                />
-              </div>
-            )}
-          </Modal>
+                  : undefined
+              }
+              maximalTime={
+                maximalDate && selectedDate && dateToUtcDay(maximalDate) === dateToUtcDay(selectedDate)
+                  ? {
+                      hours: maximalDate?.getHours(),
+                      minutes: maximalDate?.getMinutes(),
+                    }
+                  : undefined
+              }
+            />
+          </div>
         )}
-      </AnimatePresence>
-    </>
+      </PickerPopup>
+    </Popover.Root>
   );
 }
 
@@ -359,41 +337,6 @@ function CalendarDateTile({
         {date.getDate()}
       </AppButton>
     </div>
-  );
-}
-
-type ModalProps = {
-  dropdownRef: React.RefObject<HTMLDivElement | null>;
-  inputRef: React.RefObject<HTMLDivElement | null>;
-
-  children: React.ReactNode;
-  className?: string;
-};
-function Modal({ dropdownRef, inputRef, children, className }: ModalProps) {
-  const { top, left, direction } = useDropdown({
-    openingItemRef: inputRef,
-    dropdownRef,
-    dropdownPosition: 'center',
-  });
-
-  return (
-    <motion.div
-      style={{ top: top, left: left }}
-      className={cn(
-        'fixed z-50 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden',
-        className
-      )}
-      initial={{ opacity: 0, translateY: '-10%' }}
-      animate={{ opacity: 1, translateY: '0' }}
-      exit={{ opacity: 0, translateY: direction === 'up' ? '10%' : '-10%' }}
-      transition={{ ease: 'easeOut', duration: 0.2 }}
-      role="menu"
-      aria-orientation="vertical"
-      aria-labelledby="menu-button"
-      ref={dropdownRef}
-    >
-      {children}
-    </motion.div>
   );
 }
 

@@ -104,7 +104,7 @@ for (const picker of [
     await expect(control).toHaveAttribute('aria-invalid', 'true');
     await expect(control).toHaveAccessibleDescription(new RegExp(picker.message));
     await control.click();
-    await page.getByRole('menu').getByRole('button', { name: picker.option, exact: true }).click();
+    await page.getByRole('dialog').getByRole('button', { name: picker.option, exact: true }).click();
     await expect(page.getByText(picker.message, { exact: true })).toHaveCount(0);
     await expect(control).not.toHaveAttribute('aria-invalid', 'true');
   });
