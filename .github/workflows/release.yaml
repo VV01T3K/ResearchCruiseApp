@@ -149,7 +149,6 @@ jobs:
             git merge-base --is-ancestor "$SHA" origin/staging || fail "$SHA is no longer on staging."
           else
             [[ $(git rev-parse origin/staging) == "$STAGING" ]] || fail "staging moved; plan the release again."
-            [[ $(git rev-parse --verify --quiet "refs/remotes/origin/$BRANCH") == "$SHA" ]] || fail "$BRANCH moved; plan the release again."
             tree=$(git merge-tree --write-tree "$STAGING" "$SHA") || fail "$BRANCH conflicts with staging."
             merge=$(git commit-tree "$tree" -p "$STAGING" -p "$SHA" -m "chore(release): merge hotfix v$VERSION into staging")
             # The hotfix branch is pushed unchanged under a lease, so the push fails if it moved or was deleted.
