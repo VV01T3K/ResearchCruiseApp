@@ -121,6 +121,26 @@ test('ship blockades that fail to load are explained on the form', async ({ page
   }).toPass();
 });
 
+test('the ship blockade warning icon stays beside its heading when the list opens', async ({ page, network }) => {
+  network.use(
+    getGetCruiseBlockadesMockHandler([
+      { title: 'Remont stoczniowy', startDate: '2026-03-02T00:00:00Z', endDate: '2026-03-20T00:00:00Z' },
+      { title: 'Przegląd klasowy', startDate: '2026-11-02T00:00:00Z', endDate: '2026-11-06T00:00:00Z' },
+    ])
+  );
+  await page.goto(`/applications/${applicationId}/formA?mode=edit`);
+  const alert = page.getByRole('alert').filter({ hasText: 'Blokady statku w roku 2026' });
+  const icon = alert.locator('svg').first();
+  const heading = alert.getByText('Blokady statku w roku 2026');
+  const iconOffset = async () => (await icon.boundingBox())!.y - (await heading.boundingBox())!.y;
+  await expect(heading).toBeVisible();
+  const closedOffset = await iconOffset();
+
+  await alert.getByRole('button', { name: /Blokady statku/ }).click();
+  await expect(alert.getByText('Przegląd klasowy')).toBeVisible();
+  await expect.poll(iconOffset).toBe(closedOffset);
+});
+
 test('form B shows server errors under row fields and the remaining reasons above the form', async ({
   page,
   network,
