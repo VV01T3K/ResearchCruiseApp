@@ -5,7 +5,7 @@ import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
 import SearchIcon from 'bootstrap-icons/icons/search.svg?react';
 import { useState } from 'react';
 
-import { navbarCollisionPadding } from '@/components/layout/navbarCollisionPadding';
+import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
 import { AppButtonVariant } from '@/components/shared/AppButton';
 import { AppInput } from '@/components/shared/inputs/AppInput';
 import { cn } from '@/lib/utils';
@@ -55,7 +55,12 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
       </Popover.Trigger>
 
       <Popover.Portal>
-        <Popover.Positioner className="z-50" sideOffset={4} collisionPadding={navbarCollisionPadding()} align="center">
+        <Popover.Positioner
+          className="z-50"
+          sideOffset={4}
+          collisionPadding={stickyBarsCollisionPadding}
+          align="center"
+        >
           <Popover.Popup
             className={cn(
               'w-max max-w-sm min-w-64 origin-[var(--transform-origin)] rounded-lg bg-white shadow-xl ring-1 ring-black/10',

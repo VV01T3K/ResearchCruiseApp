@@ -2,7 +2,7 @@ import { Popover } from '@base-ui/react/popover';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
 import React from 'react';
 
-import { navbarCollisionPadding } from '@/components/layout/navbarCollisionPadding';
+import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { cn } from '@/lib/utils';
 
@@ -36,7 +36,7 @@ export function PickerPopup({ 'aria-label': ariaLabel, children }: Props) {
       <Popover.Positioner
         className="z-50"
         sideOffset={4}
-        collisionPadding={navbarCollisionPadding()}
+        collisionPadding={stickyBarsCollisionPadding}
         collisionAvoidance={{ fallbackAxisSide: 'none' }}
       >
         <Popover.Popup

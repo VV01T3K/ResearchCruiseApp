@@ -1,5 +1,5 @@
 import { Popover } from '@base-ui/react/popover';
-import { navbarCollisionPadding } from '@/components/layout/navbarCollisionPadding';
+import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
 import { Header } from '@/integrations/tanstack/table/features';
 
 import { AppTableFilterList } from '@/components/shared/table/common/AppTableFilterList';
@@ -23,7 +23,7 @@ export function AppDesktopTableHeaderDropdown<TData extends object, TValue>({
   }
 
   return (
-    <Popover.Positioner className="z-50" sideOffset={4} collisionPadding={navbarCollisionPadding()}>
+    <Popover.Positioner className="z-50" sideOffset={4} collisionPadding={stickyBarsCollisionPadding}>
       <Popover.Popup
         className={cn(
           'w-56 origin-[var(--transform-origin)] rounded-lg bg-white shadow-xl ring-1 ring-black/10',
