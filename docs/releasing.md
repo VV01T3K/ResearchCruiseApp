@@ -54,22 +54,11 @@ set `APP_VERSION=vX.Y.Z` in `docker/.env` and run
 
 ## Hotfix
 
-If `staging` can ship as it is, merge the fix into `staging` as usual and release a `patch`.
-
-Otherwise, fix the release itself:
-
-1. Branch `hotfix/<name>` from the latest tag (`git switch -c hotfix/<name> vX.Y.Z`), commit the fix and
-   open a pull request into `staging` for CI and review. Do not merge it.
-2. Run **Release** with bump `patch` and commit `hotfix/<name>`, then approve it. The workflow releases
-   the hotfix commit and merges it into `staging` in the same push, which marks the pull request
-   merged.
-
-The workflow refuses a hotfix that conflicts with `staging`; resolve the conflict on the hotfix branch
-first.
+A hotfix ships like any change: a pull request into `staging`, then a `patch` release. If `staging`
+has work that is not ready, wait for it or revert it first.
 
 ## Repository settings
 
 - The `production` environment requires a reviewer and allows deployments from `staging`.
 - The `Release` deploy key (secret `VERSION_RELEASE_DEPLOYMENT_KEY`) is a bypass actor on the `main`
-  ruleset, for the fast-forward and tag, and on the `staging` ruleset, whose linear history rule
-  would otherwise reject the hotfix merge.
+  ruleset, so it can fast-forward `main` and push the tag.

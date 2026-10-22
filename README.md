@@ -51,7 +51,7 @@ Database migrations run on startup only when `Database__ApplyMigrations` is `tru
 
 To upgrade production, back up the database, then start the new version once with `DATABASE_APPLY_MIGRATIONS=true`. Unset it again after the upgrade.
 
-See [Releasing](docs/releasing.md) for cutting a release or a hotfix.
+See [Releasing](docs/releasing.md) for cutting a release.
 
 Reference data seeding runs on every startup once the schema is current. Missing roles, UG units, research areas and ship equipment are added; existing reference rows, including inactive entries, are preserved. Seeding shares Entity Framework's migration lock so application replicas do not seed simultaneously.
 
