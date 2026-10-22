@@ -127,6 +127,10 @@ test('the edit dialog stays below the navbar on a short desktop viewport', async
   await page.goto('/user-management');
   await page.getByRole('row').filter({ hasText: deputy.email }).getByRole('button', { name: 'Edytuj' }).click();
   const dialog = page.getByRole('dialog', { name: 'Edytuj użytkownika' });
+  const navbar = page.locator('#header');
+  await expect(navbar).toHaveCSS('transform', 'none');
+  const { y, height } = (await navbar.boundingBox())!;
+  await expect.poll(async () => (await dialog.boundingBox())?.y ?? 0).toBeGreaterThanOrEqual(y + height + 16);
   await dialog.getByRole('button', { name: 'Zamknij' }).click();
   await expect(dialog).toBeHidden();
 });
