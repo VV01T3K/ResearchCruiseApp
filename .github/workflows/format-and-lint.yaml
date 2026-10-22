@@ -2,7 +2,7 @@ name: Format & lint checks
 
 on:
   push:
-    branches-ignore: [staging, main]
+    branches-ignore: [staging, main, "hotfix/**"]
     paths-ignore:
       - docs
   workflow_call:

@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - staging
+      - "hotfix/**"
   pull_request:
     branches:
       - main
