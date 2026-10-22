@@ -20,3 +20,7 @@ export const formValidationLogic: ValidationLogicFn = (props) =>
         form,
       }),
   });
+
+// Errors stay hidden until a submit attempt, so only block submit once that attempt has shown them.
+export const selectCanSubmit = (state: { canSubmit: boolean; submissionAttempts: number }) =>
+  state.canSubmit || state.submissionAttempts === 0;

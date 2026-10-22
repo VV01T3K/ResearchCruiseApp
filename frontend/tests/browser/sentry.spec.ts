@@ -43,7 +43,7 @@ test.describe('signed in', () => {
   test('one click closes the feedback form while its description is empty', async ({ page }) => {
     await captureEnvelopes(page);
     await page.goto('/help');
-    await page.getByTestId('feedback-tab').click();
+    await page.getByRole('main').getByRole('button', { name: 'Zgłoś problem' }).click();
     const dialog = page.getByRole('dialog', { name: 'Zgłoś problem' });
     await expect(dialog.getByRole('textbox')).toBeFocused();
 
