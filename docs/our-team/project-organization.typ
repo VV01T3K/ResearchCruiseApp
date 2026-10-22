@@ -38,8 +38,8 @@ Aplikacja obecnie nie współpracuje z innymi systemami.
 === Istotne terminy wydarzeń
 
 - Przejęcie projektu w październiku 2025 r.
-- 14.11.2025 wdrożenie wersji 2.1.0 aplikacji na serwer UG​
-- Wdrożenie wersji 2.2.0 i 2.2.1 w grudniu 2025 r.​
+- 14.11.2025 wdrożenie wersji 2.1.0 aplikacji na serwer UG
+- Wdrożenie wersji 2.2.0 i 2.2.1 w grudniu 2025 r.
 - Przygotowane wersje 2.3.0 i 2.3.1 do wdrożenia w marcu 2026 r.
 - Spotkania z promotorem średnio co dwa tygodnie w celu kontrolowania postępów prac oraz uzyskania wskazówek do dalszego rozwoju
 - Spotkania z klientem średnio co trzy miesiące w celu przedstawienia aktualnego działania systemu i zebrania opinii użytkowników
