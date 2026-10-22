@@ -83,7 +83,7 @@ function RegisterPage() {
 
   return (
     <AppLayout title="Rejestracja" variant="narrow">
-      <form className="px-4" onSubmit={handleSubmit}>
+      <form noValidate className="px-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
           <form.AppField name="email" children={(field) => <field.FloatingTextField type="email" label="E-mail" />} />
 

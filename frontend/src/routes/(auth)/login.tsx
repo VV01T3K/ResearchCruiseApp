@@ -59,7 +59,7 @@ function LoginPage() {
 
   return (
     <AppLayout title="Logowanie" variant="narrow" disableBackButton data-testid="login-page-title">
-      <form onSubmit={handleSubmit} className="px-4">
+      <form noValidate onSubmit={handleSubmit} className="px-4">
         <div className="space-y-4">
           <form.AppField
             name="email"

@@ -67,6 +67,19 @@ test('rejected login explains the error and permits another attempt', async ({ p
   await expect(page).toHaveURL('/');
 });
 
+test('an invalid email submitted with Enter shows the app error instead of the browser one', async ({
+  page,
+  requests,
+}) => {
+  await page.goto('/login');
+  const email = page.getByLabel('E-mail');
+  await email.fill('asds@');
+  await email.press('Enter');
+  await expect(page.getByText('Nieprawidłowy adres email')).toBeVisible();
+  await expect(email).toHaveAttribute('type', 'email');
+  expect(requests.bodies('POST /v2/auth/login')).toEqual([]);
+});
+
 test('a login whose profile cannot load is revoked and can be retried', async ({ page, network, requests }) => {
   network.use(
     getLoginMockHandler(session()),

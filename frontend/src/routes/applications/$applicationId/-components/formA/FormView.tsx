@@ -34,6 +34,7 @@ export function FormView({ context }: Props) {
   return (
     <>
       <form
+        noValidate
         className="space-y-8"
         onSubmit={(event) => {
           event.preventDefault();

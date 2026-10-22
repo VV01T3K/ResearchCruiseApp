@@ -251,7 +251,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form noValidate onSubmit={handleSubmit}>
       <div className="flex h-14 justify-around">
         <form.Subscribe
           selector={(state) => [state.values.firstName, state.values.lastName]}
