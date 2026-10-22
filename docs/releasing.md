@@ -68,8 +68,9 @@ it without the unreleased work on `staging`:
 
 The run refuses a hotfix that does not branch from the latest release tag or that conflicts with
 `staging`; ship such a fix as a pull request into `staging` instead. The push fails as a whole if
-`staging` or the hotfix branch changed since planning, or if `main` no longer fast-forwards to the
-hotfix; run the release again.
+`staging` changed since planning, if `main` no longer fast-forwards to the hotfix, or if the hotfix
+branch changed before the push started; run the release again. A later change to the hotfix branch
+is not caught, but only the approved commit is released.
 
 ## Repository settings
 
