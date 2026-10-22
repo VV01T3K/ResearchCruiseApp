@@ -23,7 +23,7 @@ import {
 import { ApplicationResponse, CruiseApplicationStatus } from '@/api/generated/schemas';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { getPersonName } from '@/lib/applications/person';
-import { getApplicationStatusLabel } from '@/lib/applications/status';
+import { canRevertFormB, getApplicationStatusLabel } from '@/lib/applications/status';
 
 export const Route = createFileRoute('/applications/')({
   component: ApplicationsPage,
@@ -165,9 +165,7 @@ function ApplicationsPage() {
     {
       header: 'Formularze',
       cell: ({ row }) => {
-        const isFormBReadOnly =
-          row.original.status !== CruiseApplicationStatus.enum.formBFilled &&
-          row.original.status !== CruiseApplicationStatus.enum.undertaken;
+        const isFormBReadOnly = !canRevertFormB(row.original.status);
         return (
           <div className="flex flex-col gap-1">
             <AppLink disabled={!row.original.hasFormA} href={`/applications/${row.original.id}/formA`}>

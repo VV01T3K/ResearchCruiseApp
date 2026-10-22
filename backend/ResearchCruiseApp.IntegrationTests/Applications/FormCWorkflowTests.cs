@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
@@ -26,7 +27,11 @@ public sealed class FormCWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         var application = await TestApplications.Create(app, CruiseApplicationStatus.Undertaken);
         var office = await TestUsers.Create(app, "office@example.invalid", RoleName.Shipowner);
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
+        using var shipowner = await TestApplications.Login(app, office.Email!);
         var route = $"/v2/applications/{application.Id}/form-c";
+        using var unsentRefill = await shipowner.PutAsync(route + "/refill", null, ct);
+        Assert.Equal(HttpStatusCode.BadRequest, unsentRefill.StatusCode);
+        Assert.Contains("już dostępny do edycji", await unsentRefill.Content.ReadAsStringAsync(ct));
 
         using var saved = await manager.PutAsJsonAsync(
             route,
@@ -70,11 +75,48 @@ public sealed class FormCWorkflowTests(SqlFixture fixture) : IAsyncLifetime
 
         using var denied = await manager.PutAsync(route + "/refill", null, ct);
         Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
-        using var shipowner = await TestApplications.Login(app, office.Email!);
         using var reopened = await shipowner.PutAsync(route + "/refill", null, ct);
         Assert.Equal(HttpStatusCode.NoContent, reopened.StatusCode);
         await AssertState(app, CruiseApplicationStatus.Undertaken, null);
         Assert.Empty(app.Transport.Messages);
+    }
+
+    [Fact]
+    public async Task FormC_WhenFormBIsReopenedAfterCruiseEnded_RefusesUntilFormBIsSent()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var application = await TestApplications.Create(app, CruiseApplicationStatus.FormBRequired);
+        await app.InDatabase(async db =>
+        {
+            db.Cruises.Add(
+                new Cruise
+                {
+                    Number = "2030/1",
+                    StartDate = "2030-06-01",
+                    EndDate = "2030-06-02",
+                    Status = CruiseStatus.Ended,
+                    CruiseApplications =
+                    [
+                        await db.CruiseApplications.SingleAsync(
+                            row => row.Id == application.Id,
+                            ct
+                        ),
+                    ],
+                }
+            );
+            await db.SaveChangesAsync(ct);
+        });
+        using var manager = await TestApplications.Login(app, application.OwnerEmail);
+
+        using var refused = await manager.PutAsJsonAsync(
+            $"/v2/applications/{application.Id}/form-c",
+            new FormCWriteRequest { Form = Fields(null), Draft = false },
+            ct
+        );
+
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        Assert.Contains("po wysłaniu formularza B", await refused.Content.ReadAsStringAsync(ct));
     }
 
     private static FormCFields Fields(string? photo) =>

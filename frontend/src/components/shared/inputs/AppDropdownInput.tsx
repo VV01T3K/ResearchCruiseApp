@@ -1,3 +1,4 @@
+import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import { Select } from '@base-ui/react/select';
 import CheckIcon from 'bootstrap-icons/icons/check.svg?react';
@@ -70,7 +71,6 @@ export function AppDropdownInput({
   }, [allowEmptyOption, allOptions, defaultValue, placeholder, value]);
 
   const selectedOption = allOptions.find((opt) => opt.value === value);
-  const hasError = errors && errors.length > 0;
 
   const handleValueChange = React.useCallback(
     (newValue: string | null) => {
@@ -105,7 +105,7 @@ export function AppDropdownInput({
             !disabled && 'cursor-pointer hover:border-gray-400',
             !disabled && 'focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring-inset',
             disabled && 'cursor-not-allowed bg-gray-200',
-            hasError && 'border-danger ring-danger text-danger ring-inset focus:text-gray-900'
+            hasErrors(errors) && invalidInputClassName
           )}
           data-testid={buttonTestId}
         >
@@ -157,7 +157,7 @@ export function AppDropdownInput({
         </Select.Portal>
       </Select.Root>
 
-      <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
+      <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <AppInputHelper id={aria.helperId} helper={helper} />
         <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
       </div>

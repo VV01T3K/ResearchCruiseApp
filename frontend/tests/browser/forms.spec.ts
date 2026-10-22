@@ -1,12 +1,16 @@
+import type { CruiseApplicationStatus } from '@/api/generated/schemas';
 import {
   getCreateApplicationMockHandler,
   getGetApplicationFormAMockHandler,
+  getGetApplicationMockHandler,
+  getRefillApplicationFormBMockHandler,
   getUpdateApplicationFormAMockHandler,
   getUpdateApplicationFormBMockHandler,
   getUpdateApplicationFormCMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
 import { test, expect, applicationForms, dropFile, fail } from './fixtures';
 import { admin, deputyAccount, managerAccount, outsider } from '../data/accounts';
+import { application } from '../data/cruises';
 import { applicationId, formA as formAFields, formB } from '../data/forms';
 
 const formA = `/applications/${applicationId}/formA?mode=edit`;
@@ -285,6 +289,34 @@ test('an invalid form B names the section and reason of the first error in an em
     'Formularz błędny w sekcji nr 12:\nData rozpoczęcia jest wymagana'
   );
   await expect(page.getByTestId('short-equipment-from-button')).toBeFocused();
+});
+
+test('form B offers going back to editing only while eligible and explains a stale refusal', async ({
+  page,
+  network,
+}) => {
+  let status: CruiseApplicationStatus = 'formBRequired';
+  const refusal = 'Formularz B jest już dostępny do edycji i czeka na wysłanie przez kierownika rejsu.';
+  network.use(
+    getGetApplicationMockHandler(() => ({ ...application(), status })),
+    getRefillApplicationFormBMockHandler(fail(403, { status: 403, detail: refusal }))
+  );
+  const revert = page.getByRole('button', { name: 'Cofnij do edycji' });
+
+  await page.goto(`/applications/${applicationId}/formB?mode=preview`);
+  await expect(page.getByRole('button', { name: 'Wydrukuj' })).toBeVisible();
+  await expect(revert).toHaveCount(0);
+
+  status = 'formBFilled';
+  await page.goto(`/applications/${applicationId}/formB`);
+  await expect(page.getByRole('button', { name: 'Wydrukuj' })).toBeVisible();
+  await expect(revert).toHaveCount(0);
+  await page.goto(`/applications/${applicationId}/formB?mode=preview`);
+  await expect(revert).toBeVisible();
+  status = 'formBRequired';
+  await revert.click();
+  await expect(page.getByTestId('toast-error')).toHaveText(`Nie udało się cofnąć formularza B do edycji: ${refusal}`);
+  await expect(revert).toHaveCount(0);
 });
 
 test('form C clears point awards for an unfinished task and saves attached photos', async ({

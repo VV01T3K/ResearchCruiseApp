@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
@@ -55,6 +56,7 @@ public static class FormCEndpoints
             .CruiseApplications.IncludeFormA()
             .IncludeFormC()
             .IncludeFormCContent()
+            .IncludeCruise()
             .AsSplitQuery()
             .SingleOrDefaultAsync(
                 application => application.Id == applicationId,
@@ -86,14 +88,13 @@ public static class FormCEndpoints
                 .ThenInclude(task => task.ResearchTask)
             .IncludeFormC()
             .IncludeFormCContent()
+            .IncludeCruise()
             .AsSplitQuery()
             .SingleOrDefaultAsync(candidate => candidate.Id == applicationId, cancellationToken);
         if (application is null || !await userPermissionVerifier.CanCurrentUserAddForm(application))
             return Error.ResourceNotFound().ToProblemHttpResult();
         if (application.Status != CruiseApplicationStatus.Undertaken)
-            return Error
-                .ForbiddenOperation("Obecnie nie można wysłać Formularza C.")
-                .ToProblemHttpResult();
+            return Error.ForbiddenOperation(UpdateRefusal(application)).ToProblemHttpResult();
 
         var oldFormC = application.FormC;
         var formCResult = await forms.Create(request.Form, cancellationToken);
@@ -133,12 +134,24 @@ public static class FormCEndpoints
         if (application is null)
             return Error.ResourceNotFound().ToProblemHttpResult();
         if (application.Status != CruiseApplicationStatus.Reported)
-            return Error
-                .InvalidArgument("Obecnie nie można umożliwić edycji formularza C")
-                .ToProblemHttpResult();
+            return Error.InvalidArgument(RefillRefusal(application.Status)).ToProblemHttpResult();
 
         application.Status = CruiseApplicationStatus.Undertaken;
         await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();
     }
+
+    private static string UpdateRefusal(CruiseApplication application) =>
+        application switch
+        {
+            { Status: CruiseApplicationStatus.Reported } => "Formularz C został już wysłany.",
+            { Status: CruiseApplicationStatus.FormBRequired, Cruise.Status: CruiseStatus.Ended } =>
+                "Formularz C można wysłać dopiero po wysłaniu formularza B.",
+            _ => "Formularz C można wysłać dopiero po zakończeniu rejsu.",
+        };
+
+    private static string RefillRefusal(CruiseApplicationStatus status) =>
+        status == CruiseApplicationStatus.Undertaken
+            ? "Formularz C jest już dostępny do edycji i czeka na wysłanie przez kierownika rejsu."
+            : "Formularz C można cofnąć do edycji dopiero po jego wysłaniu.";
 }

@@ -1,3 +1,4 @@
+import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
 import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
@@ -93,7 +94,7 @@ export function AppMonthPickerInput({
             className={cn(
               'relative inline-flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
               disabled ? 'bg-gray-200 hover:cursor-default' : '',
-              errors ? 'border-danger ring-danger text-danger focus:text-gray-900' : ''
+              hasErrors(errors) && invalidInputClassName
             )}
           >
             {selectedDate
@@ -112,7 +113,7 @@ export function AppMonthPickerInput({
             onResetSelection={handleResetSelection}
           />
         </div>
-        <div className={cn('flex flex-col justify-between text-sm', errors || helper ? 'mt-2' : '')}>
+        <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper id={aria.helperId} helper={helper} />
           <AppInputErrorsList id={aria.errorId} errors={errors} />
         </div>

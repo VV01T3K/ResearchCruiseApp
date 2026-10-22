@@ -3,6 +3,7 @@ import { Header } from '@/integrations/tanstack/table/features';
 import FunnelIcon from 'bootstrap-icons/icons/funnel.svg?react';
 import React from 'react';
 
+import { hasErrors } from '@/components/inputs/invalidInput';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppModal } from '@/components/shared/AppModal';
 import { AppTableInfiniteScrollTrigger } from '@/components/shared/table/common/AppTableInfiniteScrollTrigger';
@@ -85,7 +86,7 @@ export function AppMobileTable<T extends object>({
                 <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
                   <div
                     className={`rounded-lg border bg-gray-100 p-2.5 ${
-                      errors ? 'border-danger bg-gray-50 text-danger ring-danger' : 'border-gray-300'
+                      hasErrors(errors) ? 'border-danger bg-gray-50 text-danger ring-danger' : 'border-gray-300'
                     }`}
                   >
                     <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
