@@ -96,3 +96,16 @@ jobs:
           CLOUDFLARE_WEBHOOK_SECRET: ${{ secrets.CLOUDFLARE_WEBHOOK_SECRET }}
           STAGING_APP_URL: https://cruise.wsiwiec.com
         run: bash .github/scripts/deploy-staging.sh
+
+  diagnose-app:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe public staging app
+        run: |
+          for path in /api/health /api/version /; do
+            echo "== $path"
+            curl -sS -D - -o /dev/null --max-time 15 -w 'remote_ip=%{remote_ip} http_version=%{http_version}\n' \
+              "https://cruise.wsiwiec.com$path" | grep -iE '^(HTTP/|content-type|server|cf-|location|remote_ip)' || echo "curl exit=$?"
+          done
+          echo "runner_ip=$(curl -s --max-time 10 https://api.ipify.org)"
