@@ -33,7 +33,7 @@ post() {
     -H 'Content-Type: application/json' --data "$2"
 }
 
-get() { request "$1" "${STAGING_APP_URL%/}$2" 10; }
+get() { request "$1" "${STAGING_APP_URL%/}$2" 10 || { problem+=" ($why on $2)"; return 1; }; }
 
 # 1. Synchronize staging configuration
 post "$STAGING_SYNC_URL" '{}' application/json \
