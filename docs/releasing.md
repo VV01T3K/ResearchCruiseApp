@@ -37,12 +37,13 @@ A release takes two steps:
    fast-forwards `main` to it and publishes the GitHub Release. The tag push runs **Build production
    images**.
 
-The commit must be on `staging`, and the latest CI run of each workflow on that exact commit must
-pass, including the frontend, backend and dependency checks, both image builds and the Playwright
-tests. A commit that only changes paths the image builds ignore (`docs/`, `*.md`, `.gitignore`)
-takes its checks and image builds from its parents, back to the last commit that changed anything
-else, but its own Playwright run must pass. A commit whose CI failed or was cancelled cannot be
-released, and neither can one from before this release process (without `build-production.yaml`).
+The commit must be on `staging` (or head a [hotfix](#hotfix) branch), and the latest CI run of each
+workflow on that exact commit must pass, including the frontend, backend and dependency checks, both
+image builds and the Playwright tests. A commit that only changes paths the image builds ignore
+(`docs/`, `*.md`, `.gitignore`) takes its checks and image builds from its parents, back to the last
+commit that changed anything else, but its own Playwright run must pass. A commit whose CI failed or
+was cancelled cannot be released, and neither can one from before this release process (without
+`build-production.yaml`).
 
 If publishing the GitHub Release fails after the push, use **Re-run failed jobs** on the same run and
 approve it again. It finds the tag and `main` already in place and only creates the Release.
@@ -56,11 +57,25 @@ set `APP_VERSION=vX.Y.Z` in `docker/.env` and run
 
 ## Hotfix
 
-A hotfix ships like any change: a pull request into `staging`, then a `patch` release. If `staging`
-has work that is not ready, wait for it or revert it first.
+A fix usually ships like any change: a pull request into `staging`, then a `patch` release. To ship
+it without the unreleased work on `staging`:
+
+1. Create `hotfix/<name>` from the latest release tag (`git switch -c hotfix/<name> vX.Y.Z`), commit
+   the fix and push it. The push runs the same CI as `staging`.
+2. Run **Release** as above with the bump `patch` and the commit `hotfix/<name>`.
+3. Approve the `production` deployment. In one push, the workflow tags the hotfix commit,
+   fast-forwards `main` to it and merges it into `staging`. Delete the branch afterwards.
+
+The run refuses a hotfix that does not branch from the latest release tag or that conflicts with
+`staging`; ship such a fix as a pull request into `staging` instead. The push fails as a whole if
+`staging` gained commits since planning, if `main` no longer fast-forwards to the hotfix, or if the
+hotfix branch changed before the push started; run the release again. A rewind of `staging` or
+`main`, or a change to the hotfix branch, right before the push can go unnoticed, but only the
+approved commit is released.
 
 ## Repository settings
 
 - The `production` environment requires a reviewer and allows deployments from `staging`.
 - The `Release` deploy key (secret `VERSION_RELEASE_DEPLOYMENT_KEY`) is a bypass actor on the `main`
-  ruleset, so it can fast-forward `main` and push the tag.
+  ruleset, so it can fast-forward `main` and push the tag. It is also a bypass actor on the `staging`
+  ruleset, whose linear-history rule would otherwise reject the hotfix merge commit.

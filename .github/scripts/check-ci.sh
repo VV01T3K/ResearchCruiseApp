@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-# Usage: check-ci.sh <sha>. Waits for the commit's staging CI and fails unless every required job passed.
+# Usage: check-ci.sh <sha> <branch>. Waits for the commit's CI on pushes to the branch and fails unless every
+# required job passed.
 set -euo pipefail
 sha=$1
+branch=$2
 required=("checks / Frontend checks" "checks / Backend checks" "checks / JavaScript dependency audit"
   "Build frontend" "Build backend" "test")
 
@@ -17,11 +19,11 @@ docs_only() {
 commits=("$sha")
 while docs_only "${commits[-1]}"; do commits+=("$(git rev-parse "${commits[-1]}^")"); done
 
-# The newest staging push run of each workflow, as "id status conclusion url".
+# The newest push run on the branch of each workflow, as "id status conclusion url".
 runs() {
   for commit in "${commits[@]}"; do
     gh api -X GET --paginate "repos/$GITHUB_REPOSITORY/actions/runs" \
-      -f head_sha="$commit" -f branch=staging -f event=push -f per_page=100 || return
+      -f head_sha="$commit" -f branch="$branch" -f event=push -f per_page=100 || return
   done | jq -rs --arg sha "$sha" '
     [.[].workflow_runs[] | select(.path == ".github/workflows/deploy-staging.yaml"
       or (.path == ".github/workflows/playwright.yaml" and .head_sha == $sha))]
