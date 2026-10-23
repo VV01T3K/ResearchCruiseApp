@@ -1,0 +1,135 @@
+name: Release
+run-name: Release ${{ inputs.bump }} from ${{ inputs.ref }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version increment
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+        required: true
+      ref:
+        description: Commit to release (staging or the SHA of a staging commit)
+        type: string
+        default: staging
+        required: true
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  plan:
+    name: Plan release
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      sha: ${{ steps.plan.outputs.sha }}
+      previous: ${{ steps.plan.outputs.previous }}
+      version: ${{ steps.plan.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Plan
+        id: plan
+        env:
+          REF: ${{ inputs.ref }}
+          BUMP: ${{ inputs.bump }}
+        run: |
+          fail() { echo "::error::$1"; exit 1; }
+          [[ $GITHUB_REF == refs/heads/staging ]] || fail "Run this workflow from staging."
+          sha=$(git rev-parse --verify --quiet "origin/$REF^{commit}" || git rev-parse --verify --quiet "$REF^{commit}") \
+            || fail "Unknown ref: $REF"
+          previous=$(.github/scripts/version.sh latest)
+          version=$(.github/scripts/version.sh next "$BUMP")
+          range=$previous..$sha
+
+          git merge-base --is-ancestor "$sha" origin/staging || fail "$REF is not a commit on staging."
+          git merge-base --is-ancestor origin/main "$sha" || fail "main cannot fast-forward to $sha."
+          git merge-base --is-ancestor "$previous" "$sha" || fail "$previous is not an ancestor of $sha."
+          [[ $sha != "$(git rev-parse origin/main)" ]] || fail "$sha is already released."
+          git cat-file -e "$sha:.github/workflows/build-production.yaml" 2> /dev/null \
+            || fail "$sha predates tag-based releases (no build-production.yaml)."
+
+          if grep -qE '^[a-z]+(\([^)]*\))?!:|^BREAKING CHANGE:' <<< "$(git log --format=%B "$range")"; then
+            hint='major'
+          elif grep -qE '^feat(\(|:)' <<< "$(git log --format=%s "$range")"; then
+            hint='minor'
+          else
+            hint='patch'
+          fi
+          url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY
+          cat >> "$GITHUB_STEP_SUMMARY" <<EOF
+          ## v$version
+
+          - Commit: [\`${sha::8}\`]($url/commit/$sha)
+          - Bump: $BUMP from $previous (Conventional Commits suggest $hint)
+          - Changes: [$previous...${sha::8}]($url/compare/$previous...$sha)
+
+          <details><summary>$(git rev-list --count "$range") commits</summary>
+
+          $(git log --format='- %s' "$range")
+
+          </details>
+          EOF
+          printf 'sha=%s\nprevious=%s\nversion=%s\n' "$sha" "$previous" "$version" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for CI on the commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.plan.outputs.sha }}
+        run: .github/scripts/check-ci.sh "$SHA"
+
+  release:
+    name: Release v${{ needs.plan.outputs.version }}
+    needs: plan
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ github.server_url }}/${{ github.repository }}/releases/tag/v${{ needs.plan.outputs.version }}
+    permissions:
+      contents: write
+      actions: read
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ssh-key: ${{ secrets.VERSION_RELEASE_DEPLOYMENT_KEY }}
+
+      # Deploy-key pushes bypass the rulesets and, unlike GITHUB_TOKEN ones, trigger the tag's image build.
+      - name: Tag and fast-forward main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ needs.plan.outputs.sha }}
+          VERSION: ${{ needs.plan.outputs.version }}
+        run: |
+          fail() { echo "::error::$1"; exit 1; }
+          if [[ $(git rev-parse --verify --quiet "refs/tags/v$VERSION^{commit}") == "$SHA" && $(git rev-parse origin/main) == "$SHA" ]]; then
+            echo "v$VERSION is already tagged and on main; publishing only its GitHub Release."
+            exit 0
+          fi
+          # Approval can come long after planning, so check CI and staging again right before the push.
+          .github/scripts/check-ci.sh "$SHA"
+          git fetch --quiet origin
+          git merge-base --is-ancestor "$SHA" origin/staging || fail "$SHA is no longer on staging."
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            tag -a "v$VERSION" -m "v$VERSION" "$SHA"
+          git push --atomic origin "$SHA:refs/heads/main" "refs/tags/v$VERSION"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREVIOUS: ${{ needs.plan.outputs.previous }}
+          VERSION: ${{ needs.plan.outputs.version }}
+        run: gh release create "v$VERSION" --verify-tag --title "v$VERSION" --generate-notes --notes-start-tag "$PREVIOUS"

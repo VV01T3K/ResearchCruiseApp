@@ -26,6 +26,12 @@ export default defineConfig({
     command: 'vp build --mode test --outDir dist-test && vp preview --outDir dist-test --host 127.0.0.1 --port 0',
     wait: { stdout: /(?<playwright_base_url>http:\/\/127\.0\.0\.1:\d+)/ },
     timeout: 60_000,
-    env: { API_URL: '/api', APP_ENVIRONMENT: 'test', SENTRY_DSN: '', SENTRY_AUTH_TOKEN: '' },
+    env: {
+      API_URL: '/api',
+      APP_ENVIRONMENT: 'test',
+      APP_VERSION: '3.1.0-staging.4+a1b2c3d',
+      SENTRY_DSN: '',
+      SENTRY_AUTH_TOKEN: '',
+    },
   },
 });

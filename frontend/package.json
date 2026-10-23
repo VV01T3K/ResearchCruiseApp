@@ -1,6 +1,5 @@
 {
   "name": "frontend",
-  "version": "3.0.0",
   "private": true,
   "repository": "https://github.com/VV01T3K/ResearchCruiseApp",
   "type": "module",
