@@ -8,12 +8,10 @@ ENV API_URL="/api" \
 WORKDIR /app
 RUN npm install --global vite-plus@1.3.0
 
-ARG SENTRY_RELEASE
 ARG SENTRY_ORG="cruiseteam"
 ARG SENTRY_PROJECT="frontend-staging"
 
-ENV SENTRY_RELEASE=$SENTRY_RELEASE \
-    SENTRY_ORG=$SENTRY_ORG \
+ENV SENTRY_ORG=$SENTRY_ORG \
     SENTRY_PROJECT=$SENTRY_PROJECT
 
 COPY package.json bun.lock bunfig.toml ./
@@ -24,6 +22,7 @@ RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache \
 
 COPY frontend ./frontend
 WORKDIR /app/frontend
+ARG APP_VERSION
 RUN --mount=type=secret,id=sentry_auth_token,required=false \
     export SENTRY_AUTH_TOKEN=$(cat /run/secrets/sentry_auth_token 2>/dev/null || true) && \
     vp run build

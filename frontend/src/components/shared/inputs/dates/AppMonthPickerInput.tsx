@@ -1,19 +1,15 @@
-import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
+import { Popover } from '@base-ui/react/popover';
+import { PickerClearButton, PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
+import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
-import { AnimatePresence, motion } from 'motion/react';
-import React, { useCallback, useState } from 'react';
-import { createPortal } from 'react-dom';
+import React from 'react';
 
-import { AppButton } from '@/components/shared/AppButton';
 import { AppMonthPicker } from '@/components/shared/inputs/dates/AppMonthPicker';
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
 import { AppInputErrorTriangle } from '@/components/shared/inputs/parts/AppInputErrorTriangle';
 import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper';
 import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
-import { useDropdown } from '@/hooks/shared/DropdownHook';
-import { useOutsideClickDetection } from '@/hooks/shared/OutsideClickDetectionHook';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -43,26 +39,9 @@ export function AppMonthPickerInput({
   const selectedDate = getDateFromValue(value);
   const [expanded, setExpanded] = React.useState(false);
 
-  const inputRef = React.useRef<HTMLDivElement>(null);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
-  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(null);
-  const portalContainerRef = useCallback((node: HTMLDivElement | null) => setPortalContainer(node), []);
-
-  useOutsideClickDetection({
-    refs: [inputRef, dropdownRef],
-    onOutsideClick: () => {
-      setExpanded(false);
-      if (expanded) onBlur?.();
-    },
-  });
-
-  function handleInputClick() {
-    if (disabled) {
-      return;
-    }
-
-    setExpanded(!expanded);
-    if (expanded) onBlur?.();
+  function handleOpenChange(open: boolean) {
+    setExpanded(open);
+    if (!open) onBlur?.();
   }
 
   function handleSelectMonth(newDate: Date) {
@@ -80,52 +59,39 @@ export function AppMonthPickerInput({
   }
 
   return (
-    <>
+    <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
       <div className="flex flex-col">
         <AppInputLabel name={aria.id} value={label} />
-        <div className={cn()} ref={inputRef}>
+        <div className="relative">
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
-          <AppButton
+          <Popover.Trigger
             name={name}
             disabled={disabled}
             {...aria.inputProps}
-            variant="plain"
-            onClick={handleInputClick}
-            className={cn(
-              'relative inline-flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
-              disabled ? 'bg-gray-200 hover:cursor-default' : '',
-              hasErrors(errors) && invalidInputClassName
-            )}
+            className={pickerTriggerClassName({ disabled, errors })}
           >
             {selectedDate
               ? selectedDate.toLocaleDateString('pl-PL', { month: '2-digit', year: 'numeric' })
               : placeholder}
             <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
-              <div ref={portalContainerRef}></div>
+              {selectedDate && !disabled && <span className="w-4" />}
               {!selectedDate && <CalendarEventIcon className="h-4 w-4" />}
             </span>
-          </AppButton>
-          <RemoveSelectedDatePortal
-            selectedDate={selectedDate}
-            disabled={disabled}
-            portalContainer={portalContainer}
-            onResetSelection={handleResetSelection}
-          />
+          </Popover.Trigger>
+          {selectedDate && !disabled && (
+            <PickerClearButton aria-label="Wyczyść miesiąc" onClick={handleResetSelection} />
+          )}
         </div>
         <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper id={aria.helperId} helper={helper} />
           <AppInputErrorsList id={aria.errorId} errors={errors} />
         </div>
       </div>
-      <AnimatePresence>
-        {expanded && (
-          <Modal dropdownRef={dropdownRef} inputRef={inputRef}>
-            <AppMonthPicker selectedDate={selectedDate} onSelectMonth={handleSelectMonth} />
-          </Modal>
-        )}
-      </AnimatePresence>
-    </>
+      <PickerPopup aria-label="Wybierz miesiąc">
+        <AppMonthPicker selectedDate={selectedDate} onSelectMonth={handleSelectMonth} />
+      </PickerPopup>
+    </Popover.Root>
   );
 }
 
@@ -143,62 +109,4 @@ function getValueFromDate(date: Date | undefined): string | undefined {
   }
 
   return date.toISOString();
-}
-
-type ModalProps = {
-  dropdownRef: React.RefObject<HTMLDivElement | null>;
-  inputRef: React.RefObject<HTMLDivElement | null>;
-
-  children: React.ReactNode;
-  className?: string;
-};
-function Modal({ dropdownRef, inputRef, children, className }: ModalProps) {
-  const { top, left, direction } = useDropdown({
-    openingItemRef: inputRef,
-    dropdownRef,
-    dropdownPosition: 'center',
-  });
-
-  return (
-    <motion.div
-      style={{ top: top, left: left }}
-      className={cn(
-        'fixed z-50 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden',
-        className
-      )}
-      initial={{ opacity: 0, translateY: '-10%' }}
-      animate={{ opacity: 1, translateY: '0' }}
-      exit={{ opacity: 0, translateY: direction === 'up' ? '10%' : '-10%' }}
-      transition={{ ease: 'easeOut', duration: 0.2 }}
-      role="menu"
-      aria-orientation="vertical"
-      aria-labelledby="menu-button"
-      ref={dropdownRef}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-function RemoveSelectedDatePortal({
-  selectedDate,
-  disabled,
-  portalContainer,
-  onResetSelection,
-}: {
-  selectedDate: Date | undefined;
-  disabled?: boolean;
-  portalContainer: HTMLDivElement | null;
-  onResetSelection: (evt: React.MouseEvent) => void;
-}) {
-  if (!selectedDate || !portalContainer || disabled) {
-    return null;
-  }
-
-  return createPortal(
-    <AppButton variant="plain" onClick={onResetSelection} className="inline-block p-0 hover:text-red-500">
-      <XLgIcon className="h-4 w-4" />
-    </AppButton>,
-    portalContainer
-  );
 }

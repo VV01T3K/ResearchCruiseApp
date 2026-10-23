@@ -1,6 +1,6 @@
 import type { CreateUserRequest, UpdateUserRequest, UserResponse } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { formValidationLogic } from '@/integrations/tanstack/form/validation';
+import { formValidationLogic, selectCanSubmit } from '@/integrations/tanstack/form/validation';
 import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
 import ExclamationTriangleFill from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
@@ -321,7 +321,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         )}
 
         <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
+          selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
             <>
               <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting || !!submitError}>
