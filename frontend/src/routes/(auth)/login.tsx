@@ -3,7 +3,7 @@ import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { z } from 'zod';
 import { loginValidationSchema } from '@/validation/auth';
 import { allowOnly } from '@/lib/guards';
-import { formValidationLogic, selectCanSubmit } from '@/integrations/tanstack/form/validation';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -83,14 +83,9 @@ function LoginPage() {
 
           <div className="mt-8">
             <form.Subscribe
-              selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <AppButton
-                  type="submit"
-                  className="w-full"
-                  disabled={!canSubmit || isSubmitting}
-                  data-testid="login-submit-btn"
-                >
+              selector={(state) => state.isSubmitting}
+              children={(isSubmitting) => (
+                <AppButton type="submit" className="w-full" disabled={isSubmitting} data-testid="login-submit-btn">
                   Zaloguj
                 </AppButton>
               )}

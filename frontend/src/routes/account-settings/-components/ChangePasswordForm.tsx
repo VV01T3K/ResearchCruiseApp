@@ -2,7 +2,8 @@ import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import type { ChangePasswordRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { formValidationLogic, selectCanSubmit } from '@/integrations/tanstack/form/validation';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
+import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import React from 'react';
 import { z } from 'zod';
 
@@ -63,6 +64,7 @@ export function ChangePasswordForm() {
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('change-password', 'invalid', formApi.state);
+      navigateToFirstError();
     },
   });
 
@@ -93,10 +95,10 @@ export function ChangePasswordForm() {
 
         <div className="mt-8">
           <form.Subscribe
-            selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
+            selector={(state) => state.isSubmitting}
             key={result}
-            children={([canSubmit, isSubmitting]) => (
-              <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
+            children={(isSubmitting) => (
+              <AppButton type="submit" className="w-full" disabled={isSubmitting}>
                 Zmień hasło
               </AppButton>
             )}
