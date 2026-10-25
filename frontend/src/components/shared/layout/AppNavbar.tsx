@@ -1,4 +1,4 @@
-import UGLogoIcon from '@/assets/uglogo.svg?react';
+import ugLogoUrl from '@/assets/uglogo.svg';
 import { BroadcastIcon, EnvelopeSimpleIcon, SignOutIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -50,7 +50,7 @@ export function AppNavbar() {
       <div className="flex shrink-0 gap-6">
         <motion.div className="w-4" whileHover={{ scale: 1.3 }}>
           <AppLink href="https://ug.edu.pl" target="_blank" title="Uniwersytet Gdański" className="text-white">
-            <UGLogoIcon />
+            <img src={ugLogoUrl} alt="" className="h-full w-full object-contain" />
           </AppLink>
         </motion.div>
         <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
