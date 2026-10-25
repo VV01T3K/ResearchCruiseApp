@@ -28,15 +28,16 @@ export const Default: Story = {
     const trigger = canvas.getByRole('button', { name: 'Wybierz datę' });
     await userEvent.click(trigger);
     const calendar = await page.findByRole('dialog', { name: 'Wybierz datę' });
+    await waitFor(() => expect(calendar).toBeVisible());
 
     await userEvent.click(within(calendar).getByRole('button', { name: /^\d\d\.\d{4}$/ }));
     await page.findByRole('dialog', { name: 'Wybierz miesiąc' });
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(page.queryByRole('dialog', { name: 'Wybierz miesiąc' })).not.toBeInTheDocument());
-    await expect(calendar).toBeVisible();
+    await waitFor(() => expect(calendar).toBeVisible());
     await userEvent.click(within(calendar).getByRole('button', { name: /^\d\d\.\d{4}$/ }));
     await userEvent.click(await page.findByRole('button', { name: 'Marzec' }));
-    await expect(within(calendar).getByRole('button', { name: /^03\.\d{4}$/ })).toBeVisible();
+    await waitFor(() => expect(within(calendar).getByRole('button', { name: /^03\.\d{4}$/ })).toBeVisible());
 
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
