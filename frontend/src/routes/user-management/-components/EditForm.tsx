@@ -326,7 +326,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
           selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
             <>
-              <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting || !!submitError}>
+              <AppButton type="submit" className="w-full" disabled={isSubmitting}>
                 {editMode ? (
                   <div className="flex items-center gap-4">
                     <FloppyDiskIcon weight="fill" className="h-4 w-4" />

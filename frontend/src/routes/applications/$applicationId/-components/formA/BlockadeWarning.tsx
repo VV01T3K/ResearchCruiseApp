@@ -19,6 +19,7 @@ export function BlockadeWarning({ year, blockades }: Props) {
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
           transition={{ ease: 'easeOut' }}
+          className="[&_[role=alert]>svg]:mt-2.5"
         >
           <AppAlert variant="warning" iconAlign="start">
             <Collapsible.Root data-testid="form-a-blockade-warning-accordion">
