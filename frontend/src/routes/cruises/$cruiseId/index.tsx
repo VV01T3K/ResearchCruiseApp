@@ -4,6 +4,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { useQueryClient } from '@tanstack/react-query';
+import { evaluate } from '@tanstack/react-form';
 import {
   ArrowClockwiseIcon,
   CheckIcon,
@@ -19,9 +20,10 @@ import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 import { FormView } from '../-components/FormView';
-import { CruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
+import { CruiseFormSchema, type CruiseFormValues, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 import {
   getGetCruiseQueryKey,
   getGetCruisesQueryKey,
@@ -32,6 +34,7 @@ import {
   useRemoveCruiseConfirmation,
   useUpdateCruise,
 } from '@/api/generated/endpoints/cruises.gen';
+import type { CruiseResponse } from '@/api/generated/schemas';
 
 export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,
@@ -65,9 +68,10 @@ function CruiseDetailsPage() {
   const [isConfirmDeletionModalOpen, setIsConfirmDeletionModalOpen] = React.useState(false);
   const [isConfirmEndModalOpen, setIsConfirmEndModalOpen] = React.useState(false);
   const [isConfirmRevertModalOpen, setIsConfirmRevertModalOpen] = React.useState(false);
+  const [saved, setSaved] = React.useState<{ cruise: CruiseResponse; values: CruiseFormValues }>();
 
   const form = useAppForm({
-    defaultValues: mapCruiseToValues(cruiseQuery.data),
+    defaultValues: saved?.cruise === cruiseQuery.data ? saved.values : mapCruiseToValues(cruiseQuery.data),
     validationLogic: formValidationLogic,
     validators: { onDynamic: CruiseFormSchema },
     onSubmitInvalid: () => {
@@ -76,7 +80,11 @@ function CruiseDetailsPage() {
     onSubmit: async ({ value }) => {
       try {
         await updateCruiseMutation.mutateAsync({ cruiseId, data: CruiseFormSchema.parse(value) });
-        setEditMode(false);
+        setSaved({ cruise: cruiseQuery.data, values: value });
+        if (evaluate(form.state.values, value)) {
+          form.reset(value);
+          setEditMode(false);
+        }
         toast.success('Rejs został zaktualizowany pomyślnie.');
       } catch (error) {
         console.error(error);
@@ -200,6 +208,7 @@ function CruiseDetailsPage() {
           />
         </form.AppForm>
       </AppLayout>
+      <UnsavedChangesGuard form={form} disabled={!editMode} />
 
       <AppModal
         title={`Czy na pewno chcesz zatwierdzić rejs nr. ${cruiseQuery.data?.number}?`}
