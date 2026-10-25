@@ -180,6 +180,28 @@ test('rejected cruise edits show field and general errors, keep the edits and ca
   });
 });
 
+test('cruise edits ask before leaving until they are saved', async ({ page, network }) => {
+  const item = cruise();
+  network.use(getGetCruiseMockHandler(item), getUpdateCruiseMockHandler());
+  await page.goto(`/cruises/${item.id}`);
+  const title = page.locator('input[name="title"]');
+  const dialog = page.getByRole('dialog', { name: 'Niezapisane zmiany' });
+  const goHome = () => page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
+
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await title.fill('Nowy tytuł');
+  await goHome();
+  await dialog.getByRole('button', { name: 'Zostań na stronie' }).click();
+  await expect(title).toHaveValue('Nowy tytuł');
+
+  await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await expect(title).toHaveValue('Nowy tytuł');
+  await goHome();
+  await expect(page).toHaveURL('/');
+  await expect(dialog).toHaveCount(0);
+});
+
 test('a cruise is confirmed, completed and reverted step by step, offering the actions of each status', async ({
   page,
   network,

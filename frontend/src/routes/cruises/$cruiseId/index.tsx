@@ -4,6 +4,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { useQueryClient } from '@tanstack/react-query';
+import { evaluate } from '@tanstack/react-form';
 import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
 import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
 import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
@@ -17,6 +18,7 @@ import { AppModal } from '@/components/shared/AppModal';
 import { toast } from '@/components/shared/layout/toast';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 import { FormView } from '../-components/FormView';
 import { CruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
@@ -74,7 +76,10 @@ function CruiseDetailsPage() {
     onSubmit: async ({ value }) => {
       try {
         await updateCruiseMutation.mutateAsync({ cruiseId, data: CruiseFormSchema.parse(value) });
-        setEditMode(false);
+        if (evaluate(form.state.values, value)) {
+          form.reset(value, { keepDefaultValues: true });
+          setEditMode(false);
+        }
         toast.success('Rejs został zaktualizowany pomyślnie.');
       } catch (error) {
         console.error(error);
@@ -198,6 +203,7 @@ function CruiseDetailsPage() {
           />
         </form.AppForm>
       </AppLayout>
+      <UnsavedChangesGuard form={form} disabled={!editMode} />
 
       <AppModal
         title={`Czy na pewno chcesz zatwierdzić rejs nr. ${cruiseQuery.data?.number}?`}
