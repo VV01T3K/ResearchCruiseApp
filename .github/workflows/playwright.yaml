@@ -40,7 +40,8 @@ jobs:
             [[ -n $base ]] && git fetch -q --depth=1 origin "$base" || base=
           fi
           files=$([[ -n $base ]] && git diff --no-renames --name-only "$base" HEAD) || files=
-          if [[ -n $files ]] && ! grep -qvE '^docs/|\.md$' <<< "$files"; then
+          if [[ -n $files ]] && ! grep -qvE '^docs/|\.md$' <<< "$files" &&
+            git diff --no-renames --diff-filter=D --quiet "$base" HEAD; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
             echo "Browser tests skipped: only docs or Markdown changed since \`$base\`." >> "$GITHUB_STEP_SUMMARY"
           fi
