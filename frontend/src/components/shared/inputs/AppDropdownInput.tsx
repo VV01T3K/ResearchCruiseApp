@@ -2,8 +2,7 @@ import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollis
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import { Select } from '@base-ui/react/select';
-import CheckIcon from 'bootstrap-icons/icons/check.svg?react';
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
+import { CaretDownIcon, CheckIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
@@ -115,7 +114,7 @@ export function AppDropdownInput({
             <AppInputErrorTriangle errors={errors} />
             {!disabled && (
               <Select.Icon className="transition-transform duration-300 ease-out data-[popup-open]:rotate-180">
-                <ChevronDownIcon className="h-5 w-5" />
+                <CaretDownIcon className="h-5 w-5" />
               </Select.Icon>
             )}
           </span>
@@ -153,7 +152,7 @@ export function AppDropdownInput({
                     >
                       <Select.ItemText>{opt.richLabel ?? opt.inlineLabel}</Select.ItemText>
                       <Select.ItemIndicator className="text-primary transition-transform duration-200 data-[ending-style]:scale-0">
-                        <CheckIcon className="h-4 w-4" />
+                        <CheckIcon className="h-4 w-4 scale-75" />
                       </Select.ItemIndicator>
                     </Select.Item>
                   ))}

@@ -1,5 +1,5 @@
 import { Dialog } from '@base-ui/react/dialog';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import { XIcon } from '@phosphor-icons/react';
 import { useRef } from 'react';
 
 import { closeFeedback, openFeedback, useCanSendFeedback, useFeedbackState } from '@/integrations/sentry/feedback';
@@ -44,7 +44,7 @@ export function FeedbackTab() {
                 aria-label="Zamknij"
                 className="rounded-md p-1.5 text-gray-500 hover:cursor-pointer hover:bg-black/5 hover:text-gray-700"
               >
-                <XLgIcon className="h-4 w-4" />
+                <XIcon className="h-4 w-4" />
               </Dialog.Close>
             </header>
             <Dialog.Description className="mb-4 text-sm text-gray-600">

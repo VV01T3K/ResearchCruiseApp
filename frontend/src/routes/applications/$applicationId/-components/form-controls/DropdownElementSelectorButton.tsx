@@ -1,8 +1,7 @@
 /* eslint-disable @eslint-react/no-array-index-key */
 import { Button } from '@base-ui/react/button';
 import { Popover } from '@base-ui/react/popover';
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
-import SearchIcon from 'bootstrap-icons/icons/search.svg?react';
+import { CaretDownIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 
 import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
@@ -50,7 +49,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
       >
         <span>{children}</span>
         <span className="transition-transform duration-300 ease-out data-[popup-open]:rotate-180">
-          <ChevronDownIcon className="h-5 w-5" />
+          <CaretDownIcon className="h-5 w-5" />
         </span>
       </Popover.Trigger>
 
@@ -72,7 +71,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
           >
             <div className="shrink-0 border-b border-gray-200 bg-white p-2">
               <div className="relative">
-                <SearchIcon className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <MagnifyingGlassIcon className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <AppInput
                   value={searchValue}
                   onChange={setSearchValue}

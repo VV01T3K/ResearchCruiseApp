@@ -1,4 +1,4 @@
-import SearchIcon from 'bootstrap-icons/icons/search.svg?react';
+import { MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppButton } from '@/components/shared/AppButton';
@@ -26,7 +26,7 @@ export function CruiseInfoSection({ context }: { context: FormCViewModel }) {
         </div>
         <div className="grid place-items-center">
           <AppButton type="link" href={`/cruises/${cruise.id}`} variant="primaryOutline" className="grid gap-4 py-3">
-            <SearchIcon className="w-4" /> Pokaż szczegóły rejsu
+            <MagnifyingGlassIcon className="w-4" /> Pokaż szczegóły rejsu
           </AppButton>
         </div>
       </div>

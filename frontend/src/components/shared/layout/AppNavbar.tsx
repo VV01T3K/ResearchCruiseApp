@@ -1,7 +1,5 @@
 import UGLogoIcon from '@/assets/uglogo.svg?react';
-import BoxArrowRightIcon from 'bootstrap-icons/icons/box-arrow-right.svg?react';
-import BroadcastIcon from 'bootstrap-icons/icons/broadcast.svg?react';
-import EnvelopeIcon from 'bootstrap-icons/icons/envelope.svg?react';
+import { BroadcastIcon, EnvelopeSimpleIcon, SignOutIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'motion/react';
 
 import { AppButton } from '@/components/shared/AppButton';
@@ -67,7 +65,7 @@ export function AppNavbar() {
             title="Poczta Uniwersytecka"
             className="text-white"
           >
-            <EnvelopeIcon />
+            <EnvelopeSimpleIcon />
           </AppLink>
         </motion.div>
         <AnimatePresence>
@@ -92,7 +90,7 @@ export function AppNavbar() {
                   variant="plain"
                   className="p-0 text-white"
                 >
-                  <BoxArrowRightIcon />
+                  <SignOutIcon />
                 </AppButton>
               </motion.div>
             </motion.div>

@@ -1,3 +1,4 @@
+import type { IconWeight } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
@@ -9,10 +10,11 @@ type Props = {
   name: string;
   className?: string;
   Icon: React.ElementType;
+  iconWeight?: IconWeight;
   description: string;
   href: string;
 };
-export function GridCard({ name, className, Icon, description, href }: Props) {
+export function GridCard({ name, className, Icon, iconWeight, description, href }: Props) {
   const { width } = useWindowSize();
   const [isHovered, setIsHovered] = React.useState(false);
   const isMobile = React.useMemo(() => width < 768, [width]);
@@ -26,7 +28,7 @@ export function GridCard({ name, className, Icon, description, href }: Props) {
             onHoverEnd={() => setIsHovered(false)}
             className="relative flex h-full w-full flex-col items-center justify-around overflow-hidden rounded-xl bg-white p-4 [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]"
           >
-            <Icon className="h-1/2" />
+            <Icon weight={iconWeight} className="h-1/2" />
             <h3 className="text-md font-semibold text-primary md:text-lg xl:text-xl">{name}</h3>
             <div className={cn('absolute inset-0', isHovered ? 'bg-black/[.03]' : 'bg-transparent')} />
           </motion.div>
@@ -60,7 +62,7 @@ export function GridCard({ name, className, Icon, description, href }: Props) {
                 transition: 'all 0.3s',
               }}
             >
-              <Icon />
+              <Icon weight={iconWeight} />
             </motion.div>
             <motion.h3 className="text-md font-semibold text-primary md:text-lg xl:text-xl">{name}</motion.h3>
           </motion.div>

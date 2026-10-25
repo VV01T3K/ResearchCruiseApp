@@ -2,6 +2,8 @@ import type { Preview } from '@storybook/react-vite';
 import { Title, Subtitle, Description, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
 import { sb } from 'storybook/test';
 import MockDate from 'mockdate';
+import { IconContext } from '@phosphor-icons/react';
+import { iconDefaults } from '../src/integrations/phosphor/iconDefaults';
 import { withRouter } from '../stories/decorators/withRouter';
 
 import '../src/styles/index.css';
@@ -13,7 +15,14 @@ const preview: Preview = {
     MockDate.set('2026-01-15T12:00:00Z');
     return () => MockDate.reset();
   },
-  decorators: [withRouter],
+  decorators: [
+    withRouter,
+    (Story) => (
+      <IconContext.Provider value={iconDefaults}>
+        <Story />
+      </IconContext.Provider>
+    ),
+  ],
   parameters: {
     a11y: { test: 'todo' },
     controls: {

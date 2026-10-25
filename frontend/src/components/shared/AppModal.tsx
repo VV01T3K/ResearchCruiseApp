@@ -1,5 +1,5 @@
 import { Dialog } from '@base-ui/react/dialog';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import { XIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { cn } from '@/lib/utils';
@@ -38,7 +38,7 @@ export function AppModal({ title, children, isOpen, onClose, className, dismissi
                   />
                 }
               >
-                <XLgIcon className="h-5 w-5" />
+                <XIcon className="h-5 w-5" />
               </Dialog.Close>
             )}
           </header>

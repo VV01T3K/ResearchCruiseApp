@@ -1,12 +1,14 @@
-import AwardFillIcon from 'bootstrap-icons/icons/award-fill.svg?react';
-import BookIcon from 'bootstrap-icons/icons/book.svg?react';
-import CalendarCheckIcon from 'bootstrap-icons/icons/calendar-check.svg?react';
-import GearFillIcon from 'bootstrap-icons/icons/gear-fill.svg?react';
-import InfoIcon from 'bootstrap-icons/icons/info.svg?react';
-import InfoCircleIcon from 'bootstrap-icons/icons/info-circle.svg?react';
-import PeopleFillIcon from 'bootstrap-icons/icons/people-fill.svg?react';
-import PlusCircleFillIcon from 'bootstrap-icons/icons/plus-circle.svg?react';
-import UIRadiosIcon from 'bootstrap-icons/icons/ui-radios.svg?react';
+import {
+  BookOpenIcon,
+  CalendarCheckIcon,
+  GearIcon,
+  LifebuoyIcon,
+  ListBulletsIcon,
+  MedalIcon,
+  PlusCircleIcon,
+  RankingIcon,
+  UsersIcon,
+} from '@phosphor-icons/react';
 
 import { GridCard } from './GridCard';
 
@@ -17,7 +19,7 @@ export function NewCruiseApplicationCard({ className }: { className?: string }) 
       name="Nowe zgłoszenie"
       description="Zgłoś nowy rejs"
       href="/applications/new"
-      Icon={PlusCircleFillIcon}
+      Icon={PlusCircleIcon}
       className={className}
     />
   );
@@ -30,7 +32,7 @@ export function PriorityInformationCard({ className }: { className?: string }) {
       name="Informacje o priorytetyzacji"
       description="Dowiedz się więcej o zasadach priorytetyzacji"
       href="/priority-information"
-      Icon={InfoIcon}
+      Icon={RankingIcon}
       className={className}
     />
   );
@@ -43,7 +45,8 @@ export function UserManagementCard({ className }: { className?: string }) {
       name="Zarządzanie użytkownikami"
       description="Dodaj, edytuj lub usuń użytkowników"
       href="/user-management"
-      Icon={PeopleFillIcon}
+      Icon={UsersIcon}
+      iconWeight="fill"
       className={className}
     />
   );
@@ -56,7 +59,8 @@ export function AccountSettingsCard({ className }: { className?: string }) {
       name="Ustawienia konta"
       description="Zmień ustawienia swojego konta"
       href="/account-settings"
-      Icon={GearFillIcon}
+      Icon={GearIcon}
+      iconWeight="fill"
       className={className}
     />
   );
@@ -69,7 +73,7 @@ export function ApplicationsCard({ className }: { className?: string }) {
       name="Zgłoszenia"
       description="Przeglądaj aktualne i historyczne zgłoszenia"
       href="/applications"
-      Icon={UIRadiosIcon}
+      Icon={ListBulletsIcon}
       className={className}
     />
   );
@@ -82,7 +86,7 @@ export function HelpCard({ className }: { className?: string }) {
       name="Pomoc"
       description="Uzyskaj pomoc"
       href="/help"
-      Icon={InfoCircleIcon}
+      Icon={LifebuoyIcon}
       className={className}
     />
   );
@@ -108,7 +112,7 @@ export function PublicationsCard({ className }: { className?: string }) {
       name="Moje publikacje"
       description="Zarządzaj moimi publikacjami"
       href="/my-publications"
-      Icon={BookIcon}
+      Icon={BookOpenIcon}
       className={className}
     />
   );
@@ -121,7 +125,8 @@ export function CruiseEffectsCard({ className }: { className?: string }) {
       name="Efekty rejsów"
       description="Przeglądaj efekty rejsów"
       href="/cruise-effects"
-      Icon={AwardFillIcon}
+      Icon={MedalIcon}
+      iconWeight="fill"
       className={className}
     />
   );

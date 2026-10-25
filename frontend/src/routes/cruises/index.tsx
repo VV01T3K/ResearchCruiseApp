@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import BoxArrowUpRightIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
-import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
+import { ArrowSquareOutIcon, PlusIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';
@@ -46,19 +45,19 @@ function CruisesPage() {
     <AppGuard key="newCruise" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <AppButton type="link" href="/cruises/new">
         Nowy rejs
-        <PlusLgIcon className="ml-2 h-6 w-6" />
+        <PlusIcon className="ml-2 h-6 w-6" />
       </AppButton>
     </AppGuard>,
     <AppGuard key="newBlockade" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <AppButton type="link" href="/cruises/new?blockade=true" variant="primaryOutline">
         Nowa blokada
-        <PlusLgIcon className="ml-2 h-6 w-6" />
+        <PlusIcon className="ml-2 h-6 w-6" />
       </AppButton>
     </AppGuard>,
     <AppGuard key="exportCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <AppButton onClick={() => setIsExportModalOpen(true)} variant="primaryOutline">
         Eksport
-        <BoxArrowUpRightIcon className="ml-2 h-4 w-4" />
+        <ArrowSquareOutIcon className="ml-2 h-4 w-4" />
       </AppButton>
     </AppGuard>,
   ];

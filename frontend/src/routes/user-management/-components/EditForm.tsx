@@ -1,13 +1,15 @@
 import type { CreateUserRequest, UpdateUserRequest, UserResponse } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { formValidationLogic, selectCanSubmit } from '@/integrations/tanstack/form/validation';
-import EnvelopeFillIcon from 'bootstrap-icons/icons/envelope-fill.svg?react';
-import ExclamationTriangleFill from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
-import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
-import PersonFillCheckIcon from 'bootstrap-icons/icons/person-fill-check.svg?react';
-import PersonFillSlashIcon from 'bootstrap-icons/icons/person-fill-slash.svg?react';
-import PersonAddIcon from 'bootstrap-icons/icons/person-plus.svg?react';
-import TrashFillIcon from 'bootstrap-icons/icons/trash-fill.svg?react';
+import {
+  EnvelopeSimpleIcon,
+  FloppyDiskIcon,
+  TrashIcon,
+  UserCheckIcon,
+  UserMinusIcon,
+  UserPlusIcon,
+  WarningIcon,
+} from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 import { z } from 'zod';
@@ -327,12 +329,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting || !!submitError}>
                 {editMode ? (
                   <div className="flex items-center gap-4">
-                    <FloppyFillIcon className="h-4 w-4" />
+                    <FloppyDiskIcon weight="fill" className="h-4 w-4" />
                     <span>Zapisz</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-4">
-                    <PersonAddIcon className="h-4 w-4" />
+                    <UserPlusIcon className="h-4 w-4" />
                     <span>Dodaj</span>
                   </div>
                 )}
@@ -347,12 +349,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 >
                   {deletionConfirmed ? (
                     <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <ExclamationTriangleFill className="h-4 w-4" />
+                      <WarningIcon weight="fill" className="h-4 w-4" />
                       <span>Czy na pewno?</span>
                     </motion.div>
                   ) : (
                     <div className="flex items-center gap-4">
-                      <TrashFillIcon className="h-4 w-4" />
+                      <TrashIcon weight="fill" className="h-4 w-4" />
                       <span>Usuń</span>
                     </div>
                   )}
@@ -368,12 +370,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 >
                   {!user.accepted ? (
                     <div className="flex items-center gap-4">
-                      <PersonFillCheckIcon className="h-4 w-4" />
+                      <UserCheckIcon className="h-4 w-4" />
                       <span>Zaakceptuj konto użytkownika</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-4">
-                      <PersonFillSlashIcon className="h-4 w-4" />
+                      <UserMinusIcon className="h-4 w-4" />
                       <span>Cofnij akceptację konta</span>
                     </div>
                   )}
@@ -389,12 +391,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 >
                   {passwordResetSent ? (
                     <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <EnvelopeFillIcon className="h-4 w-4" />
+                      <EnvelopeSimpleIcon className="h-4 w-4" />
                       <span>Link do zmiany hasła wysłany</span>
                     </motion.div>
                   ) : (
                     <div className="flex items-center gap-4">
-                      <EnvelopeFillIcon className="h-4 w-4" />
+                      <EnvelopeSimpleIcon className="h-4 w-4" />
                       <span>Wyślij link do zmiany hasła</span>
                     </div>
                   )}

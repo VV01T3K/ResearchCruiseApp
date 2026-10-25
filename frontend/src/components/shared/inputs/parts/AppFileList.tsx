@@ -1,5 +1,4 @@
-import DownloadIcon from 'bootstrap-icons/icons/download.svg?react';
-import XIcon from 'bootstrap-icons/icons/x.svg?react';
+import { DownloadSimpleIcon, XIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
@@ -105,11 +104,11 @@ function AppFileListElement<File extends FileContent>({
       <div className="mr-2 flex flex-row items-center gap-2">
         {onRemove && !disabled && (
           <button type="button" aria-label={`Usuń plik ${file.name ?? ''}`} onClick={() => onRemove(file)}>
-            <XIcon className="h-8 w-8" />
+            <XIcon className="h-8 w-8 scale-55" />
           </button>
         )}
         <a download={file.name} href={file.content} aria-label={`Pobierz plik ${file.name ?? ''}`}>
-          <DownloadIcon className="h-6 w-6" />
+          <DownloadSimpleIcon className="h-6 w-6" />
         </a>
       </div>
     </div>

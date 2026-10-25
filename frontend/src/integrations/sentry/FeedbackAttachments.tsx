@@ -1,7 +1,4 @@
-import FileEarmarkImageIcon from 'bootstrap-icons/icons/file-earmark-image.svg?react';
-import FileEarmarkPdfIcon from 'bootstrap-icons/icons/file-earmark-pdf.svg?react';
-import PaperclipIcon from 'bootstrap-icons/icons/paperclip.svg?react';
-import XIcon from 'bootstrap-icons/icons/x.svg?react';
+import { FileImageIcon, FilePdfIcon, PaperclipIcon, XIcon } from '@phosphor-icons/react';
 import { useCallback, useId, useRef, useState } from 'react';
 
 import {
@@ -65,7 +62,7 @@ export function FeedbackAttachments({ attachments, errors, onAdd, onRemove }: Pr
                 onClick={() => onRemove(attachment.id)}
                 className="shrink-0 rounded-md p-1 text-gray-500 hover:cursor-pointer hover:bg-black/5 hover:text-gray-700"
               >
-                <XIcon className="h-4 w-4" aria-hidden />
+                <XIcon className="h-4 w-4 scale-55" aria-hidden />
               </button>
             </li>
           ))}
@@ -94,9 +91,9 @@ function AttachmentThumbnail({ attachment }: { attachment: FeedbackAttachment })
     [attachment]
   );
 
-  if (broken) return <FileEarmarkImageIcon className="h-8 w-8 shrink-0 p-1 text-gray-500" aria-hidden />;
+  if (broken) return <FileImageIcon className="h-8 w-8 shrink-0 p-1 text-gray-500" aria-hidden />;
   if (!isImageAttachment(attachment)) {
-    return <FileEarmarkPdfIcon className="h-8 w-8 shrink-0 p-1 text-red-600" aria-hidden />;
+    return <FilePdfIcon className="h-8 w-8 shrink-0 p-1 text-red-600" aria-hidden />;
   }
   return (
     <img

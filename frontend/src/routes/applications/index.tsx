@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { ColumnFiltersState, SortingState, functionalUpdate } from '@tanstack/react-table';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
-import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
+import { MagnifyingGlassPlusIcon } from '@phosphor-icons/react';
 import { useMemo, useState } from 'react';
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';
@@ -259,7 +259,7 @@ function ApplicationsPage() {
         <>
           <AppButton type="link" size="sm" href={`/applications/${row.original.id}/details`} className="flex gap-2">
             Szczegóły
-            <ZoomInIcon className="h-4 w-4" />
+            <MagnifyingGlassPlusIcon className="h-4 w-4" />
           </AppButton>
         </>
       ),
