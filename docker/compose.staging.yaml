@@ -51,7 +51,7 @@ services:
       SENTRY_REPLAYS_SESSION_SAMPLE_RATE: ${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-1}
     networks: [default, caddy]
     labels:
-      caddy: ${FRONTEND_URL:-https://cruise.wsiwiec.com}, https://cruise-check.wojtecs.com
+      caddy: ${FRONTEND_URL:-https://cruise.wsiwiec.com}
       caddy.import: protected
       caddy.reverse_proxy: '{{upstreams 8080}}'
 

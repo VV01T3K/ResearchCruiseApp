@@ -34,7 +34,6 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
         "Cookie",
         "Set-Cookie",
         "x-api-key",
-        "x-cloudflare-secret",
     ];
 
     private static readonly IPAddress ClientAddress = IPAddress.Parse("192.0.2.1");
@@ -92,7 +91,6 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
             client.DefaultRequestHeaders.Add("Cookie", "session=cookie-secret");
             client.DefaultRequestHeaders.Add("Set-Cookie", "session=set-cookie-secret");
             client.DefaultRequestHeaders.Add("X-Api-Key", "api-key-secret");
-            client.DefaultRequestHeaders.Add("X-Cloudflare-Secret", "cloudflare-secret");
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
             using var response = await client.PutAsJsonAsync(
                 $"/v2/applications/{application.Id}/form-b",
@@ -157,7 +155,6 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
                     "Cookie",
                     "Set-Cookie",
                     "X-Api-Key",
-                    "X-Cloudflare-Secret",
                 }
             )
                 Assert.DoesNotContain(
@@ -174,7 +171,6 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
                     "cookie-secret",
                     "set-cookie-secret",
                     "api-key-secret",
-                    "cloudflare-secret",
                     ClientAddress.ToString(),
                     Environment.MachineName,
                 }

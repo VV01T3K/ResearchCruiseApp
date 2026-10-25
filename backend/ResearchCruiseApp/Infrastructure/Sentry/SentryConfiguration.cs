@@ -13,7 +13,6 @@ public static class SentryConfiguration
         "Cookie",
         "Set-Cookie",
         "X-Api-Key",
-        "X-Cloudflare-Secret",
     ];
 
     public static void AddResearchCruiseAppSentry(this WebApplicationBuilder builder)

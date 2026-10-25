@@ -94,5 +94,4 @@ jobs:
           STAGING_DEPLOY_URL: ${{ vars.STAGING_DEPLOY_URL }}
           STAGING_DEPLOY_API_KEY: ${{ secrets.STAGING_DEPLOY_API_KEY }}
           CLOUDFLARE_WEBHOOK_SECRET: ${{ secrets.CLOUDFLARE_WEBHOOK_SECRET }}
-          STAGING_APP_URL: https://cruise-check.wojtecs.com
         run: bash .github/scripts/deploy-staging.sh

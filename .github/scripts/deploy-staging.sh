@@ -4,7 +4,7 @@ set -euo pipefail
 
 fail() { echo "::error::$1"; exit 1; }
 
-for name in STAGING_SYNC_URL STAGING_DEPLOY_URL STAGING_DEPLOY_API_KEY CLOUDFLARE_WEBHOOK_SECRET STAGING_APP_URL GITHUB_SHA; do
+for name in STAGING_SYNC_URL STAGING_DEPLOY_URL STAGING_DEPLOY_API_KEY CLOUDFLARE_WEBHOOK_SECRET; do
   [[ -n ${!name:-} ]] || fail "Set $name"
 done
 
@@ -33,8 +33,6 @@ post() {
     -H 'Content-Type: application/json' --data "$2"
 }
 
-get() { request "$1" "${STAGING_APP_URL%/}$2" 10 -H "X-Cloudflare-Secret: $CLOUDFLARE_WEBHOOK_SECRET" || { problem+=" ($why on $2)"; return 1; }; }
-
 # 1. Synchronize staging configuration
 post "$STAGING_SYNC_URL" '{}' application/json \
   || fail "Staging sync failed ($why)"
@@ -60,26 +58,28 @@ activity_id=$(jq -Rsre 'rtrimstr("\n") | split("\n") | map(fromjson) |
 
 echo "Staging deployment $activity_id finished"
 
-# 3. Verify the live staging application
-serves_this_build() {
-  problem="app check failed"
-
-  get text/plain /api/health && [[ $(<"$body") == Healthy ]] || return 1
-  get application/json /api/version || return 1
-
-  version=$(jq -er 'strings | select(test("^[0-9A-Za-z.+-]+$"))' "$body" 2>/dev/null) || return 1
-  local sha=${version##*+}
-
-  [[ $version == *+* && ${#sha} -ge 7 && $GITHUB_SHA == "$sha"* ]] \
-    || { problem="still serves an older build"; return 1; }
-
-  get text/html / && grep -q 'id="root"' "$body"
-}
-
+# 3. Wait until every service runs healthy
 deadline=$((SECONDS + 120))
-until serves_this_build; do
-  ((SECONDS + 5 < deadline)) || fail "Staging $problem"
+while :; do
+  if request application/json "${STAGING_DEPLOY_URL%/up}/runtime" 10 \
+    -H "X-Api-Key: $STAGING_DEPLOY_API_KEY" \
+    -H "X-Cloudflare-Secret: $CLOUDFLARE_WEBHOOK_SECRET"; then
+    result=$(jq -er '
+      select(.success == true) | .data.runtimeServices | arrays | select(length > 0) as $all
+      | map(select(.status != "running" or (.health // "healthy") != "healthy")
+          | "\(.name) (\([.status, .health // empty] | join(", ")))") as $bad
+      | if any($all[]; .status == "exited" or .status == "dead" or .health == "unhealthy") then "failed \($bad | join(", "))"
+        elif $bad == [] then "ready \($all | map(.name) | join(", "))"
+        else "waiting services not healthy: \($bad | join(", "))" end
+    ' "$body" 2>/dev/null) || result="waiting runtime check failed (invalid response)"
+  else
+    result="waiting runtime check failed ($why)"
+  fi
+
+  case $result in
+    ready\ *) echo "Staging services running and healthy: ${result#ready }"; exit 0 ;;
+    failed\ *) fail "Staging services failed: ${result#failed }" ;;
+  esac
+  ((SECONDS + 5 < deadline)) || fail "Staging ${result#waiting }"
   sleep 5
 done
-
-echo "Staging serves $version"
