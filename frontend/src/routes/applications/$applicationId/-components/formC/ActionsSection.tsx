@@ -34,7 +34,7 @@ export function ActionsSection({ onSaveDraft, onPrint, disabled, context }: Prop
       )}
       {isReadonly && (
         <AppButton className="w-64 !justify-center gap-4" onClick={onPrint} disabled={disabled}>
-          <PrinterIcon className="h-4 w-4" />
+          <PrinterIcon weight="fill" className="h-4 w-4" />
           Wydrukuj
         </AppButton>
       )}

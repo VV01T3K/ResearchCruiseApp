@@ -15,7 +15,7 @@ export function SupervisorActionsSection({ onAccept, onDeny }: Props) {
         Odrzuć
       </AppButton>
       <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={onAccept}>
-        <CheckSquareIcon className="h-4 w-4" />
+        <CheckSquareIcon weight="fill" className="h-4 w-4" />
         Zaakceptuj
       </AppButton>
     </AppActionsSection>

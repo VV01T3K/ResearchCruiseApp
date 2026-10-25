@@ -149,7 +149,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           onClick={handleAcceptSelectedUsers}
         >
           <div className="flex items-center gap-4">
-            <UserCheckIcon className="h-4 w-4" />
+            <UserCheckIcon weight="fill" className="h-4 w-4" />
             <span>Akceptuj zaznaczonych użytkowników</span>
           </div>
         </AppButton>
@@ -160,7 +160,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           onClick={handleUnAcceptSelectedUsers}
         >
           <div className="flex items-center gap-4">
-            <UserMinusIcon className="h-4 w-4" />
+            <UserMinusIcon weight="fill" className="h-4 w-4" />
             <span>Usuń akceptację zaznaczonych użytkowników</span>
           </div>
         </AppButton>

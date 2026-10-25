@@ -97,18 +97,18 @@ function HelpPage() {
           </form>
         </div>
         <div className="space-y-8">
-          <CompanyInfoCard icon={<BuildingIcon />} title="Biuro Armatora z jednostką r/v Oceanograf">
+          <CompanyInfoCard icon={<BuildingIcon weight="fill" />} title="Biuro Armatora z jednostką r/v Oceanograf">
             <p className="font-semibold">Wydział Oceanografii i Geografii</p>
             <p>al. Marszałka Józefa Piłsudzkiego 46</p>
             <p>81-378 Gdynia</p>
           </CompanyInfoCard>
-          <CompanyInfoCard icon={<PhoneIcon />} title="Telefon">
+          <CompanyInfoCard icon={<PhoneIcon weight="fill" />} title="Telefon">
             <AppLink href="tel:+48585236631">+48 58 523 66 31</AppLink>
           </CompanyInfoCard>
           <CompanyInfoCard icon={<GlobeHemisphereWestIcon />} title="Strona WWW">
             <AppLink href="https://oceanograf.ug.edu.pl">https://oceanograf.ug.edu.pl</AppLink>
           </CompanyInfoCard>
-          <CompanyInfoCard icon={<EnvelopeSimpleIcon />} title="Email">
+          <CompanyInfoCard icon={<EnvelopeSimpleIcon weight="fill" />} title="Email">
             <AppLink href="mailto:office.oceanograf@ug.edu.pl">office.oceanograf@ug.edu.pl</AppLink>
           </CompanyInfoCard>
           <CompanyInfoCard icon={<BrowsersIcon />} title="Wersja aplikacji">

@@ -370,12 +370,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 >
                   {!user.accepted ? (
                     <div className="flex items-center gap-4">
-                      <UserCheckIcon className="h-4 w-4" />
+                      <UserCheckIcon weight="fill" className="h-4 w-4" />
                       <span>Zaakceptuj konto użytkownika</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-4">
-                      <UserMinusIcon className="h-4 w-4" />
+                      <UserMinusIcon weight="fill" className="h-4 w-4" />
                       <span>Cofnij akceptację konta</span>
                     </div>
                   )}
@@ -391,12 +391,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 >
                   {passwordResetSent ? (
                     <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <EnvelopeSimpleIcon className="h-4 w-4" />
+                      <EnvelopeSimpleIcon weight="fill" className="h-4 w-4" />
                       <span>Link do zmiany hasła wysłany</span>
                     </motion.div>
                   ) : (
                     <div className="flex items-center gap-4">
-                      <EnvelopeSimpleIcon className="h-4 w-4" />
+                      <EnvelopeSimpleIcon weight="fill" className="h-4 w-4" />
                       <span>Wyślij link do zmiany hasła</span>
                     </div>
                   )}
