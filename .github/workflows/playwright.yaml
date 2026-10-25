@@ -32,19 +32,7 @@ jobs:
         id: changes
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          if [[ $GITHUB_EVENT_NAME == pull_request ]]; then
-            base=$(git rev-parse HEAD^1) || base=
-          else
-            base=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/playwright.yaml/runs?branch=$GITHUB_REF_NAME&event=push&status=success&per_page=1" --jq '.workflow_runs[0].head_sha // empty') || base=
-            [[ -n $base ]] && git fetch -q --depth=1 origin "$base" || base=
-          fi
-          files=$([[ -n $base ]] && git diff --no-renames --name-only "$base" HEAD) || files=
-          if [[ -n $files ]] && ! grep -qvE '^docs/|\.md$' <<< "$files" &&
-            git diff --no-renames --diff-filter=D --quiet "$base" HEAD; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "Browser tests skipped: only docs or Markdown changed since \`$base\`." >> "$GITHUB_STEP_SUMMARY"
-          fi
+        run: ../.github/scripts/changes.sh browser
 
       - name: Setup Vite+
         if: steps.changes.outputs.skip != 'true'
