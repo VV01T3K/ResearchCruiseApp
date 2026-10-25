@@ -2,9 +2,7 @@ import { Popover } from '@base-ui/react/popover';
 import { PickerClearButton, PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
 import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
-import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
-import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
-import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
+import { CalendarDotIcon, CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { parseBackendDateTime } from '@/lib/dateUtils';
@@ -148,7 +146,7 @@ export function AppDatePickerInput({
             <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
               {selectedDate && !disabled && <span className="w-4" />}
-              {!selectedDate && <CalendarEventIcon className="h-4 w-4" />}
+              {!selectedDate && <CalendarDotIcon className="h-4 w-4" />}
             </span>
           </Popover.Trigger>
           {selectedDate && !disabled && <PickerClearButton aria-label="Wyczyść datę" onClick={handleResetSelection} />}
@@ -165,7 +163,7 @@ export function AppDatePickerInput({
             onClick={() => handleMonthChange(-1)}
             className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
           >
-            <ChevronLeftIcon className="h-5 w-5" />
+            <CaretLeftIcon className="h-5 w-5" />
           </AppButton>
 
           <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">
@@ -177,7 +175,7 @@ export function AppDatePickerInput({
             onClick={() => handleMonthChange(1)}
             className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
           >
-            <ChevronRightIcon className="h-5 w-5" />
+            <CaretRightIcon className="h-5 w-5" />
           </AppButton>
         </div>
         <div className="grid grid-cols-7 p-2" onMouseLeave={() => setHoveredDate(undefined)}>

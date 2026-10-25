@@ -1,4 +1,4 @@
-import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
+import { CheckIcon } from '@phosphor-icons/react';
 
 import { AppButton } from '@/components/shared/AppButton';
 
@@ -9,7 +9,7 @@ export function AcceptButton({ onAccept }: Props) {
   return (
     <>
       <AppButton className="w-36 !justify-center gap-4 lg:w-48" variant="primary" onClick={onAccept}>
-        <CheckLgIcon className="h-4 w-4" />
+        <CheckIcon className="h-4 w-4" />
         Zaakceptuj zgłoszenie
       </AppButton>
     </>

@@ -1,6 +1,6 @@
 import { flexRender } from '@tanstack/react-table';
 import { Header } from '@/integrations/tanstack/table/features';
-import FunnelIcon from 'bootstrap-icons/icons/funnel.svg?react';
+import { FunnelIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { hasErrors } from '@/components/inputs/invalidInput';

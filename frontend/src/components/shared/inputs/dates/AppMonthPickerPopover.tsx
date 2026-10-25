@@ -1,5 +1,4 @@
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
-import ChevronUpIcon from 'bootstrap-icons/icons/chevron-up.svg?react';
+import { CaretDownIcon, CaretUpIcon } from '@phosphor-icons/react';
 import { Popover } from '@base-ui/react/popover';
 import React from 'react';
 
@@ -28,7 +27,7 @@ export function AppMonthPickerPopover({ value, onChange, renderDate }: Props) {
             ? renderDate(value)
             : new Date(value.year, value.month).toLocaleDateString('pl-PL', { month: '2-digit', year: 'numeric' })}
           <span className="flex gap-2">
-            <span>{expanded ? <ChevronUpIcon className="h-4 w-4" /> : <ChevronDownIcon className="h-4 w-4" />}</span>
+            <span>{expanded ? <CaretUpIcon className="h-4 w-4" /> : <CaretDownIcon className="h-4 w-4" />}</span>
           </span>
         </Popover.Trigger>
       </div>

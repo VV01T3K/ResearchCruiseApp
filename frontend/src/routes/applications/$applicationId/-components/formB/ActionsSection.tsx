@@ -1,6 +1,4 @@
-import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
-import PrinterFillIcon from 'bootstrap-icons/icons/printer-fill.svg?react';
-import SendFillIcon from 'bootstrap-icons/icons/send-fill.svg?react';
+import { FloppyDiskIcon, PaperPlaneTiltIcon, PrinterIcon } from '@phosphor-icons/react';
 
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppButton } from '@/components/shared/AppButton';
@@ -39,19 +37,19 @@ export function ActionsSection({ onSaveDraft, onRevertToEdit, onPrint, disabled,
           onClick={onSaveDraft}
           disabled={disabled}
         >
-          <FloppyFillIcon className="h-4 w-4" />
+          <FloppyDiskIcon weight="fill" className="h-4 w-4" />
           Zapisz wersję roboczą
         </AppButton>
       )}
       {!isReadonly && (
         <AppButton type="submit" className="w-64 !justify-center gap-4" disabled={disabled}>
-          <SendFillIcon className="h-4 w-4" />
+          <PaperPlaneTiltIcon weight="fill" className="h-4 w-4" />
           Wyślij
         </AppButton>
       )}
       {isReadonly && (
         <AppButton className="w-64 !justify-center gap-4" onClick={onPrint} disabled={disabled}>
-          <PrinterFillIcon className="h-4 w-4" />
+          <PrinterIcon weight="fill" className="h-4 w-4" />
           Wydrukuj
         </AppButton>
       )}

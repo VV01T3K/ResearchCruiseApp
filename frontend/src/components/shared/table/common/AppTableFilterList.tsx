@@ -1,5 +1,5 @@
 import { Header } from '@/integrations/tanstack/table/features';
-import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
+import { TrashIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';

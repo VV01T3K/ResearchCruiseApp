@@ -1,4 +1,4 @@
-import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
+import { TrashIcon } from '@phosphor-icons/react';
 
 import { AppButton } from '@/components/shared/AppButton';
 

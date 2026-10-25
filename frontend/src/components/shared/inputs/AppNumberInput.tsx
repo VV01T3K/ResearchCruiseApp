@@ -1,7 +1,6 @@
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
-import DashLgIcon from 'bootstrap-icons/icons/dash-lg.svg?react';
-import PlusLgIcon from 'bootstrap-icons/icons/plus-lg.svg?react';
+import { MinusIcon, PlusIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
@@ -216,7 +215,7 @@ function AppNumberInputButton({ side, inputToFocus, onClick, disabled }: ButtonP
       variant="plain"
       size="plain"
     >
-      {side === 'left' ? <DashLgIcon /> : <PlusLgIcon />}
+      {side === 'left' ? <MinusIcon /> : <PlusIcon />}
     </AppButton>
   );
 }

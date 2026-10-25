@@ -1,3 +1,4 @@
+import { ArrowCircleLeftIcon } from '@phosphor-icons/react';
 import { useRouter } from '@tanstack/react-router';
 import { motion } from 'motion/react';
 import React from 'react';
@@ -9,28 +10,23 @@ export function AppPreviousPageButton() {
   return (
     <motion.div onHoverStart={() => setIsHovered(true)} onHoverEnd={() => setIsHovered(false)} className="w-8" layout>
       <a className="hover:cursor-pointer" title="Cofnij się" onClick={() => router.history.back()}>
-        <motion.svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="currentColor"
-          className="bi bi-arrow-left-circle rounded-full"
-          viewBox="0 0 16 16"
-          initial={{ backgroundColor: '#fff' }}
-          animate={{ backgroundColor: isHovered ? '#0041d2' : '#fff' }}
-          transition={{ duration: 0.2 }}
-        >
-          <path
-            fillRule="evenodd"
-            d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0"
-            fill="#0041d2"
-          />
-          <motion.path
-            fillRule="evenodd"
-            d="M16 8m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"
-            initial={{ fill: '#0041d2' }}
-            animate={{ fill: isHovered ? '#fff' : '#0041d2' }}
+        <span className="relative block aspect-square rounded-full bg-white text-primary">
+          <motion.span
+            className="absolute inset-0"
+            animate={{ opacity: isHovered ? 0 : 1 }}
             transition={{ duration: 0.2 }}
-          />
-        </motion.svg>
+          >
+            <ArrowCircleLeftIcon />
+          </motion.span>
+          <motion.span
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ArrowCircleLeftIcon weight="fill" />
+          </motion.span>
+        </span>
       </a>
     </motion.div>
   );

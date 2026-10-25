@@ -1,5 +1,5 @@
 import { Popover } from '@base-ui/react/popover';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import { XIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
@@ -70,7 +70,7 @@ export function PickerClearButton({
       onClick={onClick}
       className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded outline-none hover:text-red-500 focus-visible:ring-2 focus-visible:ring-blue-500"
     >
-      <XLgIcon className="h-4 w-4" />
+      <XIcon className="h-4 w-4" />
     </button>
   );
 }

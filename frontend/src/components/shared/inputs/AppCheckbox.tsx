@@ -1,7 +1,7 @@
 import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import { Checkbox } from '@base-ui/react/checkbox';
-import CheckIcon from 'bootstrap-icons/icons/check-lg.svg?react';
+import { CheckIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
