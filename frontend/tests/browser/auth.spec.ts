@@ -83,6 +83,9 @@ test('invalid login submissions show the app errors instead of the browser ones 
   await page.getByLabel('Hasło', { exact: true }).fill('Password1!');
   await page.getByLabel('Hasło', { exact: true }).press('Enter');
   await expect(email).toBeFocused();
+  await page.getByLabel('Hasło', { exact: true }).focus();
+  await page.getByRole('button', { name: 'Zaloguj', exact: true }).click();
+  await expect(email).toBeFocused();
   expect(requests.bodies('POST /v2/auth/login')).toEqual([]);
 });
 

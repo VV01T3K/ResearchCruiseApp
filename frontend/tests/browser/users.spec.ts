@@ -94,11 +94,16 @@ for (const { action, accepted, button, route, handler } of [
   });
 }
 
-test('a role picked beside an invalid email leaves Add enabled, and submitting shows the email error', async ({
+test('repeated invalid Add submissions focus the email field, and a failed add can be retried', async ({
   page,
   network,
+  requests,
 }) => {
-  network.use(getGetUsersMockHandler([]));
+  network.use(
+    getGetUsersMockHandler([]),
+    getCreateUserMockHandler(fail(503, { detail: 'Spróbuj ponownie później' }), { once: true }),
+    getCreateUserMockHandler()
+  );
   await page.goto('/user-management');
   await page.getByRole('button', { name: 'Dodaj użytkownika' }).click();
   await page.getByLabel('Imię', { exact: true }).fill(deputy.firstName);
@@ -108,10 +113,19 @@ test('a role picked beside an invalid email leaves Add enabled, and submitting s
   await page.getByRole('combobox').click();
   await page.getByRole('option', { name: 'Kierownik' }).click();
 
-  await page.getByRole('button', { name: 'Dodaj', exact: true }).click();
-
-  await expect(email).toHaveAttribute('aria-invalid', 'true');
+  const add = page.getByRole('button', { name: 'Dodaj', exact: true });
+  await add.click();
   await expect(page.getByText('Niepoprawny adres email')).toBeVisible();
+  await add.click();
+  await expect(email).toBeFocused();
+  expect(requests.bodies('POST /v2/users')).toEqual([]);
+
+  await email.fill(deputy.email);
+  await add.click();
+  await expect(page.getByRole('alert')).toContainText('Spróbuj ponownie później');
+  await add.click();
+  await expect(add).toHaveCount(0);
+  expect(requests.bodies('POST /v2/users')).toHaveLength(2);
 });
 
 test('a user is deactivated, then deleted only after the deletion is confirmed', async ({
