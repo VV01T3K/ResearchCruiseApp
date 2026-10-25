@@ -3,7 +3,7 @@ import type { RegisterAccountRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { formValidationLogic, selectCanSubmit } from '@/integrations/tanstack/form/validation';
+import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
 import { AppButton } from '@/components/shared/AppButton';
@@ -108,9 +108,9 @@ function RegisterPage() {
 
           <div className="!mt-12">
             <form.Subscribe
-              selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <AppButton type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
+              selector={(state) => state.isSubmitting}
+              children={(isSubmitting) => (
+                <AppButton type="submit" className="w-full" disabled={isSubmitting}>
                   Zarejestruj się
                 </AppButton>
               )}
