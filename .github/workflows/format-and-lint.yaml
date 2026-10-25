@@ -81,7 +81,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '10.0.x'
+          global-json-file: backend/global.json
 
       - name: Setup Vite+
         uses: voidzero-dev/setup-vp@v1.22.0
