@@ -196,6 +196,9 @@ test('cruise edits ask before leaving until they are saved', async ({ page, netw
 
   await page.getByRole('button', { name: 'Zapisz rejs' }).click();
   await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await title.fill('Inny tytuł');
+  await page.getByRole('button', { name: 'Anuluj', exact: true }).click();
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
   await expect(title).toHaveValue('Nowy tytuł');
   await goHome();
   await expect(page).toHaveURL('/');
