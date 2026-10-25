@@ -36,4 +36,4 @@ Follow the label scheme in #565:
 
 Add `ai-generated` to every issue and PR you create. When triaging, write the missing evidence, scope, and acceptance criteria, set the type and topics, and remove `needs-triage`.
 
-Triage also records `DB impact: none / possible / confirmed` and `Migration: no / unknown / yes` in the issue body, with evidence (EF migrations live in `backend/ResearchCruiseApp/Infrastructure/Persistence/Migrations/`). Add `database` when the impact is possible or confirmed. A missing label doesn't mean the change is safe; ordinary reads and writes of existing records don't qualify.
+Triage also records `DB impact: none / possible / confirmed` and `Migration: no / unknown / yes` in the triage comment, with evidence (EF migrations live in `backend/ResearchCruiseApp/Infrastructure/Persistence/Migrations/`). Add `database` when the impact is possible or confirmed. A missing label doesn't mean the change is safe; ordinary reads and writes of existing records don't qualify.
