@@ -160,8 +160,12 @@ test.describe(() => {
     await expect(manager).toBeFocused();
     await expect(manager).toHaveAttribute('aria-invalid', 'true');
 
+    // A closing menu still exposes its options, so wait for the manager's to close.
+    const menu = page.getByRole('listbox');
+    await expect(menu).toHaveCount(0);
     await deputy.click();
-    await page.getByRole('option', { name: /Ada Lovelace/ }).click();
+    await menu.getByRole('option', { name: /Ada Lovelace/ }).click();
+    await expect(deputy).toHaveText(/Ada Lovelace/);
     await expect(page.locator('[aria-invalid="true"]')).toHaveCount(0);
   });
 });
