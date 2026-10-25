@@ -1,6 +1,6 @@
 import { getErrorMessage } from '@/api/errors';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
@@ -12,6 +12,8 @@ import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { FormView } from './-components/FormView';
 import { CruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
@@ -32,8 +34,6 @@ function NewCruisePage() {
   const createCruiseMutation = useCreateCruise({ mutation: { meta: { handlesError: true } } });
   const search = Route.useSearch();
 
-  const navigate = useNavigate();
-
   const form = useAppForm({
     defaultValues: {
       ...cruiseFormDefaultValues,
@@ -49,8 +49,8 @@ function NewCruisePage() {
       trackFormSubmit('new-cruise', 'valid', formApi.state);
       try {
         await createCruiseMutation.mutateAsync({ data: CruiseFormSchema.parse(value) });
-        navigate({ to: '/cruises' });
         toast.success('Rejs został utworzony pomyślnie.');
+        await leaveAfterSave(value, { to: '/cruises' });
       } catch (error) {
         console.error(error);
         setServerFormErrors(form, error);
@@ -59,6 +59,7 @@ function NewCruisePage() {
       }
     },
   });
+  const leaveAfterSave = useLeaveAfterSave(form);
 
   const buttons = (
     <>
@@ -80,6 +81,7 @@ function NewCruisePage() {
           <FormView cruiseApplications={cruiseApplicationsQuery.data} isReadonly={false} buttons={buttons} />
         </form.AppForm>
       </AppLayout>
+      <UnsavedChangesGuard form={form} />
     </>
   );
 }
