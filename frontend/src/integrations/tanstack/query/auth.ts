@@ -15,7 +15,7 @@ import {
 import { ApiError, getProblemDetail } from '@/api/errors';
 import type { UserResponse } from '@/api/generated/schemas';
 import type { Role, SignInResult } from '@/integrations/auth/types';
-import { logout as logoutSession, useLogin, useLogout } from '@/api/generated/endpoints/auth.gen';
+import { logout as logoutSession, useLogin } from '@/api/generated/endpoints/auth.gen';
 import { getCurrentUser, getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
 
 async function fetchCurrentUser(): Promise<UserResponse | null> {
@@ -104,18 +104,14 @@ export function useSignIn() {
 
 export function useSessionActions() {
   const queryClient = useQueryClient();
-  const { mutateAsync: logout } = useLogout();
   const refresh = useCallback(async () => {
     await refreshSession();
   }, []);
   const signOut = useCallback(async () => {
     await prepareForLogout();
-    try {
-      await logout();
-    } finally {
-      clearSessionEverywhere(queryClient);
-    }
-  }, [logout, queryClient]);
+    await logoutSession().catch(() => undefined);
+    clearSessionEverywhere(queryClient);
+  }, [queryClient]);
 
   return {
     refresh,
