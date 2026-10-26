@@ -60,11 +60,19 @@ export const Default: Story = {
 
 export const Clearable: Story = {
   args: { value: '2026-01-15T00:00:00.000Z' },
-  play: async ({ canvas, userEvent }) => {
+  play: async ({ args, canvas, canvasElement, userEvent }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: /^15\.01\.2026/ });
     const clear = canvas.getByRole('button', { name: 'Wyczyść datę' });
     await expect(clear.parentElement?.closest('button')).toBeNull();
+    await userEvent.click(trigger);
+    await page.findByRole('dialog', { name: 'Wybierz datę' });
     await userEvent.click(clear);
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
     await expect(canvas.queryByRole('button', { name: 'Wyczyść datę' })).not.toBeInTheDocument();
+    await expect(trigger).toHaveTextContent('Wybierz datę');
+    await expect(trigger).toHaveFocus();
+    await expect(args.onBlur).toHaveBeenCalledOnce();
   },
 };
 

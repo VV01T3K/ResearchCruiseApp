@@ -67,12 +67,19 @@ export function AppDatePickerInput({
   const selectedDate = getDateFromValue(value);
   const [hoveredDate, setHoveredDate] = React.useState<Date | undefined>(undefined);
   const [expanded, setExpanded] = React.useState(false);
+  const fieldRef = React.useRef<HTMLDivElement>(null);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [visibleMonth, setVisibleMonth] = React.useState({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
   });
 
-  function handleOpenChange(open: boolean) {
+  function handleOpenChange(open: boolean, details: Popover.Root.ChangeEventDetails) {
+    const target = details.event instanceof FocusEvent ? details.event.relatedTarget : details.event?.target;
+    if (!open && target instanceof Node && target !== triggerRef.current && fieldRef.current?.contains(target)) {
+      details.cancel();
+      return;
+    }
     if (open && selectedDate) {
       setVisibleMonth({ month: selectedDate.getMonth(), year: selectedDate.getFullYear() });
     }
@@ -84,6 +91,7 @@ export function AppDatePickerInput({
     onChange?.(undefined);
     setExpanded(false);
     onBlur?.();
+    triggerRef.current?.focus();
     evt.stopPropagation();
     evt.preventDefault();
   }
@@ -121,9 +129,10 @@ export function AppDatePickerInput({
     <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
       <div className="flex flex-col" data-testid={testId}>
         <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
-        <div className="relative">
+        <div ref={fieldRef} className="relative">
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
           <Popover.Trigger
+            ref={triggerRef}
             name={name}
             disabled={disabled}
             {...aria.inputProps}
