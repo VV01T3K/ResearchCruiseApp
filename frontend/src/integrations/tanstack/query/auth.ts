@@ -17,6 +17,7 @@ import type { UserResponse } from '@/api/generated/schemas';
 import type { Role, SignInResult } from '@/integrations/auth/types';
 import { logout as logoutSession, useLogin } from '@/api/generated/endpoints/auth.gen';
 import { getCurrentUser, getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
+import { discardFormRecovery } from '@/integrations/tanstack/form/recovery';
 
 async function fetchCurrentUser(): Promise<UserResponse | null> {
   try {
@@ -107,11 +108,15 @@ export function useSessionActions() {
   const refresh = useCallback(async () => {
     await refreshSession();
   }, []);
-  const signOut = useCallback(async () => {
-    await prepareForLogout();
-    await logoutSession().catch(() => undefined);
-    clearSessionEverywhere(queryClient);
-  }, [queryClient]);
+  const signOut = useCallback(
+    async ({ expired = false } = {}) => {
+      await prepareForLogout();
+      await logoutSession().catch(() => undefined);
+      clearSessionEverywhere(queryClient);
+      if (!expired) discardFormRecovery();
+    },
+    [queryClient]
+  );
 
   return {
     refresh,

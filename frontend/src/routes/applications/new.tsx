@@ -1,5 +1,6 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
+import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
@@ -31,10 +32,17 @@ import { getErrorMessage } from '@/api/errors';
 
 export const Route = createFileRoute('/applications/new')({
   component: NewCruiseApplicationPage,
-  beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager),
+  validateSearch: z.object({ draft: z.string().optional() }),
+  beforeLoad: async (context) => {
+    await allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager)(context);
+    if (!context.search.draft) {
+      throw redirect({ to: '/applications/new', search: { draft: crypto.randomUUID() }, replace: true });
+    }
+  },
 });
 
 function NewCruiseApplicationPage() {
+  const { draft } = Route.useSearch();
   const currentUser = useCurrentUser()!;
   const initialStateQuery = useGetApplicationFormAContextSuspense();
   const saveMutation = useCreateApplication({ mutation: { meta: { handlesError: true } } });
@@ -111,7 +119,7 @@ function NewCruiseApplicationPage() {
           <FormView context={context} />
         </form.AppForm>
       </AppLayout>
-      <UnsavedChangesGuard form={form} />
+      <UnsavedChangesGuard form={form} recoveryKey={`new/${draft}`} />
 
       <AppModal
         title="Zapisz wersję roboczą Formularza A"

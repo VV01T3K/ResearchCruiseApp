@@ -149,7 +149,7 @@ function FormBPage() {
           <FormView context={context} />
         </form.AppForm>
       </AppLayout>
-      <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} />
+      <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} recoveryKey={`${applicationId}/formB`} />
     </>
   );
 }

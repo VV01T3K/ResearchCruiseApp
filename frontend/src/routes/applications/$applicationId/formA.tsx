@@ -126,7 +126,7 @@ function FormAPage() {
           <FormView context={context} />
         </form.AppForm>
       </AppLayout>
-      <UnsavedChangesGuard form={form} disabled={!editMode} />
+      <UnsavedChangesGuard form={form} disabled={!editMode} recoveryKey={`${applicationId}/formA`} />
 
       <AppModal
         title="Zapisz wersję roboczą Formularza A"
