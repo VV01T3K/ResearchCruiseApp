@@ -26,4 +26,10 @@ public static class EvaluationConstants
     public const int PointsForDoctoralThesisEffect = 200;
     public const int PointsForProjectPreparationEffect = 100;
     public const int ProjectPreparationPublicationMinisterialPointsThreshold = 100;
+
+    public const uint MaxMinisterialPoints = 1_000;
+    public const double MaxFinancingAmount = 10_000_000_000; // PLN
+
+    public static bool IsValidMinisterialPoints(string? value) =>
+        uint.TryParse(value, out var points) && points <= MaxMinisterialPoints;
 }

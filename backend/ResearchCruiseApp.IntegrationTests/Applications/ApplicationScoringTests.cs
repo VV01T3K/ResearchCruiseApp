@@ -357,6 +357,80 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         await AssertSummary(app, client, id, 100);
     }
 
+    [Theory]
+    [InlineData("a", "9", null, "1000", 500)]
+    [InlineData("a", "9", null, "1001", null)]
+    [InlineData("a", "5", "10000000000", null, 8_000_000)]
+    [InlineData("a", "5", "10000000001", null, null)]
+    [InlineData("a", "2147483648", null, null, null)]
+    [InlineData("c", "2147483648", null, null, null)]
+    public async Task Draft_WhenInputsReachCaps_ScoresAtCapAndRejectsAbove(
+        string form,
+        string type,
+        string? financing,
+        string? points,
+        int? total
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        if (form == "c")
+        {
+            var application = await TestApplications.Create(
+                app,
+                CruiseApplicationStatus.Undertaken
+            );
+            using var formCClient = await TestApplications.Login(app, application.OwnerEmail);
+            var effect = new ResearchTaskEffectFields
+            {
+                Type = type,
+                Done = "false",
+                ManagerConditionMet = "false",
+                DeputyConditionMet = "false",
+            };
+            using var formC = await formCClient.PutAsJsonAsync(
+                $"/v2/applications/{application.Id}/form-c",
+                new FormCWriteRequest
+                {
+                    Form = new FormCFields
+                    {
+                        ShipUsage = "0",
+                        DifferentUsage = "",
+                        ResearchTasksEffects = [effect],
+                    },
+                    Draft = true,
+                },
+                ct
+            );
+            Assert.Equal(HttpStatusCode.BadRequest, formC.StatusCode);
+            return;
+        }
+        var owner = await TestUsers.Create(app, "scoring@example.invalid", RoleName.CruiseManager);
+        using var client = await TestApplications.Login(app, owner.Email!);
+        var draft = FormAccessTests.Draft(Guid.Parse(owner.Id));
+        draft.ResearchTasks.Add(
+            new ResearchTaskFields { Type = type, FinancingAmount = financing }
+        );
+        if (points is not null)
+            draft.Publications.Add(
+                new PublicationFields { Category = "subject", MinisterialPoints = points }
+            );
+        using var response = await client.PostAsJsonAsync(
+            "/v2/applications",
+            new FormAWriteRequest { Form = draft, Draft = true },
+            ct
+        );
+        if (total is null)
+        {
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            return;
+        }
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Guid id = default;
+        await app.InDatabase(async db => id = (await db.CruiseApplications.SingleAsync(ct)).Id);
+        await AssertSummary(app, client, id, total.Value);
+    }
+
     private static async Task<Guid> CreateDraft(
         TestApplication app,
         HttpClient client,
