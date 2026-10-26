@@ -40,6 +40,10 @@
       "dependencyDashboardApproval": true
     },
     {
+      "matchPackageNames": ["mcr.microsoft.com/**"],
+      "minimumReleaseAgeBehaviour": "timestamp-optional"
+    },
+    {
       "matchManagers": ["bun"],
       "addLabels": ["JS"]
     },
