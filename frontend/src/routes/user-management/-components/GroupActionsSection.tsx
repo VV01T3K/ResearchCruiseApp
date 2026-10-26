@@ -165,7 +165,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
         </AppButton>
         {assignmentWarning !== undefined && (
           <div className="mt-4">
-            <AssignmentsWarning items={assignmentWarning} action="deactivate" showNames />
+            <AssignmentsWarning items={assignmentWarning} action="deactivate" group />
           </div>
         )}
         <AppButton

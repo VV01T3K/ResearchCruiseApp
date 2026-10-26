@@ -20,29 +20,29 @@ export async function findActiveAssignments(users: UserResponse[]): Promise<User
 type Props = {
   items: UserAssignments[] | null;
   action: 'role' | 'deactivate';
-  showNames?: boolean;
+  group?: boolean;
 };
-export function AssignmentsWarning({ items, action, showNames }: Props) {
+export function AssignmentsWarning({ items, action, group }: Props) {
   if (!items) {
     return (
       <AppAlert variant="warning" iconAlign="start" data-testid="assignments-warning">
-        Nie udało się sprawdzić zgłoszeń i rejsów prowadzonych przez {showNames ? 'użytkowników' : 'użytkownika'}. Mogą
+        Nie udało się sprawdzić zgłoszeń i rejsów prowadzonych przez {group ? 'użytkowników' : 'użytkownika'}. Mogą
         wśród nich być aktywne zgłoszenia lub rejsy.
       </AppAlert>
     );
   }
 
-  const group = items.length > 1;
+  const several = items.length > 1;
 
   return (
     <AppAlert variant="warning" iconAlign="start" data-testid="assignments-warning">
       <div className="space-y-2">
         <p className="font-semibold">
-          {group ? 'Ci użytkownicy prowadzą' : 'Ten użytkownik prowadzi'} aktywne zgłoszenia lub rejsy
+          {several ? 'Ci użytkownicy prowadzą' : 'Ten użytkownik prowadzi'} aktywne zgłoszenia lub rejsy
         </p>
         {items.map(({ user, assignments }) => (
           <div key={user.id}>
-            {(group || showNames) && (
+            {(group || several) && (
               <p className="font-medium">
                 {user.firstName} {user.lastName}
               </p>
@@ -71,7 +71,7 @@ export function AssignmentsWarning({ items, action, showNames }: Props) {
           </div>
         ))}
         <p>
-          {action === 'role' ? 'Po zmianie roli' : 'Po cofnięciu akceptacji'} {group ? 'stracą' : 'straci'} możliwość
+          {action === 'role' ? 'Po zmianie roli' : 'Po cofnięciu akceptacji'} {several ? 'stracą' : 'straci'} możliwość
           ich edycji. Formularze B i C może dokończyć zastępca kierownika lub administrator.
         </p>
       </div>

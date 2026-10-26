@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
@@ -32,7 +33,7 @@ internal class IdentityService(
     ILogger<IdentityService> logger
 )
 {
-    public static readonly string[] CruiseManagerRoleNames =
+    internal static readonly ImmutableArray<string> CruiseManagerRoleNames =
     [
         RoleName.Administrator,
         RoleName.Shipowner,

@@ -194,6 +194,13 @@ test('demoting or deactivating a manager of active records warns and needs a sec
   await expect(dialog).toBeHidden();
   expect(requests.bodies(`PUT /v2/users/${deputy.id}/role`)).toEqual([{ roleName: 'Guest' }]);
 
+  await row.getByRole('button', { name: 'Edytuj' }).click();
+  await dialog.getByRole('button', { name: 'Cofnij akceptację konta' }).click();
+  await expect(warning).toContainText('Zgłoszenie nr 12 (kierownik)');
+  await expect(warning).toContainText('Po cofnięciu akceptacji straci');
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+
   network.use(getGetUserAssignmentsMockHandler(fail(503)));
   await row.getByRole('button', { name: 'Edytuj' }).click();
   await dialog.getByRole('button', { name: 'Cofnij akceptację konta' }).click();
