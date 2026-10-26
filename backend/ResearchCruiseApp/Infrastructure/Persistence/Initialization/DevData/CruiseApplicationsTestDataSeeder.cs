@@ -73,8 +73,6 @@ internal static class CruiseApplicationsTestDataSeeder
             .GroupBy(application => application.Cruise!.Id)
             .ToDictionaryAsync(group => group.Key, group => group.Count());
 
-        var statuses = Enum.GetValues<CruiseApplicationStatus>();
-
         var newApplications = new List<CruiseApplication>();
         for (var i = 0; i < count; i++)
         {
@@ -88,7 +86,7 @@ internal static class CruiseApplicationsTestDataSeeder
                 new CruiseApplication
                 {
                     Date = DateOnly.FromDateTime(PastDate(random, 3)),
-                    Status = statuses[random.Next(statuses.Length)],
+                    Status = PickStatus(cruise, random),
                     EffectsPoints = random.Next(0, 21),
                     Note = $"{SeedTag} note {i}",
                     Cruise = cruise,
@@ -230,7 +228,7 @@ internal static class CruiseApplicationsTestDataSeeder
                     MainDeputyManagerId = Guid.Parse(managers[random.Next(managers.Count)].Id),
                     StartDate = start.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                     EndDate = end.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                    Status = statuses[random.Next(statuses.Length)],
+                    Status = statuses[i % statuses.Length],
                     CruiseApplications = [],
                 }
             );
@@ -257,6 +255,35 @@ internal static class CruiseApplicationsTestDataSeeder
         return availableCruises.Count == 0
             ? null
             : availableCruises[random.Next(availableCruises.Count)];
+    }
+
+    private static CruiseApplicationStatus PickStatus(Cruise? cruise, Random random)
+    {
+        CruiseApplicationStatus[] statuses = cruise?.Status switch
+        {
+            null =>
+            [
+                CruiseApplicationStatus.Draft,
+                CruiseApplicationStatus.WaitingForSupervisor,
+                CruiseApplicationStatus.AcceptedBySupervisor,
+                CruiseApplicationStatus.DeniedBySupervisor,
+                CruiseApplicationStatus.Accepted,
+                CruiseApplicationStatus.Denied,
+            ],
+            CruiseStatus.New => [CruiseApplicationStatus.Accepted],
+            CruiseStatus.Confirmed =>
+            [
+                CruiseApplicationStatus.FormBRequired,
+                CruiseApplicationStatus.FormBFilled,
+            ],
+            _ =>
+            [
+                CruiseApplicationStatus.FormBRequired,
+                CruiseApplicationStatus.Undertaken,
+                CruiseApplicationStatus.Reported,
+            ],
+        };
+        return statuses[random.Next(statuses.Length)];
     }
 
     private static DateTime PastDate(Random random, int yearsBack) =>
