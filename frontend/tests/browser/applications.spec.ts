@@ -4,6 +4,7 @@ import {
   getGetApplicationMockHandler,
   getGetApplicationsMockHandler,
   getGetApplicationSupervisorReviewMockHandler,
+  getResendApplicationSupervisorReviewInvitationMockHandler,
   getUpdateApplicationDecisionMockHandler,
   getUpdateApplicationSupervisorReviewDecisionMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
@@ -221,6 +222,19 @@ test.describe('application review', () => {
     await page.getByRole('button', { name: 'Potwierdź odrzucenie' }).click();
     await expect.poll(decisions).toEqual([{ accept: true }, { accept: false }]);
     await expect(page.getByRole('button', { name: 'Potwierdź odrzucenie' })).toHaveCount(0);
+  });
+
+  test('the office resends the supervisor link once', async ({ page, network, requests }) => {
+    network.use(
+      getGetApplicationEvaluationMockHandler(evaluation()),
+      getGetApplicationMockHandler({ ...application(), status: 'waitingForSupervisor' }),
+      getResendApplicationSupervisorReviewInvitationMockHandler()
+    );
+    await page.goto(`/applications/${applicationId}/details`);
+    const resend = page.getByRole('button', { name: 'Wyślij ponownie do przełożonego' });
+    await resend.dblclick();
+    await expect(resend).toBeDisabled();
+    expect(requests.bodies(`POST /v2/applications/${applicationId}/supervisor-review/invitation`)).toHaveLength(1);
   });
 
   test('the evaluation shows every scored item with its details and points', async ({ page, network }) => {
