@@ -23,7 +23,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  play: async ({ canvas, canvasElement, userEvent }) => {
+  play: async ({ args, canvas, canvasElement, userEvent }) => {
     const page = within(canvasElement.ownerDocument.body);
     const trigger = canvas.getByRole('button', { name: 'Wybierz datę' });
     await userEvent.click(trigger);
@@ -39,9 +39,16 @@ export const Default: Story = {
     await userEvent.click(await page.findByRole('button', { name: 'Marzec' }));
     await waitFor(() => expect(within(calendar).getByRole('button', { name: /^03\.\d{4}$/ })).toBeVisible());
 
+    await userEvent.click(within(calendar).getByRole('button', { name: '10' }));
+    await userEvent.click(within(calendar).getByRole('button', { name: '12' }));
+    await expect(trigger).toHaveTextContent(/^12\.03\./);
+    await expect(calendar).toBeVisible();
+    await expect(args.onBlur).not.toHaveBeenCalled();
+
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
     await expect(trigger).toHaveFocus();
+    await expect(args.onBlur).toHaveBeenCalledOnce();
 
     await userEvent.click(trigger);
     await page.findByRole('dialog', { name: 'Wybierz datę' });

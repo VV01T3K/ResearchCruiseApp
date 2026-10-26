@@ -115,10 +115,6 @@ export function AppDatePickerInput({
     }
 
     onChange?.(getValueFromDate(newDate));
-    if (type === 'date') {
-      setExpanded(false);
-      onBlur?.();
-    }
   }
 
   return (
