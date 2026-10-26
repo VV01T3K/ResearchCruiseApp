@@ -2,6 +2,8 @@ import React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { AppButton } from '@/components/shared/AppButton';
+import { AppGuard } from '@/components/shared/AppGuard';
+import { Role } from '@/integrations/auth/types';
 import { toast } from '@/components/shared/layout/toast';
 import { AppCalendar } from '@/components/shared/calendar/AppCalendar';
 import { getGetCruisesQueryKey, useUpdateCruise } from '@/api/generated/endpoints/cruises.gen';
@@ -87,13 +89,14 @@ export function Calendar({ cruises, buttons }: Props) {
     <AppCalendar
       events={events}
       buttons={(predefinedButtons) => [
-        <AppButton
-          key="calendar-edit-mode"
-          variant={isCalendarEditMode ? 'primary' : 'primaryOutline'}
-          onClick={() => setIsCalendarEditMode((prev) => !prev)}
-        >
-          {isCalendarEditMode ? 'Wyłącz tryb edycji kalendarza' : 'Włącz tryb edycji kalendarza'}
-        </AppButton>,
+        <AppGuard key="calendar-edit-mode" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
+          <AppButton
+            variant={isCalendarEditMode ? 'primary' : 'primaryOutline'}
+            onClick={() => setIsCalendarEditMode((prev) => !prev)}
+          >
+            {isCalendarEditMode ? 'Wyłącz tryb edycji kalendarza' : 'Włącz tryb edycji kalendarza'}
+          </AppButton>
+        </AppGuard>,
         buttons,
         ...predefinedButtons,
       ]}

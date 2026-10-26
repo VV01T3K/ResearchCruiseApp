@@ -88,10 +88,7 @@ public sealed class CruiseNumberTests(SqlFixture fixture) : IAsyncLifetime
         using (held)
             Assert.Equal(HttpStatusCode.Created, held.StatusCode);
         using (other)
-            Assert.Equal(
-                autoPlan ? HttpStatusCode.NoContent : HttpStatusCode.Created,
-                other.StatusCode
-            );
+            Assert.Equal(autoPlan ? HttpStatusCode.OK : HttpStatusCode.Created, other.StatusCode);
         await app.InDatabase(async db =>
             Assert.Equal(
                 [$"{year}/1", $"{year}/2"],

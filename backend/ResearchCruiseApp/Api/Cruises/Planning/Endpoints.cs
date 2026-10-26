@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
@@ -39,7 +40,7 @@ public static class PlanningEndpoints
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
-    private static async Task<NoContent> AutoPlan(
+    private static async Task<Ok<AutoPlanResponse>> AutoPlan(
         YearBasedKeyGenerator yearBasedKeyGenerator,
         ApplicationDbContext dbContext,
         GlobalizationService globalizationService,
@@ -55,33 +56,101 @@ public static class PlanningEndpoints
             .Cruises.IncludeCruiseApplications()
             .ToListAsync(cancellationToken);
 
-        var newCruises = applications
-            .Where(application =>
-                application.Status == CruiseApplicationStatus.Accepted
-                && !cruises.Any(cruise => cruise.CruiseApplications.Contains(application))
+        var timeZone = globalizationService.GetTimeZoneInfo();
+        var occupied = cruises
+            .Where(cruise =>
+                cruise.Status != CruiseStatus.Ended
+                || !cruise.ShipUnavailable && ParsePeriod(cruise) is not null
             )
-            .Select(application => CreateCruise(application, globalizationService))
-            .OfType<DomainCruise>()
+            .Select(cruise =>
+                ParsePeriod(cruise) is var (start, end)
+                    ? (
+                        Start: start,
+                        End: end,
+                        Reason: cruise.ShipUnavailable
+                            ? "Termin koliduje z blokadą statku."
+                            : "Termin koliduje z istniejącym rejsem."
+                    )
+                    : (
+                        Start: DateTime.MinValue,
+                        End: DateTime.MaxValue,
+                        Reason: $"Rejs nr {cruise.Number} ma niepoprawny termin."
+                    )
+            )
             .ToList();
-        if (newCruises.Count == 0)
+        var newCruises = new List<DomainCruise>();
+        var skipped = new List<SkippedApplicationResponse>();
+        foreach (
+            var application in applications
+                .Where(application =>
+                    application.Status == CruiseApplicationStatus.Accepted
+                    && !cruises.Any(cruise => cruise.CruiseApplications.Contains(application))
+                )
+                .OrderBy(application => application.Number)
+        )
         {
-            return TypedResults.NoContent();
+            if (application.FormA is null)
+            {
+                skipped.Add(
+                    SkippedApplicationResponse.From(application, "Zgłoszenie nie ma formularza A.")
+                );
+                continue;
+            }
+
+            var (start, end, windowEnd) = GetAutoCalculatedDates(application.FormA, timeZone);
+            var reason =
+                end > windowEnd
+                    ? "Czas trwania rejsu nie mieści się w terminie zgłoszenia."
+                    : occupied
+                        .Where(interval =>
+                            interval.Start < interval.End
+                            && interval.Start < end
+                            && start < interval.End
+                        )
+                        .Select(interval => interval.Reason)
+                        .FirstOrDefault();
+            if (reason is not null)
+            {
+                skipped.Add(SkippedApplicationResponse.From(application, reason));
+                continue;
+            }
+
+            occupied.Add((start, end, "Termin koliduje z innym rejsem dodanym automatycznie."));
+            newCruises.Add(
+                new DomainCruise
+                {
+                    MainCruiseManagerId = application.FormA.CruiseManagerId,
+                    MainDeputyManagerId = application.FormA.DeputyManagerId,
+                    StartDate = start.ToString(
+                        DateFormats.IsoStringDateFormat,
+                        CultureInfo.InvariantCulture
+                    ),
+                    EndDate = end.ToString(
+                        DateFormats.IsoStringDateFormat,
+                        CultureInfo.InvariantCulture
+                    ),
+                    CruiseApplications = [application],
+                }
+            );
         }
 
-        var numbers = await yearBasedKeyGenerator.GenerateKeys(
-            dbContext.Cruises,
-            newCruises.Count,
-            cancellationToken
-        );
-        foreach (var (cruise, number) in newCruises.Zip(numbers))
+        if (newCruises.Count > 0)
         {
-            cruise.Number = number;
-            cruise.Status = CruiseStatus.New;
+            var numbers = await yearBasedKeyGenerator.GenerateKeys(
+                dbContext.Cruises,
+                newCruises.Count,
+                cancellationToken
+            );
+            foreach (var (cruise, number) in newCruises.Zip(numbers))
+            {
+                cruise.Number = number;
+                cruise.Status = CruiseStatus.New;
+            }
+
+            await dbContext.Cruises.AddRangeAsync(newCruises, cancellationToken);
         }
 
-        await dbContext.Cruises.AddRangeAsync(newCruises, cancellationToken);
-
-        return TypedResults.NoContent();
+        return TypedResults.Ok(new AutoPlanResponse(newCruises.Count, skipped));
     }
 
     private static async Task<Ok<List<BlockadeResponse>>> GetBlockades(
@@ -108,64 +177,57 @@ public static class PlanningEndpoints
                 && (cruise.Status == CruiseStatus.New || cruise.Status == CruiseStatus.Confirmed)
             )
             .Where(cruise =>
-                cruise.StartDate.StartsWith(year.ToString())
-                || cruise.EndDate.StartsWith(year.ToString())
+                ParsePeriod(cruise) is var (start, end)
+                && start < new DateTime(year + 1, 1, 1)
+                && end > new DateTime(year, 1, 1)
             )
             .ToList();
     }
 
-    private static DomainCruise? CreateCruise(
-        CruiseApplication application,
-        GlobalizationService globalizationService
-    )
-    {
-        if (application.FormA is null)
-        {
-            return null;
-        }
-
-        var (startDate, endDate) = GetAutoCalculatedDates(application.FormA, globalizationService);
-        return new DomainCruise
-        {
-            MainCruiseManagerId = application.FormA.CruiseManagerId,
-            MainDeputyManagerId = application.FormA.DeputyManagerId,
-            StartDate = startDate,
-            EndDate = endDate,
-            CruiseApplications = [application],
-        };
-    }
-
-    private static (string Start, string End) GetAutoCalculatedDates(
+    private static (DateTime Start, DateTime End, DateTime WindowEnd) GetAutoCalculatedDates(
         FormA formA,
-        GlobalizationService globalizationService
+        TimeZoneInfo timeZone
     )
     {
-        if (formA is { PrecisePeriodStart: not null, PrecisePeriodEnd: not null })
-        {
-            return (
-                globalizationService.GetIsoUtcString(
-                    formA.PrecisePeriodStart.Value.Date.AddHours(8)
-                ),
-                globalizationService.GetIsoUtcString(formA.PrecisePeriodEnd.Value.Date.AddHours(8))
+        var (windowStart, windowEnd) = formA
+            is { PrecisePeriodStart: not null, PrecisePeriodEnd: not null }
+            ? (formA.PrecisePeriodStart.Value.Date, formA.PrecisePeriodEnd.Value.Date)
+            : (
+                GetPeriodEdgeDate(formA.Year, formA.OptimalPeriodBeg!),
+                GetPeriodEdgeDate(formA.Year, formA.OptimalPeriodEnd!)
             );
-        }
-
-        var startDay = int.Parse(formA.OptimalPeriodBeg!) % 2 == 0 ? 1 : 15;
-        var startMonth = int.Parse(formA.OptimalPeriodBeg!) / 2 + 1;
-        var startDate = new DateTime(
-            int.Parse(formA.Year),
-            startMonth,
-            startDay,
-            8,
-            0,
-            0,
-            DateTimeKind.Unspecified
-        );
-        var endDate = startDate.AddHours(int.Parse(formA.CruiseHours));
+        var start = ToUtcAtEight(windowStart, timeZone);
 
         return (
-            globalizationService.GetIsoUtcString(startDate),
-            globalizationService.GetIsoUtcString(endDate)
+            start,
+            start.AddHours(int.Parse(formA.CruiseHours)),
+            ToUtcAtEight(windowEnd, timeZone)
         );
     }
+
+    private static DateTime GetPeriodEdgeDate(string year, string edge) =>
+        new DateTime(int.Parse(year), 1, 1)
+            .AddMonths(int.Parse(edge) / 2)
+            .AddDays(int.Parse(edge) % 2 * 14);
+
+    private static DateTime ToUtcAtEight(DateTime date, TimeZoneInfo timeZone) =>
+        TimeZoneInfo.ConvertTimeToUtc(
+            DateTime.SpecifyKind(date.AddHours(8), DateTimeKind.Unspecified),
+            timeZone
+        );
+
+    private static (DateTime Start, DateTime End)? ParsePeriod(DomainCruise cruise) =>
+        TryParseUtc(cruise.StartDate, out var start)
+        && TryParseUtc(cruise.EndDate, out var end)
+        && start <= end
+            ? (start, end)
+            : null;
+
+    internal static bool TryParseUtc(string? date, out DateTime result) =>
+        DateTime.TryParse(
+            date,
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+            out result
+        );
 }

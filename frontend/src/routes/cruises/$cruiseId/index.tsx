@@ -292,7 +292,8 @@ function CruiseDetailsPage() {
         isOpen={isConfirmDeletionModalOpen}
         onClose={() => setIsConfirmDeletionModalOpen(false)}
       >
-        Do wszystkich kierowników zgłoszeń i ich zastępców zostanie wysłane powiadomienie o anulowaniu rejsu.
+        Rejs zostanie usunięty, a przypisane do niego zgłoszenia wrócą do statusu „Zaakceptowane” i będzie można je
+        ponownie zaplanować.
         <div className="mt-4 flex flex-row gap-4">
           <AppButton
             variant="danger"
