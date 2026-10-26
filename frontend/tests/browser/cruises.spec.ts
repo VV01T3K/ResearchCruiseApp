@@ -396,3 +396,22 @@ test.describe(() => {
     }
   });
 });
+
+test.describe(() => {
+  test.use({ account: { ...admin, roles: ['Guest'] } });
+
+  test('a guest can view cruises without planner-only actions or requests', async ({ page, network, requests }) => {
+    network.use(getGetCruisesMockHandler([cruise()]), getGetCruiseMockHandler(confirmed()));
+    await page.goto('/cruises');
+    await page.getByRole('button', { name: 'Kalendarz', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Wróć do obecnego miesiąca' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' })).toHaveCount(0);
+
+    await page.goto('/cruises/new?blockade=true');
+    await expect(page).toHaveURL('/');
+
+    await page.goto(`/cruises/${cruise().id}`);
+    await expect(page.getByText(`${manager.firstName} ${manager.lastName}`)).toBeVisible();
+    expect(requests.bodies('GET /v2/users/available-cruise-managers')).toHaveLength(0);
+  });
+});
