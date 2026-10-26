@@ -2,6 +2,7 @@ import type { CruiseApplicationStatus } from '@/api/generated/schemas';
 import {
   getCreateApplicationMockHandler,
   getGetApplicationFormAMockHandler,
+  getGetApplicationFormBMockHandler,
   getGetApplicationMockHandler,
   getRefillApplicationFormBMockHandler,
   getUpdateApplicationFormAMockHandler,
@@ -311,15 +312,22 @@ test('an invalid form B names the section and reason of the first error in an em
   await expect(page.getByTestId('short-equipment-from-button')).toBeFocused();
 });
 
-test('form B offers going back to editing only while eligible and explains a stale refusal', async ({
+test('form B offers going back to editing only while eligible, explains a stale refusal and saves on the refilled revision', async ({
   page,
   network,
+  requests,
 }) => {
   let status: CruiseApplicationStatus = 'formBRequired';
+  let revision = formB().revision;
   const refusal = 'Formularz B jest już dostępny do edycji i czeka na wysłanie przez kierownika rejsu.';
   network.use(
     getGetApplicationMockHandler(() => ({ ...application(), status })),
-    getRefillApplicationFormBMockHandler(fail(403, { status: 403, detail: refusal }))
+    getGetApplicationFormBMockHandler(() => ({ ...formB(), revision })),
+    getRefillApplicationFormBMockHandler(fail(403, { status: 403, detail: refusal }), { once: true }),
+    getRefillApplicationFormBMockHandler(() => {
+      revision = 'AAAAAAAAB+A=';
+    }),
+    getUpdateApplicationFormBMockHandler()
   );
   const revert = page.getByRole('button', { name: 'Cofnij do edycji' });
 
@@ -337,6 +345,14 @@ test('form B offers going back to editing only while eligible and explains a sta
   await revert.click();
   await expect(page.getByTestId('toast-error')).toHaveText(`Nie udało się cofnąć formularza B do edycji: ${refusal}`);
   await expect(revert).toHaveCount(0);
+
+  status = 'formBFilled';
+  await page.goto(`/applications/${applicationId}/formB?mode=preview`);
+  await revert.click();
+  await page.getByRole('button', { name: 'Zapisz wersję roboczą' }).click();
+  await expect
+    .poll(() => requests.bodies(savedForm('form-b')))
+    .toEqual([expect.objectContaining({ form: expect.objectContaining({ revision: 'AAAAAAAAB+A=' }) })]);
 });
 
 test('form C clears point awards for an unfinished task and saves attached photos', async ({

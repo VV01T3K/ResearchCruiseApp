@@ -53,11 +53,14 @@ export function Calendar({ cruises, buttons }: Props) {
     await updateCruiseByIdMutation.mutateAsync(
       {
         cruiseId: cruise.id,
-        data: CruiseFormSchema.parse({
-          ...mapCruiseToValues(cruise),
-          startDate: payload.nextStart.toISOString(),
-          endDate: payload.nextEnd.toISOString(),
-        }),
+        data: {
+          ...CruiseFormSchema.parse({
+            ...mapCruiseToValues(cruise),
+            startDate: payload.nextStart.toISOString(),
+            endDate: payload.nextEnd.toISOString(),
+          }),
+          revision: cruise.revision,
+        },
       },
       {
         onSuccess: () => {

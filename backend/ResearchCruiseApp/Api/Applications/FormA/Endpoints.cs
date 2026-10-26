@@ -40,7 +40,7 @@ public static class FormAEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status409Conflict)
+            .WithSerializableTransaction()
             .WithRequestValidation<FormAWriteRequest>()
             .RequireAuthorization(AuthorizationPolicies.ApplicationFormEditors);
     }
@@ -151,10 +151,6 @@ public static class FormAEndpoints
                 return periodValidation.Error!.ToProblemHttpResult();
         }
 
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(
-            cancellationToken
-        );
-
         var oldFormA = application.FormA;
         var formAResult = await forms.Create(request.Form, cancellationToken);
         if (!formAResult.IsSuccess)
@@ -186,7 +182,6 @@ public static class FormAEndpoints
                 request.Form.SupervisorEmail
             );
 
-        await transaction.CommitAsync(cancellationToken);
         return TypedResults.Ok(new RevisionResponse(application.RowVersion.ToRevision()));
     }
 

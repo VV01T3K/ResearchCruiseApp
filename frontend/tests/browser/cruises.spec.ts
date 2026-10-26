@@ -82,7 +82,6 @@ test('a new cruise is saved with Warsaw-midnight dates and the chosen managers',
         cruiseApplicationIds: [],
         title: null,
         shipUnavailable: false,
-        revision: null,
       },
     ]);
 });

@@ -4,14 +4,14 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Api;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Cruises;
 
 public sealed partial class CruiseStatusTransitionTests
 {
-    private const string ConcurrentChange =
-        "Dane zostały w międzyczasie zmienione przez inną operację. Odśwież stronę i spróbuj ponownie.";
+    private const string ConcurrentChange = Revisions.StaleMessage;
 
     [Fact]
     public async Task UndoCompletion_WhileFormCIsSubmitted_IsRejectedAndKeepsTheReport()
