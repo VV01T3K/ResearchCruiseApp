@@ -1,4 +1,5 @@
 import { useSelector } from '@tanstack/react-form';
+import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
@@ -11,7 +12,7 @@ import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
 import { UserOption } from '@/api/generated/schemas';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
-import { useGetAvailableCruiseManagersSuspense } from '@/api/generated/endpoints/users.gen';
+import { getGetAvailableCruiseManagersSuspenseQueryOptions } from '@/api/generated/endpoints/users.gen';
 import type { CruiseManagerResponse, CruiseResponse } from '@/api/generated/schemas';
 
 export function ManagerSelectionSection({
@@ -24,7 +25,7 @@ export function ManagerSelectionSection({
   isReadonly: boolean;
 }) {
   const form = useTypedAppFormContext({ defaultValues: cruiseFormDefaultValues });
-  const usersQuery = useGetAvailableCruiseManagersSuspense();
+  const usersQuery = useQuery({ ...getGetAvailableCruiseManagersSuspenseQueryOptions(), enabled: !isReadonly });
   const cruiseApplicationIds = useSelector(form.store, (state) => state.values.cruiseApplicationIds);
   const selectedCruiseManagerId = useSelector(form.store, (state) => state.values.mainManagerId);
   const selectedDeputyManagerId = useSelector(form.store, (state) => state.values.deputyManagerId);
