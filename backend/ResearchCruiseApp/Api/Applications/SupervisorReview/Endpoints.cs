@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Api.Applications;
@@ -26,6 +27,16 @@ public static class SupervisorReviewEndpoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithSerializableTransaction()
             .AllowAnonymous();
+
+        group
+            .MapPost("/{applicationId:guid}/supervisor-review/invitation", ResendInvitation)
+            .WithName("ResendApplicationSupervisorReviewInvitation")
+            .WithSummary("Send the supervisor review link again to the saved supervisor email.")
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
+            .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
     private static async Task<Results<Ok<SupervisorReviewResponse>, NotFound>> Get(
@@ -54,7 +65,9 @@ public static class SupervisorReviewEndpoints
         var form = await forms.Create(application.FormA);
         var initValues = await formContext.CreateFormAForSupervisor(application, cancellationToken);
 
-        return TypedResults.Ok(new SupervisorReviewResponse(form, initValues));
+        return TypedResults.Ok(
+            new SupervisorReviewResponse(application.Number.ToString(), form, initValues)
+        );
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> UpdateDecision(
@@ -92,6 +105,11 @@ public static class SupervisorReviewEndpoints
                 SupervisorDecisionResult.AlreadyAnswered => Error
                     .ForbiddenOperation("Odpowiedź od przełożonego została już udzielona.")
                     .ToProblemHttpResult(),
+                SupervisorDecisionResult.ReviewClosed => Error
+                    .ForbiddenOperation(
+                        "Biuro Armatora już rozpatrzyło zgłoszenie. Opinia przełożonego nie jest już potrzebna."
+                    )
+                    .ToProblemHttpResult(),
                 _ => throw new InvalidOperationException(
                     $"Unexpected supervisor decision result: {decisionResult}"
                 ),
@@ -99,6 +117,34 @@ public static class SupervisorReviewEndpoints
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<Results<NoContent, ProblemHttpResult>> ResendInvitation(
+        Guid applicationId,
+        ApplicationDbContext dbContext,
+        SupervisorInvitationService cruiseApplicationsService,
+        CancellationToken cancellationToken
+    )
+    {
+        var application = await dbContext
+            .CruiseApplications.IncludeFormA()
+            .SingleOrDefaultAsync(
+                application => application.Id == applicationId,
+                cancellationToken
+            );
+        if (application?.FormA is null)
+            return Error.ResourceNotFound().ToProblemHttpResult();
+
+        if (application.Status != CruiseApplicationStatus.WaitingForSupervisor)
+            return Error
+                .ForbiddenOperation("Zgłoszenie nie oczekuje już na odpowiedź przełożonego.")
+                .ToProblemHttpResult();
+
+        await cruiseApplicationsService.SendRequestToSupervisor(
+            application,
+            application.FormA.SupervisorEmail
+        );
         return TypedResults.NoContent();
     }
 }
