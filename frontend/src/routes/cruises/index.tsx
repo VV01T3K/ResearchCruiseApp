@@ -80,7 +80,8 @@ function CruisesPage() {
         isOpen={!!cruiseSelectedForDeletion}
         onClose={() => setCruiseSelectedForDeletion(undefined)}
       >
-        Usunięcie rejsu jest nieodwracalne.
+        Usunięcie rejsu jest nieodwracalne. Rejs zostanie usunięty, a przypisane do niego zgłoszenia wrócą do statusu
+        „Zaakceptowane” i będzie można je ponownie zaplanować.
         <div className="mt-4 flex flex-row gap-4">
           <AppButton
             variant="danger"
