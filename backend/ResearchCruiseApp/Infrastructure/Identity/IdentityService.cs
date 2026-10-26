@@ -86,14 +86,17 @@ internal class IdentityService(
         return distinctUsers.Select(UserMappings.ToCruiseManagerOptionDto).ToList();
     }
 
-    public async Task<bool> IsEligibleCruiseManager(Guid id)
+    public Task<bool> IsEligibleCruiseManager(Guid id) =>
+        IsActiveWithAnyRole(id, CruiseManagerRoleNames);
+
+    public async Task<bool> IsActiveWithAnyRole(Guid id, IEnumerable<string> roleNames)
     {
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is not { Accepted: true })
             return false;
 
         var roles = await userManager.GetRolesAsync(user);
-        return roles.Any(CruiseManagerRoleNames.Contains);
+        return roles.Intersect(roleNames).Any();
     }
 
     public async Task<bool> UserWithEmailExists(string email)
