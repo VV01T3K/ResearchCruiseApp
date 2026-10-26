@@ -206,6 +206,29 @@ test('cruise edits ask before leaving until they are saved', async ({ page, netw
   await expect(dialog).toHaveCount(0);
 });
 
+test('the page behind an open modal cannot be clicked or focused', async ({ page, network, requests }) => {
+  const item = cruise();
+  network.use(getGetCruiseMockHandler(item), getUpdateCruiseMockHandler());
+  await page.goto(`/cruises/${item.id}`);
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await page.locator('input[name="title"]').fill('Nowy tytuł');
+  const save = page.getByRole('button', { name: 'Zapisz rejs' });
+  const box = (await save.boundingBox())!;
+  await page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Niezapisane zmiany' });
+  await expect(dialog).toBeVisible();
+  for (const key of [...Array(8).fill('Tab'), ...Array(8).fill('Shift+Tab')]) {
+    await page.keyboard.press(key);
+    expect(await page.evaluate(() => document.getElementById('root')!.contains(document.activeElement))).toBe(false);
+  }
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(page.locator('input[name="title"]')).toHaveValue('Nowy tytuł');
+  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toHaveLength(0);
+});
+
 test('discarding cruise edits asks only when the form has changes', async ({ page, network }) => {
   const item = cruise();
   network.use(getGetCruiseMockHandler(item));

@@ -1,4 +1,4 @@
-import { TrashIcon } from '@phosphor-icons/react';
+import { XSquareIcon } from '@phosphor-icons/react';
 
 import { AppButton } from '@/components/shared/AppButton';
 
@@ -29,7 +29,7 @@ export function RejectConfirmation({ onReject, setConfirmationMode }: Props) {
             setConfirmationMode(false);
           }}
         >
-          <TrashIcon weight="fill" className="h-4 w-4" />
+          <XSquareIcon weight="fill" className="h-4 w-4" />
           Potwierdź odrzucenie
         </AppButton>
       </div>
