@@ -4,6 +4,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
+import { Role } from '@/integrations/auth/types';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { ArrowClockwiseIcon, FloppyDiskIcon } from '@phosphor-icons/react';
 import { AppButton } from '@/components/shared/AppButton';
@@ -26,7 +27,7 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute('/cruises/new')({
   component: NewCruisePage,
-  beforeLoad: allowOnly.authenticated(),
+  beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner),
   validateSearch: searchSchema,
 });
 

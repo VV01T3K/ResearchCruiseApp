@@ -1795,8 +1795,15 @@
         "summary": "Automatically plan eligible cruises.",
         "operationId": "AutoPlanCruises",
         "responses": {
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoPlanResponse"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized",
@@ -1810,6 +1817,16 @@
           },
           "403": {
             "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -3530,6 +3547,25 @@
           },
           "points": {
             "type": "string"
+          }
+        }
+      },
+      "AutoPlanResponse": {
+        "required": [
+          "plannedCount",
+          "skipped"
+        ],
+        "type": "object",
+        "properties": {
+          "plannedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skipped": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkippedApplicationResponse"
+            }
           }
         }
       },
@@ -5535,6 +5571,26 @@
           "endDate": {
             "maxLength": 1024,
             "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "SkippedApplicationResponse": {
+        "required": [
+          "applicationId",
+          "applicationNumber",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "applicationNumber": {
+            "type": "string"
+          },
+          "reason": {
             "type": "string"
           }
         }
