@@ -69,17 +69,21 @@ function CruiseDetailsPage() {
   const [isConfirmEndModalOpen, setIsConfirmEndModalOpen] = React.useState(false);
   const [isConfirmRevertModalOpen, setIsConfirmRevertModalOpen] = React.useState(false);
   const [saved, setSaved] = React.useState<{ cruise: CruiseResponse; values: CruiseFormValues }>();
+  const latestSubmission = React.useRef(0);
+  const isSavedBaseline = saved?.cruise === cruiseQuery.data;
 
   const form = useAppForm({
-    defaultValues: saved?.cruise === cruiseQuery.data ? saved.values : mapCruiseToValues(cruiseQuery.data),
+    defaultValues: isSavedBaseline ? saved.values : mapCruiseToValues(cruiseQuery.data),
     validationLogic: formValidationLogic,
     validators: { onDynamic: CruiseFormSchema },
     onSubmitInvalid: () => {
       navigateToFirstError({ toast: true });
     },
     onSubmit: async ({ value }) => {
+      const submission = ++latestSubmission.current;
       try {
         await updateCruiseMutation.mutateAsync({ cruiseId, data: CruiseFormSchema.parse(value) });
+        if (submission !== latestSubmission.current) return;
         setSaved({ cruise: cruiseQuery.data, values: value });
         if (evaluate(form.state.values, value)) {
           form.reset(value);
@@ -134,6 +138,7 @@ function CruiseDetailsPage() {
               className="w-36 !justify-center gap-4 lg:w-64"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
+              disabled={cruiseQuery.isFetching && !isSavedBaseline}
             >
               <PencilSimpleIcon className="h-4 w-4" />
               Edytuj
@@ -154,6 +159,7 @@ function CruiseDetailsPage() {
               className="w-32 !justify-center gap-4 lg:w-40"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
+              disabled={cruiseQuery.isFetching && !isSavedBaseline}
             >
               <PencilSimpleIcon className="h-4 w-4" />
               Edytuj
