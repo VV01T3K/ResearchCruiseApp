@@ -3,7 +3,7 @@ import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
-import { useQueryClient } from '@tanstack/react-query';
+import { useIsMutating, useQueryClient } from '@tanstack/react-query';
 import { evaluate } from '@tanstack/react-form';
 import {
   ArrowClockwiseIcon,
@@ -27,6 +27,7 @@ import { CruiseFormSchema, type CruiseFormValues, mapCruiseToValues } from '@/ro
 import {
   getGetCruiseQueryKey,
   getGetCruisesQueryKey,
+  getUpdateCruiseMutationKey,
   useCompleteCruise,
   useConfirmCruise,
   useDeleteCruise,
@@ -71,6 +72,8 @@ function CruiseDetailsPage() {
   const [saved, setSaved] = React.useState<{ cruise: CruiseResponse; values: CruiseFormValues }>();
   const latestSubmission = React.useRef(0);
   const isSavedBaseline = saved?.cruise === cruiseQuery.data;
+  const isUpdating = useIsMutating({ mutationKey: getUpdateCruiseMutationKey() }) > 0;
+  const isEditBlocked = !isSavedBaseline && (isUpdating || cruiseQuery.isFetching || cruiseQuery.isError);
 
   const form = useAppForm({
     defaultValues: isSavedBaseline ? saved.values : mapCruiseToValues(cruiseQuery.data),
@@ -138,7 +141,7 @@ function CruiseDetailsPage() {
               className="w-36 !justify-center gap-4 lg:w-64"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
-              disabled={cruiseQuery.isFetching && !isSavedBaseline}
+              disabled={isEditBlocked}
             >
               <PencilSimpleIcon className="h-4 w-4" />
               Edytuj
@@ -159,7 +162,7 @@ function CruiseDetailsPage() {
               className="w-32 !justify-center gap-4 lg:w-40"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
-              disabled={cruiseQuery.isFetching && !isSavedBaseline}
+              disabled={isEditBlocked}
             >
               <PencilSimpleIcon className="h-4 w-4" />
               Edytuj
