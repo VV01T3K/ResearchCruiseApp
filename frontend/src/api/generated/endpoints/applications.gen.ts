@@ -1796,3 +1796,76 @@ export const useUpdateApplicationSupervisorReviewDecision = <TError = ErrorType<
       > => {
       return useMutation(getUpdateApplicationSupervisorReviewDecisionMutationOptions(options), queryClient);
     }
+    export const getResendApplicationSupervisorReviewInvitationUrl = (applicationId: string,) => {
+
+
+
+
+  return `/v2/applications/${applicationId}/supervisor-review/invitation`
+}
+
+/**
+ * @summary Send the supervisor review link again to the saved supervisor email.
+ */
+export const resendApplicationSupervisorReviewInvitation = async (applicationId: string, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+
+  return customFetch<void>(getResendApplicationSupervisorReviewInvitationUrl(applicationId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getResendApplicationSupervisorReviewInvitationMutationKey = () => ['resendApplicationSupervisorReviewInvitation'] as const;
+
+export const getResendApplicationSupervisorReviewInvitationMutationOptions = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resendApplicationSupervisorReviewInvitation>>, TError,ResendApplicationSupervisorReviewInvitationMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof resendApplicationSupervisorReviewInvitation>>, TError,ResendApplicationSupervisorReviewInvitationMutationVariables, TContext> => {
+
+const mutationKey = getResendApplicationSupervisorReviewInvitationMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof resendApplicationSupervisorReviewInvitation>>, ResendApplicationSupervisorReviewInvitationMutationVariables> = (props) => {
+          const {applicationId} = props ?? {};
+
+          return  resendApplicationSupervisorReviewInvitation(applicationId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ResendApplicationSupervisorReviewInvitationMutationResult = NonNullable<Awaited<ReturnType<typeof resendApplicationSupervisorReviewInvitation>>>
+
+    export type ResendApplicationSupervisorReviewInvitationMutationError = ErrorType<ProblemDetails>
+    export type ResendApplicationSupervisorReviewInvitationMutationVariables = {applicationId: string}
+
+    /**
+ * @summary Send the supervisor review link again to the saved supervisor email.
+ */
+export const useResendApplicationSupervisorReviewInvitation = <TError = ErrorType<ProblemDetails>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resendApplicationSupervisorReviewInvitation>>, TError,ResendApplicationSupervisorReviewInvitationMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof resendApplicationSupervisorReviewInvitation>>,
+        TError,
+        ResendApplicationSupervisorReviewInvitationMutationVariables,
+        TContext
+      > => {
+      return useMutation(getResendApplicationSupervisorReviewInvitationMutationOptions(options), queryClient);
+    }
