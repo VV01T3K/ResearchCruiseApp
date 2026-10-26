@@ -3,6 +3,7 @@ import { FormAFields } from './formAFields.gen.ts';
 import { FormAOptions } from './formAOptions.gen.ts';
 
 export const SupervisorReviewResponse = zod.object({
+  "number": zod.string(),
   "form": FormAFields,
   "initValues": FormAOptions
 });
