@@ -266,7 +266,7 @@ test('a cruise edit starts from the newest save after an older response or a rem
     await save.click();
     await expect.poll(() => patches().length).toBe(1);
     await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
-    await page.getByRole('button', { name: 'Odrzuć zmiany' }).click();
+    await page.getByRole('dialog', { name: 'Odrzucić zmiany?' }).getByRole('button', { name: 'Odrzuć zmiany' }).click();
     await title.fill('Nowszy');
     await save.click();
     await expect(edit).toBeVisible();

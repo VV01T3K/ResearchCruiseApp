@@ -99,6 +99,7 @@ function CruiseDetailsPage() {
         if (evaluate(form.state.values, value)) {
           form.reset(value);
           setEditMode(false);
+          setPendingDiscard(undefined);
         }
         toast.success('Rejs został zaktualizowany pomyślnie.');
       } catch (error) {
