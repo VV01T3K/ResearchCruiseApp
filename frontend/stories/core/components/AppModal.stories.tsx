@@ -100,3 +100,37 @@ export const NonDismissible: Story = {
     await expect(args.onClose).not.toHaveBeenCalled();
   },
 };
+
+export const Stacked: Story = {
+  args: {
+    title: 'First',
+    isOpen: true,
+  },
+  render: function Render(args) {
+    const [open, setOpen] = useState({ first: true, second: true });
+    return (
+      <div id="root">
+        <AppButton>Behind</AppButton>
+        <AppModal {...args} title="First" isOpen={open.first} onClose={() => setOpen({ ...open, first: false })} />
+        <AppModal {...args} title="Second" isOpen={open.second} onClose={() => setOpen({ ...open, second: false })}>
+          <AppButton onClick={() => setOpen({ ...open, first: false })}>Close first</AppButton>
+        </AppModal>
+      </div>
+    );
+  },
+  play: async ({ canvasElement, userEvent }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const root = canvasElement.querySelector('#root');
+    await userEvent.click(
+      within(await page.findByRole('dialog', { name: 'Second', hidden: true })).getByRole('button', {
+        name: 'Close first',
+        hidden: true,
+      })
+    );
+    await waitFor(() => expect(page.queryByRole('dialog', { name: 'First', hidden: true })).not.toBeInTheDocument());
+    await expect(root).toHaveAttribute('inert');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
+    await expect(root).not.toHaveAttribute('inert');
+  },
+};
