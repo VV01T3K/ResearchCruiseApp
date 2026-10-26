@@ -25,8 +25,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+
+      - name: Check for browser-relevant changes
+        id: changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ../.github/scripts/changes.sh browser
 
       - name: Setup Vite+
+        if: steps.changes.outputs.skip != 'true'
         uses: voidzero-dev/setup-vp@v1.22.0
         with:
           working-directory: frontend
@@ -35,22 +44,26 @@ jobs:
           cache: true
 
       - name: Install dependencies
+        if: steps.changes.outputs.skip != 'true'
         run: vp install --frozen-lockfile
 
       - name: Install Playwright Browsers
+        if: steps.changes.outputs.skip != 'true'
         run: vp exec playwright install --with-deps chromium
 
       - name: Run Storybook tests
+        if: steps.changes.outputs.skip != 'true'
         run: vp run test:storybook
 
       - name: Run Playwright tests
+        if: steps.changes.outputs.skip != 'true'
         run: |
           seed=$((RANDOM * 32768 + RANDOM))
           echo "Playwright shuffle seed \`$seed\`: reproduce with \`vp run test:browser:shuffle $seed --workers=1\`" >> "$GITHUB_STEP_SUMMARY"
           vp run test:browser:shuffle "$seed"
 
       - uses: actions/upload-artifact@v7
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.changes.outputs.skip != 'true' }}
         with:
           name: playwright-report
           path: frontend/playwright-report/
