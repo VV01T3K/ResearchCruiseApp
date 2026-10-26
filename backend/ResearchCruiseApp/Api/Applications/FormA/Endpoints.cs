@@ -208,6 +208,8 @@ public static class FormAEndpoints
             .Where(cruise =>
                 cruise.ShipUnavailable
                 && (cruise.Status == CruiseStatus.New || cruise.Status == CruiseStatus.Confirmed)
+                && DateTime.TryParse(cruise.StartDate, out _)
+                && DateTime.TryParse(cruise.EndDate, out _)
             )
             .Select(cruise => (DateTime.Parse(cruise.StartDate), DateTime.Parse(cruise.EndDate)));
 

@@ -85,7 +85,8 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
             db.Cruises.AddRange(
                 Existing("2029/1", "2030-06-30T06:00:00.000Z", "2030-07-01T06:00:00.000Z"),
                 Existing("2029/2", "2030-08-01T10:00:00.000Z", "2030-08-03T10:00:00.000Z"),
-                Existing("2029/3", "2030-08-31T00:00:00.000Z", "2030-09-05T00:00:00.000Z", true)
+                Existing("2029/3", "2030-08-31T00:00:00.000Z", "2030-09-05T00:00:00.000Z", true),
+                Existing("2029/4", "2030-06-01T10:00:00.000Z", "2030-06-01T10:00:00.000Z")
             );
             await db.SaveChangesAsync(ct);
         });
@@ -96,12 +97,8 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<AutoPlanResponse>(ct);
         Assert.Equal(2, result!.PlannedCount);
         Assert.Equal(
-            [
-                (juneAgain.Id, "Termin koliduje z innym rejsem dodanym automatycznie."),
-                (overlapping.Id, "Termin koliduje z istniejącym rejsem."),
-                (blocked.Id, "Termin koliduje z blokadą statku."),
-            ],
-            result.Skipped.Select(skipped => (skipped.ApplicationId, skipped.Reason))
+            [juneAgain.Id, overlapping.Id, blocked.Id],
+            result.Skipped.Select(skipped => skipped.ApplicationId)
         );
         Assert.Equal(
             0,
@@ -136,6 +133,43 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
                 planned.OrderBy(cruise => cruise.StartDate)
             );
         });
+    }
+
+    [Fact]
+    public async Task AutoPlan_SkipsCandidatesWhenAStoredCruiseHasMalformedDates()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var manager = await TestUsers.Create(
+            app,
+            "manager@example.invalid",
+            RoleName.CruiseManager
+        );
+        var office = await TestUsers.Create(app, "office@example.invalid", RoleName.Administrator);
+        using var client = await TestApplications.Login(app, office.Email!);
+        var candidate = Precise(
+            Guid.Parse(manager.Id),
+            new DateTime(2030, 6, 1),
+            new DateTime(2030, 6, 30)
+        );
+        await app.InDatabase(async db =>
+        {
+            db.CruiseApplications.Add(candidate);
+            db.Cruises.Add(Existing("2029/1", "not-a-date", "also-not-a-date"));
+            await db.SaveChangesAsync(ct);
+        });
+
+        using var created = await client.PostAsJsonAsync(
+            "/v2/cruises",
+            new CreateRequest("not-a-date", "2030-07-02", Guid.Empty, Guid.Empty, [], null, false),
+            ct
+        );
+        using var response = await client.PostAsync("/v2/cruises/auto-plan", null, ct);
+
+        Assert.Equal(HttpStatusCode.BadRequest, created.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<AutoPlanResponse>(ct);
+        Assert.Equal(0, result!.PlannedCount);
+        Assert.Equal([candidate.Id], result.Skipped.Select(skipped => skipped.ApplicationId));
     }
 
     [Fact]

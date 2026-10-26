@@ -60,13 +60,19 @@ public static class PlanningEndpoints
         var occupied = cruises
             .Where(cruise => !cruise.ShipUnavailable || cruise.Status != CruiseStatus.Ended)
             .Select(cruise =>
-                (
-                    Start: ParseUtc(cruise.StartDate),
-                    End: ParseUtc(cruise.EndDate),
-                    Reason: cruise.ShipUnavailable
-                        ? "Termin koliduje z blokadą statku."
-                        : "Termin koliduje z istniejącym rejsem."
-                )
+                ParsePeriod(cruise) is var (start, end)
+                    ? (
+                        Start: start,
+                        End: end,
+                        Reason: cruise.ShipUnavailable
+                            ? "Termin koliduje z blokadą statku."
+                            : "Termin koliduje z istniejącym rejsem."
+                    )
+                    : (
+                        Start: DateTime.MinValue,
+                        End: DateTime.MaxValue,
+                        Reason: $"Rejs nr {cruise.Number} ma niepoprawny termin."
+                    )
             )
             .ToList();
         var newCruises = new List<DomainCruise>();
@@ -93,7 +99,11 @@ public static class PlanningEndpoints
                 end > windowEnd
                     ? "Czas trwania rejsu nie mieści się w terminie zgłoszenia."
                     : occupied
-                        .Where(interval => interval.Start < end && start < interval.End)
+                        .Where(interval =>
+                            interval.Start < interval.End
+                            && interval.Start < end
+                            && start < interval.End
+                        )
                         .Select(interval => interval.Reason)
                         .FirstOrDefault();
             if (reason is not null)
@@ -164,8 +174,9 @@ public static class PlanningEndpoints
                 && (cruise.Status == CruiseStatus.New || cruise.Status == CruiseStatus.Confirmed)
             )
             .Where(cruise =>
-                ParseUtc(cruise.StartDate) < new DateTime(year + 1, 1, 1)
-                && ParseUtc(cruise.EndDate) > new DateTime(year, 1, 1)
+                ParsePeriod(cruise) is var (start, end)
+                && start < new DateTime(year + 1, 1, 1)
+                && end > new DateTime(year, 1, 1)
             )
             .ToList();
     }
@@ -202,10 +213,18 @@ public static class PlanningEndpoints
             timeZone
         );
 
-    private static DateTime ParseUtc(string date) =>
-        DateTime.Parse(
+    private static (DateTime Start, DateTime End)? ParsePeriod(DomainCruise cruise) =>
+        TryParseUtc(cruise.StartDate, out var start)
+        && TryParseUtc(cruise.EndDate, out var end)
+        && start <= end
+            ? (start, end)
+            : null;
+
+    internal static bool TryParseUtc(string? date, out DateTime result) =>
+        DateTime.TryParse(
             date,
             CultureInfo.InvariantCulture,
-            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal
+            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+            out result
         );
 }
