@@ -26,6 +26,14 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
                 $"Punkty ministerialne publikacji w efektach zadań muszą być liczbą całkowitą od 0 do {EvaluationConstants.MaxMinisterialPoints}."
             );
 
+        RuleForEach(request => request.Form.LongResearchEquipments)
+            .Must(equipmentFields =>
+                Enum.TryParse<ResearchEquipmentAction>(equipmentFields.Action, out var action)
+                && Enum.IsDefined(action)
+                && !equipmentFields.Action.Contains(',')
+            )
+            .WithMessage("Podana czynność dla sprzętu jest nieprawidłowa.");
+
         When(
             request => !request.Draft,
             () =>
