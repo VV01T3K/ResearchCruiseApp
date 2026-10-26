@@ -63,7 +63,7 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
             );
             Assert.Equal(HttpStatusCode.Created, created.StatusCode);
             await app.InDatabase(async db => id = (await db.CruiseApplications.SingleAsync(ct)).Id);
-            using var invalid = await client.PutAsJsonAsync(
+            using var invalid = await client.PutFormAsync(
                 $"/v2/applications/{id}/form-a",
                 new FormAWriteRequest { Form = draft, Draft = false },
                 ct
@@ -81,10 +81,10 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         var form = CompleteForm(Guid.Parse(manager.Id), Guid.Parse(deputy.Id), unit.Id);
         var request = new FormAWriteRequest { Form = form, Draft = false };
         using var submitted = fromDraft
-            ? await client.PutAsJsonAsync($"/v2/applications/{id}/form-a", request, ct)
+            ? await client.PutFormAsync($"/v2/applications/{id}/form-a", request, ct)
             : await client.PostAsJsonAsync("/v2/applications", request, ct);
         Assert.True(
-            submitted.StatusCode == (fromDraft ? HttpStatusCode.NoContent : HttpStatusCode.Created),
+            submitted.StatusCode == (fromDraft ? HttpStatusCode.OK : HttpStatusCode.Created),
             await submitted.Content.ReadAsStringAsync(ct)
         );
         await app.InDatabase(async db =>
@@ -101,11 +101,7 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(unit.Id, Assert.Single(read.UgTeams).UgUnitId);
         Assert.Equal("2", Assert.Single(read.UgTeams).NoOfEmployees);
         Assert.Equal("Synthetic thesis", Assert.Single(read.ResearchTasks).Title);
-        using var locked = await client.PutAsJsonAsync(
-            $"/v2/applications/{id}/form-a",
-            request,
-            ct
-        );
+        using var locked = await client.PutFormAsync($"/v2/applications/{id}/form-a", request, ct);
         Assert.Equal(HttpStatusCode.Forbidden, locked.StatusCode);
         Assert.Empty(app.Transport.Messages);
         await app.Dispatch(ct);

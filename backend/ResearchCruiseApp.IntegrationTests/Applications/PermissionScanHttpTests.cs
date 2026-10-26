@@ -35,7 +35,7 @@ public sealed class PermissionScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         var route = $"/v2/applications/{application.Id}/form-{(formC ? "c" : "b")}";
         var permissions = new List<PermissionFields> { Permission("original.pdf", SmallPdf) };
         using var saved = await Write(client, route, formC, permissions, true);
-        Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
         var originalPermission = await AssertFile(
             app,
             client,
@@ -125,7 +125,7 @@ public sealed class PermissionScanHttpTests(SqlFixture fixture) : IAsyncLifetime
             permissions.Clear();
             permissions.Add(Permission(lastName, lastContent));
             using var saved = await Write(client, route, formC, permissions, true);
-            Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
             var current = await AssertFile(
                 app,
                 client,
@@ -139,7 +139,7 @@ public sealed class PermissionScanHttpTests(SqlFixture fixture) : IAsyncLifetime
             previousPermission = current;
         }
         using var submitted = await Write(client, route, formC, permissions, false);
-        Assert.Equal(HttpStatusCode.Created, submitted.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, submitted.StatusCode);
         var finalStatus = formC
             ? CruiseApplicationStatus.Reported
             : CruiseApplicationStatus.FormBFilled;
@@ -166,7 +166,7 @@ public sealed class PermissionScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NoContent, refill.StatusCode);
         permissions.Clear();
         using var removed = await Write(client, route, formC, permissions, true);
-        Assert.Equal(HttpStatusCode.Created, removed.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, removed.StatusCode);
         Assert.Empty(await ReadPermissions(client, route, formC));
         await app.InDatabase(async db =>
         {
@@ -203,7 +203,7 @@ public sealed class PermissionScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         bool draft
     ) =>
         formC
-            ? client.PutAsJsonAsync(
+            ? client.PutFormAsync(
                 route,
                 new FormCWriteRequest
                 {
@@ -217,7 +217,7 @@ public sealed class PermissionScanHttpTests(SqlFixture fixture) : IAsyncLifetime
                 },
                 TestContext.Current.CancellationToken
             )
-            : client.PutAsJsonAsync(
+            : client.PutFormAsync(
                 route,
                 new FormBWriteRequest
                 {

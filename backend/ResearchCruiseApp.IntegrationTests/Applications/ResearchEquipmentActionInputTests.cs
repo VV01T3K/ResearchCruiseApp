@@ -34,7 +34,7 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
         string[] inputs = ["Put", "Collect", "0", "1", " 1 ", "Put, Collect"];
         string[] expected = ["Put", "Collect", "Put", "Collect", "Collect", "Collect"];
         using var response = await Write(client, route, Fields(form, inputs), draft);
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var read = JsonDocument.Parse(await Read(client, route));
         var equipment = read
             .RootElement.GetProperty("longResearchEquipments")

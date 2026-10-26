@@ -73,7 +73,7 @@ public sealed class CruiseLifecycleTests(SqlFixture fixture) : IAsyncLifetime
         );
 
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
-        using var submitted = await manager.PutAsJsonAsync(
+        using var submitted = await manager.PutFormAsync(
             $"/v2/applications/{application.Id}/form-b",
             new FormBWriteRequest
             {
@@ -82,7 +82,7 @@ public sealed class CruiseLifecycleTests(SqlFixture fixture) : IAsyncLifetime
             },
             ct
         );
-        Assert.Equal(HttpStatusCode.Created, submitted.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, submitted.StatusCode);
         await AssertState(app, CruiseStatus.Confirmed, CruiseApplicationStatus.FormBFilled, 0);
 
         using var completed = await client.PutAsync(route + "/completion", null, ct);

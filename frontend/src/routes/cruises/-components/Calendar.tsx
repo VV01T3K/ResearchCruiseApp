@@ -17,7 +17,7 @@ export function Calendar({ cruises, buttons }: Props) {
   const queryClient = useQueryClient();
   const updateCruiseByIdMutation = useUpdateCruise({
     mutation: {
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() }),
+      onSettled: () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() }),
     },
   });
   const [isCalendarEditMode, setIsCalendarEditMode] = React.useState(false);

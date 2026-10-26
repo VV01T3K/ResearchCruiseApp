@@ -98,7 +98,7 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         form.Contracts[0].Scans.Add(second);
         form.Contracts[0].Scans.Add(new FileContent { Name = "", Content = "" });
         using var replaced = await Write(client, route, form, true);
-        Assert.Equal(HttpStatusCode.NoContent, replaced.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, replaced.StatusCode);
         var replacement = await AssertFiles(app, client, id, [second], false);
         Assert.NotEqual(initial.Contract, replacement.Contract);
         Assert.NotEqual(initial.Files[0], replacement.Files[0]);
@@ -125,7 +125,7 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(replacement.Contract, unchanged.Contract);
         Assert.Equal(replacement.Files, unchanged.Files);
         using var submitted = await Write(client, route, form, false);
-        Assert.Equal(HttpStatusCode.NoContent, submitted.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, submitted.StatusCode);
         var final = await AssertFiles(app, client, id, [second], true);
         Assert.Equal(replacement.Contract, final.Contract);
         Assert.Equal(replacement.Files, final.Files);
@@ -171,7 +171,7 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
             form,
             true
         );
-        Assert.Equal(HttpStatusCode.NoContent, removedFirst.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, removedFirst.StatusCode);
         var retained = await AssertFiles(app, client, second, files, false);
         Assert.Equal(contractId, retained.Contract);
         Assert.Equal(fileIds.Order(), retained.Files);
@@ -186,7 +186,7 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
             form,
             true
         );
-        Assert.Equal(HttpStatusCode.NoContent, removedSecond.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, removedSecond.StatusCode);
         var secondRead = await client.GetFromJsonAsync<FormAFields>(
             $"/v2/applications/{second}/form-a",
             ct
@@ -275,7 +275,7 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         FormAFields form,
         bool draft
     ) =>
-        client.PutAsJsonAsync(
+        client.PutFormAsync(
             route,
             new FormAWriteRequest { Form = form, Draft = draft },
             TestContext.Current.CancellationToken

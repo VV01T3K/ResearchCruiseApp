@@ -12,7 +12,8 @@ export const UpdateRequest = zod.object({
   "deputyManagerId": zod.string().regex(updateRequestDeputyManagerIdRegExp),
   "cruiseApplicationIds": zod.array(zod.string().regex(updateRequestCruiseApplicationIdsItemRegExp)),
   "title": zod.string().nullable(),
-  "shipUnavailable": zod.boolean()
+  "shipUnavailable": zod.boolean(),
+  "revision": zod.string().nullable()
 });
 
 export type UpdateRequest = zod.input<typeof UpdateRequest>;

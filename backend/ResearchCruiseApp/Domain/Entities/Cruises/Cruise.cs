@@ -18,4 +18,6 @@ public class Cruise : Entity, IYearBasedNumbered
     public bool ShipUnavailable { get; set; }
 
     public List<CruiseApplication> CruiseApplications { get; set; } = null!;
+
+    public byte[] RowVersion { get; set; } = [];
 }

@@ -40,6 +40,7 @@ public static class FormAEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status409Conflict)
             .WithRequestValidation<FormAWriteRequest>()
             .RequireAuthorization(AuthorizationPolicies.ApplicationFormEditors);
     }
@@ -109,10 +110,12 @@ public static class FormAEndpoints
         )
             return TypedResults.NotFound();
 
-        return TypedResults.Ok(await forms.Create(application.FormA));
+        var fields = await forms.Create(application.FormA);
+        fields.Revision = application.RowVersion.ToRevision();
+        return TypedResults.Ok(fields);
     }
 
-    private static async Task<Results<NoContent, ProblemHttpResult>> Update(
+    private static async Task<Results<Ok<RevisionResponse>, ProblemHttpResult>> Update(
         Guid applicationId,
         FormAWriteRequest request,
         UserPermissionVerifier userPermissionVerifier,
@@ -130,6 +133,8 @@ public static class FormAEndpoints
             .SingleOrDefaultAsync(candidate => candidate.Id == applicationId, cancellationToken);
         if (application is null || !await userPermissionVerifier.CanCurrentUserAddForm(application))
             return Error.ResourceNotFound().ToProblemHttpResult();
+        if (!application.RowVersion.Matches(request.Form.Revision))
+            return Revisions.StaleRevision();
         if (application.Status != CruiseApplicationStatus.Draft)
             return Error
                 .ForbiddenOperation("Zgłoszenie nie jest już w stanie wersji roboczej.")
@@ -182,7 +187,7 @@ public static class FormAEndpoints
             );
 
         await transaction.CommitAsync(cancellationToken);
-        return TypedResults.NoContent();
+        return TypedResults.Ok(new RevisionResponse(application.RowVersion.ToRevision()));
     }
 
     private static async Task<Result> ValidatePrecisePeriodAgainstBlockades(

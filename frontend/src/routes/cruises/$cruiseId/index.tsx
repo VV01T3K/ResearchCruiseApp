@@ -71,8 +71,9 @@ function CruiseDetailsPage() {
   const [isConfirmEndModalOpen, setIsConfirmEndModalOpen] = React.useState(false);
   const [isConfirmRevertModalOpen, setIsConfirmRevertModalOpen] = React.useState(false);
   const [saved, setSaved] = React.useState<{ cruise: CruiseResponse; values: CruiseFormValues }>();
-  const latestSubmission = React.useRef(0);
-  const lastAppliedSubmission = React.useRef(0);
+  const saveQueue = React.useRef(Promise.resolve());
+  // Our own accepted saves replace the revision they were based on.
+  const nextRevisions = React.useRef(new Map<string | undefined, string>());
   const isSavedBaseline = saved?.cruise === cruiseQuery.data;
   const isUpdating =
     useIsMutating({
@@ -88,26 +89,36 @@ function CruiseDetailsPage() {
     onSubmitInvalid: () => {
       navigateToFirstError({ toast: true });
     },
-    onSubmit: async ({ value }) => {
-      const submission = ++latestSubmission.current;
-      try {
-        await updateCruiseMutation.mutateAsync({ cruiseId, data: CruiseFormSchema.parse(value) });
-        if (submission < lastAppliedSubmission.current) return;
-        lastAppliedSubmission.current = submission;
-        setSaved({ cruise: cruiseQuery.data, values: value });
-        if (evaluate(form.state.values, value)) {
-          form.reset(value);
-          setEditMode(false);
-        }
-        toast.success('Rejs został zaktualizowany pomyślnie.');
-      } catch (error) {
-        console.error(error);
-        setServerFormErrors(form, error);
-        toast.error(getErrorMessage(error, 'Nie udało się zaktualizować rejsu'));
-        navigateToFirstError();
-      }
+    onSubmit: ({ value }) => {
+      const save = saveQueue.current.then(() => saveCruise(value));
+      saveQueue.current = save;
+      return save;
     },
   });
+
+  async function saveCruise(value: CruiseFormValues) {
+    let revision = value.revision;
+    while (nextRevisions.current.has(revision)) revision = nextRevisions.current.get(revision);
+    try {
+      const accepted = await updateCruiseMutation.mutateAsync({
+        cruiseId,
+        data: CruiseFormSchema.parse({ ...value, revision }),
+      });
+      nextRevisions.current.set(revision, accepted.revision);
+      const savedValues = { ...value, revision: accepted.revision };
+      setSaved({ cruise: cruiseQuery.data, values: savedValues });
+      if (evaluate(form.state.values, value)) {
+        form.reset(savedValues);
+        setEditMode(false);
+      }
+      toast.success('Rejs został zaktualizowany pomyślnie.');
+    } catch (error) {
+      console.error(error);
+      setServerFormErrors(form, error);
+      toast.error(getErrorMessage(error, 'Nie udało się zaktualizować rejsu'));
+      navigateToFirstError();
+    }
+  }
 
   function getButtons() {
     if (editMode) {
@@ -267,7 +278,7 @@ function CruiseDetailsPage() {
             variant="danger"
             className="basis-2/3"
             onClick={async () => {
-              await deleteCruiseMutation.mutateAsync({ cruiseId });
+              await deleteCruiseMutation.mutateAsync({ cruiseId, params: { revision: cruiseQuery.data.revision } });
               navigate({ to: '/cruises' });
             }}
             disabled={deleteCruiseMutation.isPending}

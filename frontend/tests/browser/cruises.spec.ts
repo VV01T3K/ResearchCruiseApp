@@ -82,6 +82,7 @@ test('a new cruise is saved with Warsaw-midnight dates and the chosen managers',
         cruiseApplicationIds: [],
         title: null,
         shipUnavailable: false,
+        revision: null,
       },
     ]);
 });
@@ -177,6 +178,7 @@ test('rejected cruise edits show field and general errors, keep the edits and ca
     cruiseApplicationIds: [],
     title: 'Nowy tytuł',
     shipUnavailable: false,
+    revision: item.revision,
   });
 });
 
@@ -205,7 +207,7 @@ test('cruise edits ask before leaving until they are saved', async ({ page, netw
   await expect(dialog).toHaveCount(0);
 });
 
-test('a cruise edit starts from the newest save after an older response or a remount', async ({
+test('a cruise save waits for the previous one and starts from its accepted revision, also after a remount', async ({
   page,
   network,
   requests,
@@ -223,8 +225,9 @@ test('a cruise edit starts from the newest save after an older response or a rem
     }),
     getUpdateCruiseMockHandler(async ({ request }) => {
       const { title } = (await request.json()) as CruiseResponse;
-      server = { ...server, title };
       if (title === 'Starszy') await olderResponse.promise;
+      server = { ...server, title, revision: `after-${title}` };
+      return { revision: server.revision };
     })
   );
   await page.goto(`/cruises/${item.id}`);
@@ -241,8 +244,10 @@ test('a cruise edit starts from the newest save after an older response or a rem
     await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
     await title.fill('Nowszy');
     await save.click();
-    await expect(edit).toBeVisible();
+    expect(patches()).toHaveLength(1);
     olderResponse.resolve();
+    await expect(edit).toBeVisible();
+    expect(patches()[1]).toEqual(expect.objectContaining({ title: 'Nowszy', revision: 'after-Starszy' }));
     await expect.poll(() => gets).toBe(3);
 
     await edit.click();
@@ -250,7 +255,9 @@ test('a cruise edit starts from the newest save after an older response or a rem
     await page.getByRole('option', { name: `${outsider.firstName} ${outsider.lastName}` }).click();
     await save.click();
     await expect(edit).toBeVisible();
-    expect(patches().at(-1)).toEqual(expect.objectContaining({ title: 'Nowszy', deputyManagerId: outsider.id }));
+    expect(patches().at(-1)).toEqual(
+      expect.objectContaining({ title: 'Nowszy', deputyManagerId: outsider.id, revision: 'after-Nowszy' })
+    );
 
     await page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
     await expect(page).toHaveURL('/');

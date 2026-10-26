@@ -79,6 +79,22 @@ test('a failed save preserves edits and allows a successful retry', async ({ pag
   });
 });
 
+test('a save rejected as stale sends the read revision and keeps the edits', async ({ page, network, requests }) => {
+  network.use(
+    getGetApplicationFormAMockHandler({ ...formAFields(), revision: 'AAAAAAAAB9E=' }),
+    getUpdateApplicationFormAMockHandler(fail(409, { detail: 'Dane zostały w międzyczasie zmienione.' }))
+  );
+  await page.goto(formA);
+  const email = page.getByLabel('Adres e-mail przełożonego');
+  await email.fill('stale@example.com');
+  await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+  await expect(page.getByTestId('form-errors').getByText(/Dane zostały w międzyczasie zmienione/)).toBeVisible();
+  await expect(email).toHaveValue('stale@example.com');
+  expect(requests.bodies(savedForm('form-a'))).toEqual([
+    expect.objectContaining({ form: expect.objectContaining({ revision: 'AAAAAAAAB9E=' }) }),
+  ]);
+});
+
 test('form A research tasks can be removed, added and saved, with errors that follow their rows', async ({
   page,
   network,

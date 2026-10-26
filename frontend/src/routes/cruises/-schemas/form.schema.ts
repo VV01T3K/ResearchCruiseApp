@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { CreateRequest, type CruiseResponse } from '@/api/generated/schemas';
+import { type CruiseResponse, UpdateRequest } from '@/api/generated/schemas';
 import { emptyGuid } from '@/lib/applications/person';
 
 function managerIdSchema(message: string) {
@@ -16,6 +16,7 @@ export const CruiseFormInputSchema = z
     cruiseApplicationIds: z.array(z.guid()),
     title: z.string().optional(),
     shipUnavailable: z.boolean(),
+    revision: z.string().optional(),
   })
   .superRefine(({ startDate, endDate, mainManagerId, deputyManagerId, shipUnavailable, title }, ctx) => {
     if (new Date(startDate) > new Date(endDate)) {
@@ -44,10 +45,11 @@ export const CruiseFormInputSchema = z
   });
 
 /** Create and update requests share one shape. */
-export const CruiseFormSchema = CruiseFormInputSchema.transform((cruise): z.input<typeof CreateRequest> => ({
+export const CruiseFormSchema = CruiseFormInputSchema.transform((cruise): z.input<typeof UpdateRequest> => ({
   ...cruise,
   title: cruise.title || null,
-})).pipe(CreateRequest);
+  revision: cruise.revision ?? null,
+})).pipe(UpdateRequest);
 
 export type CruiseFormValues = z.input<typeof CruiseFormInputSchema>;
 
@@ -70,5 +72,6 @@ export function mapCruiseToValues(cruise: CruiseResponse): CruiseFormValues {
     cruiseApplicationIds: cruise.applications.map((application) => application.id),
     title: cruise.title ?? '',
     shipUnavailable: cruise.shipUnavailable,
+    revision: cruise.revision,
   };
 }

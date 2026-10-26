@@ -48,10 +48,10 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
         var route = $"/v2/applications/{application.Id}/form-c";
         var fields = Fields(points, "TrUe", "TRUE", "", type);
         using var draft = await Write(client, route, fields, true);
-        Assert.Equal(HttpStatusCode.Created, draft.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, draft.StatusCode);
         await app.InDatabase(async db => Assert.Empty(await db.UserEffects.ToListAsync(ct)));
         using var submitted = await Write(client, route, fields, false);
-        Assert.Equal(HttpStatusCode.Created, submitted.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, submitted.StatusCode);
         using var read = await client.GetAsync(route, ct);
         Assert.Equal(HttpStatusCode.OK, read.StatusCode);
         var effect = Assert.Single(
@@ -120,7 +120,7 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
         FormCFields fields,
         bool draft
     ) =>
-        client.PutAsJsonAsync(
+        client.PutFormAsync(
             route,
             new FormCWriteRequest { Form = fields, Draft = draft },
             TestContext.Current.CancellationToken

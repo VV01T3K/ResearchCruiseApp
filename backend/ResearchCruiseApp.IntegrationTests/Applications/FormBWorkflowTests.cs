@@ -5,6 +5,7 @@ using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Api;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
@@ -37,12 +38,12 @@ public sealed class FormBWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Contains("już dostępny do edycji", await unsentRefill.Content.ReadAsStringAsync(ct));
         var first = Fields(unit.Id, "2");
 
-        using var saved = await manager.PutAsJsonAsync(
+        using var saved = await manager.PutFormAsync(
             route,
             new FormBWriteRequest { Form = first, Draft = true },
             ct
         );
-        Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
         await AssertState(app, CruiseApplicationStatus.FormBRequired, "2");
         using var read = await manager.GetAsync(route, ct);
         Assert.Equal(HttpStatusCode.OK, read.StatusCode);
@@ -50,22 +51,22 @@ public sealed class FormBWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal("2", Assert.Single(body!.UgTeams).NoOfEmployees);
 
         var replacement = Fields(unit.Id, "3");
-        using var replaced = await manager.PutAsJsonAsync(
+        using var replaced = await manager.PutFormAsync(
             route,
             new FormBWriteRequest { Form = replacement, Draft = true },
             ct
         );
-        Assert.Equal(HttpStatusCode.Created, replaced.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, replaced.StatusCode);
         await AssertState(app, CruiseApplicationStatus.FormBRequired, "3");
 
-        using var submitted = await manager.PutAsJsonAsync(
+        using var submitted = await manager.PutFormAsync(
             route,
             new FormBWriteRequest { Form = replacement, Draft = false },
             ct
         );
-        Assert.Equal(HttpStatusCode.Created, submitted.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, submitted.StatusCode);
         await AssertState(app, CruiseApplicationStatus.FormBFilled, "3");
-        using var locked = await manager.PutAsJsonAsync(
+        using var locked = await manager.PutFormAsync(
             route,
             new FormBWriteRequest { Form = first, Draft = true },
             ct
@@ -82,6 +83,56 @@ public sealed class FormBWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, staleRefill.StatusCode);
         Assert.Contains("już dostępny do edycji", await staleRefill.Content.ReadAsStringAsync(ct));
         Assert.Empty(app.Transport.Messages);
+    }
+
+    [Fact]
+    public async Task FormB_WhenRevisionIsStaleOrMissing_RejectsSaveWithoutChanges()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var application = await TestApplications.Create(app, CruiseApplicationStatus.FormBRequired);
+        var unit = new UgUnit { Name = "Revision faculty", IsActive = true };
+        await app.InDatabase(async db =>
+        {
+            db.UgUnits.Add(unit);
+            await db.SaveChangesAsync(ct);
+        });
+        using var first = await TestApplications.Login(app, application.OwnerEmail);
+        using var second = await TestApplications.Login(app, application.OwnerEmail);
+        var route = $"/v2/applications/{application.Id}/form-b";
+        var read = await FormRequests.CurrentRevision(second, route);
+
+        using var saved = await first.PutFormAsync(
+            route,
+            new FormBWriteRequest { Form = Fields(unit.Id, "2"), Draft = true },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
+        var accepted = (await saved.Content.ReadFromJsonAsync<RevisionResponse>(ct))!.Revision;
+        Assert.NotEqual(read, accepted);
+        var snapshot = await FormRequests.Snapshot(app);
+        var stale = Fields(unit.Id, "3");
+        foreach (var revision in new[] { read, null })
+        {
+            stale.Revision = revision;
+            using var rejected = await second.PutAsJsonAsync(
+                route,
+                new FormBWriteRequest { Form = stale, Draft = false },
+                ct
+            );
+            Assert.Equal(HttpStatusCode.Conflict, rejected.StatusCode);
+            Assert.Equal(snapshot, await FormRequests.Snapshot(app));
+        }
+        await AssertState(app, CruiseApplicationStatus.FormBRequired, "2");
+
+        stale.Revision = accepted;
+        using var resaved = await second.PutAsJsonAsync(
+            route,
+            new FormBWriteRequest { Form = stale, Draft = false },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.OK, resaved.StatusCode);
+        await AssertState(app, CruiseApplicationStatus.FormBFilled, "3");
     }
 
     private static FormBFields Fields(Guid unitId, string employees) =>

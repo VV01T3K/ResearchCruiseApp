@@ -378,12 +378,12 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
 
     private static async Task ReplaceDraft(HttpClient client, Guid id, FormAFields form)
     {
-        using var response = await client.PutAsJsonAsync(
+        using var response = await client.PutFormAsync(
             $"/v2/applications/{id}/form-a",
             new FormAWriteRequest { Form = form, Draft = true },
             TestContext.Current.CancellationToken
         );
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     private static async Task AssertSummary(
@@ -459,12 +459,12 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(total, summary.GetProperty("points").GetInt32());
         form.ResearchTasks.Clear();
         form.ResearchTasks.Add(new ResearchTaskFields { Type = type, FinancingAmount = "99999" });
-        using var replaced = await client.PutAsJsonAsync(
+        using var replaced = await client.PutFormAsync(
             $"/v2/applications/{id}/form-a",
             new FormAWriteRequest { Form = form, Draft = true },
             ct
         );
-        Assert.Equal(HttpStatusCode.NoContent, replaced.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, replaced.StatusCode);
         evaluation = await client.GetFromJsonAsync<CruiseApplicationEvaluation>(
             $"/v2/applications/{id}/evaluation",
             ct

@@ -100,8 +100,11 @@ public sealed class UpgradeTests(SqlFixture fixture)
                 Note = "Preserve this graph",
                 SupervisorCode = [1, 2, 3, 4],
             };
-            db.CruiseApplications.Add(application);
-            await db.SaveChangesAsync(cancellationToken);
+            await using (var seed = new V251DbContext(options))
+            {
+                seed.CruiseApplications.Add(application);
+                await seed.SaveChangesAsync(cancellationToken);
+            }
             var applicationId = application.Id;
             var number = application.Number;
 
@@ -124,6 +127,8 @@ public sealed class UpgradeTests(SqlFixture fixture)
             Assert.Equal("Bałtyk", stored.FormA.CruiseGoalDescription);
             Assert.Equal("Existing cruise", stored.Cruise!.Title);
             Assert.Equal(CruiseStatus.Confirmed, stored.Cruise.Status);
+            Assert.NotEmpty(stored.RowVersion);
+            Assert.NotEmpty(stored.Cruise.RowVersion);
             var storedContract = Assert.Single(stored.FormA.FormAContracts).Contract;
             Assert.Equal("Existing contract", storedContract.Description);
             var file = Assert.Single(storedContract.Files);
@@ -144,6 +149,18 @@ public sealed class UpgradeTests(SqlFixture fixture)
         finally
         {
             await db.Database.EnsureDeletedAsync(CancellationToken.None);
+        }
+    }
+
+    // Rows written before the migration that adds the RowVersion columns.
+    private sealed class V251DbContext(DbContextOptions<ApplicationDbContext> options)
+        : ApplicationDbContext(options)
+    {
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<CruiseApplication>().Ignore(row => row.RowVersion);
+            builder.Entity<Cruise>().Ignore(row => row.RowVersion);
         }
     }
 }

@@ -50,10 +50,7 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
             draft,
             target == 0
         );
-        Assert.Equal(
-            target == 1 ? HttpStatusCode.NoContent : HttpStatusCode.Created,
-            response.StatusCode
-        );
+        Assert.Equal(target == 0 ? HttpStatusCode.Created : HttpStatusCode.OK, response.StatusCode);
         Guid id = default;
         await app.InDatabase(async db => id = (await db.CruiseApplications.SingleAsync(ct)).Id);
         var route = target == 0 ? $"/v2/applications/{id}/form-a" : prepared.Route;
@@ -189,7 +186,7 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
             if (target == 2)
             {
                 using var response = await Write(client, route, fields, true, target == 0);
-                Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             }
             return (client, fields, route, collection);
         }

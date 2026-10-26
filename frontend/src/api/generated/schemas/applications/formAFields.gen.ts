@@ -41,6 +41,7 @@ export const formAFieldsNoteMax = 1024;
 
 
 export const FormAFields = zod.object({
+  "revision": zod.string().nullish(),
   "id": zod.string().regex(formAFieldsIdRegExp).nullish(),
   "cruiseManagerId": zod.string().regex(formAFieldsCruiseManagerIdRegExp).optional(),
   "deputyManagerId": zod.string().regex(formAFieldsDeputyManagerIdRegExp).nullish(),

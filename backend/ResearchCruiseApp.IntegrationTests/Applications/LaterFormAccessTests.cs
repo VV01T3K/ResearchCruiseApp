@@ -18,12 +18,12 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     [Theory]
-    [InlineData("b", "owner", HttpStatusCode.Created)]
-    [InlineData("c", "owner", HttpStatusCode.Created)]
-    [InlineData("c", "deputy", HttpStatusCode.Created)]
-    [InlineData("b", RoleName.Administrator, HttpStatusCode.Created)]
-    [InlineData("c", "shipowner-owner", HttpStatusCode.Created)]
-    [InlineData("b", "shipowner-deputy", HttpStatusCode.Created)]
+    [InlineData("b", "owner", HttpStatusCode.OK)]
+    [InlineData("c", "owner", HttpStatusCode.OK)]
+    [InlineData("c", "deputy", HttpStatusCode.OK)]
+    [InlineData("b", RoleName.Administrator, HttpStatusCode.OK)]
+    [InlineData("c", "shipowner-owner", HttpStatusCode.OK)]
+    [InlineData("b", "shipowner-deputy", HttpStatusCode.OK)]
     [InlineData("b", "anonymous", HttpStatusCode.Unauthorized)]
     [InlineData("c", "anonymous", HttpStatusCode.Unauthorized)]
     [InlineData("b", RoleName.CruiseManager, HttpStatusCode.NotFound)]
@@ -87,14 +87,14 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
 
         using var created = await Write(client, route, form, unit.Id, "2", true, ct);
         Assert.Equal(expected, created.StatusCode);
-        var allowed = expected == HttpStatusCode.Created;
+        var allowed = expected == HttpStatusCode.OK;
         if (!allowed)
         {
             Assert.Equal(initial, await Capture(app));
             using var absent = await reader.GetAsync(route, ct);
             Assert.Equal(HttpStatusCode.NotFound, absent.StatusCode);
             using var control = await Write(reader, route, form, unit.Id, "2", true, ct);
-            Assert.Equal(HttpStatusCode.Created, control.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, control.StatusCode);
         }
         await AssertSaved(app, reader, route, form, editable, "2", unit.Id);
         var saved = await Capture(app);
@@ -143,7 +143,7 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
             NoOfStudents = "0",
         };
         return form == "b"
-            ? client.PutAsJsonAsync(
+            ? client.PutFormAsync(
                 route,
                 new FormBWriteRequest
                 {
@@ -152,7 +152,7 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
                 },
                 ct
             )
-            : client.PutAsJsonAsync(
+            : client.PutFormAsync(
                 route,
                 new FormCWriteRequest
                 {

@@ -36,7 +36,7 @@ public sealed partial class CruiseStatusTransitionTests
         );
 
         using (formC)
-            Assert.Equal(HttpStatusCode.Created, formC.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, formC.StatusCode);
         await AssertConflict(undo);
         await AssertCruise(app, cruiseId, CruiseStatus.Ended);
         await AssertApplication(
@@ -71,7 +71,7 @@ public sealed partial class CruiseStatusTransitionTests
         );
 
         using (formB)
-            Assert.Equal(HttpStatusCode.Created, formB.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, formB.StatusCode);
         await AssertConflict(removal);
         await AssertApplication(
             app,
@@ -80,7 +80,7 @@ public sealed partial class CruiseStatusTransitionTests
             cruiseId,
             formB: true
         );
-        Assert.Equal(HttpStatusCode.NoContent, await Patch(office, cruiseId, []));
+        Assert.Equal(HttpStatusCode.OK, await Patch(office, cruiseId, []));
         await AssertApplication(
             app,
             application.Id,

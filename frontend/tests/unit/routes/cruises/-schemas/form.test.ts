@@ -13,6 +13,7 @@ it('writes the shared create/update cruise API shape', () => {
     cruiseApplicationIds: [],
     title: 'Bałtyk',
     shipUnavailable: false,
+    revision: 'AAAAAAAAB9E=',
   });
 });
 

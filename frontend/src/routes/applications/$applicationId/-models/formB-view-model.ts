@@ -1,4 +1,4 @@
-import type { CruiseResponse } from '@/api/generated/schemas';
+import type { ApplicationCruiseResponse } from '@/api/generated/schemas';
 import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { FormAOptions } from '@/api/generated/schemas';
 import type { FormBOptions } from '@/api/generated/schemas';
@@ -15,6 +15,6 @@ export type FormBViewModel = {
   formAInitValues: FormAOptions;
   formBInitValues: FormBOptions;
   formA: FormAValues;
-  cruise: CruiseResponse;
+  cruise: ApplicationCruiseResponse;
   isReadonly: boolean;
 };

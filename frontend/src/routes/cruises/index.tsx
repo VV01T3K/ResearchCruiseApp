@@ -83,7 +83,10 @@ function CruisesPage() {
             className="basis-2/3"
             onClick={async () => {
               if (!cruiseSelectedForDeletion) return;
-              await deleteCruiseMutation.mutateAsync({ cruiseId: cruiseSelectedForDeletion.id });
+              await deleteCruiseMutation.mutateAsync({
+                cruiseId: cruiseSelectedForDeletion.id,
+                params: { revision: cruiseSelectedForDeletion.revision },
+              });
               setCruiseSelectedForDeletion(undefined);
             }}
             disabled={deleteCruiseMutation.isPending}

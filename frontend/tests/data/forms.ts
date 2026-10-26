@@ -25,6 +25,7 @@ export function formOptions(): FormAOptions {
 
 export function formA(): FormAFields {
   return {
+    revision: 'AAAAAAAAB9E=',
     id: applicationId,
     cruiseManagerId: manager.id,
     deputyManagerId: deputy.id,
@@ -55,6 +56,7 @@ export function formA(): FormAFields {
 
 export function formB(): FormBFields {
   return {
+    revision: 'AAAAAAAAB9E=',
     isCruiseManagerPresent: 'true',
     permissions: [],
     ugTeams: [{ ugUnitId: unitId, noOfEmployees: '2', noOfStudents: '1' }],
@@ -71,6 +73,7 @@ export function formB(): FormBFields {
 
 export function formC(): FormCFields {
   return {
+    revision: 'AAAAAAAAB9E=',
     shipUsage: '0',
     differentUsage: '',
     permissions: [],
