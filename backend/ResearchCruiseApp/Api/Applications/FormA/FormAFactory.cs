@@ -60,7 +60,10 @@ internal class FormAFactory(
 
         if (
             formAFields.CruiseManagerId != existingFormA?.CruiseManagerId
-            && !await identityService.IsEligibleCruiseManager(formAFields.CruiseManagerId)
+            && !await identityService.IsActiveWithAnyRole(
+                formAFields.CruiseManagerId,
+                IdentityService.CruiseManagerRoleNames
+            )
         )
             return Error.InvalidArgument(
                 "Podany kierownik nie istnieje lub nie ma aktywnego konta z uprawnieniami kierownika."
@@ -69,7 +72,10 @@ internal class FormAFactory(
         if (
             formAFields.DeputyManagerId is not null
             && formAFields.DeputyManagerId != existingFormA?.DeputyManagerId
-            && !await identityService.IsEligibleCruiseManager((Guid)formAFields.DeputyManagerId)
+            && !await identityService.IsActiveWithAnyRole(
+                (Guid)formAFields.DeputyManagerId,
+                IdentityService.CruiseManagerRoleNames
+            )
         )
         {
             return Error.InvalidArgument(
