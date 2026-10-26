@@ -3,8 +3,6 @@ name: Format & lint checks
 on:
   push:
     branches-ignore: [staging, main]
-    paths-ignore:
-      - docs
   workflow_call:
 
 concurrency:
