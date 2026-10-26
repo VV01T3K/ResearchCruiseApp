@@ -86,7 +86,8 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
                 Existing("2029/1", "2030-06-30T06:00:00.000Z", "2030-07-01T06:00:00.000Z"),
                 Existing("2029/2", "2030-08-01T10:00:00.000Z", "2030-08-03T10:00:00.000Z"),
                 Existing("2029/3", "2030-08-31T00:00:00.000Z", "2030-09-05T00:00:00.000Z", true),
-                Existing("2029/4", "2030-06-01T10:00:00.000Z", "2030-06-01T10:00:00.000Z")
+                Existing("2029/4", "2030-06-01T10:00:00.000Z", "2030-06-01T10:00:00.000Z"),
+                Existing("2029/5", "not-a-date", "also-not-a-date", status: CruiseStatus.Ended)
             );
             await db.SaveChangesAsync(ct);
         });
@@ -199,14 +200,15 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
         string number,
         string start,
         string end,
-        bool blockade = false
+        bool blockade = false,
+        CruiseStatus status = CruiseStatus.New
     ) =>
         new()
         {
             Number = number,
             StartDate = start,
             EndDate = end,
-            Status = CruiseStatus.New,
+            Status = status,
             ShipUnavailable = blockade,
             CruiseApplications = [],
         };

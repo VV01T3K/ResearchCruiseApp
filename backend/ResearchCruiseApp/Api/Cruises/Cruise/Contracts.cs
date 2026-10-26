@@ -8,7 +8,7 @@ public sealed record CreateRequest(
     List<Guid> CruiseApplicationIds,
     string? Title,
     bool ShipUnavailable
-);
+) : ICruiseRequest;
 
 public sealed record UpdateRequest(
     string StartDate,
@@ -18,4 +18,13 @@ public sealed record UpdateRequest(
     List<Guid> CruiseApplicationIds,
     string? Title,
     bool ShipUnavailable
-);
+) : ICruiseRequest;
+
+public interface ICruiseRequest
+{
+    string StartDate { get; }
+    string EndDate { get; }
+    string? Title { get; }
+    bool ShipUnavailable { get; }
+    List<Guid> CruiseApplicationIds { get; }
+}

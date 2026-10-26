@@ -58,7 +58,10 @@ public static class PlanningEndpoints
 
         var timeZone = globalizationService.GetTimeZoneInfo();
         var occupied = cruises
-            .Where(cruise => !cruise.ShipUnavailable || cruise.Status != CruiseStatus.Ended)
+            .Where(cruise =>
+                cruise.Status != CruiseStatus.Ended
+                || !cruise.ShipUnavailable && ParsePeriod(cruise) is not null
+            )
             .Select(cruise =>
                 ParsePeriod(cruise) is var (start, end)
                     ? (
