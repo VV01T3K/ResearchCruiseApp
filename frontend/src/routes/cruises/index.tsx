@@ -29,15 +29,18 @@ function CruisesPage() {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [autoPlanResult, setAutoPlanResult] = useState<AutoPlanResponse | undefined>(undefined);
 
-  async function autoAddCruises() {
-    const result = await autoAddCruisesMutation.mutateAsync();
-    if (result.skipped.length > 0) {
-      setAutoPlanResult(result);
-    } else if (result.plannedCount > 0) {
-      toast.success(`Dodano automatycznie rejsy: ${result.plannedCount}.`);
-    } else {
-      toast.success('Brak zaakceptowanych zgłoszeń do zaplanowania.');
-    }
+  function autoAddCruises() {
+    autoAddCruisesMutation.mutate(undefined, {
+      onSuccess: (result) => {
+        if (result.skipped.length > 0) {
+          setAutoPlanResult(result);
+        } else if (result.plannedCount > 0) {
+          toast.success(`Dodano automatycznie rejsy: ${result.plannedCount}.`);
+        } else {
+          toast.success('Brak zaakceptowanych zgłoszeń do zaplanowania.');
+        }
+      },
+    });
   }
 
   const buttons = [

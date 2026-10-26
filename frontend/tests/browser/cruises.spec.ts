@@ -342,20 +342,30 @@ test('auto-planning lists the skipped applications', async ({ page, network, req
     applicationNumber: '2026/7',
     reason: 'Termin koliduje z blokadą statku.',
   };
+  const conflict = 'Dane zostały w międzyczasie zmienione przez inną operację.';
+  const pageErrors: Error[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error));
   network.use(
     getGetCruisesMockHandler([cruise()]),
+    getAutoPlanCruisesMockHandler(fail(409, { status: 409, detail: conflict }))
+  );
+  await page.goto('/cruises');
+  await page.getByRole('button', { name: 'Dodaj rejsy automatycznie' }).click();
+  await expect(page.getByText(conflict)).toBeVisible();
+
+  network.use(
     getAutoPlanCruisesMockHandler(() => {
       network.use(getGetCruisesMockHandler([cruise(), planned]));
       return { plannedCount: 1, skipped: [skipped] };
     })
   );
-  await page.goto('/cruises');
   await page.getByRole('button', { name: 'Dodaj rejsy automatycznie' }).click();
   const dialog = page.getByRole('dialog', { name: 'Wynik automatycznego planowania' });
   await expect(dialog.getByText(`Nr ${skipped.applicationNumber}: ${skipped.reason}`)).toBeVisible();
   await dialog.getByRole('button', { name: 'Zamknij' }).click();
   await expect(page.getByRole('row').filter({ hasText: planned.title })).toBeVisible();
-  expect(requests.bodies('POST /v2/cruises/auto-plan')).toHaveLength(1);
+  expect(requests.bodies('POST /v2/cruises/auto-plan')).toHaveLength(2);
+  expect(pageErrors).toEqual([]);
 });
 
 test('the export downloads the CSV file of the chosen year', async ({ page, network, requests }) => {
