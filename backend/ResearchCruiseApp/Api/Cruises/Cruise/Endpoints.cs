@@ -27,6 +27,7 @@ public static class CruiseEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
+            .WithSerializableTransaction()
             .WithRequestValidation<CreateRequest>()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
@@ -68,6 +69,7 @@ public static class CruiseEndpoints
         CancellationToken cancellationToken
     )
     {
+        await yearBasedKeyGenerator.Lock<DomainCruise>(cancellationToken);
         var cruiseApplications = await dbContext
             .CruiseApplications.Where(application =>
                 request.CruiseApplicationIds.Contains(application.Id)
@@ -106,9 +108,6 @@ public static class CruiseEndpoints
             )
             .ToListAsync(cancellationToken);
 
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(
-            cancellationToken
-        );
         newCruise.Number = await yearBasedKeyGenerator.GenerateKey(
             dbContext.Cruises,
             cancellationToken
@@ -117,8 +116,6 @@ public static class CruiseEndpoints
         await dbContext.Cruises.AddAsync(newCruise, cancellationToken);
         await ClearUnavailableManagers(affectedCruises, dbContext, cancellationToken);
         affectedCruises.ForEach(cruise => dbContext.Entry(cruise).State = EntityState.Modified);
-        await dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
 
         return TypedResults.Created();
     }

@@ -90,6 +90,32 @@ public sealed partial class CruiseStatusTransitionTests
         );
     }
 
+    [Fact]
+    public async Task OpposingOfficeDecisions_WhenTheyOverlap_RejectTheSecondQuietly()
+    {
+        var gate = new SaveChangesGate();
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: gate);
+        var office = await Office(app);
+        var (id, _) = await TestApplications.Create(
+            app,
+            CruiseApplicationStatus.AcceptedBySupervisor
+        );
+        Task<HttpResponseMessage> Decide(bool accept) =>
+            office.PutAsJsonAsync($"/v2/applications/{id}/decision", new { Accept = accept });
+
+        gate.Hold(db => SavesStatus(db, id, CruiseApplicationStatus.Accepted));
+        var (accepted, rejected) = await gate.Race(
+            fixture.ConnectionString,
+            Decide(true),
+            () => Decide(false),
+            TestContext.Current.CancellationToken
+        );
+
+        using (accepted)
+            Assert.Equal(HttpStatusCode.NoContent, accepted.StatusCode);
+        await AssertConflict(rejected);
+    }
+
     private static bool SavesStatus(
         DbContext db,
         Guid applicationId,

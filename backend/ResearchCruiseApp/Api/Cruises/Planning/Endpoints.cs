@@ -25,6 +25,7 @@ public static class PlanningEndpoints
             .WithSummary("Automatically plan eligible cruises.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
@@ -45,6 +46,7 @@ public static class PlanningEndpoints
         CancellationToken cancellationToken
     )
     {
+        await yearBasedKeyGenerator.Lock<DomainCruise>(cancellationToken);
         var applications = await dbContext
             .CruiseApplications.IncludeForms()
             .IncludeFormAContent()
@@ -66,9 +68,6 @@ public static class PlanningEndpoints
             return TypedResults.NoContent();
         }
 
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(
-            cancellationToken
-        );
         var numbers = await yearBasedKeyGenerator.GenerateKeys(
             dbContext.Cruises,
             newCruises.Count,
@@ -81,8 +80,6 @@ public static class PlanningEndpoints
         }
 
         await dbContext.Cruises.AddRangeAsync(newCruises, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
 
         return TypedResults.NoContent();
     }

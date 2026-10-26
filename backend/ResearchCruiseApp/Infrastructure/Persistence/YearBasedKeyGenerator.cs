@@ -20,16 +20,7 @@ internal class YearBasedKeyGenerator(ApplicationDbContext dbContext)
     )
         where T : Entity, IYearBasedNumbered
     {
-        var resource = $"{typeof(T).Name}.Number";
-        // Held until the caller's transaction ends, so allocation and insert are serialized.
-        await dbContext.Database.ExecuteSqlAsync(
-            $"""
-            DECLARE @result int;
-            EXEC @result = sp_getapplock @Resource = {resource}, @LockMode = 'Exclusive', @LockOwner = 'Transaction';
-            IF @result < 0 THROW 50000, 'Could not lock year-based numbering.', 1;
-            """,
-            cancellationToken
-        );
+        await Lock<T>(cancellationToken);
         var currentYear = DateTime.Now.Year.ToString();
         var ordinalNumberStartIdx = currentYear.Length + 1;
         var existingEntities = await entities.ToListAsync(cancellationToken);
@@ -44,5 +35,20 @@ internal class YearBasedKeyGenerator(ApplicationDbContext dbContext)
             .Range(int.Parse(maxCurrentYearOrdinalNumber) + 1, count)
             .Select(ordinalNumber => $"{currentYear}/{ordinalNumber}")
             .ToList();
+    }
+
+    // Held until the caller's transaction ends, so allocation and insert are serialized.
+    public async Task Lock<T>(CancellationToken cancellationToken)
+        where T : Entity, IYearBasedNumbered
+    {
+        var resource = $"{typeof(T).Name}.Number";
+        await dbContext.Database.ExecuteSqlAsync(
+            $"""
+            DECLARE @result int;
+            EXEC @result = sp_getapplock @Resource = {resource}, @LockMode = 'Exclusive', @LockOwner = 'Transaction';
+            IF @result < 0 THROW 50000, 'Could not lock year-based numbering.', 1;
+            """,
+            cancellationToken
+        );
     }
 }

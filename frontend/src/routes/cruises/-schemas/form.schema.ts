@@ -44,7 +44,6 @@ export const CruiseFormInputSchema = z
     }
   });
 
-/** Create and update requests share one shape. */
 export const CruiseFormSchema = CruiseFormInputSchema.transform((cruise): z.input<typeof CreateRequest> => ({
   ...cruise,
   title: cruise.title || null,
