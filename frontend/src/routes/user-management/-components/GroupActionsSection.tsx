@@ -22,7 +22,7 @@ type Props = {
 export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUsers, close }: Props) {
   const [deletionConfirmed, setDeletionConfirmed] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | undefined>(undefined);
-  const [assignmentWarning, setAssignmentWarning] = React.useState<UserAssignments[]>();
+  const [assignmentWarning, setAssignmentWarning] = React.useState<UserAssignments[] | null>();
 
   const deleteUserMutation = useDeleteUser({
     mutation: {
@@ -99,15 +99,10 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
       return;
     }
 
-    if (!assignmentWarning) {
-      try {
-        const items = await findActiveAssignments(usersToUnAccept);
-        if (items.length > 0) {
-          setAssignmentWarning(items);
-          return;
-        }
-      } catch {
-        setSubmitError('Nie udało się sprawdzić zgłoszeń i rejsów prowadzonych przez użytkowników');
+    if (assignmentWarning === undefined) {
+      const items = await findActiveAssignments(usersToUnAccept);
+      if (items?.length !== 0) {
+        setAssignmentWarning(items);
         return;
       }
     }
@@ -168,9 +163,9 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
             <span>Akceptuj zaznaczonych użytkowników</span>
           </div>
         </AppButton>
-        {assignmentWarning && (
+        {assignmentWarning !== undefined && (
           <div className="mt-4">
-            <AssignmentsWarning items={assignmentWarning} action="deactivate" />
+            <AssignmentsWarning items={assignmentWarning} action="deactivate" showNames />
           </div>
         )}
         <AppButton
@@ -179,7 +174,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           disabled={unAcceptUserMutation.isPending || !!submitError}
           onClick={handleUnAcceptSelectedUsers}
         >
-          {assignmentWarning ? (
+          {assignmentWarning !== undefined ? (
             <div className="flex items-center gap-4">
               <WarningIcon weight="fill" className="h-4 w-4" />
               <span>Usuń akceptację mimo to</span>

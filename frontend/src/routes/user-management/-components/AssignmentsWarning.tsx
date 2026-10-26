@@ -6,18 +6,32 @@ import { getApplicationStatusLabel } from '@/lib/applications/status';
 
 export type UserAssignments = { user: UserResponse; assignments: UserAssignmentsResponse };
 
-export async function findActiveAssignments(users: UserResponse[]): Promise<UserAssignments[]> {
-  const results = await Promise.all(
-    users.map(async (user) => ({ user, assignments: await getUserAssignments(user.id) }))
-  );
-  return results.filter(({ assignments }) => assignments.applications.length + assignments.cruises.length > 0);
+export async function findActiveAssignments(users: UserResponse[]): Promise<UserAssignments[] | null> {
+  try {
+    const results = await Promise.all(
+      users.map(async (user) => ({ user, assignments: await getUserAssignments(user.id) }))
+    );
+    return results.filter(({ assignments }) => assignments.applications.length + assignments.cruises.length > 0);
+  } catch {
+    return null;
+  }
 }
 
 type Props = {
-  items: UserAssignments[];
+  items: UserAssignments[] | null;
   action: 'role' | 'deactivate';
+  showNames?: boolean;
 };
-export function AssignmentsWarning({ items, action }: Props) {
+export function AssignmentsWarning({ items, action, showNames }: Props) {
+  if (!items) {
+    return (
+      <AppAlert variant="warning" iconAlign="start" data-testid="assignments-warning">
+        Nie udało się sprawdzić zgłoszeń i rejsów prowadzonych przez {showNames ? 'użytkowników' : 'użytkownika'}. Mogą
+        wśród nich być aktywne zgłoszenia lub rejsy.
+      </AppAlert>
+    );
+  }
+
   const group = items.length > 1;
 
   return (
@@ -28,7 +42,7 @@ export function AssignmentsWarning({ items, action }: Props) {
         </p>
         {items.map(({ user, assignments }) => (
           <div key={user.id}>
-            {group && (
+            {(group || showNames) && (
               <p className="font-medium">
                 {user.firstName} {user.lastName}
               </p>

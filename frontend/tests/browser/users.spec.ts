@@ -162,7 +162,7 @@ test('a user is deactivated, then deleted only after the deletion is confirmed',
   expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(1);
 });
 
-test('demoting or deactivating a manager of active records lists them and needs a second click', async ({
+test('demoting or deactivating a manager of active records warns and needs a second click', async ({
   page,
   network,
   requests,
@@ -194,9 +194,10 @@ test('demoting or deactivating a manager of active records lists them and needs 
   await expect(dialog).toBeHidden();
   expect(requests.bodies(`PUT /v2/users/${deputy.id}/role`)).toEqual([{ roleName: 'Guest' }]);
 
+  network.use(getGetUserAssignmentsMockHandler(fail(503)));
   await row.getByRole('button', { name: 'Edytuj' }).click();
   await dialog.getByRole('button', { name: 'Cofnij akceptację konta' }).click();
-  await expect(warning).toContainText('Po cofnięciu akceptacji straci');
+  await expect(warning).toContainText('Nie udało się sprawdzić');
   expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(0);
   await dialog.getByRole('button', { name: 'Cofnij akceptację mimo to' }).click();
   await expect(dialog).toBeHidden();
@@ -266,16 +267,27 @@ test('a group deletion deletes every selected user and reports the ones that fai
   expect(requests.bodies(`DELETE /v2/users/${outsider.id}`)).toHaveLength(1);
 });
 
-test('a group deactivation sends requests only for accepted users', async ({ page, network, requests }) => {
+test('a group deactivation names the affected user and sends requests only for accepted users', async ({
+  page,
+  network,
+  requests,
+}) => {
   network.use(
     getGetUsersMockHandler([cruiseManager(), cruiseManager({ ...outsider, roles: ['Guest'], accepted: false })]),
-    noAssignments,
+    getGetUserAssignmentsMockHandler({
+      applications: [{ id: applicationId, number: '12', isDeputy: false, status: 'formBRequired' }],
+      cruises: [],
+      closedCount: 0,
+    }),
     getDeactivateUserMockHandler()
   );
   await page.goto('/user-management');
   await selectAll(page);
   await page.getByRole('button', { name: 'Akcje Grupowe' }).click();
   await page.getByRole('button', { name: 'Usuń akceptację zaznaczonych użytkowników' }).click();
+  await expect(page.getByTestId('assignments-warning')).toContainText(`${deputy.firstName} ${deputy.lastName}`);
+  expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(0);
+  await page.getByRole('button', { name: 'Usuń akceptację mimo to' }).click();
   await expect(page.getByText('Pomyślnie usunięto akceptację wszystkich wybranych użytkowników')).toBeVisible();
   expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(1);
   expect(requests.bodies(`DELETE /v2/users/${outsider.id}/acceptance`)).toHaveLength(0);

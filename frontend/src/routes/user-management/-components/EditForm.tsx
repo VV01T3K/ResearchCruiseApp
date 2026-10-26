@@ -51,7 +51,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
   const [deletionConfirmed, setDeletionConfirmed] = React.useState(false);
   const [assignmentWarning, setAssignmentWarning] = React.useState<{
     action: 'role' | 'deactivate';
-    items: UserAssignments[];
+    items: UserAssignments[] | null;
   }>();
 
   const validationSchema = z
@@ -190,15 +190,11 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
       return true;
     }
 
-    try {
-      const items = await findActiveAssignments([user!]);
-      if (items.length === 0) {
-        return true;
-      }
-      setAssignmentWarning({ action, items });
-    } catch {
-      setSubmitError('Nie udało się sprawdzić zgłoszeń i rejsów prowadzonych przez użytkownika');
+    const items = await findActiveAssignments([user!]);
+    if (items?.length === 0) {
+      return true;
     }
+    setAssignmentWarning({ action, items });
     return false;
   }
 
