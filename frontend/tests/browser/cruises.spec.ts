@@ -198,6 +198,7 @@ test('cruise edits ask before leaving until they are saved', async ({ page, netw
   await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
   await title.fill('Inny tytuł');
   await page.getByRole('button', { name: 'Anuluj', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Odrzucić zmiany?' }).getByRole('button', { name: 'Odrzuć zmiany' }).click();
   await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
   await expect(title).toHaveValue('Nowy tytuł');
   await goHome();
@@ -226,6 +227,32 @@ test('the page behind an open modal cannot be clicked or focused', async ({ page
   await expect(dialog).toBeHidden();
   await expect(page.locator('input[name="title"]')).toHaveValue('Nowy tytuł');
   expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toHaveLength(0);
+});
+
+test('discarding cruise edits asks only when the form has changes', async ({ page, network }) => {
+  const item = cruise();
+  network.use(getGetCruiseMockHandler(item));
+  await page.goto(`/cruises/${item.id}`);
+  const title = page.locator('input[name="title"]');
+  const dialog = page.getByRole('dialog', { name: 'Odrzucić zmiany?' });
+
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
+  await expect(dialog).toHaveCount(0);
+  await title.fill('Nowy tytuł');
+  await page.getByRole('button', { name: 'Anuluj', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Wróć do edycji' }).click();
+  await expect(title).toHaveValue('Nowy tytuł');
+  await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
+  await dialog.getByRole('button', { name: 'Odrzuć zmiany' }).click();
+  await expect(title).toHaveValue(item.title ?? '');
+  await expect(page.getByRole('button', { name: 'Zapisz rejs' })).toBeVisible();
+
+  await page.goto('/cruises/new');
+  await page.locator('input[name="title"]').fill('Szkic');
+  await page.getByRole('button', { name: 'Wyczyść formularz' }).click();
+  await dialog.getByRole('button', { name: 'Odrzuć zmiany' }).click();
+  await expect(page.locator('input[name="title"]')).toHaveValue('');
 });
 
 test('a cruise edit starts from the newest save after an older response or a remount', async ({
@@ -262,6 +289,7 @@ test('a cruise edit starts from the newest save after an older response or a rem
     await save.click();
     await expect.poll(() => patches().length).toBe(1);
     await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
+    await page.getByRole('dialog', { name: 'Odrzucić zmiany?' }).getByRole('button', { name: 'Odrzuć zmiany' }).click();
     await title.fill('Nowszy');
     await save.click();
     await expect(edit).toBeVisible();
