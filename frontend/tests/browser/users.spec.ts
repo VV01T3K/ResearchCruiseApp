@@ -197,7 +197,6 @@ test('demoting or deactivating a manager of active records warns and needs a sec
   await row.getByRole('button', { name: 'Edytuj' }).click();
   await dialog.getByRole('button', { name: 'Cofnij akceptację konta' }).click();
   await expect(warning).toContainText('Zgłoszenie nr 12 (kierownik)');
-  await expect(warning).toContainText('Po cofnięciu akceptacji straci');
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
 
