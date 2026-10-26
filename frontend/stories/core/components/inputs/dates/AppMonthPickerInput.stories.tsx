@@ -1,6 +1,6 @@
 import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { expect, fn, waitFor, within } from 'storybook/test';
 
 import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
 
@@ -23,6 +23,21 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const Clearable: Story = {
+  args: { value: '2026-03-01T00:00:00.000Z' },
+  play: async ({ args, canvas, canvasElement, userEvent }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: /^03\.2026/ });
+    await userEvent.click(trigger);
+    await page.findByRole('dialog', { name: 'Wybierz miesiąc' });
+    await userEvent.click(canvas.getByRole('button', { name: 'Wyczyść miesiąc' }));
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
+    await expect(trigger).toHaveTextContent('Wybierz miesiąc');
+    await expect(trigger).toHaveFocus();
+    await expect(args.onBlur).toHaveBeenCalledOnce();
+  },
+};
 
 export const WithLabel: Story = {
   args: {
