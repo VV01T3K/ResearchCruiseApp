@@ -47,6 +47,7 @@ public static class ApplicationCruiseEndpoints
             .Entry(application.Cruise)
             .Collection(cruise => cruise.CruiseApplications)
             .Query()
+            .AsSplitQuery()
             .IncludeFormA()
             .IncludeFormAPoints()
             .LoadAsync(cancellationToken);
