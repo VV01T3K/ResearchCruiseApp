@@ -152,6 +152,47 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Single(app.Transport.Messages);
     }
 
+    [Theory]
+    [InlineData("guest")]
+    [InlineData("deactivated")]
+    public async Task Save_WhenManagerCannotLeadCruises_RejectsWithoutStoringApplication(
+        string manager
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var submitter = await TestUsers.Create(
+            app,
+            "form-a-deputy@example.invalid",
+            RoleName.CruiseManager
+        );
+        var chosen = await TestUsers.Create(
+            app,
+            "form-a-manager@example.invalid",
+            manager == "guest" ? RoleName.Guest : RoleName.CruiseManager
+        );
+        if (manager == "deactivated")
+        {
+            await app.InDatabase(async db =>
+            {
+                (await db.Users.SingleAsync(user => user.Id == chosen.Id, ct)).Accepted = false;
+                await db.SaveChangesAsync(ct);
+            });
+        }
+        using var client = await TestApplications.Login(app, submitter.Email!);
+        using var response = await client.PostAsJsonAsync(
+            "/v2/applications",
+            new FormAWriteRequest
+            {
+                Form = FormAccessTests.Draft(Guid.Parse(chosen.Id), Guid.Parse(submitter.Id)),
+                Draft = true,
+            },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        await app.InDatabase(async db => Assert.Empty(await db.CruiseApplications.ToListAsync(ct)));
+    }
+
     internal static FormAFields CompleteForm(Guid manager, Guid deputy, Guid unit) =>
         new()
         {

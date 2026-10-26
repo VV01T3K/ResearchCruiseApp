@@ -53,15 +53,19 @@ internal class FormAFactory(
                 "Użytkownik wysyłający zgłoszenie musi być kierownikiem lub jego zastępcą."
             );
 
-        if (!await identityService.UserWithIdExists(formAFields.CruiseManagerId))
-            return Error.InvalidArgument("Podany kierownik nie istnieje.");
+        if (!await identityService.IsEligibleCruiseManager(formAFields.CruiseManagerId))
+            return Error.InvalidArgument(
+                "Podany kierownik nie istnieje lub nie ma aktywnego konta z uprawnieniami kierownika."
+            );
 
         if (
             formAFields.DeputyManagerId is not null
-            && !await identityService.UserWithIdExists((Guid)formAFields.DeputyManagerId)
+            && !await identityService.IsEligibleCruiseManager((Guid)formAFields.DeputyManagerId)
         )
         {
-            return Error.InvalidArgument("Podany zastępca kierownika nie istnieje.");
+            return Error.InvalidArgument(
+                "Podany zastępca kierownika nie istnieje lub nie ma aktywnego konta z uprawnieniami kierownika."
+            );
         }
 
         formA.CruiseManagerId = formAFields.CruiseManagerId;
