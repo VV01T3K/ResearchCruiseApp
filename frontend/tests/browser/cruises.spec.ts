@@ -205,7 +205,7 @@ test('cruise edits ask before leaving until they are saved', async ({ page, netw
   await expect(dialog).toHaveCount(0);
 });
 
-test('the action bar cannot be clicked while a modal is open', async ({ page, network, requests }) => {
+test('the page behind an open modal cannot be clicked or focused', async ({ page, network, requests }) => {
   const item = cruise();
   network.use(getGetCruiseMockHandler(item), getUpdateCruiseMockHandler());
   await page.goto(`/cruises/${item.id}`);
@@ -216,6 +216,10 @@ test('the action bar cannot be clicked while a modal is open', async ({ page, ne
   await page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
   const dialog = page.getByRole('dialog', { name: 'Niezapisane zmiany' });
   await expect(dialog).toBeVisible();
+  for (const key of [...Array(8).fill('Tab'), ...Array(8).fill('Shift+Tab')]) {
+    await page.keyboard.press(key);
+    expect(await page.evaluate(() => document.getElementById('root')!.contains(document.activeElement))).toBe(false);
+  }
   // Lands on the backdrop, which only dismisses the modal.
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
   await expect(dialog).toBeHidden();
