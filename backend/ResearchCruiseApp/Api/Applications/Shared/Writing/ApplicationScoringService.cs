@@ -9,14 +9,22 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 internal class ApplicationScoringService(ApplicationDbContext dbContext)
 {
-    public async Task Evaluate(
+    public static bool IsValidMinisterialPoints(string? value) =>
+        int.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out var points)
+        && points <= EvaluationConstants.MaxMinisterialPoints;
+
+    public static bool IsValidAmount(string? value) =>
+        double.TryParse(value, CultureInfo.InvariantCulture, out var amount)
+        && amount is >= 0 and <= EvaluationConstants.MaxFinancingAmount;
+
+    public async Task<Result> Evaluate(
         CruiseApplication cruiseApplication,
         bool isDraft,
         CancellationToken cancellationToken
     )
     {
         if (cruiseApplication.FormA is null)
-            return;
+            return Result.Empty;
 
         EvaluateResearchTasks(cruiseApplication);
         EvaluateContracts(cruiseApplication);
@@ -24,30 +32,29 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
         EvaluatePublications(cruiseApplication);
         EvaluateSpubTasks(cruiseApplication);
 
-        if (!isDraft)
-            await EvaluateEffects(cruiseApplication, cancellationToken);
+        if (GetPointsTotal(cruiseApplication.FormA) > int.MaxValue)
+            return Error.InvalidArgument(
+                "Suma punktów zgłoszenia przekracza zakres, który system może policzyć. "
+                    + "Sprawdź punkty ministerialne publikacji i kwoty finansowania zadań."
+            );
+
+        return isDraft ? Result.Empty : await EvaluateEffects(cruiseApplication, cancellationToken);
     }
 
     public int GetPointsSum(CruiseApplication cruiseApplication)
     {
-        var formA = cruiseApplication.FormA;
-        if (formA is null)
-            return 0;
+        return cruiseApplication.FormA is null
+            ? 0
+            : checked((int)GetPointsTotal(cruiseApplication.FormA));
+    }
 
-        var researchTaskPoints = formA.FormAResearchTasks.Sum(formAResearchTask =>
-            formAResearchTask.Points
-        );
-        var contractsPoints = formA.FormAContracts.Sum(formAContract => formAContract.Points);
-        var publicationsPoints = formA.FormAPublications.Sum(formAPublication =>
-            formAPublication.Points
-        );
-        var spubTasksPoints = formA.FormASpubTasks.Sum(formASpubTask => formASpubTask.Points);
-
-        return researchTaskPoints
-            + contractsPoints
+    private static long GetPointsTotal(FormA formA)
+    {
+        return formA.FormAResearchTasks.Sum(formAResearchTask => (long)formAResearchTask.Points)
+            + formA.FormAContracts.Sum(formAContract => (long)formAContract.Points)
             + int.Parse(formA.UgUnitsPoints)
-            + publicationsPoints
-            + spubTasksPoints;
+            + formA.FormAPublications.Sum(formAPublication => (long)formAPublication.Points)
+            + formA.FormASpubTasks.Sum(formASpubTask => (long)formASpubTask.Points);
     }
 
     private static void EvaluateResearchTasks(CruiseApplication cruiseApplication)
@@ -75,20 +82,22 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
                     : EvaluationConstants.PointsForProjectPreparationWithoutFinancing,
 
                 ResearchTaskType.DomesticProject
-                    when !string.IsNullOrEmpty(researchTask.FinancingAmount) =>
+                    when !string.IsNullOrEmpty(researchTask.FinancingAmount) => checked(
                     EvaluationConstants.PointsPerDivisionForDomesticProject
-                        * (int)(
-                            double.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
-                            / EvaluationConstants.DomesticProjectDivision
-                        ),
+                    * (int)(
+                        double.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
+                        / EvaluationConstants.DomesticProjectDivision
+                    )
+                ),
 
                 ResearchTaskType.ForeignProject
-                    when !string.IsNullOrEmpty(researchTask.FinancingAmount) =>
+                    when !string.IsNullOrEmpty(researchTask.FinancingAmount) => checked(
                     EvaluationConstants.PointsPerDivisionForForeignProject
-                        * (int)(
-                            double.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
-                            / EvaluationConstants.ForeignProjectDivision
-                        ),
+                    * (int)(
+                        double.Parse(researchTask.FinancingAmount, CultureInfo.InvariantCulture)
+                        / EvaluationConstants.ForeignProjectDivision
+                    )
+                ),
 
                 ResearchTaskType.InternalUgProject =>
                     EvaluationConstants.PointsForInternalUgProject,
@@ -165,16 +174,22 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
         }
     }
 
-    private async Task EvaluateEffects(
+    private async Task<Result> EvaluateEffects(
         CruiseApplication cruiseApplication,
         CancellationToken cancellationToken
     )
     {
-        cruiseApplication.EffectsPoints = await dbContext
+        var effectsPoints = await dbContext
             .UserEffects.Where(userEffect =>
                 userEffect.UserId == cruiseApplication.FormA!.CruiseManagerId
             )
-            .Select(userEffect => userEffect.Points)
-            .SumAsync(cancellationToken);
+            .SumAsync(userEffect => (long)userEffect.Points, cancellationToken);
+        if (effectsPoints > int.MaxValue)
+            return Error.InvalidArgument(
+                "Suma punktów za efekty kierownika rejsu przekracza zakres, który system może policzyć."
+            );
+
+        cruiseApplication.EffectsPoints = (int)effectsPoints;
+        return Result.Empty;
     }
 }

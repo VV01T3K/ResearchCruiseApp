@@ -1,5 +1,20 @@
 import { z } from 'zod';
 
+import {
+  MAX_FINANCING_AMOUNT,
+  MAX_MINISTERIAL_POINTS,
+  MINISTERIAL_POINTS_MESSAGE,
+} from '@/lib/applications/scoreLimits';
+
+const amount = (message: string) => z.number().min(0, message).max(MAX_FINANCING_AMOUNT, message);
+const financingAmountMessage = `Kwota finansowania musi być poprawną kwotą od 0.00 do ${MAX_FINANCING_AMOUNT}`;
+const securedAmountMessage = `Kwota zabezpieczona musi być poprawną kwotą od 0.00 do ${MAX_FINANCING_AMOUNT}`;
+const ministerialPoints = z
+  .number()
+  .int(MINISTERIAL_POINTS_MESSAGE)
+  .min(0, MINISTERIAL_POINTS_MESSAGE)
+  .max(MAX_MINISTERIAL_POINTS, MINISTERIAL_POINTS_MESSAGE);
+
 export enum ResearchTaskType {
   BachelorThesis = '0',
   MasterThesis = '1',
@@ -55,17 +70,17 @@ export const ProjectResearchTaskInputSchema = z.object({
     ResearchTaskType.CommercialProject,
   ]),
   title: z.string(),
-  financingAmount: z.number().nullable(),
+  financingAmount: amount(financingAmountMessage).nullable(),
   startDate: z.string(),
   endDate: z.string(),
-  securedAmount: z.number().nullable(),
+  securedAmount: amount(securedAmountMessage).nullable(),
 });
 export const ProjectResearchTaskValuesSchema = ProjectResearchTaskInputSchema.extend({
   title: z.string().nonempty('Tytuł nie może być pusty'),
-  financingAmount: z.number().nonnegative('Kwota finansowania musi być poprawną kwotą większą lub równą 0.00'),
+  financingAmount: amount(financingAmountMessage),
   startDate: z.string().nonempty('Data rozpoczęcia nie może być pusta'),
   endDate: z.string().nonempty('Data zakończenia nie może być pusta'),
-  securedAmount: z.number().nonnegative('Kwota zabezpieczona musi być poprawną kwotą większą lub równą 0.00'),
+  securedAmount: amount(securedAmountMessage),
 });
 export type ProjectResearchTaskValues = z.input<typeof ProjectResearchTaskInputSchema>;
 
@@ -85,16 +100,13 @@ export const OwnResearchTaskInputSchema = z.object({
   title: z.string(),
   date: z.string(),
   magazine: z.string(),
-  ministerialPoints: z.number().nullable(),
+  ministerialPoints: ministerialPoints.nullable(),
 });
 export const OwnResearchTaskValuesSchema = OwnResearchTaskInputSchema.extend({
   title: z.string().nonempty('Tytuł nie może być pusty'),
   date: z.string().nonempty('Data nie może być pusta'),
   magazine: z.string().nonempty('Czasopismo nie może być puste'),
-  ministerialPoints: z
-    .number()
-    .int('Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0')
-    .nonnegative('Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0'),
+  ministerialPoints,
 });
 export type OwnResearchTaskValues = z.input<typeof OwnResearchTaskInputSchema>;
 

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { isMinisterialPoints, MINISTERIAL_POINTS_MESSAGE } from '@/lib/applications/scoreLimits';
+
 import {
   ResearchTaskValuesInputSchema,
   ResearchTaskValuesSchema,
@@ -9,7 +11,11 @@ const effectFields = {
   done: z.boolean(),
   managerConditionMet: z.boolean(),
   deputyConditionMet: z.boolean(),
-  publicationMinisterialPoints: z.string().nullable().optional(),
+  publicationMinisterialPoints: z
+    .string()
+    .refine((value) => value === '' || isMinisterialPoints(value), MINISTERIAL_POINTS_MESSAGE)
+    .nullable()
+    .optional(),
 };
 
 const withEffectFields = (

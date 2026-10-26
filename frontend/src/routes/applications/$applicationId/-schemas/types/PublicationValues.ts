@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { MAX_MINISTERIAL_POINTS, MINISTERIAL_POINTS_MESSAGE } from '@/lib/applications/scoreLimits';
+
 export enum PublicationCategory {
   Subject = 'subject',
   Postscript = 'postscript',
@@ -24,7 +26,11 @@ export const PublicationValuesInputSchema = z.object({
   title: z.string(),
   magazine: z.string(),
   year: z.number().nullable(),
-  ministerialPoints: z.number(),
+  ministerialPoints: z
+    .number()
+    .int(MINISTERIAL_POINTS_MESSAGE)
+    .min(0, MINISTERIAL_POINTS_MESSAGE)
+    .max(MAX_MINISTERIAL_POINTS, MINISTERIAL_POINTS_MESSAGE),
 });
 
 export const PublicationValuesSchema = PublicationValuesInputSchema.extend({
@@ -35,7 +41,6 @@ export const PublicationValuesSchema = PublicationValuesInputSchema.extend({
   title: z.string().nonempty('Tytuł jest wymagany'),
   magazine: z.string().nonempty('Czasopismo jest wymagane'),
   year: z.number({ error: 'Rok jest wymagany' }).int().positive('Rok jest wymagany'),
-  ministerialPoints: z.number().nonnegative('Punkty muszą być liczbą nieujemną'),
 });
 
 export type PublicationValues = z.input<typeof PublicationValuesInputSchema>;

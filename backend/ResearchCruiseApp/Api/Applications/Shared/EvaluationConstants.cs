@@ -26,4 +26,9 @@ public static class EvaluationConstants
     public const int PointsForDoctoralThesisEffect = 200;
     public const int PointsForProjectPreparationEffect = 100;
     public const int ProjectPreparationPublicationMinisterialPointsThreshold = 100;
+
+    // Score-safe input bounds: scores are stored and summed as int.
+    public const int MaxMinisterialPoints = int.MaxValue;
+    public const double MaxFinancingAmount =
+        (double)(int.MaxValue / PointsPerDivisionForForeignProject) * ForeignProjectDivision;
 }

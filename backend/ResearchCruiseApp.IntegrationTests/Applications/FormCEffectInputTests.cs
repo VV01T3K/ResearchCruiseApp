@@ -89,6 +89,52 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
+    [Theory]
+    [InlineData(true, "2147483648", 1)]
+    [InlineData(true, "1.5", 1)]
+    [InlineData(true, "-1", 1)]
+    [InlineData(true, "abc", 1)]
+    [InlineData(false, "2147483647", 3)]
+    public async Task Write_WhenPointsLeaveScoreSafeRange_RejectsBeforeWriting(
+        bool draft,
+        string points,
+        int effects
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var application = await TestApplications.Create(app, CruiseApplicationStatus.Undertaken);
+        using var client = await TestApplications.Login(app, application.OwnerEmail);
+        var fields = Fields(points, "true", "true", "", ResearchTaskType.OwnResearchTask);
+        for (var index = 1; index < effects; index++)
+            fields.ResearchTasksEffects.Add(
+                Fields(
+                    points,
+                    "true",
+                    "true",
+                    "",
+                    ResearchTaskType.OwnResearchTask
+                ).ResearchTasksEffects[0]
+            );
+        using var response = await Write(
+            client,
+            $"/v2/applications/{application.Id}/form-c",
+            fields,
+            draft
+        );
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        await app.InDatabase(async db =>
+        {
+            Assert.Equal(
+                CruiseApplicationStatus.Undertaken,
+                (await db.CruiseApplications.SingleAsync(ct)).Status
+            );
+            Assert.Empty(await db.FormsC.ToListAsync(ct));
+            Assert.Empty(await db.ResearchTaskEffects.ToListAsync(ct));
+            Assert.Empty(await db.UserEffects.ToListAsync(ct));
+        });
+    }
+
     private static FormCFields Fields(
         string? points,
         string done,

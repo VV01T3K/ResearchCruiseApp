@@ -13,7 +13,7 @@ internal class CruiseEffectService(
     UniqueFormFieldResolver formsFieldsService
 )
 {
-    public async Task EvaluateEffects(
+    public async Task<Result> EvaluateEffects(
         CruiseApplication cruiseApplication,
         CancellationToken cancellationToken
     )
@@ -24,7 +24,7 @@ internal class CruiseEffectService(
             );
 
         if (cruiseApplication.FormC is null)
-            return;
+            return Result.Empty;
 
         var cruiseManagerId = cruiseApplication.FormA.CruiseManagerId;
         var deputyManagerId = cruiseApplication.FormA.DeputyManagerId;
@@ -51,6 +51,24 @@ internal class CruiseEffectService(
                 cancellationToken
             );
         }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+        var userIds = new[] { cruiseManagerId, deputyManagerId };
+        if (
+            await dbContext
+                .UserEffects.Where(userEffect => userIds.Contains(userEffect.UserId))
+                .GroupBy(userEffect => userEffect.UserId)
+                .AnyAsync(
+                    userEffects =>
+                        userEffects.Sum(userEffect => (long)userEffect.Points) > int.MaxValue,
+                    cancellationToken
+                )
+        )
+            return Error.InvalidArgument(
+                "Suma punktów za efekty kierownika lub zastępcy przekracza zakres, który system może policzyć."
+            );
+
+        return Result.Empty;
     }
 
     public async Task DeleteResearchTasksEffects(FormC formC, CancellationToken cancellationToken)

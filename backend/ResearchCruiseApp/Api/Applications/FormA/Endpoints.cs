@@ -75,7 +75,13 @@ public static class FormAEndpoints
 
         var application = applications.Create(formAResult.Data!, request.Form.Note, request.Draft);
         await dbContext.CruiseApplications.AddAsync(application, cancellationToken);
-        await cruiseApplicationEvaluator.Evaluate(application, request.Draft, cancellationToken);
+        var evaluation = await cruiseApplicationEvaluator.Evaluate(
+            application,
+            request.Draft,
+            cancellationToken
+        );
+        if (!evaluation.IsSuccess)
+            return evaluation.Error!.ToProblemHttpResult();
         await dbContext.SaveChangesAsync(cancellationToken);
 
         if (!request.Draft)
@@ -164,7 +170,13 @@ public static class FormAEndpoints
         }
         application.FormA = formAResult.Data!;
 
-        await cruiseApplicationEvaluator.Evaluate(application, request.Draft, cancellationToken);
+        var evaluation = await cruiseApplicationEvaluator.Evaluate(
+            application,
+            request.Draft,
+            cancellationToken
+        );
+        if (!evaluation.IsSuccess)
+            return evaluation.Error!.ToProblemHttpResult();
 
         // Persist replacement references before cleanup counts shared child rows.
         // The surrounding transaction still rolls back the complete submission on failure.

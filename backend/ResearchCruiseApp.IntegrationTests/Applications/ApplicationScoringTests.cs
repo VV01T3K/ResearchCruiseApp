@@ -357,6 +357,50 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         await AssertSummary(app, client, id, 100);
     }
 
+    [Theory]
+    [InlineData("2684354500000", "2147483647", HttpStatusCode.BadRequest)]
+    [InlineData("2684354500000", "47", HttpStatusCode.Created)]
+    [InlineData("2684354500001", "0", HttpStatusCode.BadRequest)]
+    [InlineData("Infinity", "0", HttpStatusCode.BadRequest)]
+    [InlineData("0", "2147483648", HttpStatusCode.BadRequest)]
+    [InlineData("0", "1.5", HttpStatusCode.BadRequest)]
+    [InlineData("0", "-1", HttpStatusCode.BadRequest)]
+    [InlineData("0", "abc", HttpStatusCode.BadRequest)]
+    public async Task Bounds_WhenDraftScoreLeavesIntRange_RejectsBeforeWriting(
+        string financing,
+        string points,
+        HttpStatusCode expected
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var owner = await TestUsers.Create(app, "scoring@example.invalid", RoleName.CruiseManager);
+        using var client = await TestApplications.Login(app, owner.Email!);
+        var form = FormAccessTests.Draft(Guid.Parse(owner.Id));
+        form.ResearchTasks.Add(new ResearchTaskFields { Type = "5", FinancingAmount = financing });
+        form.Publications.Add(
+            new PublicationFields { Category = "postscript", MinisterialPoints = points }
+        );
+        using var response = await client.PostAsJsonAsync(
+            "/v2/applications",
+            new FormAWriteRequest { Form = form, Draft = true },
+            ct
+        );
+        Assert.Equal(expected, response.StatusCode);
+        if (expected == HttpStatusCode.Created)
+        {
+            Guid id = default;
+            await app.InDatabase(async db => id = (await db.CruiseApplications.SingleAsync(ct)).Id);
+            await AssertSummary(app, client, id, int.MaxValue);
+            return;
+        }
+        await app.InDatabase(async db =>
+        {
+            Assert.Empty(await db.CruiseApplications.ToListAsync(ct));
+            Assert.Empty(await db.Publications.ToListAsync(ct));
+        });
+    }
+
     private static async Task<Guid> CreateDraft(
         TestApplication app,
         HttpClient client,

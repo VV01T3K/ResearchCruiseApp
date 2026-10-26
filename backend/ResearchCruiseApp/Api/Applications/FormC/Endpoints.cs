@@ -113,7 +113,11 @@ public static class FormCEndpoints
             await formsService.DeleteFormC(oldFormC, cancellationToken);
         }
         if (!request.Draft)
-            await effectsService.EvaluateEffects(application, cancellationToken);
+        {
+            var evaluation = await effectsService.EvaluateEffects(application, cancellationToken);
+            if (!evaluation.IsSuccess)
+                return evaluation.Error!.ToProblemHttpResult();
+        }
 
         return TypedResults.Created();
     }

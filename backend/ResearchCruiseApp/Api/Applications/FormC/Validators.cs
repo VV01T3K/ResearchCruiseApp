@@ -7,6 +7,17 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
 {
     public FormCWriteRequestValidator(FileInspector fileInspector)
     {
+        RuleForEach(request => request.Form.ResearchTasksEffects)
+            .Must(effectFields =>
+                string.IsNullOrEmpty(effectFields.PublicationMinisterialPoints)
+                || ApplicationScoringService.IsValidMinisterialPoints(
+                    effectFields.PublicationMinisterialPoints
+                )
+            )
+            .WithMessage(
+                $"Punkty ministerialne publikacji w efektach zadań muszą być liczbą całkowitą od 0 do {EvaluationConstants.MaxMinisterialPoints}."
+            );
+
         When(
             request => !request.Draft,
             () =>

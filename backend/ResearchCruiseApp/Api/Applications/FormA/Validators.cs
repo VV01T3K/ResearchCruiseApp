@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using FluentValidation;
+﻿using FluentValidation;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 
@@ -15,6 +14,8 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
 
         AddDraftValidation();
         AddNonDraftValidation();
+        AddResearchTasksCommonValidation();
+        AddPublicationPointsValidation();
     }
 
     private void AddDraftValidation()
@@ -61,7 +62,6 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     {
         AddPeriodsCommonValidation();
         AddPermissionsCommonValidation();
-        AddResearchTasksCommonValidation();
         AddContractsCommonValidation();
         AddPublicationsCommonValidation();
     }
@@ -415,19 +415,22 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             .Must(researchTaskFields =>
                 (
                     string.IsNullOrEmpty(researchTaskFields.FinancingAmount)
-                    || IsNonNegativeDouble(researchTaskFields.FinancingAmount)
+                    || ApplicationScoringService.IsValidAmount(researchTaskFields.FinancingAmount)
                 )
                 && (
                     string.IsNullOrEmpty(researchTaskFields.SecuredAmount)
-                    || IsNonNegativeDouble(researchTaskFields.SecuredAmount)
+                    || ApplicationScoringService.IsValidAmount(researchTaskFields.SecuredAmount)
                 )
                 && (
                     string.IsNullOrEmpty(researchTaskFields.MinisterialPoints)
-                    || uint.TryParse(researchTaskFields.MinisterialPoints, out _)
+                    || ApplicationScoringService.IsValidMinisterialPoints(
+                        researchTaskFields.MinisterialPoints
+                    )
                 )
             )
             .WithMessage(
-                "Podana wartość liczbowa w szczegółach zadania jest w niepoprawnym formacie."
+                "Podana wartość liczbowa w szczegółach zadania jest w niepoprawnym formacie lub poza "
+                    + "dopuszczalnym zakresem."
             );
     }
 
@@ -543,11 +546,20 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                 || publicationFields.Category == PublicationCategory.Subject
             )
             .WithMessage("Należy podać poprawną kategorię publikacji");
+    }
 
+    private void AddPublicationPointsValidation()
+    {
         RuleForEach(request => request.Form.Publications)
-            .Must(publicationFields => uint.TryParse(publicationFields.MinisterialPoints, out _))
+            .Must(
+                (request, publicationFields) =>
+                    (request.Draft && string.IsNullOrEmpty(publicationFields.MinisterialPoints))
+                    || ApplicationScoringService.IsValidMinisterialPoints(
+                        publicationFields.MinisterialPoints
+                    )
+            )
             .WithMessage(
-                "Podano liczbę punktów ministerialnych publikacji w niepoprawnym formacie."
+                $"Punkty ministerialne publikacji muszą być liczbą całkowitą od 0 do {EvaluationConstants.MaxMinisterialPoints}."
             );
     }
 
@@ -567,12 +579,6 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
         RuleFor(request => request.Form.SupervisorEmail)
             .Must(email => !string.IsNullOrEmpty(email))
             .WithMessage("Należy podać adres e-mail przełożonego.");
-    }
-
-    private static bool IsNonNegativeDouble(string? value)
-    {
-        return double.TryParse(value, CultureInfo.InvariantCulture, out var valueDouble)
-            && valueDouble >= 0;
     }
 
     private static bool IsValidShipUsage(string? shipUsage)

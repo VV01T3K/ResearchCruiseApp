@@ -350,6 +350,45 @@ describe('drafts', () => {
     ]);
   });
 
+  it('limits points and amounts to the score-safe bound in a draft', () => {
+    const draftA = (points: number, amount: number) => ({
+      ...formADefaultValues,
+      cruiseManagerId: manager.id,
+      researchTasks: [
+        { type: '5', title: '', financingAmount: amount, startDate: '', endDate: '', securedAmount: null },
+        { type: '10', title: '', date: '', magazine: '', ministerialPoints: points },
+      ],
+    });
+    const draftC = (points: string) => ({
+      ...formCDefaultValues,
+      researchTasksEffects: [
+        { type: '11', description: '', done: false, managerConditionMet: false, deputyConditionMet: false },
+        {
+          type: '10',
+          title: '',
+          date: '',
+          magazine: '',
+          ministerialPoints: null,
+          done: true,
+          managerConditionMet: false,
+          deputyConditionMet: false,
+          publicationMinisterialPoints: points,
+        },
+      ],
+    });
+    expect(getFormADraftFieldsSchema().safeParse(draftA(2147483647, 2684354500000)).success).toBe(true);
+    expect(getFormADraftFieldsSchema().safeParse(draftA(2147483648, 2684354500000))).toMatchObject(
+      issueAt(['researchTasks', 1, 'ministerialPoints'])
+    );
+    expect(getFormADraftFieldsSchema().safeParse(draftA(0, 2684354500001))).toMatchObject(
+      issueAt(['researchTasks', 0, 'financingAmount'])
+    );
+    expect(getFormCDraftFieldsSchema().safeParse(draftC('2147483647')).success).toBe(true);
+    expect(getFormCDraftFieldsSchema().safeParse(draftC('2147483648'))).toMatchObject(
+      issueAt(['researchTasksEffects', 1, 'publicationMinisterialPoints'])
+    );
+  });
+
   it('still limits cruise-day comments in a draft', () => {
     const day = {
       number: 0,

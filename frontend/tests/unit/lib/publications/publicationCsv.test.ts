@@ -53,6 +53,11 @@ describe('parsePublicationCsv', () => {
       'Nie udało się odczytać publikacji nr 2 z pliku CSV.',
     ],
     ['an unclosed quote', `${HEADER}\n1;A;"T;M;2026;5`, 'Sprawdź liczbę kolumn i zamknięcie cudzysłowów.'],
+    [
+      'points over the score-safe bound',
+      `${HEADER}\n1;A;T;M;2026;5\n2;B;T;M;2026;2147483648`,
+      'Publikacja nr 2: Punkty',
+    ],
   ])('rejects %s', (_, csv, message) => {
     expect(() => parsePublicationCsv(csv)).toThrow(PublicationCsvError);
     expect(() => parsePublicationCsv(csv)).toThrow(message);

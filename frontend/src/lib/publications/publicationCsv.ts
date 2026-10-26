@@ -1,6 +1,7 @@
 import Papa from 'papaparse';
 
 import type { ImportPublicationRequest } from '@/api/generated/schemas';
+import { isMinisterialPoints, MINISTERIAL_POINTS_MESSAGE } from '@/lib/applications/scoreLimits';
 
 const COLUMNS = {
   doi: 'Numer DOI',
@@ -53,8 +54,11 @@ export function parsePublicationCsv(text: string): ImportPublicationRequest[] {
     throw new PublicationCsvError('Plik CSV nie zawiera żadnych publikacji.');
   }
 
-  return data.map((row) => {
+  return data.map((row, index) => {
     const value = (column: string) => row[column]?.trim() || '-';
+    if (!isMinisterialPoints(value(COLUMNS.ministerialPoints))) {
+      throw new PublicationCsvError(`Publikacja nr ${index + 1}: ${MINISTERIAL_POINTS_MESSAGE}.`);
+    }
     return {
       category: 'subject',
       doi: value(COLUMNS.doi),
