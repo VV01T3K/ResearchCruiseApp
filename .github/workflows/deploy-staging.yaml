@@ -83,6 +83,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/staging' && vars.STAGING_DEPLOY_ENABLED == 'true'
+    environment:
+      name: staging
+      url: https://cruise.wsiwiec.com
     permissions:
       contents: read
     timeout-minutes: 40
