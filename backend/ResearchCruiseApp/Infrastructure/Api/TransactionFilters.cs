@@ -35,6 +35,8 @@ internal sealed class SerializableTransactionFilter(ApplicationDbContext dbConte
                 IsolationLevel.Serializable,
                 cancellationToken
             );
+            // A deadlock aborts the whole transaction, so rolling back to EF's savepoint would only log an error.
+            dbContext.Database.AutoSavepointsEnabled = false;
 
             var result = await next(context);
 
