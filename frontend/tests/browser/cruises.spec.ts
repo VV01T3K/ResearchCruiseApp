@@ -205,6 +205,67 @@ test('cruise edits ask before leaving until they are saved', async ({ page, netw
   await expect(dialog).toHaveCount(0);
 });
 
+test('a cruise edit starts from the newest save after an older response or a remount', async ({
+  page,
+  network,
+  requests,
+}) => {
+  const item = cruise();
+  const olderResponse = Promise.withResolvers<void>();
+  const refetch = Promise.withResolvers<void>();
+  let server = item;
+  let gets = 0;
+  network.use(
+    getGetAvailableCruiseManagersMockHandler([admin, deputy, outsider]),
+    getGetCruiseMockHandler(async () => {
+      if (++gets > 1) await refetch.promise;
+      return server;
+    }),
+    getUpdateCruiseMockHandler(async ({ request }) => {
+      const { title } = (await request.json()) as CruiseResponse;
+      server = { ...server, title };
+      if (title === 'Starszy') await olderResponse.promise;
+    })
+  );
+  await page.goto(`/cruises/${item.id}`);
+  const title = page.locator('input[name="title"]');
+  const edit = page.getByRole('button', { name: 'Edytuj', exact: true });
+  const save = page.getByRole('button', { name: 'Zapisz rejs' });
+  const patches = () => requests.bodies(`PATCH /v2/cruises/${item.id}`);
+
+  try {
+    await edit.click();
+    await title.fill('Starszy');
+    await save.click();
+    await expect.poll(() => patches().length).toBe(1);
+    await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
+    await title.fill('Nowszy');
+    await save.click();
+    await expect(edit).toBeVisible();
+    olderResponse.resolve();
+    await expect.poll(() => gets).toBe(3);
+
+    await edit.click();
+    await page.getByRole('combobox', { name: 'Zastępca kierownika głównego' }).click();
+    await page.getByRole('option', { name: `${outsider.firstName} ${outsider.lastName}` }).click();
+    await save.click();
+    await expect(edit).toBeVisible();
+    expect(patches().at(-1)).toEqual(expect.objectContaining({ title: 'Nowszy', deputyManagerId: outsider.id }));
+
+    await page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
+    await expect(page).toHaveURL('/');
+    await page.goBack();
+    // The cached cruise predates the saves, so editing waits for the refetch.
+    await expect(edit).toBeDisabled();
+    refetch.resolve();
+    await edit.click();
+    await expect(title).toHaveValue('Nowszy');
+  } finally {
+    olderResponse.resolve();
+    refetch.resolve();
+  }
+});
+
 test('a cruise is confirmed, completed and reverted step by step, offering the actions of each status', async ({
   page,
   network,

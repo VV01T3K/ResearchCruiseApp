@@ -3,7 +3,7 @@ import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
-import { useQueryClient } from '@tanstack/react-query';
+import { useIsMutating, useQueryClient } from '@tanstack/react-query';
 import { evaluate } from '@tanstack/react-form';
 import {
   ArrowClockwiseIcon,
@@ -27,12 +27,14 @@ import { CruiseFormSchema, type CruiseFormValues, mapCruiseToValues } from '@/ro
 import {
   getGetCruiseQueryKey,
   getGetCruisesQueryKey,
+  getUpdateCruiseMutationKey,
   useCompleteCruise,
   useConfirmCruise,
   useDeleteCruise,
   useGetCruiseSuspense,
   useRemoveCruiseConfirmation,
   useUpdateCruise,
+  type UpdateCruiseMutationVariables,
 } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
 
@@ -69,17 +71,29 @@ function CruiseDetailsPage() {
   const [isConfirmEndModalOpen, setIsConfirmEndModalOpen] = React.useState(false);
   const [isConfirmRevertModalOpen, setIsConfirmRevertModalOpen] = React.useState(false);
   const [saved, setSaved] = React.useState<{ cruise: CruiseResponse; values: CruiseFormValues }>();
+  const latestSubmission = React.useRef(0);
+  const lastAppliedSubmission = React.useRef(0);
+  const isSavedBaseline = saved?.cruise === cruiseQuery.data;
+  const isUpdating =
+    useIsMutating({
+      mutationKey: getUpdateCruiseMutationKey(),
+      predicate: ({ state }) => (state.variables as UpdateCruiseMutationVariables | undefined)?.cruiseId === cruiseId,
+    }) > 0;
+  const isEditBlocked = !isSavedBaseline && (isUpdating || cruiseQuery.isFetching || cruiseQuery.isError);
 
   const form = useAppForm({
-    defaultValues: saved?.cruise === cruiseQuery.data ? saved.values : mapCruiseToValues(cruiseQuery.data),
+    defaultValues: isSavedBaseline ? saved.values : mapCruiseToValues(cruiseQuery.data),
     validationLogic: formValidationLogic,
     validators: { onDynamic: CruiseFormSchema },
     onSubmitInvalid: () => {
       navigateToFirstError({ toast: true });
     },
     onSubmit: async ({ value }) => {
+      const submission = ++latestSubmission.current;
       try {
         await updateCruiseMutation.mutateAsync({ cruiseId, data: CruiseFormSchema.parse(value) });
+        if (submission < lastAppliedSubmission.current) return;
+        lastAppliedSubmission.current = submission;
         setSaved({ cruise: cruiseQuery.data, values: value });
         if (evaluate(form.state.values, value)) {
           form.reset(value);
@@ -134,6 +148,7 @@ function CruiseDetailsPage() {
               className="w-36 !justify-center gap-4 lg:w-64"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
+              disabled={isEditBlocked}
             >
               <PencilSimpleIcon className="h-4 w-4" />
               Edytuj
@@ -154,6 +169,7 @@ function CruiseDetailsPage() {
               className="w-32 !justify-center gap-4 lg:w-40"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
+              disabled={isEditBlocked}
             >
               <PencilSimpleIcon className="h-4 w-4" />
               Edytuj
