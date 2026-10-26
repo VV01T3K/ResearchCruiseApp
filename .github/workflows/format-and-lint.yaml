@@ -3,8 +3,6 @@ name: Format & lint checks
 on:
   push:
     branches-ignore: [staging, main]
-    paths-ignore:
-      - docs
   workflow_call:
 
 concurrency:
@@ -40,7 +38,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Check for frontend changes
+        id: changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ../.github/scripts/changes.sh frontend
+
       - name: Setup Vite+
+        if: steps.changes.outputs.skip != 'true'
         uses: voidzero-dev/setup-vp@v1.22.0
         with:
           working-directory: frontend
@@ -49,15 +54,19 @@ jobs:
           cache: true
 
       - name: Install dependencies
+        if: steps.changes.outputs.skip != 'true'
         run: vp install --frozen-lockfile
 
       - name: Run checks
+        if: steps.changes.outputs.skip != 'true'
         run: vp check
 
       - name: Run unit tests
+        if: steps.changes.outputs.skip != 'true'
         run: vp run test:unit
 
       - name: Check generated API
+        if: steps.changes.outputs.skip != 'true'
         run: |
           vp run gen
           git diff --exit-code -- src/api/generated
@@ -78,12 +87,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Check for backend changes
+        id: changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ../.github/scripts/changes.sh backend
+
       - name: Setup .NET
+        if: steps.changes.outputs.skip != 'true'
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '10.0.x'
 
       - name: Setup Vite+
+        if: steps.changes.outputs.skip != 'true'
         uses: voidzero-dev/setup-vp@v1.22.0
         with:
           working-directory: backend
@@ -92,16 +109,21 @@ jobs:
           cache: true
 
       - name: Restore .NET tools
+        if: steps.changes.outputs.skip != 'true'
         run: dotnet tool restore
 
       - name: Restore dependencies
+        if: steps.changes.outputs.skip != 'true'
         run: dotnet restore ResearchCruiseApp.slnx
 
       - name: Run checks
+        if: steps.changes.outputs.skip != 'true'
         run: vp run check
 
       - name: Check OpenAPI spec
+        if: steps.changes.outputs.skip != 'true'
         run: git diff --exit-code -- '*openapi*'
 
       - name: Run tests
+        if: steps.changes.outputs.skip != 'true'
         run: vp run test
