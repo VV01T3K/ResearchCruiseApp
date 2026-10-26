@@ -205,6 +205,25 @@ test('cruise edits ask before leaving until they are saved', async ({ page, netw
   await expect(dialog).toHaveCount(0);
 });
 
+test('the action bar cannot be clicked while a modal is open', async ({ page, network, requests }) => {
+  const item = cruise();
+  network.use(getGetCruiseMockHandler(item), getUpdateCruiseMockHandler());
+  await page.goto(`/cruises/${item.id}`);
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await page.locator('input[name="title"]').fill('Nowy tytuł');
+  const save = page.getByRole('button', { name: 'Zapisz rejs' });
+  const box = (await save.boundingBox())!;
+  await page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Niezapisane zmiany' });
+  await expect(dialog).toBeVisible();
+  // Lands on the backdrop, which only dismisses the modal.
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(dialog).toBeHidden();
+  await save.click();
+  await expect(page.getByRole('button', { name: 'Edytuj', exact: true })).toBeVisible();
+  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toHaveLength(1);
+});
+
 test('a cruise edit starts from the newest save after an older response or a remount', async ({
   page,
   network,

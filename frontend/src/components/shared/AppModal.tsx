@@ -14,6 +14,17 @@ type Props = {
   dismissible?: boolean;
 };
 export function AppModal({ title, children, isOpen, onClose, className, dismissible = true }: Props) {
+  React.useEffect(() => {
+    const root = document.getElementById('root');
+    if (!isOpen || !root || root.inert) {
+      return;
+    }
+    root.inert = true;
+    return () => {
+      root.inert = false;
+    };
+  }, [isOpen]);
+
   return (
     <Dialog.Root open={isOpen} onOpenChange={(open) => !open && dismissible && onClose()}>
       <Dialog.Portal>
