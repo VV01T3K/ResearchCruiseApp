@@ -31,8 +31,8 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
         var application = await TestApplications.Create(app, EditableStatus(form));
         using var client = await TestApplications.Login(app, application.OwnerEmail);
         var route = $"/v2/applications/{application.Id}/form-{form}";
-        string[] inputs = ["Put", "Collect", "0", "1", " 1 ", "Put, Collect"];
-        string[] expected = ["Put", "Collect", "Put", "Collect", "Collect", "Collect"];
+        string[] inputs = ["Put", "Collect", "0", "1", " 1 "];
+        string[] expected = ["Put", "Collect", "Put", "Collect", "Collect"];
         using var response = await Write(client, route, Fields(form, inputs), draft);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         using var read = JsonDocument.Parse(await Read(client, route));
@@ -97,6 +97,7 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
     [InlineData("b", "2147483648")]
     [InlineData("c", "bogus")]
     [InlineData("c", "2")]
+    [InlineData("b", "Put, Collect")]
     public async Task Write_WhenActionIsInvalid_ReturnsBadRequest(string form, string action)
     {
         await using var app = new TestApplication(fixture.ConnectionString);

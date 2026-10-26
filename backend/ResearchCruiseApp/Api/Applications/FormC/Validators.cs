@@ -12,6 +12,7 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
             .Must(equipmentFields =>
                 Enum.TryParse<ResearchEquipmentAction>(equipmentFields.Action, out var action)
                 && Enum.IsDefined(action)
+                && !equipmentFields.Action.Contains(',')
             )
             .WithMessage("Podana czynność dla sprzętu jest nieprawidłowa.");
 
