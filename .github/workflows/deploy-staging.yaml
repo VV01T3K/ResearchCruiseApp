@@ -3,10 +3,10 @@ name: Build staging images & deploy
 on:
   push:
     branches: [staging]
-    paths-ignore: ["docs/**", "*.md", ".gitignore"]
+    paths-ignore: ["docs/**", "**.md", ".gitignore"]
   pull_request:
     branches: [staging]
-    paths-ignore: ["docs/**", "*.md", ".gitignore"]
+    paths-ignore: ["docs/**", "**.md", ".gitignore"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

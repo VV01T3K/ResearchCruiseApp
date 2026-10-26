@@ -39,7 +39,7 @@ A release takes two steps:
 
 The commit must be on `staging`, and the latest CI run of each workflow on that exact commit must
 pass, including the frontend, backend and dependency checks, both image builds and the Playwright
-tests. A commit that only changes paths the image builds ignore (`docs/`, root `*.md`, `.gitignore`)
+tests. A commit that only changes paths the image builds ignore (`docs/`, `*.md`, `.gitignore`)
 takes its checks and image builds from its parents, back to the last commit that changed anything
 else, but its own Playwright run must pass. A commit whose CI failed or was cancelled cannot be
 released, and neither can one from before this release process (without `build-production.yaml`).
