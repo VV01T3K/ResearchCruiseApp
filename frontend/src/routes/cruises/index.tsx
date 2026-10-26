@@ -13,7 +13,7 @@ import { Calendar } from './-components/Calendar';
 import { ExportForm } from './-components/ExportForm';
 import { TableView } from './-components/TableView';
 import { useAutoPlanCruises, useDeleteCruise, useGetCruisesSuspense } from '@/api/generated/endpoints/cruises.gen';
-import type { CruiseResponse } from '@/api/generated/schemas';
+import type { AutoPlanResponse, CruiseResponse } from '@/api/generated/schemas';
 
 export const Route = createFileRoute('/cruises/')({
   component: CruisesPage,
@@ -27,18 +27,22 @@ function CruisesPage() {
 
   const [cruiseSelectedForDeletion, setCruiseSelectedForDeletion] = useState<CruiseResponse | undefined>(undefined);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [autoPlanResult, setAutoPlanResult] = useState<AutoPlanResponse | undefined>(undefined);
 
   async function autoAddCruises() {
-    await autoAddCruisesMutation.mutateAsync(undefined, {
-      onSuccess: () => {
-        toast.success('Rejsy zostały dodane automatycznie');
-      },
-    });
+    const result = await autoAddCruisesMutation.mutateAsync();
+    if (result.skipped.length > 0) {
+      setAutoPlanResult(result);
+    } else if (result.plannedCount > 0) {
+      toast.success(`Dodano automatycznie rejsy: ${result.plannedCount}.`);
+    } else {
+      toast.success('Brak zaakceptowanych zgłoszeń do zaplanowania.');
+    }
   }
 
   const buttons = [
     <AppGuard key="autoAddCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
-      <AppButton onClick={autoAddCruises} variant="primaryOutline">
+      <AppButton onClick={autoAddCruises} variant="primaryOutline" disabled={autoAddCruisesMutation.isPending}>
         Dodaj rejsy automatycznie
       </AppButton>
     </AppGuard>,
@@ -101,6 +105,21 @@ function CruisesPage() {
             Anuluj
           </AppButton>
         </div>
+      </AppModal>
+
+      <AppModal
+        title="Wynik automatycznego planowania"
+        isOpen={!!autoPlanResult}
+        onClose={() => setAutoPlanResult(undefined)}
+      >
+        <p>Dodano rejsy: {autoPlanResult?.plannedCount}. Pominięte zgłoszenia:</p>
+        <ul className="mt-2 list-disc pl-6">
+          {autoPlanResult?.skipped.map((application) => (
+            <li key={application.applicationId}>
+              Nr {application.applicationNumber}: {application.reason}
+            </li>
+          ))}
+        </ul>
       </AppModal>
 
       <AppModal title={`Eksportuj rejsy`} isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)}>

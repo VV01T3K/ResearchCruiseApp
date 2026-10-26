@@ -335,15 +335,25 @@ test('a rejected status undo shows the server reason and keeps the cruise status
   await expect(page.getByText('Zakończony', { exact: true })).toBeVisible();
 });
 
-test('auto-planning adds the planned cruises to the list', async ({ page, network, requests }) => {
+test('auto-planning lists the skipped applications', async ({ page, network, requests }) => {
   const planned = { ...cruise(), id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', number: '2026/2', title: 'Zaplanowany' };
+  const skipped = {
+    applicationId: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+    applicationNumber: '2026/7',
+    reason: 'Termin koliduje z blokadą statku.',
+  };
   network.use(
     getGetCruisesMockHandler([cruise()]),
-    getAutoPlanCruisesMockHandler(() => network.use(getGetCruisesMockHandler([cruise(), planned])))
+    getAutoPlanCruisesMockHandler(() => {
+      network.use(getGetCruisesMockHandler([cruise(), planned]));
+      return { plannedCount: 1, skipped: [skipped] };
+    })
   );
   await page.goto('/cruises');
   await page.getByRole('button', { name: 'Dodaj rejsy automatycznie' }).click();
-  await expect(page.getByText('Rejsy zostały dodane automatycznie')).toBeVisible();
+  const dialog = page.getByRole('dialog', { name: 'Wynik automatycznego planowania' });
+  await expect(dialog.getByText(`Nr ${skipped.applicationNumber}: ${skipped.reason}`)).toBeVisible();
+  await dialog.getByRole('button', { name: 'Zamknij' }).click();
   await expect(page.getByRole('row').filter({ hasText: planned.title })).toBeVisible();
   expect(requests.bodies('POST /v2/cruises/auto-plan')).toHaveLength(1);
 });
