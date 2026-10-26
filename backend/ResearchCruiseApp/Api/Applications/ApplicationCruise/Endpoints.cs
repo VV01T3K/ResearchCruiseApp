@@ -43,6 +43,14 @@ public static class ApplicationCruiseEndpoints
             return TypedResults.NotFound();
         }
 
+        await dbContext
+            .Entry(application.Cruise)
+            .Collection(cruise => cruise.CruiseApplications)
+            .Query()
+            .IncludeFormA()
+            .IncludeFormAPoints()
+            .LoadAsync(cancellationToken);
+
         return TypedResults.Ok(
             await ApplicationCruiseResponse.From(application.Cruise, identityService, evaluator)
         );
