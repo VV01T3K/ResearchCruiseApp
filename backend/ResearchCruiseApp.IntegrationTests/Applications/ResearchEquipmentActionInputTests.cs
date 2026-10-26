@@ -93,6 +93,20 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
         Assert.Empty(app.Transport.Messages);
     }
 
+    [Theory]
+    [InlineData("b", "2147483648")]
+    [InlineData("c", "bogus")]
+    [InlineData("c", "2")]
+    public async Task Write_WhenActionIsInvalid_ReturnsBadRequest(string form, string action)
+    {
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var application = await TestApplications.Create(app, EditableStatus(form));
+        using var client = await TestApplications.Login(app, application.OwnerEmail);
+        var route = $"/v2/applications/{application.Id}/form-{form}";
+        using var response = await Write(client, route, Fields(form, [action]), draft: true);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
     private static CruiseApplicationStatus EditableStatus(string form) =>
         form == "b" ? CruiseApplicationStatus.FormBRequired : CruiseApplicationStatus.Undertaken;
 

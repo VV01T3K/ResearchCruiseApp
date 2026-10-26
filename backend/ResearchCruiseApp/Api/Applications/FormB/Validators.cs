@@ -1,5 +1,6 @@
 using FluentValidation;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -7,6 +8,13 @@ public sealed class FormBWriteRequestValidator : AbstractValidator<FormBWriteReq
 {
     public FormBWriteRequestValidator(FileInspector fileInspector)
     {
+        RuleForEach(request => request.Form.LongResearchEquipments)
+            .Must(equipmentFields =>
+                Enum.TryParse<ResearchEquipmentAction>(equipmentFields.Action, out var action)
+                && Enum.IsDefined(action)
+            )
+            .WithMessage("Podana czynność dla sprzętu jest nieprawidłowa.");
+
         When(
             request => !request.Draft,
             () =>
