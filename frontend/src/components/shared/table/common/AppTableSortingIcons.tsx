@@ -1,7 +1,5 @@
 import { Header } from '@/integrations/tanstack/table/features';
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
-import ChevronExpandIcon from 'bootstrap-icons/icons/chevron-expand.svg?react';
-import ChevronUpIcon from 'bootstrap-icons/icons/chevron-up.svg?react';
+import { CaretDownIcon, CaretUpDownIcon, CaretUpIcon } from '@phosphor-icons/react';
 
 export function AppTableSortingIcon<TData extends object, TValue>({ header }: { header: Header<TData, TValue> }) {
   if (!header.column.getCanSort()) {
@@ -9,12 +7,12 @@ export function AppTableSortingIcon<TData extends object, TValue>({ header }: { 
   }
 
   if (header.column.getIsSorted() === 'asc') {
-    return <ChevronDownIcon className="h-3.5 w-3.5 shrink-0" />;
+    return <CaretDownIcon className="h-3.5 w-3.5 shrink-0" />;
   }
 
   if (header.column.getIsSorted() === 'desc') {
-    return <ChevronUpIcon className="h-3.5 w-3.5 shrink-0" />;
+    return <CaretUpIcon className="h-3.5 w-3.5 shrink-0" />;
   }
 
-  return <ChevronExpandIcon className="h-3.5 w-3.5 shrink-0" />;
+  return <CaretUpDownIcon className="h-3.5 w-3.5 shrink-0" />;
 }

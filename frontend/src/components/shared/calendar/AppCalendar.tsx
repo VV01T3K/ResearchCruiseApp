@@ -1,5 +1,4 @@
-import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
-import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
+import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import {
   DndContext,
   DragOverlay,
@@ -449,7 +448,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
     <div ref={calendarRef} className="flex flex-col gap-4 p-4">
       <div className="flex w-full items-center justify-center">
         <AppButton variant="plain" onClick={() => handleMonthChange(-1)}>
-          <ChevronLeftIcon className="h-8 w-8" />
+          <CaretLeftIcon className="h-8 w-8" />
         </AppButton>
         <AppMonthPickerPopover
           value={currentMonth}
@@ -462,7 +461,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
         />
 
         <AppButton variant="plain" onClick={() => handleMonthChange(1)}>
-          <ChevronRightIcon className="h-8 w-8" />
+          <CaretRightIcon className="h-8 w-8" />
         </AppButton>
       </div>
       <div className="my-4 flex flex-wrap justify-end gap-4">{buttons?.(defaultButtons) ?? defaultButtons}</div>

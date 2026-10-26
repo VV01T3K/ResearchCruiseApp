@@ -1,7 +1,5 @@
 import { Header } from '@/integrations/tanstack/table/features';
-import SortDownIcon from 'bootstrap-icons/icons/sort-down.svg?react';
-import SortUpIcon from 'bootstrap-icons/icons/sort-up.svg?react';
-import XIcon from 'bootstrap-icons/icons/x.svg?react';
+import { SortAscendingIcon, SortDescendingIcon, XIcon } from '@phosphor-icons/react';
 
 import { AppTableListItem } from '@/components/shared/table/common/AppTableListItem';
 
@@ -26,7 +24,7 @@ export function AppTableSortingToggle<TData extends object, TValue>({
         disabled={isSorted === 'asc'}
         expanded={expanded}
       >
-        <SortUpIcon className="mr-2 h-4 w-4" />
+        <SortAscendingIcon className="mr-2 h-4 w-4" />
         Sortuj rosnąco
       </AppTableListItem>
       <AppTableListItem
@@ -35,7 +33,7 @@ export function AppTableSortingToggle<TData extends object, TValue>({
         disabled={isSorted === 'desc'}
         expanded={expanded}
       >
-        <SortDownIcon className="mr-2 h-4 w-4" />
+        <SortDescendingIcon className="mr-2 h-4 w-4" />
         Sortuj malejąco
       </AppTableListItem>
       <AppTableListItem
@@ -44,7 +42,7 @@ export function AppTableSortingToggle<TData extends object, TValue>({
         disabled={!isSorted}
         expanded={expanded}
       >
-        <XIcon className="mr-2 h-4 w-4" />
+        <XIcon className="mr-2 h-4 w-4 scale-55" />
         Usuń sortowanie
       </AppTableListItem>
     </>

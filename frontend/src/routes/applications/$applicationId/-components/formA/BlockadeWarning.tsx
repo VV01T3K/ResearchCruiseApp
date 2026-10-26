@@ -1,5 +1,5 @@
 import { Collapsible } from '@base-ui/react/collapsible';
-import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?react';
+import { CaretDownIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'motion/react';
 
 import { AppAlert } from '@/components/shared/AppAlert';
@@ -32,7 +32,7 @@ export function BlockadeWarning({ year, blockades }: Props) {
                   <span className="text-sm font-normal">Rozwiń, aby zobaczyć wszystkie blokady</span>
                 </div>
                 <span className="ml-4 transition-transform duration-300 group-data-[panel-open]:rotate-180">
-                  <ChevronDownIcon className="h-5 w-5" />
+                  <CaretDownIcon className="h-5 w-5" />
                 </span>
               </Collapsible.Trigger>
               <Collapsible.Panel

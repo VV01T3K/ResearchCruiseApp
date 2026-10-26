@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
-import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
+import { FloppyDiskIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -150,7 +150,7 @@ function FormAPage() {
               disabled={saveMutation.isPending}
               onClick={() => void submitApplicationForm(form, true)}
             >
-              <FloppyFillIcon className="h-4 w-4" />
+              <FloppyDiskIcon weight="fill" className="h-4 w-4" />
               Zapisz wersję roboczą
             </AppButton>
           </div>

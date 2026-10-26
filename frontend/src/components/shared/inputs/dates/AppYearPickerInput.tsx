@@ -1,9 +1,7 @@
 'use client';
 
 import { Popover } from '@base-ui/react/popover';
-import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
-import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
-import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
+import { CalendarDotIcon, CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { PickerClearButton, PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
@@ -97,7 +95,7 @@ export function AppYearPickerInput({
             <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
               {selectedYear && !disabled && <span className="w-4" />}
-              {!selectedYear && <CalendarEventIcon className="h-4 w-4" />}
+              {!selectedYear && <CalendarDotIcon className="h-4 w-4" />}
             </span>
           </Popover.Trigger>
           {selectedYear && !disabled && <PickerClearButton aria-label="Wyczyść rok" onClick={handleResetSelection} />}
@@ -115,7 +113,7 @@ export function AppYearPickerInput({
             onClick={() => setVisibleDecade((prev) => ({ from: prev.from - 11, to: prev.to - 11 }))}
             className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
           >
-            <ChevronLeftIcon className="h-5 w-5" />
+            <CaretLeftIcon className="h-5 w-5" />
           </AppButton>
           <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">{`${visibleDecade.from}-${visibleDecade.to}`}</span>
           <AppButton
@@ -123,7 +121,7 @@ export function AppYearPickerInput({
             onClick={() => setVisibleDecade((prev) => ({ from: prev.from + 11, to: prev.to + 11 }))}
             className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
           >
-            <ChevronRightIcon className="h-5 w-5" />
+            <CaretRightIcon className="h-5 w-5" />
           </AppButton>
         </div>
         <div className="grid grid-cols-3 gap-4 px-4 py-2">

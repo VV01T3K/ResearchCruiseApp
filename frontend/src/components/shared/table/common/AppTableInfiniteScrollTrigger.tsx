@@ -1,4 +1,4 @@
-import ArrowRepeatIcon from 'bootstrap-icons/icons/arrow-repeat.svg?react';
+import { ArrowsClockwiseIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 export type InfiniteScrollProps = {
@@ -43,7 +43,7 @@ export function AppTableInfiniteScrollTrigger({
   return (
     <div ref={sentinelRef} className="flex w-full items-center justify-center py-4">
       {isFetchingNextPage && (
-        <ArrowRepeatIcon className="h-6 w-6 animate-spin text-primary" role="status" aria-label="Wczytywanie…" />
+        <ArrowsClockwiseIcon className="h-6 w-6 animate-spin text-primary" role="status" aria-label="Wczytywanie…" />
       )}
     </div>
   );

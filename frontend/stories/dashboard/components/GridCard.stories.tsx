@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import GlobeAmericasIcon from 'bootstrap-icons/icons/globe-americas.svg?react';
+import { GlobeHemisphereWestIcon } from '@phosphor-icons/react';
 
 import { Grid } from '@/components/dashboard/Grid';
 import { GridCard } from '@/components/dashboard/GridCard';
@@ -9,7 +9,7 @@ const meta = {
   component: GridCard,
   args: {
     name: 'Grid card',
-    Icon: GlobeAmericasIcon,
+    Icon: GlobeHemisphereWestIcon,
     description: 'Grid card description',
     href: '#',
   },

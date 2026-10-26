@@ -1,7 +1,4 @@
-import ExclamationTriangleFillIcon from 'bootstrap-icons/icons/exclamation-triangle-fill.svg?react';
-import PersonFillCheckIcon from 'bootstrap-icons/icons/person-fill-check.svg?react';
-import PersonFillSlashIcon from 'bootstrap-icons/icons/person-fill-slash.svg?react';
-import TrashFillIcon from 'bootstrap-icons/icons/trash-fill.svg?react';
+import { TrashIcon, UserCheckIcon, UserMinusIcon, WarningIcon } from '@phosphor-icons/react';
 import { motion } from 'motion/react';
 import React from 'react';
 
@@ -132,12 +129,12 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
         >
           {deletionConfirmed ? (
             <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <ExclamationTriangleFillIcon className="h-4 w-4" />
+              <WarningIcon weight="fill" className="h-4 w-4" />
               <span>Na pewno?</span>
             </motion.div>
           ) : (
             <div className="flex items-center gap-4">
-              <TrashFillIcon className="h-4 w-4" />
+              <TrashIcon weight="fill" className="h-4 w-4" />
               <span>Usuń zaznaczonych użytkowników</span>
             </div>
           )}
@@ -152,7 +149,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           onClick={handleAcceptSelectedUsers}
         >
           <div className="flex items-center gap-4">
-            <PersonFillCheckIcon className="h-4 w-4" />
+            <UserCheckIcon weight="fill" className="h-4 w-4" />
             <span>Akceptuj zaznaczonych użytkowników</span>
           </div>
         </AppButton>
@@ -163,7 +160,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           onClick={handleUnAcceptSelectedUsers}
         >
           <div className="flex items-center gap-4">
-            <PersonFillSlashIcon className="h-4 w-4" />
+            <UserMinusIcon weight="fill" className="h-4 w-4" />
             <span>Usuń akceptację zaznaczonych użytkowników</span>
           </div>
         </AppButton>

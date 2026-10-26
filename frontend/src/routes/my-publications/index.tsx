@@ -3,8 +3,7 @@ import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
 import { RowSelectionState } from '@tanstack/react-table';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
-import ExternalLinkIcon from 'bootstrap-icons/icons/box-arrow-up-right.svg?react';
-import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
+import { ArrowSquareOutIcon, TrashIcon } from '@phosphor-icons/react';
 import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -136,7 +135,7 @@ function MyPublicationsPage() {
               target="_blank"
             >
               Przejdź do repozytorium BG
-              <ExternalLinkIcon className="ml-2 h-4 w-4" />
+              <ArrowSquareOutIcon className="ml-2 h-4 w-4" />
             </AppButton>,
             <AppButton
               key="removeAllPublications"

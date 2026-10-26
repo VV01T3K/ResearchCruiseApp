@@ -1,4 +1,4 @@
-import TrashFillIcon from 'bootstrap-icons/icons/trash-fill.svg?react';
+import { TrashIcon } from '@phosphor-icons/react';
 
 import { AppButton } from '@/components/shared/AppButton';
 
@@ -13,7 +13,7 @@ export function RejectButton({ setConfirmationMode }: Props) {
         variant="danger"
         onClick={() => setConfirmationMode(true)}
       >
-        <TrashFillIcon className="h-4 w-4" />
+        <TrashIcon weight="fill" className="h-4 w-4" />
         Odrzuć zgłoszenie
       </AppButton>
     </>

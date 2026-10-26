@@ -1,6 +1,5 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
-import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
-import ZoomInIcon from 'bootstrap-icons/icons/zoom-in.svg?react';
+import { MagnifyingGlassPlusIcon, TrashIcon } from '@phosphor-icons/react';
 
 import { AppAvatar } from '@/components/shared/AppAvatar';
 import { AppBadge } from '@/components/shared/AppBadge';
@@ -134,7 +133,7 @@ function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
     <div className="grid min-w-30 grid-cols-1 gap-2">
       <AppButton variant="primary" type="link" size="sm" href={`/cruises/${cruise.id}`}>
         Szczegóły
-        <ZoomInIcon className="ml-2 h-4 w-4" />
+        <MagnifyingGlassPlusIcon className="ml-2 h-4 w-4" />
       </AppButton>
       <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
         {cruise.status === 'new' && (

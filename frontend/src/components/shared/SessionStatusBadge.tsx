@@ -1,5 +1,4 @@
-import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
-import ClockIcon from 'bootstrap-icons/icons/clock.svg?react';
+import { ArrowClockwiseIcon, ClockIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { useSessionRemainingMs } from '@/integrations/auth/useSessionClock';

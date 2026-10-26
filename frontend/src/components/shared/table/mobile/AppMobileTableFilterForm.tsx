@@ -1,8 +1,6 @@
 import { flexRender } from '@tanstack/react-table';
 import { Header, Table } from '@/integrations/tanstack/table/features';
-import SortDownIcon from 'bootstrap-icons/icons/sort-down.svg?react';
-import SortUpIcon from 'bootstrap-icons/icons/sort-up.svg?react';
-import XIcon from 'bootstrap-icons/icons/x.svg?react';
+import { SortAscendingIcon, SortDescendingIcon, XIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 import { Fragment } from 'react/jsx-runtime';
@@ -63,19 +61,19 @@ function SortFormElement<T extends object>({ header }: FormElementProps<T>) {
         className={cn('flex items-center gap-1', isSorted === 'asc' ? 'font-bold' : '')}
         onClick={() => header.column.toggleSorting(false)}
       >
-        <SortUpIcon className="h-4 w-4" />
+        <SortAscendingIcon className="h-4 w-4" />
         Rosnąco
       </div>
       <div
         className={cn('flex items-center gap-1', isSorted === 'desc' ? 'font-bold' : '')}
         onClick={() => header.column.toggleSorting(true)}
       >
-        <SortDownIcon className="h-4 w-4" />
+        <SortDescendingIcon className="h-4 w-4" />
         Malejąco
       </div>
       {isSorted && (
         <div className="flex items-center" onClick={() => header.column.clearSorting()}>
-          <XIcon className="h-4 w-4" />
+          <XIcon className="h-4 w-4 scale-55" />
         </div>
       )}
     </div>

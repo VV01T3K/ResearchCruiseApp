@@ -1,5 +1,4 @@
-import ChevronLeftIcon from 'bootstrap-icons/icons/chevron-left.svg?react';
-import ChevronRightIcon from 'bootstrap-icons/icons/chevron-right.svg?react';
+import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { AppButton } from '@/components/shared/AppButton';
@@ -26,7 +25,7 @@ export function AppMonthPicker({ selectedDate, onSelectMonth }: Props) {
           onClick={() => setVisibleYear((prev) => prev - 1)}
           className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
         >
-          <ChevronLeftIcon className="h-5 w-5" />
+          <CaretLeftIcon className="h-5 w-5" />
         </AppButton>
         <span className="col-span-3 inline-flex items-center justify-center gap-2 font-bold">{visibleYear}</span>
         <AppButton
@@ -34,7 +33,7 @@ export function AppMonthPicker({ selectedDate, onSelectMonth }: Props) {
           onClick={() => setVisibleYear((prev) => prev + 1)}
           className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
         >
-          <ChevronRightIcon className="h-5 w-5" />
+          <CaretRightIcon className="h-5 w-5" />
         </AppButton>
       </div>
       <div className="grid grid-cols-3 gap-4 px-4 py-2">

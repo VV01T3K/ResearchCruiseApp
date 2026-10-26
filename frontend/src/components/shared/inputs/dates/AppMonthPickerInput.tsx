@@ -2,7 +2,7 @@ import { Popover } from '@base-ui/react/popover';
 import { PickerClearButton, PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
 import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
-import CalendarEventIcon from 'bootstrap-icons/icons/calendar-event.svg?react';
+import { CalendarDotIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { AppMonthPicker } from '@/components/shared/inputs/dates/AppMonthPicker';
@@ -76,7 +76,7 @@ export function AppMonthPickerInput({
             <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
               {selectedDate && !disabled && <span className="w-4" />}
-              {!selectedDate && <CalendarEventIcon className="h-4 w-4" />}
+              {!selectedDate && <CalendarDotIcon className="h-4 w-4" />}
             </span>
           </Popover.Trigger>
           {selectedDate && !disabled && (

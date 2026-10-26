@@ -1,8 +1,4 @@
-import CheckIcon from 'bootstrap-icons/icons/check.svg?react';
-import ExclamationCircleIcon from 'bootstrap-icons/icons/exclamation-circle.svg?react';
-import ExclamationTraingleIcon from 'bootstrap-icons/icons/exclamation-triangle.svg?react';
-import InfoCircleFillIcon from 'bootstrap-icons/icons/info-circle-fill.svg?react';
-import XIcon from 'bootstrap-icons/icons/x.svg?react';
+import { CheckIcon, InfoIcon, WarningCircleIcon, WarningIcon, XIcon } from '@phosphor-icons/react';
 
 import { cn } from '@/lib/utils';
 
@@ -30,7 +26,10 @@ export function AppAlert({
       role="alert"
       data-testid={testId}
     >
-      <Icon className={cn('mr-4 h-6 w-6', iconAlign === 'start' && 'shrink-0 self-start')} />
+      <Icon
+        weight={variants[variant].weight}
+        className={cn('mr-4 h-6 w-6', iconAlign === 'start' && 'shrink-0 self-start')}
+      />
       <span className="sr-only">{variants[variant].screenReaderMessage}</span>
       {children}
       {onClose && (
@@ -44,7 +43,7 @@ export function AppAlert({
           onClick={onClose}
         >
           <span className="sr-only">Close</span>
-          <XIcon />
+          <XIcon className="scale-55" />
         </button>
       )}
     </div>
@@ -53,33 +52,38 @@ export function AppAlert({
 
 const variants = {
   primary: {
+    weight: 'fill',
     screenReaderMessage: 'Notification',
-    icon: InfoCircleFillIcon,
+    icon: InfoIcon,
     containerClassName: 'text-primary-dark bg-primary-light',
     closeButtonClassName: 'bg-primary-light text-primary focus:ring-primary-400 p-1.5 hover:bg-primary-200',
   },
   success: {
+    weight: 'regular',
     screenReaderMessage: 'Success',
     icon: CheckIcon,
     containerClassName: 'text-success-dark bg-success-light',
     closeButtonClassName: 'bg-success-light text-success focus:ring-success-300 p-1.5 hover:bg-success-200',
   },
   danger: {
+    weight: 'regular',
     screenReaderMessage: 'Error',
-    icon: ExclamationCircleIcon,
+    icon: WarningCircleIcon,
     containerClassName: 'text-danger-dark bg-danger-light',
     closeButtonClassName: 'bg-danger-light text-danger focus:ring-danger-400 p-1.5 hover:bg-danger-200',
   },
   warning: {
+    weight: 'regular',
     screenReaderMessage: 'Warning',
-    icon: ExclamationTraingleIcon,
+    icon: WarningIcon,
     containerClassName: 'text-warning-dark bg-warning-light',
     closeButtonClassName: 'bg-warning-light text-warning-dark focus:ring-warning-300 p-1.5 hover:bg-warning-100',
   },
   info: {
+    weight: 'fill',
     screenReaderMessage: 'Info',
-    icon: InfoCircleFillIcon,
+    icon: InfoIcon,
     containerClassName: 'text-info-dark bg-info-light',
     closeButtonClassName: 'bg-info-light text-info focus:ring-info-300 p-1.5 hover:bg-info-100',
   },
-};
+} as const;

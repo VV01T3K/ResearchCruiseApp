@@ -5,12 +5,14 @@ import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { useQueryClient } from '@tanstack/react-query';
 import { evaluate } from '@tanstack/react-form';
-import ArrowClockwiseIcon from 'bootstrap-icons/icons/arrow-clockwise.svg?react';
-import CheckLgIcon from 'bootstrap-icons/icons/check-lg.svg?react';
-import FloppyFillIcon from 'bootstrap-icons/icons/floppy-fill.svg?react';
-import PencilIcon from 'bootstrap-icons/icons/pencil.svg?react';
-import TrashIcon from 'bootstrap-icons/icons/trash.svg?react';
-import XLgIcon from 'bootstrap-icons/icons/x-lg.svg?react';
+import {
+  ArrowClockwiseIcon,
+  CheckIcon,
+  FloppyDiskIcon,
+  PencilSimpleIcon,
+  TrashIcon,
+  XIcon,
+} from '@phosphor-icons/react';
 import React from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -105,7 +107,7 @@ function CruiseDetailsPage() {
               setEditMode(false);
             }}
           >
-            <XLgIcon className="h-4 w-4" />
+            <XIcon className="h-4 w-4" />
             Anuluj
           </AppButton>
           <AppButton
@@ -117,7 +119,7 @@ function CruiseDetailsPage() {
             Cofnij zmiany
           </AppButton>
           <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={() => form.handleSubmit()}>
-            <FloppyFillIcon className="h-4 w-4" />
+            <FloppyDiskIcon weight="fill" className="h-4 w-4" />
             Zapisz rejs
           </AppButton>
         </>
@@ -133,14 +135,14 @@ function CruiseDetailsPage() {
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
             >
-              <PencilIcon className="h-4 w-4" />
+              <PencilSimpleIcon className="h-4 w-4" />
               Edytuj
             </AppButton>
             <AppButton
               className="w-36 !justify-center gap-4 lg:w-64"
               onClick={() => setIsConfirmAcceptanceModalOpen(true)}
             >
-              <CheckLgIcon className="h-4 w-4" />
+              <CheckIcon className="h-4 w-4" />
               Zatwierdź rejs
             </AppButton>
           </>
@@ -153,7 +155,7 @@ function CruiseDetailsPage() {
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
             >
-              <PencilIcon className="h-4 w-4" />
+              <PencilSimpleIcon className="h-4 w-4" />
               Edytuj
             </AppButton>
             <AppButton
@@ -173,7 +175,7 @@ function CruiseDetailsPage() {
               Usuń rejs
             </AppButton>
             <AppButton className="w-32 !justify-center gap-4 lg:w-40" onClick={() => setIsConfirmEndModalOpen(true)}>
-              <CheckLgIcon className="h-4 w-4" />
+              <CheckIcon className="h-4 w-4" />
               Zakończ rejs
             </AppButton>
           </>
