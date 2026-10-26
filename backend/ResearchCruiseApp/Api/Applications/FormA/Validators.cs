@@ -318,30 +318,21 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     {
         RuleForEach(request => request.Form.ResearchTasks)
             .Must(researchTaskFields =>
-            {
-                try
-                {
-                    var type = researchTaskFields.Type.ToEnum<ResearchTaskType>();
-
-                    return type
-                        is ResearchTaskType.BachelorThesis
-                            or ResearchTaskType.MasterThesis
-                            or ResearchTaskType.DoctoralThesis
-                            or ResearchTaskType.ProjectPreparation
-                            or ResearchTaskType.DomesticProject
-                            or ResearchTaskType.ForeignProject
-                            or ResearchTaskType.InternalUgProject
-                            or ResearchTaskType.OtherProject
-                            or ResearchTaskType.CommercialProject
-                            or ResearchTaskType.Didactics
-                            or ResearchTaskType.OwnResearchTask
-                            or ResearchTaskType.OtherResearchTask;
-                }
-                catch (ArgumentException)
-                {
-                    return false;
-                }
-            })
+                Enum.TryParse<ResearchTaskType>(researchTaskFields.Type, out var type)
+                && type
+                    is ResearchTaskType.BachelorThesis
+                        or ResearchTaskType.MasterThesis
+                        or ResearchTaskType.DoctoralThesis
+                        or ResearchTaskType.ProjectPreparation
+                        or ResearchTaskType.DomesticProject
+                        or ResearchTaskType.ForeignProject
+                        or ResearchTaskType.InternalUgProject
+                        or ResearchTaskType.OtherProject
+                        or ResearchTaskType.CommercialProject
+                        or ResearchTaskType.Didactics
+                        or ResearchTaskType.OwnResearchTask
+                        or ResearchTaskType.OtherResearchTask
+            )
             .WithMessage("Podany typ zadania jest nieprawidłowy.");
     }
 
@@ -354,54 +345,48 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
         RuleForEach(request => request.Form.ResearchTasks)
             .Must(researchTaskFields =>
             {
-                try
-                {
-                    var type = researchTaskFields.Type.ToEnum<ResearchTaskType>();
-
-                    switch (type)
-                    {
-                        case ResearchTaskType.BachelorThesis:
-                        case ResearchTaskType.MasterThesis:
-                        case ResearchTaskType.DoctoralThesis:
-                            return !string.IsNullOrEmpty(researchTaskFields.Author)
-                                && !string.IsNullOrEmpty(researchTaskFields.Title);
-
-                        case ResearchTaskType.ProjectPreparation:
-                            return !string.IsNullOrEmpty(researchTaskFields.Title)
-                                && !string.IsNullOrEmpty(researchTaskFields.Title)
-                                && !string.IsNullOrEmpty(researchTaskFields.Date)
-                                && !string.IsNullOrEmpty(researchTaskFields.FinancingApproved);
-
-                        case ResearchTaskType.DomesticProject:
-                        case ResearchTaskType.ForeignProject:
-                        case ResearchTaskType.InternalUgProject:
-                        case ResearchTaskType.OtherProject:
-                        case ResearchTaskType.CommercialProject:
-                            return !string.IsNullOrEmpty(researchTaskFields.Title)
-                                && !string.IsNullOrEmpty(researchTaskFields.FinancingAmount)
-                                && !string.IsNullOrEmpty(researchTaskFields.StartDate)
-                                && !string.IsNullOrEmpty(researchTaskFields.EndDate)
-                                && !string.IsNullOrEmpty(researchTaskFields.SecuredAmount);
-
-                        case ResearchTaskType.Didactics:
-                            return !string.IsNullOrEmpty(researchTaskFields.Description);
-
-                        case ResearchTaskType.OwnResearchTask:
-                            return !string.IsNullOrEmpty(researchTaskFields.Title)
-                                && !string.IsNullOrEmpty(researchTaskFields.Date)
-                                && !string.IsNullOrEmpty(researchTaskFields.Magazine)
-                                && !string.IsNullOrEmpty(researchTaskFields.MinisterialPoints);
-
-                        case ResearchTaskType.OtherResearchTask:
-                            return !string.IsNullOrEmpty(researchTaskFields.Description);
-
-                        default:
-                            return false;
-                    }
-                }
-                catch (ArgumentException)
-                {
+                if (!Enum.TryParse<ResearchTaskType>(researchTaskFields.Type, out var type))
                     return false;
+
+                switch (type)
+                {
+                    case ResearchTaskType.BachelorThesis:
+                    case ResearchTaskType.MasterThesis:
+                    case ResearchTaskType.DoctoralThesis:
+                        return !string.IsNullOrEmpty(researchTaskFields.Author)
+                            && !string.IsNullOrEmpty(researchTaskFields.Title);
+
+                    case ResearchTaskType.ProjectPreparation:
+                        return !string.IsNullOrEmpty(researchTaskFields.Title)
+                            && !string.IsNullOrEmpty(researchTaskFields.Title)
+                            && !string.IsNullOrEmpty(researchTaskFields.Date)
+                            && !string.IsNullOrEmpty(researchTaskFields.FinancingApproved);
+
+                    case ResearchTaskType.DomesticProject:
+                    case ResearchTaskType.ForeignProject:
+                    case ResearchTaskType.InternalUgProject:
+                    case ResearchTaskType.OtherProject:
+                    case ResearchTaskType.CommercialProject:
+                        return !string.IsNullOrEmpty(researchTaskFields.Title)
+                            && !string.IsNullOrEmpty(researchTaskFields.FinancingAmount)
+                            && !string.IsNullOrEmpty(researchTaskFields.StartDate)
+                            && !string.IsNullOrEmpty(researchTaskFields.EndDate)
+                            && !string.IsNullOrEmpty(researchTaskFields.SecuredAmount);
+
+                    case ResearchTaskType.Didactics:
+                        return !string.IsNullOrEmpty(researchTaskFields.Description);
+
+                    case ResearchTaskType.OwnResearchTask:
+                        return !string.IsNullOrEmpty(researchTaskFields.Title)
+                            && !string.IsNullOrEmpty(researchTaskFields.Date)
+                            && !string.IsNullOrEmpty(researchTaskFields.Magazine)
+                            && !string.IsNullOrEmpty(researchTaskFields.MinisterialPoints);
+
+                    case ResearchTaskType.OtherResearchTask:
+                        return !string.IsNullOrEmpty(researchTaskFields.Description);
+
+                    default:
+                        return false;
                 }
             })
             .WithMessage(

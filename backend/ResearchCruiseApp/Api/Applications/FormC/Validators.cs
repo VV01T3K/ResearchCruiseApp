@@ -1,5 +1,6 @@
 using FluentValidation;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -7,6 +8,13 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
 {
     public FormCWriteRequestValidator(FileInspector fileInspector)
     {
+        RuleForEach(request => request.Form.ResearchTasksEffects)
+            .Must(effectFields =>
+                Enum.TryParse<ResearchTaskType>(effectFields.Type, out var type)
+                && Enum.IsDefined(type)
+            )
+            .WithMessage("Podany typ zadania jest nieprawidłowy.");
+
         RuleForEach(request => request.Form.ResearchTasksEffects)
             .Must(effectFields =>
                 string.IsNullOrEmpty(effectFields.PublicationMinisterialPoints)

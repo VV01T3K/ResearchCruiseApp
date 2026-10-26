@@ -362,6 +362,7 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
     [InlineData("2684354599999", "47", HttpStatusCode.Created)]
     [InlineData("2684354600000", "0", HttpStatusCode.BadRequest)]
     [InlineData("2684354600000", "0", HttpStatusCode.BadRequest, "ForeignProject")]
+    [InlineData("0", "0", HttpStatusCode.BadRequest, "2147483648")]
     [InlineData("Infinity", "0", HttpStatusCode.BadRequest)]
     [InlineData("0", "2147483648", HttpStatusCode.BadRequest)]
     [InlineData("0", "1.5", HttpStatusCode.BadRequest)]

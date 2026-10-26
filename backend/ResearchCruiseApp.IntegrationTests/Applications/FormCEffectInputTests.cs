@@ -95,26 +95,30 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
     [InlineData(true, "-1", 1)]
     [InlineData(true, "abc", 1)]
     [InlineData(false, "2147483647", 3)]
+    [InlineData(true, "0", 1, "2147483648")]
     public async Task Write_WhenPointsLeaveScoreSafeRange_RejectsBeforeWriting(
         bool draft,
         string points,
-        int effects
+        int effects,
+        string type = "10"
     )
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
         var application = await TestApplications.Create(app, CruiseApplicationStatus.Undertaken);
         using var client = await TestApplications.Login(app, application.OwnerEmail);
-        var fields = Fields(points, "true", "true", "", ResearchTaskType.OwnResearchTask);
-        for (var index = 1; index < effects; index++)
+        var fields = new FormCFields { ShipUsage = "0", DifferentUsage = "" };
+        for (var index = 0; index < effects; index++)
             fields.ResearchTasksEffects.Add(
-                Fields(
-                    points,
-                    "true",
-                    "true",
-                    "",
-                    ResearchTaskType.OwnResearchTask
-                ).ResearchTasksEffects[0]
+                new ResearchTaskEffectFields
+                {
+                    Type = type,
+                    Title = "Synthetic effect",
+                    Done = "true",
+                    ManagerConditionMet = "true",
+                    DeputyConditionMet = "",
+                    PublicationMinisterialPoints = points,
+                }
             );
         using var response = await Write(
             client,
