@@ -73,6 +73,12 @@ export const Clearable: Story = {
     await expect(trigger).toHaveTextContent('Wybierz datę');
     await expect(trigger).toHaveFocus();
     await expect(args.onBlur).toHaveBeenCalledOnce();
+
+    await userEvent.click(trigger);
+    await page.findByRole('dialog', { name: 'Wybierz datę' });
+    await userEvent.click(trigger.querySelector('svg')!);
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
+    await expect(args.onBlur).toHaveBeenCalledTimes(2);
   },
 };
 

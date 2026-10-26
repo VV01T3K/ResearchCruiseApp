@@ -59,15 +59,21 @@ export function PickerPopup({ 'aria-label': ariaLabel, children }: Props) {
 export function PickerClearButton({
   'aria-label': ariaLabel,
   onClick,
+  onMouseDown,
+  ref,
 }: {
   'aria-label': string;
   onClick: (evt: React.MouseEvent) => void;
+  onMouseDown?: (evt: React.MouseEvent) => void;
+  ref?: React.Ref<HTMLButtonElement>;
 }) {
   return (
     <button
+      ref={ref}
       type="button"
       aria-label={ariaLabel}
       onClick={onClick}
+      onMouseDown={onMouseDown}
       className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded outline-none hover:text-red-500 focus-visible:ring-2 focus-visible:ring-blue-500"
     >
       <XIcon className="h-4 w-4" />
