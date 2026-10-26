@@ -34,6 +34,7 @@ import {
   useGetCruiseSuspense,
   useRemoveCruiseConfirmation,
   useUpdateCruise,
+  type UpdateCruiseMutationVariables,
 } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
 
@@ -71,8 +72,13 @@ function CruiseDetailsPage() {
   const [isConfirmRevertModalOpen, setIsConfirmRevertModalOpen] = React.useState(false);
   const [saved, setSaved] = React.useState<{ cruise: CruiseResponse; values: CruiseFormValues }>();
   const latestSubmission = React.useRef(0);
+  const lastAppliedSubmission = React.useRef(0);
   const isSavedBaseline = saved?.cruise === cruiseQuery.data;
-  const isUpdating = useIsMutating({ mutationKey: getUpdateCruiseMutationKey() }) > 0;
+  const isUpdating =
+    useIsMutating({
+      mutationKey: getUpdateCruiseMutationKey(),
+      predicate: ({ state }) => (state.variables as UpdateCruiseMutationVariables | undefined)?.cruiseId === cruiseId,
+    }) > 0;
   const isEditBlocked = !isSavedBaseline && (isUpdating || cruiseQuery.isFetching || cruiseQuery.isError);
 
   const form = useAppForm({
@@ -86,7 +92,8 @@ function CruiseDetailsPage() {
       const submission = ++latestSubmission.current;
       try {
         await updateCruiseMutation.mutateAsync({ cruiseId, data: CruiseFormSchema.parse(value) });
-        if (submission !== latestSubmission.current) return;
+        if (submission < lastAppliedSubmission.current) return;
+        lastAppliedSubmission.current = submission;
         setSaved({ cruise: cruiseQuery.data, values: value });
         if (evaluate(form.state.values, value)) {
           form.reset(value);
