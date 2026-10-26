@@ -14,5 +14,6 @@ public static class UsersEndpoints
         AccountsEndpoints.Map(group);
         AcceptanceEndpoints.Map(group);
         RolesEndpoints.Map(group);
+        AssignmentsEndpoints.Map(group);
     }
 }

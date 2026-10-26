@@ -28,6 +28,7 @@ import type {
   PublicationResponse,
   ReplaceUserRoleRequest,
   UpdateUserRequest,
+  UserAssignmentsResponse,
   UserResponse
 } from '../schemas';
 
@@ -1465,3 +1466,91 @@ export const useReplaceUserRole = <TError = ErrorType<ProblemDetails>,
       > => {
       return useMutation(getReplaceUserRoleMutationOptions(options), queryClient);
     }
+    export const getGetUserAssignmentsUrl = (userId: string,) => {
+
+
+
+
+  return `/v2/users/${userId}/assignments`
+}
+
+/**
+ * @summary Get the applications and cruises a managed user leads or deputizes, before their role or account changes.
+ */
+export const getUserAssignments = async (userId: string, options?: Parameters<typeof customFetch>[1]): Promise<UserAssignmentsResponse> => {
+
+  return customFetch<UserAssignmentsResponse>(getGetUserAssignmentsUrl(userId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetUserAssignmentsQueryKey = (userId: string,) => {
+    return [
+    'v2','users',userId,'assignments'
+    ] as const;
+    }
+
+
+export const getGetUserAssignmentsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getUserAssignments>>, TError = ErrorType<ProblemDetails>>(userId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAssignments>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUserAssignmentsQueryKey(userId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserAssignments>>> = ({ signal }) => getUserAssignments(userId, { signal, ...requestOptions });
+
+
+
+
+
+   return  queryOptionsBuilder({ queryKey, ...queryOptions, queryFn: queryOptions?.queryFn ?? queryFn}) as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAssignments>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> } & { throwOnError?: ((this: never, error: TError) => boolean) & { readonly __inferenceOnly: never } }
+}
+
+export type GetUserAssignmentsSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getUserAssignments>>>
+export type GetUserAssignmentsSuspenseQueryError = ErrorType<ProblemDetails>
+
+
+export function useGetUserAssignmentsSuspense<TData = Awaited<ReturnType<typeof getUserAssignments>>, TError = ErrorType<ProblemDetails>>(
+ userId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAssignments>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUserAssignmentsSuspense<TData = Awaited<ReturnType<typeof getUserAssignments>>, TError = ErrorType<ProblemDetails>>(
+ userId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAssignments>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUserAssignmentsSuspense<TData = Awaited<ReturnType<typeof getUserAssignments>>, TError = ErrorType<ProblemDetails>>(
+ userId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAssignments>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get the applications and cruises a managed user leads or deputizes, before their role or account changes.
+ */
+
+export function useGetUserAssignmentsSuspense<TData = Awaited<ReturnType<typeof getUserAssignments>>, TError = ErrorType<ProblemDetails>>(
+ userId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getUserAssignments>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetUserAssignmentsSuspenseQueryOptions(userId,options)
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+

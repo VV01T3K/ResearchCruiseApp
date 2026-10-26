@@ -32,6 +32,9 @@ import {
 } from '@/api/generated/endpoints/users.gen';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
 import { getProblemDetail } from '@/api/errors';
+import { AssignmentsWarning, findActiveAssignments, type UserAssignments } from './AssignmentsWarning';
+
+const editingRoles: string[] = [Role.Administrator, Role.ShipOwner, Role.CruiseManager];
 
 type Props = {
   user?: UserResponse;
@@ -46,6 +49,10 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
   const editMode = !!user;
   const [submitError, setSubmitError] = React.useState<string | undefined>(undefined);
   const [deletionConfirmed, setDeletionConfirmed] = React.useState(false);
+  const [assignmentWarning, setAssignmentWarning] = React.useState<{
+    action: 'role' | 'deactivate';
+    items: UserAssignments[];
+  }>();
 
   const validationSchema = z
     .object({
@@ -128,6 +135,11 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
       const profile = { email: value.email, firstName: value.firstName, lastName: value.lastName };
 
       if (editMode) {
+        const losesEditing = user.roles[0] !== value.role && !editingRoles.includes(value.role);
+        if (losesEditing && !(await confirmAssignments('role'))) {
+          return;
+        }
+
         const loading = toast.loading('Zapisywanie zmian...');
         try {
           await updateUserMutation.mutateAsync({
@@ -171,6 +183,23 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
     e.preventDefault();
     e.stopPropagation();
     void form.handleSubmit();
+  }
+
+  async function confirmAssignments(action: 'role' | 'deactivate') {
+    if (assignmentWarning?.action === action) {
+      return true;
+    }
+
+    try {
+      const items = await findActiveAssignments([user!]);
+      if (items.length === 0) {
+        return true;
+      }
+      setAssignmentWarning({ action, items });
+    } catch {
+      setSubmitError('Nie udało się sprawdzić zgłoszeń i rejsów prowadzonych przez użytkownika');
+    }
+    return false;
   }
 
   async function handleUserDeletion() {
@@ -223,6 +252,10 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         toast.error('Nie udało się zaakceptować konta użytkownika');
       }
     } else {
+      if (!(await confirmAssignments('deactivate'))) {
+        return;
+      }
+
       const loading = toast.loading('Cofanie akceptacji konta użytkownika...');
       try {
         await unAcceptUserMutation.mutateAsync({ userId: user.id });
@@ -303,6 +336,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
 
         <form.AppField
           name="role"
+          listeners={{ onChange: () => setAssignmentWarning(undefined) }}
           children={(field) => (
             <field.SelectField
               allOptions={Object.values(allowedRoles).map((role) => ({
@@ -322,12 +356,19 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
           </AppAlert>
         )}
 
+        {assignmentWarning?.action === 'role' && <AssignmentsWarning items={assignmentWarning.items} action="role" />}
+
         <form.Subscribe
           selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
             <>
               <AppButton type="submit" className="w-full" disabled={isSubmitting}>
-                {editMode ? (
+                {assignmentWarning?.action === 'role' ? (
+                  <div className="flex items-center gap-4">
+                    <WarningIcon weight="fill" className="h-4 w-4" />
+                    <span>Zmień rolę mimo to</span>
+                  </div>
+                ) : editMode ? (
                   <div className="flex items-center gap-4">
                     <FloppyDiskIcon weight="fill" className="h-4 w-4" />
                     <span>Zapisz</span>
@@ -361,6 +402,10 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 </AppButton>
               )}
 
+              {assignmentWarning?.action === 'deactivate' && (
+                <AssignmentsWarning items={assignmentWarning.items} action="deactivate" />
+              )}
+
               {editMode && (
                 <AppButton
                   variant={!user.accepted ? 'success' : 'danger'}
@@ -372,6 +417,11 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                     <div className="flex items-center gap-4">
                       <UserCheckIcon weight="fill" className="h-4 w-4" />
                       <span>Zaakceptuj konto użytkownika</span>
+                    </div>
+                  ) : assignmentWarning?.action === 'deactivate' ? (
+                    <div className="flex items-center gap-4">
+                      <WarningIcon weight="fill" className="h-4 w-4" />
+                      <span>Cofnij akceptację mimo to</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-4">

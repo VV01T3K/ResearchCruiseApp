@@ -11,7 +11,6 @@ export * from './contractFields.gen.ts';
 export * from './crewMemberFields.gen.ts';
 export * from './cruiseApplicationCandidateResponse.gen.ts';
 export * from './cruiseApplicationEvaluation.gen.ts';
-export * from './cruiseApplicationStatus.gen.ts';
 export * from './cruiseDayFields.gen.ts';
 export * from './fileContent.gen.ts';
 export * from './formAFields.gen.ts';
