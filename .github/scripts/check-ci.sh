@@ -7,12 +7,12 @@ required=("checks / Frontend checks" "checks / Backend checks" "checks / JavaScr
 
 fail() { echo "::error::$1"; exit 1; }
 
-# deploy-staging.yaml skips commits that only touch docs/, *.md or .gitignore, so its run may come from
+# deploy-staging.yaml skips commits that only touch docs/, root *.md or .gitignore, so its run may come from
 # the parents back to the last other commit. Playwright must pass on the commit itself.
 docs_only() {
   local files
   files=$(git diff-tree --no-commit-id --name-only -r "$1")
-  [[ -n $files ]] && ! grep -qvE '^docs/|\.md$|^\.gitignore$' <<< "$files"
+  [[ -n $files ]] && ! grep -qvE '^docs/|^[^/]+\.md$|^\.gitignore$' <<< "$files"
 }
 commits=("$sha")
 while docs_only "${commits[-1]}"; do commits+=("$(git rev-parse "${commits[-1]}^")"); done
