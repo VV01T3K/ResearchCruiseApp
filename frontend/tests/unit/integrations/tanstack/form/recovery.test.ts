@@ -36,7 +36,7 @@ it('offers dirty values with their read revision to the same account and form on
 
 it.each([
   ['another account signs in', () => signIn(outsider.id)],
-  ['the user signs out', () => recovery.discardFormRecovery()],
+  ['the user signs out', () => auth.completeLogout()],
 ])('forgets the values when %s', (_, end) => {
   loseSessionWith(true);
   end();

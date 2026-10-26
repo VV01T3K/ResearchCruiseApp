@@ -36,7 +36,11 @@ export const Route = createFileRoute('/applications/new')({
   beforeLoad: async (context) => {
     await allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager)(context);
     if (!context.search.draft) {
-      throw redirect({ to: '/applications/new', search: { draft: crypto.randomUUID() }, replace: true });
+      throw redirect({
+        to: '/applications/new',
+        search: { draft: `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}` },
+        replace: true,
+      });
     }
   },
 });

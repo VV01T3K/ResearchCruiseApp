@@ -6,14 +6,14 @@ let owner: string | undefined;
 let activeForm: { key: string; form: Pick<AnyFormApi, 'state'> } | undefined;
 const recoveries = new Map<string, Record<string, unknown>>();
 
-subscribeAuthDetails((details, previous) => {
+subscribeAuthDetails((details, previous, manualLogout) => {
   if (details) {
     if (owner && accountId(details) !== owner) discardFormRecovery();
     return;
   }
+  if (manualLogout) return discardFormRecovery();
   const previousOwner = previous && accountId(previous);
   if (!previousOwner || !activeForm?.form.state.isDirty) return;
-  if (owner !== previousOwner) recoveries.clear();
   owner = previousOwner;
   recoveries.set(activeForm.key, activeForm.form.state.values);
 });
@@ -35,7 +35,7 @@ export function clearFormRecovery(key: string) {
   recoveries.delete(key);
 }
 
-export function discardFormRecovery() {
+function discardFormRecovery() {
   owner = undefined;
   recoveries.clear();
 }

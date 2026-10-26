@@ -17,7 +17,6 @@ import type { UserResponse } from '@/api/generated/schemas';
 import type { Role, SignInResult } from '@/integrations/auth/types';
 import { logout as logoutSession, useLogin } from '@/api/generated/endpoints/auth.gen';
 import { getCurrentUser, getGetCurrentUserQueryKey } from '@/api/generated/endpoints/users.gen';
-import { discardFormRecovery } from '@/integrations/tanstack/form/recovery';
 
 async function fetchCurrentUser(): Promise<UserResponse | null> {
   try {
@@ -54,8 +53,8 @@ function clearSession(queryClient: QueryClient) {
   clearAccountQueries(queryClient);
 }
 
-function clearSessionEverywhere(queryClient: QueryClient) {
-  completeLogout();
+function clearSessionEverywhere(queryClient: QueryClient, expired = false) {
+  completeLogout(expired);
   clearAccountQueries(queryClient);
 }
 
@@ -97,7 +96,7 @@ export function useSignIn() {
     } catch (error) {
       await prepareForLogout();
       await logoutSession().catch(() => undefined);
-      clearSessionEverywhere(queryClient);
+      clearSessionEverywhere(queryClient, true);
       return { error: getProblemDetail(error, 'Nie udało się wczytać profilu. Spróbuj ponownie.') };
     }
   };
@@ -112,8 +111,7 @@ export function useSessionActions() {
     async ({ expired = false } = {}) => {
       await prepareForLogout();
       await logoutSession().catch(() => undefined);
-      clearSessionEverywhere(queryClient);
-      if (!expired) discardFormRecovery();
+      clearSessionEverywhere(queryClient, expired);
     },
     [queryClient]
   );
