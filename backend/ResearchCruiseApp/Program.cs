@@ -5,7 +5,6 @@ using Asp.Versioning;
 using MailKit.Security;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using ResearchCruiseApp.Api;
@@ -127,12 +126,6 @@ app.UseExceptionHandler(exceptionHandlerApp =>
     exceptionHandlerApp.Run(async context =>
     {
         var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
-        if (exception is DbUpdateConcurrencyException)
-        {
-            await Revisions.StaleRevision().ExecuteAsync(context);
-            return;
-        }
-
         var errorCode = context.TraceIdentifier;
         if (exception is not null)
         {

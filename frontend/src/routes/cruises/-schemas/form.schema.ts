@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { type CruiseResponse, UpdateRequest } from '@/api/generated/schemas';
+import { CreateRequest, type CruiseResponse } from '@/api/generated/schemas';
 import { emptyGuid } from '@/lib/applications/person';
 
 function managerIdSchema(message: string) {
@@ -45,11 +45,10 @@ export const CruiseFormInputSchema = z
   });
 
 /** Create and update requests share one shape. */
-export const CruiseFormSchema = CruiseFormInputSchema.transform((cruise): z.input<typeof UpdateRequest> => ({
+export const CruiseFormSchema = CruiseFormInputSchema.transform((cruise): z.input<typeof CreateRequest> => ({
   ...cruise,
   title: cruise.title || null,
-  revision: cruise.revision ?? null,
-})).pipe(UpdateRequest);
+})).pipe(CreateRequest);
 
 export type CruiseFormValues = z.input<typeof CruiseFormInputSchema>;
 

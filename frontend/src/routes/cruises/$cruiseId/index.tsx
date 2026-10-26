@@ -102,7 +102,7 @@ function CruiseDetailsPage() {
     try {
       const accepted = await updateCruiseMutation.mutateAsync({
         cruiseId,
-        data: CruiseFormSchema.parse({ ...value, revision }),
+        data: { ...CruiseFormSchema.parse(value), revision: revision ?? null },
       });
       nextRevisions.current.set(revision, accepted.revision);
       const savedValues = { ...value, revision: accepted.revision };
