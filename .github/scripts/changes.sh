@@ -11,8 +11,8 @@ else
   [[ -n $base ]] && git fetch -q --depth=1 origin "$base" || base=
 fi
 [[ -n $base ]] && files=$(git diff --no-renames --name-only "$base" HEAD) || exit 0
-code=$(grep -vE '^docs/|\.md$' <<< "$files")
-deleted=$(git diff --no-renames --diff-filter=D --name-only "$base" HEAD | grep -vE '^docs/|\.md$')
+code=$(grep -vE '^docs/|\.md$|^\.gitignore$' <<< "$files")
+deleted=$(git diff --no-renames --diff-filter=D --name-only "$base" HEAD | grep -vE '^docs/|\.md$|^\.gitignore$')
 # frontend/package.json and .node-version also set up the backend checks.
 if [[ -z $files || -n $deleted ]] || grep -qvE '^$|^(frontend|backend)/' <<< "$code" ||
   grep -qxE 'frontend/(package\.json|\.node-version)' <<< "$code"; then
