@@ -51,7 +51,7 @@ function FormBPage() {
 
   const formA = useFormAQuery(applicationId);
   const formB = useFormBQuery(applicationId);
-  const formAInitValues = useGetApplicationFormAContextSuspense();
+  const formAInitValues = useGetApplicationFormAContextSuspense({ applicationId });
   const formBInitValues = useGetApplicationFormBContextSuspense();
   const cruise = useGetApplicationCruiseSuspense(applicationId);
   const updateMutation = useUpdateApplicationFormB({ mutation: { meta: { handlesError: true } } });

@@ -32,7 +32,7 @@ internal class IdentityService(
     ILogger<IdentityService> logger
 )
 {
-    private static readonly string[] CruiseManagerRoleNames =
+    public static readonly string[] CruiseManagerRoleNames =
     [
         RoleName.Administrator,
         RoleName.Shipowner,

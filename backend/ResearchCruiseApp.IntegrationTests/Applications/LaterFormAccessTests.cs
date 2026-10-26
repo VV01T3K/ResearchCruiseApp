@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +6,6 @@ using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.IntegrationTests.Auth;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
@@ -129,9 +127,10 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Theory]
+    [InlineData("remove")]
     [InlineData("replace")]
     [InlineData("deactivate")]
-    public async Task Write_AfterManagerLosesAccess_DeniesRefreshedSessionWhileDeputyContinues(
+    public async Task Write_AfterManagerLosesAccess_DeniesTheirSessionWhileDeputyContinues(
         string change
     )
     {
@@ -152,36 +151,25 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
             await db.SaveChangesAsync(ct);
         });
         var route = $"/v2/applications/{application.Id}/form-b";
-        using var manager = app.CreateApiClient();
-        var session = await RefreshSessionTests.Login(manager, application.OwnerEmail);
+        using var manager = await TestApplications.Login(app, application.OwnerEmail);
         using var office = await TestApplications.Login(app, "office@example.invalid");
 
-        using var changed =
-            change == "replace"
-                ? await office.PutAsJsonAsync(
-                    $"/v2/users/{managerId}/role",
-                    new { roleName = RoleName.Guest },
-                    ct
-                )
-                : await office.DeleteAsync($"/v2/users/{managerId}/acceptance", ct);
-        Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
-        using var refresh = await RefreshSessionTests.SendCookie(
-            manager,
-            "/v2/auth/refresh",
-            session.Cookie
-        );
-        if (change == "deactivate")
-            Assert.Equal(HttpStatusCode.Unauthorized, refresh.StatusCode);
-        else
+        using var changed = change switch
         {
-            Assert.Equal(HttpStatusCode.OK, refresh.StatusCode);
-            manager.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                "Bearer",
-                await RefreshSessionTests.ReadAccessToken(refresh)
-            );
-            using var denied = await Write(manager, route, "b", unit.Id, "2", true, ct);
-            Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
-        }
+            "remove" => await office.DeleteAsync(
+                $"/v2/users/{managerId}/roles/{RoleName.CruiseManager}",
+                ct
+            ),
+            "replace" => await office.PutAsJsonAsync(
+                $"/v2/users/{managerId}/role",
+                new { roleName = RoleName.Guest },
+                ct
+            ),
+            _ => await office.DeleteAsync($"/v2/users/{managerId}/acceptance", ct),
+        };
+        Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
+        using var denied = await Write(manager, route, "b", unit.Id, "2", true, ct);
+        Assert.Equal(HttpStatusCode.NotFound, denied.StatusCode);
 
         using var deputyClient = await TestApplications.Login(app, deputy.Email!);
         using var continued = await Write(deputyClient, route, "b", unit.Id, "2", true, ct);
