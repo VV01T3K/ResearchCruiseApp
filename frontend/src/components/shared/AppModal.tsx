@@ -31,7 +31,7 @@ export function AppModal({ title, children, isOpen, onClose, className, dismissi
   }, [isOpen]);
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={(open) => !open && dismissible && onClose()}>
+    <Dialog.Root open={isOpen} disablePointerDismissal onOpenChange={(open) => !open && dismissible && onClose()}>
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-50 backdrop-blur-md transition-opacity duration-300 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
         <Dialog.Popup

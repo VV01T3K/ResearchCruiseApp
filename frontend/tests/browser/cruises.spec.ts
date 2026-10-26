@@ -220,12 +220,12 @@ test('the page behind an open modal cannot be clicked or focused', async ({ page
     await page.keyboard.press(key);
     expect(await page.evaluate(() => document.getElementById('root')!.contains(document.activeElement))).toBe(false);
   }
-  // Lands on the backdrop, which only dismisses the modal.
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
-  await save.click();
-  await expect(page.getByRole('button', { name: 'Edytuj', exact: true })).toBeVisible();
-  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toHaveLength(1);
+  await expect(page.locator('input[name="title"]')).toHaveValue('Nowy tytuł');
+  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toHaveLength(0);
 });
 
 test('a cruise edit starts from the newest save after an older response or a remount', async ({
