@@ -45,7 +45,6 @@ jobs:
         run: ../.github/scripts/changes.sh frontend
 
       - name: Setup Vite+
-        if: steps.changes.outputs.skip != 'true'
         uses: voidzero-dev/setup-vp@v1.22.0
         with:
           working-directory: frontend
@@ -54,11 +53,9 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        if: steps.changes.outputs.skip != 'true'
         run: vp install --frozen-lockfile
 
       - name: Run checks
-        if: steps.changes.outputs.skip != 'true'
         run: vp check
 
       - name: Run unit tests
