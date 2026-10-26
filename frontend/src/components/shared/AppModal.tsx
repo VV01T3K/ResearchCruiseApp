@@ -13,15 +13,20 @@ type Props = {
   className?: string;
   dismissible?: boolean;
 };
+
+let openModals = 0;
+
 export function AppModal({ title, children, isOpen, onClose, className, dismissible = true }: Props) {
   React.useEffect(() => {
     const root = document.getElementById('root');
-    if (!isOpen || !root || root.inert) {
+    if (!isOpen || !root) {
       return;
     }
+    openModals++;
     root.inert = true;
     return () => {
-      root.inert = false;
+      openModals--;
+      root.inert = openModals > 0;
     };
   }, [isOpen]);
 
