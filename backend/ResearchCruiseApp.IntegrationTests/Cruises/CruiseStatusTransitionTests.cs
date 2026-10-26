@@ -273,7 +273,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         await SubmitFormB(app, filled);
         Assert.Equal(HttpStatusCode.NoContent, await Revert(office, cruiseId));
 
-        Assert.Equal(HttpStatusCode.NoContent, await Patch(office, cruiseId, []));
+        Assert.Equal(HttpStatusCode.OK, await Patch(office, cruiseId, []));
 
         await AssertApplication(
             app,

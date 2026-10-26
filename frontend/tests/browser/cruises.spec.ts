@@ -207,9 +207,24 @@ test('cruise edits ask before leaving until they are saved', async ({ page, netw
   await expect(dialog).toHaveCount(0);
 });
 
-test('discarding cruise edits asks only when the form has changes', async ({ page, network }) => {
+test('discarding cruise edits asks only when the form has changes and lands on the server version after a conflict', async ({
+  page,
+  network,
+  requests,
+}) => {
   const item = cruise();
-  network.use(getGetCruiseMockHandler(item));
+  let server = item;
+  network.use(
+    getGetCruiseMockHandler(() => server),
+    getUpdateCruiseMockHandler(
+      () => {
+        server = { ...item, title: 'Cudzy', revision: 'AAAAAAAAB+A=' };
+        return fail(409, { detail: 'Dane zostały w międzyczasie zmienione.' })();
+      },
+      { once: true }
+    ),
+    getUpdateCruiseMockHandler()
+  );
   await page.goto(`/cruises/${item.id}`);
   const title = page.locator('input[name="title"]');
   const dialog = page.getByRole('dialog', { name: 'Odrzucić zmiany?' });
@@ -225,6 +240,17 @@ test('discarding cruise edits asks only when the form has changes', async ({ pag
   await dialog.getByRole('button', { name: 'Odrzuć zmiany' }).click();
   await expect(title).toHaveValue(item.title ?? '');
   await expect(page.getByRole('button', { name: 'Zapisz rejs' })).toBeVisible();
+
+  await title.fill('Mój');
+  await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+  await expect(page.getByTestId('form-errors')).toContainText('Dane zostały w międzyczasie zmienione.');
+  await expect(title).toHaveValue('Mój');
+  await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
+  await dialog.getByRole('button', { name: 'Odrzuć zmiany' }).click();
+  await expect(title).toHaveValue('Cudzy');
+  await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+  await expect(page.getByRole('button', { name: 'Edytuj', exact: true })).toBeVisible();
+  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`).at(-1)).toMatchObject({ revision: 'AAAAAAAAB+A=' });
 
   await page.goto('/cruises/new');
   await page.locator('input[name="title"]').fill('Szkic');

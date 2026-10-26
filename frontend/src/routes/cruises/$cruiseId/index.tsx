@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@/api/errors';
+import { ApiError, getErrorMessage } from '@/api/errors';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
@@ -116,6 +116,8 @@ function CruiseDetailsPage() {
       toast.success('Rejs został zaktualizowany pomyślnie.');
     } catch (error) {
       console.error(error);
+      // Discarding after a conflict should land on the current server version.
+      if (error instanceof ApiError && error.status === 409) void cruiseQuery.refetch();
       setServerFormErrors(form, error);
       toast.error(getErrorMessage(error, 'Nie udało się zaktualizować rejsu'));
       navigateToFirstError();
