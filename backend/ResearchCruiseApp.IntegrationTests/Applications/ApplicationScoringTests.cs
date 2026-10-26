@@ -358,9 +358,9 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData("2684354500000", "2147483647", HttpStatusCode.BadRequest)]
-    [InlineData("2684354500000", "47", HttpStatusCode.Created)]
-    [InlineData("2684354500001", "0", HttpStatusCode.BadRequest)]
+    [InlineData("2684354599999", "2147483647", HttpStatusCode.BadRequest)]
+    [InlineData("2684354599999", "47", HttpStatusCode.Created)]
+    [InlineData("2684354600000", "0", HttpStatusCode.BadRequest)]
     [InlineData("Infinity", "0", HttpStatusCode.BadRequest)]
     [InlineData("0", "2147483648", HttpStatusCode.BadRequest)]
     [InlineData("0", "1.5", HttpStatusCode.BadRequest)]
@@ -392,6 +392,15 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             Guid id = default;
             await app.InDatabase(async db => id = (await db.CruiseApplications.SingleAsync(ct)).Id);
             await AssertSummary(app, client, id, int.MaxValue);
+            // Legacy rows may already total more than int; reads must still answer.
+            await app.InDatabase(async db =>
+            {
+                (await db.FormAPublications.SingleAsync(ct)).Points += 20;
+                await db.SaveChangesAsync(ct);
+            });
+            await AssertSummary(app, client, id, int.MaxValue + 20L);
+            using var list = await client.GetAsync("/v2/applications", ct);
+            Assert.Equal(HttpStatusCode.OK, list.StatusCode);
             return;
         }
         await app.InDatabase(async db =>
@@ -434,12 +443,12 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         TestApplication app,
         HttpClient client,
         Guid id,
-        int points
+        long points
     )
     {
         var ct = TestContext.Current.CancellationToken;
         var summary = await client.GetFromJsonAsync<JsonElement>($"/v2/applications/{id}", ct);
-        Assert.Equal(points, summary.GetProperty("points").GetInt32());
+        Assert.Equal(points, summary.GetProperty("points").GetInt64());
         await app.InDatabase(async db =>
         {
             Assert.Equal(

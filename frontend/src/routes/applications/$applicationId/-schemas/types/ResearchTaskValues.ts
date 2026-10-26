@@ -1,14 +1,9 @@
 import { z } from 'zod';
 
-import {
-  MAX_FINANCING_AMOUNT,
-  MAX_MINISTERIAL_POINTS,
-  MINISTERIAL_POINTS_MESSAGE,
-} from '@/lib/applications/scoreLimits';
+import { MAX_MINISTERIAL_POINTS, MINISTERIAL_POINTS_MESSAGE } from '@/lib/applications/scoreLimits';
 
-const amount = (message: string) => z.number().min(0, message).max(MAX_FINANCING_AMOUNT, message);
-const financingAmountMessage = `Kwota finansowania musi być poprawną kwotą od 0.00 do ${MAX_FINANCING_AMOUNT}`;
-const securedAmountMessage = `Kwota zabezpieczona musi być poprawną kwotą od 0.00 do ${MAX_FINANCING_AMOUNT}`;
+const financingAmount = z.number().nonnegative('Kwota finansowania musi być poprawną kwotą większą lub równą 0.00');
+const securedAmount = z.number().nonnegative('Kwota zabezpieczona musi być poprawną kwotą większą lub równą 0.00');
 const ministerialPoints = z
   .number()
   .int(MINISTERIAL_POINTS_MESSAGE)
@@ -60,27 +55,32 @@ export const ProjectPreparationResearchTaskValuesSchema = ProjectPreparationRese
 });
 export type ProjectPreparationResearchTaskValues = z.input<typeof ProjectPreparationResearchTaskInputSchema>;
 
-export const ProjectResearchTaskInputSchema = z.object({
-  ...metadataFields,
-  type: z.enum([
-    ResearchTaskType.DomesticProject,
-    ResearchTaskType.ForeignProject,
-    ResearchTaskType.InternalUgProject,
-    ResearchTaskType.OtherProject,
-    ResearchTaskType.CommercialProject,
-  ]),
-  title: z.string(),
-  financingAmount: amount(financingAmountMessage).nullable(),
-  startDate: z.string(),
-  endDate: z.string(),
-  securedAmount: amount(securedAmountMessage).nullable(),
-});
-export const ProjectResearchTaskValuesSchema = ProjectResearchTaskInputSchema.extend({
+export const ProjectResearchTaskInputSchema = z
+  .object({
+    ...metadataFields,
+    type: z.enum([
+      ResearchTaskType.DomesticProject,
+      ResearchTaskType.ForeignProject,
+      ResearchTaskType.InternalUgProject,
+      ResearchTaskType.OtherProject,
+      ResearchTaskType.CommercialProject,
+    ]),
+    title: z.string(),
+    financingAmount: financingAmount.nullable(),
+    startDate: z.string(),
+    endDate: z.string(),
+    securedAmount: securedAmount.nullable(),
+  })
+  .refine(isScoreSafeFinancing, {
+    message: 'Kwota finansowania jest zbyt duża, aby policzyć punkty za projekt',
+    path: ['financingAmount'],
+  });
+export const ProjectResearchTaskValuesSchema = ProjectResearchTaskInputSchema.safeExtend({
   title: z.string().nonempty('Tytuł nie może być pusty'),
-  financingAmount: amount(financingAmountMessage),
+  financingAmount,
   startDate: z.string().nonempty('Data rozpoczęcia nie może być pusta'),
   endDate: z.string().nonempty('Data zakończenia nie może być pusta'),
-  securedAmount: amount(securedAmountMessage),
+  securedAmount,
 });
 export type ProjectResearchTaskValues = z.input<typeof ProjectResearchTaskInputSchema>;
 
@@ -243,4 +243,19 @@ export function getEmptyTask(taskType: ResearchTaskType): ResearchTaskValues {
     default:
       throw new Error(`Unknown task type: ${taskType}`);
   }
+}
+
+// Mirrors backend ApplicationScoringService.IsScoreSafeFinancing: the project score must fit int.
+const PROJECT_POINTS_PER_100K: Record<string, number> = {
+  [ResearchTaskType.DomesticProject]: 50,
+  [ResearchTaskType.ForeignProject]: 80,
+};
+
+function isScoreSafeFinancing(task: { type: string; financingAmount: number | null }) {
+  const points = PROJECT_POINTS_PER_100K[task.type];
+  return (
+    !points ||
+    task.financingAmount === null ||
+    Math.floor(task.financingAmount / 100_000) <= Math.floor(MAX_MINISTERIAL_POINTS / points)
+  );
 }

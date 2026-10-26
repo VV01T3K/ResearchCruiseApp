@@ -20,7 +20,7 @@ const effectFields = {
 
 const withEffectFields = (
   schemas: typeof ResearchTaskValuesInputSchema.options | typeof ResearchTaskValuesSchema.options
-) => z.union(schemas.map((schema) => schema.extend(effectFields)));
+) => z.union(schemas.map((schema) => schema.safeExtend(effectFields)));
 
 export const ResearchTaskEffectValuesInputSchema = withEffectFields(ResearchTaskValuesInputSchema.options);
 export const ResearchTaskEffectValuesSchema = withEffectFields(ResearchTaskValuesSchema.options);

@@ -15,7 +15,27 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
 
     public static bool IsValidAmount(string? value) =>
         double.TryParse(value, CultureInfo.InvariantCulture, out var amount)
-        && amount is >= 0 and <= EvaluationConstants.MaxFinancingAmount;
+        && double.IsFinite(amount)
+        && amount >= 0;
+
+    public static bool IsScoreSafeFinancing(string? type, string amount)
+    {
+        var (pointsPerDivision, division) = type switch
+        {
+            "4" => (
+                EvaluationConstants.PointsPerDivisionForDomesticProject,
+                EvaluationConstants.DomesticProjectDivision
+            ),
+            "5" => (
+                EvaluationConstants.PointsPerDivisionForForeignProject,
+                EvaluationConstants.ForeignProjectDivision
+            ),
+            _ => (0, 1),
+        };
+        return pointsPerDivision == 0
+            || Math.Floor(double.Parse(amount, CultureInfo.InvariantCulture) / division)
+                <= int.MaxValue / pointsPerDivision;
+    }
 
     public async Task<Result> Evaluate(
         CruiseApplication cruiseApplication,
@@ -41,11 +61,9 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
         return isDraft ? Result.Empty : await EvaluateEffects(cruiseApplication, cancellationToken);
     }
 
-    public int GetPointsSum(CruiseApplication cruiseApplication)
+    public long GetPointsSum(CruiseApplication cruiseApplication)
     {
-        return cruiseApplication.FormA is null
-            ? 0
-            : checked((int)GetPointsTotal(cruiseApplication.FormA));
+        return cruiseApplication.FormA is null ? 0 : GetPointsTotal(cruiseApplication.FormA);
     }
 
     private static long GetPointsTotal(FormA formA)
@@ -184,9 +202,9 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
                 userEffect.UserId == cruiseApplication.FormA!.CruiseManagerId
             )
             .SumAsync(userEffect => (long)userEffect.Points, cancellationToken);
-        if (effectsPoints > int.MaxValue)
+        if (effectsPoints is < 0 or > int.MaxValue)
             return Error.InvalidArgument(
-                "Suma punktów za efekty kierownika rejsu przekracza zakres, który system może policzyć."
+                "Suma punktów za efekty kierownika rejsu jest poza zakresem, który system może policzyć."
             );
 
         cruiseApplication.EffectsPoints = (int)effectsPoints;

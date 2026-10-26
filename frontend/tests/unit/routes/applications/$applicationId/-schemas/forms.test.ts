@@ -376,11 +376,11 @@ describe('drafts', () => {
         },
       ],
     });
-    expect(getFormADraftFieldsSchema().safeParse(draftA(2147483647, 2684354500000)).success).toBe(true);
-    expect(getFormADraftFieldsSchema().safeParse(draftA(2147483648, 2684354500000))).toMatchObject(
+    expect(getFormADraftFieldsSchema().safeParse(draftA(2147483647, 2684354599999)).success).toBe(true);
+    expect(getFormADraftFieldsSchema().safeParse(draftA(2147483648, 2684354599999))).toMatchObject(
       issueAt(['researchTasks', 1, 'ministerialPoints'])
     );
-    expect(getFormADraftFieldsSchema().safeParse(draftA(0, 2684354500001))).toMatchObject(
+    expect(getFormADraftFieldsSchema().safeParse(draftA(0, 2684354600000))).toMatchObject(
       issueAt(['researchTasks', 0, 'financingAmount'])
     );
     expect(getFormCDraftFieldsSchema().safeParse(draftC('2147483647')).success).toBe(true);

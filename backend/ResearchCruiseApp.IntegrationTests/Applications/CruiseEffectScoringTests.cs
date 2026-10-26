@@ -427,6 +427,59 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
         });
     }
 
+    [Fact]
+    public async Task Effects_WhenStoredHistoryWouldWrap_RefuseNextApplication()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var old = await TestApplications.Create(app, CruiseApplicationStatus.Undertaken);
+        using var client = await TestApplications.Login(app, old.OwnerEmail);
+        var effects = new FormCFields { ShipUsage = "0", DifferentUsage = "" };
+        for (var index = 0; index < 3; index++)
+            effects.ResearchTasksEffects.Add(
+                new ResearchTaskEffectFields
+                {
+                    Type = "10",
+                    Title = $"Task {index}",
+                    Done = "true",
+                    ManagerConditionMet = "true",
+                    DeputyConditionMet = "false",
+                    PublicationMinisterialPoints = "100",
+                }
+            );
+        using var reported = await client.PutAsJsonAsync(
+            $"/v2/applications/{old.Id}/form-c",
+            new FormCWriteRequest { Form = effects, Draft = false },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.Created, reported.StatusCode);
+        var deputy = await TestUsers.Create(app, "deputy@example.invalid", RoleName.CruiseManager);
+        var unit = new UgUnit { Name = "Faculty", IsActive = true };
+        Guid ownerId = default;
+        await app.InDatabase(async db =>
+        {
+            ownerId = (await db.FormsA.SingleAsync(ct)).CruiseManagerId;
+            // Legacy negative points sum to -3221225472, which an int cast wraps to a positive score.
+            foreach (var row in await db.UserEffects.ToListAsync(ct))
+                row.Points = -1_073_741_824;
+            db.UgUnits.Add(unit);
+            await db.SaveChangesAsync(ct);
+        });
+        using var response = await client.PostAsJsonAsync(
+            "/v2/applications",
+            new FormAWriteRequest
+            {
+                Form = FormAWorkflowTests.CompleteForm(ownerId, Guid.Parse(deputy.Id), unit.Id),
+                Draft = false,
+            },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        await app.InDatabase(async db =>
+            Assert.Equal(old.Id, (await db.CruiseApplications.SingleAsync(ct)).Id)
+        );
+    }
+
     private static async Task AssertEffects(
         TestApplication app,
         HttpClient client,

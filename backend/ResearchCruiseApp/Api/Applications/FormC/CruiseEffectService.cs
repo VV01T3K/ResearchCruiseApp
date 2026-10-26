@@ -58,14 +58,11 @@ internal class CruiseEffectService(
             await dbContext
                 .UserEffects.Where(userEffect => userIds.Contains(userEffect.UserId))
                 .GroupBy(userEffect => userEffect.UserId)
-                .AnyAsync(
-                    userEffects =>
-                        userEffects.Sum(userEffect => (long)userEffect.Points) > int.MaxValue,
-                    cancellationToken
-                )
+                .Select(userEffects => userEffects.Sum(userEffect => (long)userEffect.Points))
+                .AnyAsync(sum => sum < 0 || sum > int.MaxValue, cancellationToken)
         )
             return Error.InvalidArgument(
-                "Suma punktów za efekty kierownika lub zastępcy przekracza zakres, który system może policzyć."
+                "Suma punktów za efekty kierownika lub zastępcy jest poza zakresem, który system może policzyć."
             );
 
         return Result.Empty;

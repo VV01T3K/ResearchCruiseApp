@@ -163,7 +163,7 @@ public class CruiseApplicationSummary
     public bool HasFormC { get; init; }
 
     [JsonNumberHandling(JsonNumberHandling.Strict)]
-    public int Points { get; set; }
+    public long Points { get; set; }
 
     public CruiseApplicationStatus Status { get; init; }
 
@@ -219,7 +219,7 @@ public class CruiseApplicationCandidateResponse
     public required bool HasFormC { get; init; }
 
     [JsonNumberHandling(JsonNumberHandling.Strict)]
-    public required int Points { get; set; }
+    public required long Points { get; set; }
 }
 
 public class CruiseApplicationEvaluation

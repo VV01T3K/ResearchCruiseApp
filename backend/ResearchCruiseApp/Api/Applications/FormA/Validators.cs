@@ -416,6 +416,10 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                 (
                     string.IsNullOrEmpty(researchTaskFields.FinancingAmount)
                     || ApplicationScoringService.IsValidAmount(researchTaskFields.FinancingAmount)
+                        && ApplicationScoringService.IsScoreSafeFinancing(
+                            researchTaskFields.Type,
+                            researchTaskFields.FinancingAmount
+                        )
                 )
                 && (
                     string.IsNullOrEmpty(researchTaskFields.SecuredAmount)
