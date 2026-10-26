@@ -67,12 +67,18 @@ export function AppDatePickerInput({
   const selectedDate = getDateFromValue(value);
   const [hoveredDate, setHoveredDate] = React.useState<Date | undefined>(undefined);
   const [expanded, setExpanded] = React.useState(false);
+  const clearRef = React.useRef<HTMLButtonElement>(null);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
   const [visibleMonth, setVisibleMonth] = React.useState({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
   });
 
-  function handleOpenChange(open: boolean) {
+  function handleOpenChange(open: boolean, details: Popover.Root.ChangeEventDetails) {
+    if (details.reason === 'outside-press' && clearRef.current?.contains(details.event.target as Node)) {
+      details.cancel();
+      return;
+    }
     if (open && selectedDate) {
       setVisibleMonth({ month: selectedDate.getMonth(), year: selectedDate.getFullYear() });
     }
@@ -84,6 +90,7 @@ export function AppDatePickerInput({
     onChange?.(undefined);
     setExpanded(false);
     onBlur?.();
+    triggerRef.current?.focus();
     evt.stopPropagation();
     evt.preventDefault();
   }
@@ -115,10 +122,6 @@ export function AppDatePickerInput({
     }
 
     onChange?.(getValueFromDate(newDate));
-    if (type === 'date') {
-      setExpanded(false);
-      onBlur?.();
-    }
   }
 
   return (
@@ -128,6 +131,7 @@ export function AppDatePickerInput({
         <div className="relative">
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
           <Popover.Trigger
+            ref={triggerRef}
             name={name}
             disabled={disabled}
             {...aria.inputProps}
@@ -149,7 +153,14 @@ export function AppDatePickerInput({
               {!selectedDate && <CalendarDotIcon className="h-4 w-4" />}
             </span>
           </Popover.Trigger>
-          {selectedDate && !disabled && <PickerClearButton aria-label="Wyczyść datę" onClick={handleResetSelection} />}
+          {selectedDate && !disabled && (
+            <PickerClearButton
+              ref={clearRef}
+              aria-label="Wyczyść datę"
+              onClick={handleResetSelection}
+              onMouseDown={(evt) => evt.preventDefault()}
+            />
+          )}
         </div>
         <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper id={aria.helperId} helper={helper} />
