@@ -361,6 +361,7 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
     [InlineData("2684354599999", "2147483647", HttpStatusCode.BadRequest)]
     [InlineData("2684354599999", "47", HttpStatusCode.Created)]
     [InlineData("2684354600000", "0", HttpStatusCode.BadRequest)]
+    [InlineData("2684354600000", "0", HttpStatusCode.BadRequest, "ForeignProject")]
     [InlineData("Infinity", "0", HttpStatusCode.BadRequest)]
     [InlineData("0", "2147483648", HttpStatusCode.BadRequest)]
     [InlineData("0", "1.5", HttpStatusCode.BadRequest)]
@@ -369,7 +370,8 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
     public async Task Bounds_WhenDraftScoreLeavesIntRange_RejectsBeforeWriting(
         string financing,
         string points,
-        HttpStatusCode expected
+        HttpStatusCode expected,
+        string type = "5"
     )
     {
         var ct = TestContext.Current.CancellationToken;
@@ -377,7 +379,7 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         var owner = await TestUsers.Create(app, "scoring@example.invalid", RoleName.CruiseManager);
         using var client = await TestApplications.Login(app, owner.Email!);
         var form = FormAccessTests.Draft(Guid.Parse(owner.Id));
-        form.ResearchTasks.Add(new ResearchTaskFields { Type = "5", FinancingAmount = financing });
+        form.ResearchTasks.Add(new ResearchTaskFields { Type = type, FinancingAmount = financing });
         form.Publications.Add(
             new PublicationFields { Category = "postscript", MinisterialPoints = points }
         );

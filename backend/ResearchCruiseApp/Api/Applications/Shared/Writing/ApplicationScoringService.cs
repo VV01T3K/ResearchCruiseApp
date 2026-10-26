@@ -20,13 +20,14 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
 
     public static bool IsScoreSafeFinancing(string? type, string amount)
     {
-        var (pointsPerDivision, division) = type switch
+        Enum.TryParse<ResearchTaskType>(type, out var taskType);
+        var (pointsPerDivision, division) = taskType switch
         {
-            "4" => (
+            ResearchTaskType.DomesticProject => (
                 EvaluationConstants.PointsPerDivisionForDomesticProject,
                 EvaluationConstants.DomesticProjectDivision
             ),
-            "5" => (
+            ResearchTaskType.ForeignProject => (
                 EvaluationConstants.PointsPerDivisionForForeignProject,
                 EvaluationConstants.ForeignProjectDivision
             ),
