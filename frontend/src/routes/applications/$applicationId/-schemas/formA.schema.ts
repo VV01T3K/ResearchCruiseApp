@@ -24,6 +24,7 @@ import {
   PublicationValuesSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
 import {
+  MAX_RESEARCH_TASKS,
   ResearchTaskValuesInputSchema,
   ResearchTaskValuesSchema,
 } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
@@ -396,7 +397,9 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
         error: 'Cel rejsu musi być jednym z dostępnych celów rejsu',
       }),
       cruiseGoalDescription: z.string().max(10240, 'Opis celu rejsu nie może być dłuższy niż 10240 znaków'),
-      researchTasks: ResearchTaskValuesSchema.array().min(1, 'Co najmniej jedno zadanie badawcze jest wymagane'),
+      researchTasks: ResearchTaskValuesSchema.array()
+        .min(1, 'Co najmniej jedno zadanie badawcze jest wymagane')
+        .max(MAX_RESEARCH_TASKS, `Można podać maksymalnie ${MAX_RESEARCH_TASKS} zadań badawczych`),
       contracts: ContractValuesSchema.array(),
       ugTeams: UgTeamValuesSchema.array()
         .min(1, 'Co najmniej jeden zespół UG jest wymagany')

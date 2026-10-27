@@ -357,6 +357,50 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         await AssertSummary(app, client, id, 100);
     }
 
+    [Theory]
+    [InlineData(1, "9", null, "1000", 500)]
+    [InlineData(1, "9", null, "1001", null)]
+    [InlineData(1, "5", "10000000000", null, 8_000_000)]
+    [InlineData(1, "5", "10000000001", null, null)]
+    [InlineData(1, "2147483648", null, null, null)]
+    [InlineData(101, "5", "10000000000", null, null)]
+    public async Task Draft_WhenInputsReachCaps_ScoresAtCapAndRejectsAbove(
+        int tasks,
+        string type,
+        string? financing,
+        string? points,
+        int? total
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var owner = await TestUsers.Create(app, "scoring@example.invalid", RoleName.CruiseManager);
+        using var client = await TestApplications.Login(app, owner.Email!);
+        var draft = FormAccessTests.Draft(Guid.Parse(owner.Id));
+        for (var index = 0; index < tasks; index++)
+            draft.ResearchTasks.Add(
+                new ResearchTaskFields { Type = type, FinancingAmount = financing }
+            );
+        if (points is not null)
+            draft.Publications.Add(
+                new PublicationFields { Category = "subject", MinisterialPoints = points }
+            );
+        using var response = await client.PostAsJsonAsync(
+            "/v2/applications",
+            new FormAWriteRequest { Form = draft, Draft = true },
+            ct
+        );
+        if (total is null)
+        {
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            return;
+        }
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Guid id = default;
+        await app.InDatabase(async db => id = (await db.CruiseApplications.SingleAsync(ct)).Id);
+        await AssertSummary(app, client, id, total.Value);
+    }
+
     private static async Task<Guid> CreateDraft(
         TestApplication app,
         HttpClient client,

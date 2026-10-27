@@ -8,6 +8,24 @@ public sealed class FormCWriteRequestValidator : AbstractValidator<FormCWriteReq
 {
     public FormCWriteRequestValidator(FileInspector fileInspector)
     {
+        RuleForEach(request => request.Form.ResearchTasksEffects)
+            .Must(effectFields =>
+                Enum.TryParse<ResearchTaskType>(effectFields.Type, out var type)
+                && Enum.IsDefined(type)
+            )
+            .WithMessage("Podany typ zadania jest nieprawidłowy.");
+
+        RuleForEach(request => request.Form.ResearchTasksEffects)
+            .Must(effectFields =>
+                string.IsNullOrEmpty(effectFields.PublicationMinisterialPoints)
+                || EvaluationConstants.IsValidMinisterialPoints(
+                    effectFields.PublicationMinisterialPoints
+                )
+            )
+            .WithMessage(
+                $"Punkty ministerialne publikacji muszą być liczbą całkowitą od 0 do {EvaluationConstants.MaxMinisterialPoints}."
+            );
+
         RuleForEach(request => request.Form.LongResearchEquipments)
             .Must(equipmentFields =>
                 Enum.TryParse<ResearchEquipmentAction>(equipmentFields.Action, out var action)
