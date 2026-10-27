@@ -83,7 +83,8 @@ public static class FormBEndpoints
     )
     {
         var application = await dbContext
-            .CruiseApplications.IncludeFormA()
+            .CruiseApplications.AsSplitQuery()
+            .IncludeFormA()
             .IncludeFormB()
             .IncludeFormBContent()
             .IncludeCruise()
