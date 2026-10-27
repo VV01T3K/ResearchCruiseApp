@@ -45,7 +45,8 @@ public static class ListsEndpoints
     )
     {
         var cruises = await dbContext
-            .Cruises.IncludeCruiseApplications()
+            .Cruises.AsSplitQuery()
+            .IncludeCruiseApplications()
                 .ThenInclude(application => application.FormA!.Permissions)
             .IncludeCruiseApplications()
                 .ThenInclude(application => application.FormA!.FormAResearchTasks)
@@ -83,7 +84,8 @@ public static class ListsEndpoints
     )
     {
         var cruise = await dbContext
-            .Cruises.IncludeCruiseApplications()
+            .Cruises.AsSplitQuery()
+            .IncludeCruiseApplications()
                 .ThenInclude(application => application.FormA!.Permissions)
             .IncludeCruiseApplications()
                 .ThenInclude(application => application.FormA!.FormAResearchTasks)
