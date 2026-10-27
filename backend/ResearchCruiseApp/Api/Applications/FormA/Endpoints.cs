@@ -29,6 +29,7 @@ public static class FormAEndpoints
             .WithSummary("Get Form A.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status409Conflict)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
 
         group
@@ -89,7 +90,7 @@ public static class FormAEndpoints
         return TypedResults.Created();
     }
 
-    private static async Task<Results<Ok<FormAFields>, NotFound>> Get(
+    private static async Task<Results<Ok<FormAFields>, NotFound, ProblemHttpResult>> Get(
         Guid applicationId,
         ApplicationDbContext dbContext,
         FormReader forms,
@@ -97,13 +98,28 @@ public static class FormAEndpoints
         CancellationToken cancellationToken
     )
     {
-        var application = await dbContext
-            .CruiseApplications.IncludeFormA()
-            .IncludeFormAContent()
-            .SingleOrDefaultAsync(
-                application => application.Id == applicationId,
-                cancellationToken
-            );
+        var query = dbContext.CruiseApplications.IncludeFormA().IncludeFormAContent();
+        var read = await dbContext.ReadOneRevision(
+            () =>
+                query.SingleOrDefaultAsync(
+                    application => application.Id == applicationId,
+                    cancellationToken
+                ),
+            async application =>
+                application is not null
+                && !application.RowVersion.Matches(
+                    (
+                        await dbContext
+                            .CruiseApplications.Where(current => current.Id == applicationId)
+                            .Select(current => current.RowVersion)
+                            .SingleOrDefaultAsync(cancellationToken)
+                    )?.ToRevision()
+                )
+        );
+        if (!read.IsSuccess)
+            return read.Error!.ToProblemHttpResult();
+
+        var application = read.Data;
         if (
             application?.FormA is null
             || !await userPermissionVerifier.CanCurrentUserViewForm(application)

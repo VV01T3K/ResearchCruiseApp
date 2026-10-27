@@ -22,6 +22,7 @@ public static class ListsEndpoints
             .WithName("GetCruises")
             .WithSummary("Get visible cruises.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status409Conflict)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
@@ -33,10 +34,11 @@ public static class ListsEndpoints
             .WithSummary("Get one visible cruise.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status409Conflict)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
 
-    private static async Task<Ok<List<CruiseResponse>>> GetAll(
+    private static async Task<Results<Ok<List<CruiseResponse>>, ProblemHttpResult>> GetAll(
         IdentityService identityService,
         ApplicationScoringService evaluator,
         ApplicationDbContext dbContext,
@@ -44,7 +46,7 @@ public static class ListsEndpoints
         CancellationToken cancellationToken
     )
     {
-        var cruises = await dbContext
+        var query = dbContext
             .Cruises.AsSplitQuery()
             .IncludeCruiseApplications()
                 .ThenInclude(application => application.FormA!.Permissions)
@@ -59,11 +61,26 @@ public static class ListsEndpoints
             .IncludeCruiseApplications()
                 .ThenInclude(application => application.FormA!.FormAPublications)
             .IncludeCruiseApplications()
-                .ThenInclude(application => application.FormA!.FormASpubTasks)
-            .ToListAsync(cancellationToken);
+                .ThenInclude(application => application.FormA!.FormASpubTasks);
+        var read = await dbContext.ReadOneRevision(
+            () => query.ToListAsync(cancellationToken),
+            async cruises =>
+                !cruises
+                    .Select(cruise => cruise.RowVersion.ToRevision())
+                    .ToHashSet()
+                    .SetEquals(
+                        (
+                            await dbContext
+                                .Cruises.Select(cruise => cruise.RowVersion)
+                                .ToListAsync(cancellationToken)
+                        ).Select(rowVersion => rowVersion.ToRevision())
+                    )
+        );
+        if (!read.IsSuccess)
+            return read.Error!.ToProblemHttpResult();
 
         var visibleCruises = new List<CruiseResponse>();
-        foreach (var cruise in cruises)
+        foreach (var cruise in read.Data!)
         {
             if (await userPermissionVerifier.CanCurrentUserViewCruise(cruise))
             {
@@ -74,7 +91,7 @@ public static class ListsEndpoints
         return TypedResults.Ok(visibleCruises);
     }
 
-    private static async Task<Results<Ok<CruiseResponse>, NotFound>> GetById(
+    private static async Task<Results<Ok<CruiseResponse>, NotFound, ProblemHttpResult>> GetById(
         Guid cruiseId,
         IdentityService identityService,
         ApplicationScoringService evaluator,
@@ -83,7 +100,7 @@ public static class ListsEndpoints
         CancellationToken cancellationToken
     )
     {
-        var cruise = await dbContext
+        var query = dbContext
             .Cruises.AsSplitQuery()
             .IncludeCruiseApplications()
                 .ThenInclude(application => application.FormA!.Permissions)
@@ -98,8 +115,24 @@ public static class ListsEndpoints
             .IncludeCruiseApplications()
                 .ThenInclude(application => application.FormA!.FormAPublications)
             .IncludeCruiseApplications()
-                .ThenInclude(application => application.FormA!.FormASpubTasks)
-            .SingleOrDefaultAsync(cruise => cruise.Id == cruiseId, cancellationToken);
+                .ThenInclude(application => application.FormA!.FormASpubTasks);
+        var read = await dbContext.ReadOneRevision(
+            () => query.SingleOrDefaultAsync(cruise => cruise.Id == cruiseId, cancellationToken),
+            async cruise =>
+                cruise is not null
+                && !cruise.RowVersion.Matches(
+                    (
+                        await dbContext
+                            .Cruises.Where(current => current.Id == cruiseId)
+                            .Select(current => current.RowVersion)
+                            .SingleOrDefaultAsync(cancellationToken)
+                    )?.ToRevision()
+                )
+        );
+        if (!read.IsSuccess)
+            return read.Error!.ToProblemHttpResult();
+
+        var cruise = read.Data;
         if (cruise is null || !await userPermissionVerifier.CanCurrentUserViewCruise(cruise))
         {
             return TypedResults.NotFound();
