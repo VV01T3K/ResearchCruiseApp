@@ -437,12 +437,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 >
                   {passwordResetSent ? (
                     <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <EnvelopeSimpleIcon weight="fill" className="h-4 w-4" />
+                      <EnvelopeSimpleIcon className="h-4 w-4" />
                       <span>Link do zmiany hasła wysłany</span>
                     </motion.div>
                   ) : (
                     <div className="flex items-center gap-4">
-                      <EnvelopeSimpleIcon weight="fill" className="h-4 w-4" />
+                      <EnvelopeSimpleIcon className="h-4 w-4" />
                       <span>Wyślij link do zmiany hasła</span>
                     </div>
                   )}
