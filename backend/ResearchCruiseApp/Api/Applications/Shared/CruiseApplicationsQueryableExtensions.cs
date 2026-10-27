@@ -47,6 +47,7 @@ internal static class CruiseApplicationsQueryableExtensions
     )
     {
         return query
+            .AsSplitQuery()
             .Include(cruiseApplication => cruiseApplication.FormA!.Permissions)
             .Include(cruiseApplication => cruiseApplication.FormA!.ResearchAreaDescriptions)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
@@ -140,6 +141,7 @@ internal static class CruiseApplicationsQueryableExtensions
     )
     {
         return query
+            .AsSplitQuery()
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAContracts)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAPublications)
