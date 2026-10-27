@@ -10,11 +10,16 @@ import type {
   RequestHandlerOptions
 } from 'msw';
 
+import {
+  CruiseApplicationStatus,
+  CruiseStatus
+} from '../../schemas';
 import type {
   CruiseEffectResponse,
   CruiseManagerResponse,
   CurrentUserResponse,
   PublicationResponse,
+  UserAssignmentsResponse,
   UserResponse
 } from '../../schemas';
 
@@ -28,6 +33,8 @@ export const getGetCurrentUserPublicationsResponseMock = (): PublicationResponse
 export const getGetUsersResponseMock = (): UserResponse[] => (Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.helpers.fromRegExp("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"), email: faker.string.alpha({length: {min: 10, max: 20}}), firstName: faker.string.alpha({length: {min: 10, max: 20}}), lastName: faker.string.alpha({length: {min: 10, max: 20}}), roles: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => (faker.string.alpha({length: {min: 10, max: 20}}))), emailConfirmed: faker.datatype.boolean(), accepted: faker.datatype.boolean()})))
 
 export const getGetAvailableCruiseManagersResponseMock = (): CruiseManagerResponse[] => (Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.helpers.fromRegExp("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"), email: faker.string.alpha({length: {min: 10, max: 20}}), firstName: faker.string.alpha({length: {min: 10, max: 20}}), lastName: faker.string.alpha({length: {min: 10, max: 20}})})))
+
+export const getGetUserAssignmentsResponseMock = (overrideResponse: Partial<Extract<UserAssignmentsResponse, object>> = {}): UserAssignmentsResponse => ({applications: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.helpers.fromRegExp("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"), number: faker.string.alpha({length: {min: 10, max: 20}}), isDeputy: faker.datatype.boolean(), status: faker.helpers.arrayElement(Object.values(CruiseApplicationStatus))})), cruises: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.helpers.fromRegExp("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"), number: faker.string.alpha({length: {min: 10, max: 20}}), isDeputy: faker.datatype.boolean(), status: faker.helpers.arrayElement(Object.values(CruiseStatus))})), closedCount: faker.number.int(), ...overrideResponse})
 
 
 export const getGetCurrentUserMockHandler = (overrideResponse?: CurrentUserResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CurrentUserResponse> | CurrentUserResponse), options?: RequestHandlerOptions) => {
@@ -209,6 +216,18 @@ export const getReplaceUserRoleMockHandler = (overrideResponse?: void | ((info: 
       })
   }, options)
 }
+
+export const getGetUserAssignmentsMockHandler = (overrideResponse?: UserAssignmentsResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<UserAssignmentsResponse> | UserAssignmentsResponse), options?: RequestHandlerOptions) => {
+  return http.get('*/v2/users/:userId/assignments', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetUserAssignmentsResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
 export const getUsersMock = () => [
   getGetCurrentUserMockHandler(),
   getChangeCurrentUserPasswordMockHandler(),
@@ -226,5 +245,6 @@ export const getUsersMock = () => [
   getDeactivateUserMockHandler(),
   getAddUserRoleMockHandler(),
   getRemoveUserRoleMockHandler(),
-  getReplaceUserRoleMockHandler()
+  getReplaceUserRoleMockHandler(),
+  getGetUserAssignmentsMockHandler()
 ]

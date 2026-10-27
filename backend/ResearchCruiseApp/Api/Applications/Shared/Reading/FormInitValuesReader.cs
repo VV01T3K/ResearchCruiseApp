@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
@@ -11,18 +13,44 @@ internal class FormInitValuesReader(
     IdentityService identityService,
     ContractReader contracts,
     ApplicationDbContext dbContext,
-    CurrentUserService currentUserService
+    CurrentUserService currentUserService,
+    UserPermissionVerifier userPermissionVerifier
 )
 {
-    public async Task<FormAOptions> CreateFormA(CancellationToken cancellationToken)
+    public async Task<FormAOptions> CreateFormA(
+        Guid? applicationId,
+        CancellationToken cancellationToken
+    )
     {
         var users = await identityService.GetAllUsersDtos(cancellationToken);
         var applications = await GetApplicationsForCurrentUser(cancellationToken);
+        var assigned = applicationId is null
+            ? null
+            : await dbContext
+                .CruiseApplications.Where(
+                    await userPermissionVerifier.GetApplicationVisibilityFilter()
+                )
+                .Where(application => application.Id == applicationId && application.FormA != null)
+                .Select(application => new
+                {
+                    application.FormA!.CruiseManagerId,
+                    application.FormA.DeputyManagerId,
+                })
+                .SingleOrDefaultAsync(cancellationToken);
 
         var result = await CreatePublicFormA(cancellationToken);
-        result.CruiseManagers = users.Select(ToUserOption).ToList();
+        result.CruiseManagers = users
+            .Where(user =>
+                (user.Accepted && user.Roles.Any(IdentityService.CruiseManagerRoleNames.Contains))
+                || user.Id == assigned?.CruiseManagerId
+            )
+            .Select(ToUserOption)
+            .ToList();
         result.DeputyManagers = users
-            .Where(user => user.Roles.Contains(RoleName.CruiseManager))
+            .Where(user =>
+                (user.Accepted && user.Roles.Contains(RoleName.CruiseManager))
+                || user.Id == assigned?.DeputyManagerId
+            )
             .Select(ToUserOption)
             .ToList();
         result.HistoricalResearchTasks = applications

@@ -1280,6 +1280,58 @@
         }
       }
     },
+    "/v2/users/{userId}/assignments": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get the applications and cruises a managed user leads or deputizes, before their role or account changes.",
+        "operationId": "GetUserAssignments",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserAssignmentsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v2/cruises": {
       "get": {
         "tags": [
@@ -1795,8 +1847,15 @@
         "summary": "Automatically plan eligible cruises.",
         "operationId": "AutoPlanCruises",
         "responses": {
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoPlanResponse"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized",
@@ -1810,6 +1869,16 @@
           },
           "403": {
             "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -2429,6 +2498,16 @@
         ],
         "summary": "Get authenticated Form A context.",
         "operationId": "GetApplicationFormAContext",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "query",
+            "schema": {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -3530,6 +3609,73 @@
           },
           "points": {
             "type": "string"
+          }
+        }
+      },
+      "AssignedApplicationResponse": {
+        "required": [
+          "id",
+          "number",
+          "isDeputy",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "isDeputy": {
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CruiseApplicationStatus"
+          }
+        }
+      },
+      "AssignedCruiseResponse": {
+        "required": [
+          "id",
+          "number",
+          "isDeputy",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "isDeputy": {
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CruiseStatus"
+          }
+        }
+      },
+      "AutoPlanResponse": {
+        "required": [
+          "plannedCount",
+          "skipped"
+        ],
+        "type": "object",
+        "properties": {
+          "plannedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skipped": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkippedApplicationResponse"
+            }
           }
         }
       },
@@ -5539,6 +5685,26 @@
           }
         }
       },
+      "SkippedApplicationResponse": {
+        "required": [
+          "applicationId",
+          "applicationNumber",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": "string"
+          },
+          "applicationNumber": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
       "SpubTaskFields": {
         "type": "object",
         "properties": {
@@ -5716,6 +5882,32 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "UserAssignmentsResponse": {
+        "required": [
+          "applications",
+          "cruises",
+          "closedCount"
+        ],
+        "type": "object",
+        "properties": {
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssignedApplicationResponse"
+            }
+          },
+          "cruises": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssignedCruiseResponse"
+            }
+          },
+          "closedCount": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
