@@ -29,6 +29,7 @@ public static class FormAEndpoints
             .WithSummary("Get Form A.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status409Conflict)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
 
         group
@@ -89,7 +90,7 @@ public static class FormAEndpoints
         return TypedResults.Created();
     }
 
-    private static async Task<Results<Ok<FormAFields>, NotFound>> Get(
+    private static async Task<Results<Ok<FormAFields>, NotFound, ProblemHttpResult>> Get(
         Guid applicationId,
         ApplicationDbContext dbContext,
         FormReader forms,
@@ -98,7 +99,7 @@ public static class FormAEndpoints
     )
     {
         var query = dbContext.CruiseApplications.IncludeFormA().IncludeFormAContent();
-        var application = await dbContext.ReadOneRevision(
+        var read = await dbContext.ReadOneRevision(
             () =>
                 query.SingleOrDefaultAsync(
                     application => application.Id == applicationId,
@@ -115,6 +116,10 @@ public static class FormAEndpoints
                     )?.ToRevision()
                 )
         );
+        if (!read.IsSuccess)
+            return read.Error!.ToProblemHttpResult();
+
+        var application = read.Data;
         if (
             application?.FormA is null
             || !await userPermissionVerifier.CanCurrentUserViewForm(application)

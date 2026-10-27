@@ -20,7 +20,7 @@ public static class Revisions
         Error.Conflict(StaleMessage).ToProblemHttpResult();
 
     // Split queries run outside a transaction, so reread when a save lands between them.
-    internal static async Task<T> ReadOneRevision<T>(
+    internal static async Task<Result<T>> ReadOneRevision<T>(
         this ApplicationDbContext dbContext,
         Func<Task<T>> read,
         Func<T, Task<bool>> changed
@@ -29,8 +29,12 @@ public static class Revisions
         for (var attempt = 1; ; attempt++)
         {
             var result = await read();
-            if (attempt == 3 || !await changed(result))
+            if (!await changed(result))
                 return result;
+            if (attempt == 3)
+                return Error.Conflict(
+                    "Dane zmieniły się podczas wczytywania. Odśwież stronę, aby wczytać aktualną wersję."
+                );
             dbContext.ChangeTracker.Clear();
         }
     }
