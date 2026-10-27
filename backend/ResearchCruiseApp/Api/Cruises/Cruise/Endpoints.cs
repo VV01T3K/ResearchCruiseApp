@@ -189,20 +189,18 @@ public static class CruiseEndpoints
             .Where(application => request.CruiseApplicationIds.Contains(application.Id))
             .ToListAsync(cancellationToken);
         var formBRequested = new List<CruiseApplication>();
-        if (cruise.Status == CruiseStatus.Confirmed)
-        {
-            // Removed applications can be planned again; Form B is kept.
-            foreach (
-                var application in cruise.CruiseApplications.Where(application =>
-                    !request.CruiseApplicationIds.Contains(application.Id)
-                )
+        // Removed applications can be planned again; Form B is kept.
+        foreach (
+            var application in cruise.CruiseApplications.Where(application =>
+                !request.CruiseApplicationIds.Contains(application.Id)
             )
-            {
-                application.Status = CruiseApplicationStatus.Accepted;
-            }
-
-            formBRequested = CruiseLifecycleRules.RequestFormB(newCruiseApplications);
+        )
+        {
+            application.Status = CruiseApplicationStatus.Accepted;
         }
+
+        if (cruise.Status == CruiseStatus.Confirmed)
+            formBRequested = CruiseLifecycleRules.RequestFormB(newCruiseApplications);
 
         cruise.CruiseApplications = newCruiseApplications;
         // Managers of applications already on the cruise were told when it was confirmed.
@@ -235,12 +233,9 @@ public static class CruiseEndpoints
             return Error.InvalidArgument("Nie można już usunąć rejsu").ToProblemHttpResult();
         }
 
-        if (cruise.Status == CruiseStatus.Confirmed)
+        foreach (var application in cruise.CruiseApplications)
         {
-            foreach (var application in cruise.CruiseApplications)
-            {
-                application.Status = CruiseApplicationStatus.Accepted;
-            }
+            application.Status = CruiseApplicationStatus.Accepted;
         }
 
         dbContext.Cruises.Remove(cruise);

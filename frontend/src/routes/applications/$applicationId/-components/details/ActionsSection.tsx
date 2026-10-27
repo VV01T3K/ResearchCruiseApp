@@ -6,6 +6,7 @@ import { Role } from '@/integrations/auth/types';
 import { AcceptButton } from './actions/AcceptButton';
 import { RejectButton } from './actions/RejectButton';
 import { RejectConfirmation } from './actions/RejectConfirmation';
+import { ResendInvitationButton } from './actions/ResendInvitationButton';
 import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { CruiseApplicationStatus } from '@/api/generated/schemas';
 
@@ -28,9 +29,12 @@ export function ActionsSection({ onAccept, onReject }: Props) {
   switch (application.status) {
     case CruiseApplicationStatus.enum.waitingForSupervisor:
       return (
-        <AppActionsSection>
-          <RejectButton setConfirmationMode={setConfirmationMode} />
-        </AppActionsSection>
+        <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
+          <AppActionsSection>
+            <ResendInvitationButton applicationId={application.id} />
+            <RejectButton setConfirmationMode={setConfirmationMode} />
+          </AppActionsSection>
+        </AppGuard>
       );
     case CruiseApplicationStatus.enum.acceptedBySupervisor:
       return (
