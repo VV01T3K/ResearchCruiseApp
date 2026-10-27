@@ -19,6 +19,8 @@ public static class RolePermissionRules
             return true;
 
         return currentUserRoles.Contains(RoleName.Shipowner)
+            && !otherUserRoles.Contains(RoleName.Administrator)
+            && !otherUserRoles.Contains(RoleName.Shipowner)
             && (
                 otherUserRoles.Contains(RoleName.CruiseManager)
                 || otherUserRoles.Contains(RoleName.Guest)

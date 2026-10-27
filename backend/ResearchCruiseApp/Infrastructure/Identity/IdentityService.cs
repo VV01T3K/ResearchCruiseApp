@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
@@ -32,6 +33,13 @@ internal class IdentityService(
     ILogger<IdentityService> logger
 )
 {
+    internal static readonly ImmutableArray<string> CruiseManagerRoleNames =
+    [
+        RoleName.Administrator,
+        RoleName.Shipowner,
+        RoleName.CruiseManager,
+    ];
+
     public async Task<UserDto?> GetUserDtoById(Guid id)
     {
         var user = await userManager.FindByIdAsync(id.ToString());
@@ -65,16 +73,9 @@ internal class IdentityService(
         CancellationToken cancellationToken
     )
     {
-        var roleNames = new[]
-        {
-            RoleName.Administrator,
-            RoleName.Shipowner,
-            RoleName.CruiseManager,
-        };
-
         var users = new List<User>();
 
-        foreach (var roleName in roleNames)
+        foreach (var roleName in CruiseManagerRoleNames)
         {
             var roleUsers = await userManager.GetUsersInRoleAsync(roleName);
             users.AddRange(roleUsers);
@@ -85,9 +86,14 @@ internal class IdentityService(
         return distinctUsers.Select(UserMappings.ToCruiseManagerOptionDto).ToList();
     }
 
-    public async Task<bool> UserWithIdExists(Guid id)
+    public async Task<bool> IsEligibleCruiseManager(Guid id)
     {
-        return await userManager.FindByIdAsync(id.ToString()) is not null;
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is not { Accepted: true })
+            return false;
+
+        var roles = await userManager.GetRolesAsync(user);
+        return roles.Any(CruiseManagerRoleNames.Contains);
     }
 
     public async Task<bool> UserWithEmailExists(string email)

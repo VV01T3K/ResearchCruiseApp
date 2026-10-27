@@ -4,12 +4,15 @@ import {
   getCreateUserMockHandler,
   getDeactivateUserMockHandler,
   getDeleteUserMockHandler,
+  getGetUserAssignmentsMockHandler,
   getGetUsersMockHandler,
+  getReplaceUserRoleMockHandler,
   getUpdateUserMockHandler,
 } from '@/api/generated/mocks/users/users.msw.gen';
 import type { UserResponse } from '@/api/generated/schemas';
 import { test, expect, fail } from './fixtures';
 import { admin, deputy, outsider } from '../data/accounts';
+import { applicationId } from '../data/forms';
 
 test.use({ account: admin });
 
@@ -23,6 +26,8 @@ const cruiseManager = (changes: Partial<UserResponse> = {}): UserResponse => ({
   emailConfirmed: true,
   ...changes,
 });
+
+const noAssignments = getGetUserAssignmentsMockHandler({ applications: [], cruises: [], closedCount: 0 });
 
 test('an administrator creates a user, then edits them and sees the refreshed record', async ({
   page,
@@ -76,6 +81,7 @@ for (const { action, accepted, button, route, handler } of [
   test(`a failed account ${action} is explained and can be retried`, async ({ page, network, requests }) => {
     network.use(
       getGetUsersMockHandler([cruiseManager({ accepted })]),
+      noAssignments,
       handler(fail(503, { detail: 'Spróbuj ponownie później' }), { once: true }),
       handler()
     );
@@ -135,6 +141,7 @@ test('a user is deactivated, then deleted only after the deletion is confirmed',
 }) => {
   network.use(
     getGetUsersMockHandler([cruiseManager()]),
+    noAssignments,
     getDeactivateUserMockHandler(() => network.use(getGetUsersMockHandler([cruiseManager({ accepted: false })]))),
     getDeleteUserMockHandler(() => network.use(getGetUsersMockHandler([])))
   );
@@ -153,6 +160,54 @@ test('a user is deactivated, then deleted only after the deletion is confirmed',
   await dialog.getByRole('button', { name: 'Czy na pewno?' }).click();
   await expect(row).toHaveCount(0);
   expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(1);
+});
+
+test('demoting or deactivating a manager of active records warns and needs a second click', async ({
+  page,
+  network,
+  requests,
+}) => {
+  network.use(
+    getGetUsersMockHandler([cruiseManager()]),
+    getGetUserAssignmentsMockHandler({
+      applications: [{ id: applicationId, number: '12', isDeputy: false, status: 'formBRequired' }],
+      cruises: [{ id: applicationId, number: '2030/1', isDeputy: true, status: 'confirmed' }],
+      closedCount: 2,
+    }),
+    getUpdateUserMockHandler(),
+    getReplaceUserRoleMockHandler(),
+    getDeactivateUserMockHandler()
+  );
+  await page.goto('/user-management');
+  const row = page.getByRole('row').filter({ hasText: deputy.email });
+  const dialog = page.getByRole('dialog', { name: 'Edytuj użytkownika' });
+  const warning = dialog.getByTestId('assignments-warning');
+  await row.getByRole('button', { name: 'Edytuj' }).click();
+  await dialog.getByRole('combobox').click();
+  await page.getByRole('option', { name: 'Gość' }).click();
+  await dialog.getByRole('button', { name: 'Zapisz', exact: true }).click();
+  await expect(warning).toContainText('Zgłoszenie nr 12 (kierownik)');
+  await expect(warning).toContainText('Rejs nr 2030/1 (zastępca)');
+  await expect(warning).toContainText('Zamknięte zgłoszenia i rejsy (2)');
+  expect(requests.bodies(`PATCH /v2/users/${deputy.id}`)).toHaveLength(0);
+  await dialog.getByRole('button', { name: 'Zmień rolę mimo to' }).click();
+  await expect(dialog).toBeHidden();
+  expect(requests.bodies(`PUT /v2/users/${deputy.id}/role`)).toEqual([{ roleName: 'Guest' }]);
+
+  await row.getByRole('button', { name: 'Edytuj' }).click();
+  await dialog.getByRole('button', { name: 'Cofnij akceptację konta' }).click();
+  await expect(warning).toContainText('Zgłoszenie nr 12 (kierownik)');
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+
+  network.use(getGetUserAssignmentsMockHandler(fail(503)));
+  await row.getByRole('button', { name: 'Edytuj' }).click();
+  await dialog.getByRole('button', { name: 'Cofnij akceptację konta' }).click();
+  await expect(warning).toContainText('Nie udało się sprawdzić');
+  expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(0);
+  await dialog.getByRole('button', { name: 'Cofnij akceptację mimo to' }).click();
+  await expect(dialog).toBeHidden();
+  expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(1);
 });
 
 test('the edit dialog stays below the navbar on a short desktop viewport', async ({ page, network }) => {
@@ -218,15 +273,27 @@ test('a group deletion deletes every selected user and reports the ones that fai
   expect(requests.bodies(`DELETE /v2/users/${outsider.id}`)).toHaveLength(1);
 });
 
-test('a group deactivation sends requests only for accepted users', async ({ page, network, requests }) => {
+test('a group deactivation names the affected user and sends requests only for accepted users', async ({
+  page,
+  network,
+  requests,
+}) => {
   network.use(
     getGetUsersMockHandler([cruiseManager(), cruiseManager({ ...outsider, roles: ['Guest'], accepted: false })]),
+    getGetUserAssignmentsMockHandler({
+      applications: [{ id: applicationId, number: '12', isDeputy: false, status: 'formBRequired' }],
+      cruises: [],
+      closedCount: 0,
+    }),
     getDeactivateUserMockHandler()
   );
   await page.goto('/user-management');
   await selectAll(page);
   await page.getByRole('button', { name: 'Akcje Grupowe' }).click();
   await page.getByRole('button', { name: 'Usuń akceptację zaznaczonych użytkowników' }).click();
+  await expect(page.getByTestId('assignments-warning')).toContainText(`${deputy.firstName} ${deputy.lastName}`);
+  expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(0);
+  await page.getByRole('button', { name: 'Usuń akceptację mimo to' }).click();
   await expect(page.getByText('Pomyślnie usunięto akceptację wszystkich wybranych użytkowników')).toBeVisible();
   expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(1);
   expect(requests.bodies(`DELETE /v2/users/${outsider.id}/acceptance`)).toHaveLength(0);

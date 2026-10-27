@@ -1,7 +1,11 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using ResearchCruiseApp.Api.Users;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Auth;
@@ -125,6 +129,94 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
             expected == HttpStatusCode.NoContent ? [requestedRole] : originalRoles
         );
     }
+
+    [Fact]
+    public async Task Assignments_ListActiveManagerAndDeputyRecordsAndCountClosedHistory()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var target = Guid.Parse(
+            (await TestUsers.Create(app, "target@example.invalid", RoleName.CruiseManager)).Id
+        );
+        var other = Guid.Parse(
+            (await TestUsers.Create(app, "other@example.invalid", RoleName.CruiseManager)).Id
+        );
+        await TestUsers.Create(app, "actor@example.invalid", RoleName.Shipowner);
+        var leads = Application(CruiseApplicationStatus.FormBRequired, target, other);
+        var deputizes = Application(CruiseApplicationStatus.Undertaken, other, target);
+        var cruise = Cruise(CruiseStatus.Confirmed, other, target);
+        await app.InDatabase(async db =>
+        {
+            db.CruiseApplications.AddRange(
+                leads,
+                deputizes,
+                Application(CruiseApplicationStatus.Reported, target, other),
+                Application(CruiseApplicationStatus.Denied, other, target),
+                Application(CruiseApplicationStatus.FormBRequired, other, Guid.Empty)
+            );
+            db.Cruises.AddRange(
+                cruise,
+                Cruise(CruiseStatus.Ended, target, other),
+                Cruise(CruiseStatus.New, other, Guid.Empty)
+            );
+            await db.SaveChangesAsync(ct);
+        });
+        using var client = await TestApplications.Login(app, "actor@example.invalid");
+        var assignments = await client.GetFromJsonAsync<UserAssignmentsResponse>(
+            $"/v2/users/{target}/assignments",
+            new JsonSerializerOptions(JsonSerializerDefaults.Web)
+            {
+                Converters = { new JsonStringEnumConverter() },
+            },
+            ct
+        );
+        Assert.Equal(
+            [
+                (leads.Id, false, CruiseApplicationStatus.FormBRequired),
+                (deputizes.Id, true, CruiseApplicationStatus.Undertaken),
+            ],
+            assignments!
+                .Applications.Select(a => (a.Id, a.IsDeputy, a.Status))
+                .OrderBy(a => a.IsDeputy)
+        );
+        var assignedCruise = Assert.Single(assignments.Cruises);
+        Assert.Equal((cruise.Id, true), (assignedCruise.Id, assignedCruise.IsDeputy));
+        Assert.Equal(3, assignments.ClosedCount);
+    }
+
+    private static CruiseApplication Application(
+        CruiseApplicationStatus status,
+        Guid manager,
+        Guid deputy
+    ) =>
+        new()
+        {
+            Date = new DateOnly(2030, 1, 15),
+            Status = status,
+            FormA = new FormA
+            {
+                CruiseManagerId = manager,
+                DeputyManagerId = deputy,
+                Year = "2030",
+                CruiseHours = "24",
+                PeriodNotes = "",
+                DifferentUsage = "",
+                CruiseGoalDescription = "",
+                SupervisorEmail = "supervisor@example.invalid",
+            },
+        };
+
+    private static Cruise Cruise(CruiseStatus status, Guid manager, Guid deputy) =>
+        new()
+        {
+            Number = $"2030/{status}",
+            MainCruiseManagerId = manager,
+            MainDeputyManagerId = deputy,
+            StartDate = "2030-01-15T08:00:00.000Z",
+            EndDate = "2030-01-16T08:00:00.000Z",
+            Status = status,
+            CruiseApplications = [],
+        };
 
     private static async Task AssertRoles(TestApplication app, string userId, string[] expected)
     {

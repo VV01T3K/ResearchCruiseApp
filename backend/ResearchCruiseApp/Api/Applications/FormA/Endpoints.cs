@@ -152,7 +152,7 @@ public static class FormAEndpoints
         }
 
         var oldFormA = application.FormA;
-        var formAResult = await forms.Create(request.Form, cancellationToken);
+        var formAResult = await forms.Create(request.Form, cancellationToken, oldFormA);
         if (!formAResult.IsSuccess)
             return formAResult.Error!.ToProblemHttpResult();
 

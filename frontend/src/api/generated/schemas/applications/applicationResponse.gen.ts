@@ -1,6 +1,6 @@
 import * as zod from 'zod';
 import { ApplicationPersonResponse } from './applicationPersonResponse.gen.ts';
-import { CruiseApplicationStatus } from './cruiseApplicationStatus.gen.ts';
+import { CruiseApplicationStatus } from '../cruiseApplicationStatus.gen.ts';
 
 export const applicationResponseIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
 

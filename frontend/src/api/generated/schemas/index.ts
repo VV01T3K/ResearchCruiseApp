@@ -1,4 +1,5 @@
 
+export * from './cruiseApplicationStatus.gen.ts';
 export * from './cruiseStatus.gen.ts';
 export * from './problemDetails.gen.ts';
 export * from './revisionResponse.gen.ts';

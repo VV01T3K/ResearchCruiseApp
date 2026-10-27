@@ -33,6 +33,7 @@ import type {
   FormBWriteRequest,
   FormCFields,
   FormCWriteRequest,
+  GetApplicationFormAContextParams,
   GetApplicationSupervisorReviewParams,
   GetApplicationsForCruisePlanningParams,
   GetApplicationsParams,
@@ -797,20 +798,27 @@ export function useGetApplicationsForCruisePlanningSuspense<TData = Awaited<Retu
 
 
 
-export const getGetApplicationFormAContextUrl = () => {
+export const getGetApplicationFormAContextUrl = (params?: GetApplicationFormAContextParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/v2/applications/form-a/context`
+  return stringifiedParams.length > 0 ? `/v2/applications/form-a/context?${stringifiedParams}` : `/v2/applications/form-a/context`
 }
 
 /**
  * @summary Get authenticated Form A context.
  */
-export const getApplicationFormAContext = async ( options?: Parameters<typeof customFetch>[1]): Promise<FormAOptions> => {
+export const getApplicationFormAContext = async (params?: GetApplicationFormAContextParams, options?: Parameters<typeof customFetch>[1]): Promise<FormAOptions> => {
 
-  return customFetch<FormAOptions>(getGetApplicationFormAContextUrl(),
+  return customFetch<FormAOptions>(getGetApplicationFormAContextUrl(params),
   {
     ...options,
     method: 'GET'
@@ -823,23 +831,23 @@ export const getApplicationFormAContext = async ( options?: Parameters<typeof cu
 
 
 
-export const getGetApplicationFormAContextQueryKey = () => {
+export const getGetApplicationFormAContextQueryKey = (params?: GetApplicationFormAContextParams,) => {
     return [
-    'v2','applications','form-a','context'
+    'v2','applications','form-a','context', ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetApplicationFormAContextSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ErrorType<ProblemDetails>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getGetApplicationFormAContextSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ErrorType<ProblemDetails>>(params?: GetApplicationFormAContextParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApplicationFormAContextQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetApplicationFormAContextQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApplicationFormAContext>>> = ({ signal }) => getApplicationFormAContext({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApplicationFormAContext>>> = ({ signal }) => getApplicationFormAContext(params, { signal, ...requestOptions });
 
 
 
@@ -853,15 +861,15 @@ export type GetApplicationFormAContextSuspenseQueryError = ErrorType<ProblemDeta
 
 
 export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ErrorType<ProblemDetails>>(
-  options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params: undefined |  GetApplicationFormAContextParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ErrorType<ProblemDetails>>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: GetApplicationFormAContextParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ErrorType<ProblemDetails>>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: GetApplicationFormAContextParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -869,11 +877,11 @@ export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType
  */
 
 export function useGetApplicationFormAContextSuspense<TData = Awaited<ReturnType<typeof getApplicationFormAContext>>, TError = ErrorType<ProblemDetails>>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: GetApplicationFormAContextParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApplicationFormAContext>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApplicationFormAContextSuspenseQueryOptions(options)
+  const queryOptions = getGetApplicationFormAContextSuspenseQueryOptions(params,options)
 
   const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

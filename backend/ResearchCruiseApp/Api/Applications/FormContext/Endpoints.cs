@@ -24,11 +24,12 @@ public static class FormContextEndpoints
     }
 
     private static async Task<Ok<FormAOptions>> GetFormAContext(
+        Guid? applicationId,
         FormInitValuesReader forms,
         CancellationToken cancellationToken
     )
     {
-        return TypedResults.Ok(await forms.CreateFormA(cancellationToken));
+        return TypedResults.Ok(await forms.CreateFormA(applicationId, cancellationToken));
     }
 
     private static async Task<Ok<FormBOptions>> GetFormBContext(

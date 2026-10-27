@@ -144,6 +144,7 @@ public sealed class AccountAccessTests(SqlFixture fixture) : IAsyncLifetime
     [Theory]
     [InlineData(RoleName.Administrator, HttpStatusCode.Forbidden)]
     [InlineData(RoleName.Shipowner, HttpStatusCode.Forbidden)]
+    [InlineData("Administrator,CruiseManager", HttpStatusCode.Forbidden)]
     [InlineData(RoleName.CruiseManager, HttpStatusCode.NoContent)]
     [InlineData(RoleName.ShipCrew, HttpStatusCode.NoContent)]
     [InlineData(RoleName.Guest, HttpStatusCode.NoContent)]
@@ -154,7 +155,7 @@ public sealed class AccountAccessTests(SqlFixture fixture) : IAsyncLifetime
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
-        var target = await TestUsers.Create(app, "target@example.invalid", targetRole);
+        var target = await TestUsers.Create(app, "target@example.invalid", targetRole.Split(','));
         var office = await TestUsers.Create(app, "office@example.invalid", RoleName.Shipowner);
         using var targetClient = app.CreateApiClient();
         var session = await RefreshSessionTests.Login(targetClient, target.Email!);
