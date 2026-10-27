@@ -29,6 +29,7 @@ public static class EvaluationConstants
 
     public const uint MaxMinisterialPoints = 1_000;
     public const double MaxFinancingAmount = 10_000_000_000; // PLN
+    public const int MaxResearchTasks = 100;
 
     public static bool IsValidMinisterialPoints(string? value) =>
         uint.TryParse(value, out var points) && points <= MaxMinisterialPoints;

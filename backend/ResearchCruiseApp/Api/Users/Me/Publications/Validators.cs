@@ -20,7 +20,9 @@ public sealed class ImportPublicationsValidator : AbstractValidator<ImportPublic
                     .MaximumLength(MaxLength);
                 publication
                     .RuleFor(request => request.MinisterialPoints)
-                    .Must(EvaluationConstants.IsValidMinisterialPoints)
+                    .Must(points =>
+                        points is "" or "-" || EvaluationConstants.IsValidMinisterialPoints(points)
+                    )
                     .WithMessage(
                         $"Punkty ministerialne muszą być liczbą całkowitą od 0 do {EvaluationConstants.MaxMinisterialPoints}."
                     );

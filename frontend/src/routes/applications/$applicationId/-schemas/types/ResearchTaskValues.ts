@@ -17,6 +17,7 @@ export enum ResearchTaskType {
 
 export const MAX_MINISTERIAL_POINTS = 1000;
 export const MAX_FINANCING_AMOUNT = 10_000_000_000;
+export const MAX_RESEARCH_TASKS = 100;
 
 const metadataFields = {
   institution: z.string().nullable().optional(),

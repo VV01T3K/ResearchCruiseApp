@@ -385,6 +385,12 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
 
     private void AddResearchTasksCommonValidation()
     {
+        RuleFor(request => request.Form.ResearchTasks)
+            .Must(researchTasks => researchTasks.Count <= EvaluationConstants.MaxResearchTasks)
+            .WithMessage(
+                $"Można podać maksymalnie {EvaluationConstants.MaxResearchTasks} zadań badawczych."
+            );
+
         RuleForEach(request => request.Form.ResearchTasks)
             .Must(researchTaskFields =>
                 (
@@ -406,7 +412,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                 )
             )
             .WithMessage(
-                "Podana wartość liczbowa w szczegółach zadania jest w niepoprawnym formacie."
+                $"Podana wartość liczbowa w szczegółach zadania jest niepoprawna. Punkty ministerialne muszą być liczbą całkowitą od 0 do {EvaluationConstants.MaxMinisterialPoints}, a kwoty nieujemne, przy czym kwota finansowania nie może przekraczać {EvaluationConstants.MaxFinancingAmount} zł."
             );
     }
 
@@ -535,7 +541,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                     )
             )
             .WithMessage(
-                "Podano liczbę punktów ministerialnych publikacji w niepoprawnym formacie."
+                $"Punkty ministerialne publikacji muszą być liczbą całkowitą od 0 do {EvaluationConstants.MaxMinisterialPoints}."
             );
     }
 
