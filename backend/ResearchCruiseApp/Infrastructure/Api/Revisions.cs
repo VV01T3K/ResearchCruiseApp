@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Infrastructure.Api;
 
@@ -17,4 +18,20 @@ public static class Revisions
 
     public static ProblemHttpResult StaleRevision() =>
         Error.Conflict(StaleMessage).ToProblemHttpResult();
+
+    // Split queries run outside a transaction, so reread when a save lands between them.
+    internal static async Task<T> ReadOneRevision<T>(
+        this ApplicationDbContext dbContext,
+        Func<Task<T>> read,
+        Func<T, Task<bool>> changed
+    )
+    {
+        for (var attempt = 1; ; attempt++)
+        {
+            var result = await read();
+            if (attempt == 3 || !await changed(result))
+                return result;
+            dbContext.ChangeTracker.Clear();
+        }
+    }
 }

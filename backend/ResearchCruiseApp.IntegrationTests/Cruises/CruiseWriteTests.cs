@@ -1,6 +1,9 @@
+using System.Data.Common;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using ResearchCruiseApp.Api.Cruises;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
@@ -221,6 +224,44 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
         });
     }
 
+    [Fact]
+    public async Task GetCruise_WhenEditSavedBetweenSplitQueries_ReturnsEditedVersion()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var pause = new ApplicationsQueryPause();
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: pause);
+        var id = await CreateCruise(app);
+        await TestUsers.Create(app, "office@example.invalid", RoleName.Administrator);
+        using var client = await TestApplications.Login(app, "office@example.invalid");
+        var route = $"/v2/cruises/{id}";
+        var revision = await FormRequests.CruiseRevision(client, id);
+        pause.Armed = true;
+        var reading = client.GetFromJsonAsync<JsonObject>(route, ct);
+        await pause.Reached.Task.WaitAsync(TimeSpan.FromSeconds(30), ct);
+        using (
+            var edited = await client.PatchAsJsonAsync(
+                route,
+                new UpdateRequest(
+                    "2030-06-01",
+                    "2030-06-02",
+                    Guid.Empty,
+                    Guid.Empty,
+                    [],
+                    "Edited",
+                    false,
+                    revision
+                ),
+                ct
+            )
+        )
+            Assert.Equal(HttpStatusCode.OK, edited.StatusCode);
+        pause.Released.TrySetResult();
+
+        var cruise = (await reading)!;
+        Assert.Equal("Edited", cruise["title"]!.GetValue<string>());
+        Assert.Empty(cruise["applications"]!.AsArray());
+    }
+
     private static async Task<Guid> CreateCruise(TestApplication app)
     {
         var application = await TestApplications.Create(app, CruiseApplicationStatus.Accepted);
@@ -268,5 +309,34 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
             );
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
         });
+    }
+
+    // Holds the first split query for cruise applications until the edit commits.
+    private sealed class ApplicationsQueryPause : DbCommandInterceptor
+    {
+        internal volatile bool Armed;
+        internal TaskCompletionSource Reached { get; } =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
+        internal TaskCompletionSource Released { get; } =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public override async ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(
+            DbCommand command,
+            CommandEventData eventData,
+            InterceptionResult<DbDataReader> result,
+            CancellationToken cancellationToken = default
+        )
+        {
+            if (
+                Armed
+                && command.CommandText.StartsWith(
+                    "SELECT [s].[Id], [s].[CruiseId]",
+                    StringComparison.Ordinal
+                )
+                && Reached.TrySetResult()
+            )
+                await Released.Task.WaitAsync(TimeSpan.FromSeconds(30), cancellationToken);
+            return result;
+        }
     }
 }

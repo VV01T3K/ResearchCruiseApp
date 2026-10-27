@@ -97,13 +97,24 @@ public static class FormAEndpoints
         CancellationToken cancellationToken
     )
     {
-        var application = await dbContext
-            .CruiseApplications.IncludeFormA()
-            .IncludeFormAContent()
-            .SingleOrDefaultAsync(
-                application => application.Id == applicationId,
-                cancellationToken
-            );
+        var query = dbContext.CruiseApplications.IncludeFormA().IncludeFormAContent();
+        var application = await dbContext.ReadOneRevision(
+            () =>
+                query.SingleOrDefaultAsync(
+                    application => application.Id == applicationId,
+                    cancellationToken
+                ),
+            async application =>
+                application is not null
+                && !application.RowVersion.Matches(
+                    (
+                        await dbContext
+                            .CruiseApplications.Where(current => current.Id == applicationId)
+                            .Select(current => current.RowVersion)
+                            .SingleOrDefaultAsync(cancellationToken)
+                    )?.ToRevision()
+                )
+        );
         if (
             application?.FormA is null
             || !await userPermissionVerifier.CanCurrentUserViewForm(application)
