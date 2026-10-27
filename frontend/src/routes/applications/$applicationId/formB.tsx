@@ -15,7 +15,11 @@ import {
   formBDefaultValues,
   getFormBSubmissionSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { getGetApplicationQueryKey, useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
+import {
+  getGetApplicationFormBQueryKey,
+  getGetApplicationQueryKey,
+  useGetApplicationCruiseSuspense,
+} from '@/api/generated/endpoints/applications.gen';
 import { useFormAQuery, useFormBQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
   useGetApplicationFormAContextSuspense,
@@ -64,6 +68,7 @@ function FormBPage() {
 
   const defaultValues = (formB.data ?? {
     ...formBDefaultValues,
+    revision: formA.data.revision,
     permissions: formA.data.permissions,
     ugTeams: formA.data.ugTeams,
     guestTeams: formA.data.guestTeams,
@@ -102,11 +107,12 @@ function FormBPage() {
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
     try {
-      await updateMutation.mutateAsync({
+      const { revision } = await updateMutation.mutateAsync({
         applicationId,
         data: { form: schema.parse(values), draft: values.draft ?? false },
       });
-      leaveAfterSave(values, { to: '/applications' });
+      form.setFieldValue('revision', revision, { dontUpdateMeta: true, dontValidate: true });
+      leaveAfterSave({ ...values, revision }, { to: '/applications' });
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );
@@ -130,6 +136,7 @@ function FormBPage() {
     const loading = toast.loading('Cofanie formularza B do edycji...');
     try {
       await revertToEditMutation.mutateAsync({ applicationId });
+      await queryClient.invalidateQueries({ queryKey: getGetApplicationFormBQueryKey(applicationId) });
       await navigate({ to: `/applications/${applicationId}/formB?mode=edit` });
     } catch (err) {
       captureHandledRefusal('form-b.refill', err);

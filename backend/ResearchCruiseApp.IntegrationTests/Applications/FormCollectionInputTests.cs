@@ -74,12 +74,12 @@ public sealed class FormCollectionInputTests(SqlFixture fixture) : IAsyncLifetim
                 fields[property] = new JsonArray();
         foreach (var draft in new[] { true, false })
         {
-            using var response = await client.PutAsJsonAsync(
+            using var response = await client.PutFormAsync(
                 route,
                 new { Form = fields, Draft = draft },
                 ct
             );
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             using var read = await client.GetAsync(route, ct);
             Assert.Equal(HttpStatusCode.OK, read.StatusCode);
             using var body = await JsonDocument.ParseAsync(

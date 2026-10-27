@@ -16,7 +16,8 @@ export const CruiseResponse = zod.object({
   "applications": zod.array(ApplicationSummaryResponse),
   "status": CruiseStatus,
   "title": zod.string().nullable(),
-  "shipUnavailable": zod.boolean()
+  "shipUnavailable": zod.boolean(),
+  "revision": zod.string()
 });
 
 export type CruiseResponse = zod.input<typeof CruiseResponse>;

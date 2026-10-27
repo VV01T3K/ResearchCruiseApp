@@ -17,7 +17,8 @@ public sealed record UpdateRequest(
     Guid DeputyManagerId,
     List<Guid> CruiseApplicationIds,
     string? Title,
-    bool ShipUnavailable
+    bool ShipUnavailable,
+    string? Revision
 ) : ICruiseRequest;
 
 public interface ICruiseRequest

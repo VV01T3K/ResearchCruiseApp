@@ -92,7 +92,7 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
             client.DefaultRequestHeaders.Add("Set-Cookie", "session=set-cookie-secret");
             client.DefaultRequestHeaders.Add("X-Api-Key", "api-key-secret");
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
-            using var response = await client.PutAsJsonAsync(
+            using var response = await client.PutFormAsync(
                 $"/v2/applications/{application.Id}/form-b",
                 new FormBWriteRequest
                 {

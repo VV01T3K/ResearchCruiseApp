@@ -97,16 +97,17 @@ function FormAPage() {
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
     try {
-      await saveMutation.mutateAsync({
+      const { revision } = await saveMutation.mutateAsync({
         applicationId,
         data: { form: schema.parse(values), draft: values.draft ?? false },
       });
+      form.setFieldValue('revision', revision, { dontUpdateMeta: true, dontValidate: true });
       toast.success(
         values.draft
           ? 'Formularz został zapisany jako wersja robocza'
           : 'Formularz został zapisany i wysłany do potwierdzenia przez przełożonego'
       );
-      await leaveAfterSave(values, { to: '/' });
+      await leaveAfterSave({ ...values, revision }, { to: '/' });
     } catch (error) {
       setServerFormErrors(form, error);
       toast.error(getErrorMessage(error, saveFailedMessage(values.draft)));

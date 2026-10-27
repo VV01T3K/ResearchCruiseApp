@@ -6,6 +6,8 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 public class FormAFields
 {
+    public string? Revision { get; set; }
+
     public Guid? Id { get; init; }
 
     public Guid CruiseManagerId { get; init; }

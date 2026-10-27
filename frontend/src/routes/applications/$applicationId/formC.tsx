@@ -55,6 +55,7 @@ function FormCPage() {
 
   const defaultValues = (formC.data ?? {
     ...formCDefaultValues,
+    revision: formB.data.revision,
     shipUsage: formA.data.shipUsage ?? '', // Max length 1
     differentUsage: formA.data.differentUsage,
     permissions: formB.data.permissions,
@@ -113,11 +114,12 @@ function FormCPage() {
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
     try {
-      await updateMutation.mutateAsync({
+      const { revision } = await updateMutation.mutateAsync({
         applicationId,
         data: { form: schema.parse(values), draft: values.draft ?? false },
       });
-      leaveAfterSave(values, { to: '/applications' });
+      form.setFieldValue('revision', revision, { dontUpdateMeta: true, dontValidate: true });
+      leaveAfterSave({ ...values, revision }, { to: '/applications' });
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );

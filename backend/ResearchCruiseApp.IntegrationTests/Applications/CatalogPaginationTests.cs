@@ -153,7 +153,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         Assert.DoesNotContain(managers, manager => manager.Id == Guid.Parse(hiddenOwner.Id));
 
         using var owner = await TestApplications.Login(app, other.Email!);
-        using var removed = await owner.PutAsJsonAsync(
+        using var removed = await owner.PutFormAsync(
             $"/v2/applications/{deputyDraft.Id}/form-a",
             new FormAWriteRequest
             {
@@ -162,7 +162,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
             },
             ct
         );
-        Assert.Equal(System.Net.HttpStatusCode.NoContent, removed.StatusCode);
+        Assert.Equal(System.Net.HttpStatusCode.OK, removed.StatusCode);
         foreach (var suffix in new[] { "", "/form-a" })
         {
             using var concealed = await client.GetAsync(

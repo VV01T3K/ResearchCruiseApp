@@ -30,6 +30,7 @@ export const formCFieldsAdditionalDescriptionMax = 10240;
 
 
 export const FormCFields = zod.object({
+  "revision": zod.string().nullish(),
   "shipUsage": zod.string().min(formCFieldsShipUsageMin).max(formCFieldsShipUsageMax).optional(),
   "differentUsage": zod.string().min(formCFieldsDifferentUsageMin).max(formCFieldsDifferentUsageMax).optional(),
   "permissions": zod.array(PermissionFields).optional(),

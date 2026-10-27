@@ -42,6 +42,7 @@ import {
 
 const FormBInputSchema = z.object({
   draft: z.boolean().optional(),
+  revision: z.string().optional(),
   isCruiseManagerPresent: z.boolean(),
   permissions: PermissionValuesInputSchema.array(),
   ugTeams: UgTeamValuesInputSchema.array(),
@@ -115,6 +116,7 @@ function buildFormBFieldsSchema(inputSchema: z.ZodType<FormBValues, FormBValues>
       (form): z.input<typeof FormBFields> =>
         ({
           ...form,
+          revision: form.revision ?? null,
           isCruiseManagerPresent: String(form.isCruiseManagerPresent),
           permissions: form.permissions.map((permission) => ({
             description: permission.description || null,
@@ -143,6 +145,7 @@ function buildFormBFieldsSchema(inputSchema: z.ZodType<FormBValues, FormBValues>
 
 export function mapFormBToValues(form: FormBFields): FormBValues {
   return {
+    revision: form.revision ?? undefined,
     isCruiseManagerPresent: form.isCruiseManagerPresent === 'true',
     permissions: (form.permissions ?? []).map((permission) => ({
       description: permission.description ?? '',

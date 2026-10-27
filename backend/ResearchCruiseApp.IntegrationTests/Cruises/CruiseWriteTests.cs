@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Cruises;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Api;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Cruises;
@@ -60,7 +61,8 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
                 Guid.Empty,
                 [],
                 "Denied",
-                false
+                false,
+                null
             ),
             ct
         );
@@ -100,7 +102,8 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
                 Guid.Empty,
                 [],
                 "Changed",
-                false
+                false,
+                await FormRequests.CruiseRevision(client, id)
             ),
             ct
         );
@@ -118,11 +121,12 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
                 Guid.Empty,
                 [],
                 "Changed",
-                false
+                false,
+                await FormRequests.CruiseRevision(client, id)
             ),
             ct
         );
-        Assert.Equal(HttpStatusCode.NoContent, accepted.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, accepted.StatusCode);
         await app.InDatabase(async db =>
         {
             var cruise = Assert.Single(
@@ -138,6 +142,81 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
                 .SingleAsync(ct);
             Assert.Equal(CruiseApplicationStatus.Accepted, application.Status);
             Assert.Null(application.Cruise);
+            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
+        });
+    }
+
+    [Fact]
+    public async Task UpdateCruise_WhenRevisionIsStaleOrMissing_RejectsUpdateAndDeleteWithoutChanges()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var id = await CreateCruise(app);
+        var office = await TestUsers.Create(app, "office@example.invalid", RoleName.Administrator);
+        using var first = await TestApplications.Login(app, office.Email!);
+        using var second = await TestApplications.Login(app, office.Email!);
+        var route = $"/v2/cruises/{id}";
+        var applicationIds = new List<Guid>();
+        await app.InDatabase(async db =>
+            applicationIds = await db.CruiseApplications.Select(row => row.Id).ToListAsync(ct)
+        );
+        var read = await FormRequests.CruiseRevision(second, id);
+        UpdateRequest Update(string title, string? revision) =>
+            new(
+                "2030-07-01",
+                "2030-07-02",
+                Guid.Empty,
+                Guid.Empty,
+                applicationIds,
+                title,
+                false,
+                revision
+            );
+
+        using var saved = await first.PatchAsJsonAsync(route, Update("First", read), ct);
+        Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
+        var accepted = (await saved.Content.ReadFromJsonAsync<RevisionResponse>(ct))!.Revision;
+        var snapshot = await FormRequests.Snapshot(app);
+        foreach (var revision in new[] { read, null })
+        {
+            using var updated = await second.PatchAsJsonAsync(
+                route,
+                Update("Second", revision),
+                ct
+            );
+            Assert.Equal(HttpStatusCode.Conflict, updated.StatusCode);
+            using var deleted = await second.DeleteAsync(
+                revision is null ? route : $"{route}?revision={Uri.EscapeDataString(revision)}",
+                ct
+            );
+            Assert.Equal(HttpStatusCode.Conflict, deleted.StatusCode);
+            Assert.Equal(snapshot, await FormRequests.Snapshot(app));
+        }
+
+        // Moving the application to another cruise changes this cruise's list too.
+        using var created = await first.PostAsJsonAsync(
+            "/v2/cruises",
+            new CreateRequest(
+                "2030-08-01",
+                "2030-08-02",
+                Guid.Empty,
+                Guid.Empty,
+                applicationIds,
+                "Other",
+                false
+            ),
+            ct
+        );
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        using var moved = await second.PatchAsJsonAsync(route, Update("Second", accepted), ct);
+        Assert.Equal(HttpStatusCode.Conflict, moved.StatusCode);
+        await app.InDatabase(async db =>
+        {
+            var cruise = await db
+                .Cruises.Include(row => row.CruiseApplications)
+                .SingleAsync(row => row.Id == id, ct);
+            Assert.Equal("First", cruise.Title);
+            Assert.Empty(cruise.CruiseApplications);
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
         });
     }

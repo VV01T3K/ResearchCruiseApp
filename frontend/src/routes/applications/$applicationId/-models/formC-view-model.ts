@@ -1,4 +1,4 @@
-import type { CruiseResponse } from '@/api/generated/schemas';
+import type { ApplicationCruiseResponse } from '@/api/generated/schemas';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import type { FormAOptions } from '@/api/generated/schemas';
@@ -17,6 +17,6 @@ export type FormCViewModel = {
   formBInitValues: FormBOptions;
   formA: FormAValues;
   formB: FormBValues;
-  cruise: CruiseResponse;
+  cruise: ApplicationCruiseResponse;
   isReadonly: boolean;
 };

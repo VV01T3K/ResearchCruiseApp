@@ -66,7 +66,7 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         var id = await ApplicationId(app);
         var route = $"/v2/applications/{id}/form-a";
         using var updated = await Write(client, route, fields, true, false);
-        Assert.Equal(HttpStatusCode.NoContent, updated.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, updated.StatusCode);
         using var read = await client.GetAsync(route, ct);
         var stored = (await read.Content.ReadFromJsonAsync<FormAFields>(ct))!;
         Assert.Null(stored.AcceptablePeriod);
@@ -125,10 +125,7 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
             else
                 fields.Remove(property);
         using var response = await Write(client, prepared.Route, fields, false, create);
-        Assert.Equal(
-            create ? HttpStatusCode.Created : HttpStatusCode.NoContent,
-            response.StatusCode
-        );
+        Assert.Equal(create ? HttpStatusCode.Created : HttpStatusCode.OK, response.StatusCode);
         var id = await ApplicationId(app);
         var stored = await client.GetFromJsonAsync<FormAFields>(
             $"/v2/applications/{id}/form-a",
@@ -192,10 +189,7 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         else
             contract.Remove("Scans");
         using var response = await Write(client, prepared.Route, fields, true, false);
-        Assert.Equal(
-            formC ? HttpStatusCode.Created : HttpStatusCode.NoContent,
-            response.StatusCode
-        );
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var read = await client.GetAsync(prepared.Route, ct);
         Assert.Equal(HttpStatusCode.OK, read.StatusCode);
         using var body = await JsonDocument.ParseAsync(
@@ -289,7 +283,7 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
             if (target == 2)
             {
                 using var saved = await Write(client, route, fields, true, false);
-                Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
+                Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
             }
             return (client, fields, route);
         }
