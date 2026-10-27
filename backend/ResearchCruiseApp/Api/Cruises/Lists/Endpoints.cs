@@ -84,7 +84,14 @@ public static class ListsEndpoints
         {
             if (await userPermissionVerifier.CanCurrentUserViewCruise(cruise))
             {
-                visibleCruises.Add(await CruiseResponse.From(cruise, identityService, evaluator));
+                visibleCruises.Add(
+                    await CruiseResponse.From(
+                        cruise,
+                        identityService,
+                        evaluator,
+                        userPermissionVerifier
+                    )
+                );
             }
         }
 
@@ -138,6 +145,8 @@ public static class ListsEndpoints
             return TypedResults.NotFound();
         }
 
-        return TypedResults.Ok(await CruiseResponse.From(cruise, identityService, evaluator));
+        return TypedResults.Ok(
+            await CruiseResponse.From(cruise, identityService, evaluator, userPermissionVerifier)
+        );
     }
 }

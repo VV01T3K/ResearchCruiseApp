@@ -75,9 +75,8 @@ function DashboardPage() {
     return (
       <Grid>
         <CruisesCard className="col-span-2 row-span-2" />
-        <ApplicationsCard className="row-span-2" />
         <PriorityInformationCard className="col-span-2" />
-        <AccountSettingsCard className="row-span-2" />
+        <AccountSettingsCard className="col-span-2 row-span-2" />
         <HelpCard className="col-span-2" />
       </Grid>
     );

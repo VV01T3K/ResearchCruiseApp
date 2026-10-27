@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
+import { Role } from '@/integrations/auth/types';
 import { AppLayout } from '@/components/shared/AppLayout';
 import {
   getGetApplicationEvaluationSuspenseQueryOptions,
@@ -9,7 +10,7 @@ import { DetailsView } from './-components/details/DetailsView';
 
 export const Route = createFileRoute('/applications/$applicationId/details')({
   component: DetailsPage,
-  beforeLoad: allowOnly.authenticated(),
+  beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew),
   loader: ({ context, params }) =>
     Promise.all([
       context.queryClient.query({

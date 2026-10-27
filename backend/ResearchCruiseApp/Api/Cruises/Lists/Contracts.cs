@@ -1,5 +1,6 @@
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using DomainCruise = ResearchCruiseApp.Domain.Entities.Cruise;
 
 namespace ResearchCruiseApp.Api.Cruises;
@@ -21,9 +22,26 @@ public sealed record CruiseResponse(
     internal static async Task<CruiseResponse> From(
         DomainCruise cruise,
         IdentityService identityService,
-        ApplicationScoringService evaluator
+        ApplicationScoringService evaluator,
+        UserPermissionVerifier userPermissionVerifier
     )
     {
+        var applications = new List<ApplicationSummaryResponse>();
+        foreach (var application in cruise.CruiseApplications)
+        {
+            if (await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application))
+            {
+                applications.Add(
+                    new ApplicationSummaryResponse(
+                        application.Id,
+                        application.FormA?.CruiseManagerId ?? Guid.Empty,
+                        application.FormA?.DeputyManagerId ?? Guid.Empty,
+                        application.Number.ToString(),
+                        evaluator.GetPointsSum(application).ToString()
+                    )
+                );
+            }
+        }
         var manager = await identityService.GetUserDtoById(cruise.MainCruiseManagerId);
         var deputy = await identityService.GetUserDtoById(cruise.MainDeputyManagerId);
 
@@ -42,15 +60,7 @@ public sealed record CruiseResponse(
                 deputy?.FirstName ?? string.Empty,
                 deputy?.LastName ?? string.Empty
             ),
-            cruise
-                .CruiseApplications.Select(application => new ApplicationSummaryResponse(
-                    application.Id,
-                    application.FormA?.CruiseManagerId ?? Guid.Empty,
-                    application.FormA?.DeputyManagerId ?? Guid.Empty,
-                    application.Number.ToString(),
-                    evaluator.GetPointsSum(application).ToString()
-                ))
-                .ToList(),
+            applications,
             cruise.Status,
             cruise.Title,
             cruise.ShipUnavailable,

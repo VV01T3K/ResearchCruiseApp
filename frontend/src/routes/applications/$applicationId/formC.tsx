@@ -2,6 +2,7 @@ import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplic
 import { createFileRoute, notFound } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
+import { Role } from '@/integrations/auth/types';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { toast } from '@/components/shared/layout/toast';
@@ -33,7 +34,7 @@ import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formC')({
   component: FormCPage,
-  beforeLoad: allowOnly.authenticated(),
+  beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew),
   validateSearch: z.object({
     mode: z.optional(z.enum(['edit', 'view'])),
   }),

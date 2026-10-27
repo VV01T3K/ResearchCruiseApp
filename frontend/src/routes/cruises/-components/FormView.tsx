@@ -31,7 +31,9 @@ export function FormView({ cruise, cruiseApplications, isReadonly, buttons }: Pr
       <BasicInformationSection cruise={cruise} isReadonly={isReadonly} />
       <DateSelectionSection isReadonly={isReadonly} />
       <ManagerSelectionSection cruise={cruise} cruiseApplications={cruiseApplications} isReadonly={isReadonly} />
-      <ApplicationsSection cruiseApplications={cruiseApplications} isReadonly={isReadonly} />
+      <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew]}>
+        <ApplicationsSection cruiseApplications={cruiseApplications} isReadonly={isReadonly} />
+      </AppGuard>
       <form.FormErrors />
       <AppGuard allowedRoles={[Role.ShipOwner, Role.Administrator]}>
         <AppActionsSection children={buttons} />

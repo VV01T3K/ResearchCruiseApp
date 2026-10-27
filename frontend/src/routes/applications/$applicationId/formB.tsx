@@ -39,7 +39,7 @@ import { canRevertFormB } from '@/lib/applications/status';
 
 export const Route = createFileRoute('/applications/$applicationId/formB')({
   component: FormBPage,
-  beforeLoad: allowOnly.authenticated(),
+  beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew),
   validateSearch: z.object({
     mode: z.optional(z.enum(['edit', 'view', 'preview'])),
   }),

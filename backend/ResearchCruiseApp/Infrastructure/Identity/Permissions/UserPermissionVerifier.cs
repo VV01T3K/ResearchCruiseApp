@@ -55,7 +55,6 @@ internal class UserPermissionVerifier(
         var canViewOthers =
             currentUserRoles.Contains(RoleName.Administrator)
             || currentUserRoles.Contains(RoleName.Shipowner)
-            || currentUserRoles.Contains(RoleName.Guest)
             || currentUserRoles.Contains(RoleName.ShipCrew);
 
         // One rule serves both database queries and checks on already-loaded applications.
@@ -144,7 +143,6 @@ internal class UserPermissionVerifier(
         if (
             currentUserRoles.Contains(RoleName.Administrator)
             || currentUserRoles.Contains(RoleName.Shipowner)
-            || currentUserRoles.Contains(RoleName.Guest)
             || currentUserRoles.Contains(RoleName.ShipCrew)
         )
         {
