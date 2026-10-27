@@ -70,6 +70,7 @@ internal static class CruiseApplicationsQueryableExtensions
     )
     {
         return query
+            .AsSplitQuery()
             .Include(cruiseApplication => cruiseApplication.FormB!.Permissions)
             .Include(cruiseApplication => cruiseApplication.FormB!.FormBUgUnits)
                 .ThenInclude(formBUgUnit => formBUgUnit.UgUnit)
