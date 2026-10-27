@@ -200,6 +200,43 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, continued.StatusCode);
     }
 
+    [Theory]
+    [InlineData(RoleName.Shipowner)]
+    [InlineData(RoleName.Administrator)]
+    public async Task Refill_AfterOfficeUserLosesAccess_DeniesTheirOldToken(string role)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var application = await TestApplications.Create(app, CruiseApplicationStatus.FormBFilled);
+        var revoked = await TestUsers.Create(app, "revoked@example.invalid", role);
+        await TestUsers.Create(app, "office@example.invalid", RoleName.Administrator);
+        await TestUsers.Create(app, "role-holder@example.invalid", RoleName.Guest);
+        using var oldToken = await TestApplications.Login(app, revoked.Email!);
+        using var office = await TestApplications.Login(app, "office@example.invalid");
+
+        using var changed =
+            role == RoleName.Shipowner
+                ? await office.DeleteAsync($"/v2/users/{revoked.Id}/acceptance", ct)
+                : await office.PutAsJsonAsync(
+                    $"/v2/users/{revoked.Id}/role",
+                    new { roleName = RoleName.Guest },
+                    ct
+                );
+        Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
+        using var denied = await oldToken.PutAsync(
+            $"/v2/applications/{application.Id}/form-b/refill",
+            null,
+            ct
+        );
+        Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+        await app.InDatabase(async db =>
+            Assert.Equal(
+                CruiseApplicationStatus.FormBFilled,
+                (await db.CruiseApplications.SingleAsync(ct)).Status
+            )
+        );
+    }
+
     private static Task<HttpResponseMessage> Write(
         HttpClient client,
         string route,
