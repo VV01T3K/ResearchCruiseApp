@@ -112,7 +112,10 @@ internal class UserPermissionVerifier(
         var currentUserId = currentUserService.GetId();
         if (
             currentUserId is null
-            || !await identityService.IsEligibleCruiseManager(currentUserId.Value)
+            || !await identityService.IsActiveWithAnyRole(
+                currentUserId.Value,
+                IdentityService.CruiseManagerRoleNames
+            )
         )
             return false;
 
