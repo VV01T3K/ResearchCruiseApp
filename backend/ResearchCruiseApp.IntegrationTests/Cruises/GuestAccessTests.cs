@@ -1,8 +1,11 @@
 using System.Net;
 using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Cruises;
@@ -37,8 +40,27 @@ public sealed class GuestAccessTests(SqlFixture fixture) : IAsyncLifetime
             db.Cruises.Add(cruise);
             await db.SaveChangesAsync(ct);
         });
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            var users = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var owner = await users.FindByEmailAsync(application.OwnerEmail);
+            await users.RemoveFromRoleAsync(owner!, RoleName.CruiseManager);
+            await users.AddToRoleAsync(owner!, RoleName.Guest);
+        }
         using var client = await TestApplications.Login(app, guest.Email!);
+        using var formerManager = await TestApplications.Login(app, application.OwnerEmail);
 
+        foreach (var reader in new[] { client, formerManager })
+            await AssertGuestAccess(reader, cruise, application.Id, ct);
+    }
+
+    private static async Task AssertGuestAccess(
+        HttpClient client,
+        Cruise cruise,
+        Guid applicationId,
+        CancellationToken ct
+    )
+    {
         foreach (var route in new[] { "/v2/cruises", $"/v2/cruises/{cruise.Id}" })
         {
             using var body = JsonDocument.Parse(await client.GetStringAsync(route, ct));
@@ -58,10 +80,17 @@ public sealed class GuestAccessTests(SqlFixture fixture) : IAsyncLifetime
         foreach (var suffix in new[] { "", "/form-a", "/evaluation", "/cruise" })
         {
             using var response = await client.GetAsync(
-                $"/v2/applications/{application.Id}{suffix}",
+                $"/v2/applications/{applicationId}{suffix}",
                 ct
             );
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+        foreach (
+            var route in new[] { "/v2/applications/form-a/context", "/v2/users/me/cruise-effects" }
+        )
+        {
+            using var response = await client.GetAsync(route, ct);
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
     }
 }

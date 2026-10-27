@@ -9,6 +9,7 @@ namespace ResearchCruiseApp.Infrastructure.Api;
 public static class AuthorizationPolicies
 {
     public const string AnyKnownUser = nameof(AnyKnownUser);
+    public const string ApplicationReaders = nameof(ApplicationReaders);
     public const string AdministratorsOnly = nameof(AdministratorsOnly);
     public const string AdministratorsOrShipowners = nameof(AdministratorsOrShipowners);
     public const string ApplicationFormEditors = nameof(ApplicationFormEditors);
@@ -26,6 +27,19 @@ public static class AuthorizationPolicies
                         RoleName.Shipowner,
                         RoleName.CruiseManager,
                         RoleName.Guest,
+                        RoleName.ShipCrew
+                    )
+        );
+
+        options.AddPolicy(
+            ApplicationReaders,
+            policy =>
+                policy
+                    .RequireAuthenticatedUser()
+                    .RequireRole(
+                        RoleName.Administrator,
+                        RoleName.Shipowner,
+                        RoleName.CruiseManager,
                         RoleName.ShipCrew
                     )
         );

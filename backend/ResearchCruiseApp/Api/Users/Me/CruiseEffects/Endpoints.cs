@@ -14,8 +14,9 @@ public static class CruiseEffectsEndpoints
             .WithName("GetCurrentUserCruiseEffects")
             .WithSummary("Get cruise effects for the current user.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
+            .RequireAuthorization(AuthorizationPolicies.ApplicationReaders);
     }
 
     private static async Task<Results<Ok<List<CruiseEffectResponse>>, NotFound>> Handle(

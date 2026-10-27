@@ -75,7 +75,6 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
     [InlineData(RoleName.CruiseManager, false)]
     [InlineData(RoleName.Administrator, true)]
     [InlineData(RoleName.Shipowner, true)]
-    [InlineData(RoleName.Guest, false)]
     [InlineData(RoleName.ShipCrew, true)]
     public async Task Pages_WhenApplicationsAreRestricted_FilterBeforePagingAndHideOtherDrafts(
         string role,
