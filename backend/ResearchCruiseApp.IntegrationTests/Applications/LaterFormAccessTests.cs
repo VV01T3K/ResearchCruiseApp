@@ -197,7 +197,7 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
 
         using var deputyClient = await TestApplications.Login(app, deputy.Email!);
         using var continued = await Write(deputyClient, route, "b", unit.Id, "2", true, ct);
-        Assert.Equal(HttpStatusCode.Created, continued.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, continued.StatusCode);
     }
 
     private static Task<HttpResponseMessage> Write(

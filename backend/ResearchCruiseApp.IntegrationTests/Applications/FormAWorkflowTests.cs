@@ -202,8 +202,8 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
             ct
         );
         Assert.Contains(options!.DeputyManagers, user => user.Id == assigneeId);
-        using var kept = await client.PutAsJsonAsync($"/v2/applications/{id}/form-a", draft, ct);
-        Assert.Equal(HttpStatusCode.NoContent, kept.StatusCode);
+        using var kept = await client.PutFormAsync($"/v2/applications/{id}/form-a", draft, ct);
+        Assert.Equal(HttpStatusCode.OK, kept.StatusCode);
         using var rejected = await client.PostAsJsonAsync("/v2/applications", draft, ct);
         Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
         await app.InDatabase(async db =>
