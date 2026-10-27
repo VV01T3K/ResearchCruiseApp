@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { MAX_MINISTERIAL_POINTS } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+
 export enum PublicationCategory {
   Subject = 'subject',
   Postscript = 'postscript',
@@ -35,7 +37,10 @@ export const PublicationValuesSchema = PublicationValuesInputSchema.extend({
   title: z.string().nonempty('Tytuł jest wymagany'),
   magazine: z.string().nonempty('Czasopismo jest wymagane'),
   year: z.number({ error: 'Rok jest wymagany' }).int().positive('Rok jest wymagany'),
-  ministerialPoints: z.number().nonnegative('Punkty muszą być liczbą nieujemną'),
+  ministerialPoints: z
+    .number()
+    .nonnegative('Punkty muszą być liczbą nieujemną')
+    .max(MAX_MINISTERIAL_POINTS, `Punkty nie mogą przekraczać ${MAX_MINISTERIAL_POINTS}`),
 });
 
 export type PublicationValues = z.input<typeof PublicationValuesInputSchema>;

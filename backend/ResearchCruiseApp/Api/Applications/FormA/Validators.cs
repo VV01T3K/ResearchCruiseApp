@@ -15,6 +15,8 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
 
         AddDraftValidation();
         AddNonDraftValidation();
+        AddResearchTasksCommonValidation();
+        AddPublicationPointsValidation();
     }
 
     private void AddDraftValidation()
@@ -61,7 +63,6 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     {
         AddPeriodsCommonValidation();
         AddPermissionsCommonValidation();
-        AddResearchTasksCommonValidation();
         AddContractsCommonValidation();
         AddPublicationsCommonValidation();
     }
@@ -318,30 +319,9 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
     {
         RuleForEach(request => request.Form.ResearchTasks)
             .Must(researchTaskFields =>
-            {
-                try
-                {
-                    var type = researchTaskFields.Type.ToEnum<ResearchTaskType>();
-
-                    return type
-                        is ResearchTaskType.BachelorThesis
-                            or ResearchTaskType.MasterThesis
-                            or ResearchTaskType.DoctoralThesis
-                            or ResearchTaskType.ProjectPreparation
-                            or ResearchTaskType.DomesticProject
-                            or ResearchTaskType.ForeignProject
-                            or ResearchTaskType.InternalUgProject
-                            or ResearchTaskType.OtherProject
-                            or ResearchTaskType.CommercialProject
-                            or ResearchTaskType.Didactics
-                            or ResearchTaskType.OwnResearchTask
-                            or ResearchTaskType.OtherResearchTask;
-                }
-                catch (ArgumentException)
-                {
-                    return false;
-                }
-            })
+                Enum.TryParse<ResearchTaskType>(researchTaskFields.Type, out var type)
+                && Enum.IsDefined(type)
+            )
             .WithMessage("Podany typ zadania jest nieprawidłowy.");
     }
 
@@ -354,54 +334,48 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
         RuleForEach(request => request.Form.ResearchTasks)
             .Must(researchTaskFields =>
             {
-                try
-                {
-                    var type = researchTaskFields.Type.ToEnum<ResearchTaskType>();
-
-                    switch (type)
-                    {
-                        case ResearchTaskType.BachelorThesis:
-                        case ResearchTaskType.MasterThesis:
-                        case ResearchTaskType.DoctoralThesis:
-                            return !string.IsNullOrEmpty(researchTaskFields.Author)
-                                && !string.IsNullOrEmpty(researchTaskFields.Title);
-
-                        case ResearchTaskType.ProjectPreparation:
-                            return !string.IsNullOrEmpty(researchTaskFields.Title)
-                                && !string.IsNullOrEmpty(researchTaskFields.Title)
-                                && !string.IsNullOrEmpty(researchTaskFields.Date)
-                                && !string.IsNullOrEmpty(researchTaskFields.FinancingApproved);
-
-                        case ResearchTaskType.DomesticProject:
-                        case ResearchTaskType.ForeignProject:
-                        case ResearchTaskType.InternalUgProject:
-                        case ResearchTaskType.OtherProject:
-                        case ResearchTaskType.CommercialProject:
-                            return !string.IsNullOrEmpty(researchTaskFields.Title)
-                                && !string.IsNullOrEmpty(researchTaskFields.FinancingAmount)
-                                && !string.IsNullOrEmpty(researchTaskFields.StartDate)
-                                && !string.IsNullOrEmpty(researchTaskFields.EndDate)
-                                && !string.IsNullOrEmpty(researchTaskFields.SecuredAmount);
-
-                        case ResearchTaskType.Didactics:
-                            return !string.IsNullOrEmpty(researchTaskFields.Description);
-
-                        case ResearchTaskType.OwnResearchTask:
-                            return !string.IsNullOrEmpty(researchTaskFields.Title)
-                                && !string.IsNullOrEmpty(researchTaskFields.Date)
-                                && !string.IsNullOrEmpty(researchTaskFields.Magazine)
-                                && !string.IsNullOrEmpty(researchTaskFields.MinisterialPoints);
-
-                        case ResearchTaskType.OtherResearchTask:
-                            return !string.IsNullOrEmpty(researchTaskFields.Description);
-
-                        default:
-                            return false;
-                    }
-                }
-                catch (ArgumentException)
-                {
+                if (!Enum.TryParse<ResearchTaskType>(researchTaskFields.Type, out var type))
                     return false;
+
+                switch (type)
+                {
+                    case ResearchTaskType.BachelorThesis:
+                    case ResearchTaskType.MasterThesis:
+                    case ResearchTaskType.DoctoralThesis:
+                        return !string.IsNullOrEmpty(researchTaskFields.Author)
+                            && !string.IsNullOrEmpty(researchTaskFields.Title);
+
+                    case ResearchTaskType.ProjectPreparation:
+                        return !string.IsNullOrEmpty(researchTaskFields.Title)
+                            && !string.IsNullOrEmpty(researchTaskFields.Title)
+                            && !string.IsNullOrEmpty(researchTaskFields.Date)
+                            && !string.IsNullOrEmpty(researchTaskFields.FinancingApproved);
+
+                    case ResearchTaskType.DomesticProject:
+                    case ResearchTaskType.ForeignProject:
+                    case ResearchTaskType.InternalUgProject:
+                    case ResearchTaskType.OtherProject:
+                    case ResearchTaskType.CommercialProject:
+                        return !string.IsNullOrEmpty(researchTaskFields.Title)
+                            && !string.IsNullOrEmpty(researchTaskFields.FinancingAmount)
+                            && !string.IsNullOrEmpty(researchTaskFields.StartDate)
+                            && !string.IsNullOrEmpty(researchTaskFields.EndDate)
+                            && !string.IsNullOrEmpty(researchTaskFields.SecuredAmount);
+
+                    case ResearchTaskType.Didactics:
+                        return !string.IsNullOrEmpty(researchTaskFields.Description);
+
+                    case ResearchTaskType.OwnResearchTask:
+                        return !string.IsNullOrEmpty(researchTaskFields.Title)
+                            && !string.IsNullOrEmpty(researchTaskFields.Date)
+                            && !string.IsNullOrEmpty(researchTaskFields.Magazine)
+                            && !string.IsNullOrEmpty(researchTaskFields.MinisterialPoints);
+
+                    case ResearchTaskType.OtherResearchTask:
+                        return !string.IsNullOrEmpty(researchTaskFields.Description);
+
+                    default:
+                        return false;
                 }
             })
             .WithMessage(
@@ -411,11 +385,20 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
 
     private void AddResearchTasksCommonValidation()
     {
+        RuleFor(request => request.Form.ResearchTasks)
+            .Must(researchTasks => researchTasks.Count <= EvaluationConstants.MaxResearchTasks)
+            .WithMessage(
+                $"Można podać maksymalnie {EvaluationConstants.MaxResearchTasks} zadań badawczych."
+            );
+
         RuleForEach(request => request.Form.ResearchTasks)
             .Must(researchTaskFields =>
                 (
                     string.IsNullOrEmpty(researchTaskFields.FinancingAmount)
-                    || IsNonNegativeDouble(researchTaskFields.FinancingAmount)
+                    || IsNonNegativeDouble(
+                        researchTaskFields.FinancingAmount,
+                        EvaluationConstants.MaxFinancingAmount
+                    )
                 )
                 && (
                     string.IsNullOrEmpty(researchTaskFields.SecuredAmount)
@@ -423,11 +406,13 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                 )
                 && (
                     string.IsNullOrEmpty(researchTaskFields.MinisterialPoints)
-                    || uint.TryParse(researchTaskFields.MinisterialPoints, out _)
+                    || EvaluationConstants.IsValidMinisterialPoints(
+                        researchTaskFields.MinisterialPoints
+                    )
                 )
             )
             .WithMessage(
-                "Podana wartość liczbowa w szczegółach zadania jest w niepoprawnym formacie."
+                $"Podana wartość liczbowa w szczegółach zadania jest niepoprawna. Punkty ministerialne muszą być liczbą całkowitą od 0 do {EvaluationConstants.MaxMinisterialPoints}, a kwoty nieujemne, przy czym kwota finansowania nie może przekraczać {EvaluationConstants.MaxFinancingAmount} zł."
             );
     }
 
@@ -543,11 +528,20 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                 || publicationFields.Category == PublicationCategory.Subject
             )
             .WithMessage("Należy podać poprawną kategorię publikacji");
+    }
 
+    private void AddPublicationPointsValidation()
+    {
         RuleForEach(request => request.Form.Publications)
-            .Must(publicationFields => uint.TryParse(publicationFields.MinisterialPoints, out _))
+            .Must(
+                (request, publicationFields) =>
+                    (request.Draft && string.IsNullOrEmpty(publicationFields.MinisterialPoints))
+                    || EvaluationConstants.IsValidMinisterialPoints(
+                        publicationFields.MinisterialPoints
+                    )
+            )
             .WithMessage(
-                "Podano liczbę punktów ministerialnych publikacji w niepoprawnym formacie."
+                $"Punkty ministerialne publikacji muszą być liczbą całkowitą od 0 do {EvaluationConstants.MaxMinisterialPoints}."
             );
     }
 
@@ -569,10 +563,11 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             .WithMessage("Należy podać adres e-mail przełożonego.");
     }
 
-    private static bool IsNonNegativeDouble(string? value)
+    private static bool IsNonNegativeDouble(string? value, double max = double.PositiveInfinity)
     {
         return double.TryParse(value, CultureInfo.InvariantCulture, out var valueDouble)
-            && valueDouble >= 0;
+            && valueDouble >= 0
+            && valueDouble <= max;
     }
 
     private static bool IsValidShipUsage(string? shipUsage)

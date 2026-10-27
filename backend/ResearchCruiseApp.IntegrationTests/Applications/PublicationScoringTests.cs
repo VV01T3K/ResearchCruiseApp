@@ -66,9 +66,9 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData("subject", "1073741823", 1_073_741_823)]
-    [InlineData("postscript", "2147483647", 2_147_483_647)]
-    public async Task Publication_WhenPointsAreAtSignedMaximum_PreservesRepresentableScore(
+    [InlineData("subject", "500", 500)]
+    [InlineData("postscript", "1000", 1000)]
+    public async Task Publication_WhenPointsAreAtCap_PreservesScore(
         string category,
         string expected,
         int total
@@ -80,7 +80,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         using var client = await TestApplications.Login(app, owner.Email!);
         var form = FormAccessTests.Draft(Guid.Parse(owner.Id));
         form.Publications.Add(
-            new PublicationFields { Category = category, MinisterialPoints = "2147483647" }
+            new PublicationFields { Category = category, MinisterialPoints = "1000" }
         );
         using var response = await client.PostAsJsonAsync(
             "/v2/applications",

@@ -102,6 +102,24 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
         Assert.Equal(target != 2 && !draft ? 1 : 0, app.Transport.Messages.Count);
     }
 
+    [Theory]
+    [InlineData(2)]
+    public async Task Write_WhenTaskTypeIsUnknown_ReturnsBadRequest(int target)
+    {
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var prepared = await Prepare(app, target);
+        using var client = prepared.Client;
+        prepared.Fields[prepared.Collection] = new JsonArray(TaskFields("2147483648", 0));
+        using var response = await Write(
+            client,
+            prepared.Route,
+            prepared.Fields,
+            true,
+            target == 0
+        );
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
     private static JsonObject TaskFields(string type, int index) =>
         new()
         {

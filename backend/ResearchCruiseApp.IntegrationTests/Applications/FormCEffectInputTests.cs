@@ -23,7 +23,7 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
     [InlineData("0", ResearchTaskType.OwnResearchTask, 0)]
     [InlineData("99", ResearchTaskType.OwnResearchTask, 49)]
     [InlineData("100", ResearchTaskType.OwnResearchTask, 50)]
-    [InlineData("2147483647", ResearchTaskType.OwnResearchTask, 1_073_741_823)]
+    [InlineData("1000", ResearchTaskType.OwnResearchTask, 500)]
     [InlineData(null, ResearchTaskType.ProjectPreparation, 100)]
     [InlineData("", ResearchTaskType.ProjectPreparation, 100)]
     public async Task Submit_WhenPointsAreSupported_PreservesValuesAndScoresReport(

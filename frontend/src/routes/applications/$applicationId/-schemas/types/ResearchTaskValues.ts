@@ -15,6 +15,10 @@ export enum ResearchTaskType {
   OtherResearchTask = '11',
 }
 
+export const MAX_MINISTERIAL_POINTS = 1000;
+export const MAX_FINANCING_AMOUNT = 10_000_000_000;
+export const MAX_RESEARCH_TASKS = 100;
+
 const metadataFields = {
   institution: z.string().nullable().optional(),
 };
@@ -62,7 +66,10 @@ export const ProjectResearchTaskInputSchema = z.object({
 });
 export const ProjectResearchTaskValuesSchema = ProjectResearchTaskInputSchema.extend({
   title: z.string().nonempty('Tytuł nie może być pusty'),
-  financingAmount: z.number().nonnegative('Kwota finansowania musi być poprawną kwotą większą lub równą 0.00'),
+  financingAmount: z
+    .number()
+    .nonnegative('Kwota finansowania musi być poprawną kwotą większą lub równą 0.00')
+    .max(MAX_FINANCING_AMOUNT, `Kwota finansowania nie może przekraczać ${MAX_FINANCING_AMOUNT} zł`),
   startDate: z.string().nonempty('Data rozpoczęcia nie może być pusta'),
   endDate: z.string().nonempty('Data zakończenia nie może być pusta'),
   securedAmount: z.number().nonnegative('Kwota zabezpieczona musi być poprawną kwotą większą lub równą 0.00'),
@@ -94,7 +101,8 @@ export const OwnResearchTaskValuesSchema = OwnResearchTaskInputSchema.extend({
   ministerialPoints: z
     .number()
     .int('Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0')
-    .nonnegative('Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0'),
+    .nonnegative('Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0')
+    .max(MAX_MINISTERIAL_POINTS, `Punkty ministerialne nie mogą przekraczać ${MAX_MINISTERIAL_POINTS}`),
 });
 export type OwnResearchTaskValues = z.input<typeof OwnResearchTaskInputSchema>;
 
