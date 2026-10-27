@@ -111,7 +111,7 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
             await hub.FlushAsync(TimeSpan.FromSeconds(10));
             var events = transport
                 .Payloads()
-                .Where(payload => payload.TryGetProperty("exception", out _))
+                .Where(payload => payload.TryGetProperty("level", out _))
                 .ToList();
             var captured = Assert.Single(events);
             Assert.Equal(userId, captured.GetProperty("user").GetProperty("id").GetString());
@@ -263,7 +263,7 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
                     options.TracesSampleRate = 1;
                     options.AutoSessionTracking = false;
                     options.SendClientReports = false;
-                    options.MinimumEventLevel = LogLevel.Critical;
+                    options.MinimumEventLevel = LogLevel.Error;
                 });
                 services.Insert(
                     0,
