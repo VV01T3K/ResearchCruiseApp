@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Sentry.Extensibility;
+using Sentry.Extensions.Logging;
 using Sentry.Protocol;
 
 namespace ResearchCruiseApp.Infrastructure.Sentry;
@@ -22,6 +24,10 @@ public static class SentryConfiguration
         {
             options.SendDefaultPii = true;
             options.MaxRequestBodySize = RequestSize.Always;
+            // EF logs failed commands without the exception; real failures reach Sentry as exceptions, expected conflicts become 409s.
+            options.AddLogEntryFilter(
+                (_, _, eventId, _) => eventId.Name == RelationalEventId.CommandError.Name
+            );
 
             options.SetBeforeSend(
                 (@event, _) =>
