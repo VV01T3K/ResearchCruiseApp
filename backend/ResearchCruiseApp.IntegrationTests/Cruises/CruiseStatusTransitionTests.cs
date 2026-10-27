@@ -44,7 +44,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         );
         await DispatchConfirmations(app);
 
-        Assert.Equal(HttpStatusCode.NoContent, await Patch(office, cruiseId, []));
+        Assert.Equal(HttpStatusCode.OK, await Patch(office, cruiseId, []));
 
         await AssertCruise(app, cruiseId, CruiseStatus.Confirmed);
         await AssertApplication(app, required.Id, CruiseApplicationStatus.Accepted, null);
@@ -63,10 +63,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
 
         // Planned on another cruise and confirmed, both must submit Form B for it.
         var otherId = await PostCruise(app, office, "Other");
-        Assert.Equal(
-            HttpStatusCode.NoContent,
-            await Patch(office, otherId, [required.Id, filled.Id])
-        );
+        Assert.Equal(HttpStatusCode.OK, await Patch(office, otherId, [required.Id, filled.Id]));
         await AssertApplication(app, required.Id, CruiseApplicationStatus.Accepted, otherId);
         await AssertApplication(
             app,
@@ -105,6 +102,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         await SubmitFormB(app, original);
         Assert.Equal(HttpStatusCode.NoContent, await Complete(office, cruiseId));
         var pendingBefore = await PendingEmails(app);
+        var revision = await FormRequests.CruiseRevision(office, cruiseId);
         var request = change switch
         {
             "dates" => new UpdateRequest(
@@ -114,7 +112,8 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
                 Guid.Empty,
                 [original.Id],
                 "Ended",
-                false
+                false,
+                revision
             ),
             "remove" => new UpdateRequest(
                 "2030-06-01",
@@ -123,7 +122,8 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
                 Guid.Empty,
                 [],
                 "Ended",
-                false
+                false,
+                revision
             ),
             _ => throw new ArgumentOutOfRangeException(nameof(change)),
         };
@@ -169,7 +169,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         await SubmitFormB(app, application);
         Assert.Equal(HttpStatusCode.NoContent, await Complete(office, cruiseId));
 
-        Assert.Equal(HttpStatusCode.Created, await SubmitFormC(app, application));
+        Assert.Equal(HttpStatusCode.OK, await SubmitFormC(app, application));
         await AssertApplication(
             app,
             application.Id,
@@ -196,7 +196,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
             points: 200
         );
 
-        Assert.Equal(HttpStatusCode.Created, await SubmitFormC(app, application));
+        Assert.Equal(HttpStatusCode.OK, await SubmitFormC(app, application));
         await AssertCruise(app, cruiseId, CruiseStatus.Ended);
         await AssertApplication(
             app,
@@ -273,7 +273,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         await SubmitFormB(app, filled);
         Assert.Equal(HttpStatusCode.NoContent, await Revert(office, cruiseId));
 
-        Assert.Equal(HttpStatusCode.NoContent, await Patch(office, cruiseId, []));
+        Assert.Equal(HttpStatusCode.OK, await Patch(office, cruiseId, []));
 
         await AssertApplication(
             app,
@@ -299,7 +299,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         await DispatchConfirmations(app);
 
         Assert.Equal(
-            HttpStatusCode.NoContent,
+            HttpStatusCode.OK,
             await Patch(office, cruiseId, [existing.Id, first.Id, second.Id])
         );
 
@@ -318,7 +318,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
 
         // Saving again without new applications sends nothing.
         Assert.Equal(
-            HttpStatusCode.NoContent,
+            HttpStatusCode.OK,
             await Patch(office, cruiseId, [existing.Id, first.Id, second.Id])
         );
         Assert.Equal(0, await PendingEmails(app));
@@ -337,7 +337,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         await SubmitFormB(app, undertaken);
         await SubmitFormB(app, reported);
         Assert.Equal(HttpStatusCode.NoContent, await Complete(office, cruiseId));
-        Assert.Equal(HttpStatusCode.Created, await SubmitFormC(app, reported));
+        Assert.Equal(HttpStatusCode.OK, await SubmitFormC(app, reported));
         var pendingBefore = await PendingEmails(app);
 
         await AssertRejected(await RevertResponse(office, cruiseId), ReportedBlocksRevert);
@@ -455,12 +455,12 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         return response.StatusCode;
     }
 
-    private static Task<HttpResponseMessage> PatchResponse(
+    private static async Task<HttpResponseMessage> PatchResponse(
         HttpClient office,
         Guid cruiseId,
         List<Guid> applicationIds
     ) =>
-        office.PatchAsJsonAsync(
+        await office.PatchAsJsonAsync(
             $"/v2/cruises/{cruiseId}",
             new UpdateRequest(
                 "2030-06-01",
@@ -469,7 +469,8 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
                 Guid.Empty,
                 applicationIds,
                 "Edited",
-                false
+                false,
+                await FormRequests.CruiseRevision(office, cruiseId)
             ),
             TestContext.Current.CancellationToken
         );
@@ -532,11 +533,11 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
     {
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
         using var response = await SendFormB(manager, application);
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     private static Task<HttpResponseMessage> SendFormB(HttpClient manager, Seeded application) =>
-        manager.PutAsJsonAsync(
+        manager.PutFormAsync(
             $"/v2/applications/{application.Id}/form-b",
             new FormBWriteRequest
             {
@@ -567,7 +568,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
                 DeputyConditionMet = "true",
             }
         );
-        return manager.PutAsJsonAsync(
+        return manager.PutFormAsync(
             $"/v2/applications/{application.Id}/form-c",
             new FormCWriteRequest { Form = fields, Draft = false },
             TestContext.Current.CancellationToken

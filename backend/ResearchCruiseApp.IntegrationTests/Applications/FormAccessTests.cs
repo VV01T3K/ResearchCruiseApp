@@ -103,8 +103,8 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData("owner", HttpStatusCode.NoContent)]
-    [InlineData("deputy", HttpStatusCode.NoContent)]
+    [InlineData("owner", HttpStatusCode.OK)]
+    [InlineData("deputy", HttpStatusCode.OK)]
     [InlineData(RoleName.Administrator, HttpStatusCode.NotFound)]
     [InlineData("administrator-manager", HttpStatusCode.NotFound)]
     [InlineData("anonymous", HttpStatusCode.Unauthorized)]
@@ -124,7 +124,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         await app.InDatabase(async db => originalForm = (await db.FormsA.SingleAsync(ct)).Id);
         using var client = await ActorClient(app, actor);
 
-        using var response = await client.PutAsJsonAsync(
+        using var response = await client.PutFormAsync(
             $"/v2/applications/{draft.Id}/form-a",
             new FormAWriteRequest
             {
@@ -135,7 +135,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         );
 
         Assert.Equal(expected, response.StatusCode);
-        var allowed = expected == HttpStatusCode.NoContent;
+        var allowed = expected == HttpStatusCode.OK;
         await app.InDatabase(async db =>
         {
             var row = Assert.Single(
@@ -158,8 +158,8 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData("owner", HttpStatusCode.NoContent)]
-    [InlineData("deputy", HttpStatusCode.NoContent)]
+    [InlineData("owner", HttpStatusCode.OK)]
+    [InlineData("deputy", HttpStatusCode.OK)]
     [InlineData("unrelated", HttpStatusCode.NotFound)]
     public async Task UpdateDraft_WhenShipownerChangesForm_RequiresExistingAssignment(
         string relationship,
@@ -191,7 +191,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
             session.Access
         );
 
-        using var response = await client.PutAsJsonAsync(
+        using var response = await client.PutFormAsync(
             $"/v2/applications/{draft.Id}/form-a",
             new FormAWriteRequest
             {
@@ -232,7 +232,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         using var client = await ActorClient(app, RoleName.Shipowner);
         HttpResponseMessage response;
         if (form == "b")
-            response = await client.PutAsJsonAsync(
+            response = await client.PutFormAsync(
                 $"/v2/applications/{draft.Id}/form-b",
                 new FormBWriteRequest
                 {
@@ -242,7 +242,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
                 ct
             );
         else
-            response = await client.PutAsJsonAsync(
+            response = await client.PutFormAsync(
                 $"/v2/applications/{draft.Id}/form-c",
                 new FormCWriteRequest
                 {

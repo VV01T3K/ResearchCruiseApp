@@ -37,6 +37,7 @@ async function holdFormASave(page: Page, network: NetworkFixture, outcome: 'save
     getUpdateApplicationFormAMockHandler(async () => {
       await released;
       if (outcome === 'failed') throw HttpResponse.json({ detail: 'Serwer niedostępny' }, { status: 503 });
+      return { revision: 'AAAAAAAAB9I=' };
     })
   );
   const request = page.waitForRequest((request) => request.method() === 'PUT');

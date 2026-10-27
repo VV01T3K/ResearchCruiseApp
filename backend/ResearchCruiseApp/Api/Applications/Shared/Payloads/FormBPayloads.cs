@@ -4,6 +4,8 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 public class FormBFields
 {
+    public string? Revision { get; set; }
+
     [StringLength(1024)]
     public string IsCruiseManagerPresent { get; init; } = null!;
 

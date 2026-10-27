@@ -4,14 +4,14 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Api;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Cruises;
 
 public sealed partial class CruiseStatusTransitionTests
 {
-    private const string ConcurrentChange =
-        "Dane zostały w międzyczasie zmienione przez inną operację. Odśwież stronę i spróbuj ponownie.";
+    private const string ConcurrentChange = Revisions.StaleMessage;
 
     [Fact]
     public async Task UndoCompletion_WhileFormCIsSubmitted_IsRejectedAndKeepsTheReport()
@@ -36,7 +36,7 @@ public sealed partial class CruiseStatusTransitionTests
         );
 
         using (formC)
-            Assert.Equal(HttpStatusCode.Created, formC.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, formC.StatusCode);
         await AssertConflict(undo);
         await AssertCruise(app, cruiseId, CruiseStatus.Ended);
         await AssertApplication(
@@ -71,7 +71,7 @@ public sealed partial class CruiseStatusTransitionTests
         );
 
         using (formB)
-            Assert.Equal(HttpStatusCode.Created, formB.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, formB.StatusCode);
         await AssertConflict(removal);
         await AssertApplication(
             app,
@@ -80,7 +80,7 @@ public sealed partial class CruiseStatusTransitionTests
             cruiseId,
             formB: true
         );
-        Assert.Equal(HttpStatusCode.NoContent, await Patch(office, cruiseId, []));
+        Assert.Equal(HttpStatusCode.OK, await Patch(office, cruiseId, []));
         await AssertApplication(
             app,
             application.Id,
@@ -88,6 +88,32 @@ public sealed partial class CruiseStatusTransitionTests
             null,
             formB: true
         );
+    }
+
+    [Fact]
+    public async Task OpposingOfficeDecisions_WhenTheyOverlap_RejectTheSecondQuietly()
+    {
+        var gate = new SaveChangesGate();
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: gate);
+        var office = await Office(app);
+        var (id, _) = await TestApplications.Create(
+            app,
+            CruiseApplicationStatus.AcceptedBySupervisor
+        );
+        Task<HttpResponseMessage> Decide(bool accept) =>
+            office.PutAsJsonAsync($"/v2/applications/{id}/decision", new { Accept = accept });
+
+        gate.Hold(db => SavesStatus(db, id, CruiseApplicationStatus.Accepted));
+        var (accepted, rejected) = await gate.Race(
+            fixture.ConnectionString,
+            Decide(true),
+            () => Decide(false),
+            TestContext.Current.CancellationToken
+        );
+
+        using (accepted)
+            Assert.Equal(HttpStatusCode.NoContent, accepted.StatusCode);
+        await AssertConflict(rejected);
     }
 
     private static bool SavesStatus(

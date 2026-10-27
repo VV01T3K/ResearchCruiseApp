@@ -8,7 +8,7 @@ namespace ResearchCruiseApp.Infrastructure.Api;
 
 public static class TransactionFilters
 {
-    // Concurrent check-then-write requests can't both act on old state; the deadlock victim gets 409.
+    // Concurrent check-then-write requests can't both act on old state; the loser gets 409.
     public static RouteHandlerBuilder WithSerializableTransaction(this RouteHandlerBuilder builder)
     {
         return builder
@@ -35,6 +35,8 @@ internal sealed class SerializableTransactionFilter(ApplicationDbContext dbConte
                 IsolationLevel.Serializable,
                 cancellationToken
             );
+            // A deadlock aborts the whole transaction, so rolling back to EF's savepoint would only log an error.
+            dbContext.Database.AutoSavepointsEnabled = false;
 
             var result = await next(context);
 
@@ -46,13 +48,10 @@ internal sealed class SerializableTransactionFilter(ApplicationDbContext dbConte
 
             return result;
         }
-        catch (Exception exception) when (IsDeadlockVictim(exception))
+        catch (Exception exception)
+            when (IsDeadlockVictim(exception) || exception is DbUpdateConcurrencyException)
         {
-            return Error
-                .Conflict(
-                    "Dane zostały w międzyczasie zmienione przez inną operację. Odśwież stronę i spróbuj ponownie."
-                )
-                .ToProblemHttpResult();
+            return Revisions.StaleRevision();
         }
     }
 

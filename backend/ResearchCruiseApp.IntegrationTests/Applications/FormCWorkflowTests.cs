@@ -33,12 +33,12 @@ public sealed class FormCWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, unsentRefill.StatusCode);
         Assert.Contains("już dostępny do edycji", await unsentRefill.Content.ReadAsStringAsync(ct));
 
-        using var saved = await manager.PutAsJsonAsync(
+        using var saved = await manager.PutFormAsync(
             route,
             new FormCWriteRequest { Form = Fields("first.png"), Draft = true },
             ct
         );
-        Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
         await AssertState(app, CruiseApplicationStatus.Undertaken, "first.png");
         using var read = await manager.GetAsync(route, ct);
         Assert.Equal(HttpStatusCode.OK, read.StatusCode);
@@ -47,22 +47,22 @@ public sealed class FormCWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal("first.png", photo.Name);
         Assert.Equal(Png, photo.Content);
 
-        using var replaced = await manager.PutAsJsonAsync(
+        using var replaced = await manager.PutFormAsync(
             route,
             new FormCWriteRequest { Form = Fields("replacement.png"), Draft = true },
             ct
         );
-        Assert.Equal(HttpStatusCode.Created, replaced.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, replaced.StatusCode);
         await AssertState(app, CruiseApplicationStatus.Undertaken, "replacement.png");
 
-        using var submitted = await manager.PutAsJsonAsync(
+        using var submitted = await manager.PutFormAsync(
             route,
             new FormCWriteRequest { Form = Fields(null), Draft = false },
             ct
         );
-        Assert.Equal(HttpStatusCode.Created, submitted.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, submitted.StatusCode);
         await AssertState(app, CruiseApplicationStatus.Reported, null);
-        using var locked = await manager.PutAsJsonAsync(
+        using var locked = await manager.PutFormAsync(
             route,
             new FormCWriteRequest { Form = Fields("forbidden.png"), Draft = true },
             ct
@@ -109,7 +109,7 @@ public sealed class FormCWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
 
-        using var refused = await manager.PutAsJsonAsync(
+        using var refused = await manager.PutFormAsync(
             $"/v2/applications/{application.Id}/form-c",
             new FormCWriteRequest { Form = Fields(null), Draft = false },
             ct
@@ -117,6 +117,39 @@ public sealed class FormCWorkflowTests(SqlFixture fixture) : IAsyncLifetime
 
         Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
         Assert.Contains("po wysłaniu formularza B", await refused.Content.ReadAsStringAsync(ct));
+    }
+
+    [Fact]
+    public async Task FormC_WhenRevisionIsStaleOrMissing_RejectsSaveWithoutChanges()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var application = await TestApplications.Create(app, CruiseApplicationStatus.Undertaken);
+        using var first = await TestApplications.Login(app, application.OwnerEmail);
+        using var second = await TestApplications.Login(app, application.OwnerEmail);
+        var route = $"/v2/applications/{application.Id}/form-c";
+        var read = await FormRequests.CurrentRevision(second, route);
+
+        using var saved = await first.PutFormAsync(
+            route,
+            new FormCWriteRequest { Form = Fields("first.png"), Draft = true },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
+        var snapshot = await FormRequests.Snapshot(app);
+        var stale = Fields("stale.png");
+        foreach (var revision in new[] { read, null })
+        {
+            stale.Revision = revision;
+            using var rejected = await second.PutAsJsonAsync(
+                route,
+                new FormCWriteRequest { Form = stale, Draft = false },
+                ct
+            );
+            Assert.Equal(HttpStatusCode.Conflict, rejected.StatusCode);
+            Assert.Equal(snapshot, await FormRequests.Snapshot(app));
+        }
+        await AssertState(app, CruiseApplicationStatus.Undertaken, "first.png");
     }
 
     private static FormCFields Fields(string? photo) =>

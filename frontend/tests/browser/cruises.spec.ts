@@ -177,6 +177,7 @@ test('rejected cruise edits show field and general errors, keep the edits and ca
     cruiseApplicationIds: [],
     title: 'Nowy tytuł',
     shipUnavailable: false,
+    revision: item.revision,
   });
 });
 
@@ -229,9 +230,24 @@ test('the page behind an open modal cannot be clicked or focused', async ({ page
   expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toHaveLength(0);
 });
 
-test('discarding cruise edits asks only when the form has changes', async ({ page, network }) => {
+test('discarding cruise edits asks only when the form has changes and lands on the server version after a conflict', async ({
+  page,
+  network,
+  requests,
+}) => {
   const item = cruise();
-  network.use(getGetCruiseMockHandler(item));
+  let server = item;
+  network.use(
+    getGetCruiseMockHandler(() => server),
+    getUpdateCruiseMockHandler(
+      () => {
+        server = { ...item, title: 'Cudzy', revision: 'AAAAAAAAB+A=' };
+        return fail(409, { detail: 'Dane zostały w międzyczasie zmienione.' })();
+      },
+      { once: true }
+    ),
+    getUpdateCruiseMockHandler()
+  );
   await page.goto(`/cruises/${item.id}`);
   const title = page.locator('input[name="title"]');
   const dialog = page.getByRole('dialog', { name: 'Odrzucić zmiany?' });
@@ -248,6 +264,17 @@ test('discarding cruise edits asks only when the form has changes', async ({ pag
   await expect(title).toHaveValue(item.title ?? '');
   await expect(page.getByRole('button', { name: 'Zapisz rejs' })).toBeVisible();
 
+  await title.fill('Mój');
+  await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+  await expect(page.getByTestId('form-errors')).toContainText('Dane zostały w międzyczasie zmienione.');
+  await expect(title).toHaveValue('Mój');
+  await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
+  await dialog.getByRole('button', { name: 'Odrzuć zmiany' }).click();
+  await expect(title).toHaveValue('Cudzy');
+  await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+  await expect(page.getByRole('button', { name: 'Edytuj', exact: true })).toBeVisible();
+  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`).at(-1)).toMatchObject({ revision: 'AAAAAAAAB+A=' });
+
   await page.goto('/cruises/new');
   await page.locator('input[name="title"]').fill('Szkic');
   await page.getByRole('button', { name: 'Wyczyść formularz' }).click();
@@ -255,7 +282,7 @@ test('discarding cruise edits asks only when the form has changes', async ({ pag
   await expect(page.locator('input[name="title"]')).toHaveValue('');
 });
 
-test('a cruise edit starts from the newest save after an older response or a remount', async ({
+test('a cruise save waits for the previous one and starts from its accepted revision, also after a remount', async ({
   page,
   network,
   requests,
@@ -273,8 +300,9 @@ test('a cruise edit starts from the newest save after an older response or a rem
     }),
     getUpdateCruiseMockHandler(async ({ request }) => {
       const { title } = (await request.json()) as CruiseResponse;
-      server = { ...server, title };
       if (title === 'Starszy') await olderResponse.promise;
+      server = { ...server, title, revision: `after-${title}` };
+      return { revision: server.revision };
     })
   );
   await page.goto(`/cruises/${item.id}`);
@@ -292,8 +320,10 @@ test('a cruise edit starts from the newest save after an older response or a rem
     await page.getByRole('dialog', { name: 'Odrzucić zmiany?' }).getByRole('button', { name: 'Odrzuć zmiany' }).click();
     await title.fill('Nowszy');
     await save.click();
-    await expect(edit).toBeVisible();
+    expect(patches()).toHaveLength(1);
     olderResponse.resolve();
+    await expect(edit).toBeVisible();
+    expect(patches()[1]).toEqual(expect.objectContaining({ title: 'Nowszy', revision: 'after-Starszy' }));
     await expect.poll(() => gets).toBe(3);
 
     await edit.click();
@@ -301,7 +331,9 @@ test('a cruise edit starts from the newest save after an older response or a rem
     await page.getByRole('option', { name: `${outsider.firstName} ${outsider.lastName}` }).click();
     await save.click();
     await expect(edit).toBeVisible();
-    expect(patches().at(-1)).toEqual(expect.objectContaining({ title: 'Nowszy', deputyManagerId: outsider.id }));
+    expect(patches().at(-1)).toEqual(
+      expect.objectContaining({ title: 'Nowszy', deputyManagerId: outsider.id, revision: 'after-Nowszy' })
+    );
 
     await page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
     await expect(page).toHaveURL('/');

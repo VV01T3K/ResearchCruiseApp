@@ -72,7 +72,7 @@ public sealed class FormAAtomicityTests(SqlFixture fixture) : IAsyncLifetime
         try
         {
             using var failed = fromDraft
-                ? await client.PutAsJsonAsync($"/v2/applications/{id}/form-a", request, ct)
+                ? await client.PutFormAsync($"/v2/applications/{id}/form-a", request, ct)
                 : await client.PostAsJsonAsync("/v2/applications", request, ct);
             Assert.Equal(HttpStatusCode.InternalServerError, failed.StatusCode);
             Assert.Equal("application/problem+json", failed.Content.Headers.ContentType?.MediaType);
@@ -116,12 +116,9 @@ public sealed class FormAAtomicityTests(SqlFixture fixture) : IAsyncLifetime
             );
         }
         using var recovered = fromDraft
-            ? await client.PutAsJsonAsync($"/v2/applications/{id}/form-a", request, ct)
+            ? await client.PutFormAsync($"/v2/applications/{id}/form-a", request, ct)
             : await client.PostAsJsonAsync("/v2/applications", request, ct);
-        Assert.Equal(
-            fromDraft ? HttpStatusCode.NoContent : HttpStatusCode.Created,
-            recovered.StatusCode
-        );
+        Assert.Equal(fromDraft ? HttpStatusCode.OK : HttpStatusCode.Created, recovered.StatusCode);
         await app.InDatabase(async db =>
         {
             Assert.Equal(

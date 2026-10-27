@@ -1414,6 +1414,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -1497,8 +1507,15 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -1565,6 +1582,13 @@
             "required": true,
             "schema": {
               "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "query",
+            "schema": {
               "type": "string"
             }
           }
@@ -2642,8 +2666,15 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -2677,6 +2708,16 @@
           },
           "404": {
             "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -2767,8 +2808,15 @@
           "required": true
         },
         "responses": {
-          "201": {
-            "description": "Created"
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -2967,8 +3015,15 @@
           "required": true
         },
         "responses": {
-          "201": {
-            "description": "Created"
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -4119,7 +4174,8 @@
           "applications",
           "status",
           "title",
-          "shipUnavailable"
+          "shipUnavailable",
+          "revision"
         ],
         "type": "object",
         "properties": {
@@ -4159,6 +4215,9 @@
           },
           "shipUnavailable": {
             "type": "boolean"
+          },
+          "revision": {
+            "type": "string"
           }
         }
       },
@@ -4353,6 +4412,12 @@
       "FormAFields": {
         "type": "object",
         "properties": {
+          "revision": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "id": {
             "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
             "type": [
@@ -4629,6 +4694,12 @@
       "FormBFields": {
         "type": "object",
         "properties": {
+          "revision": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "isCruiseManagerPresent": {
             "maxLength": 1024,
             "minLength": 0,
@@ -4729,6 +4800,12 @@
       "FormCFields": {
         "type": "object",
         "properties": {
+          "revision": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "shipUsage": {
             "maxLength": 1,
             "minLength": 0,
@@ -5569,6 +5646,17 @@
           }
         }
       },
+      "RevisionResponse": {
+        "required": [
+          "revision"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "string"
+          }
+        }
+      },
       "ScoredContract": {
         "required": [
           "id",
@@ -5826,7 +5914,8 @@
           "deputyManagerId",
           "cruiseApplicationIds",
           "title",
-          "shipUnavailable"
+          "shipUnavailable",
+          "revision"
         ],
         "type": "object",
         "properties": {
@@ -5859,6 +5948,12 @@
           },
           "shipUnavailable": {
             "type": "boolean"
+          },
+          "revision": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

@@ -38,6 +38,7 @@ import type {
   GetApplicationsForCruisePlanningParams,
   GetApplicationsParams,
   ProblemDetails,
+  RevisionResponse,
   SupervisorDecisionRequest,
   SupervisorReviewResponse
 } from '../schemas';
@@ -1080,7 +1081,7 @@ export const getUpdateApplicationFormAUrl = (applicationId: string,) => {
  * @summary Update Form A.
  */
 export const updateApplicationFormA = async (applicationId: string,
-    formAWriteRequest: FormAWriteRequest, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+    formAWriteRequest: FormAWriteRequest, options?: Parameters<typeof customFetch>[1]): Promise<RevisionResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -1096,7 +1097,7 @@ export const updateApplicationFormA = async (applicationId: string,
     }
     return headers;
   };
-return customFetch<void>(getUpdateApplicationFormAUrl(applicationId),
+return customFetch<RevisionResponse>(getUpdateApplicationFormAUrl(applicationId),
   {
     ...options,
     method: 'PUT',
@@ -1256,7 +1257,7 @@ export const getUpdateApplicationFormBUrl = (applicationId: string,) => {
  * @summary Create or replace Form B.
  */
 export const updateApplicationFormB = async (applicationId: string,
-    formBWriteRequest: FormBWriteRequest, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+    formBWriteRequest: FormBWriteRequest, options?: Parameters<typeof customFetch>[1]): Promise<RevisionResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -1272,7 +1273,7 @@ export const updateApplicationFormB = async (applicationId: string,
     }
     return headers;
   };
-return customFetch<void>(getUpdateApplicationFormBUrl(applicationId),
+return customFetch<RevisionResponse>(getUpdateApplicationFormBUrl(applicationId),
   {
     ...options,
     method: 'PUT',
@@ -1505,7 +1506,7 @@ export const getUpdateApplicationFormCUrl = (applicationId: string,) => {
  * @summary Create or replace Form C.
  */
 export const updateApplicationFormC = async (applicationId: string,
-    formCWriteRequest: FormCWriteRequest, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+    formCWriteRequest: FormCWriteRequest, options?: Parameters<typeof customFetch>[1]): Promise<RevisionResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -1521,7 +1522,7 @@ export const updateApplicationFormC = async (applicationId: string,
     }
     return headers;
   };
-return customFetch<void>(getUpdateApplicationFormCUrl(applicationId),
+return customFetch<RevisionResponse>(getUpdateApplicationFormCUrl(applicationId),
   {
     ...options,
     method: 'PUT',

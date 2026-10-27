@@ -4,6 +4,7 @@ export * from './autoPlanResponse.gen.ts';
 export * from './blockadeResponse.gen.ts';
 export * from './createRequest.gen.ts';
 export * from './cruiseResponse.gen.ts';
+export * from './deleteCruiseParams.gen.ts';
 export * from './exportCruisesParams.gen.ts';
 export * from './exportResponse.gen.ts';
 export * from './getCruiseBlockadesParams.gen.ts';

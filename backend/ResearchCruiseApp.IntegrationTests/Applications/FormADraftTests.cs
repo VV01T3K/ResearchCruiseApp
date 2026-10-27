@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
@@ -129,6 +130,41 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(await clean.Users.ToListAsync(cancellationToken));
         Assert.Empty(await clean.CruiseApplications.ToListAsync(cancellationToken));
         Assert.Empty(await clean.EmailOutboxMessages.ToListAsync(cancellationToken));
+    }
+
+    [Fact]
+    public async Task UpdateDraft_WhenRevisionIsStaleOrMissing_RejectsSaveWithoutChanges()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var application = await TestApplications.Create(app, CruiseApplicationStatus.Draft);
+        using var first = await TestApplications.Login(app, application.OwnerEmail);
+        using var second = await TestApplications.Login(app, application.OwnerEmail);
+        var route = $"/v2/applications/{application.Id}/form-a";
+        var read = (await second.GetFromJsonAsync<JsonObject>(route, ct))!;
+        var staleRevision = read["revision"]!.GetValue<string>();
+
+        read["note"] = "First";
+        using var saved = await first.PutFormAsync(route, new { Form = read, Draft = true }, ct);
+        Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
+        var snapshot = await FormRequests.Snapshot(app);
+        read["note"] = "Second";
+        foreach (var revision in new[] { staleRevision, null })
+        {
+            read["revision"] = revision;
+            using var rejected = await second.PutAsJsonAsync(
+                route,
+                new { Form = read, Draft = true },
+                ct
+            );
+            Assert.Equal(HttpStatusCode.Conflict, rejected.StatusCode);
+            Assert.Equal(snapshot, await FormRequests.Snapshot(app));
+        }
+        await app.InDatabase(async db =>
+        {
+            Assert.Equal("First", (await db.CruiseApplications.SingleAsync(ct)).Note);
+            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
+        });
     }
 
     private static async Task<HttpClient> CreateAuthorizedClient(

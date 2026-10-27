@@ -27,6 +27,7 @@ public static class CruiseEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
+            .WithSerializableTransaction()
             .WithRequestValidation<CreateRequest>()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
@@ -68,6 +69,7 @@ public static class CruiseEndpoints
         CancellationToken cancellationToken
     )
     {
+        await yearBasedKeyGenerator.Lock<DomainCruise>(cancellationToken);
         var cruiseApplications = await dbContext
             .CruiseApplications.Where(application =>
                 request.CruiseApplicationIds.Contains(application.Id)
@@ -106,9 +108,6 @@ public static class CruiseEndpoints
             )
             .ToListAsync(cancellationToken);
 
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(
-            cancellationToken
-        );
         newCruise.Number = await yearBasedKeyGenerator.GenerateKey(
             dbContext.Cruises,
             cancellationToken
@@ -116,13 +115,12 @@ public static class CruiseEndpoints
         newCruise.Status = CruiseStatus.New;
         await dbContext.Cruises.AddAsync(newCruise, cancellationToken);
         await ClearUnavailableManagers(affectedCruises, dbContext, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
+        affectedCruises.ForEach(cruise => dbContext.Entry(cruise).State = EntityState.Modified);
 
         return TypedResults.Created();
     }
 
-    private static async Task<Results<NoContent, ProblemHttpResult>> Update(
+    private static async Task<Results<Ok<RevisionResponse>, ProblemHttpResult>> Update(
         Guid cruiseId,
         UpdateRequest request,
         IdentityService identityService,
@@ -137,6 +135,11 @@ public static class CruiseEndpoints
         if (cruise is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
+        }
+
+        if (!cruise.RowVersion.Matches(request.Revision))
+        {
+            return Revisions.StaleRevision();
         }
 
         // Form C stays editable after the cruise ends; the cruise itself does not.
@@ -186,8 +189,16 @@ public static class CruiseEndpoints
 
         var newCruiseApplications = await dbContext
             .CruiseApplications.Include(application => application.FormA)
+            .Include(application => application.Cruise)
             .Where(application => request.CruiseApplicationIds.Contains(application.Id))
             .ToListAsync(cancellationToken);
+        // Membership lives on application rows, so bump every cruise whose list changes.
+        var changedCruises = newCruiseApplications
+            .Select(application => application.Cruise)
+            .Append(cruise)
+            .OfType<DomainCruise>();
+        foreach (var changedCruise in changedCruises)
+            dbContext.Entry(changedCruise).State = EntityState.Modified;
         var formBRequested = new List<CruiseApplication>();
         // Removed applications can be planned again; Form B is kept.
         foreach (
@@ -211,11 +222,12 @@ public static class CruiseEndpoints
             identityService
         );
         await dbContext.SaveChangesAsync(cancellationToken);
-        return TypedResults.NoContent();
+        return TypedResults.Ok(new RevisionResponse(cruise.RowVersion.ToRevision()));
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Delete(
         Guid cruiseId,
+        string? revision,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
@@ -226,6 +238,11 @@ public static class CruiseEndpoints
         if (cruise is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
+        }
+
+        if (!cruise.RowVersion.Matches(revision))
+        {
+            return Revisions.StaleRevision();
         }
 
         if (cruise.Status != CruiseStatus.New && cruise.Status != CruiseStatus.Confirmed)
