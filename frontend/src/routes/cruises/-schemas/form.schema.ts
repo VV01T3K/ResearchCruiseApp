@@ -16,6 +16,7 @@ export const CruiseFormInputSchema = z
     cruiseApplicationIds: z.array(z.guid()),
     title: z.string().optional(),
     shipUnavailable: z.boolean(),
+    revision: z.string().optional(),
   })
   .superRefine(({ startDate, endDate, mainManagerId, deputyManagerId, shipUnavailable, title }, ctx) => {
     if (new Date(startDate) > new Date(endDate)) {
@@ -43,7 +44,6 @@ export const CruiseFormInputSchema = z
     }
   });
 
-/** Create and update requests share one shape. */
 export const CruiseFormSchema = CruiseFormInputSchema.transform((cruise): z.input<typeof CreateRequest> => ({
   ...cruise,
   title: cruise.title || null,
@@ -70,5 +70,6 @@ export function mapCruiseToValues(cruise: CruiseResponse): CruiseFormValues {
     cruiseApplicationIds: cruise.applications.map((application) => application.id),
     title: cruise.title ?? '',
     shipUnavailable: cruise.shipUnavailable,
+    revision: cruise.revision,
   };
 }

@@ -41,7 +41,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         }
         using (var response = await Write(client, prepared.Route, fields, true, target == 0))
             Assert.Equal(
-                target == 1 ? HttpStatusCode.NoContent : HttpStatusCode.Created,
+                target == 0 ? HttpStatusCode.Created : HttpStatusCode.OK,
                 response.StatusCode
             );
         var route = prepared.Route;
@@ -96,10 +96,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
             parent[field.Property] = null;
         }
         using (var response = await Write(client, route, fields, true))
-            Assert.Equal(
-                target is 0 or 1 ? HttpStatusCode.NoContent : HttpStatusCode.Created,
-                response.StatusCode
-            );
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var nullableRead = JsonDocument.Parse(await Read(client, route));
         foreach (var field in controls.Where(field => !field.Required))
         {
@@ -135,8 +132,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
             target == 0
         );
         Assert.True(
-            response.StatusCode
-                == (target == 1 ? HttpStatusCode.NoContent : HttpStatusCode.Created),
+            response.StatusCode == (target == 0 ? HttpStatusCode.Created : HttpStatusCode.OK),
             await response.Content.ReadAsStringAsync(ct)
         );
         await app.InDatabase(async db =>
@@ -183,7 +179,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         }
         using (var response = await Write(client, prepared.Route, fields, true, target == 0))
             Assert.True(
-                response.StatusCode == HttpStatusCode.Created,
+                response.StatusCode == (target == 0 ? HttpStatusCode.Created : HttpStatusCode.OK),
                 await response.Content.ReadAsStringAsync(ct)
             );
         var route = prepared.Route;
@@ -193,10 +189,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
                     $"/v2/applications/{(await db.CruiseApplications.SingleAsync(ct)).Id}/form-a"
             );
         using (var response = await Write(client, route, fields, true))
-            Assert.Equal(
-                target == 0 ? HttpStatusCode.NoContent : HttpStatusCode.Created,
-                response.StatusCode
-            );
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var read = JsonDocument.Parse(await Read(client, route));
         foreach (var property in read.RootElement.EnumerateObject())
             if (property.Value.ValueKind == JsonValueKind.Array)
@@ -551,7 +544,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
             if (target is 2 or 3)
             {
                 using var saved = await Write(client, route, fields, true, target == 0);
-                Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
+                Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
             }
             return (client, fields, route);
         }

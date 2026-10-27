@@ -42,6 +42,7 @@ export function cruise(): CruiseResponse {
     status: 'new',
     title: 'Bałtyk',
     shipUnavailable: false,
+    revision: 'AAAAAAAAB9E=',
   };
 }
 

@@ -47,17 +47,17 @@ public sealed class FormValidationTests(SqlFixture fixture) : IAsyncLifetime
         };
         using var saved =
             form == "b"
-                ? await client.PutAsJsonAsync(
+                ? await client.PutFormAsync(
                     route,
                     new FormBWriteRequest { Form = fieldsB, Draft = true },
                     ct
                 )
-                : await client.PutAsJsonAsync(
+                : await client.PutFormAsync(
                     route,
                     new FormCWriteRequest { Form = fieldsC, Draft = true },
                     ct
                 );
-        Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
         Guid originalForm = default;
         Guid originalPermission = default;
         await app.InDatabase(async db =>
@@ -71,12 +71,12 @@ public sealed class FormValidationTests(SqlFixture fixture) : IAsyncLifetime
 
         using var response =
             form == "b"
-                ? await client.PutAsJsonAsync(
+                ? await client.PutFormAsync(
                     route,
                     new FormBWriteRequest { Form = fieldsB, Draft = false },
                     ct
                 )
-                : await client.PutAsJsonAsync(
+                : await client.PutFormAsync(
                     route,
                     new FormCWriteRequest { Form = fieldsC, Draft = false },
                     ct

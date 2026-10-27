@@ -19,7 +19,7 @@ export function Calendar({ cruises, buttons }: Props) {
   const queryClient = useQueryClient();
   const updateCruiseByIdMutation = useUpdateCruise({
     mutation: {
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() }),
+      onSettled: () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() }),
     },
   });
   const [isCalendarEditMode, setIsCalendarEditMode] = React.useState(false);
@@ -55,11 +55,14 @@ export function Calendar({ cruises, buttons }: Props) {
     await updateCruiseByIdMutation.mutateAsync(
       {
         cruiseId: cruise.id,
-        data: CruiseFormSchema.parse({
-          ...mapCruiseToValues(cruise),
-          startDate: payload.nextStart.toISOString(),
-          endDate: payload.nextEnd.toISOString(),
-        }),
+        data: {
+          ...CruiseFormSchema.parse({
+            ...mapCruiseToValues(cruise),
+            startDate: payload.nextStart.toISOString(),
+            endDate: payload.nextEnd.toISOString(),
+          }),
+          revision: cruise.revision,
+        },
       },
       {
         onSuccess: () => {

@@ -47,7 +47,7 @@ export function AuthSession({ children }: { children: ReactNode }) {
     if (!authDetails?.refreshTokenExpirationDate) return;
 
     const checkExpiration = () => {
-      if (Date.now() >= Date.parse(authDetails.refreshTokenExpirationDate)) void signOut();
+      if (Date.now() >= Date.parse(authDetails.refreshTokenExpirationDate)) void signOut({ expired: true });
     };
     checkExpiration();
     const interval = setInterval(checkExpiration, 5000);
@@ -63,7 +63,7 @@ export function AuthSession({ children }: { children: ReactNode }) {
         <SessionExpirationWarning
           expirationDate={new Date(authDetails.refreshTokenExpirationDate)}
           onRefreshSession={refresh}
-          onSignOut={signOut}
+          onSignOut={() => signOut()}
         />
       )}
     </>

@@ -54,6 +54,7 @@ import { PublicationCategory } from '@/routes/applications/$applicationId/-schem
 
 const FormAInputSchema = z.object({
   draft: z.boolean().optional(),
+  revision: z.string().optional(),
   id: z.string().optional(),
   cruiseManagerId: z.string(),
   deputyManagerId: z.string(),
@@ -353,6 +354,7 @@ const evenWithFieldErrors = {
 export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: BlockadePeriod[]) =>
   z
     .object({
+      revision: z.string().optional(),
       id: z.guid().optional(),
       cruiseManagerId: z
         .string()
@@ -585,6 +587,7 @@ function buildFormAFieldsSchema(
 
 function mapFormAFields(form: FormAValues, applicationId?: string) {
   return {
+    revision: form.revision ?? null,
     id: applicationId ?? form.id ?? null,
     cruiseManagerId: form.cruiseManagerId,
     deputyManagerId: form.deputyManagerId || null,
@@ -660,6 +663,7 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
   const optimalPeriod = CruisePeriodValidationSchema.safeParse(form.optimalPeriod ?? '').data ?? '';
 
   return {
+    revision: form.revision ?? undefined,
     id: form.id ?? undefined,
     cruiseManagerId: form.cruiseManagerId ?? '',
     deputyManagerId: form.deputyManagerId ?? '',

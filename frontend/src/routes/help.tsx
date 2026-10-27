@@ -108,7 +108,7 @@ function HelpPage() {
           <CompanyInfoCard icon={<GlobeHemisphereWestIcon />} title="Strona WWW">
             <AppLink href="https://oceanograf.ug.edu.pl">https://oceanograf.ug.edu.pl</AppLink>
           </CompanyInfoCard>
-          <CompanyInfoCard icon={<EnvelopeSimpleIcon weight="fill" />} title="Email">
+          <CompanyInfoCard icon={<EnvelopeSimpleIcon />} title="Email">
             <AppLink href="mailto:office.oceanograf@ug.edu.pl">office.oceanograf@ug.edu.pl</AppLink>
           </CompanyInfoCard>
           <CompanyInfoCard icon={<BrowsersIcon />} title="Wersja aplikacji">

@@ -29,10 +29,12 @@ import type {
   BlockadeResponse,
   CreateRequest,
   CruiseResponse,
+  DeleteCruiseParams,
   ExportCruisesParams,
   ExportResponse,
   GetCruiseBlockadesParams,
   ProblemDetails,
+  RevisionResponse,
   UpdateRequest
 } from '../schemas';
 
@@ -341,7 +343,7 @@ export const getUpdateCruiseUrl = (cruiseId: string,) => {
  * @summary Update a cruise.
  */
 export const updateCruise = async (cruiseId: string,
-    updateRequest: UpdateRequest, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+    updateRequest: UpdateRequest, options?: Parameters<typeof customFetch>[1]): Promise<RevisionResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -357,7 +359,7 @@ export const updateCruise = async (cruiseId: string,
     }
     return headers;
   };
-return customFetch<void>(getUpdateCruiseUrl(cruiseId),
+return customFetch<RevisionResponse>(getUpdateCruiseUrl(cruiseId),
   {
     ...options,
     method: 'PATCH',
@@ -423,20 +425,29 @@ export const useUpdateCruise = <TError = ErrorType<ProblemDetails>,
       const backupQueryClient = useQueryClient();
       return useMutation(getUpdateCruiseMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
     }
-    export const getDeleteCruiseUrl = (cruiseId: string,) => {
+    export const getDeleteCruiseUrl = (cruiseId: string,
+    params?: DeleteCruiseParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/v2/cruises/${cruiseId}`
+  return stringifiedParams.length > 0 ? `/v2/cruises/${cruiseId}?${stringifiedParams}` : `/v2/cruises/${cruiseId}`
 }
 
 /**
  * @summary Delete a cruise.
  */
-export const deleteCruise = async (cruiseId: string, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+export const deleteCruise = async (cruiseId: string,
+    params?: DeleteCruiseParams, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
-  return customFetch<void>(getDeleteCruiseUrl(cruiseId),
+  return customFetch<void>(getDeleteCruiseUrl(cruiseId,params),
   {
     ...options,
     method: 'DELETE'
@@ -466,9 +477,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCruise>>, DeleteCruiseMutationVariables> = (props) => {
-          const {cruiseId} = props ?? {};
+          const {cruiseId,params} = props ?? {};
 
-          return  deleteCruise(cruiseId,requestOptions)
+          return  deleteCruise(cruiseId,params,requestOptions)
         }
 
   const onSuccess = (data: Awaited<ReturnType<typeof deleteCruise>>, variables: DeleteCruiseMutationVariables, onMutateResult: TContext, context: MutationFunctionContext) => {
@@ -486,7 +497,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCruise>>>
 
     export type DeleteCruiseMutationError = ErrorType<ProblemDetails>
-    export type DeleteCruiseMutationVariables = {cruiseId: string}
+    export type DeleteCruiseMutationVariables = {cruiseId: string;params?: DeleteCruiseParams}
 
     /**
  * @summary Delete a cruise.

@@ -68,6 +68,7 @@ import {
 
 const FormCInputSchema = z.object({
   draft: z.boolean().optional(),
+  revision: z.string().optional(),
   shipUsage: z.string(),
   differentUsage: z.string(),
   permissions: PermissionValuesInputSchema.array(),
@@ -177,6 +178,7 @@ function buildFormCFieldsSchema(inputSchema: z.ZodType<FormCValues, FormCValues>
       (form): z.input<typeof FormCFields> =>
         ({
           ...form,
+          revision: form.revision ?? null,
           permissions: form.permissions.map((permission) => ({
             description: permission.description || null,
             executive: permission.executive || null,
@@ -228,6 +230,7 @@ function buildFormCFieldsSchema(inputSchema: z.ZodType<FormCValues, FormCValues>
 
 export function mapFormCToValues(form: FormCFields): FormCValues {
   return {
+    revision: form.revision ?? undefined,
     shipUsage: form.shipUsage ?? '',
     differentUsage: form.differentUsage ?? '',
     permissions: (form.permissions ?? []).map((permission) => ({

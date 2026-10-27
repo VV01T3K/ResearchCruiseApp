@@ -68,10 +68,12 @@ public static class FormCEndpoints
         )
             return TypedResults.NotFound();
 
-        return TypedResults.Ok(await forms.Create(application.FormC));
+        var fields = await forms.Create(application.FormC);
+        fields.Revision = application.RowVersion.ToRevision();
+        return TypedResults.Ok(fields);
     }
 
-    private static async Task<Results<Created, ProblemHttpResult>> Update(
+    private static async Task<Results<Ok<RevisionResponse>, ProblemHttpResult>> Update(
         Guid applicationId,
         FormCWriteRequest request,
         FormCFactory forms,
@@ -93,6 +95,8 @@ public static class FormCEndpoints
             .SingleOrDefaultAsync(candidate => candidate.Id == applicationId, cancellationToken);
         if (application is null || !await userPermissionVerifier.CanCurrentUserAddForm(application))
             return Error.ResourceNotFound().ToProblemHttpResult();
+        if (!application.RowVersion.Matches(request.Form.Revision))
+            return Revisions.StaleRevision();
         if (application.Status != CruiseApplicationStatus.Undertaken)
             return Error.ForbiddenOperation(UpdateRefusal(application)).ToProblemHttpResult();
 
@@ -115,7 +119,8 @@ public static class FormCEndpoints
         if (!request.Draft)
             await effectsService.EvaluateEffects(application, cancellationToken);
 
-        return TypedResults.Created();
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return TypedResults.Ok(new RevisionResponse(application.RowVersion.ToRevision()));
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Refill(

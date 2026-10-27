@@ -14,7 +14,8 @@ public sealed record CruiseResponse(
     List<ApplicationSummaryResponse> Applications,
     CruiseStatus Status,
     string? Title,
-    bool ShipUnavailable
+    bool ShipUnavailable,
+    string Revision
 )
 {
     internal static async Task<CruiseResponse> From(
@@ -52,7 +53,8 @@ public sealed record CruiseResponse(
                 .ToList(),
             cruise.Status,
             cruise.Title,
-            cruise.ShipUnavailable
+            cruise.ShipUnavailable,
+            cruise.RowVersion.ToRevision()
         );
     }
 }

@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
@@ -47,12 +49,12 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
             ? formBFields.Permissions
             : ((FormCFields)originalFields).Permissions;
         originalPermissions.Add(new PermissionFields { Description = "Obsolete permission" });
-        using var saved = await client.PutAsJsonAsync(
+        using var saved = await client.PutFormAsync(
             route,
             new { Form = originalFields, Draft = true },
             ct
         );
-        Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
         await AssertFields(client, route, originalFields, ct);
         Guid originalFormId = default;
         Guid permissionId = default;
@@ -85,7 +87,7 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
         );
         try
         {
-            using var failed = await client.PutAsJsonAsync(
+            using var failed = await client.PutFormAsync(
                 route,
                 new { Form = fields, Draft = draft },
                 ct
@@ -108,12 +110,12 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
             );
         }
 
-        using var retried = await client.PutAsJsonAsync(
+        using var retried = await client.PutFormAsync(
             route,
             new { Form = fields, Draft = draft },
             ct
         );
-        Assert.Equal(HttpStatusCode.Created, retried.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, retried.StatusCode);
         await AssertFields(client, route, fields, ct);
         await AssertState(
             draft ? editable
@@ -304,12 +306,12 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
 
         async Task Save(HttpClient client, string route, object form)
         {
-            using var response = await client.PutAsJsonAsync(
+            using var response = await client.PutFormAsync(
                 route,
                 new { Form = form, Draft = true },
                 ct
             );
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             await AssertFields(client, route, form, ct);
         }
     }
@@ -323,8 +325,13 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
     {
         using var response = await client.GetAsync(route, ct);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var actual = await response.Content.ReadFromJsonAsync(expected.GetType(), ct);
-        Assert.Equivalent(expected, actual, strict: true);
+        var actual = await response.Content.ReadFromJsonAsync<JsonObject>(ct);
+        actual!.Remove("revision");
+        Assert.Equivalent(
+            expected,
+            actual.Deserialize(expected.GetType(), JsonSerializerOptions.Web),
+            strict: true
+        );
     }
 
     private static object Fields(bool formC, Guid unitId, Guid shipEquipmentId)

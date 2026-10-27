@@ -16,6 +16,7 @@ export const formBFieldsShipEquipmentsIdsItemRegExp = new RegExp('^[0-9a-fA-F]{8
 
 
 export const FormBFields = zod.object({
+  "revision": zod.string().nullish(),
   "isCruiseManagerPresent": zod.string().min(formBFieldsIsCruiseManagerPresentMin).max(formBFieldsIsCruiseManagerPresentMax).optional(),
   "permissions": zod.array(PermissionFields).optional(),
   "ugTeams": zod.array(UgTeamFields).optional(),

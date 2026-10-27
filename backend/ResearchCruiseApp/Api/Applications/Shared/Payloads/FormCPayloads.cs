@@ -4,6 +4,8 @@ namespace ResearchCruiseApp.Api.Applications.Shared;
 
 public class FormCFields
 {
+    public string? Revision { get; set; }
+
     [StringLength(1)]
     public string ShipUsage { get; init; } = null!;
 

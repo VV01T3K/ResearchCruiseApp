@@ -22,4 +22,6 @@ public class CruiseApplication : Entity
 
     public int EffectsPoints { get; set; }
     public string? Note { get; set; }
+
+    public byte[] RowVersion { get; set; } = [];
 }

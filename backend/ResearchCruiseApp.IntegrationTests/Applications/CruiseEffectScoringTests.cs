@@ -223,12 +223,12 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
         using var deputyClient = await TestApplications.Login(app, deputy.Email!);
         using var unrelatedClient = await TestApplications.Login(app, unrelated.Email!);
         var route = $"/v2/applications/{application.Id}/form-c";
-        using var draft = await manager.PutAsJsonAsync(
+        using var draft = await manager.PutFormAsync(
             route,
             new FormCWriteRequest { Form = fields, Draft = true },
             ct
         );
-        Assert.Equal(HttpStatusCode.Created, draft.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, draft.StatusCode);
         await app.InDatabase(async db =>
         {
             Assert.Empty(await db.UserEffects.ToListAsync(ct));
@@ -246,12 +246,12 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
                 )
             )!
         );
-        using var submitted = await manager.PutAsJsonAsync(
+        using var submitted = await manager.PutFormAsync(
             route,
             new FormCWriteRequest { Form = fields, Draft = false },
             ct
         );
-        Assert.Equal(HttpStatusCode.Created, submitted.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, submitted.StatusCode);
         await app.InDatabase(async db =>
         {
             var beforeCruise = await db
@@ -310,12 +310,12 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
                 )
             )!.EffectsPoints
         );
-        using var final = await manager.PutAsJsonAsync(
+        using var final = await manager.PutFormAsync(
             $"/v2/applications/{nextId}/form-a",
             new FormAWriteRequest { Form = nextForm, Draft = false },
             ct
         );
-        Assert.Equal(HttpStatusCode.NoContent, final.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, final.StatusCode);
         Assert.Equal(
             "738",
             (
@@ -347,12 +347,12 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
                 DeputyConditionMet = "false",
             }
         );
-        using var replaced = await manager.PutAsJsonAsync(
+        using var replaced = await manager.PutFormAsync(
             route,
             new FormCWriteRequest { Form = fields, Draft = false },
             ct
         );
-        Assert.Equal(HttpStatusCode.Created, replaced.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, replaced.StatusCode);
         await AssertEffects(
             app,
             manager,
@@ -406,13 +406,13 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
         );
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
 
-        using var submitted = await manager.PutAsJsonAsync(
+        using var submitted = await manager.PutFormAsync(
             $"/v2/applications/{application.Id}/form-c",
             new FormCWriteRequest { Form = fields, Draft = false },
             ct
         );
 
-        Assert.Equal(HttpStatusCode.Created, submitted.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, submitted.StatusCode);
         await AssertEffects(
             app,
             manager,

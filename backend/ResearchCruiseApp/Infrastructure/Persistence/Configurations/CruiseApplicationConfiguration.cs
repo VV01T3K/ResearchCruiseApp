@@ -14,6 +14,7 @@ public class CruiseApplicationConfiguration : IEntityTypeConfiguration<CruiseApp
             .HasForeignKey<CruiseApplication>("FormCId");
 
         builder.Property(nameof(CruiseApplication.Number)).ValueGeneratedOnAdd();
+        builder.Property(cruiseApplication => cruiseApplication.RowVersion).IsRowVersion();
 
         builder
             .HasIndex(cruiseApplication => new { cruiseApplication.Number, cruiseApplication.Id })

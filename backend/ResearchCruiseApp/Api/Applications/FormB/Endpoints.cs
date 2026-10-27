@@ -67,10 +67,12 @@ public static class FormBEndpoints
         )
             return TypedResults.NotFound();
 
-        return TypedResults.Ok(await forms.Create(application.FormB));
+        var fields = await forms.Create(application.FormB);
+        fields.Revision = application.RowVersion.ToRevision();
+        return TypedResults.Ok(fields);
     }
 
-    private static async Task<Results<Created, ProblemHttpResult>> Update(
+    private static async Task<Results<Ok<RevisionResponse>, ProblemHttpResult>> Update(
         Guid applicationId,
         FormBWriteRequest request,
         UserPermissionVerifier userPermissionVerifier,
@@ -88,6 +90,8 @@ public static class FormBEndpoints
             .SingleOrDefaultAsync(candidate => candidate.Id == applicationId, cancellationToken);
         if (application is null || !await userPermissionVerifier.CanCurrentUserAddForm(application))
             return Error.ResourceNotFound().ToProblemHttpResult();
+        if (!application.RowVersion.Matches(request.Form.Revision))
+            return Revisions.StaleRevision();
         if (application.Status != CruiseApplicationStatus.FormBRequired)
             return Error
                 .ForbiddenOperation(UpdateRefusal(application.Status))
@@ -106,7 +110,8 @@ public static class FormBEndpoints
         if (!request.Draft)
             CompleteFormB(application);
 
-        return TypedResults.Created();
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return TypedResults.Ok(new RevisionResponse(application.RowVersion.ToRevision()));
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Refill(
