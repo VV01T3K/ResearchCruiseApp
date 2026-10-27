@@ -110,7 +110,10 @@ internal class UserPermissionVerifier(
             return false;
 
         var currentUserId = currentUserService.GetId();
-        if (currentUserId is null)
+        if (
+            currentUserId is null
+            || !await identityService.IsEligibleCruiseManager(currentUserId.Value)
+        )
             return false;
 
         if (cruiseApplication.Status == CruiseApplicationStatus.Draft)

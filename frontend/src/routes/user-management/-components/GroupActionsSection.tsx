@@ -9,6 +9,7 @@ import { Role } from '@/integrations/auth/types';
 import type { UserResponse } from '@/api/generated/schemas';
 import { useAcceptUser, useDeactivateUser, useDeleteUser } from '@/api/generated/endpoints/users.gen';
 import { getProblemDetail } from '@/api/errors';
+import { AssignmentsWarning, findActiveAssignments, type UserAssignments } from './AssignmentsWarning';
 
 type Props = {
   selectedUsers: UserResponse[];
@@ -21,6 +22,7 @@ type Props = {
 export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUsers, close }: Props) {
   const [deletionConfirmed, setDeletionConfirmed] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | undefined>(undefined);
+  const [assignmentWarning, setAssignmentWarning] = React.useState<UserAssignments[] | null>();
 
   const deleteUserMutation = useDeleteUser({
     mutation: {
@@ -97,6 +99,14 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
       return;
     }
 
+    if (assignmentWarning === undefined) {
+      const items = await findActiveAssignments(usersToUnAccept);
+      if (items?.length !== 0) {
+        setAssignmentWarning(items);
+        return;
+      }
+    }
+
     const promises = usersToUnAccept.map((user) => unAcceptUserMutation.mutateAsync({ userId: user.id }));
     const results = await Promise.allSettled(promises);
     const failedCount = results.filter((result) => result.status === 'rejected').length;
@@ -153,16 +163,28 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
             <span>Akceptuj zaznaczonych użytkowników</span>
           </div>
         </AppButton>
+        {assignmentWarning !== undefined && (
+          <div className="mt-4">
+            <AssignmentsWarning items={assignmentWarning} action="deactivate" group />
+          </div>
+        )}
         <AppButton
           variant="danger"
           className="mt-4 w-full"
           disabled={unAcceptUserMutation.isPending || !!submitError}
           onClick={handleUnAcceptSelectedUsers}
         >
-          <div className="flex items-center gap-4">
-            <UserMinusIcon weight="fill" className="h-4 w-4" />
-            <span>Usuń akceptację zaznaczonych użytkowników</span>
-          </div>
+          {assignmentWarning !== undefined ? (
+            <div className="flex items-center gap-4">
+              <WarningIcon weight="fill" className="h-4 w-4" />
+              <span>Usuń akceptację mimo to</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <UserMinusIcon weight="fill" className="h-4 w-4" />
+              <span>Usuń akceptację zaznaczonych użytkowników</span>
+            </div>
+          )}
         </AppButton>
       </div>
     </div>
