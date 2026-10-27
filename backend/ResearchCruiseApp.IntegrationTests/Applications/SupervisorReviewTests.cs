@@ -1,10 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.IntegrationTests.Auth;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
@@ -146,6 +148,135 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
             });
         }
         Assert.Empty(app.Transport.Messages);
+    }
+
+    [Fact]
+    public async Task ResendInvitation_AfterExpiredEmail_QueuesFreshLinkOnlyForOfficeWhileWaiting()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var (target, _) = await Seed(app);
+        await TestUsers.Create(app, "office@example.invalid", RoleName.Shipowner);
+        using var office = await TestApplications.Login(app, "office@example.invalid");
+        using var manager = await TestApplications.Login(app, "review-owner@example.invalid");
+        using var anonymous = app.CreateApiClient();
+        var route = $"/v2/applications/{target.Id}/supervisor-review/invitation";
+
+        Assert.Equal(
+            HttpStatusCode.NoContent,
+            (await office.PostAsync(route, null, ct)).StatusCode
+        );
+        app.Clock.Advance(TimeSpan.FromHours(13));
+        await app.Dispatch(ct);
+        Assert.Empty(app.Transport.Messages);
+        Assert.Equal(
+            HttpStatusCode.Forbidden,
+            (await manager.PostAsync(route, null, ct)).StatusCode
+        );
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            (await anonymous.PostAsync(route, null, ct)).StatusCode
+        );
+
+        Assert.Equal(
+            HttpStatusCode.NoContent,
+            (await office.PostAsync(route, null, ct)).StatusCode
+        );
+        await app.Dispatch(ct);
+        var mail = Assert.Single(app.Transport.Messages);
+        Assert.Equal("supervisor@example.invalid", mail.Payload.Recipient);
+        var code = QueryHelpers
+            .ParseQuery(PasswordRecoveryTests.Link(mail.Payload.Body, "cruise-approval").Query)[
+                "supervisorCode"
+            ]
+            .ToString();
+        Assert.Equal(WebEncoders.Base64UrlEncode(target.SupervisorCode), code);
+        using var decision = await anonymous.PutAsJsonAsync(
+            $"/v2/applications/{target.Id}/supervisor-review/decision",
+            new SupervisorDecisionRequest(true, code),
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NoContent, decision.StatusCode);
+
+        Assert.Equal(
+            HttpStatusCode.Forbidden,
+            (await office.PostAsync(route, null, ct)).StatusCode
+        );
+        await app.Dispatch(ct);
+        Assert.Single(app.Transport.Messages);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Decision_AfterOfficeDecided_DoesNotClaimSupervisorAnswered(bool officeAccepts)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var (target, _) = await Seed(app);
+        await TestUsers.Create(app, "office@example.invalid", RoleName.Shipowner);
+        using var office = await TestApplications.Login(app, "office@example.invalid");
+        using var supervisor = app.CreateApiClient();
+        using var officeDecision = await office.PutAsJsonAsync(
+            $"/v2/applications/{target.Id}/decision",
+            new ApplicationDecisionRequest(officeAccepts),
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NoContent, officeDecision.StatusCode);
+
+        using var late = await supervisor.PutAsJsonAsync(
+            $"/v2/applications/{target.Id}/supervisor-review/decision",
+            new SupervisorDecisionRequest(true, WebEncoders.Base64UrlEncode(target.SupervisorCode)),
+            ct
+        );
+
+        Assert.Equal(HttpStatusCode.Forbidden, late.StatusCode);
+        var problem = await late.Content.ReadFromJsonAsync<JsonElement>(ct);
+        Assert.Contains("Biuro Armatora", problem.GetProperty("detail").GetString());
+    }
+
+    [Fact]
+    public async Task Decision_WhileOfficeDecides_LetsOnlyOneActOnWaitingApplication()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var gate = new SaveChangesGate();
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: gate);
+        var (target, _) = await Seed(app);
+        await TestUsers.Create(app, "office@example.invalid", RoleName.Shipowner);
+        using var office = await TestApplications.Login(app, "office@example.invalid");
+        using var supervisor = app.CreateApiClient();
+
+        gate.Hold(db =>
+            db.ChangeTracker.Entries<CruiseApplication>()
+                .Any(entry => entry.Entity.Status == CruiseApplicationStatus.DeniedBySupervisor)
+        );
+        var (denied, accepted) = await gate.Race(
+            fixture.ConnectionString,
+            supervisor.PutAsJsonAsync(
+                $"/v2/applications/{target.Id}/supervisor-review/decision",
+                new SupervisorDecisionRequest(
+                    false,
+                    WebEncoders.Base64UrlEncode(target.SupervisorCode)
+                ),
+                ct
+            ),
+            () =>
+                office.PutAsJsonAsync(
+                    $"/v2/applications/{target.Id}/decision",
+                    new ApplicationDecisionRequest(true),
+                    ct
+                ),
+            ct
+        );
+
+        Assert.Equal(HttpStatusCode.NoContent, denied.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, accepted.StatusCode);
+        await app.InDatabase(async db =>
+            Assert.Equal(
+                CruiseApplicationStatus.DeniedBySupervisor,
+                (await db.CruiseApplications.SingleAsync(a => a.Id == target.Id, ct)).Status
+            )
+        );
     }
 
     private static async Task<(CruiseApplication Target, CruiseApplication Other)> Seed(

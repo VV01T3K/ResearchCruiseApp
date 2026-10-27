@@ -4,12 +4,13 @@ import {
   getGetApplicationMockHandler,
   getGetApplicationsMockHandler,
   getGetApplicationSupervisorReviewMockHandler,
+  getResendApplicationSupervisorReviewInvitationMockHandler,
   getUpdateApplicationDecisionMockHandler,
   getUpdateApplicationSupervisorReviewDecisionMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
 import type { Page } from '@playwright/test';
 import type { ApplicationResponse, ResearchTaskFields } from '@/api/generated/schemas';
-import { test, expect } from './fixtures';
+import { test, expect, fail } from './fixtures';
 import { admin, managerAccount, publication } from '../data/accounts';
 import { application, evaluation } from '../data/cruises';
 import { applicationId, formA, formOptions } from '../data/forms';
@@ -223,6 +224,19 @@ test.describe('application review', () => {
     await expect(page.getByRole('button', { name: 'Potwierdź odrzucenie' })).toHaveCount(0);
   });
 
+  test('the office resends the supervisor link once', async ({ page, network, requests }) => {
+    network.use(
+      getGetApplicationEvaluationMockHandler(evaluation()),
+      getGetApplicationMockHandler({ ...application(), status: 'waitingForSupervisor' }),
+      getResendApplicationSupervisorReviewInvitationMockHandler()
+    );
+    await page.goto(`/applications/${applicationId}/details`);
+    const resend = page.getByRole('button', { name: 'Wyślij ponownie do przełożonego' });
+    await resend.dblclick();
+    await expect(resend).toBeDisabled();
+    expect(requests.bodies(`POST /v2/applications/${applicationId}/supervisor-review/invitation`)).toHaveLength(1);
+  });
+
   test('the evaluation shows every scored item with its details and points', async ({ page, network }) => {
     const task = (points: string, researchTask: ResearchTaskFields) => ({ id: `t${points}`, points, researchTask });
     network.use(
@@ -325,23 +339,54 @@ test.describe('application review', () => {
 test.describe('supervisor review link', () => {
   const reviewLink = `/cruise-approval?cruiseApplicationId=${applicationId}&supervisorCode=review-token`;
 
+  const review = () => ({ number: '2026/17', form: formA(), initValues: formOptions() });
+  const decisions = `PUT /v2/applications/${applicationId}/supervisor-review/decision`;
+
   for (const accept of [true, false]) {
-    test(`the supervisor ${accept ? 'accepts' : 'rejects'} an application`, async ({ page, network, requests }) => {
+    const action = accept ? 'Zaakceptuj' : 'Odrzuć';
+    test(`the supervisor confirms ${accept ? 'acceptance' : 'rejection'} once and sees the result`, async ({
+      page,
+      network,
+      requests,
+    }) => {
       network.use(
-        getGetApplicationSupervisorReviewMockHandler({ form: formA(), initValues: formOptions() }),
+        getGetApplicationSupervisorReviewMockHandler(review()),
         getUpdateApplicationSupervisorReviewDecisionMockHandler()
       );
       await page.goto(reviewLink);
-      await page.getByRole('button', { name: accept ? 'Zaakceptuj' : 'Odrzuć', exact: true }).click();
-      await expect(page).toHaveURL('/login?redirect=%2F');
+      await page.getByRole('button', { name: action, exact: true }).click();
+      await page.getByRole('dialog').getByRole('button', { name: 'Anuluj' }).click();
+      await expect(page.getByRole('dialog')).toBeHidden();
+      expect(requests.bodies(decisions)).toEqual([]);
+
+      await page.getByRole('button', { name: action, exact: true }).click();
+      await page.getByRole('button', { name: `${action} zgłoszenie nr 2026/17` }).dblclick();
+      await expect(page.getByRole('status')).toContainText('2026/17');
+      await expect(page).toHaveURL(reviewLink);
       expect(requests.queries(`GET /v2/applications/${applicationId}/supervisor-review`)[0]).toEqual({
         code: 'review-token',
       });
-      expect(requests.bodies(`PUT /v2/applications/${applicationId}/supervisor-review/decision`)).toEqual([
-        { accept, code: 'review-token' },
-      ]);
+      expect(requests.bodies(decisions)).toEqual([{ accept, code: 'review-token' }]);
     });
   }
+
+  test('the supervisor can retry after a failed decision', async ({ page, network, requests }) => {
+    network.use(
+      getGetApplicationSupervisorReviewMockHandler(review()),
+      getUpdateApplicationSupervisorReviewDecisionMockHandler(fail(503, { detail: 'Serwer niedostępny.' }), {
+        once: true,
+      }),
+      getUpdateApplicationSupervisorReviewDecisionMockHandler()
+    );
+    await page.goto(reviewLink);
+    await page.getByRole('button', { name: 'Odrzuć', exact: true }).click();
+    const confirm = page.getByRole('button', { name: 'Odrzuć zgłoszenie nr 2026/17' });
+    await confirm.click();
+    await expect(page.getByRole('alert')).toContainText('Serwer niedostępny.');
+    await confirm.click();
+    await expect(page.getByRole('status')).toContainText('2026/17');
+    expect(requests.bodies(decisions)).toHaveLength(2);
+  });
 
   test('the supervisor sees precise cruise dates on the days the manager chose', async ({ page, network }) => {
     const form = {
@@ -352,7 +397,7 @@ test.describe('supervisor review link', () => {
       precisePeriodStart: '2026-06-01T00:00:00',
       precisePeriodEnd: '2026-06-03T00:00:00',
     };
-    network.use(getGetApplicationSupervisorReviewMockHandler({ form, initValues: formOptions() }));
+    network.use(getGetApplicationSupervisorReviewMockHandler({ ...review(), form }));
     await page.goto(reviewLink);
     await expect(page.getByRole('button', { name: 'Dokładny termin rozpoczęcia rejsu' })).toContainText('01.06.2026');
     await expect(page.getByRole('button', { name: 'Dokładny termin zakończenia rejsu' })).toContainText('03.06.2026');

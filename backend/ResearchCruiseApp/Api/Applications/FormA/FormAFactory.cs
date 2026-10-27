@@ -15,12 +15,13 @@ internal class FormAFactory(
 {
     public async Task<Result<FormA>> Create(
         FormAFields formAFields,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken,
+        FormA? existingFormA = null
     )
     {
         var formA = ApplicationMappings.ToFormA(formAFields);
 
-        var result = await AddManagersTeam(formA, formAFields);
+        var result = await AddManagersTeam(formA, formAFields, existingFormA);
         if (!result.IsSuccess)
             return result.Error!;
 
@@ -39,7 +40,11 @@ internal class FormAFactory(
         return formA;
     }
 
-    private async Task<Result> AddManagersTeam(FormA formA, FormAFields formAFields)
+    private async Task<Result> AddManagersTeam(
+        FormA formA,
+        FormAFields formAFields,
+        FormA? existingFormA
+    )
     {
         var currentUserId = currentUserService.GetId();
         if (currentUserId is null)
@@ -53,15 +58,29 @@ internal class FormAFactory(
                 "Użytkownik wysyłający zgłoszenie musi być kierownikiem lub jego zastępcą."
             );
 
-        if (!await identityService.UserWithIdExists(formAFields.CruiseManagerId))
-            return Error.InvalidArgument("Podany kierownik nie istnieje.");
+        if (
+            formAFields.CruiseManagerId != existingFormA?.CruiseManagerId
+            && !await identityService.IsActiveWithAnyRole(
+                formAFields.CruiseManagerId,
+                IdentityService.CruiseManagerRoleNames
+            )
+        )
+            return Error.InvalidArgument(
+                "Podany kierownik nie istnieje lub nie ma aktywnego konta z uprawnieniami kierownika."
+            );
 
         if (
             formAFields.DeputyManagerId is not null
-            && !await identityService.UserWithIdExists((Guid)formAFields.DeputyManagerId)
+            && formAFields.DeputyManagerId != existingFormA?.DeputyManagerId
+            && !await identityService.IsActiveWithAnyRole(
+                (Guid)formAFields.DeputyManagerId,
+                IdentityService.CruiseManagerRoleNames
+            )
         )
         {
-            return Error.InvalidArgument("Podany zastępca kierownika nie istnieje.");
+            return Error.InvalidArgument(
+                "Podany zastępca kierownika nie istnieje lub nie ma aktywnego konta z uprawnieniami kierownika."
+            );
         }
 
         formA.CruiseManagerId = formAFields.CruiseManagerId;

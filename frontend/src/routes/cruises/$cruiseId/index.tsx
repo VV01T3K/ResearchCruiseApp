@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@/api/errors';
+import { ApiError, getErrorMessage } from '@/api/errors';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
@@ -70,6 +70,7 @@ function CruiseDetailsPage() {
   const [isConfirmDeletionModalOpen, setIsConfirmDeletionModalOpen] = React.useState(false);
   const [isConfirmEndModalOpen, setIsConfirmEndModalOpen] = React.useState(false);
   const [isConfirmRevertModalOpen, setIsConfirmRevertModalOpen] = React.useState(false);
+  const [pendingDiscard, setPendingDiscard] = React.useState<'cancel' | 'revert'>();
   const [saved, setSaved] = React.useState<{ cruise: CruiseResponse; values: CruiseFormValues }>();
   const saveQueue = React.useRef(Promise.resolve());
   // Our own accepted saves replace the revision they were based on.
@@ -110,14 +111,23 @@ function CruiseDetailsPage() {
       if (evaluate(form.state.values, value)) {
         form.reset(savedValues);
         setEditMode(false);
+        setPendingDiscard(undefined);
       }
       toast.success('Rejs został zaktualizowany pomyślnie.');
     } catch (error) {
       console.error(error);
+      // Discarding after a conflict should land on the current server version.
+      if (error instanceof ApiError && error.status === 409) void cruiseQuery.refetch();
       setServerFormErrors(form, error);
       toast.error(getErrorMessage(error, 'Nie udało się zaktualizować rejsu'));
       navigateToFirstError();
     }
+  }
+
+  function discard(action: 'cancel' | 'revert') {
+    form.reset();
+    if (action === 'cancel') setEditMode(false);
+    setPendingDiscard(undefined);
   }
 
   function getButtons() {
@@ -127,10 +137,7 @@ function CruiseDetailsPage() {
           <AppButton
             className="w-36 !justify-center gap-4 lg:w-48"
             variant="primaryOutline"
-            onClick={() => {
-              form.reset();
-              setEditMode(false);
-            }}
+            onClick={() => (form.state.isDirty ? setPendingDiscard('cancel') : discard('cancel'))}
           >
             <XIcon className="h-4 w-4" />
             Anuluj
@@ -138,7 +145,7 @@ function CruiseDetailsPage() {
           <AppButton
             className="w-36 !justify-center gap-4 lg:w-48"
             variant="primaryOutline"
-            onClick={() => form.reset()}
+            onClick={() => (form.state.isDirty ? setPendingDiscard('revert') : discard('revert'))}
           >
             <ArrowClockwiseIcon className="h-4 w-4" />
             Cofnij zmiany
@@ -236,6 +243,19 @@ function CruiseDetailsPage() {
         </form.AppForm>
       </AppLayout>
       <UnsavedChangesGuard form={form} disabled={!editMode} />
+      <AppModal title="Odrzucić zmiany?" isOpen={!!pendingDiscard} onClose={() => setPendingDiscard(undefined)}>
+        <div className="space-y-4">
+          <p>Formularz zawiera niezapisane zmiany. Jeśli je odrzucisz, zostaną utracone.</p>
+          <div className="flex flex-wrap justify-end gap-4">
+            <AppButton variant="primaryOutline" onClick={() => setPendingDiscard(undefined)}>
+              Wróć do edycji
+            </AppButton>
+            <AppButton variant="danger" onClick={() => pendingDiscard && discard(pendingDiscard)}>
+              Odrzuć zmiany
+            </AppButton>
+          </div>
+        </div>
+      </AppModal>
 
       <AppModal
         title={`Czy na pewno chcesz zatwierdzić rejs nr. ${cruiseQuery.data?.number}?`}
@@ -272,7 +292,8 @@ function CruiseDetailsPage() {
         isOpen={isConfirmDeletionModalOpen}
         onClose={() => setIsConfirmDeletionModalOpen(false)}
       >
-        Do wszystkich kierowników zgłoszeń i ich zastępców zostanie wysłane powiadomienie o anulowaniu rejsu.
+        Rejs zostanie usunięty, a przypisane do niego zgłoszenia wrócą do statusu „Zaakceptowane” i będzie można je
+        ponownie zaplanować.
         <div className="mt-4 flex flex-row gap-4">
           <AppButton
             variant="danger"

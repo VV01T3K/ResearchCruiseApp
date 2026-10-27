@@ -152,7 +152,7 @@ public static class FormAEndpoints
         }
 
         var oldFormA = application.FormA;
-        var formAResult = await forms.Create(request.Form, cancellationToken);
+        var formAResult = await forms.Create(request.Form, cancellationToken, oldFormA);
         if (!formAResult.IsSuccess)
             return formAResult.Error!.ToProblemHttpResult();
 
@@ -193,7 +193,7 @@ public static class FormAEndpoints
     {
         if (request.PrecisePeriodStart is null || request.PrecisePeriodEnd is null)
             return Result.Empty;
-        if (!int.TryParse(request.Year, out var year))
+        if (!int.TryParse(request.Year, out _))
             return Error.InvalidArgument("Rok w zgłoszeniu ma niepoprawny format.");
 
         double cruiseDurationDays = 0;
@@ -208,10 +208,8 @@ public static class FormAEndpoints
             .Where(cruise =>
                 cruise.ShipUnavailable
                 && (cruise.Status == CruiseStatus.New || cruise.Status == CruiseStatus.Confirmed)
-            )
-            .Where(cruise =>
-                cruise.StartDate.StartsWith(year.ToString())
-                || cruise.EndDate.StartsWith(year.ToString())
+                && DateTime.TryParse(cruise.StartDate, out _)
+                && DateTime.TryParse(cruise.EndDate, out _)
             )
             .Select(cruise => (DateTime.Parse(cruise.StartDate), DateTime.Parse(cruise.EndDate)));
 

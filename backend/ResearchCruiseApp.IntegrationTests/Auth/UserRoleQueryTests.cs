@@ -46,7 +46,10 @@ public sealed class UserRoleQueryTests(SqlFixture fixture) : IAsyncLifetime
     {
         var ct = TestContext.Current.CancellationToken;
         var managers = roles
-            .Where(pair => pair.Value.Contains(RoleName.CruiseManager))
+            .Where(pair =>
+                pair.Value.Contains(RoleName.CruiseManager)
+                && !pair.Value.Contains(RoleName.Administrator)
+            )
             .Select(pair => pair.Key);
         var counts = new List<int>();
         foreach (var (client, visible) in new[] { (admin, roles.Keys), (office, managers) })

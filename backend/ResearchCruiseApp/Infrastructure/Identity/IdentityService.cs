@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
@@ -32,6 +33,13 @@ internal class IdentityService(
     ILogger<IdentityService> logger
 )
 {
+    internal static readonly ImmutableArray<string> CruiseManagerRoleNames =
+    [
+        RoleName.Administrator,
+        RoleName.Shipowner,
+        RoleName.CruiseManager,
+    ];
+
     public async Task<UserDto?> GetUserDtoById(Guid id)
     {
         var user = await userManager.FindByIdAsync(id.ToString());
@@ -65,16 +73,9 @@ internal class IdentityService(
         CancellationToken cancellationToken
     )
     {
-        var roleNames = new[]
-        {
-            RoleName.Administrator,
-            RoleName.Shipowner,
-            RoleName.CruiseManager,
-        };
-
         var users = new List<User>();
 
-        foreach (var roleName in roleNames)
+        foreach (var roleName in CruiseManagerRoleNames)
         {
             var roleUsers = await userManager.GetUsersInRoleAsync(roleName);
             users.AddRange(roleUsers);
@@ -85,9 +86,17 @@ internal class IdentityService(
         return distinctUsers.Select(UserMappings.ToCruiseManagerOptionDto).ToList();
     }
 
-    public async Task<bool> UserWithIdExists(Guid id)
+    public async Task<bool> IsActiveWithAnyRole(Guid id, IEnumerable<string> roleNames)
     {
-        return await userManager.FindByIdAsync(id.ToString()) is not null;
+        var userId = id.ToString();
+        var names = roleNames.ToArray();
+        return await (
+            from userRole in dbContext.UserRoles
+            join role in dbContext.Roles on userRole.RoleId equals role.Id
+            join user in dbContext.Users on userRole.UserId equals user.Id
+            where user.Id == userId && user.Accepted && names.Contains(role.Name!)
+            select userRole
+        ).AnyAsync();
     }
 
     public async Task<bool> UserWithEmailExists(string email)

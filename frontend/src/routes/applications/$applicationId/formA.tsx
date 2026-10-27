@@ -43,7 +43,7 @@ function FormAPage() {
   const mode = Route.useSearch().mode ?? 'view';
 
   const currentUser = useCurrentUser()!;
-  const initialStateQuery = useGetApplicationFormAContextSuspense();
+  const initialStateQuery = useGetApplicationFormAContextSuspense({ applicationId });
   const saveMutation = useUpdateApplicationFormA({ mutation: { meta: { handlesError: true } } });
   const formA = useFormAQuery(applicationId);
 

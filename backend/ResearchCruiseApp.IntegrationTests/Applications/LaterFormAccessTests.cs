@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.IntegrationTests.Auth;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
@@ -124,6 +126,115 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
         }
         await app.Dispatch(ct);
         Assert.Empty(app.Transport.Messages);
+    }
+
+    [Theory]
+    [InlineData("remove")]
+    [InlineData("replace")]
+    [InlineData("deactivate")]
+    public async Task Write_AfterManagerLosesAccess_DeniesTheirSessionWhileDeputyContinues(
+        string change
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var application = await TestApplications.Create(app, CruiseApplicationStatus.FormBRequired);
+        var deputy = await TestUsers.Create(app, "deputy@example.invalid", RoleName.CruiseManager);
+        await TestUsers.Create(app, "office@example.invalid", RoleName.Administrator);
+        await TestUsers.Create(app, "role-holder@example.invalid", RoleName.Guest);
+        var unit = new UgUnit { Name = "Access faculty", IsActive = true };
+        Guid managerId = default;
+        await app.InDatabase(async db =>
+        {
+            var row = await db.CruiseApplications.Include(row => row.FormA).SingleAsync(ct);
+            row.FormA!.DeputyManagerId = Guid.Parse(deputy.Id);
+            managerId = row.FormA.CruiseManagerId;
+            db.UgUnits.Add(unit);
+            await db.SaveChangesAsync(ct);
+        });
+        var route = $"/v2/applications/{application.Id}/form-b";
+        using var manager = app.CreateApiClient();
+        var session = await RefreshSessionTests.Login(manager, application.OwnerEmail);
+        manager.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            session.Access
+        );
+        using var office = await TestApplications.Login(app, "office@example.invalid");
+
+        using var changed = change switch
+        {
+            "remove" => await office.DeleteAsync(
+                $"/v2/users/{managerId}/roles/{RoleName.CruiseManager}",
+                ct
+            ),
+            "replace" => await office.PutAsJsonAsync(
+                $"/v2/users/{managerId}/role",
+                new { roleName = RoleName.Guest },
+                ct
+            ),
+            _ => await office.DeleteAsync($"/v2/users/{managerId}/acceptance", ct),
+        };
+        Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
+        using var denied = await Write(manager, route, "b", unit.Id, "2", true, ct);
+        Assert.Equal(HttpStatusCode.NotFound, denied.StatusCode);
+        using var refresh = await RefreshSessionTests.SendCookie(
+            manager,
+            "/v2/auth/refresh",
+            session.Cookie
+        );
+        if (change == "deactivate")
+            Assert.Equal(HttpStatusCode.Unauthorized, refresh.StatusCode);
+        else
+        {
+            Assert.Equal(HttpStatusCode.OK, refresh.StatusCode);
+            manager.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                "Bearer",
+                await RefreshSessionTests.ReadAccessToken(refresh)
+            );
+            using var refreshed = await Write(manager, route, "b", unit.Id, "2", true, ct);
+            Assert.Equal(HttpStatusCode.Forbidden, refreshed.StatusCode);
+        }
+
+        using var deputyClient = await TestApplications.Login(app, deputy.Email!);
+        using var continued = await Write(deputyClient, route, "b", unit.Id, "2", true, ct);
+        Assert.Equal(HttpStatusCode.OK, continued.StatusCode);
+    }
+
+    [Theory]
+    [InlineData(RoleName.Shipowner)]
+    [InlineData(RoleName.Administrator)]
+    public async Task Refill_AfterOfficeUserLosesAccess_DeniesTheirOldToken(string role)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var application = await TestApplications.Create(app, CruiseApplicationStatus.FormBFilled);
+        var revoked = await TestUsers.Create(app, "revoked@example.invalid", role);
+        await TestUsers.Create(app, "office@example.invalid", RoleName.Administrator);
+        await TestUsers.Create(app, "role-holder@example.invalid", RoleName.Guest);
+        using var oldToken = await TestApplications.Login(app, revoked.Email!);
+        using var office = await TestApplications.Login(app, "office@example.invalid");
+
+        using var changed =
+            role == RoleName.Shipowner
+                ? await office.DeleteAsync($"/v2/users/{revoked.Id}/acceptance", ct)
+                : await office.PutAsJsonAsync(
+                    $"/v2/users/{revoked.Id}/role",
+                    new { roleName = RoleName.Guest },
+                    ct
+                );
+        Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
+        using var denied = await oldToken.PutAsync(
+            $"/v2/applications/{application.Id}/form-b/refill",
+            null,
+            ct
+        );
+        Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+        await app.InDatabase(async db =>
+            Assert.Equal(
+                CruiseApplicationStatus.FormBFilled,
+                (await db.CruiseApplications.SingleAsync(ct)).Status
+            )
+        );
     }
 
     private static Task<HttpResponseMessage> Write(

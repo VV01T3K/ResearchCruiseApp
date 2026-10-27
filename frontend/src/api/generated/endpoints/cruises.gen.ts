@@ -25,6 +25,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AutoPlanResponse,
   BlockadeResponse,
   CreateRequest,
   CruiseResponse,
@@ -760,9 +761,9 @@ export const useCompleteCruise = <TError = ErrorType<ProblemDetails>,
 /**
  * @summary Automatically plan eligible cruises.
  */
-export const autoPlanCruises = async ( options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+export const autoPlanCruises = async ( options?: Parameters<typeof customFetch>[1]): Promise<AutoPlanResponse> => {
 
-  return customFetch<void>(getAutoPlanCruisesUrl(),
+  return customFetch<AutoPlanResponse>(getAutoPlanCruisesUrl(),
   {
     ...options,
     method: 'POST'

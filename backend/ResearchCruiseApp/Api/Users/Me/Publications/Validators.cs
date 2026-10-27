@@ -1,4 +1,5 @@
 using FluentValidation;
+using ResearchCruiseApp.Api.Applications.Shared;
 
 namespace ResearchCruiseApp.Api.Users;
 
@@ -19,9 +20,12 @@ public sealed class ImportPublicationsValidator : AbstractValidator<ImportPublic
                     .MaximumLength(MaxLength);
                 publication
                     .RuleFor(request => request.MinisterialPoints)
-                    .NotEmpty()
-                    .WithName("Punkty ministerialne")
-                    .MaximumLength(MaxLength);
+                    .Must(points =>
+                        points is "" or "-" || EvaluationConstants.IsValidMinisterialPoints(points)
+                    )
+                    .WithMessage(
+                        $"Punkty ministerialne muszą być liczbą całkowitą od 0 do {EvaluationConstants.MaxMinisterialPoints}."
+                    );
                 publication
                     .RuleFor(request => request.Doi)
                     .MaximumLength(MaxLength)

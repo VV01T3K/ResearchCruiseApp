@@ -49,13 +49,19 @@ export function AppYearPickerInput({
   const [selectedYear, setSelectedYear] = React.useState<number | undefined>(value);
   const [visibleDecade, setVisibleDecade] = React.useState(() => decadeOf(new Date().getFullYear()));
   const [expanded, setExpanded] = React.useState(false);
+  const clearRef = React.useRef<HTMLButtonElement>(null);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
 
   React.useEffect(() => {
     // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
     setSelectedYear(value);
   }, [value]);
 
-  function handleOpenChange(open: boolean) {
+  function handleOpenChange(open: boolean, details: Popover.Root.ChangeEventDetails) {
+    if (details.reason === 'outside-press' && clearRef.current?.contains(details.event.target as Node)) {
+      details.cancel();
+      return;
+    }
     if (open && selectedYear) {
       setVisibleDecade(decadeOf(selectedYear));
     }
@@ -68,6 +74,7 @@ export function AppYearPickerInput({
     onChange?.(undefined);
     onBlur?.();
     setExpanded(false);
+    triggerRef.current?.focus();
     evt.preventDefault();
     evt.stopPropagation();
   }
@@ -86,6 +93,7 @@ export function AppYearPickerInput({
         <div className="relative">
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
           <Popover.Trigger
+            ref={triggerRef}
             disabled={disabled}
             {...aria.inputProps}
             className={pickerTriggerClassName({ disabled, errors })}
@@ -98,7 +106,14 @@ export function AppYearPickerInput({
               {!selectedYear && <CalendarDotIcon className="h-4 w-4" />}
             </span>
           </Popover.Trigger>
-          {selectedYear && !disabled && <PickerClearButton aria-label="Wyczyść rok" onClick={handleResetSelection} />}
+          {selectedYear && !disabled && (
+            <PickerClearButton
+              ref={clearRef}
+              aria-label="Wyczyść rok"
+              onClick={handleResetSelection}
+              onMouseDown={(evt) => evt.preventDefault()}
+            />
+          )}
         </div>
         <div className={cn('flex flex-row justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper id={aria.helperId} helper={helper} />

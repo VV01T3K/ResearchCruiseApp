@@ -1,4 +1,4 @@
-import { CheckSquareIcon, TrashIcon } from '@phosphor-icons/react';
+import { CheckSquareIcon, XSquareIcon } from '@phosphor-icons/react';
 
 import { AppActionsSection } from '@/components/shared/AppActionsSection';
 import { AppButton } from '@/components/shared/AppButton';
@@ -11,7 +11,7 @@ export function SupervisorActionsSection({ onAccept, onDeny }: Props) {
   return (
     <AppActionsSection>
       <AppButton className="w-36 !justify-center gap-4 lg:w-48" variant="danger" onClick={onDeny}>
-        <TrashIcon weight="fill" className="h-4 w-4" />
+        <XSquareIcon weight="fill" className="h-4 w-4" />
         Odrzuć
       </AppButton>
       <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={onAccept}>

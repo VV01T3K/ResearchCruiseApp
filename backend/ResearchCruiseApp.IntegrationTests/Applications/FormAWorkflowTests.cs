@@ -148,6 +148,69 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Single(app.Transport.Messages);
     }
 
+    [Theory]
+    [InlineData("guest")]
+    [InlineData("deactivated")]
+    public async Task Save_WhenAssigneeCannotLeadCruises_RejectsNewSelectionButKeepsExistingDraft(
+        string change
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var submitter = await TestUsers.Create(
+            app,
+            "form-a-manager@example.invalid",
+            RoleName.CruiseManager
+        );
+        var assignee = await TestUsers.Create(
+            app,
+            "form-a-deputy@example.invalid",
+            RoleName.CruiseManager
+        );
+        await TestUsers.Create(app, "form-a-office@example.invalid", RoleName.Administrator);
+        await TestUsers.Create(app, "role-holder@example.invalid", RoleName.Guest);
+        using var client = await TestApplications.Login(app, submitter.Email!);
+        var draft = new FormAWriteRequest
+        {
+            Form = FormAccessTests.Draft(Guid.Parse(submitter.Id), Guid.Parse(assignee.Id)),
+            Draft = true,
+        };
+        using var created = await client.PostAsJsonAsync("/v2/applications", draft, ct);
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        Guid id = default;
+        await app.InDatabase(async db => id = (await db.CruiseApplications.SingleAsync(ct)).Id);
+        using var office = await TestApplications.Login(app, "form-a-office@example.invalid");
+        using var changed =
+            change == "guest"
+                ? await office.PutAsJsonAsync(
+                    $"/v2/users/{assignee.Id}/role",
+                    new { roleName = RoleName.Guest },
+                    ct
+                )
+                : await office.DeleteAsync($"/v2/users/{assignee.Id}/acceptance", ct);
+        Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
+
+        var assigneeId = Guid.Parse(assignee.Id);
+        var options = await client.GetFromJsonAsync<FormAOptions>(
+            "/v2/applications/form-a/context",
+            ct
+        );
+        Assert.DoesNotContain(options!.CruiseManagers, user => user.Id == assigneeId);
+        Assert.DoesNotContain(options.DeputyManagers, user => user.Id == assigneeId);
+        options = await client.GetFromJsonAsync<FormAOptions>(
+            $"/v2/applications/form-a/context?applicationId={id}",
+            ct
+        );
+        Assert.Contains(options!.DeputyManagers, user => user.Id == assigneeId);
+        using var kept = await client.PutFormAsync($"/v2/applications/{id}/form-a", draft, ct);
+        Assert.Equal(HttpStatusCode.OK, kept.StatusCode);
+        using var rejected = await client.PostAsJsonAsync("/v2/applications", draft, ct);
+        Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
+        await app.InDatabase(async db =>
+            Assert.Single(await db.CruiseApplications.ToListAsync(ct))
+        );
+    }
+
     internal static FormAFields CompleteForm(Guid manager, Guid deputy, Guid unit) =>
         new()
         {

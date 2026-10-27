@@ -199,11 +199,87 @@ test('cruise edits ask before leaving until they are saved', async ({ page, netw
   await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
   await title.fill('Inny tytuł');
   await page.getByRole('button', { name: 'Anuluj', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Odrzucić zmiany?' }).getByRole('button', { name: 'Odrzuć zmiany' }).click();
   await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
   await expect(title).toHaveValue('Nowy tytuł');
   await goHome();
   await expect(page).toHaveURL('/');
   await expect(dialog).toHaveCount(0);
+});
+
+test('the page behind an open modal cannot be clicked or focused', async ({ page, network, requests }) => {
+  const item = cruise();
+  network.use(getGetCruiseMockHandler(item), getUpdateCruiseMockHandler());
+  await page.goto(`/cruises/${item.id}`);
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await page.locator('input[name="title"]').fill('Nowy tytuł');
+  const save = page.getByRole('button', { name: 'Zapisz rejs' });
+  const box = (await save.boundingBox())!;
+  await page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Niezapisane zmiany' });
+  await expect(dialog).toBeVisible();
+  for (const key of [...Array(8).fill('Tab'), ...Array(8).fill('Shift+Tab')]) {
+    await page.keyboard.press(key);
+    expect(await page.evaluate(() => document.getElementById('root')!.contains(document.activeElement))).toBe(false);
+  }
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(page.locator('input[name="title"]')).toHaveValue('Nowy tytuł');
+  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toHaveLength(0);
+});
+
+test('discarding cruise edits asks only when the form has changes and lands on the server version after a conflict', async ({
+  page,
+  network,
+  requests,
+}) => {
+  const item = cruise();
+  let server = item;
+  network.use(
+    getGetCruiseMockHandler(() => server),
+    getUpdateCruiseMockHandler(
+      () => {
+        server = { ...item, title: 'Cudzy', revision: 'AAAAAAAAB+A=' };
+        return fail(409, { detail: 'Dane zostały w międzyczasie zmienione.' })();
+      },
+      { once: true }
+    ),
+    getUpdateCruiseMockHandler()
+  );
+  await page.goto(`/cruises/${item.id}`);
+  const title = page.locator('input[name="title"]');
+  const dialog = page.getByRole('dialog', { name: 'Odrzucić zmiany?' });
+
+  await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
+  await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
+  await expect(dialog).toHaveCount(0);
+  await title.fill('Nowy tytuł');
+  await page.getByRole('button', { name: 'Anuluj', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Wróć do edycji' }).click();
+  await expect(title).toHaveValue('Nowy tytuł');
+  await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
+  await dialog.getByRole('button', { name: 'Odrzuć zmiany' }).click();
+  await expect(title).toHaveValue(item.title ?? '');
+  await expect(page.getByRole('button', { name: 'Zapisz rejs' })).toBeVisible();
+
+  await title.fill('Mój');
+  await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+  await expect(page.getByTestId('form-errors')).toContainText('Dane zostały w międzyczasie zmienione.');
+  await expect(title).toHaveValue('Mój');
+  await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
+  await dialog.getByRole('button', { name: 'Odrzuć zmiany' }).click();
+  await expect(title).toHaveValue('Cudzy');
+  await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+  await expect(page.getByRole('button', { name: 'Edytuj', exact: true })).toBeVisible();
+  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`).at(-1)).toMatchObject({ revision: 'AAAAAAAAB+A=' });
+
+  await page.goto('/cruises/new');
+  await page.locator('input[name="title"]').fill('Szkic');
+  await page.getByRole('button', { name: 'Wyczyść formularz' }).click();
+  await dialog.getByRole('button', { name: 'Odrzuć zmiany' }).click();
+  await expect(page.locator('input[name="title"]')).toHaveValue('');
 });
 
 test('a cruise save waits for the previous one and starts from its accepted revision, also after a remount', async ({
@@ -241,6 +317,7 @@ test('a cruise save waits for the previous one and starts from its accepted revi
     await save.click();
     await expect.poll(() => patches().length).toBe(1);
     await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
+    await page.getByRole('dialog', { name: 'Odrzucić zmiany?' }).getByRole('button', { name: 'Odrzuć zmiany' }).click();
     await title.fill('Nowszy');
     await save.click();
     expect(patches()).toHaveLength(1);
@@ -341,17 +418,37 @@ test('a rejected status undo shows the server reason and keeps the cruise status
   await expect(page.getByText('Zakończony', { exact: true })).toBeVisible();
 });
 
-test('auto-planning adds the planned cruises to the list', async ({ page, network, requests }) => {
+test('auto-planning lists the skipped applications', async ({ page, network, requests }) => {
   const planned = { ...cruise(), id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', number: '2026/2', title: 'Zaplanowany' };
+  const skipped = {
+    applicationId: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+    applicationNumber: '2026/7',
+    reason: 'Termin koliduje z blokadą statku.',
+  };
+  const conflict = 'Dane zostały w międzyczasie zmienione przez inną operację.';
+  const pageErrors: Error[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error));
   network.use(
     getGetCruisesMockHandler([cruise()]),
-    getAutoPlanCruisesMockHandler(() => network.use(getGetCruisesMockHandler([cruise(), planned])))
+    getAutoPlanCruisesMockHandler(fail(409, { status: 409, detail: conflict }))
   );
   await page.goto('/cruises');
   await page.getByRole('button', { name: 'Dodaj rejsy automatycznie' }).click();
-  await expect(page.getByText('Rejsy zostały dodane automatycznie')).toBeVisible();
+  await expect(page.getByText(conflict)).toBeVisible();
+
+  network.use(
+    getAutoPlanCruisesMockHandler(() => {
+      network.use(getGetCruisesMockHandler([cruise(), planned]));
+      return { plannedCount: 1, skipped: [skipped] };
+    })
+  );
+  await page.getByRole('button', { name: 'Dodaj rejsy automatycznie' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Wynik automatycznego planowania' });
+  await expect(dialog.getByText(`Nr ${skipped.applicationNumber}: ${skipped.reason}`)).toBeVisible();
+  await dialog.getByRole('button', { name: 'Zamknij' }).click();
   await expect(page.getByRole('row').filter({ hasText: planned.title })).toBeVisible();
-  expect(requests.bodies('POST /v2/cruises/auto-plan')).toHaveLength(1);
+  expect(requests.bodies('POST /v2/cruises/auto-plan')).toHaveLength(2);
+  expect(pageErrors).toEqual([]);
 });
 
 test('the export downloads the CSV file of the chosen year', async ({ page, network, requests }) => {
@@ -390,5 +487,24 @@ test.describe(() => {
         0
       );
     }
+  });
+});
+
+test.describe(() => {
+  test.use({ account: { ...admin, roles: ['Guest'] } });
+
+  test('a guest can view cruises without planner-only actions or requests', async ({ page, network, requests }) => {
+    network.use(getGetCruisesMockHandler([cruise()]), getGetCruiseMockHandler(confirmed()));
+    await page.goto('/cruises');
+    await page.getByRole('button', { name: 'Kalendarz', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Wróć do obecnego miesiąca' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' })).toHaveCount(0);
+
+    await page.goto('/cruises/new?blockade=true');
+    await expect(page).toHaveURL('/');
+
+    await page.goto(`/cruises/${cruise().id}`);
+    await expect(page.getByText(`${manager.firstName} ${manager.lastName}`)).toBeVisible();
+    expect(requests.bodies('GET /v2/users/available-cruise-managers')).toHaveLength(0);
   });
 });

@@ -261,6 +261,29 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         );
     }
 
+    // #721
+    [Fact]
+    public async Task RemoveFromRevertedCruise_ReturnsFilledApplicationToAccepted()
+    {
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var office = await Office(app);
+        var filled = await Accepted(app, "filled@example.invalid");
+        var cruiseId = await PostCruise(app, office, "Reverted", filled.Id);
+        Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, cruiseId));
+        await SubmitFormB(app, filled);
+        Assert.Equal(HttpStatusCode.NoContent, await Revert(office, cruiseId));
+
+        Assert.Equal(HttpStatusCode.OK, await Patch(office, cruiseId, []));
+
+        await AssertApplication(
+            app,
+            filled.Id,
+            CruiseApplicationStatus.Accepted,
+            null,
+            formB: true
+        );
+    }
+
     [Fact]
     public async Task AddToConfirmedCruise_RequestsFormBAndEmailsOnlyTheAddedApplicationsPeopleOnce()
     {

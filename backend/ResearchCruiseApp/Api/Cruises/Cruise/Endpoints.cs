@@ -27,6 +27,7 @@ public static class CruiseEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
+            .WithSerializableTransaction()
             .WithRequestValidation<CreateRequest>()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
@@ -68,6 +69,7 @@ public static class CruiseEndpoints
         CancellationToken cancellationToken
     )
     {
+        await yearBasedKeyGenerator.Lock<DomainCruise>(cancellationToken);
         var cruiseApplications = await dbContext
             .CruiseApplications.Where(application =>
                 request.CruiseApplicationIds.Contains(application.Id)
@@ -106,9 +108,6 @@ public static class CruiseEndpoints
             )
             .ToListAsync(cancellationToken);
 
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(
-            cancellationToken
-        );
         newCruise.Number = await yearBasedKeyGenerator.GenerateKey(
             dbContext.Cruises,
             cancellationToken
@@ -117,8 +116,6 @@ public static class CruiseEndpoints
         await dbContext.Cruises.AddAsync(newCruise, cancellationToken);
         await ClearUnavailableManagers(affectedCruises, dbContext, cancellationToken);
         affectedCruises.ForEach(cruise => dbContext.Entry(cruise).State = EntityState.Modified);
-        await dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
 
         return TypedResults.Created();
     }
@@ -203,20 +200,18 @@ public static class CruiseEndpoints
         foreach (var changedCruise in changedCruises)
             dbContext.Entry(changedCruise).State = EntityState.Modified;
         var formBRequested = new List<CruiseApplication>();
-        if (cruise.Status == CruiseStatus.Confirmed)
-        {
-            // Removed applications can be planned again; Form B is kept.
-            foreach (
-                var application in cruise.CruiseApplications.Where(application =>
-                    !request.CruiseApplicationIds.Contains(application.Id)
-                )
+        // Removed applications can be planned again; Form B is kept.
+        foreach (
+            var application in cruise.CruiseApplications.Where(application =>
+                !request.CruiseApplicationIds.Contains(application.Id)
             )
-            {
-                application.Status = CruiseApplicationStatus.Accepted;
-            }
-
-            formBRequested = CruiseLifecycleRules.RequestFormB(newCruiseApplications);
+        )
+        {
+            application.Status = CruiseApplicationStatus.Accepted;
         }
+
+        if (cruise.Status == CruiseStatus.Confirmed)
+            formBRequested = CruiseLifecycleRules.RequestFormB(newCruiseApplications);
 
         cruise.CruiseApplications = newCruiseApplications;
         // Managers of applications already on the cruise were told when it was confirmed.
@@ -255,12 +250,9 @@ public static class CruiseEndpoints
             return Error.InvalidArgument("Nie można już usunąć rejsu").ToProblemHttpResult();
         }
 
-        if (cruise.Status == CruiseStatus.Confirmed)
+        foreach (var application in cruise.CruiseApplications)
         {
-            foreach (var application in cruise.CruiseApplications)
-            {
-                application.Status = CruiseApplicationStatus.Accepted;
-            }
+            application.Status = CruiseApplicationStatus.Accepted;
         }
 
         dbContext.Cruises.Remove(cruise);

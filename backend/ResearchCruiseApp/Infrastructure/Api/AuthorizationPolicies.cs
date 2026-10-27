@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 namespace ResearchCruiseApp.Infrastructure.Api;
@@ -39,6 +41,19 @@ public static class AuthorizationPolicies
                 policy
                     .RequireAuthenticatedUser()
                     .RequireRole(RoleName.Administrator, RoleName.Shipowner)
+                    .RequireAssertion(async context =>
+                        context.Resource is HttpContext httpContext
+                        && Guid.TryParse(
+                            context.User.FindFirstValue(ClaimTypes.NameIdentifier),
+                            out var userId
+                        )
+                        && await httpContext
+                            .RequestServices.GetRequiredService<IdentityService>()
+                            .IsActiveWithAnyRole(
+                                userId,
+                                [RoleName.Administrator, RoleName.Shipowner]
+                            )
+                    )
         );
 
         options.AddPolicy(
