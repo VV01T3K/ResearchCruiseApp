@@ -1,10 +1,21 @@
 import type { Page } from '@playwright/test';
 import type { NetworkFixture } from '@msw/playwright';
-import { getUpdateApplicationFormAMockHandler } from '@/api/generated/mocks/applications/applications.msw.gen';
+import {
+  getGetApplicationFormBMockHandler,
+  getUpdateApplicationFormAMockHandler,
+  getUpdateApplicationFormBMockHandler,
+} from '@/api/generated/mocks/applications/applications.msw.gen';
+import {
+  getGetCurrentSessionMockHandler,
+  getLoginMockHandler,
+  getRefreshTokensMockHandler,
+} from '@/api/generated/mocks/auth/auth.msw.gen';
+import { getGetCurrentUserMockHandler } from '@/api/generated/mocks/users/users.msw.gen';
+import type { CurrentUserResponse } from '@/api/generated/schemas';
 import { HttpResponse } from 'msw';
-import { test, expect, applicationForms, dropFile } from './fixtures';
-import { admin } from '../data/accounts';
-import { applicationId } from '../data/forms';
+import { test, expect, applicationForms, dropFile, fail } from './fixtures';
+import { admin, outsider, session } from '../data/accounts';
+import { applicationId, formB } from '../data/forms';
 
 const UNSAVED = 'Notatka, której nie zapisano';
 const formA = `/applications/${applicationId}/formA?mode=edit`;
@@ -99,11 +110,11 @@ test('an in-app link asks before discarding edits, and staying keeps them', asyn
 test('browser Back asks before discarding edits on a new application', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('link', { name: /Nowe zgłoszenie/ }).click();
-  await expect(page).toHaveURL('/applications/new');
+  await expect(page).toHaveURL(/\/applications\/new\?draft=/);
   await notes(page).fill(UNSAVED);
   await page.goBack();
   await dialog(page).getByRole('button', { name: 'Zostań na stronie' }).click();
-  await expect(page).toHaveURL('/applications/new');
+  await expect(page).toHaveURL(/\/applications\/new\?draft=/);
   await expect(notes(page)).toHaveValue(UNSAVED);
 });
 
@@ -172,7 +183,7 @@ test.describe('pending saves', () => {
     await notes(page).fill(UNSAVED);
     release();
     await expect(page.getByTestId('toast-success')).toBeVisible();
-    await expect(page).toHaveURL('/applications/new');
+    await expect(page).toHaveURL(/\/applications\/new\?draft=/);
     await expect(notes(page)).toHaveValue(UNSAVED);
   });
 });
@@ -185,4 +196,57 @@ test('disallowing past dates, which clamps a saved period, asks before leaving',
   await expect(page.getByText('Wybrano okres: Cały rok')).toHaveCount(0);
   await goHome(page);
   await expect(dialog(page)).toBeVisible();
+});
+
+test.describe('edits lost when the session ends', () => {
+  const formBUrl = `/applications/${applicationId}/formB?mode=edit`;
+  const employees = (page: Page) => page.locator('input[name="ugTeams[0].noOfEmployees"]');
+  const recovery = (page: Page) => page.getByRole('dialog', { name: 'Odzyskane zmiany' });
+  const claim = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier';
+  const tokens = (id: string) => ({
+    ...session(),
+    accessToken: `header.${Buffer.from(JSON.stringify({ [claim]: id })).toString('base64url')}.signature`,
+  });
+
+  async function expireAndSignInAs(page: Page, network: NetworkFixture, account: CurrentUserResponse) {
+    network.use(getGetCurrentSessionMockHandler(tokens(admin.id)));
+    await page.clock.install();
+    await page.goto(formBUrl);
+    await employees(page).fill('7');
+    network.use(getRefreshTokensMockHandler(fail(401)), getGetCurrentUserMockHandler(fail(401)));
+    await page.clock.fastForward(30 * 60_000);
+    await expect(page).toHaveURL(/\/login/);
+    network.use(
+      getLoginMockHandler(tokens(account.id)),
+      getGetCurrentUserMockHandler(account),
+      getGetApplicationFormBMockHandler({ ...formB(), revision: 'AAAAAAAAB9M=' })
+    );
+    await page.getByLabel('E-mail').fill(account.email);
+    await page.getByLabel('Hasło', { exact: true }).fill('Password1!');
+    await page.getByRole('button', { name: 'Zaloguj', exact: true }).click();
+    await expect(page).toHaveURL(formBUrl);
+  }
+
+  test('are offered to the same account and keep the revision they were read with', async ({
+    page,
+    network,
+    requests,
+  }) => {
+    network.use(getUpdateApplicationFormBMockHandler(fail(409, { detail: 'Dane zostały w międzyczasie zmienione.' })));
+    await expireAndSignInAs(page, network, admin);
+    await recovery(page).getByRole('button', { name: 'Przywróć zmiany' }).click();
+    await expect(employees(page)).toHaveValue('7');
+    await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+    await expect(page.getByTestId('form-errors').getByText(/Dane zostały w międzyczasie zmienione/)).toBeVisible();
+    await expect(employees(page)).toHaveValue('7');
+    expect(requests.bodies(`PUT /v2/applications/${applicationId}/form-b`)).toEqual([
+      expect.objectContaining({ form: expect.objectContaining({ revision: 'AAAAAAAAB9E=' }) }),
+    ]);
+  });
+
+  test('are not shown to another account', async ({ page, network }) => {
+    await expireAndSignInAs(page, network, outsider);
+    await expect(employees(page)).toHaveValue('2');
+    await expect(recovery(page)).toHaveCount(0);
+  });
 });

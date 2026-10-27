@@ -53,8 +53,8 @@ function clearSession(queryClient: QueryClient) {
   clearAccountQueries(queryClient);
 }
 
-function clearSessionEverywhere(queryClient: QueryClient) {
-  completeLogout();
+function clearSessionEverywhere(queryClient: QueryClient, expired = false) {
+  completeLogout(expired);
   clearAccountQueries(queryClient);
 }
 
@@ -96,7 +96,7 @@ export function useSignIn() {
     } catch (error) {
       await prepareForLogout();
       await logoutSession().catch(() => undefined);
-      clearSessionEverywhere(queryClient);
+      clearSessionEverywhere(queryClient, true);
       return { error: getProblemDetail(error, 'Nie udało się wczytać profilu. Spróbuj ponownie.') };
     }
   };
@@ -107,11 +107,14 @@ export function useSessionActions() {
   const refresh = useCallback(async () => {
     await refreshSession();
   }, []);
-  const signOut = useCallback(async () => {
-    await prepareForLogout();
-    await logoutSession().catch(() => undefined);
-    clearSessionEverywhere(queryClient);
-  }, [queryClient]);
+  const signOut = useCallback(
+    async ({ expired = false } = {}) => {
+      await prepareForLogout();
+      await logoutSession().catch(() => undefined);
+      clearSessionEverywhere(queryClient, expired);
+    },
+    [queryClient]
+  );
 
   return {
     refresh,

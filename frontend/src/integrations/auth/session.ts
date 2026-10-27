@@ -1,7 +1,13 @@
 import type { TokenResponse } from '@/api/generated/schemas';
 import { getCurrentSession, refreshTokens } from '@/api/generated/endpoints/auth.gen';
 
-const subscribers = new Set<(details: TokenResponse | undefined, previous: TokenResponse | undefined) => void>();
+type AuthSubscriber = (
+  details: TokenResponse | undefined,
+  previous: TokenResponse | undefined,
+  manualLogout: boolean
+) => void;
+
+const subscribers = new Set<AuthSubscriber>();
 const concurrentRefreshWaiters = new Set<(details: TokenResponse) => void>();
 let refreshPromise: Promise<TokenResponse | undefined> | undefined;
 let session: TokenResponse | undefined;
@@ -11,7 +17,7 @@ let authGeneration = 0;
 let logoutInProgress = false;
 let acceptBroadcastSessions = true;
 
-type AuthChannelMessage = { type: 'session'; session: TokenResponse } | { type: 'logout' };
+type AuthChannelMessage = { type: 'session'; session: TokenResponse } | { type: 'logout'; expired: boolean };
 
 const authChannel =
   typeof window === 'undefined' || typeof window.BroadcastChannel === 'undefined'
@@ -22,7 +28,7 @@ authChannel?.addEventListener('message', (event: MessageEvent<AuthChannelMessage
   if (event.data.type === 'logout') {
     authGeneration += 1;
     acceptBroadcastSessions = false;
-    updateSession(undefined, false);
+    updateSession(undefined, false, !event.data.expired);
     return;
   }
   if (!logoutInProgress && acceptBroadcastSessions) updateSession(event.data.session, false);
@@ -47,12 +53,12 @@ export function accountId(details: TokenResponse) {
   }
 }
 
-function updateSession(details: TokenResponse | undefined, broadcast: boolean) {
+function updateSession(details: TokenResponse | undefined, broadcast: boolean, manualLogout = false) {
   const previous = session;
   session = details;
   sessionState = details ? 'authenticated' : 'anonymous';
   sessionRevision += 1;
-  subscribers.forEach((subscriber) => subscriber(details, previous));
+  subscribers.forEach((subscriber) => subscriber(details, previous, manualLogout));
   if (details) concurrentRefreshWaiters.forEach((waiter) => waiter(details));
   if (details && broadcast) {
     authChannel?.postMessage({
@@ -71,9 +77,7 @@ export function getSession() {
   return session;
 }
 
-export function subscribeAuthDetails(
-  subscriber: (details: TokenResponse | undefined, previous: TokenResponse | undefined) => void
-) {
+export function subscribeAuthDetails(subscriber: AuthSubscriber) {
   subscribers.add(subscriber);
   return () => {
     subscribers.delete(subscriber);
@@ -150,10 +154,10 @@ export async function prepareForLogout() {
   await refreshPromise?.catch(() => undefined);
 }
 
-export function completeLogout() {
+export function completeLogout(expired = false) {
   acceptBroadcastSessions = false;
-  updateSession(undefined, false);
-  authChannel?.postMessage({ type: 'logout' } satisfies AuthChannelMessage);
+  updateSession(undefined, false, !expired);
+  authChannel?.postMessage({ type: 'logout', expired } satisfies AuthChannelMessage);
   logoutInProgress = false;
 }
 
