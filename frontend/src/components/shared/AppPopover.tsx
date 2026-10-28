@@ -60,7 +60,7 @@ export function AppPopover({ children, modal, className, variant = 'plain' }: Pr
 }
 
 const variants = {
-  plain: '',
+  plain: 'text-inherit',
   primary: 'rounded-lg bg-primary hover:bg-primary-900 active:bg-primary disabled:bg-primary-500',
   success: 'rounded-lg bg-success hover:bg-success-900 active:bg-success disabled:bg-success-400',
   danger: 'rounded-lg bg-danger hover:bg-danger-700 active:bg-danger disabled:bg-danger-400',

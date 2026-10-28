@@ -76,14 +76,14 @@ const sizes = {
   plain: '',
   xs: 'px-3 py-2 text-xs',
   sm: 'px-3 py-2 text-sm',
-  md: 'px-5 py-2.5 text-base',
+  md: 'px-5 py-2.5',
   lg: 'px-5 py-3 text-lg',
   xl: 'px-6 py-3.5 text-xl',
   square: 'p-2.5',
 };
 
 const variants = {
-  plain: '',
+  plain: 'text-inherit',
 
   primary: 'rounded-lg bg-primary hover:bg-primary-900 active:bg-primary disabled:bg-primary-500',
   success: 'rounded-lg bg-success hover:bg-success-900 active:bg-success disabled:bg-success-400',
