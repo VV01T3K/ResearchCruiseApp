@@ -10,10 +10,8 @@ internal class Compressor
         var bytes = Encoding.UTF8.GetBytes(input);
         using var inputStream = new MemoryStream(bytes);
         using var outputStream = new MemoryStream();
-        await using var gZipStream = new GZipStream(outputStream, CompressionMode.Compress);
-
-        await inputStream.CopyToAsync(gZipStream);
-        await gZipStream.FlushAsync();
+        await using (var gZipStream = new GZipStream(outputStream, CompressionMode.Compress))
+            await inputStream.CopyToAsync(gZipStream);
 
         return outputStream.ToArray();
     }
@@ -25,7 +23,6 @@ internal class Compressor
         await using var gZipStream = new GZipStream(inputStream, CompressionMode.Decompress);
 
         await gZipStream.CopyToAsync(outputStream);
-        await gZipStream.FlushAsync();
 
         return Encoding.UTF8.GetString(outputStream.ToArray());
     }
