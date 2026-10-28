@@ -1,6 +1,3 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Sentry.Extensibility;
@@ -21,26 +18,24 @@ public static class SentryConfiguration
         "X-Api-Key",
     ];
 
-    // Auth request fields and email-link query parameters that carry passwords or one-time codes.
-    private static readonly string[] SecretFields =
+    // Email-link query parameters that carry one-time codes.
+    private static readonly string[] SecretParameters = ["code", "resetCode", "supervisorCode"];
+
+    private static readonly string[] SecretBreadcrumbKeys =
     [
+        .. SecretParameters,
         "password",
         "newPassword",
         "passwordConfirm",
-        "resetCode",
-        "code",
-        "supervisorCode",
     ];
 
-    private static readonly Regex SecretParameters = new(
-        $@"\b((?:{string.Join('|', SecretFields)})=)[^&#\s]*",
+    // Routes whose request body carries a password or one-time code.
+    private static readonly Regex SecretBodyRoute = new(
+        @"/(?:auth/(?:login|register|password-reset)|users/me/password|supervisor-review/decision)/?(?:[?#]|$)",
         RegexOptions.IgnoreCase | RegexOptions.Compiled
     );
 
-    private static readonly JsonSerializerOptions BodyJsonOptions = new()
-    {
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-    };
+    private static readonly Regex QueryString = new(@"\?[^\s#""'<>]*", RegexOptions.Compiled);
 
     private const string Filtered = "[Filtered]";
 
@@ -80,37 +75,64 @@ public static class SentryConfiguration
     internal static bool IsHealthTransaction(string transactionName) =>
         transactionName.EndsWith("/health", StringComparison.OrdinalIgnoreCase);
 
-    internal static void ScrubSensitiveData(SentryEvent @event) =>
+    internal static void ScrubSensitiveData(SentryEvent @event)
+    {
+        foreach (var exception in @event.SentryExceptions ?? [])
+            exception.Value = FilterQueries(exception.Value);
+        if (@event.Message is not null)
+        {
+            @event.Message.Message = FilterQueries(@event.Message.Message);
+            @event.Message.Formatted = FilterQueries(@event.Message.Formatted);
+        }
         ScrubSensitiveData(@event.Request, @event.User);
+    }
 
     internal static Breadcrumb ScrubBreadcrumb(Breadcrumb breadcrumb) =>
         new(
-            ScrubSecrets(breadcrumb.Message)!,
+            FilterQueries(breadcrumb.Message)!,
             breadcrumb.Type!,
-            breadcrumb.Data?.ToDictionary(pair => pair.Key, pair => ScrubSecrets(pair.Value)!),
+            breadcrumb.Data?.ToDictionary(
+                pair => pair.Key,
+                pair =>
+                    SecretBreadcrumbKeys.Contains(pair.Key, StringComparer.OrdinalIgnoreCase)
+                        ? Filtered
+                        : FilterQueries(pair.Value)!
+            ),
             breadcrumb.Category,
             breadcrumb.Level
         );
 
-    private static string? ScrubSecrets(string? value) =>
-        value is null ? null : SecretParameters.Replace(value, "$1" + Filtered);
-
-    private static void ScrubJson(JsonNode? node)
+    private static string? FilterQueries(string? value)
     {
-        if (node is JsonArray array)
+        if (value is null)
+            return null;
+        try
         {
-            foreach (var item in array)
-                ScrubJson(item);
+            return QueryString.Replace(
+                value,
+                query =>
+                    "?"
+                    + string.Join(
+                        '&',
+                        query
+                            .Value[1..]
+                            .Split('&')
+                            .Select(parameter =>
+                            {
+                                var name = parameter.Split('=')[0];
+                                return SecretParameters.Contains(
+                                    Uri.UnescapeDataString(name.Replace('+', ' ')),
+                                    StringComparer.OrdinalIgnoreCase
+                                )
+                                    ? $"{name}={Filtered}"
+                                    : parameter;
+                            })
+                    )
+            );
         }
-        else if (node is JsonObject obj)
+        catch
         {
-            foreach (var (key, value) in obj.ToArray())
-            {
-                if (SecretFields.Contains(key, StringComparer.OrdinalIgnoreCase))
-                    obj[key] = Filtered;
-                else
-                    ScrubJson(value);
-            }
+            return Filtered;
         }
     }
 
@@ -122,21 +144,18 @@ public static class SentryConfiguration
             user.IpAddress = null;
         }
 
-        request.Url = ScrubSecrets(request.Url);
-        request.QueryString = ScrubSecrets(request.QueryString);
-        if (request.Data is string body)
-        {
-            try
-            {
-                var json = JsonNode.Parse(body);
-                ScrubJson(json);
-                request.Data = json?.ToJsonString(BodyJsonOptions);
-            }
-            catch (JsonException)
-            {
-                request.Data = ScrubSecrets(body);
-            }
-        }
+        if (request.Url is not null && SecretBodyRoute.IsMatch(request.Url))
+            request.Data = Filtered;
+        request.Url = FilterQueries(request.Url);
+        request.QueryString = FilterQueries(request.QueryString);
+        foreach (
+            var key in request
+                .Headers.Keys.Where(key =>
+                    key.Equals("Referer", StringComparison.OrdinalIgnoreCase)
+                )
+                .ToArray()
+        )
+            request.Headers[key] = FilterQueries(request.Headers[key])!;
 
         request.Env.Remove("REMOTE_ADDR");
         request.Env.Remove("SERVER_NAME");

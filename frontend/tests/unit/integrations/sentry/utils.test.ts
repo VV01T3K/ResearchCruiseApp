@@ -39,9 +39,9 @@ it('filters token query parameters from URLs anywhere in an event', () => {
     ],
   };
   expect(scrubSensitiveUrls(event)).toEqual({
-    request: { url: 'https://app/reset-password?emailBase64=[Filtered]&resetCode=[Filtered]' },
+    request: { url: 'https://app/reset-password?emailBase64=YUBi&resetCode=[Filtered]' },
     contexts: {
-      feedback: { url: 'https://app/reset-password?%65mailBase64=[Filtered]&%72esetCode=[Filtered]&lang=pl' },
+      feedback: { url: 'https://app/reset-password?%65mailBase64=YUBi&%72esetCode=[Filtered]&lang=pl' },
     },
     transaction: 'GET /confirm-email?%63ode=[Filtered]',
     breadcrumbs: [
