@@ -98,7 +98,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
                             : undefined
                         }
                         className={cn(
-                          'text-default block w-full rounded-md px-3 py-2.5 text-left text-base transition-colors duration-150 outline-none disabled:cursor-default disabled:opacity-50',
+                          'block w-full rounded-md px-3 py-2.5 text-left text-base transition-colors duration-150 outline-none disabled:cursor-default disabled:opacity-50',
                           option.onClick &&
                             'data-[highlighted]:bg-primary-50 hover:bg-primary-50 active:bg-primary-100 hover:cursor-pointer data-[highlighted]:text-gray-900'
                         )}
@@ -119,7 +119,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
 }
 
 const variants = {
-  plain: 'text-default',
+  plain: '',
   primary: 'rounded-lg bg-primary hover:bg-primary-900 active:bg-primary disabled:bg-primary-500',
   success: 'rounded-lg bg-success hover:bg-success-900 active:bg-success disabled:bg-success-400',
   danger: 'rounded-lg bg-danger hover:bg-danger-700 active:bg-danger disabled:bg-danger-400',

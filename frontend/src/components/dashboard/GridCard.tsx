@@ -29,7 +29,7 @@ export function GridCard({ name, className, Icon, iconWeight, description, href 
             className="relative flex h-full w-full flex-col items-center justify-around overflow-hidden rounded-xl bg-white p-4 [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]"
           >
             <Icon weight={iconWeight} className="h-1/2" />
-            <h3 className="text-md font-semibold text-primary md:text-lg xl:text-xl">{name}</h3>
+            <h3 className="text-base font-semibold text-primary md:text-lg xl:text-xl">{name}</h3>
             <div className={cn('absolute inset-0', isHovered ? 'bg-black/[.03]' : 'bg-transparent')} />
           </motion.div>
         </AppLink>
@@ -64,7 +64,7 @@ export function GridCard({ name, className, Icon, iconWeight, description, href 
             >
               <Icon weight={iconWeight} />
             </motion.div>
-            <motion.h3 className="text-md font-semibold text-primary md:text-lg xl:text-xl">{name}</motion.h3>
+            <motion.h3 className="text-base font-semibold text-primary md:text-lg xl:text-xl">{name}</motion.h3>
           </motion.div>
 
           <AnimatePresence>

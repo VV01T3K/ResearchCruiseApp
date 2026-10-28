@@ -160,7 +160,7 @@ export function AppNumberInput({
             className={cn(
               'block h-11 w-full border border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900',
               'transition duration-300 ease-in-out',
-              'focus:ring-primary focus:border-primary transform:scale-105 focus:shadow focus:outline-none',
+              'focus:ring-primary focus:border-primary focus:shadow focus:outline-none',
               disabled ? 'rounded-lg bg-gray-200' : '',
               hasErrors(errors) && invalidInputClassName
             )}

@@ -38,7 +38,7 @@ export function AppAvatar({ fullName, className, variant = 'default' }: Props) {
 
 const variants = {
   default: 'w-16 h-16 text-2xl',
-  small: 'w-10 h-10 text-md',
+  small: 'w-10 h-10 text-base',
 };
 
 const minCharByteValue: number = getByteLength('a');

@@ -24,7 +24,7 @@ function AccountSettingsPage() {
         <header className="flex items-center gap-4">
           <AppAvatar fullName={`${currentUser.firstName} ${currentUser.lastName}`} />
           <div>
-            <p className="title text-xl font-semibold">
+            <p className="text-xl font-semibold">
               {currentUser.firstName} {currentUser.lastName}
             </p>
             <p>
