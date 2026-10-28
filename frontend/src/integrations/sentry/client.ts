@@ -23,6 +23,8 @@ export function initializeSentry(router: RegisteredRouter): void {
     tunnel: config.sentryProxy || undefined,
     environment: config.environment,
     release: `research-cruise-app-frontend@${config.version}`,
+    // User id and roles are set explicitly in setSentryUser.
+    dataCollection: { userInfo: false, cookies: false },
     integrations: [
       Sentry.tanstackRouterBrowserTracingIntegration(router),
       ...(recordReplay

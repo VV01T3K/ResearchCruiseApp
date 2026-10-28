@@ -23,7 +23,7 @@ public sealed class SentryScrubbingTests
                 },
                 Headers =
                 {
-                    ["Authorization"] = "Bearer token-secret",
+                    ["X-Api-Key"] = "api-key-secret",
                     ["referer"] = "https://app.test/confirm-email?userId=u1&code=code-secret",
                 },
             },

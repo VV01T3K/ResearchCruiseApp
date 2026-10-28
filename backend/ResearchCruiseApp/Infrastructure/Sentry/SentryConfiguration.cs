@@ -8,15 +8,8 @@ namespace ResearchCruiseApp.Infrastructure.Sentry;
 
 public static class SentryConfiguration
 {
-    // Request/session identifiers that must never leave the app.
-    private static readonly string[] SensitiveHeaders =
-    [
-        "Authorization",
-        "Proxy-Authorization",
-        "Cookie",
-        "Set-Cookie",
-        "X-Api-Key",
-    ];
+    // The SDK already filters Authorization and, without default PII, skips cookies.
+    private static readonly string[] SensitiveHeaders = ["Set-Cookie", "X-Api-Key"];
 
     // Email-link query parameters that carry one-time codes.
     private static readonly string[] SecretParameters = ["code", "resetCode", "supervisorCode"];
@@ -44,8 +37,9 @@ public static class SentryConfiguration
         builder.Services.AddSingleton<ISentryEventProcessor, AbortedRequestEventProcessor>();
         builder.WebHost.UseSentry(options =>
         {
-            options.SendDefaultPii = true;
+            options.SendDefaultPii = false;
             options.MaxRequestBodySize = RequestSize.Always;
+            options.IgnoreTransactions.Add(new Regex("(?i)/health$"));
             // EF logs failed commands without the exception; real failures reach Sentry as exceptions, expected conflicts become 409s.
             options.AddLogEntryFilter(
                 (_, _, eventId, _) => eventId.Name == RelationalEventId.CommandError.Name
@@ -63,17 +57,12 @@ public static class SentryConfiguration
             options.SetBeforeSendTransaction(
                 (transaction, _) =>
                 {
-                    if (IsHealthTransaction(transaction.Name))
-                        return null;
                     ScrubSensitiveData(transaction.Request, transaction.User);
                     return transaction;
                 }
             );
         });
     }
-
-    internal static bool IsHealthTransaction(string transactionName) =>
-        transactionName.EndsWith("/health", StringComparison.OrdinalIgnoreCase);
 
     internal static void ScrubSensitiveData(SentryEvent @event)
     {
@@ -157,19 +146,14 @@ public static class SentryConfiguration
         )
             request.Headers[key] = FilterQueries(request.Headers[key])!;
 
-        request.Env.Remove("REMOTE_ADDR");
         request.Env.Remove("SERVER_NAME");
 
-        if (request.Headers is not null)
+        var sensitiveKeys = request.Headers.Keys.Where(key =>
+            SensitiveHeaders.Contains(key, StringComparer.OrdinalIgnoreCase)
+        );
+        foreach (var header in sensitiveKeys.ToArray())
         {
-            var sensitiveKeys = request.Headers.Keys.Where(key =>
-                SensitiveHeaders.Contains(key, StringComparer.OrdinalIgnoreCase)
-            );
-            foreach (var header in sensitiveKeys.ToArray())
-            {
-                request.Headers.Remove(header);
-            }
+            request.Headers.Remove(header);
         }
-        request.Cookies = null;
     }
 }
