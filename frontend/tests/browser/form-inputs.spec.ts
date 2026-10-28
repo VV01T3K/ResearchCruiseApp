@@ -31,7 +31,6 @@ test('cruise days and hours stay in sync through typing, decimals, steppers and 
   await page.goto(`/applications/${applicationId}/formA?mode=edit`);
   const days = page.getByLabel('Liczba planowanych dób rejsowych');
   const hours = page.getByLabel('Liczba planowanych godzin rejsowych');
-  // The stepper buttons have no accessible name yet.
   const daysField = page.getByTestId('form-a-cruise-days');
   const hoursField = page.getByTestId('form-a-cruise-hours');
   await expect(days).toHaveValue('2');
@@ -49,9 +48,9 @@ test('cruise days and hours stay in sync through typing, decimals, steppers and 
   await expect(hours).toHaveValue('7');
   await expect(days).toHaveValue('0.29');
 
-  await daysField.getByRole('button').last().click();
+  await daysField.getByRole('button', { name: 'Zwiększ' }).click();
   await expect(hours).toHaveValue('31');
-  await hoursField.getByRole('button').first().click();
+  await hoursField.getByRole('button', { name: 'Zmniejsz' }).click();
   await expect(hours).toHaveValue('30');
   await hours.fill('');
   await expect(hours).toHaveValue('0');
@@ -178,7 +177,7 @@ test('form B shows server errors under row fields and the remaining reasons abov
     .getByTestId('form-b-cruise-day-details-section')
     .getByRole('button', { name: 'Dodaj', exact: true })
     .click();
-  const task = page.getByPlaceholder('Nazwa zadania');
+  const task = page.getByRole('textbox', { name: 'Nazwa zadania' });
   await task.fill('Niedokończone zadanie');
   await page.getByRole('button', { name: 'Zapisz wersję roboczą', exact: true }).click();
 

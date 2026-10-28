@@ -96,6 +96,7 @@ export const Sorted: Story = {
     await userEvent.click(await page.findByRole('menuitem', { name: 'Sortuj malejąco' }));
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(rows()[0]).toHaveTextContent('John Smith'));
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
   },
 };
 

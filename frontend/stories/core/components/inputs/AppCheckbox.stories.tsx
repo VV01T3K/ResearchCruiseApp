@@ -8,6 +8,7 @@ const meta = {
   component: AppCheckbox,
   args: {
     name: 'Checkbox',
+    'aria-label': 'Checkbox',
     checked: true,
     errors: undefined,
     label: undefined,
