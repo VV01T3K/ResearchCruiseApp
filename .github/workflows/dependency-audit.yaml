@@ -53,6 +53,7 @@ jobs:
         if: github.ref == 'refs/heads/staging'
         env:
           FAILED: ${{ steps.js.outcome == 'failure' || steps.dotnet.outcome == 'failure' }}
+          OWNER: ${{ github.repository_owner }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           issue=$(gh issue list --state open --label security --search "\"$TITLE\" in:title" --json number,title --jq ".[] | select(.title == \"$TITLE\") | .number" | head -1)
@@ -61,7 +62,7 @@ jobs:
             if [ -n "$issue" ]; then
               gh issue comment "$issue" --body "$body"
             else
-              gh issue create --title "$TITLE" --label bug,security,ai-generated --body "$body"
+              gh issue create --title "$TITLE" --label bug,security,ai-generated --assignee "$OWNER" --body "$body"
             fi
           elif [ -n "$issue" ]; then
             gh issue close "$issue" --comment "Audit passed: $RUN_URL"
