@@ -7,11 +7,13 @@ internal class Compressor
 {
     public async Task<byte[]> Compress(string input)
     {
-        var bytes = Encoding.UTF8.GetBytes(input);
-        using var inputStream = new MemoryStream(bytes);
+        // GZipStream writes nothing for empty input, so return a complete empty gzip stream.
+        if (input.Length == 0)
+            return [0x1f, 0x8b, 8, 0, 0, 0, 0, 0, 0, 0xff, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
         using var outputStream = new MemoryStream();
         await using (var gZipStream = new GZipStream(outputStream, CompressionMode.Compress))
-            await inputStream.CopyToAsync(gZipStream);
+            await gZipStream.WriteAsync(Encoding.UTF8.GetBytes(input));
 
         return outputStream.ToArray();
     }

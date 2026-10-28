@@ -9,16 +9,24 @@ public sealed class CompressorTests
 {
     private const string Input = "data:application/pdf;base64,JVBERi0xLjQK";
 
-    [Fact]
-    public async Task Compress_WritesGzipTrailer()
+    [Theory]
+    [InlineData(Input)]
+    [InlineData("")]
+    public async Task Compress_WritesGzipTrailer(string input)
     {
-        var compressed = await new Compressor().Compress(Input);
+        var compressed = await new Compressor().Compress(input);
 
         Assert.Equal(
-            (uint)Encoding.UTF8.GetByteCount(Input),
+            (uint)Encoding.UTF8.GetByteCount(input),
             BinaryPrimitives.ReadUInt32LittleEndian(compressed.AsSpan(^4))
         );
-        Assert.Equal(Input, await new Compressor().Decompress(compressed));
+        Assert.Equal(input, await new Compressor().Decompress(compressed));
+    }
+
+    [Fact]
+    public async Task Decompress_ReadsEmptyPayload()
+    {
+        Assert.Equal("", await new Compressor().Decompress([]));
     }
 
     [Fact]
