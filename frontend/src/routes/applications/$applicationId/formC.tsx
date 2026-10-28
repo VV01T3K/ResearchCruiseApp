@@ -1,4 +1,5 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
+import { useEffect, useRef } from 'react';
 import { createFileRoute, notFound } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -96,6 +97,11 @@ function FormCPage() {
     },
   });
   const leaveAfterSave = useLeaveAfterSave(form);
+  const wasEditing = useRef(mode === 'edit');
+  useEffect(() => {
+    if (wasEditing.current && mode !== 'edit') form.reset();
+    wasEditing.current = mode === 'edit';
+  }, [mode, form]);
   const context = {
     form,
     formA: formA.data,
