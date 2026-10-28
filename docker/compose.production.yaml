@@ -7,8 +7,8 @@ services:
     environment:
       ConnectionStrings__Database: ${DB_CONNECTION_STRING:?Set DB_CONNECTION_STRING}
       Database__ApplyMigrations: ${DATABASE_APPLY_MIGRATIONS:-false}
-      Database__SeedAccountsAutomatically: "false"
-      Database__LogUserPasswordsWhenSeeding: "false"
+      Database__SeedAccountsAutomatically: 'false'
+      Database__LogUserPasswordsWhenSeeding: 'false'
       FrontendUrl: ${FRONTEND_URL:-https://rejsy.ug.edu.pl}
       JWT__Secret: ${JWT_SECRET:?Set JWT_SECRET (at least 32 random characters)}
       SmtpSettings__SmtpUsername: ${SMTP_USERNAME:?Set SMTP_USERNAME}
@@ -16,7 +16,7 @@ services:
       Sentry__Dsn: ${SENTRY_DSN_BACKEND:-}
       Sentry__TracesSampleRate: ${SENTRY_TRACES_SAMPLE_RATE:-1}
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     ports:
       - 3000:8080
 

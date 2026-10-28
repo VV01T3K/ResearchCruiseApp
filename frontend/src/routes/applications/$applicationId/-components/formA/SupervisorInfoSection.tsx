@@ -17,9 +17,8 @@ export function SupervisorInfoSection({ context }: { context: FormAViewModel }) 
             zgłoszenie może zostać odrzucone.
           </span>
         </AppAlert>
-        <form.AppField
-          name="supervisorEmail"
-          children={(field) => (
+        <form.AppField name="supervisorEmail">
+          {(field) => (
             <field.TextField
               label="Adres e-mail przełożonego"
               showRequiredAsterisk
@@ -30,7 +29,7 @@ export function SupervisorInfoSection({ context }: { context: FormAViewModel }) 
               data-testid-errors="form-a-supervisor-email-errors"
             />
           )}
-        />
+        </form.AppField>
       </div>
     </AppAccordion>
   );

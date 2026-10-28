@@ -24,9 +24,8 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.number,
     cell: ({ row }) => (
-      <form.AppField
-        name={`cruiseDaysDetails[${row.index}].number`}
-        children={(field) => (
+      <form.AppField name={`cruiseDaysDetails[${row.index}].number`}>
+        {(field) => (
           <field.NumberField
             data-testid-input="cruise-day-number-input"
             data-testid-errors="cruise-day-number-errors"
@@ -35,7 +34,7 @@ const cruiseDayDetailsColumns = (
             type="integer"
           />
         )}
-      />
+      </form.AppField>
     ),
     size: 10,
   },
@@ -45,9 +44,8 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.hours,
     cell: ({ row }) => (
-      <form.AppField
-        name={`cruiseDaysDetails[${row.index}].hours`}
-        children={(field) => (
+      <form.AppField name={`cruiseDaysDetails[${row.index}].hours`}>
+        {(field) => (
           <field.NumberField
             data-testid-input="cruise-day-hours-input"
             data-testid-errors="cruise-day-hours-errors"
@@ -56,7 +54,7 @@ const cruiseDayDetailsColumns = (
             type="integer"
           />
         )}
-      />
+      </form.AppField>
     ),
     size: 10,
   },
@@ -66,9 +64,8 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.taskName,
     cell: ({ row }) => (
-      <form.AppField
-        name={`cruiseDaysDetails[${row.index}].taskName`}
-        children={(field) => (
+      <form.AppField name={`cruiseDaysDetails[${row.index}].taskName`}>
+        {(field) => (
           <field.TextField
             data-testid="cruise-day-task-name-input"
             data-testid-errors="cruise-day-task-name-errors"
@@ -76,7 +73,7 @@ const cruiseDayDetailsColumns = (
             placeholder="Nazwa zadania"
           />
         )}
-      />
+      </form.AppField>
     ),
     size: 20,
   },
@@ -86,9 +83,8 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.region,
     cell: ({ row }) => (
-      <form.AppField
-        name={`cruiseDaysDetails[${row.index}].region`}
-        children={(field) => (
+      <form.AppField name={`cruiseDaysDetails[${row.index}].region`}>
+        {(field) => (
           <field.TextField
             data-testid="cruise-day-region-input"
             data-testid-errors="cruise-day-region-errors"
@@ -96,7 +92,7 @@ const cruiseDayDetailsColumns = (
             placeholder="Rejon zadania"
           />
         )}
-      />
+      </form.AppField>
     ),
     size: 20,
   },
@@ -106,9 +102,8 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.position,
     cell: ({ row }) => (
-      <form.AppField
-        name={`cruiseDaysDetails[${row.index}].position`}
-        children={(field) => (
+      <form.AppField name={`cruiseDaysDetails[${row.index}].position`}>
+        {(field) => (
           <field.TextField
             data-testid="cruise-day-position-input"
             data-testid-errors="cruise-day-position-errors"
@@ -116,7 +111,7 @@ const cruiseDayDetailsColumns = (
             placeholder="Pozycja"
           />
         )}
-      />
+      </form.AppField>
     ),
     size: 20,
   },
@@ -126,9 +121,8 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.comment,
     cell: ({ row }) => (
-      <form.AppField
-        name={`cruiseDaysDetails[${row.index}].comment`}
-        children={(field) => (
+      <form.AppField name={`cruiseDaysDetails[${row.index}].comment`}>
+        {(field) => (
           <field.TextField
             data-testid="cruise-day-comment-input"
             data-testid-errors="cruise-day-comment-errors"
@@ -136,7 +130,7 @@ const cruiseDayDetailsColumns = (
             placeholder="Uwagi"
           />
         )}
-      />
+      </form.AppField>
     ),
     size: 20,
   },
@@ -185,10 +179,8 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
       expandedByDefault
       data-testid="form-b-cruise-day-details-section"
     >
-      <form.AppField
-        name="cruiseDaysDetails"
-        mode="array"
-        children={(field) => (
+      <form.AppField name="cruiseDaysDetails" mode="array">
+        {(field) => (
           <>
             <AppTable
               data={field.state.value}
@@ -268,7 +260,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
             />
           </>
         )}
-      />
+      </form.AppField>
     </AppAccordion>
   );
 }

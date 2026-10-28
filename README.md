@@ -38,8 +38,8 @@ environment once traffic grows. Staging samples everything.
 | `Sentry__TracesSampleRate`              | Backend trace sampling rate                    | `0.4`                                                                           | No       |
 | `SmtpSettings__SmtpServer`              | SMTP server address                            | `smtp.gmail.com`                                                                | Yes      |
 | `SmtpSettings__SmtpPort`                | SMTP server port                               | `465`                                                                           | No       |
-| `SmtpSettings__SmtpUsername`            | SMTP mailbox address                 | `example@gmail.com`                                                             | Yes      |
-| `SmtpSettings__SmtpPassword`            | Gmail app password                 |                                                                                 | Yes      |
+| `SmtpSettings__SmtpUsername`            | SMTP mailbox address                           | `example@gmail.com`                                                             | Yes      |
+| `SmtpSettings__SmtpPassword`            | Gmail app password                             |                                                                                 | Yes      |
 | `SmtpSettings__SenderName`              | Email sender name                              | `Biuro Armatora z jednostką r/v Oceanograf, Uniwersytet Gdański`                | No       |
 | `JWT__ValidAudience`                    | JWT valid audience                             | `https://rejsy.ug.edu.pl/`                                                      | No       |
 | `JWT__ValidIssuer`                      | JWT valid issuer                               | `https://rejsy.ug.edu.pl/`                                                      | No       |

@@ -12,28 +12,20 @@ export function OwnResearchTaskDetails({ row, disabled }: Props) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <form.AppField
-        name={`researchTasks[${row.index}].title`}
-        children={(field) => (
-          <field.TextField label="Roboczy tytuł projektu" placeholder="Wprowadź tytuł" disabled={disabled} />
-        )}
-      />
+      <form.AppField name={`researchTasks[${row.index}].title`}>
+        {(field) => <field.TextField label="Roboczy tytuł projektu" placeholder="Wprowadź tytuł" disabled={disabled} />}
+      </form.AppField>
 
-      <form.AppField
-        name={`researchTasks[${row.index}].date`}
-        children={(field) => <field.DateField label="Przewidywany termin składania" disabled={disabled} />}
-      />
+      <form.AppField name={`researchTasks[${row.index}].date`}>
+        {(field) => <field.DateField label="Przewidywany termin składania" disabled={disabled} />}
+      </form.AppField>
 
-      <form.AppField
-        name={`researchTasks[${row.index}].magazine`}
-        children={(field) => (
-          <field.TextField label="Czasopismo" placeholder="Wprowadź czasopismo" disabled={disabled} />
-        )}
-      />
+      <form.AppField name={`researchTasks[${row.index}].magazine`}>
+        {(field) => <field.TextField label="Czasopismo" placeholder="Wprowadź czasopismo" disabled={disabled} />}
+      </form.AppField>
 
-      <form.AppField
-        name={`researchTasks[${row.index}].ministerialPoints`}
-        children={(field) => (
+      <form.AppField name={`researchTasks[${row.index}].ministerialPoints`}>
+        {(field) => (
           <field.NullableNumberField
             minimum={0}
             step={10}
@@ -41,7 +33,7 @@ export function OwnResearchTaskDetails({ row, disabled }: Props) {
             disabled={disabled}
           />
         )}
-      />
+      </form.AppField>
     </div>
   );
 }

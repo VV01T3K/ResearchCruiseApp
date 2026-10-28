@@ -19,9 +19,8 @@ export function SPUBReportDataSection({ context }: { context: FormCViewModel }) 
         reprezentacyjnych, lub odbywając szkolenie doskonalące z wykonywania prac z wykorzystaniem aparatury
         naukowo-badawczej, itp.
       </header>
-      <form.AppField
-        name="spubReportData"
-        children={(field) => (
+      <form.AppField name="spubReportData">
+        {(field) => (
           <field.TextField
             label="Dodatkowe dane do raportu SPUB"
             type="textarea"
@@ -30,7 +29,7 @@ export function SPUBReportDataSection({ context }: { context: FormCViewModel }) 
             disabled={isReadonly}
           />
         )}
-      />
+      </form.AppField>
     </AppAccordion>
   );
 }
