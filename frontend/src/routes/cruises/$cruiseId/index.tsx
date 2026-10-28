@@ -267,7 +267,7 @@ function CruiseDetailsPage() {
             variant="primary"
             className="basis-2/3"
             onClick={async () => {
-              await confirmCruiseMutation.mutateAsync({ cruiseId });
+              await confirmCruiseMutation.mutateAsync({ cruiseId, params: { revision: cruiseQuery.data.revision } });
               setIsConfirmAcceptanceModalOpen(false);
             }}
             disabled={confirmCruiseMutation.isPending}
@@ -329,7 +329,7 @@ function CruiseDetailsPage() {
             variant="primary"
             className="basis-2/3"
             onClick={async () => {
-              await endCruiseMutation.mutateAsync({ cruiseId });
+              await endCruiseMutation.mutateAsync({ cruiseId, params: { revision: cruiseQuery.data.revision } });
               setIsConfirmEndModalOpen(false);
             }}
             disabled={endCruiseMutation.isPending}
@@ -361,7 +361,10 @@ function CruiseDetailsPage() {
             variant="dangerOutline"
             className="basis-2/3"
             onClick={() =>
-              revertCruiseStatusMutation.mutate({ cruiseId }, { onSettled: () => setIsConfirmRevertModalOpen(false) })
+              revertCruiseStatusMutation.mutate(
+                { cruiseId, params: { revision: cruiseQuery.data.revision } },
+                { onSettled: () => setIsConfirmRevertModalOpen(false) }
+              )
             }
             disabled={revertCruiseStatusMutation.isPending}
           >

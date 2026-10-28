@@ -56,14 +56,26 @@ public sealed class CruiseLifecycleTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
         });
         var route = $"/v2/cruises/{cruiseId}";
-        using var premature = await client.PutAsync(route + "/completion", null, ct);
+        using var premature = await client.PutAsync(
+            route + "/completion" + await FormRequests.CruiseRevisionQuery(client, cruiseId),
+            null,
+            ct
+        );
         Assert.Equal(HttpStatusCode.BadRequest, premature.StatusCode);
         await AssertState(app, CruiseStatus.New, CruiseApplicationStatus.Accepted, 0);
 
-        using var confirmed = await client.PutAsync(route + "/confirmation", null, ct);
+        using var confirmed = await client.PutAsync(
+            route + "/confirmation" + await FormRequests.CruiseRevisionQuery(client, cruiseId),
+            null,
+            ct
+        );
         Assert.Equal(HttpStatusCode.NoContent, confirmed.StatusCode);
         await AssertState(app, CruiseStatus.Confirmed, CruiseApplicationStatus.FormBRequired, 1);
-        using var repeated = await client.PutAsync(route + "/confirmation", null, ct);
+        using var repeated = await client.PutAsync(
+            route + "/confirmation" + await FormRequests.CruiseRevisionQuery(client, cruiseId),
+            null,
+            ct
+        );
         Assert.Equal(HttpStatusCode.Forbidden, repeated.StatusCode);
         await AssertState(app, CruiseStatus.Confirmed, CruiseApplicationStatus.FormBRequired, 1);
         await app.Dispatch(ct);
@@ -85,14 +97,25 @@ public sealed class CruiseLifecycleTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, submitted.StatusCode);
         await AssertState(app, CruiseStatus.Confirmed, CruiseApplicationStatus.FormBFilled, 0);
 
-        using var completed = await client.PutAsync(route + "/completion", null, ct);
+        using var completed = await client.PutAsync(
+            route + "/completion" + await FormRequests.CruiseRevisionQuery(client, cruiseId),
+            null,
+            ct
+        );
         Assert.Equal(HttpStatusCode.NoContent, completed.StatusCode);
         await AssertState(app, CruiseStatus.Ended, CruiseApplicationStatus.Undertaken, 0);
-        using var duplicate = await client.PutAsync(route + "/completion", null, ct);
+        using var duplicate = await client.PutAsync(
+            route + "/completion" + await FormRequests.CruiseRevisionQuery(client, cruiseId),
+            null,
+            ct
+        );
         Assert.Equal(HttpStatusCode.BadRequest, duplicate.StatusCode);
         await AssertState(app, CruiseStatus.Ended, CruiseApplicationStatus.Undertaken, 0);
 
-        using var reverted = await client.DeleteAsync(route + "/confirmation", ct);
+        using var reverted = await client.DeleteAsync(
+            route + "/confirmation" + await FormRequests.CruiseRevisionQuery(client, cruiseId),
+            ct
+        );
         Assert.Equal(HttpStatusCode.NoContent, reverted.StatusCode);
         await AssertState(app, CruiseStatus.Confirmed, CruiseApplicationStatus.FormBFilled, 0);
         Assert.Single(app.Transport.Messages);

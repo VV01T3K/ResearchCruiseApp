@@ -73,6 +73,8 @@ internal class ApplicationReader(
             CruiseManagerFirstName = manager?.FirstName ?? string.Empty,
             CruiseManagerLastName = manager?.LastName ?? string.Empty,
             Points = evaluator.GetPointsSum(application),
+            CruiseId = application.Cruise?.Id,
+            CruiseNumber = application.Cruise?.Number,
         };
     }
 

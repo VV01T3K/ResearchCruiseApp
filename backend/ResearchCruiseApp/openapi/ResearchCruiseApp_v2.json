@@ -1696,6 +1696,13 @@
               "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
               "type": "string"
             }
+          },
+          {
+            "name": "revision",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1757,6 +1764,13 @@
             "required": true,
             "schema": {
               "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "query",
+            "schema": {
               "type": "string"
             }
           }
@@ -1832,6 +1846,13 @@
             "required": true,
             "schema": {
               "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "query",
+            "schema": {
               "type": "string"
             }
           }
@@ -4051,6 +4072,19 @@
           "points": {
             "type": "integer",
             "format": "int32"
+          },
+          "cruiseId": {
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cruiseNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

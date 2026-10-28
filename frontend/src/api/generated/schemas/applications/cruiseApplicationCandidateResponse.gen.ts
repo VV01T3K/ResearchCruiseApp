@@ -3,6 +3,7 @@ import * as zod from 'zod';
 export const cruiseApplicationCandidateResponseIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
 export const cruiseApplicationCandidateResponseCruiseManagerIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
 export const cruiseApplicationCandidateResponseDeputyManagerIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+export const cruiseApplicationCandidateResponseCruiseIdRegExp = new RegExp('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
 
 
 export const CruiseApplicationCandidateResponse = zod.object({
@@ -16,7 +17,9 @@ export const CruiseApplicationCandidateResponse = zod.object({
   "hasFormA": zod.boolean(),
   "hasFormB": zod.boolean(),
   "hasFormC": zod.boolean(),
-  "points": zod.int()
+  "points": zod.int(),
+  "cruiseId": zod.string().regex(cruiseApplicationCandidateResponseCruiseIdRegExp).nullish(),
+  "cruiseNumber": zod.string().nullish()
 });
 
 export type CruiseApplicationCandidateResponse = zod.input<typeof CruiseApplicationCandidateResponse>;

@@ -60,6 +60,9 @@ internal static class FormRequests
         return cruise?["revision"]?.GetValue<string>();
     }
 
+    internal static async Task<string> CruiseRevisionQuery(HttpClient client, Guid cruiseId) =>
+        $"?revision={Uri.EscapeDataString((await CruiseRevision(client, cruiseId))!)}";
+
     internal static async Task<string> Read(HttpClient client, string route)
     {
         using var response = await client.GetAsync(route, TestContext.Current.CancellationToken);

@@ -222,6 +222,10 @@ public class CruiseApplicationCandidateResponse
 
     [JsonNumberHandling(JsonNumberHandling.Strict)]
     public required int Points { get; set; }
+
+    public Guid? CruiseId { get; init; }
+
+    public string? CruiseNumber { get; init; }
 }
 
 public class CruiseApplicationEvaluation

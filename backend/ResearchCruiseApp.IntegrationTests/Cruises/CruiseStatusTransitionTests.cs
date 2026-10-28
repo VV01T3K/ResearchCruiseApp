@@ -72,6 +72,10 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
             otherId,
             formB: true
         );
+        Assert.All(
+            await PlanningCandidates(office),
+            candidate => Assert.Equal(otherId, candidate.CruiseId)
+        );
         Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, otherId));
         await AssertApplication(app, required.Id, CruiseApplicationStatus.FormBRequired, otherId);
         await AssertApplication(
@@ -478,7 +482,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
     private static async Task<HttpStatusCode> Confirm(HttpClient office, Guid cruiseId)
     {
         using var response = await office.PutAsync(
-            $"/v2/cruises/{cruiseId}/confirmation",
+            $"/v2/cruises/{cruiseId}/confirmation{await FormRequests.CruiseRevisionQuery(office, cruiseId)}",
             null,
             TestContext.Current.CancellationToken
         );
@@ -491,9 +495,12 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         return response.StatusCode;
     }
 
-    private static Task<HttpResponseMessage> RevertResponse(HttpClient office, Guid cruiseId) =>
-        office.DeleteAsync(
-            $"/v2/cruises/{cruiseId}/confirmation",
+    private static async Task<HttpResponseMessage> RevertResponse(
+        HttpClient office,
+        Guid cruiseId
+    ) =>
+        await office.DeleteAsync(
+            $"/v2/cruises/{cruiseId}/confirmation{await FormRequests.CruiseRevisionQuery(office, cruiseId)}",
             TestContext.Current.CancellationToken
         );
 
@@ -512,7 +519,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
     private static async Task<HttpStatusCode> Complete(HttpClient office, Guid cruiseId)
     {
         using var response = await office.PutAsync(
-            $"/v2/cruises/{cruiseId}/completion",
+            $"/v2/cruises/{cruiseId}/completion{await FormRequests.CruiseRevisionQuery(office, cruiseId)}",
             null,
             TestContext.Current.CancellationToken
         );
