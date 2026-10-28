@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite-plus';
 import type { UserConfig } from 'vite-plus';
 
+import oxfmtConfig from '../.oxfmtrc.json';
+
 export const lintConfig = {
   plugins: ['eslint', 'react', 'react-perf', 'typescript', 'import', 'unicorn', 'promise', 'oxc'],
   jsPlugins: [
@@ -23,7 +25,7 @@ export const lintConfig = {
     shadcn: { ui: '@/components/shared' },
   },
   rules: {
-    'no-children-prop': 'off',
+    'no-children-prop': 'error',
     // Error on deprecated API usage
     '@typescript-eslint/no-deprecated': 'error',
     'react/rules-of-hooks': 'error',
@@ -81,15 +83,10 @@ export const lintConfig = {
 } satisfies NonNullable<UserConfig['lint']>;
 
 export const fmtConfig = {
-  trailingComma: 'es5',
-  tabWidth: 2,
-  semi: true,
-  singleQuote: true,
-  printWidth: 120,
+  ...(oxfmtConfig as NonNullable<UserConfig['fmt']>),
   sortTailwindcss: {
     stylesheet: './src/styles/index.css',
   },
-  sortPackageJson: true,
   ignorePatterns: ['dist', 'src/routeTree.gen.ts', 'src/api/generated'],
 } satisfies NonNullable<UserConfig['fmt']>;
 

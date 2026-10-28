@@ -12,9 +12,8 @@ export function ProjectResearchTaskDetails({ row, disabled }: Props) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <form.AppField
-        name={`researchTasks[${row.index}].title`}
-        children={(field) => (
+      <form.AppField name={`researchTasks[${row.index}].title`}>
+        {(field) => (
           <field.TextField
             label="Tytuł"
             placeholder="Wprowadź tytuł"
@@ -22,28 +21,24 @@ export function ProjectResearchTaskDetails({ row, disabled }: Props) {
             disabled={disabled}
           />
         )}
-      />
+      </form.AppField>
 
-      <form.AppField
-        name={`researchTasks[${row.index}].startDate`}
-        children={(field) => <field.MonthField label="Data rozpoczęcia" disabled={disabled} />}
-      />
+      <form.AppField name={`researchTasks[${row.index}].startDate`}>
+        {(field) => <field.MonthField label="Data rozpoczęcia" disabled={disabled} />}
+      </form.AppField>
 
-      <form.AppField
-        name={`researchTasks[${row.index}].endDate`}
-        children={(field) => <field.MonthField label="Data zakończenia" disabled={disabled} />}
-      />
+      <form.AppField name={`researchTasks[${row.index}].endDate`}>
+        {(field) => <field.MonthField label="Data zakończenia" disabled={disabled} />}
+      </form.AppField>
 
-      <form.AppField
-        name={`researchTasks[${row.index}].financingAmount`}
-        children={(field) => (
+      <form.AppField name={`researchTasks[${row.index}].financingAmount`}>
+        {(field) => (
           <field.NullableNumberField type="float" minimum={0} label="Kwota finansowania [zł]" disabled={disabled} />
         )}
-      />
+      </form.AppField>
 
-      <form.AppField
-        name={`researchTasks[${row.index}].securedAmount`}
-        children={(field) => (
+      <form.AppField name={`researchTasks[${row.index}].securedAmount`}>
+        {(field) => (
           <field.NullableNumberField
             type="float"
             minimum={0}
@@ -51,7 +46,7 @@ export function ProjectResearchTaskDetails({ row, disabled }: Props) {
             disabled={disabled}
           />
         )}
-      />
+      </form.AppField>
     </div>
   );
 }

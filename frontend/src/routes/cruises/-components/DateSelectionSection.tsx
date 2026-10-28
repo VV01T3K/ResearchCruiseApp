@@ -21,9 +21,8 @@ export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {
     <AppAccordion title="2. Termin rejsu" expandedByDefault>
       <div className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <form.AppField
-            name="startDate"
-            children={(field) => (
+          <form.AppField name="startDate">
+            {(field) => (
               <field.DateField
                 label="Data rozpoczęcia rejsu"
                 placeholder="Wybierz datę rozpoczęcia rejsu"
@@ -33,11 +32,10 @@ export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {
                 minimalDate={minimalDateForStartDate}
               />
             )}
-          />
+          </form.AppField>
 
-          <form.AppField
-            name="endDate"
-            children={(field) => (
+          <form.AppField name="endDate">
+            {(field) => (
               <field.DateField
                 label="Data zakończenia rejsu"
                 placeholder="Wybierz datę zakończenia rejsu"
@@ -48,7 +46,7 @@ export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {
                 selectionStartDate={cruiseStartDate}
               />
             )}
-          />
+          </form.AppField>
           {!isReadonly && (
             <div className="lg:col-span-2">
               <AppCheckbox

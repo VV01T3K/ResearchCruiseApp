@@ -16,13 +16,12 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
-    }, 
+    },
     "Production": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:3000",
-      "environmentVariables": {
-      }
+      "environmentVariables": {}
     }
   }
 }

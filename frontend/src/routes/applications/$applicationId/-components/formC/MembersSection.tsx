@@ -42,9 +42,8 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
         enableSorting: false,
         accessorFn: (row) => row.noOfEmployees,
         cell: ({ row }) => (
-          <form.AppField
-            name={`ugTeams[${row.index}].noOfEmployees`}
-            children={(field) => (
+          <form.AppField name={`ugTeams[${row.index}].noOfEmployees`}>
+            {(field) => (
               <field.NumberField
                 minimum={0}
                 onChange={(x: number) => {
@@ -54,7 +53,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
       },
@@ -64,9 +63,8 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
         enableSorting: false,
         accessorFn: (row) => row.noOfStudents,
         cell: ({ row }) => (
-          <form.AppField
-            name={`ugTeams[${row.index}].noOfStudents`}
-            children={(field) => (
+          <form.AppField name={`ugTeams[${row.index}].noOfStudents`}>
+            {(field) => (
               <field.NumberField
                 minimum={0}
                 onChange={(x: number) => {
@@ -76,7 +74,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
       },
@@ -112,10 +110,9 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
         enableSorting: false,
         accessorFn: (row) => row.name,
         cell: ({ row }) => (
-          <form.AppField
-            name={`guestTeams[${row.index}].name`}
-            children={(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
-          />
+          <form.AppField name={`guestTeams[${row.index}].name`}>
+            {(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
+          </form.AppField>
         ),
         size: 60,
       },
@@ -125,9 +122,8 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
         enableSorting: false,
         accessorFn: (row) => row.noOfPersons,
         cell: ({ row }) => (
-          <form.AppField
-            name={`guestTeams[${row.index}].noOfPersons`}
-            children={(field) => (
+          <form.AppField name={`guestTeams[${row.index}].noOfPersons`}>
+            {(field) => (
               <field.NumberField
                 minimum={0}
                 onChange={(x: number) => {
@@ -137,7 +133,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 25,
       },
@@ -234,10 +230,8 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
       data-testid="form-c-members-section"
     >
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
-        <form.AppField
-          name="ugTeams"
-          mode="array"
-          children={(field) => (
+        <form.AppField name="ugTeams" mode="array">
+          {(field) => (
             <div>
               <AppTable
                 className="mt-0"
@@ -275,11 +269,9 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
               <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
-        />
-        <form.AppField
-          name="guestTeams"
-          mode="array"
-          children={(field) => (
+        </form.AppField>
+        <form.AppField name="guestTeams" mode="array">
+          {(field) => (
             <div>
               <AppTable
                 className="mt-0"
@@ -324,7 +316,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
               <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
-        />
+        </form.AppField>
       </div>
       <AppTable
         columns={crewMembersColumns}

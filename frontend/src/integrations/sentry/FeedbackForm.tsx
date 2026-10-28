@@ -70,9 +70,8 @@ export function FeedbackForm({ context, close }: Props) {
   return (
     <form onSubmit={handleSubmit} onPaste={handlePaste} className="flex min-h-0 flex-1 flex-col">
       <div className="-mx-1 min-h-0 space-y-4 overflow-y-auto px-1 pb-1">
-        <form.AppField
-          name="message"
-          children={(field) => (
+        <form.AppField name="message">
+          {(field) => (
             <field.TextField
               type="textarea"
               label="Opis problemu"
@@ -81,10 +80,9 @@ export function FeedbackForm({ context, close }: Props) {
               showRequiredAsterisk
             />
           )}
-        />
-        <form.Subscribe
-          selector={(state) => state.values.attachments}
-          children={(attachments) => (
+        </form.AppField>
+        <form.Subscribe selector={(state) => state.values.attachments}>
+          {(attachments) => (
             <FeedbackAttachments
               attachments={attachments}
               errors={attachmentErrors}
@@ -95,16 +93,15 @@ export function FeedbackForm({ context, close }: Props) {
               }}
             />
           )}
-        />
+        </form.Subscribe>
       </div>
-      <form.Subscribe
-        selector={(state) => state.isSubmitting}
-        children={(isSubmitting) => (
+      <form.Subscribe selector={(state) => state.isSubmitting}>
+        {(isSubmitting) => (
           <AppButton type="submit" className="mt-3 w-full shrink-0" disabled={isSubmitting || pendingReads > 0}>
             {isSubmitting ? 'Wysyłanie...' : 'Wyślij zgłoszenie'}
           </AppButton>
         )}
-      />
+      </form.Subscribe>
     </form>
   );
 }

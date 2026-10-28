@@ -22,9 +22,8 @@ const researchEquipmentsColumns = (
   {
     header: 'Nazwa sprzętu / aparatury',
     cell: ({ row }) => (
-      <form.AppField
-        name={`researchEquipments[${row.index}].name`}
-        children={(field) => (
+      <form.AppField name={`researchEquipments[${row.index}].name`}>
+        {(field) => (
           <field.TextField
             data-testid="research-equipment-name-input"
             data-testid-errors="research-equipment-name-errors"
@@ -32,7 +31,7 @@ const researchEquipmentsColumns = (
             disabled={isReadonly}
           />
         )}
-      />
+      </form.AppField>
     ),
     size: 30,
   },
@@ -40,9 +39,8 @@ const researchEquipmentsColumns = (
     header: 'Data zgłoszenia do ubezpieczenia (jeśli zgłoszono)',
     cell: ({ row }) => (
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <form.AppField
-          name={`researchEquipments[${row.index}].insuranceStartDate`}
-          children={(field) => (
+        <form.AppField name={`researchEquipments[${row.index}].insuranceStartDate`}>
+          {(field) => (
             <field.DateField
               data-testid="research-equipment-insurance-start"
               onChange={(e) => field.handleChange(e ?? '')}
@@ -50,13 +48,11 @@ const researchEquipmentsColumns = (
               disabled={isReadonly}
             />
           )}
-        />
-        <form.AppField
-          name={`researchEquipments[${row.index}].insuranceEndDate`}
-          children={(field) => (
-            <form.Subscribe
-              selector={(state) => state.values.researchEquipments[row.index].insuranceStartDate}
-              children={(state) => {
+        </form.AppField>
+        <form.AppField name={`researchEquipments[${row.index}].insuranceEndDate`}>
+          {(field) => (
+            <form.Subscribe selector={(state) => state.values.researchEquipments[row.index].insuranceStartDate}>
+              {(state) => {
                 if (state && field.state.value && state > field.state.value) {
                   field.handleChange(state);
                 }
@@ -71,9 +67,9 @@ const researchEquipmentsColumns = (
                   />
                 );
               }}
-            />
+            </form.Subscribe>
           )}
-        />
+        </form.AppField>
       </div>
     ),
     size: 30,
@@ -81,12 +77,9 @@ const researchEquipmentsColumns = (
   {
     header: 'Czy uzyskano zgodę opiekuna?',
     cell: ({ row }) => (
-      <form.AppField
-        name={`researchEquipments[${row.index}].permission`}
-        children={(field) => (
-          <field.CheckboxField size="md" className="grid place-items-center" disabled={isReadonly} />
-        )}
-      />
+      <form.AppField name={`researchEquipments[${row.index}].permission`}>
+        {(field) => <field.CheckboxField size="md" className="grid place-items-center" disabled={isReadonly} />}
+      </form.AppField>
     ),
     size: 5,
   },
@@ -111,10 +104,8 @@ export function ResearchEquipmentsSection({ context }: { context: FormBViewModel
       expandedByDefault
       data-testid="form-b-research-equipments-section"
     >
-      <form.AppField
-        name="researchEquipments"
-        mode="array"
-        children={(field) => (
+      <form.AppField name="researchEquipments" mode="array">
+        {(field) => (
           <AppTable
             data={field.state.value}
             columns={researchEquipmentsColumns(
@@ -146,7 +137,7 @@ export function ResearchEquipmentsSection({ context }: { context: FormBViewModel
             disabled={isReadonly}
           />
         )}
-      />
+      </form.AppField>
     </AppAccordion>
   );
 }

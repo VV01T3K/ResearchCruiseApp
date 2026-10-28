@@ -12,9 +12,8 @@ export function ProjectPreparationResearchTaskDetails({ row, disabled }: Props) 
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <form.AppField
-        name={`researchTasks[${row.index}].title`}
-        children={(field) => (
+      <form.AppField name={`researchTasks[${row.index}].title`}>
+        {(field) => (
           <field.TextField
             label="Roboczy tytuł projektu"
             placeholder="Wprowadź tytuł"
@@ -22,16 +21,14 @@ export function ProjectPreparationResearchTaskDetails({ row, disabled }: Props) 
             disabled={disabled}
           />
         )}
-      />
+      </form.AppField>
 
-      <form.AppField
-        name={`researchTasks[${row.index}].date`}
-        children={(field) => <field.DateField label="Przewidywany termin składania" disabled={disabled} />}
-      />
+      <form.AppField name={`researchTasks[${row.index}].date`}>
+        {(field) => <field.DateField label="Przewidywany termin składania" disabled={disabled} />}
+      </form.AppField>
 
-      <form.AppField
-        name={`researchTasks[${row.index}].financingApproved`}
-        children={(field) => (
+      <form.AppField name={`researchTasks[${row.index}].financingApproved`}>
+        {(field) => (
           <field.BooleanSelectField
             allOptions={[
               { value: 'true', inlineLabel: 'Tak' },
@@ -41,7 +38,7 @@ export function ProjectPreparationResearchTaskDetails({ row, disabled }: Props) 
             disabled={disabled}
           />
         )}
-      />
+      </form.AppField>
     </div>
   );
 }

@@ -122,24 +122,21 @@ function ResetPasswordPage() {
           void form.handleSubmit();
         }}
       >
-        <form.AppField
-          name="password"
-          children={(field) => <field.FloatingTextField type="password" label="Hasło" />}
-        />
+        <form.AppField name="password">
+          {(field) => <field.FloatingTextField type="password" label="Hasło" />}
+        </form.AppField>
 
-        <form.AppField
-          name="passwordConfirm"
-          children={(field) => <field.FloatingTextField type="password" label="Potwierdź hasło" />}
-        />
+        <form.AppField name="passwordConfirm">
+          {(field) => <field.FloatingTextField type="password" label="Potwierdź hasło" />}
+        </form.AppField>
 
-        <form.Subscribe
-          selector={(state) => state.isSubmitting}
-          children={(isSubmitting) => (
+        <form.Subscribe selector={(state) => state.isSubmitting}>
+          {(isSubmitting) => (
             <AppButton type="submit" className="mt-6 w-full" disabled={isSubmitting}>
               Zmień hasło
             </AppButton>
           )}
-        />
+        </form.Subscribe>
       </form>
     </AppLayout>
   );

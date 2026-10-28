@@ -41,7 +41,8 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
                 }
               },
             }}
-            children={(field) => (
+          >
+            {(field) => (
               <AppYearPickerInput
                 name={field.name}
                 value={field.state.value ? parseInt(field.state.value) : undefined}
@@ -51,7 +52,7 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
       },
@@ -61,9 +62,8 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`spubTasks[${row.index}].yearTo`}
-            children={(field) => (
+          <form.AppField name={`spubTasks[${row.index}].yearTo`}>
+            {(field) => (
               <AppYearPickerInput
                 name={field.name}
                 value={field.state.value ? parseInt(field.state.value) : undefined}
@@ -73,7 +73,7 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
       },
@@ -83,9 +83,8 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`spubTasks[${row.index}].name`}
-            children={(field) => (
+          <form.AppField name={`spubTasks[${row.index}].name`}>
+            {(field) => (
               <field.SelectField
                 allOptions={formAInitValues?.standardSpubTasks.map((taskName) => ({
                   value: taskName,
@@ -94,7 +93,7 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 50,
       },
@@ -122,10 +121,8 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
       data-testid="form-c-spub-tasks-section"
     >
       <div>
-        <form.AppField
-          name="spubTasks"
-          mode="array"
-          children={(field) => (
+        <form.AppField name="spubTasks" mode="array">
+          {(field) => (
             <>
               <AppTable
                 columns={getColumns((index) => {
@@ -168,7 +165,7 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
               <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </>
           )}
-        />
+        </form.AppField>
       </div>
     </AppAccordion>
   );

@@ -1,0 +1,17 @@
+{
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": true,
+  "printWidth": 120,
+  "sortPackageJson": true,
+  "ignorePatterns": [
+    "frontend",
+    "bun.lock",
+    "skills-lock.json",
+    ".devcontainer/devcontainer-lock.json",
+    "**/packages.lock.json",
+    "backend/ResearchCruiseApp/openapi",
+    "backend/ResearchCruiseApp/wwwroot"
+  ]
+}

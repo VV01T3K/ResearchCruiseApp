@@ -8,9 +8,8 @@ import type { CruiseResponse } from '@/api/generated/schemas';
 export function BasicInformationSection({ cruise, isReadonly }: { cruise?: CruiseResponse; isReadonly: boolean }) {
   const form = useTypedAppFormContext({ defaultValues: cruiseFormDefaultValues });
   return (
-    <form.Subscribe
-      selector={(state) => state.values.shipUnavailable}
-      children={(shipUnavailable) => (
+    <form.Subscribe selector={(state) => state.values.shipUnavailable}>
+      {(shipUnavailable) => (
         <AppAccordion
           title={`1. Podstawowe informacje o ${shipUnavailable ? 'blokadzie' : 'rejsie'}`}
           expandedByDefault
@@ -32,20 +31,19 @@ export function BasicInformationSection({ cruise, isReadonly }: { cruise?: Cruis
             )}
             {!cruise && <AppAlert>Numer i status rejsu będą dostępne po jego utworzeniu</AppAlert>}
             <div className="mt-2 flex flex-col space-y-2">
-              <form.AppField
-                name="title"
-                children={(field) => (
+              <form.AppField name="title">
+                {(field) => (
                   <field.TextField
                     label={shipUnavailable ? 'Tytuł blokady' : 'Tytuł rejsu'}
                     placeholder="np. Rejs specjalny, Serwis silnika, Zmiana załogi..."
                     disabled={isReadonly}
                   />
                 )}
-              />
+              </form.AppField>
             </div>
           </>
         </AppAccordion>
       )}
-    />
+    </form.Subscribe>
   );
 }

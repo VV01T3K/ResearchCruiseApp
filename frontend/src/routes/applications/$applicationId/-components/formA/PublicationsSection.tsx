@@ -35,9 +35,8 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`publications[${row.index}].category`}
-            children={(field) => (
+          <form.AppField name={`publications[${row.index}].category`}>
+            {(field) => (
               <field.SelectField
                 onChange={field.handleChange as (value: string) => void}
                 allOptions={Object.values(PublicationCategory).map((role) => ({
@@ -47,7 +46,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 10,
       },
@@ -58,9 +57,8 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
         enableSorting: false,
         cell: ({ row }) => (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <form.AppField
-              name={`publications[${row.index}].doi`}
-              children={(field) => (
+            <form.AppField name={`publications[${row.index}].doi`}>
+              {(field) => (
                 <field.TextField
                   label="DOI"
                   placeholder='np. "10.1016/j.jmarsys.2019.03.007"'
@@ -68,11 +66,10 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                   data-testid="form-a-publication-doi-input"
                 />
               )}
-            />
+            </form.AppField>
 
-            <form.AppField
-              name={`publications[${row.index}].authors`}
-              children={(field) => (
+            <form.AppField name={`publications[${row.index}].authors`}>
+              {(field) => (
                 <field.TextField
                   label="Autorzy"
                   placeholder='np. "Kowalski J., Nowak A."'
@@ -80,11 +77,10 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                   data-testid="form-a-publication-authors-input"
                 />
               )}
-            />
+            </form.AppField>
 
-            <form.AppField
-              name={`publications[${row.index}].title`}
-              children={(field) => (
+            <form.AppField name={`publications[${row.index}].title`}>
+              {(field) => (
                 <field.TextField
                   label="Tytuł"
                   placeholder='np. "The impact of sea level rise on the coastal zone"'
@@ -92,11 +88,10 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                   data-testid="form-a-publication-title-input"
                 />
               )}
-            />
+            </form.AppField>
 
-            <form.AppField
-              name={`publications[${row.index}].magazine`}
-              children={(field) => (
+            <form.AppField name={`publications[${row.index}].magazine`}>
+              {(field) => (
                 <field.TextField
                   label="Czasopismo"
                   placeholder='np. "Journal of Marine Systems"'
@@ -104,7 +99,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                   data-testid="form-a-publication-magazine-input"
                 />
               )}
-            />
+            </form.AppField>
           </div>
         ),
         size: 50,
@@ -115,9 +110,8 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`publications[${row.index}].year`}
-            children={(field) => (
+          <form.AppField name={`publications[${row.index}].year`}>
+            {(field) => (
               <AppYearPickerInput
                 name={field.name}
                 value={field.state.value ?? undefined}
@@ -129,7 +123,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                 data-testid-button="form-a-publication-year-button"
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 10,
       },
@@ -139,9 +133,8 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`publications[${row.index}].ministerialPoints`}
-            children={(field) => (
+          <form.AppField name={`publications[${row.index}].ministerialPoints`}>
+            {(field) => (
               <field.NumberField
                 minimum={0}
                 step={10}
@@ -150,7 +143,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                 data-testid-input="form-a-publication-points-input"
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 10,
       },
@@ -203,10 +196,8 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
         </p>
       </header>
       <div>
-        <form.AppField
-          name="publications"
-          mode="array"
-          children={(field) => (
+        <form.AppField name="publications" mode="array">
+          {(field) => (
             <>
               <AppTable
                 columns={getColumns((index) => {
@@ -306,7 +297,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
               />
             </>
           )}
-        />
+        </form.AppField>
       </div>
     </AppAccordion>
   );

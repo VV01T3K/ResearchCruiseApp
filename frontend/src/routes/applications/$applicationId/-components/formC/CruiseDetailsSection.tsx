@@ -28,10 +28,9 @@ const shortResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.AppField
-        name={`shortResearchEquipments[${row.index}].startDate`}
-        children={(field) => <field.DateField disabled={isReadonly} />}
-      />
+      <form.AppField name={`shortResearchEquipments[${row.index}].startDate`}>
+        {(field) => <field.DateField disabled={isReadonly} />}
+      </form.AppField>
     ),
     size: 20,
   },
@@ -41,12 +40,10 @@ const shortResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.AppField
-        name={`shortResearchEquipments[${row.index}].endDate`}
-        children={(field) => (
-          <form.Subscribe
-            selector={(state) => state.values.shortResearchEquipments[row.index].startDate}
-            children={(state) => {
+      <form.AppField name={`shortResearchEquipments[${row.index}].endDate`}>
+        {(field) => (
+          <form.Subscribe selector={(state) => state.values.shortResearchEquipments[row.index].startDate}>
+            {(state) => {
               if (state && field.state.value && state > field.state.value) {
                 field.handleChange(state);
               }
@@ -58,9 +55,9 @@ const shortResearchEquipmentColumns = (
                 />
               );
             }}
-          />
+          </form.Subscribe>
         )}
-      />
+      </form.AppField>
     ),
     size: 20,
   },
@@ -70,10 +67,9 @@ const shortResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.AppField
-        name={`shortResearchEquipments[${row.index}].name`}
-        children={(field) => <field.TextField placeholder="Nazwa sprzętu" disabled={isReadonly} />}
-      />
+      <form.AppField name={`shortResearchEquipments[${row.index}].name`}>
+        {(field) => <field.TextField placeholder="Nazwa sprzętu" disabled={isReadonly} />}
+      </form.AppField>
     ),
   },
   {
@@ -108,9 +104,8 @@ const longResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.AppField
-        name={`longResearchEquipments[${row.index}].action`}
-        children={(field) => (
+      <form.AppField name={`longResearchEquipments[${row.index}].action`}>
+        {(field) => (
           <field.SelectField
             disabled={isReadonly}
             allOptions={[
@@ -119,7 +114,7 @@ const longResearchEquipmentColumns = (
             ]}
           />
         )}
-      />
+      </form.AppField>
     ),
     size: 20,
   },
@@ -129,10 +124,9 @@ const longResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.AppField
-        name={`longResearchEquipments[${row.index}].duration`}
-        children={(field) => <field.TextField placeholder="Czas" disabled={isReadonly} />}
-      />
+      <form.AppField name={`longResearchEquipments[${row.index}].duration`}>
+        {(field) => <field.TextField placeholder="Czas" disabled={isReadonly} />}
+      </form.AppField>
     ),
     size: 20,
   },
@@ -142,10 +136,9 @@ const longResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.AppField
-        name={`longResearchEquipments[${row.index}].name`}
-        children={(field) => <field.TextField placeholder="Nazwa sprzętu" disabled={isReadonly} />}
-      />
+      <form.AppField name={`longResearchEquipments[${row.index}].name`}>
+        {(field) => <field.TextField placeholder="Nazwa sprzętu" disabled={isReadonly} />}
+      </form.AppField>
     ),
   },
   {
@@ -180,10 +173,9 @@ const portColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.AppField
-        name={`ports[${row.index}].startTime`}
-        children={(field) => <field.DateField disabled={isReadonly} type="datetime" />}
-      />
+      <form.AppField name={`ports[${row.index}].startTime`}>
+        {(field) => <field.DateField disabled={isReadonly} type="datetime" />}
+      </form.AppField>
     ),
     size: 20,
   },
@@ -193,12 +185,10 @@ const portColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.AppField
-        name={`ports[${row.index}].endTime`}
-        children={(field) => (
-          <form.Subscribe
-            selector={(state) => state.values.ports[row.index].startTime}
-            children={(state) => {
+      <form.AppField name={`ports[${row.index}].endTime`}>
+        {(field) => (
+          <form.Subscribe selector={(state) => state.values.ports[row.index].startTime}>
+            {(state) => {
               if (state > field.state.value && field.state.value !== '') {
                 field.handleChange(state);
               }
@@ -211,9 +201,9 @@ const portColumns = (
                 />
               );
             }}
-          />
+          </form.Subscribe>
         )}
-      />
+      </form.AppField>
     ),
     size: 20,
   },
@@ -223,10 +213,9 @@ const portColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.AppField
-        name={`ports[${row.index}].name`}
-        children={(field) => <field.TextField placeholder="Nazwa portu" disabled={isReadonly} />}
-      />
+      <form.AppField name={`ports[${row.index}].name`}>
+        {(field) => <field.TextField placeholder="Nazwa portu" disabled={isReadonly} />}
+      </form.AppField>
     ),
   },
   {
@@ -255,10 +244,8 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
 
       <div className="mt-8">
         <p className="text-lg font-semibold">Wystawienie sprzętu</p>
-        <form.AppField
-          name="shortResearchEquipments"
-          mode="array"
-          children={(field) => (
+        <form.AppField name="shortResearchEquipments" mode="array">
+          {(field) => (
             <AppTable
               columns={shortResearchEquipmentColumns(
                 form,
@@ -288,15 +275,13 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
               disabled={isReadonly}
             />
           )}
-        />
+        </form.AppField>
       </div>
 
       <div className="mt-8">
         <p className="text-lg font-semibold">Pozostawienie lub zabranie sprzętu</p>
-        <form.AppField
-          name="longResearchEquipments"
-          mode="array"
-          children={(field) => (
+        <form.AppField name="longResearchEquipments" mode="array">
+          {(field) => (
             <AppTable
               columns={longResearchEquipmentColumns(
                 form,
@@ -334,15 +319,13 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
               disabled={isReadonly}
             />
           )}
-        />
+        </form.AppField>
       </div>
 
       <div className="mt-8">
         <p className="text-lg font-semibold">Wchodzenie lub wychodzenie z portu</p>
-        <form.AppField
-          name="ports"
-          mode="array"
-          children={(field) => (
+        <form.AppField name="ports" mode="array">
+          {(field) => (
             <AppTable
               columns={portColumns(
                 form,
@@ -372,7 +355,7 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
               disabled={isReadonly}
             />
           )}
-        />
+        </form.AppField>
       </div>
     </AppAccordion>
   );

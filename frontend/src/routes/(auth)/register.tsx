@@ -87,34 +87,34 @@ function RegisterPage() {
     <AppLayout title="Rejestracja" variant="narrow">
       <form noValidate className="px-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <form.AppField name="email" children={(field) => <field.FloatingTextField type="email" label="E-mail" />} />
+          <form.AppField name="email">
+            {(field) => <field.FloatingTextField type="email" label="E-mail" />}
+          </form.AppField>
 
-          <form.AppField name="firstName" children={(field) => <field.FloatingTextField type="text" label="Imię" />} />
+          <form.AppField name="firstName">
+            {(field) => <field.FloatingTextField type="text" label="Imię" />}
+          </form.AppField>
 
-          <form.AppField
-            name="lastName"
-            children={(field) => <field.FloatingTextField type="text" label="Nazwisko" />}
-          />
+          <form.AppField name="lastName">
+            {(field) => <field.FloatingTextField type="text" label="Nazwisko" />}
+          </form.AppField>
 
-          <form.AppField
-            name="password"
-            children={(field) => <field.FloatingTextField type="password" label="Hasło" />}
-          />
+          <form.AppField name="password">
+            {(field) => <field.FloatingTextField type="password" label="Hasło" />}
+          </form.AppField>
 
-          <form.AppField
-            name="confirmPassword"
-            children={(field) => <field.FloatingTextField type="password" label="Potwierdź hasło" />}
-          />
+          <form.AppField name="confirmPassword">
+            {(field) => <field.FloatingTextField type="password" label="Potwierdź hasło" />}
+          </form.AppField>
 
           <div className="!mt-12">
-            <form.Subscribe
-              selector={(state) => state.isSubmitting}
-              children={(isSubmitting) => (
+            <form.Subscribe selector={(state) => state.isSubmitting}>
+              {(isSubmitting) => (
                 <AppButton type="submit" className="w-full" disabled={isSubmitting}>
                   Zarejestruj się
                 </AppButton>
               )}
-            />
+            </form.Subscribe>
 
             {submitError && <p className="mt-2 text-center text-sm font-semibold text-danger">{submitError}</p>}
           </div>
