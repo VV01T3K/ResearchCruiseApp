@@ -26,7 +26,7 @@ export function AppDesktopTableHeader<TData extends object, TValue>({ header, ch
               render={
                 <button
                   className={cn(
-                    'text-default outline-none hover:cursor-pointer disabled:cursor-default',
+                    'outline-none hover:cursor-pointer disabled:cursor-default',
                     supportsDropdown ? 'cursor-pointer' : '',
                     'flex items-center justify-center gap-1 py-1'
                   )}
