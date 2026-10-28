@@ -71,6 +71,7 @@ export function CruiseApplicationPeriodInput({
 
   // When bounds change, synchronize clamped values with form state
   React.useEffect(() => {
+    if (disabled) return;
     const clamped = sliderValues;
     const valueChanged =
       !isValidPeriod(value) || clamped[0].toString() !== value[0] || clamped[1].toString() !== value[1];
@@ -78,7 +79,7 @@ export function CruiseApplicationPeriodInput({
       if (clamped[0] === clamped[1]) return;
       (onNormalize ?? onChange)?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
     }
-  }, [minBound, maxBound, sliderValues, onChange, onNormalize, value]);
+  }, [disabled, minBound, maxBound, sliderValues, onChange, onNormalize, value]);
 
   const handleValueChange = (newValues: number | number[]) => {
     if (!Array.isArray(newValues) || newValues.length !== 2) return;

@@ -126,7 +126,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
 
   const [hasToggledPastDates, setHasToggledPastDates] = useState(false);
 
-  const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year, new Date(nowMs));
+  const minPeriodValue = allowPastDates || isReadonly ? 0 : getCurrentFortnight(year, new Date(nowMs));
 
   const overlappingPreciseBlockades = useMemo(
     () => getOverlappingBlockadesForRange(blockades, precisePeriodStart, precisePeriodEnd),
