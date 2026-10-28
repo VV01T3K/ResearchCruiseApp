@@ -50,7 +50,7 @@ jobs:
           ! grep -E '\b(High|Critical)\b' "$RUNNER_TEMP/audit.txt"
 
       - name: Report to issue
-        if: github.ref == 'refs/heads/staging'
+        if: github.repository == 'VV01T3K/ResearchCruiseApp' && github.ref == 'refs/heads/staging'
         env:
           FAILED: ${{ steps.js.outcome == 'failure' || steps.dotnet.outcome == 'failure' }}
           OWNER: ${{ github.repository_owner }}
