@@ -581,7 +581,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
         return shipUsage
             == FormAValuesConstants
                 .ShipUsages.IndexOf(FormAValuesConstants.DifferentUsage)
-                .ToString();
+                .ToString(CultureInfo.InvariantCulture);
     }
 
     private static bool IsValidCruiseGoal(string? cruiseGoal)

@@ -1,3 +1,4 @@
+using System.Globalization;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
@@ -24,6 +25,6 @@ internal class ContractReader(FileReader files)
         {
             Id = contract.Id,
             Contract = await Create(contract.Contract),
-            Points = contract.Points.ToString(),
+            Points = contract.Points.ToString(CultureInfo.InvariantCulture),
         };
 }

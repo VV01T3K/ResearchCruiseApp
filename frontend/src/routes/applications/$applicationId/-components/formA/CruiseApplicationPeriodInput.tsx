@@ -62,23 +62,29 @@ export function CruiseApplicationPeriodInput({
 }: Props) {
   const [minBound, maxBound] = parsePeriod(maxValues, [minPeriodValue, 24]);
   const helperId = React.useId();
+  const [loadBounds] = React.useState([minBound, maxBound]);
   const isUnavailable = (step: number) => !disabled && (step < minBound || step > maxBound);
 
   const sliderValues = React.useMemo((): [number, number] => {
     const parsed = parsePeriod(value, [minBound, maxBound]);
-    return clampToBounds(parsed, minBound, maxBound);
-  }, [value, minBound, maxBound]);
+    return disabled ? parsed : clampToBounds(parsed, minBound, maxBound);
+  }, [disabled, value, minBound, maxBound]);
 
-  // When bounds change, synchronize clamped values with form state
+  // Clamps forced by bounds that moved after load are user-visible edits, so they mark the form dirty.
   React.useEffect(() => {
+    if (disabled) return;
     const clamped = sliderValues;
     const valueChanged =
       !isValidPeriod(value) || clamped[0].toString() !== value[0] || clamped[1].toString() !== value[1];
     if (valueChanged) {
       if (clamped[0] === clamped[1]) return;
-      (onNormalize ?? onChange)?.([clamped[0].toString(), clamped[1].toString()] as CruisePeriodType);
+      const boundsMoved = minBound !== loadBounds[0] || maxBound !== loadBounds[1];
+      ((boundsMoved ? undefined : onNormalize) ?? onChange)?.([
+        clamped[0].toString(),
+        clamped[1].toString(),
+      ] as CruisePeriodType);
     }
-  }, [minBound, maxBound, sliderValues, onChange, onNormalize, value]);
+  }, [disabled, minBound, maxBound, loadBounds, sliderValues, onChange, onNormalize, value]);
 
   const handleValueChange = (newValues: number | number[]) => {
     if (!Array.isArray(newValues) || newValues.length !== 2) return;

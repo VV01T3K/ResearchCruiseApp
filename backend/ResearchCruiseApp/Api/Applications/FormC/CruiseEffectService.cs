@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ResearchCruiseApp.Api.Applications.Shared;
@@ -181,7 +182,7 @@ internal class CruiseEffectService(
                     effect.PublicationMinisterialPoints
                 )
                     ? 0
-                    : int.Parse(effect.PublicationMinisterialPoints);
+                    : int.Parse(effect.PublicationMinisterialPoints, CultureInfo.InvariantCulture);
                 managerPoints = publicationMinisterialPoints / 2;
                 deputyPoints = publicationMinisterialPoints / 2;
                 break;
@@ -210,7 +211,7 @@ internal class CruiseEffectService(
             case ResearchTaskType.ProjectPreparation:
                 int? publicationPoints = string.IsNullOrEmpty(effect.PublicationMinisterialPoints)
                     ? null
-                    : int.Parse(effect.PublicationMinisterialPoints);
+                    : int.Parse(effect.PublicationMinisterialPoints, CultureInfo.InvariantCulture);
                 return publicationPoints
                     >= EvaluationConstants.ProjectPreparationPublicationMinisterialPointsThreshold;
 

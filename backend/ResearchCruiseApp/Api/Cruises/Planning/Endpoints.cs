@@ -200,15 +200,15 @@ public static class PlanningEndpoints
 
         return (
             start,
-            start.AddHours(int.Parse(formA.CruiseHours)),
+            start.AddHours(int.Parse(formA.CruiseHours, CultureInfo.InvariantCulture)),
             ToUtcAtEight(windowEnd, timeZone)
         );
     }
 
     private static DateTime GetPeriodEdgeDate(string year, string edge) =>
-        new DateTime(int.Parse(year), 1, 1)
-            .AddMonths(int.Parse(edge) / 2)
-            .AddDays(int.Parse(edge) % 2 * 14);
+        new DateTime(int.Parse(year, CultureInfo.InvariantCulture), 1, 1)
+            .AddMonths(int.Parse(edge, CultureInfo.InvariantCulture) / 2)
+            .AddDays(int.Parse(edge, CultureInfo.InvariantCulture) % 2 * 14);
 
     private static DateTime ToUtcAtEight(DateTime date, TimeZoneInfo timeZone) =>
         TimeZoneInfo.ConvertTimeToUtc(

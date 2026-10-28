@@ -26,11 +26,9 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
 
   let columnIndices: Record<string, number>;
 
-  /* eslint-disable no-useless-assignment */
   let foundColumnsCount = 0;
   let latHeaderIndex = -1;
   let lonHeaderIndex = -1;
-  /* eslint-enable no-useless-assignment */
 
   do {
     headers = parseCSVLine(lines[headerRowIndex], delimiter).map((h) => h.toLowerCase().trim());
@@ -264,7 +262,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
   for (let i = headerRowIndex + 1; i < data.length; i++) {
     const row = data[i];
 
-    if (!row || row.length === 0 || row.every((cell) => !cell)) {
+    if (!row || row.every((cell) => !cell)) {
       continue;
     }
 

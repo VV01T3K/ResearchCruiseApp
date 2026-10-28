@@ -60,7 +60,6 @@ export function AppButton(props: Props) {
   );
 
   if (props.type === 'link') {
-    // oxlint-disable-next-line @typescript-eslint/no-unused-vars
     const { variant: _, ...other } = props;
 
     return (

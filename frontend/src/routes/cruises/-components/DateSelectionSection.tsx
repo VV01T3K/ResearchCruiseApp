@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { AppAccordion } from '@/components/shared/AppAccordion';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import { useNow } from '@/lib/dateUtils';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 
 export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {
@@ -12,8 +13,9 @@ export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {
   const cruiseStartDate = cruiseStart !== '' ? new Date(cruiseStart) : undefined;
 
   const [allowPastDates, setAllowPastDates] = useState(false);
+  const nowMs = useNow((now) => now.setSeconds(0, 0));
 
-  const minimalDateForStartDate = allowPastDates ? undefined : new Date();
+  const minimalDateForStartDate = allowPastDates ? undefined : new Date(nowMs);
 
   return (
     <AppAccordion title="2. Termin rejsu" expandedByDefault>

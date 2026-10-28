@@ -18,7 +18,10 @@ public class GlobalizationService
 
         var timeZoneInfo = GetTimeZoneInfo();
         var dateUtc = TimeZoneInfo.ConvertTimeToUtc(date, timeZoneInfo);
-        var dateString = dateUtc.ToString(DateFormats.IsoStringDateFormat);
+        var dateString = dateUtc.ToString(
+            DateFormats.IsoStringDateFormat,
+            CultureInfo.InvariantCulture
+        );
 
         return dateString;
     }
@@ -28,7 +31,10 @@ public class GlobalizationService
         var utcDate = DateTime.Parse(isoUtcString, null, DateTimeStyles.RoundtripKind);
         var timeZoneInfo = GetTimeZoneInfo();
         var localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, timeZoneInfo);
-        var localDateString = localDate.ToString(DateFormats.LocalStringDateFormat);
+        var localDateString = localDate.ToString(
+            DateFormats.LocalStringDateFormat,
+            GetCultureInfo()
+        );
 
         return localDateString;
     }

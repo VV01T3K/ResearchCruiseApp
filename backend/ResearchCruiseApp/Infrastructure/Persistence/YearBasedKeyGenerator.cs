@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
@@ -21,18 +22,20 @@ internal class YearBasedKeyGenerator(ApplicationDbContext dbContext)
         where T : Entity, IYearBasedNumbered
     {
         await Lock<T>(cancellationToken);
-        var currentYear = DateTime.Now.Year.ToString();
+        var currentYear = DateTime.Now.Year.ToString(CultureInfo.InvariantCulture);
         var ordinalNumberStartIdx = currentYear.Length + 1;
         var existingEntities = await entities.ToListAsync(cancellationToken);
         var maxCurrentYearOrdinalNumber =
             existingEntities
-                .Where(e => e.Number.StartsWith(currentYear))
-                .MaxBy(e => int.Parse(e.Number[ordinalNumberStartIdx..]))
+                .Where(e => e.Number.StartsWith(currentYear, StringComparison.Ordinal))
+                .MaxBy(e =>
+                    int.Parse(e.Number[ordinalNumberStartIdx..], CultureInfo.InvariantCulture)
+                )
                 ?.Number[ordinalNumberStartIdx..]
             ?? "0";
 
         return Enumerable
-            .Range(int.Parse(maxCurrentYearOrdinalNumber) + 1, count)
+            .Range(int.Parse(maxCurrentYearOrdinalNumber, CultureInfo.InvariantCulture) + 1, count)
             .Select(ordinalNumber => $"{currentYear}/{ordinalNumber}")
             .ToList();
     }

@@ -21,7 +21,6 @@ export function FormErrors() {
           ) : (
             <ul className="list-disc ps-4">
               {errors.map((error, index) => (
-                // oxlint-disable-next-line @eslint-react/no-array-index-key
                 <li key={index}>{error}</li>
               ))}
             </ul>

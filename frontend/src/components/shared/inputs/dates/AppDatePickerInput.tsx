@@ -69,9 +69,9 @@ export function AppDatePickerInput({
   const [expanded, setExpanded] = React.useState(false);
   const clearRef = React.useRef<HTMLButtonElement>(null);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
-  const [visibleMonth, setVisibleMonth] = React.useState({
-    month: new Date().getMonth(),
-    year: new Date().getFullYear(),
+  const [visibleMonth, setVisibleMonth] = React.useState(() => {
+    const now = new Date();
+    return { month: now.getMonth(), year: now.getFullYear() };
   });
 
   function handleOpenChange(open: boolean, details: Popover.Root.ChangeEventDetails) {
