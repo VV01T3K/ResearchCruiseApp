@@ -16,7 +16,8 @@ export function initializeSentry(router: RegisteredRouter): void {
   if (!config.sentryDsn) return;
   // Replay snapshots record the page URL without an SDK hook to filter it, so token pages are never recorded.
   const replaysSessionSampleRate = parseSampleRate(config.sentryReplaysSessionSampleRate, 0);
-  const recordReplay = replaysSessionSampleRate > 0 && !hasSensitiveUrl(window.location.href);
+  const recordReplay =
+    replaysSessionSampleRate > 0 && replaysSessionSampleRate <= 1 && !hasSensitiveUrl(window.location.href);
 
   Sentry.init({
     dsn: config.sentryDsn,

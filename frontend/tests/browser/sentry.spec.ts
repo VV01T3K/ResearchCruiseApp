@@ -57,6 +57,7 @@ test.describe('signed in', () => {
     ['', false],
     ['garbage', false],
     ['0', false],
+    ['1.5', false],
     ['1', true],
   ] as const) {
     test(`replay sample rate '${replayRate}' ${replayed ? 'sends' : 'never sends'} replays`, async ({ page }) => {
