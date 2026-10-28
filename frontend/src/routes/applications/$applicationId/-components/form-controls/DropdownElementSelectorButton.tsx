@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/no-array-index-key */
 import { Button } from '@base-ui/react/button';
 import { Popover } from '@base-ui/react/popover';
 import { CaretDownIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';

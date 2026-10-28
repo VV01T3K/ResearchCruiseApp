@@ -12,6 +12,6 @@ export function StatusBadge({ status }: Props) {
   } else if (status === 'ended') {
     return <AppBadge variant="info">Zakończony</AppBadge>;
   } else {
-    throw new Error(`Unknown cruise status: ${status}`);
+    throw new Error(`Unknown cruise status: ${String(status)}`);
   }
 }

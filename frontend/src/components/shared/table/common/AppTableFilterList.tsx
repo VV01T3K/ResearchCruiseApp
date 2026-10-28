@@ -21,7 +21,9 @@ export function AppTableFilterList<TData extends object, TValue>({ header, expan
     if (staticOptions) {
       return staticOptions.map((value): [any, number] => [value, 0]);
     }
-    return Array.from(header.column.getFacetedUniqueValues().entries()).sort();
+    return Array.from(header.column.getFacetedUniqueValues().entries()).sort(([a], [b]) =>
+      String(a) > String(b) ? 1 : -1
+    );
   }, [header.column]);
 
   // Snapshot options on open so picking one can't make others vanish mid-selection.
@@ -116,7 +118,7 @@ export function AppTableFilterList<TData extends object, TValue>({ header, expan
               isRendered={supportsFilter}
               expanded={expanded}
             >
-              <AppCheckbox name={`isFilterChecked-${value}`} checked={isFilterChecked(value[0])} />
+              <AppCheckbox name={`isFilterChecked-${value[0]}`} checked={isFilterChecked(value[0])} />
               {getFilterOptionLabel ? getFilterOptionLabel(value[0]) : value[0]}
             </AppTableListItem>
           ))}

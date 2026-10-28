@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/no-array-index-key */
 import { Fragment, RefObject } from 'react';
 
 import { cn } from '@/lib/utils';
