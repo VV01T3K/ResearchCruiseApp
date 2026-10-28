@@ -11,6 +11,7 @@ import { getErrors } from '@/integrations/tanstack/form/errors';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applications/periodUtils';
+import { useNow } from '@/lib/dateUtils';
 import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
 
@@ -58,8 +59,7 @@ function getOverlappingBlockadesForRange(
     .sort((a, b) => a.start.getTime() - b.start.getTime());
 }
 
-function getCurrentFortnight(year: string): number {
-  const today = new Date();
+function getCurrentFortnight(year: string, today: Date): number {
   // If the year is in the future, return 0 (the first fortnight so it doesn't block the slider )
   if (today.getFullYear() < parseInt(year, 10)) {
     return 0;
@@ -97,14 +97,16 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   const precisePeriodStart = useSelector(form.store, (state) => state.values.precisePeriodStart);
   const precisePeriodEnd = useSelector(form.store, (state) => state.values.precisePeriodEnd);
 
+  const nowMs = useNow((now) => now.setSeconds(0, 0));
+
   // Initialize checkbox state based on whether saved start date is in the past
   const [allowPastDates, setAllowPastDates] = useState(() => {
-    const currentFortnight = getCurrentFortnight(year);
+    const currentFortnight = getCurrentFortnight(year, new Date(nowMs));
 
     // Check if precisePeriodStart is in the past
     if (precisePeriodStart) {
       const startDate = new Date(precisePeriodStart);
-      const today = new Date();
+      const today = new Date(nowMs);
       today.setHours(0, 0, 0, 0);
       if (startDate < today) {
         return true;
@@ -122,9 +124,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
     return false;
   });
 
-  const [hasToggledPastDates, setHasToggledPastDates] = useState(false);
-
-  const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
+  const minPeriodValue = allowPastDates || isReadonly ? 0 : getCurrentFortnight(year, new Date(nowMs));
 
   const overlappingPreciseBlockades = useMemo(
     () => getOverlappingBlockadesForRange(blockades, precisePeriodStart, precisePeriodEnd),
@@ -227,7 +227,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     type="date"
                     showRequiredAsterisk
                     disabled={isReadonly}
-                    minimalDate={allowPastDates ? undefined : new Date()}
+                    minimalDate={allowPastDates ? undefined : new Date(nowMs)}
                   />
                 )}
               />
@@ -249,7 +249,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                             ? new Date(precisePeriodStart)
                             : allowPastDates
                               ? undefined
-                              : new Date()
+                              : new Date(nowMs)
                         }
                       />
                     )}
@@ -268,7 +268,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     name={field.name}
                     value={field.state.value}
                     onChange={field.handleChange}
-                    onNormalize={(period) => field.setValue(period, { dontUpdateMeta: !hasToggledPastDates })}
+                    onNormalize={(period) => field.setValue(period, { dontUpdateMeta: true })}
                     onBlur={field.handleBlur}
                     errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                     label="Dopuszczalny okres, w którym miałby się odbywać rejs"
@@ -294,7 +294,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                         name={field.name}
                         value={field.state.value}
                         onChange={field.handleChange}
-                        onNormalize={(period) => field.setValue(period, { dontUpdateMeta: !hasToggledPastDates })}
+                        onNormalize={(period) => field.setValue(period, { dontUpdateMeta: true })}
                         onBlur={field.handleBlur}
                         errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                         maxValues={acceptablePeriod}
@@ -336,10 +336,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
               <AppCheckbox
                 name="allowPastDates"
                 checked={allowPastDates}
-                onChange={(checked) => {
-                  setAllowPastDates(checked);
-                  setHasToggledPastDates(true);
-                }}
+                onChange={setAllowPastDates}
                 label="Zezwól na wybór dat z przeszłości"
               />
             </div>

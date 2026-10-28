@@ -32,7 +32,7 @@ type Props = {
 };
 export function AppYearPickerInput({
   name,
-  value,
+  value: selectedYear,
   onChange,
   onBlur,
   errors,
@@ -46,16 +46,10 @@ export function AppYearPickerInput({
   'data-testid-errors': errorsTestId,
 }: Props) {
   const aria = useInputAria(errors, helper);
-  const [selectedYear, setSelectedYear] = React.useState<number | undefined>(value);
   const [visibleDecade, setVisibleDecade] = React.useState(() => decadeOf(new Date().getFullYear()));
   const [expanded, setExpanded] = React.useState(false);
   const clearRef = React.useRef<HTMLButtonElement>(null);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
-
-  React.useEffect(() => {
-    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-    setSelectedYear(value);
-  }, [value]);
 
   function handleOpenChange(open: boolean, details: Popover.Root.ChangeEventDetails) {
     if (details.reason === 'outside-press' && clearRef.current?.contains(details.event.target as Node)) {
@@ -70,7 +64,6 @@ export function AppYearPickerInput({
   }
 
   function handleResetSelection(evt: React.MouseEvent) {
-    setSelectedYear(undefined);
     onChange?.(undefined);
     onBlur?.();
     setExpanded(false);
@@ -80,7 +73,6 @@ export function AppYearPickerInput({
   }
 
   function handleSelectYear(newYear: number): void {
-    setSelectedYear(newYear);
     onChange?.(newYear);
     onBlur?.();
     setExpanded(false);
@@ -91,7 +83,7 @@ export function AppYearPickerInput({
       <div className="flex flex-col" data-testid={testId}>
         <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div className="relative">
-          <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
+          <input type="hidden" name={name} value={selectedYear ?? ''} disabled={disabled} />
           <Popover.Trigger
             ref={triggerRef}
             disabled={disabled}
