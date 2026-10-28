@@ -28,9 +28,8 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`permissions[${row.index}].description`}
-            children={(field) => (
+          <form.AppField name={`permissions[${row.index}].description`}>
+            {(field) => (
               <field.TextField
                 data-testid="permission-description-input"
                 data-testid-errors="permission-description-errors"
@@ -38,7 +37,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
       },
@@ -48,9 +47,8 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`permissions[${row.index}].executive`}
-            children={(field) => (
+          <form.AppField name={`permissions[${row.index}].executive`}>
+            {(field) => (
               <field.TextField
                 data-testid="permission-executive-input"
                 data-testid-errors="permission-executive-errors"
@@ -58,7 +56,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
       },
@@ -77,9 +75,8 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`permissions[${row.index}].scan`}
-            children={(field) => (
+          <form.AppField name={`permissions[${row.index}].scan`}>
+            {(field) => (
               <field.FileField
                 data-testid-button="permission-scan-button"
                 data-testid-errors="permission-scan-errors"
@@ -87,7 +84,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 10,
       },
@@ -109,10 +106,8 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
       expandedByDefault
       data-testid="form-b-additional-permissions-section"
     >
-      <form.AppField
-        name="permissions"
-        mode="array"
-        children={(field) => (
+      <form.AppField name="permissions" mode="array">
+        {(field) => (
           <>
             <AppTable
               columns={getColumns((index) => {
@@ -141,7 +136,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
             <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
           </>
         )}
-      />
+      </form.AppField>
     </AppAccordion>
   );
 }

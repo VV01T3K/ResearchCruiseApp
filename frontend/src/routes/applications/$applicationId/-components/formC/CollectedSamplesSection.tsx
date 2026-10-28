@@ -17,44 +17,38 @@ const collectedSamplesColumns = (
   {
     header: 'Rodzaj materiału badawczego/próbek/danych',
     cell: ({ row }) => (
-      <form.AppField
-        name={`collectedSamples[${row.index}].type`}
-        children={(field) => (
+      <form.AppField name={`collectedSamples[${row.index}].type`}>
+        {(field) => (
           <field.TextField placeholder="Wpisz rodzaj materiału badawczego/próbek/danych" disabled={isReadonly} />
         )}
-      />
+      </form.AppField>
     ),
     size: 30,
   },
   {
     header: 'Ilość',
     cell: ({ row }) => (
-      <form.AppField
-        name={`collectedSamples[${row.index}].amount`}
-        children={(field) => <field.NumberField disabled={isReadonly} />}
-      />
+      <form.AppField name={`collectedSamples[${row.index}].amount`}>
+        {(field) => <field.NumberField disabled={isReadonly} />}
+      </form.AppField>
     ),
     size: 5,
   },
   {
     header: 'Analizy na zebranym materiale badawczym, przeprowadzone podczas rejsu lub do przeprowadzenia po rejsie',
     cell: ({ row }) => (
-      <form.AppField
-        name={`collectedSamples[${row.index}].analysis`}
-        children={(field) => <field.TextField placeholder="Wpisz zakres analiz" disabled={isReadonly} />}
-      />
+      <form.AppField name={`collectedSamples[${row.index}].analysis`}>
+        {(field) => <field.TextField placeholder="Wpisz zakres analiz" disabled={isReadonly} />}
+      </form.AppField>
     ),
     size: 30,
   },
   {
     header: 'Czy dane upubliczniono? (jeśli tak, to w jaki sposób, czy przesłano je np. do BHMW)',
     cell: ({ row }) => (
-      <form.AppField
-        name={`collectedSamples[${row.index}].publishing`}
-        children={(field) => (
-          <field.TextField placeholder="Wpisz informacje o upublicznieniu danych" disabled={isReadonly} />
-        )}
-      />
+      <form.AppField name={`collectedSamples[${row.index}].publishing`}>
+        {(field) => <field.TextField placeholder="Wpisz informacje o upublicznieniu danych" disabled={isReadonly} />}
+      </form.AppField>
     ),
     size: 30,
   },
@@ -79,10 +73,8 @@ export function CollectedSamplesSection({ context }: { context: FormCViewModel }
       expandedByDefault
       data-testid="form-c-collected-samples-section"
     >
-      <form.AppField
-        name="collectedSamples"
-        mode="array"
-        children={(field) => (
+      <form.AppField name="collectedSamples" mode="array">
+        {(field) => (
           <AppTable
             data={field.state.value}
             columns={collectedSamplesColumns(form, (index) => field.removeValue(index), isReadonly)}
@@ -108,7 +100,7 @@ export function CollectedSamplesSection({ context }: { context: FormCViewModel }
             disabled={isReadonly}
           />
         )}
-      />
+      </form.AppField>
     </AppAccordion>
   );
 }

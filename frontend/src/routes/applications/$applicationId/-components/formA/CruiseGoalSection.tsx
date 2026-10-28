@@ -10,9 +10,8 @@ export function CruiseGoalSection({ context }: { context: FormAViewModel }) {
   return (
     <AppAccordion title="5. Cel rejsu" expandedByDefault data-testid="form-a-cruise-goal-section">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <form.AppField
-          name="cruiseGoal"
-          children={(field) => (
+        <form.AppField name="cruiseGoal">
+          {(field) => (
             <field.SelectField
               label="Cel rejsu"
               allOptions={initValues.cruiseGoals.map((cruiseGoal, index) => ({
@@ -25,14 +24,12 @@ export function CruiseGoalSection({ context }: { context: FormAViewModel }) {
               data-testid-errors="form-a-cruise-goal-errors"
             />
           )}
-        />
+        </form.AppField>
 
-        <form.Subscribe
-          selector={(state) => state.values.cruiseGoal}
-          children={(cruiseGoal) => (
-            <form.AppField
-              name="cruiseGoalDescription"
-              children={(field) => (
+        <form.Subscribe selector={(state) => state.values.cruiseGoal}>
+          {(cruiseGoal) => (
+            <form.AppField name="cruiseGoalDescription">
+              {(field) => (
                 <field.TextField
                   label="Opis"
                   placeholder="np. szczegóły dotyczące celu rejsu"
@@ -42,9 +39,9 @@ export function CruiseGoalSection({ context }: { context: FormAViewModel }) {
                   data-testid-errors="form-a-cruise-goal-description-errors"
                 />
               )}
-            />
+            </form.AppField>
           )}
-        />
+        </form.Subscribe>
       </div>
     </AppAccordion>
   );

@@ -36,7 +36,7 @@ export function FormView({ cruise, cruiseApplications, isReadonly, buttons }: Pr
       </AppGuard>
       <form.FormErrors />
       <AppGuard allowedRoles={[Role.ShipOwner, Role.Administrator]}>
-        <AppActionsSection children={buttons} />
+        <AppActionsSection>{buttons}</AppActionsSection>
       </AppGuard>
     </form>
   );

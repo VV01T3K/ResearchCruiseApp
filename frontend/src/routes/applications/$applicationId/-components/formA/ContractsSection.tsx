@@ -30,10 +30,9 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
         header: 'Kategoria',
         accessorFn: (row) => getContractCategoryName(row.category),
         cell: ({ row }) => (
-          <form.AppField
-            name={`contracts[${row.index}].category`}
-            children={(field) => getContractCategoryName(field.state.value)}
-          />
+          <form.AppField name={`contracts[${row.index}].category`}>
+            {(field) => getContractCategoryName(field.state.value)}
+          </form.AppField>
         ),
         size: 10,
       },
@@ -42,28 +41,25 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
         accessorFn: (row) => `${row.institutionName}, ${row.institutionUnit}, ${row.institutionLocalization}`,
         cell: ({ row }) => (
           <>
-            <form.AppField
-              name={`contracts[${row.index}].institutionName`}
-              children={(field) => (
+            <form.AppField name={`contracts[${row.index}].institutionName`}>
+              {(field) => (
                 <field.TextField
                   label="Nazwa instytucji"
                   placeholder='np. "Uniwersytet Gdański"'
                   disabled={isReadonly}
                 />
               )}
-            />
-            <form.AppField
-              name={`contracts[${row.index}].institutionUnit`}
-              children={(field) => (
+            </form.AppField>
+            <form.AppField name={`contracts[${row.index}].institutionUnit`}>
+              {(field) => (
                 <field.TextField label="Jednostka" placeholder='np. "Wydział Biologii"' disabled={isReadonly} />
               )}
-            />
-            <form.AppField
-              name={`contracts[${row.index}].institutionLocalization`}
-              children={(field) => (
+            </form.AppField>
+            <form.AppField name={`contracts[${row.index}].institutionLocalization`}>
+              {(field) => (
                 <field.TextField label="Lokalizacja instytucji" placeholder='np. "Gdańsk"' disabled={isReadonly} />
               )}
-            />
+            </form.AppField>
           </>
         ),
         size: 30,
@@ -72,12 +68,9 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
         header: 'Opis',
         accessorFn: (row) => row.description,
         cell: ({ row }) => (
-          <form.AppField
-            name={`contracts[${row.index}].description`}
-            children={(field) => (
-              <field.TextField label="Opis" placeholder='np. "Umowa o współpracy"' disabled={isReadonly} />
-            )}
-          />
+          <form.AppField name={`contracts[${row.index}].description`}>
+            {(field) => <field.TextField label="Opis" placeholder='np. "Umowa o współpracy"' disabled={isReadonly} />}
+          </form.AppField>
         ),
         size: 30,
       },
@@ -87,9 +80,8 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`contracts[${row.index}].scans`}
-            children={(field) => (
+          <form.AppField name={`contracts[${row.index}].scans`}>
+            {(field) => (
               <field.FilesField
                 allowMultiple={true}
                 label="Skany"
@@ -98,7 +90,7 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
       },
@@ -126,10 +118,8 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
       data-testid="form-a-contracts-section"
     >
       <div>
-        <form.AppField
-          name="contracts"
-          mode="array"
-          children={(field) => (
+        <form.AppField name="contracts" mode="array">
+          {(field) => (
             <>
               <AppTable
                 columns={getColumns((index) => {
@@ -191,7 +181,7 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
               />
             </>
           )}
-        />
+        </form.AppField>
       </div>
     </AppAccordion>
   );

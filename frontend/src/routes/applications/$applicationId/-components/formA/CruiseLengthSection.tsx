@@ -196,9 +196,8 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {!isReadonly && (
             <div className="lg:col-span-2">
-              <form.AppField
-                name="periodSelectionType"
-                children={(field) => (
+              <form.AppField name="periodSelectionType">
+                {(field) => (
                   <field.SelectField
                     onChange={(value) => {
                       field.handleChange(value as 'precise' | 'period');
@@ -214,14 +213,13 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     data-testid-button="form-a-period-selection-type-button"
                   />
                 )}
-              />
+              </form.AppField>
             </div>
           )}
           {periodSelectionType === 'precise' && (
             <>
-              <form.AppField
-                name="precisePeriodStart"
-                children={(field) => (
+              <form.AppField name="precisePeriodStart">
+                {(field) => (
                   <field.DateField
                     label="Dokładny termin rozpoczęcia rejsu"
                     type="date"
@@ -230,14 +228,12 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     minimalDate={allowPastDates ? undefined : new Date(nowMs)}
                   />
                 )}
-              />
+              </form.AppField>
 
-              <form.Subscribe
-                selector={(state) => state.values.precisePeriodStart}
-                children={(precisePeriodStart) => (
-                  <form.AppField
-                    name="precisePeriodEnd"
-                    children={(field) => (
+              <form.Subscribe selector={(state) => state.values.precisePeriodStart}>
+                {(precisePeriodStart) => (
+                  <form.AppField name="precisePeriodEnd">
+                    {(field) => (
                       <field.DateField
                         label="Dokładny termin zakończenia rejsu"
                         type="date"
@@ -253,17 +249,16 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                         }
                       />
                     )}
-                  />
+                  </form.AppField>
                 )}
-              />
+              </form.Subscribe>
             </>
           )}
 
           {periodSelectionType === 'period' && (
             <>
-              <form.AppField
-                name="acceptablePeriod"
-                children={(field) => (
+              <form.AppField name="acceptablePeriod">
+                {(field) => (
                   <CruiseApplicationPeriodInput
                     name={field.name}
                     value={field.state.value}
@@ -282,14 +277,12 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     }
                   />
                 )}
-              />
+              </form.AppField>
 
-              <form.Subscribe
-                selector={(state) => state.values.acceptablePeriod}
-                children={(acceptablePeriod) => (
-                  <form.AppField
-                    name="optimalPeriod"
-                    children={(field) => (
+              <form.Subscribe selector={(state) => state.values.acceptablePeriod}>
+                {(acceptablePeriod) => (
+                  <form.AppField name="optimalPeriod">
+                    {(field) => (
                       <CruiseApplicationPeriodInput
                         name={field.name}
                         value={field.state.value}
@@ -304,9 +297,9 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                         minPeriodValue={minPeriodValue}
                       />
                     )}
-                  />
+                  </form.AppField>
                 )}
-              />
+              </form.Subscribe>
             </>
           )}
 
@@ -342,12 +335,10 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
             </div>
           )}
 
-          <form.Subscribe
-            selector={(state) => state.values.cruiseDays * 24 + state.values.cruiseHours}
-            children={(totalCruiseHours) => (
-              <form.AppField
-                name="cruiseDays"
-                children={(field) => (
+          <form.Subscribe selector={(state) => state.values.cruiseDays * 24 + state.values.cruiseHours}>
+            {(totalCruiseHours) => (
+              <form.AppField name="cruiseDays">
+                {(field) => (
                   <field.NumberField
                     value={totalCruiseHours / 24}
                     onChange={(days) => {
@@ -365,16 +356,14 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     data-testid-input="form-a-cruise-days-input"
                   />
                 )}
-              />
+              </form.AppField>
             )}
-          />
+          </form.Subscribe>
 
-          <form.Subscribe
-            selector={(state) => state.values.cruiseDays * 24 + state.values.cruiseHours}
-            children={(totalCruiseHours) => (
-              <form.AppField
-                name="cruiseHours"
-                children={(field) => (
+          <form.Subscribe selector={(state) => state.values.cruiseDays * 24 + state.values.cruiseHours}>
+            {(totalCruiseHours) => (
+              <form.AppField name="cruiseHours">
+                {(field) => (
                   <field.NumberField
                     value={totalCruiseHours}
                     onChange={(hours) => {
@@ -392,13 +381,12 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     data-testid-errors="form-a-cruise-hours-errors"
                   />
                 )}
-              />
+              </form.AppField>
             )}
-          />
+          </form.Subscribe>
 
-          <form.AppField
-            name="periodNotes"
-            children={(field) => (
+          <form.AppField name="periodNotes">
+            {(field) => (
               <div className="lg:col-span-2">
                 <field.TextField
                   label="Uwagi dotyczące terminu"
@@ -408,11 +396,10 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                 />
               </div>
             )}
-          />
+          </form.AppField>
 
-          <form.AppField
-            name="shipUsage"
-            children={(field) => (
+          <form.AppField name="shipUsage">
+            {(field) => (
               <div className="lg:col-span-2">
                 <field.SelectField
                   label="Statek na potrzeby badań będzie wykorzystywany"
@@ -426,11 +413,10 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                 />
               </div>
             )}
-          />
+          </form.AppField>
 
-          <form.Subscribe
-            selector={(state) => state.values.shipUsage}
-            children={(shipUsage) => (
+          <form.Subscribe selector={(state) => state.values.shipUsage}>
+            {(shipUsage) => (
               <div className="lg:col-span-2">
                 <AnimatePresence>
                   {shipUsage === '4' && (
@@ -440,9 +426,8 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                       exit={{ opacity: 0, translateY: '-10%' }}
                       transition={{ ease: 'easeOut', duration: 0.2 }}
                     >
-                      <form.AppField
-                        name="differentUsage"
-                        children={(field) => (
+                      <form.AppField name="differentUsage">
+                        {(field) => (
                           <field.TextField
                             label="Inny sposób użycia"
                             placeholder="np. statek badawczy"
@@ -451,13 +436,13 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                             data-testid="form-a-alternative-ship-usage-input"
                           />
                         )}
-                      />
+                      </form.AppField>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
             )}
-          />
+          </form.Subscribe>
         </div>
       </div>
     </AppAccordion>

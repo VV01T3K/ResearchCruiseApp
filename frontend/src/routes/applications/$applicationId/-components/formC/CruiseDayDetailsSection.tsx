@@ -20,10 +20,9 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.number,
     cell: ({ row }) => (
-      <form.AppField
-        name={`cruiseDaysDetails[${row.index}].number`}
-        children={(field) => <field.NumberField disabled={isReadonly} minimum={0} type="integer" />}
-      />
+      <form.AppField name={`cruiseDaysDetails[${row.index}].number`}>
+        {(field) => <field.NumberField disabled={isReadonly} minimum={0} type="integer" />}
+      </form.AppField>
     ),
     size: 10,
   },
@@ -33,10 +32,9 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.hours,
     cell: ({ row }) => (
-      <form.AppField
-        name={`cruiseDaysDetails[${row.index}].hours`}
-        children={(field) => <field.NumberField disabled={isReadonly} minimum={0} type="integer" />}
-      />
+      <form.AppField name={`cruiseDaysDetails[${row.index}].hours`}>
+        {(field) => <field.NumberField disabled={isReadonly} minimum={0} type="integer" />}
+      </form.AppField>
     ),
     size: 10,
   },
@@ -46,10 +44,9 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.taskName,
     cell: ({ row }) => (
-      <form.AppField
-        name={`cruiseDaysDetails[${row.index}].taskName`}
-        children={(field) => <field.TextField disabled={isReadonly} placeholder="Nazwa zadania" />}
-      />
+      <form.AppField name={`cruiseDaysDetails[${row.index}].taskName`}>
+        {(field) => <field.TextField disabled={isReadonly} placeholder="Nazwa zadania" />}
+      </form.AppField>
     ),
     size: 20,
   },
@@ -59,10 +56,9 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.region,
     cell: ({ row }) => (
-      <form.AppField
-        name={`cruiseDaysDetails[${row.index}].region`}
-        children={(field) => <field.TextField disabled={isReadonly} placeholder="Rejon zadania" />}
-      />
+      <form.AppField name={`cruiseDaysDetails[${row.index}].region`}>
+        {(field) => <field.TextField disabled={isReadonly} placeholder="Rejon zadania" />}
+      </form.AppField>
     ),
     size: 20,
   },
@@ -72,10 +68,9 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.position,
     cell: ({ row }) => (
-      <form.AppField
-        name={`cruiseDaysDetails[${row.index}].position`}
-        children={(field) => <field.TextField disabled={isReadonly} placeholder="Pozycja" />}
-      />
+      <form.AppField name={`cruiseDaysDetails[${row.index}].position`}>
+        {(field) => <field.TextField disabled={isReadonly} placeholder="Pozycja" />}
+      </form.AppField>
     ),
     size: 20,
   },
@@ -85,10 +80,9 @@ const cruiseDayDetailsColumns = (
     enableSorting: false,
     accessorFn: (row) => row.comment,
     cell: ({ row }) => (
-      <form.AppField
-        name={`cruiseDaysDetails[${row.index}].comment`}
-        children={(field) => <field.TextField disabled={isReadonly} placeholder="Uwagi" />}
-      />
+      <form.AppField name={`cruiseDaysDetails[${row.index}].comment`}>
+        {(field) => <field.TextField disabled={isReadonly} placeholder="Uwagi" />}
+      </form.AppField>
     ),
     size: 20,
   },
@@ -118,10 +112,8 @@ export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }
       expandedByDefault
       data-testid="form-c-cruise-day-details-section"
     >
-      <form.AppField
-        name="cruiseDaysDetails"
-        mode="array"
-        children={(field) => (
+      <form.AppField name="cruiseDaysDetails" mode="array">
+        {(field) => (
           <AppTable
             data={field.state.value}
             columns={cruiseDayDetailsColumns(
@@ -156,7 +148,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }
             disabled={isReadonly}
           />
         )}
-      />
+      </form.AppField>
     </AppAccordion>
   );
 }

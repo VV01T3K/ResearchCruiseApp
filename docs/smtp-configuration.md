@@ -4,12 +4,12 @@ Gmail delivery uses implicit TLS on port 465. Supply the full mailbox address an
 a Gmail app password through the deployment environment; never commit credentials
 to application settings or environment files.
 
-| Hosting | Configuration |
-| --- | --- |
-| Staging and production Compose | Set `SMTP_USERNAME` and `SMTP_PASSWORD` in the deployment environment. Compose maps them to the backend settings and rejects missing or empty values. |
-| Direct backend hosting | Set `SmtpSettings__SmtpUsername` and `SmtpSettings__SmtpPassword` in the backend process environment. The short `SMTP_*` names only work through Compose. |
-| Local development | Fake SMTP writes HTML to `fake-emails/`; no Gmail credentials required. |
-| Docker development | Fake SMTP writes HTML to `/tmp/fake-emails` in the backend container; files disappear when the container is replaced. |
+| Hosting                        | Configuration                                                                                                                                             |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Staging and production Compose | Set `SMTP_USERNAME` and `SMTP_PASSWORD` in the deployment environment. Compose maps them to the backend settings and rejects missing or empty values.     |
+| Direct backend hosting         | Set `SmtpSettings__SmtpUsername` and `SmtpSettings__SmtpPassword` in the backend process environment. The short `SMTP_*` names only work through Compose. |
+| Local development              | Fake SMTP writes HTML to `fake-emails/`; no Gmail credentials required.                                                                                   |
+| Docker development             | Fake SMTP writes HTML to `/tmp/fake-emails` in the backend container; files disappear when the container is replaced.                                     |
 
 For local deployment setup, copy `docker/.env.staging.template` to an untracked
 file and supply it with `docker compose --env-file <path> ...`. Validate with

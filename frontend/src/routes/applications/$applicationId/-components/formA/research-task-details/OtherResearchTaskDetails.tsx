@@ -12,12 +12,9 @@ export function OtherResearchTaskDetails({ row, disabled }: Props) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div>
-      <form.AppField
-        name={`researchTasks[${row.index}].description`}
-        children={(field) => (
-          <field.TextField label="Opis zadania" placeholder="Wprowadź opis zadania" disabled={disabled} />
-        )}
-      />
+      <form.AppField name={`researchTasks[${row.index}].description`}>
+        {(field) => <field.TextField label="Opis zadania" placeholder="Wprowadź opis zadania" disabled={disabled} />}
+      </form.AppField>
     </div>
   );
 }

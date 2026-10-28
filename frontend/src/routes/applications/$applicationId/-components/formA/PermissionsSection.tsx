@@ -28,10 +28,9 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`permissions[${row.index}].description`}
-            children={(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
-          />
+          <form.AppField name={`permissions[${row.index}].description`}>
+            {(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
+          </form.AppField>
         ),
         size: 45,
       },
@@ -41,10 +40,9 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`permissions[${row.index}].executive`}
-            children={(field) => <field.TextField className="mx-4" disabled={isReadonly} />}
-          />
+          <form.AppField name={`permissions[${row.index}].executive`}>
+            {(field) => <field.TextField className="mx-4" disabled={isReadonly} />}
+          </form.AppField>
         ),
         size: 45,
       },
@@ -72,10 +70,8 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
       data-testid="form-a-permissions-section"
     >
       <div>
-        <form.AppField
-          name="permissions"
-          mode="array"
-          children={(field) => (
+        <form.AppField name="permissions" mode="array">
+          {(field) => (
             <>
               <AppTable
                 columns={getColumns((index) => {
@@ -112,7 +108,7 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
               />
             </>
           )}
-        />
+        </form.AppField>
       </div>
     </AppAccordion>
   );

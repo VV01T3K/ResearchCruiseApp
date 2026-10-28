@@ -28,10 +28,9 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
         header: 'Rejon prowadzenia badań',
         cell: ({ row }) => (
           <>
-            <form.AppField
-              name={`researchAreaDescriptions[${row.index}].areaId`}
-              children={(field) => <input type="hidden" name={field.name} value="" readOnly />}
-            />
+            <form.AppField name={`researchAreaDescriptions[${row.index}].areaId`}>
+              {(field) => <input type="hidden" name={field.name} value="" readOnly />}
+            </form.AppField>
             <form.AppField
               listeners={{
                 onChange: () => {
@@ -39,7 +38,8 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
                 },
               }}
               name={`researchAreaDescriptions[${row.index}].differentName`}
-              children={(field) => (
+            >
+              {(field) => (
                 <field.TextField
                   value={
                     field.state.value ?? getResearchAreaName(initValues.researchAreas, row.original.areaId ?? '') ?? ''
@@ -49,7 +49,7 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
                   showRequiredAsterisk
                 />
               )}
-            />
+            </form.AppField>
           </>
         ),
         size: 30,
@@ -57,15 +57,14 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
       {
         header: 'Informacje dodatkowe',
         cell: ({ row }) => (
-          <form.AppField
-            name={`researchAreaDescriptions[${row.index}].info`}
-            children={(field) => (
+          <form.AppField name={`researchAreaDescriptions[${row.index}].info`}>
+            {(field) => (
               <field.TextField
                 placeholder={isReadonly ? '' : 'np. szczegóły dotyczące celu rejsu'}
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
       },
       {
@@ -87,10 +86,8 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
 
   return (
     <AppAccordion title="4. Rejony prowadzenia badań" expandedByDefault data-testid="form-a-research-area-section">
-      <form.AppField
-        name="researchAreaDescriptions"
-        mode="array"
-        children={(field) => (
+      <form.AppField name="researchAreaDescriptions" mode="array">
+        {(field) => (
           <>
             <AppTable
               columns={getColumns((index) => {
@@ -132,7 +129,7 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
             />
           </>
         )}
-      />
+      </form.AppField>
     </AppAccordion>
   );
 }

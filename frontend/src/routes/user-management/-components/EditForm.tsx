@@ -286,9 +286,8 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
   return (
     <form noValidate onSubmit={handleSubmit}>
       <div className="flex h-14 justify-around">
-        <form.Subscribe
-          selector={(state) => [state.values.firstName, state.values.lastName]}
-          children={([firstName, lastName]) => (
+        <form.Subscribe selector={(state) => [state.values.firstName, state.values.lastName]}>
+          {([firstName, lastName]) => (
             <AnimatePresence>
               {(firstName || lastName) && (
                 <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
@@ -297,7 +296,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               )}
             </AnimatePresence>
           )}
-        />
+        </form.Subscribe>
 
         {editMode && (
           <div className="grid max-w-48 grid-cols-2 gap-1">
@@ -318,22 +317,18 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
       </div>
 
       <div className="space-y-4">
-        <form.AppField name="firstName" children={(field) => <field.TextField label="Imię" placeholder="Jan" />} />
+        <form.AppField name="firstName">{(field) => <field.TextField label="Imię" placeholder="Jan" />}</form.AppField>
 
-        <form.AppField
-          name="lastName"
-          children={(field) => <field.TextField label="Nazwisko" placeholder="Kowalski" />}
-        />
+        <form.AppField name="lastName">
+          {(field) => <field.TextField label="Nazwisko" placeholder="Kowalski" />}
+        </form.AppField>
 
-        <form.AppField
-          name="email"
-          children={(field) => <field.TextField label="Email" placeholder="jan.kowalski@example.com" type="email" />}
-        />
+        <form.AppField name="email">
+          {(field) => <field.TextField label="Email" placeholder="jan.kowalski@example.com" type="email" />}
+        </form.AppField>
 
-        <form.AppField
-          name="role"
-          listeners={{ onChange: () => setAssignmentWarning(undefined) }}
-          children={(field) => (
+        <form.AppField name="role" listeners={{ onChange: () => setAssignmentWarning(undefined) }}>
+          {(field) => (
             <field.SelectField
               allOptions={Object.values(allowedRoles).map((role) => ({
                 value: role,
@@ -342,7 +337,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               label="Rola"
             />
           )}
-        />
+        </form.AppField>
       </div>
 
       <div className="mt-8 space-y-4">
@@ -354,9 +349,8 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
 
         {assignmentWarning?.action === 'role' && <AssignmentsWarning items={assignmentWarning.items} action="role" />}
 
-        <form.Subscribe
-          selector={(state) => [selectCanSubmit(state), state.isSubmitting]}
-          children={([canSubmit, isSubmitting]) => (
+        <form.Subscribe selector={(state) => [selectCanSubmit(state), state.isSubmitting]}>
+          {([canSubmit, isSubmitting]) => (
             <>
               <AppButton type="submit" className="w-full" disabled={isSubmitting}>
                 {assignmentWarning?.action === 'role' ? (
@@ -450,7 +444,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               )}
             </>
           )}
-        />
+        </form.Subscribe>
       </div>
     </form>
   );

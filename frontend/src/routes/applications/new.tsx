@@ -131,16 +131,15 @@ function NewCruiseApplicationPage() {
         onClose={() => setIsSaveDraftModalOpen(false)}
       >
         <div className="space-y-4">
-          <form.AppField
-            name="note"
-            children={(field) => (
+          <form.AppField name="note">
+            {(field) => (
               <field.TextField
                 label="Notatka aktualnej wersji roboczej"
                 placeholder="Wpisz notatkę dot. aktualnej wersji roboczej"
                 autoFocus
               />
             )}
-          />
+          </form.AppField>
 
           <div className="flex justify-center gap-4">
             <AppButton
