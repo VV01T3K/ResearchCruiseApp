@@ -11,3 +11,7 @@ pre-commit:
       glob: '**/*.cs'
       run: vp run -F backend staged {staged_files}
       stage_fixed: true
+    format-root:
+      glob: '*.{json,md,yml,yaml}'
+      run: vp fmt -c frontend/vite.tool.config.ts --no-error-on-unmatched-pattern {staged_files}
+      stage_fixed: true
