@@ -54,10 +54,12 @@ test.describe('signed in', () => {
   });
 
   for (const [replayRate, replayed] of [
+    ['', false],
+    ['garbage', false],
     ['0', false],
     ['1', true],
   ] as const) {
-    test(`replay sample rate ${replayRate} ${replayed ? 'sends' : 'never sends'} replays`, async ({ page }) => {
+    test(`replay sample rate '${replayRate}' ${replayed ? 'sends' : 'never sends'} replays`, async ({ page }) => {
       const sent = await captureEnvelopes(page, replayRate);
       await page.goto('/help');
       await page.getByRole('main').getByRole('button', { name: 'Zgłoś problem' }).click();
