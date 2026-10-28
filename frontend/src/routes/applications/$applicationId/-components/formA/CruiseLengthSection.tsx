@@ -11,6 +11,7 @@ import { getErrors } from '@/integrations/tanstack/form/errors';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applications/periodUtils';
+import { useNow } from '@/lib/dateUtils';
 import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
 
@@ -123,6 +124,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   });
 
   const [hasToggledPastDates, setHasToggledPastDates] = useState(false);
+  const nowMs = useNow((now) => now.setSeconds(0, 0));
 
   const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
 
@@ -227,7 +229,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     type="date"
                     showRequiredAsterisk
                     disabled={isReadonly}
-                    minimalDate={allowPastDates ? undefined : new Date()}
+                    minimalDate={allowPastDates ? undefined : new Date(nowMs)}
                   />
                 )}
               />
