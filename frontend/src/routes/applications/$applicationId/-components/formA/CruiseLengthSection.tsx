@@ -59,8 +59,7 @@ function getOverlappingBlockadesForRange(
     .sort((a, b) => a.start.getTime() - b.start.getTime());
 }
 
-function getCurrentFortnight(year: string): number {
-  const today = new Date();
+function getCurrentFortnight(year: string, today: Date): number {
   // If the year is in the future, return 0 (the first fortnight so it doesn't block the slider )
   if (today.getFullYear() < parseInt(year, 10)) {
     return 0;
@@ -98,14 +97,16 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   const precisePeriodStart = useSelector(form.store, (state) => state.values.precisePeriodStart);
   const precisePeriodEnd = useSelector(form.store, (state) => state.values.precisePeriodEnd);
 
+  const nowMs = useNow((now) => now.setSeconds(0, 0));
+
   // Initialize checkbox state based on whether saved start date is in the past
   const [allowPastDates, setAllowPastDates] = useState(() => {
-    const currentFortnight = getCurrentFortnight(year);
+    const currentFortnight = getCurrentFortnight(year, new Date(nowMs));
 
     // Check if precisePeriodStart is in the past
     if (precisePeriodStart) {
       const startDate = new Date(precisePeriodStart);
-      const today = new Date();
+      const today = new Date(nowMs);
       today.setHours(0, 0, 0, 0);
       if (startDate < today) {
         return true;
@@ -124,9 +125,8 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   });
 
   const [hasToggledPastDates, setHasToggledPastDates] = useState(false);
-  const nowMs = useNow((now) => now.setSeconds(0, 0));
 
-  const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year);
+  const minPeriodValue = allowPastDates ? 0 : getCurrentFortnight(year, new Date(nowMs));
 
   const overlappingPreciseBlockades = useMemo(
     () => getOverlappingBlockadesForRange(blockades, precisePeriodStart, precisePeriodEnd),
@@ -251,7 +251,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                             ? new Date(precisePeriodStart)
                             : allowPastDates
                               ? undefined
-                              : new Date()
+                              : new Date(nowMs)
                         }
                       />
                     )}
