@@ -42,6 +42,24 @@ public static class AuthorizationPolicies
                         RoleName.CruiseManager,
                         RoleName.ShipCrew
                     )
+                    .RequireAssertion(async context =>
+                        context.Resource is HttpContext httpContext
+                        && Guid.TryParse(
+                            context.User.FindFirstValue(ClaimTypes.NameIdentifier),
+                            out var userId
+                        )
+                        && await httpContext
+                            .RequestServices.GetRequiredService<IdentityService>()
+                            .IsActiveWithAnyRole(
+                                userId,
+                                [
+                                    RoleName.Administrator,
+                                    RoleName.Shipowner,
+                                    RoleName.CruiseManager,
+                                    RoleName.ShipCrew,
+                                ]
+                            )
+                    )
         );
 
         options.AddPolicy(

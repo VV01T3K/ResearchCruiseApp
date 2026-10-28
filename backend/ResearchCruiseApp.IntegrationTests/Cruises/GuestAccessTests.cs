@@ -40,6 +40,8 @@ public sealed class GuestAccessTests(SqlFixture fixture) : IAsyncLifetime
             db.Cruises.Add(cruise);
             await db.SaveChangesAsync(ct);
         });
+        // Token issued before the downgrade must not keep manager access.
+        using var formerManager = await TestApplications.Login(app, application.OwnerEmail);
         await using (var scope = app.Services.CreateAsyncScope())
         {
             var users = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
@@ -48,7 +50,6 @@ public sealed class GuestAccessTests(SqlFixture fixture) : IAsyncLifetime
             await users.AddToRoleAsync(owner!, RoleName.Guest);
         }
         using var client = await TestApplications.Login(app, guest.Email!);
-        using var formerManager = await TestApplications.Login(app, application.OwnerEmail);
 
         foreach (var reader in new[] { client, formerManager })
             await AssertGuestAccess(reader, cruise, application.Id, ct);
