@@ -124,8 +124,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
     return false;
   });
 
-  const [hasToggledPastDates, setHasToggledPastDates] = useState(false);
-
   const minPeriodValue = allowPastDates || isReadonly ? 0 : getCurrentFortnight(year, new Date(nowMs));
 
   const overlappingPreciseBlockades = useMemo(
@@ -270,7 +268,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     name={field.name}
                     value={field.state.value}
                     onChange={field.handleChange}
-                    onNormalize={(period) => field.setValue(period, { dontUpdateMeta: !hasToggledPastDates })}
+                    onNormalize={(period) => field.setValue(period, { dontUpdateMeta: true })}
                     onBlur={field.handleBlur}
                     errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                     label="Dopuszczalny okres, w którym miałby się odbywać rejs"
@@ -296,7 +294,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                         name={field.name}
                         value={field.state.value}
                         onChange={field.handleChange}
-                        onNormalize={(period) => field.setValue(period, { dontUpdateMeta: !hasToggledPastDates })}
+                        onNormalize={(period) => field.setValue(period, { dontUpdateMeta: true })}
                         onBlur={field.handleBlur}
                         errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                         maxValues={acceptablePeriod}
@@ -338,10 +336,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
               <AppCheckbox
                 name="allowPastDates"
                 checked={allowPastDates}
-                onChange={(checked) => {
-                  setAllowPastDates(checked);
-                  setHasToggledPastDates(true);
-                }}
+                onChange={setAllowPastDates}
                 label="Zezwól na wybór dat z przeszłości"
               />
             </div>
