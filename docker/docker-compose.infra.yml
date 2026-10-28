@@ -6,8 +6,8 @@ services:
     container_name: researchcruiseapp-db
     restart: unless-stopped
     environment:
-      SA_PASSWORD: "p@ssw0rd"
-      ACCEPT_EULA: "Y"
+      SA_PASSWORD: 'p@ssw0rd'
+      ACCEPT_EULA: 'Y'
     ports:
       - 1433:1433
     volumes:
