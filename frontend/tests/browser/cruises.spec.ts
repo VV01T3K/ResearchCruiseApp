@@ -418,6 +418,35 @@ test('a rejected status undo shows the server reason and keeps the cruise status
   await expect(page.getByText('Zakończony', { exact: true })).toBeVisible();
 });
 
+test('a stale status undo refetches the cruise so the retry sends the current revision', async ({
+  page,
+  network,
+  requests,
+}) => {
+  let server: CruiseResponse = { ...cruise(), status: 'ended' };
+  network.use(
+    getGetCruiseMockHandler(() => server),
+    getRemoveCruiseConfirmationMockHandler(() => {
+      server = { ...server, revision: 'AAAAAAAAB+A=' };
+      return fail(409, { detail: 'Dane zostały w międzyczasie zmienione.' })();
+    })
+  );
+  await page.goto(`/cruises/${server.id}`);
+  const stale = server.revision;
+  const dialog = page.getByRole('dialog', { name: `Czy na pewno chcesz cofnąć status rejsu nr. ${server.number}?` });
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    await page.getByRole('button', { name: 'Cofnij status', exact: true }).click();
+    await dialog.getByRole('button', { name: `Cofnij status rejsu nr. ${server.number}` }).click();
+    await expect(dialog).toBeHidden();
+  }
+
+  expect(requests.queries(`DELETE /v2/cruises/${server.id}/confirmation`)).toEqual([
+    { revision: stale },
+    { revision: 'AAAAAAAAB+A=' },
+  ]);
+});
+
 test('auto-planning lists the skipped applications', async ({ page, network, requests }) => {
   const planned = { ...cruise(), id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', number: '2026/2', title: 'Zaplanowany' };
   const skipped = {
