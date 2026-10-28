@@ -63,33 +63,26 @@ function LoginPage() {
     <AppLayout title="Logowanie" variant="narrow" disableBackButton data-testid="login-page-title">
       <form noValidate onSubmit={handleSubmit} className="px-4">
         <div className="space-y-4">
-          <form.AppField
-            name="email"
-            children={(field) => (
-              <field.FloatingTextField type="email" label="E-mail" data-testid="login-email-input" />
-            )}
-          />
+          <form.AppField name="email">
+            {(field) => <field.FloatingTextField type="email" label="E-mail" data-testid="login-email-input" />}
+          </form.AppField>
 
-          <form.AppField
-            name="password"
-            children={(field) => (
-              <field.FloatingTextField type="password" label="Hasło" data-testid="login-password-input" />
-            )}
-          />
+          <form.AppField name="password">
+            {(field) => <field.FloatingTextField type="password" label="Hasło" data-testid="login-password-input" />}
+          </form.AppField>
 
           <div className="!mt-8 flex flex-wrap items-center justify-end">
             <AppLink href="/forgot-password">Zapomniałeś hasła?</AppLink>
           </div>
 
           <div className="mt-8">
-            <form.Subscribe
-              selector={(state) => state.isSubmitting}
-              children={(isSubmitting) => (
+            <form.Subscribe selector={(state) => state.isSubmitting}>
+              {(isSubmitting) => (
                 <AppButton type="submit" className="w-full" disabled={isSubmitting} data-testid="login-submit-btn">
                   Zaloguj
                 </AppButton>
               )}
-            />
+            </form.Subscribe>
 
             {signInError && <p className="mt-2 text-center text-sm font-semibold text-danger">{signInError}</p>}
           </div>

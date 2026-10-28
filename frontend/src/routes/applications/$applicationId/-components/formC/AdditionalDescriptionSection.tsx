@@ -17,9 +17,8 @@ export function AdditionalDescriptionSection({ context }: { context: FormCViewMo
         Do ewentualnego wykorzystania do celów promocyjnych, na stronie internetowej, FB itp.; można załączyć zdjęcia w
         osobnych plikach
       </header>
-      <form.AppField
-        name="additionalDescription"
-        children={(field) => (
+      <form.AppField name="additionalDescription">
+        {(field) => (
           <field.TextField
             type="textarea"
             className="h-48"
@@ -30,10 +29,9 @@ export function AdditionalDescriptionSection({ context }: { context: FormCViewMo
             data-testid-errors="form-c-description-errors"
           />
         )}
-      />
-      <form.AppField
-        name="photos"
-        children={(field) => (
+      </form.AppField>
+      <form.AppField name="photos">
+        {(field) => (
           <field.FilesField
             label="Załączniki"
             disabled={isReadonly}
@@ -44,7 +42,7 @@ export function AdditionalDescriptionSection({ context }: { context: FormCViewMo
             data-testid-errors="form-c-attachment-input-errors"
           />
         )}
-      />
+      </form.AppField>
     </AppAccordion>
   );
 }

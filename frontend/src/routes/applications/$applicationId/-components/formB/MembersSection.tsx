@@ -41,9 +41,8 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         enableSorting: false,
         accessorFn: (row) => row.noOfEmployees,
         cell: ({ row }) => (
-          <form.AppField
-            name={`ugTeams[${row.index}].noOfEmployees`}
-            children={(field) => (
+          <form.AppField name={`ugTeams[${row.index}].noOfEmployees`}>
+            {(field) => (
               <field.NumberField
                 data-testid="ug-team-employees"
                 minimum={0}
@@ -54,7 +53,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
       },
@@ -64,9 +63,8 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         enableSorting: false,
         accessorFn: (row) => row.noOfStudents,
         cell: ({ row }) => (
-          <form.AppField
-            name={`ugTeams[${row.index}].noOfStudents`}
-            children={(field) => (
+          <form.AppField name={`ugTeams[${row.index}].noOfStudents`}>
+            {(field) => (
               <field.NumberField
                 data-testid="ug-team-students"
                 minimum={0}
@@ -77,7 +75,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
       },
@@ -113,9 +111,8 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         enableSorting: false,
         accessorFn: (row) => row.name,
         cell: ({ row }) => (
-          <form.AppField
-            name={`guestTeams[${row.index}].name`}
-            children={(field) => (
+          <form.AppField name={`guestTeams[${row.index}].name`}>
+            {(field) => (
               <field.TextField
                 data-testid="guest-team-name-input"
                 data-testid-errors="guest-team-name-errors"
@@ -123,7 +120,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 60,
       },
@@ -133,9 +130,8 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         enableSorting: false,
         accessorFn: (row) => row.noOfPersons,
         cell: ({ row }) => (
-          <form.AppField
-            name={`guestTeams[${row.index}].noOfPersons`}
-            children={(field) => (
+          <form.AppField name={`guestTeams[${row.index}].noOfPersons`}>
+            {(field) => (
               <field.NumberField
                 data-testid-input="guest-team-people-input"
                 data-testid-errors="guest-team-people-errors"
@@ -147,7 +143,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 25,
       },
@@ -184,9 +180,8 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         accessorFn: (row) => `${row.title} ${row.firstName} ${row.lastName}`,
         cell: ({ row }) => (
           <div className="grid grid-cols-5 gap-2">
-            <form.AppField
-              name={`crewMembers[${row.index}].title`}
-              children={(field) => (
+            <form.AppField name={`crewMembers[${row.index}].title`}>
+              {(field) => (
                 <field.TextField
                   data-testid="crew-member-title-input"
                   data-testid-errors="crew-member-title-errors"
@@ -194,11 +189,10 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                   disabled={isReadonly}
                 />
               )}
-            />
+            </form.AppField>
 
-            <form.AppField
-              name={`crewMembers[${row.index}].firstName`}
-              children={(field) => (
+            <form.AppField name={`crewMembers[${row.index}].firstName`}>
+              {(field) => (
                 <field.TextField
                   data-testid="crew-member-names-input"
                   data-testid-errors="crew-member-names-errors"
@@ -207,11 +201,10 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                   disabled={isReadonly}
                 />
               )}
-            />
+            </form.AppField>
 
-            <form.AppField
-              name={`crewMembers[${row.index}].lastName`}
-              children={(field) => (
+            <form.AppField name={`crewMembers[${row.index}].lastName`}>
+              {(field) => (
                 <field.TextField
                   data-testid="crew-member-surname-input"
                   data-testid-errors="crew-member-surname-errors"
@@ -220,7 +213,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                   disabled={isReadonly}
                 />
               )}
-            />
+            </form.AppField>
           </div>
         ),
         size: 35,
@@ -231,9 +224,8 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         enableSorting: false,
         cell: ({ row }) => (
           <div className="grid grid-cols-2 gap-2">
-            <form.AppField
-              name={`crewMembers[${row.index}].birthPlace`}
-              children={(field) => (
+            <form.AppField name={`crewMembers[${row.index}].birthPlace`}>
+              {(field) => (
                 <field.TextField
                   data-testid="crew-member-birthplace-input"
                   data-testid-errors="crew-member-birthplace-errors"
@@ -241,11 +233,10 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                   disabled={isReadonly}
                 />
               )}
-            />
+            </form.AppField>
 
-            <form.AppField
-              name={`crewMembers[${row.index}].birthDate`}
-              children={(field) => (
+            <form.AppField name={`crewMembers[${row.index}].birthDate`}>
+              {(field) => (
                 <field.DateField
                   data-testid-button="crew-member-birthdate-button"
                   data-testid-errors="crew-member-birthdate-errors"
@@ -254,11 +245,10 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                   disabled={isReadonly}
                 />
               )}
-            />
+            </form.AppField>
 
-            <form.AppField
-              name={`crewMembers[${row.index}].documentNumber`}
-              children={(field) => (
+            <form.AppField name={`crewMembers[${row.index}].documentNumber`}>
+              {(field) => (
                 <field.TextField
                   data-testid="crew-member-document-id-input"
                   data-testid-errors="crew-member-document-id-errors"
@@ -266,11 +256,10 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                   disabled={isReadonly}
                 />
               )}
-            />
+            </form.AppField>
 
-            <form.AppField
-              name={`crewMembers[${row.index}].documentExpiryDate`}
-              children={(field) => (
+            <form.AppField name={`crewMembers[${row.index}].documentExpiryDate`}>
+              {(field) => (
                 <field.DateField
                   data-testid-button="crew-member-document-expiry-button"
                   data-testid-errors="crew-member-document-expiry-errors"
@@ -279,7 +268,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                   disabled={isReadonly}
                 />
               )}
-            />
+            </form.AppField>
           </div>
         ),
         size: 35,
@@ -290,9 +279,8 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         enableSorting: false,
         accessorFn: (row) => row.institution,
         cell: ({ row }) => (
-          <form.AppField
-            name={`crewMembers[${row.index}].institution`}
-            children={(field) => (
+          <form.AppField name={`crewMembers[${row.index}].institution`}>
+            {(field) => (
               <field.TextField
                 data-testid="crew-member-institution-input"
                 data-testid-errors="crew-member-institution-errors"
@@ -300,7 +288,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
       },
@@ -324,10 +312,8 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
     >
       <AppAlert>Rejs do 12 godzin w porze dziennej - 33 osoby, powyżej 12 godzin - 16 osób</AppAlert>
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
-        <form.AppField
-          name="ugTeams"
-          mode="array"
-          children={(field) => (
+        <form.AppField name="ugTeams" mode="array">
+          {(field) => (
             <div>
               <AppTable
                 columns={getUgTeamsColumns((index) => {
@@ -368,11 +354,9 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
               />
             </div>
           )}
-        />
-        <form.AppField
-          name="guestTeams"
-          mode="array"
-          children={(field) => (
+        </form.AppField>
+        <form.AppField name="guestTeams" mode="array">
+          {(field) => (
             <div>
               <AppTable
                 columns={getGuestTeams((index) => {
@@ -421,12 +405,10 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
               />
             </div>
           )}
-        />
+        </form.AppField>
       </div>
-      <form.AppField
-        name="crewMembers"
-        mode="array"
-        children={(field) => (
+      <form.AppField name="crewMembers" mode="array">
+        {(field) => (
           <>
             <AppTable
               columns={getCrewMembersColumns((index) => {
@@ -467,7 +449,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
             />
           </>
         )}
-      />
+      </form.AppField>
     </AppAccordion>
   );
 }

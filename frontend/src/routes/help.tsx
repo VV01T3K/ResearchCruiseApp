@@ -82,12 +82,11 @@ function HelpPage() {
             </div>
           )}
           <form className="flex flex-col space-y-4 p-4" onSubmit={handleSubmit}>
-            <form.AppField name="title" children={(field) => <field.TextField type="text" label="Tytuł" />} />
+            <form.AppField name="title">{(field) => <field.TextField type="text" label="Tytuł" />}</form.AppField>
 
-            <form.AppField
-              name="content"
-              children={(field) => <field.TextField label="Wiadomość" className="h-48" type="textarea" />}
-            />
+            <form.AppField name="content">
+              {(field) => <field.TextField label="Wiadomość" className="h-48" type="textarea" />}
+            </form.AppField>
 
             <div className="mt-8">
               <AppButton type="submit" className="w-full">

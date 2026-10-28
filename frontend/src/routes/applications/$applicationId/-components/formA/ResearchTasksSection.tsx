@@ -35,11 +35,9 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
         header: 'Zadanie',
         accessorFn: (row) => getTaskName(row.type),
         cell: ({ row }) => (
-          <form.AppField
-            key={row.index}
-            name={`researchTasks[${row.index}].type`}
-            children={(field) => getTaskName(field.state.value) ?? 'Nieznany typ'}
-          />
+          <form.AppField key={row.index} name={`researchTasks[${row.index}].type`}>
+            {(field) => getTaskName(field.state.value) ?? 'Nieznany typ'}
+          </form.AppField>
         ),
         size: 20,
       },
@@ -71,10 +69,8 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
       data-testid="form-a-research-tasks-section"
     >
       <div>
-        <form.AppField
-          name="researchTasks"
-          mode="array"
-          children={(field) => (
+        <form.AppField name="researchTasks" mode="array">
+          {(field) => (
             <>
               <AppTable
                 columns={getColumns((index) => {
@@ -140,7 +136,7 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
               />
             </>
           )}
-        />
+        </form.AppField>
       </div>
     </AppAccordion>
   );

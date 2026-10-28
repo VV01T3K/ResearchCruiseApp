@@ -78,31 +78,26 @@ export function ChangePasswordForm() {
     <form className="grid grid-cols-2" onSubmit={handleSubmit}>
       <h2 className="text-xl font-semibold">Zmiana Hasła</h2>
       <div className="space-y-4">
-        <form.AppField
-          name="password"
-          children={(field) => <field.TextField type="password" label="Aktualne hasło" />}
-        />
+        <form.AppField name="password">
+          {(field) => <field.TextField type="password" label="Aktualne hasło" />}
+        </form.AppField>
 
-        <form.AppField
-          name="newPassword"
-          children={(field) => <field.TextField type="password" label="Nowe hasło" />}
-        />
+        <form.AppField name="newPassword">
+          {(field) => <field.TextField type="password" label="Nowe hasło" />}
+        </form.AppField>
 
-        <form.AppField
-          name="repeatedNewPassword"
-          children={(field) => <field.TextField type="password" label="Powtórz nowe hasło" />}
-        />
+        <form.AppField name="repeatedNewPassword">
+          {(field) => <field.TextField type="password" label="Powtórz nowe hasło" />}
+        </form.AppField>
 
         <div className="mt-8">
-          <form.Subscribe
-            selector={(state) => state.isSubmitting}
-            key={result}
-            children={(isSubmitting) => (
+          <form.Subscribe selector={(state) => state.isSubmitting} key={result}>
+            {(isSubmitting) => (
               <AppButton type="submit" className="w-full" disabled={isSubmitting}>
                 Zmień hasło
               </AppButton>
             )}
-          />
+          </form.Subscribe>
         </div>
 
         {result === 'success' && (

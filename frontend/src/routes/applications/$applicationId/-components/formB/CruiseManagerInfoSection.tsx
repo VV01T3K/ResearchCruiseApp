@@ -37,12 +37,11 @@ export function CruiseManagerInfoSection({ context }: { context: FormBViewModel 
           />
         </div>
         <div className="grid place-items-center">
-          <form.AppField
-            name="isCruiseManagerPresent"
-            children={(field) => (
+          <form.AppField name="isCruiseManagerPresent">
+            {(field) => (
               <field.CheckboxField size="md" label="Czy kierownik jest obecny na rejsie?" disabled={isReadonly} />
             )}
-          />
+          </form.AppField>
         </div>
       </div>
     </AppAccordion>

@@ -11,9 +11,8 @@ export function CruiseManagerInfoSection({ context }: { context: FormAViewModel 
   return (
     <AppAccordion title="1. Kierownik zgłaszanego rejsu" expandedByDefault data-testid="form-a-cruise-manager-section">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <form.AppField
-          name="cruiseManagerId"
-          children={(field) => (
+        <form.AppField name="cruiseManagerId">
+          {(field) => (
             <field.SelectField
               label="Kierownik rejsu"
               showRequiredAsterisk
@@ -23,11 +22,10 @@ export function CruiseManagerInfoSection({ context }: { context: FormAViewModel 
               data-testid-button="form-a-cruise-manager-button"
             />
           )}
-        />
+        </form.AppField>
 
-        <form.AppField
-          name="deputyManagerId"
-          children={(field) => (
+        <form.AppField name="deputyManagerId">
+          {(field) => (
             <field.SelectField
               label="Zastępca kierownika rejsu"
               showRequiredAsterisk
@@ -38,11 +36,10 @@ export function CruiseManagerInfoSection({ context }: { context: FormAViewModel 
               data-testid-errors="form-a-deputy-manager-errors"
             />
           )}
-        />
+        </form.AppField>
 
-        <form.AppField
-          name="year"
-          children={(field) => (
+        <form.AppField name="year">
+          {(field) => (
             <field.SelectField
               label="Rok"
               showRequiredAsterisk
@@ -55,7 +52,7 @@ export function CruiseManagerInfoSection({ context }: { context: FormAViewModel 
               data-testid-button="form-a-year-button"
             />
           )}
-        />
+        </form.AppField>
       </div>
     </AppAccordion>
   );

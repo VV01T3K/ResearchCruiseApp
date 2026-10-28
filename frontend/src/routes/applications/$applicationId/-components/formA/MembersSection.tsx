@@ -36,9 +36,8 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
         header: 'Liczba pracowników',
         accessorFn: (row) => row.noOfEmployees,
         cell: ({ row }) => (
-          <form.AppField
-            name={`ugTeams[${row.index}].noOfEmployees`}
-            children={(field) => (
+          <form.AppField name={`ugTeams[${row.index}].noOfEmployees`}>
+            {(field) => (
               <field.NumberField
                 minimum={0}
                 onChange={(x: number) => {
@@ -49,7 +48,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
         enableColumnFilter: false,
@@ -59,9 +58,8 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
         header: 'Liczba studentów',
         accessorFn: (row) => row.noOfStudents,
         cell: ({ row }) => (
-          <form.AppField
-            name={`ugTeams[${row.index}].noOfStudents`}
-            children={(field) => (
+          <form.AppField name={`ugTeams[${row.index}].noOfStudents`}>
+            {(field) => (
               <field.NumberField
                 minimum={0}
                 onChange={(x: number) => {
@@ -72,7 +70,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
         enableColumnFilter: false,
@@ -106,12 +104,9 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
         header: 'Instytucja',
         accessorFn: (row) => row.name,
         cell: ({ row }) => (
-          <form.AppField
-            name={`guestTeams[${row.index}].name`}
-            children={(field) => (
-              <field.TextField containerClassName="mx-4" showRequiredAsterisk disabled={isReadonly} />
-            )}
-          />
+          <form.AppField name={`guestTeams[${row.index}].name`}>
+            {(field) => <field.TextField containerClassName="mx-4" showRequiredAsterisk disabled={isReadonly} />}
+          </form.AppField>
         ),
         size: 70,
         enableColumnFilter: false,
@@ -121,9 +116,8 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
         header: 'Liczba osób',
         accessorFn: (row) => row.noOfPersons,
         cell: ({ row }) => (
-          <form.AppField
-            name={`guestTeams[${row.index}].noOfPersons`}
-            children={(field) => (
+          <form.AppField name={`guestTeams[${row.index}].noOfPersons`}>
+            {(field) => (
               <field.NumberField
                 minimum={0}
                 onChange={(x: number) => {
@@ -134,7 +128,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 disabled={isReadonly}
               />
             )}
-          />
+          </form.AppField>
         ),
         size: 20,
         enableColumnFilter: false,
@@ -164,10 +158,8 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
       data-testid="form-a-members-section"
     >
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
-        <form.AppField
-          name="ugTeams"
-          mode="array"
-          children={(field) => (
+        <form.AppField name="ugTeams" mode="array">
+          {(field) => (
             <div className="mt-auto">
               <AppTable
                 className="mt-0"
@@ -211,11 +203,9 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
               />
             </div>
           )}
-        />
-        <form.AppField
-          name="guestTeams"
-          mode="array"
-          children={(field) => (
+        </form.AppField>
+        <form.AppField name="guestTeams" mode="array">
+          {(field) => (
             <div>
               <AppTable
                 className="mt-0"
@@ -266,7 +256,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
               />
             </div>
           )}
-        />
+        </form.AppField>
       </div>
     </AppAccordion>
   );
