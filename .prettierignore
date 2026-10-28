@@ -1,7 +1,0 @@
-frontend
-bun.lock
-skills-lock.json
-.devcontainer/devcontainer-lock.json
-**/packages.lock.json
-backend/ResearchCruiseApp/openapi
-backend/ResearchCruiseApp/wwwroot

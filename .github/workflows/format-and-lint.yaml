@@ -60,7 +60,7 @@ jobs:
 
       - name: Check root formatting
         working-directory: .
-        run: vp fmt --check -c frontend/vite.tool.config.ts
+        run: vp run fmt --check
 
       - name: Run unit tests
         if: steps.changes.outputs.skip != 'true'
