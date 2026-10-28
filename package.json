@@ -11,7 +11,7 @@
     "build": "vp run --cache -r build",
     "check": "vp run fmt --check && vp run --cache -r check",
     "audit": "bun audit --audit-level=high && vp run -F backend audit",
-    "fmt": "vp fmt -c frontend/vite.tool.config.ts '!frontend' '!bun.lock' '!skills-lock.json' '!.devcontainer/devcontainer-lock.json' '!**/packages.lock.json' '!backend/ResearchCruiseApp/openapi' '!backend/ResearchCruiseApp/wwwroot'",
+    "fmt": "vp fmt -c .oxfmtrc.json",
     "fix": "vp run fmt && vp run --cache -r fix",
     "gen": "vp run -F frontend gen",
     "seed": "vp run -F backend seed",
