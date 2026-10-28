@@ -5,7 +5,7 @@ import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { FloppyDiskIcon } from '@phosphor-icons/react';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { AppButton } from '@/components/shared/AppButton';
 import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
@@ -81,11 +81,6 @@ function FormAPage() {
     },
   });
   const leaveAfterSave = useLeaveAfterSave(form);
-  const wasEditing = useRef(editMode);
-  useEffect(() => {
-    if (wasEditing.current && !editMode) form.reset();
-    wasEditing.current = editMode;
-  }, [editMode, form]);
 
   const context = {
     form,
