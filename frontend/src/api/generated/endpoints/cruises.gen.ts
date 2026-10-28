@@ -27,6 +27,8 @@ import type {
 import type {
   AutoPlanResponse,
   BlockadeResponse,
+  CompleteCruiseParams,
+  ConfirmCruiseParams,
   CreateRequest,
   CruiseResponse,
   DeleteCruiseParams,
@@ -34,6 +36,7 @@ import type {
   ExportResponse,
   GetCruiseBlockadesParams,
   ProblemDetails,
+  RemoveCruiseConfirmationParams,
   RevisionResponse,
   UpdateRequest
 } from '../schemas';
@@ -513,20 +516,29 @@ export const useDeleteCruise = <TError = ErrorType<ProblemDetails>,
       const backupQueryClient = useQueryClient();
       return useMutation(getDeleteCruiseMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
     }
-    export const getConfirmCruiseUrl = (cruiseId: string,) => {
+    export const getConfirmCruiseUrl = (cruiseId: string,
+    params?: ConfirmCruiseParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/v2/cruises/${cruiseId}/confirmation`
+  return stringifiedParams.length > 0 ? `/v2/cruises/${cruiseId}/confirmation?${stringifiedParams}` : `/v2/cruises/${cruiseId}/confirmation`
 }
 
 /**
  * @summary Confirm a cruise.
  */
-export const confirmCruise = async (cruiseId: string, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+export const confirmCruise = async (cruiseId: string,
+    params?: ConfirmCruiseParams, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
-  return customFetch<void>(getConfirmCruiseUrl(cruiseId),
+  return customFetch<void>(getConfirmCruiseUrl(cruiseId,params),
   {
     ...options,
     method: 'PUT'
@@ -556,9 +568,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof confirmCruise>>, ConfirmCruiseMutationVariables> = (props) => {
-          const {cruiseId} = props ?? {};
+          const {cruiseId,params} = props ?? {};
 
-          return  confirmCruise(cruiseId,requestOptions)
+          return  confirmCruise(cruiseId,params,requestOptions)
         }
 
   const onSuccess = (data: Awaited<ReturnType<typeof confirmCruise>>, variables: ConfirmCruiseMutationVariables, onMutateResult: TContext, context: MutationFunctionContext) => {
@@ -576,7 +588,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ConfirmCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof confirmCruise>>>
 
     export type ConfirmCruiseMutationError = ErrorType<ProblemDetails>
-    export type ConfirmCruiseMutationVariables = {cruiseId: string}
+    export type ConfirmCruiseMutationVariables = {cruiseId: string;params?: ConfirmCruiseParams}
 
     /**
  * @summary Confirm a cruise.
@@ -592,20 +604,29 @@ export const useConfirmCruise = <TError = ErrorType<ProblemDetails>,
       const backupQueryClient = useQueryClient();
       return useMutation(getConfirmCruiseMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
     }
-    export const getRemoveCruiseConfirmationUrl = (cruiseId: string,) => {
+    export const getRemoveCruiseConfirmationUrl = (cruiseId: string,
+    params?: RemoveCruiseConfirmationParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/v2/cruises/${cruiseId}/confirmation`
+  return stringifiedParams.length > 0 ? `/v2/cruises/${cruiseId}/confirmation?${stringifiedParams}` : `/v2/cruises/${cruiseId}/confirmation`
 }
 
 /**
  * @summary Revert the latest cruise lifecycle state.
  */
-export const removeCruiseConfirmation = async (cruiseId: string, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+export const removeCruiseConfirmation = async (cruiseId: string,
+    params?: RemoveCruiseConfirmationParams, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
-  return customFetch<void>(getRemoveCruiseConfirmationUrl(cruiseId),
+  return customFetch<void>(getRemoveCruiseConfirmationUrl(cruiseId,params),
   {
     ...options,
     method: 'DELETE'
@@ -635,9 +656,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeCruiseConfirmation>>, RemoveCruiseConfirmationMutationVariables> = (props) => {
-          const {cruiseId} = props ?? {};
+          const {cruiseId,params} = props ?? {};
 
-          return  removeCruiseConfirmation(cruiseId,requestOptions)
+          return  removeCruiseConfirmation(cruiseId,params,requestOptions)
         }
 
   const onSuccess = (data: Awaited<ReturnType<typeof removeCruiseConfirmation>>, variables: RemoveCruiseConfirmationMutationVariables, onMutateResult: TContext, context: MutationFunctionContext) => {
@@ -655,7 +676,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type RemoveCruiseConfirmationMutationResult = NonNullable<Awaited<ReturnType<typeof removeCruiseConfirmation>>>
 
     export type RemoveCruiseConfirmationMutationError = ErrorType<ProblemDetails>
-    export type RemoveCruiseConfirmationMutationVariables = {cruiseId: string}
+    export type RemoveCruiseConfirmationMutationVariables = {cruiseId: string;params?: RemoveCruiseConfirmationParams}
 
     /**
  * @summary Revert the latest cruise lifecycle state.
@@ -671,20 +692,29 @@ export const useRemoveCruiseConfirmation = <TError = ErrorType<ProblemDetails>,
       const backupQueryClient = useQueryClient();
       return useMutation(getRemoveCruiseConfirmationMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
     }
-    export const getCompleteCruiseUrl = (cruiseId: string,) => {
+    export const getCompleteCruiseUrl = (cruiseId: string,
+    params?: CompleteCruiseParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/v2/cruises/${cruiseId}/completion`
+  return stringifiedParams.length > 0 ? `/v2/cruises/${cruiseId}/completion?${stringifiedParams}` : `/v2/cruises/${cruiseId}/completion`
 }
 
 /**
  * @summary Mark a cruise as completed.
  */
-export const completeCruise = async (cruiseId: string, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+export const completeCruise = async (cruiseId: string,
+    params?: CompleteCruiseParams, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
 
-  return customFetch<void>(getCompleteCruiseUrl(cruiseId),
+  return customFetch<void>(getCompleteCruiseUrl(cruiseId,params),
   {
     ...options,
     method: 'PUT'
@@ -714,9 +744,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof completeCruise>>, CompleteCruiseMutationVariables> = (props) => {
-          const {cruiseId} = props ?? {};
+          const {cruiseId,params} = props ?? {};
 
-          return  completeCruise(cruiseId,requestOptions)
+          return  completeCruise(cruiseId,params,requestOptions)
         }
 
   const onSuccess = (data: Awaited<ReturnType<typeof completeCruise>>, variables: CompleteCruiseMutationVariables, onMutateResult: TContext, context: MutationFunctionContext) => {
@@ -734,7 +764,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type CompleteCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof completeCruise>>>
 
     export type CompleteCruiseMutationError = ErrorType<ProblemDetails>
-    export type CompleteCruiseMutationVariables = {cruiseId: string}
+    export type CompleteCruiseMutationVariables = {cruiseId: string;params?: CompleteCruiseParams}
 
     /**
  * @summary Mark a cruise as completed.

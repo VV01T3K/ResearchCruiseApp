@@ -58,6 +58,7 @@ public static class LifecycleEndpoints
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Confirm(
         Guid cruiseId,
+        string? revision,
         ApplicationDbContext dbContext,
         EmailSender emailSender,
         IdentityService identityService,
@@ -75,6 +76,11 @@ public static class LifecycleEndpoints
         if (cruise is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
+        }
+
+        if (!cruise.RowVersion.Matches(revision))
+        {
+            return Revisions.StaleRevision();
         }
 
         if (cruise.Status != CruiseStatus.New)
@@ -102,6 +108,7 @@ public static class LifecycleEndpoints
 
     private static async Task<Results<NoContent, ProblemHttpResult>> RemoveConfirmation(
         Guid cruiseId,
+        string? revision,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
@@ -112,6 +119,11 @@ public static class LifecycleEndpoints
         if (cruise is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
+        }
+
+        if (!cruise.RowVersion.Matches(revision))
+        {
+            return Revisions.StaleRevision();
         }
 
         var result = CruiseLifecycleRules.Revert(cruise);
@@ -135,6 +147,7 @@ public static class LifecycleEndpoints
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Complete(
         Guid cruiseId,
+        string? revision,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
@@ -145,6 +158,11 @@ public static class LifecycleEndpoints
         if (cruise is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
+        }
+
+        if (!cruise.RowVersion.Matches(revision))
+        {
+            return Revisions.StaleRevision();
         }
 
         var result = CruiseLifecycleRules.Complete(cruise);

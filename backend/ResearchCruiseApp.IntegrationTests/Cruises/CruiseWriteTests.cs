@@ -150,7 +150,7 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
-    public async Task UpdateCruise_WhenRevisionIsStaleOrMissing_RejectsUpdateAndDeleteWithoutChanges()
+    public async Task MutateCruise_WhenRevisionIsStaleOrMissing_RejectsWritesWithoutChanges()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -188,11 +188,15 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
                 ct
             );
             Assert.Equal(HttpStatusCode.Conflict, updated.StatusCode);
-            using var deleted = await second.DeleteAsync(
-                revision is null ? route : $"{route}?revision={Uri.EscapeDataString(revision)}",
-                ct
-            );
+            var query = revision is null ? "" : $"?revision={Uri.EscapeDataString(revision)}";
+            using var deleted = await second.DeleteAsync(route + query, ct);
             Assert.Equal(HttpStatusCode.Conflict, deleted.StatusCode);
+            using var confirmed = await second.PutAsync($"{route}/confirmation{query}", null, ct);
+            Assert.Equal(HttpStatusCode.Conflict, confirmed.StatusCode);
+            using var completed = await second.PutAsync($"{route}/completion{query}", null, ct);
+            Assert.Equal(HttpStatusCode.Conflict, completed.StatusCode);
+            using var reverted = await second.DeleteAsync($"{route}/confirmation{query}", ct);
+            Assert.Equal(HttpStatusCode.Conflict, reverted.StatusCode);
             Assert.Equal(snapshot, await FormRequests.Snapshot(app));
         }
 

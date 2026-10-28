@@ -12,9 +12,11 @@ import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 
 export function ApplicationsSection({
+  cruiseId,
   cruiseApplications,
   isReadonly,
 }: {
+  cruiseId?: string;
   cruiseApplications: CruiseApplicationCandidateResponse[];
   isReadonly: boolean;
 }) {
@@ -28,7 +30,25 @@ export function ApplicationsSection({
         mode="array"
         children={(field) => {
           const getColumns = (attached: boolean): ColumnDef<CruiseApplicationCandidateResponse>[] => [
-            { header: 'Numer', accessorFn: (row) => row.number, enableColumnFilter: !attached, size: 5 },
+            {
+              header: 'Numer',
+              accessorFn: (row) => row.number,
+              cell: ({ row }) => (
+                <>
+                  {row.original.number}
+                  {row.original.cruiseId && row.original.cruiseId !== cruiseId && (
+                    <div className="text-xs whitespace-nowrap text-gray-500">
+                      obecnie w rejsie{' '}
+                      <AppLink href={`/cruises/${row.original.cruiseId}`} target="_blank">
+                        {row.original.cruiseNumber}
+                      </AppLink>
+                    </div>
+                  )}
+                </>
+              ),
+              enableColumnFilter: !attached,
+              size: 5,
+            },
             { header: 'Rok rejsu', accessorFn: (row) => row.year, enableColumnFilter: !attached, size: 20 },
             {
               id: 'cruiseManagerAvatar',

@@ -50,7 +50,16 @@ function CruiseDetailsPage() {
   const cruiseQuery = useGetCruiseSuspense(cruiseId);
   const applicationQuery = useGetApplicationsForCruisePlanningSuspense({ cruiseId });
   const updateCruiseMutation = useUpdateCruise({ mutation: { meta: { handlesError: true } } });
-  const confirmCruiseMutation = useConfirmCruise();
+  const refetchOnConflict = {
+    mutation: {
+      // Awaited so the action stays pending until the current version is on screen.
+      onError: async (error: unknown) => {
+        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
+        if (error instanceof ApiError && error.status === 409) await cruiseQuery.refetch();
+      },
+    },
+  };
+  const confirmCruiseMutation = useConfirmCruise(refetchOnConflict);
   const deleteCruiseMutation = useDeleteCruise({
     skipInvalidation: true,
     mutation: {
@@ -60,8 +69,8 @@ function CruiseDetailsPage() {
       },
     },
   });
-  const endCruiseMutation = useCompleteCruise();
-  const revertCruiseStatusMutation = useRemoveCruiseConfirmation();
+  const endCruiseMutation = useCompleteCruise(refetchOnConflict);
+  const revertCruiseStatusMutation = useRemoveCruiseConfirmation(refetchOnConflict);
 
   const navigate = useNavigate();
 
@@ -266,10 +275,12 @@ function CruiseDetailsPage() {
           <AppButton
             variant="primary"
             className="basis-2/3"
-            onClick={async () => {
-              await confirmCruiseMutation.mutateAsync({ cruiseId });
-              setIsConfirmAcceptanceModalOpen(false);
-            }}
+            onClick={() =>
+              confirmCruiseMutation.mutate(
+                { cruiseId, params: { revision: cruiseQuery.data.revision } },
+                { onSettled: () => setIsConfirmAcceptanceModalOpen(false) }
+              )
+            }
             disabled={confirmCruiseMutation.isPending}
           >
             Potwierdź rejs nr. {cruiseQuery.data?.number}
@@ -328,10 +339,12 @@ function CruiseDetailsPage() {
           <AppButton
             variant="primary"
             className="basis-2/3"
-            onClick={async () => {
-              await endCruiseMutation.mutateAsync({ cruiseId });
-              setIsConfirmEndModalOpen(false);
-            }}
+            onClick={() =>
+              endCruiseMutation.mutate(
+                { cruiseId, params: { revision: cruiseQuery.data.revision } },
+                { onSettled: () => setIsConfirmEndModalOpen(false) }
+              )
+            }
             disabled={endCruiseMutation.isPending}
           >
             Oznacz rejs nr. {cruiseQuery.data?.number} jako zakończony
@@ -361,7 +374,10 @@ function CruiseDetailsPage() {
             variant="dangerOutline"
             className="basis-2/3"
             onClick={() =>
-              revertCruiseStatusMutation.mutate({ cruiseId }, { onSettled: () => setIsConfirmRevertModalOpen(false) })
+              revertCruiseStatusMutation.mutate(
+                { cruiseId, params: { revision: cruiseQuery.data.revision } },
+                { onSettled: () => setIsConfirmRevertModalOpen(false) }
+              )
             }
             disabled={revertCruiseStatusMutation.isPending}
           >
