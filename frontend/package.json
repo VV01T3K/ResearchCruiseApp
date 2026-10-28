@@ -19,7 +19,8 @@
     "test:browser": "playwright test",
     "test:browser:shuffle": "playwright test --shuffle",
     "test:ui": "playwright test --ui",
-    "lint": "vp check && vp run type"
+    "lint": "vp check && vp run type",
+    "lint:design": "LINT_DESIGN=1 vp lint"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -51,6 +52,7 @@
     "@playwright/test": "1.64.1",
     "@rolldown/plugin-babel": "^0.2.4",
     "@sentry/vite-plugin": "^11.8.0",
+    "@shadcn/lint": "0.2.3",
     "@storybook/addon-a11y": "^10.6.2",
     "@storybook/addon-docs": "^10.6.2",
     "@storybook/addon-vitest": "^10.6.2",

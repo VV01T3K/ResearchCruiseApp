@@ -5,7 +5,11 @@ import oxfmtConfig from '../.oxfmtrc.json';
 
 export const lintConfig = {
   plugins: ['eslint', 'react', 'react-perf', 'typescript', 'import', 'unicorn', 'promise', 'oxc'],
-  jsPlugins: ['@tanstack/eslint-plugin-query', { name: 'react-hooks-js', specifier: 'eslint-plugin-react-hooks' }],
+  jsPlugins: [
+    '@shadcn/lint',
+    '@tanstack/eslint-plugin-query',
+    { name: 'react-hooks-js', specifier: 'eslint-plugin-react-hooks' },
+  ],
   categories: {
     correctness: 'warn',
   },
@@ -16,6 +20,9 @@ export const lintConfig = {
   },
   env: {
     builtin: true,
+  },
+  settings: {
+    shadcn: { ui: '@/components/shared' },
   },
   rules: {
     'no-children-prop': 'error',
@@ -37,6 +44,16 @@ export const lintConfig = {
     '@tanstack/query/infinite-query-property-order': 'error',
     '@tanstack/query/no-void-query-fn': 'error',
     '@tanstack/query/mutation-property-order': 'error',
+
+    'shadcn/no-unknown-classes': 'error',
+    ...(process.env.LINT_DESIGN && {
+      'shadcn/no-unknown-classes': 'warn',
+      'shadcn/no-raw-colors': 'warn',
+      'shadcn/no-arbitrary-values': 'warn',
+      'shadcn/no-inline-styles': 'warn',
+      'shadcn/no-restyle': ['warn', { allow: ['layout'] }],
+      'shadcn/require-static-classes': 'warn',
+    }),
   },
   ignorePatterns: ['dist', 'src/routeTree.gen.ts', 'src/api/generated', '.storybook'],
   overrides: [
