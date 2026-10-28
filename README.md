@@ -14,8 +14,7 @@ and Renovate.
 
 Production defaults sample 40% of traces (`SENTRY_TRACES_SAMPLE_RATE=0.4`, shared by frontend and
 backend) and 40% of replay sessions (`SENTRY_REPLAYS_SESSION_SAMPLE_RATE=0.4`); sessions with an
-error are always replayed. Staging samples every trace and sends no replays
-(`SENTRY_REPLAYS_SESSION_SAMPLE_RATE=0` turns replay off, including on-error and feedback replays).
+error are always replayed. Staging samples everything.
 
 ### Frontend
 
