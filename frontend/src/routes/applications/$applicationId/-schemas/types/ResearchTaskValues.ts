@@ -237,6 +237,6 @@ export function getEmptyTask(taskType: ResearchTaskType): ResearchTaskValues {
     case ResearchTaskType.OtherResearchTask:
       return { type: ResearchTaskType.OtherResearchTask, description: '' };
     default:
-      throw new Error(`Unknown task type: ${taskType}`);
+      throw new Error(`Unknown task type: ${String(taskType)}`);
   }
 }

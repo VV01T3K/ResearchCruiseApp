@@ -311,7 +311,7 @@ function CruiseDetailsPage() {
             className="basis-2/3"
             onClick={async () => {
               await deleteCruiseMutation.mutateAsync({ cruiseId, params: { revision: cruiseQuery.data.revision } });
-              navigate({ to: '/cruises' });
+              await navigate({ to: '/cruises' });
             }}
             disabled={deleteCruiseMutation.isPending}
           >

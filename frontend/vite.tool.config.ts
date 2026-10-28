@@ -10,25 +10,16 @@ export const lintConfig = {
   options: {
     typeAware: true,
     typeCheck: true,
+    reportUnusedDisableDirectives: 'warn',
   },
   env: {
     builtin: true,
   },
   rules: {
-    // Temporarily disable some after migrating from eslint to oxc, can re-enable later
     'no-children-prop': 'off',
-    'no-useless-length-check': 'off',
-    'no-useless-spread': 'off',
-    'react/rules-of-hooks': 'off',
-    'no-floating-promises': 'off',
-    'await-thenable': 'off',
-    'no-base-to-string': 'off',
-    'restrict-template-expressions': 'off',
-    'no-redundant-type-constituents': 'off',
-    'require-array-sort-compare': 'off',
-    // other ----------
     // Error on deprecated API usage
     '@typescript-eslint/no-deprecated': 'error',
+    'react/rules-of-hooks': 'error',
     'react/exhaustive-deps': 'warn',
     // Native `react/*` handles the standard Hooks rules.
     // Keep the aliased JS plugin only for the extra React Compiler-style checks.

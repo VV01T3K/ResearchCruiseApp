@@ -45,7 +45,7 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
 
         return researchTaskPoints
             + contractsPoints
-            + int.Parse(formA.UgUnitsPoints)
+            + int.Parse(formA.UgUnitsPoints, CultureInfo.InvariantCulture)
             + publicationsPoints
             + spubTasksPoints;
     }
@@ -121,14 +121,17 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
 
         // Redundant since teams have been already validated on formA creation
         var notEmptyTeamsCount = cruiseApplication.FormA.FormAUgUnits.Count(formAUgUnit =>
-            uint.Parse(formAUgUnit.NoOfEmployees) > 0 || uint.Parse(formAUgUnit.NoOfStudents) > 0
+            uint.Parse(formAUgUnit.NoOfEmployees, CultureInfo.InvariantCulture) > 0
+            || uint.Parse(formAUgUnit.NoOfStudents, CultureInfo.InvariantCulture) > 0
         );
 
         cruiseApplication.FormA.UgUnitsPoints = notEmptyTeamsCount switch
         {
-            >= 3 => EvaluationConstants.PointsFor3OrMoreUgUnits.ToString(),
-            2 => EvaluationConstants.PointsFor2UgUnits.ToString(),
-            _ => 0.ToString(),
+            >= 3 => EvaluationConstants.PointsFor3OrMoreUgUnits.ToString(
+                CultureInfo.InvariantCulture
+            ),
+            2 => EvaluationConstants.PointsFor2UgUnits.ToString(CultureInfo.InvariantCulture),
+            _ => 0.ToString(CultureInfo.InvariantCulture),
         };
     }
 
@@ -150,7 +153,7 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
 
             var ministerialPoints = string.IsNullOrEmpty(publication.MinisterialPoints)
                 ? 0
-                : int.Parse(publication.MinisterialPoints);
+                : int.Parse(publication.MinisterialPoints, CultureInfo.InvariantCulture);
             formAPublication.Points = (int)(ministerialPoints * ministerialPointsRatio);
         }
     }
