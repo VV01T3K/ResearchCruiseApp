@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
 using System.Security.Claims;
@@ -737,7 +738,10 @@ internal class IdentityService(
     {
         var issuer = configuration["JWT:ValidIssuer"];
         var audience = configuration["JWT:ValidAudience"];
-        var lifetime = int.Parse(configuration["JWT:AccessTokenLifetimeSeconds"] ?? "0");
+        var lifetime = int.Parse(
+            configuration["JWT:AccessTokenLifetimeSeconds"] ?? "0",
+            CultureInfo.InvariantCulture
+        );
 
         if (issuer is null || audience is null)
             return Error.ServerError();
@@ -769,7 +773,10 @@ internal class IdentityService(
 
     private (string token, DateTime expiry) CreateRefreshToken()
     {
-        var lifetime = int.Parse(configuration["JWT:RefreshTokenLifetimeSeconds"] ?? "0");
+        var lifetime = int.Parse(
+            configuration["JWT:RefreshTokenLifetimeSeconds"] ?? "0",
+            CultureInfo.InvariantCulture
+        );
         var expiry = DateTime.UtcNow.AddSeconds(lifetime);
         var token = Convert.ToBase64String(randomGenerator.CreateSecureCodeBytes());
 

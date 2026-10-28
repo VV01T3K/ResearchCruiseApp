@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
@@ -110,7 +111,11 @@ internal class FormInitValuesReader(
         {
             CruiseManagers = [],
             DeputyManagers = [],
-            Years = [DateTime.Now.Year.ToString(), (DateTime.Now.Year + 1).ToString()],
+            Years =
+            [
+                DateTime.Now.Year.ToString(CultureInfo.InvariantCulture),
+                (DateTime.Now.Year + 1).ToString(CultureInfo.InvariantCulture),
+            ],
             ShipUsages = FormAValuesConstants.ShipUsages,
             StandardSpubTasks = FormAValuesConstants.StandardSpubTasks,
             ResearchAreas = (

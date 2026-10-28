@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
@@ -77,7 +78,7 @@ public static class AssignmentsEndpoints
             .Where(application => !ClosedApplicationStatuses.Contains(application.Status))
             .Select(application => new AssignedApplicationResponse(
                 application.Id,
-                application.Number.ToString(),
+                application.Number.ToString(CultureInfo.InvariantCulture),
                 application.IsDeputy,
                 application.Status
             ))

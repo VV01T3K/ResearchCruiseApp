@@ -1,3 +1,4 @@
+using System.Globalization;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 
@@ -70,7 +71,7 @@ internal static partial class ApplicationMappings
     public static ResearchTaskFields ToResearchTaskFields(ResearchTask task) =>
         new()
         {
-            Type = ((int)task.Type).ToString(),
+            Type = ((int)task.Type).ToString(CultureInfo.InvariantCulture),
             Title = task.Title,
             Magazine = task.Magazine,
             Author = task.Author,
@@ -91,7 +92,7 @@ internal static partial class ApplicationMappings
     public static ResearchTaskEffectFields ToResearchTaskEffectFields(ResearchTaskEffect effect) =>
         new()
         {
-            Type = ((int)effect.ResearchTask.Type).ToString(),
+            Type = ((int)effect.ResearchTask.Type).ToString(CultureInfo.InvariantCulture),
             Title = effect.ResearchTask.Title,
             Magazine = effect.ResearchTask.Magazine,
             Author = effect.ResearchTask.Author,
@@ -281,7 +282,7 @@ internal static partial class ApplicationMappings
             Id = effect.Id,
             UserId = effect.UserId,
             Effect = ToResearchTaskEffectFields(effect.Effect),
-            Points = effect.Points.ToString(),
+            Points = effect.Points.ToString(CultureInfo.InvariantCulture),
             CruiseApplicationId = effect.Effect.FormC.CruiseApplication.Id.ToString(),
         };
 }
