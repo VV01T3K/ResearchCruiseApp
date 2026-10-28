@@ -115,7 +115,7 @@ function FormBPage() {
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );
-      await leaveAfterSave({ ...values, revision }, { to: '/applications' });
+      await leaveAfterSave({ ...values, revision }, { to: '/applications' }).catch(console.error);
     } catch (err) {
       console.error(err);
       captureHandledRefusal(values.draft ? 'form-b.draft' : 'form-b.submit', err);
