@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
+import { Role } from '@/integrations/auth/types';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { AppBadge } from '@/components/shared/AppBadge';
 import { AppLayout } from '@/components/shared/AppLayout';
@@ -13,7 +14,7 @@ import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-s
 
 export const Route = createFileRoute('/cruise-effects')({
   component: CruiseEffectsPage,
-  beforeLoad: allowOnly.authenticated(),
+  beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew),
 });
 
 function mapEffectsToValues(effects: CruiseEffectResponse[]) {

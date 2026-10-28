@@ -49,13 +49,12 @@ internal class UserPermissionVerifier(
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
         var currentUserId = currentUserService.GetId();
 
-        if (currentUserId is null)
+        if (currentUserId is null || currentUserRoles.All(role => role == RoleName.Guest))
             return _applicationVisibility = application => false;
 
         var canViewOthers =
             currentUserRoles.Contains(RoleName.Administrator)
             || currentUserRoles.Contains(RoleName.Shipowner)
-            || currentUserRoles.Contains(RoleName.Guest)
             || currentUserRoles.Contains(RoleName.ShipCrew);
 
         // One rule serves both database queries and checks on already-loaded applications.
@@ -138,13 +137,12 @@ internal class UserPermissionVerifier(
         var cruiseManagerId = cruiseApplication.FormA?.CruiseManagerId;
         var deputyManagerId = cruiseApplication.FormA?.DeputyManagerId;
 
-        if (currentUserId is null)
+        if (currentUserId is null || currentUserRoles.All(role => role == RoleName.Guest))
             return false;
 
         if (
             currentUserRoles.Contains(RoleName.Administrator)
             || currentUserRoles.Contains(RoleName.Shipowner)
-            || currentUserRoles.Contains(RoleName.Guest)
             || currentUserRoles.Contains(RoleName.ShipCrew)
         )
         {

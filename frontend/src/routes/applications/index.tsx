@@ -1,6 +1,7 @@
 import { useGetApplicationManagersSuspense } from '@/api/generated/endpoints/applications.gen';
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
+import { Role } from '@/integrations/auth/types';
 import { ColumnFiltersState, SortingState, functionalUpdate } from '@tanstack/react-table';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { MagnifyingGlassPlusIcon } from '@phosphor-icons/react';
@@ -27,7 +28,7 @@ import { canRevertFormB, getApplicationStatusLabel } from '@/lib/applications/st
 
 export const Route = createFileRoute('/applications/')({
   component: ApplicationsPage,
-  beforeLoad: allowOnly.authenticated(),
+  beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew),
 });
 
 const statusFilterOptions = CruiseApplicationStatus.options;

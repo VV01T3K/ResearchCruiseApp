@@ -13,7 +13,8 @@ public static class FormContextEndpoints
             .WithName("GetApplicationFormAContext")
             .WithSummary("Get authenticated Form A context.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .RequireAuthorization(AuthorizationPolicies.ApplicationReaders);
 
         group
             .MapGet("/form-b/context", GetFormBContext)

@@ -2,6 +2,7 @@ import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplic
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
+import { Role } from '@/integrations/auth/types';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { FloppyDiskIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
@@ -32,7 +33,7 @@ import { getErrorMessage } from '@/api/errors';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({
   component: FormAPage,
-  beforeLoad: allowOnly.authenticated(),
+  beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew),
   validateSearch: z.object({
     mode: z.optional(z.enum(['edit', 'view'])),
   }),

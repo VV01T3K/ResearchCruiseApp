@@ -496,6 +496,8 @@ test.describe(() => {
   test('a guest can view cruises without planner-only actions or requests', async ({ page, network, requests }) => {
     network.use(getGetCruisesMockHandler([cruise()]), getGetCruiseMockHandler(confirmed()));
     await page.goto('/cruises');
+    await expect(page.getByRole('cell', { name: cruise().number, exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Zgłoszenia' })).toHaveCount(0);
     await page.getByRole('button', { name: 'Kalendarz', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Wróć do obecnego miesiąca' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' })).toHaveCount(0);
@@ -505,6 +507,10 @@ test.describe(() => {
 
     await page.goto(`/cruises/${cruise().id}`);
     await expect(page.getByText(`${manager.firstName} ${manager.lastName}`)).toBeVisible();
+    await expect(page.getByText('Zgłoszenia przypisane do rejsu')).toHaveCount(0);
     expect(requests.bodies('GET /v2/users/available-cruise-managers')).toHaveLength(0);
+
+    await page.goto('/applications');
+    await expect(page).toHaveURL('/');
   });
 });

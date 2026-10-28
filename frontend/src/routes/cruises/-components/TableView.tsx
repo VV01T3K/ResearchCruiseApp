@@ -7,6 +7,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppGuard } from '@/components/shared/AppGuard';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { Role } from '@/integrations/auth/types';
+import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { formatDate } from '@/lib/dateUtils';
 import { getPersonName, isUnassignedPerson } from '@/lib/applications/person';
 import { StatusBadge } from './StatusBadge';
@@ -22,6 +23,7 @@ type Props = {
   buttons: React.ReactNode[];
 };
 export function TableView({ cruises, deleteCruise, buttons }: Props) {
+  const currentUser = useCurrentUser();
   const columns: ColumnDef<CruiseResponse>[] = [
     {
       header: 'Numer',
@@ -76,11 +78,15 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       accessorFn: (row) => getPersonName(row.mainManager) || 'Nie przypisano',
       size: 10,
     },
-    {
-      header: 'Zgłoszenia',
-      cell: ({ row }) => <ApplicationsCell applications={row.original.applications} />,
-      size: 30,
-    },
+    ...(isInRole(currentUser, [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew])
+      ? [
+          {
+            header: 'Zgłoszenia',
+            cell: ({ row }) => <ApplicationsCell applications={row.original.applications} />,
+            size: 30,
+          } satisfies ColumnDef<CruiseResponse>,
+        ]
+      : []),
     {
       id: 'actions',
       cell: ({ row }) => <ActionsCell cruise={row.original} deleteCruise={deleteCruise} />,
