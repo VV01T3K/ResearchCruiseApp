@@ -1,5 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vite-plus/test';
-import { formatDate, parseBackendDateTime } from '@/lib/dateUtils';
+import { createElement } from 'react';
+import { renderToString } from 'react-dom/server';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
+import { formatDate, parseBackendDateTime, useNow } from '@/lib/dateUtils';
 
 it.each([
   ['2026-07-20T00:00:00', '2026-07-20T00:00:00.000Z'],
@@ -22,4 +24,11 @@ describe.each(['Europe/Warsaw', 'America/Los_Angeles'])('in %s', (timeZone) => {
     expect(formatDate('2026-07-20', 'date')).toBe('20.07.2026');
     expect(formatDate('2026-07-20', 'monthYear')).toBe('07.2026');
   });
+});
+
+it('reads the current time when rendering on the server', () => {
+  vi.useFakeTimers({ now: new Date(2026, 11, 31, 23, 59) });
+  const html = renderToString(createElement(() => useNow((now) => now.getFullYear())));
+  vi.useRealTimers();
+  expect(html).toBe('2026');
 });
