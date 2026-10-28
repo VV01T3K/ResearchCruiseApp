@@ -425,7 +425,11 @@ test('a stale status undo refetches the cruise so the retry sends the current re
 }) => {
   let server: CruiseResponse = { ...cruise(), status: 'ended' };
   network.use(
-    getGetCruiseMockHandler(() => server),
+    // A slow refetch must not let the retry go out with the stale revision.
+    getGetCruiseMockHandler(async () => {
+      if (server.revision === 'AAAAAAAAB+A=') await new Promise((resolve) => setTimeout(resolve, 1500));
+      return server;
+    }),
     getRemoveCruiseConfirmationMockHandler(() => {
       server = { ...server, revision: 'AAAAAAAAB+A=' };
       return fail(409, { detail: 'Dane zostały w międzyczasie zmienione.' })();

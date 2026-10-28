@@ -50,12 +50,12 @@ function CruiseDetailsPage() {
   const cruiseQuery = useGetCruiseSuspense(cruiseId);
   const applicationQuery = useGetApplicationsForCruisePlanningSuspense({ cruiseId });
   const updateCruiseMutation = useUpdateCruise({ mutation: { meta: { handlesError: true } } });
-  // A rejected lifecycle action should retry against the current server version.
   const refetchOnConflict = {
     mutation: {
-      onError: (error: unknown) => {
+      // Awaited so the action stays pending until the current version is on screen.
+      onError: async (error: unknown) => {
         toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
-        if (error instanceof ApiError && error.status === 409) void cruiseQuery.refetch();
+        if (error instanceof ApiError && error.status === 409) await cruiseQuery.refetch();
       },
     },
   };
