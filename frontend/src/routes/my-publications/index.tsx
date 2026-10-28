@@ -28,6 +28,7 @@ export const Route = createFileRoute('/my-publications/')({
 function MyPublicationsPage() {
   const [selectedPublications, setSelectedPublications] = React.useState<RowSelectionState>({});
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = React.useState(false);
+  const [isDeletingSelected, setIsDeletingSelected] = React.useState(false);
   const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense();
   const deleteOwnPublicationMutation = useDeleteCurrentUserPublication();
   const deleteSelectedPublicationsMutation = useDeleteCurrentUserPublication({
@@ -38,9 +39,11 @@ function MyPublicationsPage() {
 
   async function deleteSelectedPublications() {
     const ids = Object.keys(selectedPublications);
+    setIsDeletingSelected(true);
     const results = await Promise.allSettled(
       ids.map((id) => deleteSelectedPublicationsMutation.mutateAsync({ publicationId: id }))
     );
+    setIsDeletingSelected(false);
     const deletedIds = new Set(ids.filter((_, i) => results[i].status === 'fulfilled'));
     setSelectedPublications((selected) =>
       Object.fromEntries(Object.entries(selected).filter(([id]) => !deletedIds.has(id)))
@@ -161,7 +164,7 @@ function MyPublicationsPage() {
               key="removeSelectedPublications"
               variant="dangerOutline"
               onClick={() => void deleteSelectedPublications()}
-              disabled={!Object.keys(selectedPublications).length || deleteSelectedPublicationsMutation.isPending}
+              disabled={!Object.keys(selectedPublications).length || isDeletingSelected}
             >
               <TrashIcon className="mr-2 h-4 w-4" />
               Usuń zaznaczone publikacje
