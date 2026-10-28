@@ -11,11 +11,11 @@ requests into `main`.
 [`.github/scripts/version.sh`](../.github/scripts/version.sh) computes the version of the checked-out
 commit, and the image builds pass it to both applications as `APP_VERSION`:
 
-| Build            | Version                                                                   |
-| ---------------- | ------------------------------------------------------------------------- |
-| Release tag      | `3.1.0`                                                                   |
-| `staging` and PR | `3.1.0-staging.4+a1b2c3d` (last release, commits since it, short SHA)     |
-| Local            | `0.0.0`                                                                   |
+| Build            | Version                                                               |
+| ---------------- | --------------------------------------------------------------------- |
+| Release tag      | `3.1.0`                                                               |
+| `staging` and PR | `3.1.0-staging.4+a1b2c3d` (last release, commits since it, short SHA) |
+| Local            | `0.0.0`                                                               |
 
 The navbar, the Help page (frontend and backend `/version`) and the Sentry releases
 (`research-cruise-app-frontend@<version>`, `research-cruise-app-backend@<version>`) show this value.

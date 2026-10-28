@@ -20,6 +20,7 @@ COPY backend/package.json backend/package.json
 RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache \
     vp install --frozen-lockfile
 
+COPY .oxfmtrc.json ./
 COPY frontend ./frontend
 WORKDIR /app/frontend
 ARG APP_VERSION
