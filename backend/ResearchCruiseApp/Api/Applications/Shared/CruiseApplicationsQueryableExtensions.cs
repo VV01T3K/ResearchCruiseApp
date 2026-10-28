@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using ResearchCruiseApp.Application.ExternalServices.Persistence.Repositories;
 using ResearchCruiseApp.Domain.Entities;
@@ -168,7 +169,9 @@ internal static class CruiseApplicationsQueryableExtensions
 
         if (filter.Years is { Count: > 0 })
         {
-            var years = filter.Years.Select(year => year.ToString()).ToList();
+            var years = filter
+                .Years.Select(year => year.ToString(CultureInfo.InvariantCulture))
+                .ToList();
             query = query.Where(cruiseApplication =>
                 cruiseApplication.FormA != null && years.Contains(cruiseApplication.FormA.Year)
             );
@@ -194,7 +197,7 @@ internal static class CruiseApplicationsQueryableExtensions
     {
         if (cursorSortValue is not null && cursorId is not null)
         {
-            var cursorNumber = int.Parse(cursorSortValue);
+            var cursorNumber = int.Parse(cursorSortValue, CultureInfo.InvariantCulture);
             query = descending
                 ? query.Where(cruiseApplication =>
                     cruiseApplication.Number < cursorNumber

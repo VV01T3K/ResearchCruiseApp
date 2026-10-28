@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
@@ -132,9 +133,9 @@ public static class CatalogEndpoints
     private static string GetSortValue(CruiseApplication application, string sortBy) =>
         sortBy switch
         {
-            "date" => application.Date.ToString("yyyy-MM-dd"),
+            "date" => application.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
             "year" => application.FormA!.Year,
-            _ => application.Number.ToString(),
+            _ => application.Number.ToString(CultureInfo.InvariantCulture),
         };
 
     private static async Task<Ok<List<ApplicationPersonResponse>>> GetManagers(

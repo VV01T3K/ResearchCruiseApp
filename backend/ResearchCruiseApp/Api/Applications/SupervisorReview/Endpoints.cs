@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
@@ -66,7 +67,11 @@ public static class SupervisorReviewEndpoints
         var initValues = await formContext.CreateFormAForSupervisor(application, cancellationToken);
 
         return TypedResults.Ok(
-            new SupervisorReviewResponse(application.Number.ToString(), form, initValues)
+            new SupervisorReviewResponse(
+                application.Number.ToString(CultureInfo.InvariantCulture),
+                form,
+                initValues
+            )
         );
     }
 

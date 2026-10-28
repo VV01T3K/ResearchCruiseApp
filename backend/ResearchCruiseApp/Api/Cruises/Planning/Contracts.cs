@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
 using ResearchCruiseApp.Domain.Entities;
 using DomainCruise = ResearchCruiseApp.Domain.Entities.Cruise;
@@ -9,8 +10,8 @@ public sealed record BlockadeResponse(DateTime StartDate, DateTime EndDate, stri
     public static BlockadeResponse From(DomainCruise cruise)
     {
         return new BlockadeResponse(
-            DateTime.Parse(cruise.StartDate),
-            DateTime.Parse(cruise.EndDate),
+            DateTime.Parse(cruise.StartDate, CultureInfo.InvariantCulture),
+            DateTime.Parse(cruise.EndDate, CultureInfo.InvariantCulture),
             cruise.Title ?? string.Empty
         );
     }
@@ -28,5 +29,5 @@ public sealed record SkippedApplicationResponse(
 )
 {
     public static SkippedApplicationResponse From(CruiseApplication application, string reason) =>
-        new(application.Id, application.Number.ToString(), reason);
+        new(application.Id, application.Number.ToString(CultureInfo.InvariantCulture), reason);
 }
