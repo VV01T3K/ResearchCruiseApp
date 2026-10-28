@@ -80,18 +80,19 @@ function ForgotPasswordPage() {
     <AppLayout title="Przywracanie hasła" variant="narrow">
       <form noValidate className="px-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <form.AppField name="email" children={(field) => <field.FloatingTextField type="email" label="E-mail" />} />
+          <form.AppField name="email">
+            {(field) => <field.FloatingTextField type="email" label="E-mail" />}
+          </form.AppField>
         </div>
 
         <div className="mt-8">
-          <form.Subscribe
-            selector={(state) => state.isSubmitting}
-            children={(isSubmitting) => (
+          <form.Subscribe selector={(state) => state.isSubmitting}>
+            {(isSubmitting) => (
               <AppButton type="submit" className="w-full" disabled={isSubmitting}>
                 Przypomnij hasło
               </AppButton>
             )}
-          />
+          </form.Subscribe>
         </div>
 
         <div className="!mt-8 flex flex-wrap items-center justify-end">

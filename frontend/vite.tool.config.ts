@@ -16,7 +16,7 @@ export const lintConfig = {
     builtin: true,
   },
   rules: {
-    'no-children-prop': 'off',
+    'no-children-prop': 'error',
     // Error on deprecated API usage
     '@typescript-eslint/no-deprecated': 'error',
     'react/rules-of-hooks': 'error',

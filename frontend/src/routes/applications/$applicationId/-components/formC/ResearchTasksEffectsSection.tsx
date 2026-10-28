@@ -35,9 +35,8 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
       id: 'done-and-conditions',
       cell: ({ row }) => {
         return (
-          <form.Subscribe
-            selector={(state) => state.values.researchTasksEffects[row.index].done}
-            children={(taskDone) => (
+          <form.Subscribe selector={(state) => state.values.researchTasksEffects[row.index].done}>
+            {(taskDone) => (
               <div className="flex items-center justify-center gap-4">
                 <form.AppField
                   name={`researchTasksEffects[${row.index}].done`}
@@ -48,13 +47,13 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
                       form.setFieldValue(`researchTasksEffects[${row.index}].deputyConditionMet`, false);
                     },
                   }}
-                  children={(field) => (
+                >
+                  {(field) => (
                     <field.CheckboxField size="md" label="Zrealizowane" labelPosition="top" disabled={isReadonly} />
                   )}
-                />
-                <form.AppField
-                  name={`researchTasksEffects[${row.index}].managerConditionMet`}
-                  children={(field) => (
+                </form.AppField>
+                <form.AppField name={`researchTasksEffects[${row.index}].managerConditionMet`}>
+                  {(field) => (
                     <field.CheckboxField
                       size="md"
                       label="Czy naliczyć punkty kierownikowi?"
@@ -62,10 +61,9 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
                       disabled={isReadonly || !taskDone}
                     />
                   )}
-                />
-                <form.AppField
-                  name={`researchTasksEffects[${row.index}].deputyConditionMet`}
-                  children={(field) => (
+                </form.AppField>
+                <form.AppField name={`researchTasksEffects[${row.index}].deputyConditionMet`}>
+                  {(field) => (
                     <field.CheckboxField
                       size="md"
                       label="Czy naliczyć punkty zastępcy?"
@@ -73,10 +71,10 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
                       disabled={isReadonly || !taskDone}
                     />
                   )}
-                />
+                </form.AppField>
               </div>
             )}
-          />
+          </form.Subscribe>
         );
       },
       size: 35,

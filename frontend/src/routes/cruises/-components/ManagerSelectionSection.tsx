@@ -81,9 +81,8 @@ export function ManagerSelectionSection({
       )}
 
       <div className="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-        <form.AppField
-          name="mainManagerId"
-          children={(field) => (
+        <form.AppField name="mainManagerId">
+          {(field) => (
             <field.SelectField
               allOptions={users}
               label="Kierownik główny"
@@ -91,11 +90,10 @@ export function ManagerSelectionSection({
               disabled={isReadonly}
             />
           )}
-        />
+        </form.AppField>
 
-        <form.AppField
-          name="deputyManagerId"
-          children={(field) => (
+        <form.AppField name="deputyManagerId">
+          {(field) => (
             <field.SelectField
               allOptions={users}
               label="Zastępca kierownika głównego"
@@ -103,7 +101,7 @@ export function ManagerSelectionSection({
               disabled={isReadonly}
             />
           )}
-        />
+        </form.AppField>
       </div>
     </AppAccordion>
   );

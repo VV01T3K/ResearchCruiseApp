@@ -28,10 +28,9 @@ export function AdditionalPermissionsSection({ context }: { context: FormCViewMo
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`permissions[${row.index}].description`}
-            children={(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
-          />
+          <form.AppField name={`permissions[${row.index}].description`}>
+            {(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
+          </form.AppField>
         ),
         size: 20,
       },
@@ -41,10 +40,9 @@ export function AdditionalPermissionsSection({ context }: { context: FormCViewMo
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`permissions[${row.index}].executive`}
-            children={(field) => <field.TextField className="mx-4" disabled={isReadonly} />}
-          />
+          <form.AppField name={`permissions[${row.index}].executive`}>
+            {(field) => <field.TextField className="mx-4" disabled={isReadonly} />}
+          </form.AppField>
         ),
         size: 20,
       },
@@ -54,10 +52,9 @@ export function AdditionalPermissionsSection({ context }: { context: FormCViewMo
         enableColumnFilter: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <form.AppField
-            name={`permissions[${row.index}].scan`}
-            children={(field) => <field.FileField acceptedMimeTypes={['application/pdf']} disabled={isReadonly} />}
-          />
+          <form.AppField name={`permissions[${row.index}].scan`}>
+            {(field) => <field.FileField acceptedMimeTypes={['application/pdf']} disabled={isReadonly} />}
+          </form.AppField>
         ),
         size: 10,
       },
@@ -84,10 +81,8 @@ export function AdditionalPermissionsSection({ context }: { context: FormCViewMo
       expandedByDefault
       data-testid="form-c-additional-permissions-section"
     >
-      <form.AppField
-        name="permissions"
-        mode="array"
-        children={(field) => (
+      <form.AppField name="permissions" mode="array">
+        {(field) => (
           <>
             <AppTable
               columns={getColumns((index) => {
@@ -116,7 +111,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormCViewMo
             <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
           </>
         )}
-      />
+      </form.AppField>
     </AppAccordion>
   );
 }

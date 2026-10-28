@@ -16,9 +16,8 @@ const shipEquipmentColumns = (form: FormBFormApi, isReadonly: boolean): ColumnDe
   {
     header: 'W użyciu',
     cell: ({ row }) => (
-      <form.AppField
-        name={`shipEquipmentsIds`}
-        children={(field) => (
+      <form.AppField name={`shipEquipmentsIds`}>
+        {(field) => (
           <field.ArrayCheckboxField
             item={row.original.id}
             size="md"
@@ -26,7 +25,7 @@ const shipEquipmentColumns = (form: FormBFormApi, isReadonly: boolean): ColumnDe
             disabled={isReadonly}
           />
         )}
-      />
+      </form.AppField>
     ),
   },
 ];
@@ -41,9 +40,8 @@ export function ShipEquipmentsSection({ context }: { context: FormBViewModel }) 
       expandedByDefault
       data-testid="form-b-ship-equipments-section"
     >
-      <form.AppField
-        name="shipEquipmentsIds"
-        children={() => (
+      <form.AppField name="shipEquipmentsIds">
+        {() => (
           <AppTable
             data={formBInitValues.shipEquipments}
             columns={shipEquipmentColumns(form, isReadonly)}
@@ -52,7 +50,7 @@ export function ShipEquipmentsSection({ context }: { context: FormBViewModel }) 
             disabled={isReadonly}
           />
         )}
-      />
+      </form.AppField>
     </AppAccordion>
   );
 }

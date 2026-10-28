@@ -11,9 +11,8 @@ export function ShipUsageSection({ context }: { context: FormCViewModel }) {
 
   return (
     <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault data-testid="form-c-ship-usage-section">
-      <form.AppField
-        name="shipUsage"
-        children={(field) => (
+      <form.AppField name="shipUsage">
+        {(field) => (
           <div className="lg:col-span-2">
             <field.SelectField
               label="Statek na potrzeby badań był wykorzystywany"
@@ -25,11 +24,10 @@ export function ShipUsageSection({ context }: { context: FormCViewModel }) {
             />
           </div>
         )}
-      />
+      </form.AppField>
 
-      <form.Subscribe
-        selector={(state) => state.values.shipUsage}
-        children={(shipUsage) => (
+      <form.Subscribe selector={(state) => state.values.shipUsage}>
+        {(shipUsage) => (
           <div className="lg:col-span-2">
             <AnimatePresence>
               {shipUsage === '4' && (
@@ -39,22 +37,21 @@ export function ShipUsageSection({ context }: { context: FormCViewModel }) {
                   exit={{ opacity: 0, translateY: '-10%' }}
                   transition={{ ease: 'easeOut', duration: 0.2 }}
                 >
-                  <form.AppField
-                    name="differentUsage"
-                    children={(field) => (
+                  <form.AppField name="differentUsage">
+                    {(field) => (
                       <field.TextField
                         label="Inny sposób użycia"
                         placeholder="np. statek badawczy"
                         disabled={isReadonly}
                       />
                     )}
-                  />
+                  </form.AppField>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
         )}
-      />
+      </form.Subscribe>
     </AppAccordion>
   );
 }

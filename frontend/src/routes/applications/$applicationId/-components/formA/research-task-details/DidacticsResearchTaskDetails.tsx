@@ -12,16 +12,15 @@ export function DidacticsResearchTaskDetails({ row, disabled }: Props) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   return (
     <div>
-      <form.AppField
-        name={`researchTasks[${row.index}].description`}
-        children={(field) => (
+      <form.AppField name={`researchTasks[${row.index}].description`}>
+        {(field) => (
           <field.TextField
             label="Opis zajęcia dydaktycznego"
             placeholder="Wprowadź opis zajęcia dydaktycznego"
             disabled={disabled}
           />
         )}
-      />
+      </form.AppField>
     </div>
   );
 }
