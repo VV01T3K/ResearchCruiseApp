@@ -12,9 +12,9 @@ See [backend development and checks](docs/backend-development.md) for setup, wor
 See [dependency maintenance](docs/dependency-maintenance.md) for installs, audits
 and Renovate.
 
-Production defaults sample 40% of traces (`SENTRY_TRACES_SAMPLE_RATE=0.4`, shared by frontend and
-backend) and 40% of replay sessions (`SENTRY_REPLAYS_SESSION_SAMPLE_RATE=0.4`); sessions with an
-error are always replayed. Staging samples everything.
+Production defaults sample every trace (`SENTRY_TRACES_SAMPLE_RATE=1`, shared by frontend and
+backend) and every replay session (`SENTRY_REPLAYS_SESSION_SAMPLE_RATE=1`); lower them through the
+environment once traffic grows. Staging samples everything.
 
 ### Frontend
 
