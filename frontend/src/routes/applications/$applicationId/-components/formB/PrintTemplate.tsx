@@ -1,4 +1,3 @@
-/* eslint-disable @eslint-react/no-array-index-key */
 import { formatDate } from '@/lib/dateUtils';
 import { Fragment, RefObject } from 'react';
 

@@ -120,10 +120,10 @@ function FormCPage() {
         data: { form: schema.parse(values), draft: values.draft ?? false },
       });
       form.setFieldValue('revision', revision, { dontUpdateMeta: true, dontValidate: true });
-      leaveAfterSave({ ...values, revision }, { to: '/applications' });
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );
+      await leaveAfterSave({ ...values, revision }, { to: '/applications' }).catch(console.error);
     } catch (err) {
       console.error(err);
       setServerFormErrors(form, err);

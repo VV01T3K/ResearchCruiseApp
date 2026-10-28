@@ -18,6 +18,7 @@ import { AppButton } from '@/components/shared/AppButton';
 import { AppCalendarTile } from '@/components/shared/calendar/AppCalendarTile';
 import { AppMonthPickerPopover } from '@/components/shared/inputs/dates/AppMonthPickerPopover';
 import { dateToUtcDay, getDaysInMonth, months, weekDays } from '@/lib/calendarUtils';
+import { useNow } from '@/lib/dateUtils';
 import type { CalendarEvent, CalendarEventWithRow, CalendarEventDropPayload } from './calendarTypes';
 
 function assignEventsToRows(events: CalendarEvent[]): CalendarEventWithRow[] {
@@ -46,11 +47,12 @@ type Props = {
 export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   const DAY_MS = 24 * 60 * 60 * 1000;
   const DRAG_CURSOR_Y_NUDGE = 4;
-  const [currentMonth, setCurrentMonth] = React.useState({
-    month: new Date().getMonth(),
-    year: new Date().getFullYear(),
+  const [currentMonth, setCurrentMonth] = React.useState(() => {
+    const now = new Date();
+    return { month: now.getMonth(), year: now.getFullYear() };
   });
   const [previousMonth, setPreviousMonth] = React.useState(currentMonth);
+  const todayUtc = useNow(dateToUtcDay);
   const [dropPreviewDays, setDropPreviewDays] = React.useState<number[]>([]);
   const [activeDragEventId, setActiveDragEventId] = React.useState<string | undefined>(undefined);
   const [pendingDrop, setPendingDrop] = React.useState<
@@ -75,13 +77,11 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
     const dayTiles = calendarElement.querySelectorAll<HTMLElement>('[data-calendar-day-tile]');
     const calendarWidth = calendarElement.getBoundingClientRect().width;
     if (Number.isFinite(calendarWidth) && calendarWidth > 0) {
-      // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
       setTileWidth(calendarWidth / 7);
     }
 
     const eventBlock = calendarElement.querySelector<HTMLElement>('[data-calendar-event-block]');
     if (eventBlock) {
-      // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
       setDragBlockHeight(eventBlock.getBoundingClientRect().height);
     }
 
@@ -89,7 +89,6 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
     if (eventRows) {
       const rowGap = Number.parseFloat(window.getComputedStyle(eventRows).rowGap || '0');
       if (Number.isFinite(rowGap)) {
-        // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
         setDragBlockRowGap(rowGap);
       }
     }
@@ -99,7 +98,6 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
       const secondRowTop = dayTiles[7].getBoundingClientRect().top;
       const weekStep = secondRowTop - firstRowTop;
       if (Number.isFinite(weekStep) && weekStep > 0) {
-        // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
         setDragWeekRowStep(weekStep);
       }
     }
@@ -339,25 +337,16 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
     }
   }
 
-  React.useEffect(() => {
-    if (!pendingDrop) {
-      return;
-    }
-
-    const updatedEvent = events.find((calendarEvent) => calendarEvent.id === pendingDrop.eventId);
-    if (!updatedEvent) {
-      return;
-    }
-
-    if (
-      updatedEvent.start.getTime() === pendingDrop.nextStartMs &&
-      updatedEvent.end.getTime() === pendingDrop.nextEndMs
-    ) {
-      setActiveDragEventId(undefined);
-      setDropPreviewDays([]);
-      setPendingDrop(undefined);
-    }
-  }, [events, pendingDrop]);
+  const droppedEvent = pendingDrop && events.find((calendarEvent) => calendarEvent.id === pendingDrop.eventId);
+  if (
+    droppedEvent &&
+    droppedEvent.start.getTime() === pendingDrop.nextStartMs &&
+    droppedEvent.end.getTime() === pendingDrop.nextEndMs
+  ) {
+    setActiveDragEventId(undefined);
+    setDropPreviewDays([]);
+    setPendingDrop(undefined);
+  }
 
   const eventsWithRows = React.useMemo(() => assignEventsToRows(events), [events]);
   const displayedMonthDays = React.useMemo(() => getDaysInMonth(currentMonth), [currentMonth]);
@@ -496,6 +485,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
                   enableDragAndDrop={Boolean(onEventDrop)}
                   dayDropId={`calendar-day-${dateToUtcDay(date)}`}
                   isDropPreview={dropPreviewDays.includes(dateToUtcDay(date))}
+                  isToday={dateToUtcDay(date) === todayUtc}
                   activeDragEventId={activeDragEventId}
                   key={date.toString()}
                 />

@@ -1,3 +1,4 @@
+using System.Globalization;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Users;
@@ -16,7 +17,7 @@ public sealed record CruiseEffectResponse(
             effect.Id,
             effect.UserId,
             EffectResponse.From(effect.Effect),
-            effect.Points.ToString(),
+            effect.Points.ToString(CultureInfo.InvariantCulture),
             effect.Effect.FormC.CruiseApplication.Id.ToString()
         );
     }
@@ -47,7 +48,7 @@ public sealed record EffectResponse(
         var task = effect.ResearchTask;
 
         return new EffectResponse(
-            ((int)task.Type).ToString(),
+            ((int)task.Type).ToString(CultureInfo.InvariantCulture),
             task.Title,
             task.Magazine,
             task.Author,

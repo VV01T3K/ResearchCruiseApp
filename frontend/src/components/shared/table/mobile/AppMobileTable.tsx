@@ -44,7 +44,6 @@ export function AppMobileTable<T extends object>({
         {allButtons.length > 0 && (
           <div className="m-4 flex flex-col gap-4">
             {allButtons.map((x, id) => (
-              // oxlint-disable-next-line @eslint-react/no-array-index-key
               <div key={id} className="flex justify-end">
                 {x}
               </div>

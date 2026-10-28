@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
@@ -227,7 +228,12 @@ public static class FormAEndpoints
                 && DateTime.TryParse(cruise.StartDate, out _)
                 && DateTime.TryParse(cruise.EndDate, out _)
             )
-            .Select(cruise => (DateTime.Parse(cruise.StartDate), DateTime.Parse(cruise.EndDate)));
+            .Select(cruise =>
+                (
+                    DateTime.Parse(cruise.StartDate, CultureInfo.InvariantCulture),
+                    DateTime.Parse(cruise.EndDate, CultureInfo.InvariantCulture)
+                )
+            );
 
         return CruiseBlockadeRules.HasNoFreeWindow(
             request.PrecisePeriodStart.Value,

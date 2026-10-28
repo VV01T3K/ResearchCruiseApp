@@ -235,7 +235,7 @@ async function loadFile(file: File): Promise<FileValue> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = () => {
-      const content = reader.result?.toString();
+      const content = typeof reader.result === 'string' ? reader.result : undefined;
       if (!content) {
         throw new Error(`Failed to read the ${file.name} file content`);
       }

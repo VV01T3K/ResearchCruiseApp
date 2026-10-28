@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Application.ExternalServices;
@@ -94,8 +95,8 @@ internal static class CruiseApplicationsTestDataSeeder
                     {
                         CruiseManagerId = Guid.Parse(manager.Id),
                         DeputyManagerId = Guid.Parse(deputy.Id),
-                        Year = PastDate(random, 3).Year.ToString(),
-                        CruiseHours = random.Next(24, 721).ToString(),
+                        Year = PastDate(random, 3).Year.ToString(CultureInfo.InvariantCulture),
+                        CruiseHours = random.Next(24, 721).ToString(CultureInfo.InvariantCulture),
                         PeriodNotes = $"{SeedTag} period notes {i}",
                         DifferentUsage = $"{SeedTag} different usage {i}",
                         CruiseGoalDescription = $"{SeedTag} goal description {i}",
@@ -226,8 +227,14 @@ internal static class CruiseApplicationsTestDataSeeder
                     Title = $"{SeedTag} cruise {i}",
                     MainCruiseManagerId = Guid.Parse(managers[random.Next(managers.Count)].Id),
                     MainDeputyManagerId = Guid.Parse(managers[random.Next(managers.Count)].Id),
-                    StartDate = start.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                    EndDate = end.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                    StartDate = start.ToString(
+                        "yyyy-MM-ddTHH:mm:ss.fffZ",
+                        CultureInfo.InvariantCulture
+                    ),
+                    EndDate = end.ToString(
+                        "yyyy-MM-ddTHH:mm:ss.fffZ",
+                        CultureInfo.InvariantCulture
+                    ),
                     Status = statuses[i % statuses.Length],
                     CruiseApplications = [],
                 }

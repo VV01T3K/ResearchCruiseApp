@@ -1,3 +1,4 @@
+using System.Globalization;
 using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
@@ -16,9 +17,11 @@ internal class ApplicationReader(
         var dto = new CruiseApplicationSummary
         {
             Id = application.Id,
-            Number = application.Number.ToString(),
+            Number = application.Number.ToString(CultureInfo.InvariantCulture),
             Date = application.Date,
-            Year = application.FormA is null ? default : int.Parse(application.FormA.Year),
+            Year = application.FormA is null
+                ? default
+                : int.Parse(application.FormA.Year, CultureInfo.InvariantCulture),
             CruiseManagerId = application.FormA?.CruiseManagerId ?? Guid.Empty,
             DeputyManagerId = application.FormA?.DeputyManagerId ?? Guid.Empty,
             HasFormA = application.FormA is not null,
@@ -36,11 +39,11 @@ internal class ApplicationReader(
             StartDate =
                 application.Cruise is not null
                 && !string.IsNullOrEmpty(application.Cruise.StartDate)
-                    ? DateTime.Parse(application.Cruise.StartDate)
+                    ? DateTime.Parse(application.Cruise.StartDate, CultureInfo.InvariantCulture)
                     : null,
             EndDate =
                 application.Cruise is not null && !string.IsNullOrEmpty(application.Cruise.EndDate)
-                    ? DateTime.Parse(application.Cruise.EndDate)
+                    ? DateTime.Parse(application.Cruise.EndDate, CultureInfo.InvariantCulture)
                     : null,
         };
 
@@ -63,8 +66,10 @@ internal class ApplicationReader(
         return new CruiseApplicationCandidateResponse
         {
             Id = application.Id,
-            Number = application.Number.ToString(),
-            Year = application.FormA is null ? default : int.Parse(application.FormA.Year),
+            Number = application.Number.ToString(CultureInfo.InvariantCulture),
+            Year = application.FormA is null
+                ? default
+                : int.Parse(application.FormA.Year, CultureInfo.InvariantCulture),
             CruiseManagerId = application.FormA?.CruiseManagerId ?? Guid.Empty,
             DeputyManagerId = application.FormA?.DeputyManagerId ?? Guid.Empty,
             HasFormA = application.FormA is not null,
@@ -98,7 +103,7 @@ internal class ApplicationReader(
                 ?? [],
             FormASpubTasks =
                 form?.FormASpubTasks.Select(ApplicationMappings.ToScoredSpubTask).ToList() ?? [],
-            EffectsPoints = application.EffectsPoints.ToString(),
+            EffectsPoints = application.EffectsPoints.ToString(CultureInfo.InvariantCulture),
         };
     }
 

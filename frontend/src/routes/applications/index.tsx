@@ -15,7 +15,7 @@ import { AppLink } from '@/components/shared/AppLink';
 import { AppLoader } from '@/components/shared/layout/AppLoader';
 import { AppTable } from '@/components/shared/table/AppTable';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
-import { formatDate } from '@/lib/dateUtils';
+import { formatDate, useNow } from '@/lib/dateUtils';
 import {
   CruiseApplicationsFilter,
   CruiseApplicationsSort,
@@ -65,7 +65,7 @@ function ApplicationsPage() {
     () => applicationsQuery.data?.pages.flatMap((page) => page.items) ?? [],
     [applicationsQuery.data]
   );
-  const currentYear = new Date().getFullYear();
+  const currentYear = useNow((now) => now.getFullYear());
   const yearFilterOptions = Array.from(
     { length: currentYear + YEAR_FILTER_OPTIONS_AHEAD - EARLIEST_APPLICATION_YEAR + 1 },
     (_, index) => (EARLIEST_APPLICATION_YEAR + index).toString()

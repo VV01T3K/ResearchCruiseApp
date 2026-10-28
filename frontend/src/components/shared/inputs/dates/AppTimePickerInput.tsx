@@ -37,7 +37,7 @@ type Props = {
 };
 export function AppDatePickerTimeInput({
   name,
-  value,
+  value: time,
   onChange,
   onBlur,
   errors,
@@ -50,13 +50,7 @@ export function AppDatePickerTimeInput({
   minuteStep = 1,
 }: Props) {
   const aria = useInputAria(errors, helper);
-  const [time, setTime] = React.useState<Time | undefined>(value);
   const [expanded, setExpanded] = React.useState(false);
-
-  React.useEffect(() => {
-    // oxlint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
-    setTime(value);
-  }, [value]);
 
   if (60 % minuteStep !== 0) {
     throw new Error('minuteStep must be a divisor of 60');
@@ -102,7 +96,6 @@ export function AppDatePickerTimeInput({
                 }
                 return (
                   <AppButton
-                    // oxlint-disable-next-line @eslint-react/no-array-index-key
                     key={i}
                     variant="plain"
                     onClick={() => {
@@ -134,7 +127,6 @@ export function AppDatePickerTimeInput({
 
                 return (
                   <AppButton
-                    // oxlint-disable-next-line @eslint-react/no-array-index-key
                     key={i}
                     variant="plain"
                     onClick={() => {

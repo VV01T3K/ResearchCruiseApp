@@ -1,3 +1,4 @@
+using System.Globalization;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
@@ -72,7 +73,7 @@ internal static partial class ApplicationMappings
         {
             Id = task.Id,
             ResearchTask = ToResearchTaskFields(task.ResearchTask),
-            Points = task.Points.ToString(),
+            Points = task.Points.ToString(CultureInfo.InvariantCulture),
         };
 
     public static ScoredPublication ToScoredPublication(FormAPublication publication) =>
@@ -80,7 +81,7 @@ internal static partial class ApplicationMappings
         {
             Id = publication.Id,
             Publication = ToPublicationFields(publication.Publication),
-            Points = publication.Points.ToString(),
+            Points = publication.Points.ToString(CultureInfo.InvariantCulture),
         };
 
     public static ScoredSpubTask ToScoredSpubTask(FormASpubTask task) =>
@@ -88,6 +89,6 @@ internal static partial class ApplicationMappings
         {
             Id = task.Id,
             SpubTask = ToSpubTaskFields(task.SpubTask),
-            Points = task.Points.ToString(),
+            Points = task.Points.ToString(CultureInfo.InvariantCulture),
         };
 }

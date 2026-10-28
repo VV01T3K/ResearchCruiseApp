@@ -103,16 +103,14 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                     key="historical"
                     options={groupBy(initValues.historicalResearchTasks, (x) => x.type ?? '').flatMap(
                       ([type, tasks]) => [
-                        ...[
-                          {
-                            value: type,
-                            content: (
-                              <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
-                                {getTaskName(type)}
-                              </div>
-                            ),
-                          },
-                        ],
+                        {
+                          value: type,
+                          content: (
+                            <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
+                              {getTaskName(type)}
+                            </div>
+                          ),
+                        },
                         ...tasks.map((task) => ({
                           value: JSON.stringify(task),
                           content: <ResearchTaskThumbnail task={task} />,
