@@ -1,4 +1,5 @@
 import { Header } from '@/integrations/tanstack/table/features';
+import { compareFilterOptions } from '@/integrations/tanstack/table/filterOptions';
 import { TrashIcon } from '@phosphor-icons/react';
 import React from 'react';
 
@@ -21,7 +22,7 @@ export function AppTableFilterList<TData extends object, TValue>({ header, expan
     if (staticOptions) {
       return staticOptions.map((value): [any, number] => [value, 0]);
     }
-    return Array.from(header.column.getFacetedUniqueValues().entries()).sort();
+    return Array.from(header.column.getFacetedUniqueValues().entries()).sort(([a], [b]) => compareFilterOptions(a, b));
   }, [header.column]);
 
   // Snapshot options on open so picking one can't make others vanish mid-selection.
@@ -116,7 +117,7 @@ export function AppTableFilterList<TData extends object, TValue>({ header, expan
               isRendered={supportsFilter}
               expanded={expanded}
             >
-              <AppCheckbox name={`isFilterChecked-${value}`} checked={isFilterChecked(value[0])} />
+              <AppCheckbox name={`isFilterChecked-${value[0]}`} checked={isFilterChecked(value[0])} />
               {getFilterOptionLabel ? getFilterOptionLabel(value[0]) : value[0]}
             </AppTableListItem>
           ))}

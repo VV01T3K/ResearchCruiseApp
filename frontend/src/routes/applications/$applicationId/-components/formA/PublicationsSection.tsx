@@ -253,16 +253,14 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                       ),
                       (x) => x.category ?? ''
                     ).flatMap(([category, publications]) => [
-                      ...[
-                        {
-                          value: category ?? '',
-                          content: (
-                            <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
-                              {getPublicationCategoryLabel(category as PublicationCategory)}
-                            </div>
-                          ),
-                        },
-                      ],
+                      {
+                        value: category ?? '',
+                        content: (
+                          <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
+                            {getPublicationCategoryLabel(category as PublicationCategory)}
+                          </div>
+                        ),
+                      },
                       ...publications.map((publication) => ({
                         value: JSON.stringify(publication),
                         content: (

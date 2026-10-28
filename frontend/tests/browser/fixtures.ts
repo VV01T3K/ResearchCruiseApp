@@ -64,6 +64,7 @@ export const test = base.extend<{
   requests: async ({ context }, use) => {
     const requests = new Requests();
     context.on('request', (request) => requests.record(request));
+    // oxlint-disable-next-line react/rules-of-hooks
     await use(requests);
   },
   // The signed-in user. Without one, the startup session lookup finds none, as for a guest.
