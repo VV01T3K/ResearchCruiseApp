@@ -468,7 +468,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDragCancel={handleDragCancel}
-            onDragEnd={handleDragEnd}
+            onDragEnd={(event) => void handleDragEnd(event)}
           >
             <div className="grid grid-cols-7 gap-1">
               {weekDays.map((day) => (

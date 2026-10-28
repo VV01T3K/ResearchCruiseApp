@@ -159,7 +159,7 @@ function CruiseDetailsPage() {
             <ArrowClockwiseIcon className="h-4 w-4" />
             Cofnij zmiany
           </AppButton>
-          <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={() => form.handleSubmit()}>
+          <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={() => void form.handleSubmit()}>
             <FloppyDiskIcon weight="fill" className="h-4 w-4" />
             Zapisz rejs
           </AppButton>
@@ -309,10 +309,12 @@ function CruiseDetailsPage() {
           <AppButton
             variant="danger"
             className="basis-2/3"
-            onClick={async () => {
-              await deleteCruiseMutation.mutateAsync({ cruiseId, params: { revision: cruiseQuery.data.revision } });
-              await navigate({ to: '/cruises' });
-            }}
+            onClick={() =>
+              deleteCruiseMutation.mutate(
+                { cruiseId, params: { revision: cruiseQuery.data.revision } },
+                { onSuccess: () => void navigate({ to: '/cruises' }) }
+              )
+            }
             disabled={deleteCruiseMutation.isPending}
           >
             Potwierdź usunięcie rejsu nr. {cruiseQuery.data?.number}

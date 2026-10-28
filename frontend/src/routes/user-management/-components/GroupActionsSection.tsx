@@ -135,7 +135,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           variant={deletionConfirmed ? 'dangerOutline' : 'danger'}
           className="w-full"
           disabled={deleteUserMutation.isPending || !!submitError}
-          onClick={() => handleDeleteSelectedUsers()}
+          onClick={() => void handleDeleteSelectedUsers()}
         >
           {deletionConfirmed ? (
             <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -156,7 +156,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           variant="success"
           className="mt-4 w-full"
           disabled={acceptUserMutation.isPending || !!submitError}
-          onClick={handleAcceptSelectedUsers}
+          onClick={() => void handleAcceptSelectedUsers()}
         >
           <div className="flex items-center gap-4">
             <UserCheckIcon weight="fill" className="h-4 w-4" />
@@ -172,7 +172,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           variant="danger"
           className="mt-4 w-full"
           disabled={unAcceptUserMutation.isPending || !!submitError}
-          onClick={handleUnAcceptSelectedUsers}
+          onClick={() => void handleUnAcceptSelectedUsers()}
         >
           {assignmentWarning !== undefined ? (
             <div className="flex items-center gap-4">

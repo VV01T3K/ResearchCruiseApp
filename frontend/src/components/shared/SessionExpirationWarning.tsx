@@ -62,10 +62,10 @@ export function SessionExpirationWarning({ expirationDate, onRefreshSession, onS
         </div>
 
         <div className="flex justify-end gap-2">
-          <AppButton variant="dangerOutline" size="sm" onClick={handleSignOut}>
+          <AppButton variant="dangerOutline" size="sm" onClick={() => void handleSignOut()}>
             Wyloguj
           </AppButton>
-          <AppButton variant="primary" size="sm" onClick={handleRefreshSession} disabled={isRefreshing}>
+          <AppButton variant="primary" size="sm" onClick={() => void handleRefreshSession()} disabled={isRefreshing}>
             {isRefreshing ? 'Odświeżanie...' : 'Odśwież sesję'}
           </AppButton>
         </div>

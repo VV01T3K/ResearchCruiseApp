@@ -37,6 +37,11 @@ export const lintConfig = {
     '@tanstack/query/infinite-query-property-order': 'error',
     '@tanstack/query/no-void-query-fn': 'error',
     '@tanstack/query/mutation-property-order': 'error',
+
+    'typescript/no-misused-promises': 'error',
+    'typescript/switch-exhaustiveness-check': ['error', { considerDefaultExhaustiveForUnions: true }],
+    'typescript/no-unnecessary-type-parameters': 'error',
+    'promise/catch-or-return': 'error',
   },
   ignorePatterns: ['dist', 'src/routeTree.gen.ts', 'src/api/generated', '.storybook'],
   overrides: [

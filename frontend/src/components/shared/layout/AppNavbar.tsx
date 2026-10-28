@@ -84,7 +84,7 @@ export function AppNavbar() {
               )}
               <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
                 <AppButton
-                  onClick={() => onSignOutButtonClicked()}
+                  onClick={() => void onSignOutButtonClicked()}
                   title="Wyloguj"
                   data-testid="sign-out-btn"
                   variant="plain"

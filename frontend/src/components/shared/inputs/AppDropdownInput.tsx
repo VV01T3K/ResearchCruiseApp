@@ -137,7 +137,7 @@ export function AppDropdownInput({
             >
               <Select.List className="flex max-h-64 flex-col overflow-y-auto">
                 {allPossibleOptions
-                  .filter((opt) => opt.inlineLabel || opt.richLabel)
+                  .filter((opt) => Boolean(opt.inlineLabel || opt.richLabel))
                   .map((opt) => (
                     <Select.Item
                       key={`dropdown-option-${opt.value}`}
