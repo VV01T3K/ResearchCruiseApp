@@ -275,10 +275,12 @@ function CruiseDetailsPage() {
           <AppButton
             variant="primary"
             className="basis-2/3"
-            onClick={async () => {
-              await confirmCruiseMutation.mutateAsync({ cruiseId, params: { revision: cruiseQuery.data.revision } });
-              setIsConfirmAcceptanceModalOpen(false);
-            }}
+            onClick={() =>
+              confirmCruiseMutation.mutate(
+                { cruiseId, params: { revision: cruiseQuery.data.revision } },
+                { onSettled: () => setIsConfirmAcceptanceModalOpen(false) }
+              )
+            }
             disabled={confirmCruiseMutation.isPending}
           >
             Potwierdź rejs nr. {cruiseQuery.data?.number}
@@ -337,10 +339,12 @@ function CruiseDetailsPage() {
           <AppButton
             variant="primary"
             className="basis-2/3"
-            onClick={async () => {
-              await endCruiseMutation.mutateAsync({ cruiseId, params: { revision: cruiseQuery.data.revision } });
-              setIsConfirmEndModalOpen(false);
-            }}
+            onClick={() =>
+              endCruiseMutation.mutate(
+                { cruiseId, params: { revision: cruiseQuery.data.revision } },
+                { onSettled: () => setIsConfirmEndModalOpen(false) }
+              )
+            }
             disabled={endCruiseMutation.isPending}
           >
             Oznacz rejs nr. {cruiseQuery.data?.number} jako zakończony
