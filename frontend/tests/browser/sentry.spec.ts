@@ -2,13 +2,14 @@ import type { Page } from '@playwright/test';
 import { test, expect } from './fixtures';
 import { admin } from '../data/accounts';
 
-async function captureEnvelopes(page: Page) {
+async function captureEnvelopes(page: Page, replayRate = '') {
   await page.route('/runtime-config.js', (route) =>
     route.fulfill({
       contentType: 'text/javascript',
       body: `window.__SENTRY_DSN__ = 'https://key@sentry.invalid/1';
         window.__SENTRY_PROXY__ = '/monitoring';
-        window.__SENTRY_TRACES_SAMPLE_RATE__ = '1';`,
+        window.__SENTRY_TRACES_SAMPLE_RATE__ = '1';
+        window.__SENTRY_REPLAYS_SESSION_SAMPLE_RATE__ = '${replayRate}';`,
     })
   );
   const envelopes: string[] = [];
@@ -51,4 +52,25 @@ test.describe('signed in', () => {
 
     await expect(dialog).toBeHidden();
   });
+
+  for (const [replayRate, replayed] of [
+    ['', false],
+    ['garbage', false],
+    ['0', false],
+    ['1.5', false],
+    ['1', true],
+  ] as const) {
+    test(`replay sample rate '${replayRate}' ${replayed ? 'sends' : 'never sends'} replays`, async ({ page }) => {
+      const sent = await captureEnvelopes(page, replayRate);
+      await page.goto('/help');
+      await page.getByRole('main').getByRole('button', { name: 'Zgłoś problem' }).click();
+      const dialog = page.getByRole('dialog', { name: 'Zgłoś problem' });
+      await dialog.getByRole('textbox').fill('Replay check');
+      await dialog.getByRole('button', { name: 'Wyślij zgłoszenie' }).click();
+
+      await expect.poll(sent).toContain('Replay check');
+      if (replayed) await expect.poll(sent).toContain('"type":"replay_event"');
+      else expect(sent()).not.toContain('replay_');
+    });
+  }
 });
