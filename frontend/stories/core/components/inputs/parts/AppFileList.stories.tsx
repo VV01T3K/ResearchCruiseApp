@@ -12,9 +12,6 @@ const waitForFiles = ({ canvasElement }: { canvasElement: HTMLElement }) =>
 
 const meta = {
   component: AppFileList,
-  parameters: {
-    a11y: { test: 'error' },
-  },
   args: {
     files: [
       {

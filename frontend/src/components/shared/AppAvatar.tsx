@@ -20,7 +20,7 @@ export function AppAvatar({ fullName, className, variant = 'default' }: Props) {
     maxRange,
     0,
     360
-  )},50%,50%)`;
+  )},50%,30%)`;
 
   return (
     <div

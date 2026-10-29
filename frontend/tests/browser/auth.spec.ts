@@ -21,7 +21,7 @@ import { admin, outsider, session } from '../data/accounts';
 import { applicationId } from '../data/forms';
 
 // The icon-only sign-out button has no accessible name yet (#491).
-const signOut = (page: Page) => page.getByTestId('sign-out-btn').click();
+const signOut = (page: Page) => page.getByRole('button', { name: 'Wyloguj', exact: true }).click();
 
 async function logIn(page: Page, password = 'Password1!') {
   await page.getByLabel('E-mail').fill(admin.email);

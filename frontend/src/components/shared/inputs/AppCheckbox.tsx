@@ -24,6 +24,7 @@ type Props = {
   className?: string;
   disabled?: boolean;
   helper?: React.ReactNode;
+  'aria-label'?: string;
 };
 export function AppCheckbox({
   name,
@@ -38,6 +39,7 @@ export function AppCheckbox({
   className,
   disabled,
   helper,
+  'aria-label': ariaLabel,
 }: Props) {
   const aria = useInputAria(errors, helper);
   return (
@@ -52,6 +54,7 @@ export function AppCheckbox({
           onBlur={onBlur}
           disabled={disabled}
           {...aria.inputProps}
+          aria-label={ariaLabel}
           className={cn(
             'flex items-center justify-center rounded-md border border-gray-300 transition-all duration-300',
             sizes[size],

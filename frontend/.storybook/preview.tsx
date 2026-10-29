@@ -3,12 +3,14 @@ import { Title, Subtitle, Description, Primary, Controls, Stories } from '@story
 import { sb } from 'storybook/test';
 import MockDate from 'mockdate';
 import { IconContext } from '@phosphor-icons/react';
+import { MotionGlobalConfig } from 'motion/react';
 import { iconDefaults } from '../src/integrations/phosphor/iconDefaults';
 import { withRouter } from '../stories/decorators/withRouter';
 
 import '../src/styles/index.css';
 
 sb.mock(import('../src/api/fetch.ts'));
+MotionGlobalConfig.skipAnimations = true;
 
 const preview: Preview = {
   beforeEach: () => {
@@ -24,7 +26,7 @@ const preview: Preview = {
     ),
   ],
   parameters: {
-    a11y: { test: 'todo' },
+    a11y: { test: 'error' },
     controls: {
       matchers: {
         color: /(background|color)$/i,

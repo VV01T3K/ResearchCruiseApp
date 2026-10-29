@@ -66,7 +66,7 @@ const variants = {
   danger: 'rounded-lg bg-danger hover:bg-danger-700 active:bg-danger disabled:bg-danger-400',
   warning:
     'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning disabled:bg-warning-100 text-black disabled:text-warning-800',
-  info: 'rounded-lg bg-info hover:bg-info-400 active:bg-info disabled:bg-info-200',
+  info: 'rounded-lg bg-info hover:bg-info-700 active:bg-info disabled:bg-info-200',
   primaryOutline:
     'rounded-lg bg-white hover:bg-primary active:bg-primary text-primary hover:text-white border border-primary transition-all duration-300 disabled:border-primary-300 disabled:text-primary-400 disabled:hover:bg-white',
   successOutline:

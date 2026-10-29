@@ -24,6 +24,7 @@ type CommonProps = {
   minimum?: number;
   maximum?: number;
   step?: number;
+  'aria-label'?: string;
   'data-testid'?: string;
   'data-testid-input'?: string;
   'data-testid-errors'?: string;
@@ -68,6 +69,7 @@ export function AppNumberInput({
   step = 1,
   type = 'integer',
   precision = 2,
+  'aria-label': ariaLabel,
   'data-testid': testId,
   'data-testid-input': inputTestId,
   'data-testid-errors': errorsTestId,
@@ -157,6 +159,7 @@ export function AppNumberInput({
             }}
             disabled={disabled}
             {...aria.inputProps}
+            aria-label={ariaLabel}
             className={cn(
               'block h-11 w-full border border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900',
               'transition duration-300 ease-in-out',
@@ -215,6 +218,7 @@ function AppNumberInputButton({ side, inputToFocus, onClick, disabled }: ButtonP
       )}
       variant="plain"
       size="plain"
+      title={side === 'left' ? 'Zmniejsz' : 'Zwiększ'}
     >
       {side === 'left' ? <MinusIcon /> : <PlusIcon />}
     </AppButton>
