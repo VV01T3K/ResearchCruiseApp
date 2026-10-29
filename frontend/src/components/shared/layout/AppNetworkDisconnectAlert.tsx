@@ -8,7 +8,7 @@ import config from '@/config';
 export function AppNetworkDisconnectAlert() {
   const [networkConnectionStatus, setNetworkConnectionStatus] = React.useState<boolean | undefined>(undefined);
 
-  const { mutate, mutateAsync } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: async () => {
       const response = await fetch(`${config.apiUrl}/health`);
       if (!response.ok) throw new Error(`Network status request failed with status ${response.status}`);
@@ -21,11 +21,9 @@ export function AppNetworkDisconnectAlert() {
 
   React.useEffect(() => {
     mutate();
-    const intervalId = setInterval(async () => {
-      await mutateAsync().catch(() => {});
-    }, 3000);
+    const intervalId = setInterval(() => mutate(), 3000);
     return () => clearInterval(intervalId);
-  }, [mutate, mutateAsync]);
+  }, [mutate]);
 
   return (
     <AnimatePresence>

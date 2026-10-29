@@ -149,7 +149,7 @@ export function AppFileInput({
         onClick={() => {
           if (!disabled) inputRef.current?.click();
         }}
-        onDrop={handleDrop}
+        onDrop={(evt) => void handleDrop(evt)}
         onDragOver={(e) => e.preventDefault()}
       >
         <div
@@ -219,7 +219,7 @@ export function AppFileInput({
         multiple={allowMultiple}
         disabled={disabled}
         className="hidden"
-        onChange={handleChange}
+        onChange={(evt) => void handleChange(evt)}
         accept={acceptedMimeTypes?.join(',')}
         data-testid={inputTestId}
       />

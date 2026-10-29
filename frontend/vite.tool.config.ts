@@ -45,6 +45,11 @@ export const lintConfig = {
     '@tanstack/query/no-void-query-fn': 'error',
     '@tanstack/query/mutation-property-order': 'error',
 
+    'typescript/no-misused-promises': 'error',
+    'typescript/switch-exhaustiveness-check': ['error', { considerDefaultExhaustiveForUnions: true }],
+    'typescript/no-unnecessary-type-parameters': 'error',
+    'promise/catch-or-return': 'error',
+
     'shadcn/no-unknown-classes': 'error',
     ...(process.env.LINT_DESIGN && {
       'shadcn/no-unknown-classes': 'warn',

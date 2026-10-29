@@ -298,7 +298,7 @@ function ApplicationsPage() {
             isFetchingNextPage: applicationsQuery.isFetchingNextPage,
             isFetching: applicationsQuery.isFetching,
             pageCount: applicationsQuery.data?.pages.length ?? 0,
-            fetchNextPage: applicationsQuery.fetchNextPage,
+            fetchNextPage: () => void applicationsQuery.fetchNextPage(),
           }}
         />
       </AppLayout>

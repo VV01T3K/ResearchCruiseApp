@@ -168,38 +168,38 @@ function UserManagementPage() {
 
       <AppModal
         isOpen={modalState.state === 'newUserModal'}
-        onClose={() => handleModalClose()}
+        onClose={() => void handleModalClose()}
         title="Dodaj użytkownika"
       >
         <EditForm
           allUsers={usersQuery.data}
           allowedRoles={allowedRoles[currentUserRole]}
-          close={() => handleModalClose()}
+          close={() => void handleModalClose()}
           allowToRemoveUsers={false}
         />
       </AppModal>
       <AppModal
         isOpen={modalState.state === 'groupActionsModal' && Object.keys(selectedUsers).length > 0}
-        onClose={() => handleModalClose()}
+        onClose={() => void handleModalClose()}
         title="Akcje grupowe"
       >
         <GroupActionsSection
           selectedUsers={usersQuery.data.filter((user) => selectedUsers[user.id])}
           allUsers={usersQuery.data}
           allowToRemoveUsers={currentUserRole === Role.Administrator || currentUserRole === Role.ShipOwner}
-          close={() => handleModalClose()}
+          close={() => void handleModalClose()}
         />
       </AppModal>
       <AppModal
         isOpen={modalState.state === 'editUserModal' && 'user' in modalState}
-        onClose={() => handleModalClose()}
+        onClose={() => void handleModalClose()}
         title="Edytuj użytkownika"
       >
         <EditForm
           user={(modalState as { state: 'editUserModal'; user: UserResponse }).user}
           allUsers={usersQuery.data}
           allowedRoles={allowedRoles[currentUserRole]}
-          close={() => handleModalClose()}
+          close={() => void handleModalClose()}
           allowToRemoveUsers={currentUserRole === Role.Administrator || currentUserRole === Role.ShipOwner}
         />
       </AppModal>

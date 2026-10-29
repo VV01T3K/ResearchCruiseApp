@@ -253,7 +253,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
             <input
               type="file"
               accept=".csv,.txt,.xlsx"
-              onChange={handleFileImport}
+              onChange={(event) => void handleFileImport(event)}
               ref={fileInputRef}
               disabled={isReadonly}
               className="hidden"
