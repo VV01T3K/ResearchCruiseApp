@@ -61,7 +61,7 @@ export function SessionStatusBadge({ refreshTokenExpirationDate, onRefresh }: Pr
       <button
         data-testid="session-refresh-btn"
         title="Odśwież sesję"
-        onClick={handleRefresh}
+        onClick={() => void handleRefresh()}
         disabled={isRefreshing}
         className="hover:opacity-70 disabled:opacity-40"
       >

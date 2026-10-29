@@ -89,13 +89,12 @@ function CruisesPage() {
           <AppButton
             variant="danger"
             className="basis-2/3"
-            onClick={async () => {
+            onClick={() => {
               if (!cruiseSelectedForDeletion) return;
-              await deleteCruiseMutation.mutateAsync({
-                cruiseId: cruiseSelectedForDeletion.id,
-                params: { revision: cruiseSelectedForDeletion.revision },
-              });
-              setCruiseSelectedForDeletion(undefined);
+              deleteCruiseMutation.mutate(
+                { cruiseId: cruiseSelectedForDeletion.id, params: { revision: cruiseSelectedForDeletion.revision } },
+                { onSuccess: () => setCruiseSelectedForDeletion(undefined) }
+              );
             }}
             disabled={deleteCruiseMutation.isPending}
           >

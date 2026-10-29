@@ -13,6 +13,7 @@ type Props = {
   role?: React.HTMLAttributes<HTMLButtonElement>['role'];
   name?: string;
   id?: string;
+  title?: string;
   'aria-describedby'?: string;
   'aria-invalid'?: boolean;
   'data-testid'?: string;
@@ -29,6 +30,7 @@ export function AppButton(props: Props) {
     role,
     name,
     id,
+    title,
     'aria-describedby': ariaDescribedBy,
     variant = 'primary',
     size = 'md',
@@ -51,6 +53,7 @@ export function AppButton(props: Props) {
       role={role}
       name={name}
       id={id}
+      title={title}
       aria-describedby={ariaDescribedBy}
       aria-invalid={ariaInvalid}
       data-testid={testId}
@@ -90,7 +93,7 @@ const variants = {
   danger: 'rounded-lg bg-danger hover:bg-danger-700 active:bg-danger disabled:bg-danger-400',
   warning:
     'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning disabled:bg-warning-100 text-black disabled:text-warning-800',
-  info: 'rounded-lg bg-info hover:bg-info-400 active:bg-info disabled:bg-info-200',
+  info: 'rounded-lg bg-info hover:bg-info-700 active:bg-info disabled:bg-info-200',
 
   primaryOutline:
     'rounded-lg bg-white hover:bg-primary active:bg-primary text-primary hover:text-white border border-primary transition-all duration-300 disabled:border-gray-300 disabled:text-gray-400 disabled:hover:bg-white',

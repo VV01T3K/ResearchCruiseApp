@@ -10,6 +10,7 @@ import { AppLayout } from '@/components/shared/AppLayout';
 import { AppModal } from '@/components/shared/AppModal';
 import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
 import { AppTable } from '@/components/shared/table/AppTable';
+import { toast } from '@/components/shared/layout/toast';
 import { UploadButton } from './-components/UploadButton';
 import {
   useDeleteAllCurrentUserPublications,
@@ -27,14 +28,29 @@ export const Route = createFileRoute('/my-publications/')({
 function MyPublicationsPage() {
   const [selectedPublications, setSelectedPublications] = React.useState<RowSelectionState>({});
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = React.useState(false);
+  const [isDeletingSelected, setIsDeletingSelected] = React.useState(false);
   const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense();
   const deleteOwnPublicationMutation = useDeleteCurrentUserPublication();
+  const deleteSelectedPublicationsMutation = useDeleteCurrentUserPublication({
+    mutation: { meta: { handlesError: true } },
+  });
   const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications();
   const uploadPublicationsMutation = useImportCurrentUserPublications();
 
-  function deleteSelectedPublications() {
-    Object.keys(selectedPublications).forEach((id) => deleteOwnPublicationMutation.mutateAsync({ publicationId: id }));
-    setSelectedPublications({});
+  async function deleteSelectedPublications() {
+    const ids = Object.keys(selectedPublications);
+    setIsDeletingSelected(true);
+    const results = await Promise.allSettled(
+      ids.map((id) => deleteSelectedPublicationsMutation.mutateAsync({ publicationId: id }))
+    );
+    setIsDeletingSelected(false);
+    const deletedIds = new Set(ids.filter((_, i) => results[i].status === 'fulfilled'));
+    setSelectedPublications((selected) =>
+      Object.fromEntries(Object.entries(selected).filter(([id]) => !deletedIds.has(id)))
+    );
+    if (deletedIds.size < ids.length) {
+      toast.error(`Nie udało się usunąć ${ids.length - deletedIds.size} z ${ids.length} zaznaczonych publikacji`);
+    }
   }
 
   const columns: ColumnDef<PublicationResponse>[] = [
@@ -100,9 +116,7 @@ function MyPublicationsPage() {
         <AppButton
           variant="dangerOutline"
           size="xs"
-          onClick={() =>
-            deleteOwnPublicationMutation.mutateAsync({ publicationId: cell.row.original.id }).catch(() => {})
-          }
+          onClick={() => deleteOwnPublicationMutation.mutate({ publicationId: cell.row.original.id })}
         >
           <TrashIcon className="mr-2 h-3 w-3" />
           Usuń
@@ -149,8 +163,8 @@ function MyPublicationsPage() {
             <AppButton
               key="removeSelectedPublications"
               variant="dangerOutline"
-              onClick={() => deleteSelectedPublications()}
-              disabled={!Object.keys(selectedPublications).length || deleteOwnPublicationMutation.isPending}
+              onClick={() => void deleteSelectedPublications()}
+              disabled={!Object.keys(selectedPublications).length || isDeletingSelected}
             >
               <TrashIcon className="mr-2 h-4 w-4" />
               Usuń zaznaczone publikacje
@@ -169,10 +183,9 @@ function MyPublicationsPage() {
           <AppButton
             variant="dangerOutline"
             className="basis-2/3"
-            onClick={async () => {
-              await deleteAllOwnPublicationsMutation.mutateAsync();
-              setIsDeleteAllModalOpen(false);
-            }}
+            onClick={() =>
+              deleteAllOwnPublicationsMutation.mutate(undefined, { onSuccess: () => setIsDeleteAllModalOpen(false) })
+            }
             disabled={deleteAllOwnPublicationsMutation.isPending}
           >
             Usuń wszystkie publikacje

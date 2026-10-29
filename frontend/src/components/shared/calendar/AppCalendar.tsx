@@ -436,7 +436,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
   return (
     <div ref={calendarRef} className="flex flex-col gap-4 p-4">
       <div className="flex w-full items-center justify-center">
-        <AppButton variant="plain" onClick={() => handleMonthChange(-1)}>
+        <AppButton variant="plain" title="Poprzedni miesiąc" onClick={() => handleMonthChange(-1)}>
           <CaretLeftIcon className="h-8 w-8" />
         </AppButton>
         <AppMonthPickerPopover
@@ -449,7 +449,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
           )}
         />
 
-        <AppButton variant="plain" onClick={() => handleMonthChange(1)}>
+        <AppButton variant="plain" title="Następny miesiąc" onClick={() => handleMonthChange(1)}>
           <CaretRightIcon className="h-8 w-8" />
         </AppButton>
       </div>
@@ -468,7 +468,7 @@ export function AppCalendar({ events, buttons, onEventDrop }: Props) {
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDragCancel={handleDragCancel}
-            onDragEnd={handleDragEnd}
+            onDragEnd={(event) => void handleDragEnd(event)}
           >
             <div className="grid grid-cols-7 gap-1">
               {weekDays.map((day) => (

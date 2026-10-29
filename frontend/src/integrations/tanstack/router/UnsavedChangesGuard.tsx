@@ -18,7 +18,7 @@ export function UnsavedChangesGuard({ form, disabled = false, recoveryKey }: Pro
   );
 
   useEffect(() => {
-    if (recoveryKey && !disabled) return registerRecoverableForm(recoveryKey, form);
+    return recoveryKey && !disabled ? registerRecoverableForm(recoveryKey, form) : undefined;
   }, [recoveryKey, disabled, form]);
 
   function closeRecovery(restore: boolean) {

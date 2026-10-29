@@ -116,7 +116,6 @@ export const DuplicateFieldNames: Story = {
       <IndependentInput {...args} label="Second field" />
     </div>
   ),
-  parameters: { a11y: { test: 'error' } },
   play: async ({ args, canvas, userEvent }) => {
     const first = canvas.getByLabelText('First field');
     const second = canvas.getByLabelText('Second field');

@@ -9,7 +9,6 @@ import AppBackground from '@/components/shared/layout/AppBackground';
 const meta = {
   component: AppModal,
   parameters: {
-    a11y: { test: 'error' },
     docs: {
       story: { inline: false },
     },

@@ -10,6 +10,7 @@ const meta = {
   component: AppNumberInput,
   args: {
     name: 'Numer input',
+    'aria-label': 'Number input',
     value: 12,
     errors: undefined,
     label: undefined,
@@ -40,6 +41,7 @@ export const WithErrors: Story = {
 export const WithLabel: Story = {
   args: {
     label: 'Label',
+    'aria-label': undefined,
   },
 };
 
@@ -54,7 +56,7 @@ export const ResyncsDraftOnTypeChange: Story = {
     const [type, setType] = useState<'float' | 'integer'>('float');
     return (
       <>
-        <AppNumberInput name="resync" value={1} type={type as 'float'} />
+        <AppNumberInput name="resync" aria-label="Resync" value={1} type={type as 'float'} />
         {/* Keeps focus in the input, so its blur reformat cannot hide a missed resync. */}
         <button type="button" onMouseDown={(evt) => evt.preventDefault()} onClick={() => setType('integer')}>
           Integer

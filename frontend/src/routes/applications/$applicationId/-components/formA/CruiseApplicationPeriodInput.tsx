@@ -143,7 +143,7 @@ export function CruiseApplicationPeriodInput({
                   key={`step-${position}-text`}
                   className={cn(
                     'absolute top-1/2 z-0 -translate-x-1/2 translate-y-8 rotate-60 transform text-sm',
-                    isUnavailable(idx * 2 + 1) ? 'text-gray-400' : 'text-gray-800'
+                    isUnavailable(idx * 2 + 1) ? 'text-gray-500' : 'text-gray-800'
                   )}
                   style={{ left: `${position}%` }}
                 >
@@ -153,6 +153,7 @@ export function CruiseApplicationPeriodInput({
           </Slider.Track>
           <Slider.Thumb
             index={0}
+            aria-label="Początek okresu"
             aria-describedby={helper ? helperId : undefined}
             className={cn(
               'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none',
@@ -162,6 +163,7 @@ export function CruiseApplicationPeriodInput({
           />
           <Slider.Thumb
             index={1}
+            aria-label="Koniec okresu"
             aria-describedby={helper ? helperId : undefined}
             className={cn(
               'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 outline-none',

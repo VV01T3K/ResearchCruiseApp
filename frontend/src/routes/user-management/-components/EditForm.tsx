@@ -375,7 +375,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 <AppButton
                   variant={deletionConfirmed ? 'danger' : 'warning'}
                   disabled={!canSubmit || isSubmitting}
-                  onClick={handleUserDeletion}
+                  onClick={() => void handleUserDeletion()}
                   className="w-full"
                 >
                   {deletionConfirmed ? (
@@ -400,7 +400,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 <AppButton
                   variant={!user.accepted ? 'success' : 'danger'}
                   disabled={!!submitError || acceptUserMutation.isPending || unAcceptUserMutation.isPending}
-                  onClick={() => handleAccountAcceptanceToggle()}
+                  onClick={() => void handleAccountAcceptanceToggle()}
                   className="w-full"
                 >
                   {!user.accepted ? (
@@ -426,7 +426,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 <AppButton
                   variant={passwordResetSent ? 'success' : 'primaryOutline'}
                   disabled={!!submitError || initiatePasswordResetMutation.isPending || passwordResetSent}
-                  onClick={() => handleInitiatePasswordReset()}
+                  onClick={() => void handleInitiatePasswordReset()}
                   className="w-full"
                 >
                   {passwordResetSent ? (

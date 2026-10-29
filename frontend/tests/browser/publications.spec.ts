@@ -4,7 +4,7 @@ import {
   getGetCurrentUserPublicationsMockHandler,
   getImportCurrentUserPublicationsMockHandler,
 } from '@/api/generated/mocks/users/users.msw.gen';
-import { test, expect } from './fixtures';
+import { test, expect, fail } from './fixtures';
 import { admin, publication } from '../data/accounts';
 
 test.use({ account: admin });
@@ -64,4 +64,33 @@ test('publications can be deleted one at a time or all at once after confirmatio
   await confirmation.getByRole('button', { name: 'Usuń wszystkie publikacje' }).click();
   await expect(page.getByRole('cell', { name: second.title, exact: true })).toHaveCount(0);
   expect(requests.bodies('DELETE /v2/users/me/publications')).toHaveLength(1);
+});
+
+test('a partly failed bulk delete reports one error and keeps the failed row selected', async ({ page, network }) => {
+  const first = publication();
+  const second = { ...publication(), id: '88888888-8888-4888-8888-888888888888', title: 'Temperature' };
+  let releaseFirst!: () => void;
+  const firstHeld = new Promise<void>((resolve) => (releaseFirst = resolve));
+  network.use(
+    getGetCurrentUserPublicationsMockHandler([first, second]),
+    getDeleteCurrentUserPublicationMockHandler(async ({ params }) => {
+      if (params.publicationId === first.id) {
+        await firstHeld;
+        fail(500)();
+      }
+      network.use(getGetCurrentUserPublicationsMockHandler([first]));
+    })
+  );
+  await page.goto('/my-publications');
+  for (const title of [first.title!, second.title]) {
+    await page.getByRole('row').filter({ hasText: title }).getByRole('checkbox').check();
+  }
+  const deleteSelected = page.getByRole('button', { name: 'Usuń zaznaczone publikacje' });
+  await deleteSelected.click();
+
+  await expect(page.getByRole('cell', { name: second.title, exact: true })).toHaveCount(0);
+  await expect(deleteSelected).toBeDisabled();
+  releaseFirst();
+  await expect(page.getByTestId('toast-error')).toHaveText('Nie udało się usunąć 1 z 2 zaznaczonych publikacji');
+  await expect(page.getByRole('row').filter({ hasText: first.title! }).getByRole('checkbox')).toBeChecked();
 });
