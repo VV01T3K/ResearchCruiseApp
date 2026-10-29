@@ -1,0 +1,73 @@
+name: Dependency audit
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TITLE: Nightly dependency audit found vulnerabilities
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Audit JavaScript dependencies
+        id: js
+        continue-on-error: true
+        run: bun audit --audit-level=high 2>&1 | tee -a "$RUNNER_TEMP/audit.txt"
+
+      - name: Audit .NET dependencies
+        id: dotnet
+        continue-on-error: true
+        working-directory: backend
+        run: |
+          dotnet restore ResearchCruiseApp.slnx
+          dotnet list ResearchCruiseApp.slnx package --vulnerable --include-transitive | tee -a "$RUNNER_TEMP/audit.txt"
+          ! grep -E '\b(High|Critical)\b' "$RUNNER_TEMP/audit.txt"
+
+      - name: Report to issue
+        if: github.repository == 'VV01T3K/ResearchCruiseApp' && github.ref == 'refs/heads/staging'
+        env:
+          FAILED: ${{ steps.js.outcome == 'failure' || steps.dotnet.outcome == 'failure' }}
+          OWNER: ${{ github.repository_owner }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          issue=$(gh issue list --state open --label security --search "\"$TITLE\" in:title" --json number,title --jq ".[] | select(.title == \"$TITLE\") | .number" | head -1)
+          body=$(printf "Run: %s\n\n\`\`\`\n%s\n\`\`\`\n" "$RUN_URL" "$(tail -c 60000 "$RUNNER_TEMP/audit.txt")")
+          if [ "$FAILED" = true ]; then
+            if [ -n "$issue" ]; then
+              gh issue comment "$issue" --body "$body"
+            else
+              gh issue create --title "$TITLE" --label bug,security,ai-generated --assignee "$OWNER" --body "$body"
+            fi
+          elif [ -n "$issue" ]; then
+            gh issue close "$issue" --comment "Audit passed: $RUN_URL"
+          fi
+
+      - name: Fail on vulnerabilities
+        if: steps.js.outcome == 'failure' || steps.dotnet.outcome == 'failure'
+        run: exit 1
