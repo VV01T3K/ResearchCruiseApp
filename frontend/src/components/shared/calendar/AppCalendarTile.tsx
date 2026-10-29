@@ -174,7 +174,13 @@ export function AppCalendarTile({
       )}
     >
       <div className="gap-1 p-2">
-        <div className={cn(!isCurrentMonth ? 'text-gray-500' : '', isSunday ? 'text-danger' : '', 'text-end')}>
+        <div
+          className={cn(
+            !isCurrentMonth ? 'text-gray-500' : '',
+            isSunday ? (isToday ? 'text-danger-700' : 'text-danger') : '',
+            'text-end'
+          )}
+        >
           {date.getDate()}
         </div>
       </div>

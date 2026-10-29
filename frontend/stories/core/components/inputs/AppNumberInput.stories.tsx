@@ -41,6 +41,7 @@ export const WithErrors: Story = {
 export const WithLabel: Story = {
   args: {
     label: 'Label',
+    'aria-label': undefined,
   },
 };
 
