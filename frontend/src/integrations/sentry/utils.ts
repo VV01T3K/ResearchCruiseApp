@@ -31,7 +31,7 @@ export function createFormBreadcrumb(
 }
 
 const queryParam = /(^|[?&])([^?&=#\s"']+)=[^?&#\s"']*/g;
-const sensitiveParams = new Set(['code', 'resetcode', 'supervisorcode', 'emailbase64']);
+const sensitiveParams = new Set(['code', 'resetcode', 'supervisorcode']);
 
 function isSensitiveParam(name: string): boolean {
   const [decoded = ''] = new URLSearchParams(`${name}=`).keys();

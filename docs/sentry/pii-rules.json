@@ -1,0 +1,25 @@
+{
+  "rules": {
+    "secret_query": {
+      "type": "pattern",
+      "pattern": "(?i)[?&](?:(?:c|%63)(?:o|%6f)(?:d|%64)(?:e|%65)|(?:r|%72)(?:e|%65)(?:s|%73)(?:e|%65)(?:t|%74)(?:c|%63)(?:o|%6f)(?:d|%64)(?:e|%65)|(?:s|%73)(?:u|%75)(?:p|%70)(?:e|%65)(?:r|%72)(?:v|%76)(?:i|%69)(?:s|%73)(?:o|%6f)(?:r|%72)(?:c|%63)(?:o|%6f)(?:d|%64)(?:e|%65))=([^&#\\s\\x22\\x27<>]*)",
+      "replaceGroups": [1],
+      "redaction": {
+        "method": "replace",
+        "text": "[Filtered]"
+      }
+    }
+  },
+  "applications": {
+    "$string || $http.url || $http.query_string || $http.headers.referer || $error.value || $message || $breadcrumb.message || $breadcrumb.data.** || $span.description || $span.data.**": [
+      "secret_query"
+    ],
+    "$http.cookies || $http.headers.authorization || $http.headers.proxy-authorization || $http.headers.cookie || $http.headers.set-cookie || $http.headers.x-api-key": [
+      "@anything:remove"
+    ],
+    "$user.ip_address || $http.env.REMOTE_ADDR": ["@anything:remove"],
+    "password || passwordConfirm || newPassword || resetCode || supervisorCode || $http.query_string.code || $breadcrumb.data.code": [
+      "@anything:filter"
+    ]
+  }
+}

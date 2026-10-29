@@ -131,7 +131,6 @@ app.UseExceptionHandler(exceptionHandlerApp =>
         {
             var hub = context.RequestServices.GetRequiredService<IHub>();
             hub.ConfigureScope(scope => scope.SetTag("error.code", errorCode));
-            hub.CaptureException(exception);
         }
 
         await Results

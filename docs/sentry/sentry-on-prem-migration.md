@@ -48,7 +48,7 @@ never mix cloud and on-prem DSNs within an environment.
 
 Before creating the real projects, rehearse on throwaway ones (e.g. `tmp-frontend` /
 `tmp-backend`): mirror the staging projects' settings (inbound filters, allowed domains, client
-key rate limits, data scrubbing, alert rules, ownership) through the MCP server or the UI, point a local
+key rate limits, data scrubbing per [project-scrubbing.md](project-scrubbing.md), alert rules, ownership) through the MCP server or the UI, point a local
 `docker/docker-compose.dev.yml` run at their DSNs, and walk the Step 5 checklist. Delete them
 once the production projects are configured the same way.
 
@@ -114,7 +114,6 @@ In the production compose/host environment set:
 ```
 SENTRY_DSN_FRONTEND=<frontend-production DSN>
 SENTRY_DSN_BACKEND=<backend-production DSN>
-SENTRY_TRACES_SAMPLE_RATE=0.4
 ```
 
 then restart the containers. Both application environments are already set by their production
