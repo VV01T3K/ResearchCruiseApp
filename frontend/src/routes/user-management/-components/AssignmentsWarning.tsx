@@ -25,7 +25,7 @@ type Props = {
 export function AssignmentsWarning({ items, action, group }: Props) {
   if (!items) {
     return (
-      <AppAlert variant="warning" iconAlign="start" data-testid="assignments-warning">
+      <AppAlert variant="warning" iconAlign="start">
         Nie udało się sprawdzić zgłoszeń i rejsów prowadzonych przez {group ? 'użytkowników' : 'użytkownika'}. Mogą
         wśród nich być aktywne zgłoszenia lub rejsy.
       </AppAlert>
@@ -35,7 +35,7 @@ export function AssignmentsWarning({ items, action, group }: Props) {
   const several = items.length > 1;
 
   return (
-    <AppAlert variant="warning" iconAlign="start" data-testid="assignments-warning">
+    <AppAlert variant="warning" iconAlign="start">
       <div className="space-y-2">
         <p className="font-semibold">
           {several ? 'Ci użytkownicy prowadzą' : 'Ten użytkownik prowadzi'} aktywne zgłoszenia lub rejsy

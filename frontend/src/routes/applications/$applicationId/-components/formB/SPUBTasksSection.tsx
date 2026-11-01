@@ -40,7 +40,6 @@ export function SPUBTasksSection({ context }: { context: FormBViewModel }) {
     <AppAccordion
       title="11. Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
       expandedByDefault
-      data-testid="form-b-spub-tasks-section"
     >
       <AppTable
         data={formA.spubTasks}

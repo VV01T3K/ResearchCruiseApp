@@ -101,11 +101,7 @@ export function ResearchEquipmentsSection({ context }: { context: FormCViewModel
   const { isReadonly } = context;
 
   return (
-    <AppAccordion
-      title="14. Lista sprzętu i aparatury badawczej użytej podczas rejsu"
-      expandedByDefault
-      data-testid="form-c-research-equipments-section"
-    >
+    <AppAccordion title="14. Lista sprzętu i aparatury badawczej użytej podczas rejsu" expandedByDefault>
       <form.AppField name="researchEquipments" mode="array">
         {(field) => (
           <AppTable

@@ -91,7 +91,6 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
                   inlineLabel: taskName,
                 }))}
                 disabled={isReadonly}
-                data-testid-button="form-a-spub-task-name-button"
               />
             )}
           </form.AppField>
@@ -119,7 +118,6 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
     <AppAccordion
       title="10. Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
       expandedByDefault
-      data-testid="form-a-spub-tasks-section"
     >
       <div>
         <form.AppField name="spubTasks" mode="array">
@@ -139,7 +137,6 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
                       field.handleBlur();
                     }}
                     disabled={isReadonly}
-                    data-testid="form-a-add-spub-task-btn"
                   >
                     Dodaj
                   </AppButton>,
@@ -157,7 +154,6 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
                       }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
-                    data-testid="form-a-add-historical-spub-task-btn"
                   >
                     Dodaj historyczne zadanie
                   </DropdownElementSelectorButton>,
@@ -166,12 +162,8 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-spub-tasks-table"
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-spub-tasks-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </>
           )}
         </form.AppField>

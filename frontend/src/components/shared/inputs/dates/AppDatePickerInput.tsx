@@ -30,9 +30,6 @@ type Props = {
   minimalDate?: Date;
   maximalDate?: Date;
   selectionStartDate?: Date;
-  'data-testid'?: string;
-  'data-testid-button'?: string;
-  'data-testid-errors'?: string;
 } & (
   | {
       type?: 'date';
@@ -59,9 +56,6 @@ export function AppDatePickerInput({
   minimalDate,
   maximalDate,
   selectionStartDate,
-  'data-testid': testId,
-  'data-testid-button': buttonTestId,
-  'data-testid-errors': errorsTestId,
 }: Props) {
   const aria = useInputAria(errors, helper);
   const selectedDate = getDateFromValue(value);
@@ -126,7 +120,7 @@ export function AppDatePickerInput({
 
   return (
     <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
-      <div className="flex flex-col" data-testid={testId}>
+      <div className="flex flex-col">
         <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div className="relative">
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
@@ -136,7 +130,6 @@ export function AppDatePickerInput({
             disabled={disabled}
             {...aria.inputProps}
             className={pickerTriggerClassName({ disabled, errors })}
-            data-testid={buttonTestId}
           >
             {selectedDate
               ? selectedDate.toLocaleDateString('pl-PL', {
@@ -164,7 +157,7 @@ export function AppDatePickerInput({
         </div>
         <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper id={aria.helperId} helper={helper} />
-          <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
+          <AppInputErrorsList id={aria.errorId} errors={errors} />
         </div>
       </div>
       <PickerPopup aria-label="Wybierz datę">

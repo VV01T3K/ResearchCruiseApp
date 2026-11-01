@@ -25,9 +25,6 @@ type CommonProps = {
   maximum?: number;
   step?: number;
   'aria-label'?: string;
-  'data-testid'?: string;
-  'data-testid-input'?: string;
-  'data-testid-errors'?: string;
 } & (
   | {
       type?: 'integer';
@@ -70,9 +67,6 @@ export function AppNumberInput({
   type = 'integer',
   precision = 2,
   'aria-label': ariaLabel,
-  'data-testid': testId,
-  'data-testid-input': inputTestId,
-  'data-testid-errors': errorsTestId,
 }: Props) {
   const aria = useInputAria(errors, helper);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -137,9 +131,9 @@ export function AppNumberInput({
   }
 
   return (
-    <div className={cn(className, 'flex flex-col')} data-testid={testId}>
+    <div className={cn(className, 'flex flex-col')}>
       <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
-      <div className="flex items-center">
+      <div className="flex items-center" role="group" aria-label={typeof label === 'string' ? label : ariaLabel}>
         {!disabled && (
           <AppNumberInputButton
             onClick={() => updateValue((value ?? 0) - step)}
@@ -168,7 +162,6 @@ export function AppNumberInput({
               hasErrors(errors) && invalidInputClassName
             )}
             ref={inputRef}
-            data-testid={inputTestId}
           />
           <AppInputErrorTriangle errors={errors} mode={'absolute'} />
         </div>
@@ -183,7 +176,7 @@ export function AppNumberInput({
       </div>
       <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <AppInputHelper id={aria.helperId} helper={helper} />
-        <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
+        <AppInputErrorsList id={aria.errorId} errors={errors} />
       </div>
     </div>
   );

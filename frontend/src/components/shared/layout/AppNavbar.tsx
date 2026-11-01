@@ -86,7 +86,6 @@ export function AppNavbar() {
                 <AppButton
                   onClick={() => void onSignOutButtonClicked()}
                   title="Wyloguj"
-                  data-testid="sign-out-btn"
                   variant="plain"
                   className="p-0 text-white"
                 >

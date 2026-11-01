@@ -7,7 +7,7 @@ export function CruiseGoalSection({ context }: { context: FormCViewModel }) {
   const { formA, formAInitValues } = context;
 
   return (
-    <AppAccordion title="6. Cel rejsu" expandedByDefault data-testid="form-c-cruise-goal-section">
+    <AppAccordion title="6. Cel rejsu" expandedByDefault>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div>
           <AppDropdownInput

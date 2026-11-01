@@ -89,10 +89,16 @@ for (const { action, accepted, button, route, handler } of [
     await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
     const toggle = page.getByRole('button', { name: button, exact: true });
     await toggle.click();
-    await expect(page.getByRole('alert')).toContainText('Spróbuj ponownie później');
+    await expect(page.getByRole('dialog', { name: 'Edytuj użytkownika' }).getByRole('alert')).toContainText(
+      'Spróbuj ponownie później'
+    );
     // A failed action stays blocked until its error is dismissed.
     await expect(toggle).toBeDisabled();
-    await page.getByRole('alert').getByRole('button', { name: 'Close' }).click();
+    await page
+      .getByRole('dialog', { name: 'Edytuj użytkownika' })
+      .getByRole('alert')
+      .getByRole('button', { name: 'Close' })
+      .click();
 
     await toggle.click();
     await expect(toggle).toHaveCount(0);
@@ -128,7 +134,9 @@ test('repeated invalid Add submissions focus the email field, and a failed add c
 
   await email.fill(deputy.email);
   await add.click();
-  await expect(page.getByRole('alert')).toContainText('Spróbuj ponownie później');
+  await expect(page.getByRole('dialog', { name: 'Dodaj użytkownika' }).getByRole('alert')).toContainText(
+    'Spróbuj ponownie później'
+  );
   await add.click();
   await expect(add).toHaveCount(0);
   expect(requests.bodies('POST /v2/users')).toHaveLength(2);
@@ -181,7 +189,7 @@ test('demoting or deactivating a manager of active records warns and needs a sec
   await page.goto('/user-management');
   const row = page.getByRole('row').filter({ hasText: deputy.email });
   const dialog = page.getByRole('dialog', { name: 'Edytuj użytkownika' });
-  const warning = dialog.getByTestId('assignments-warning');
+  const warning = dialog.getByRole('alert');
   await row.getByRole('button', { name: 'Edytuj' }).click();
   await dialog.getByRole('combobox').click();
   await page.getByRole('option', { name: 'Gość' }).click();
@@ -291,7 +299,7 @@ test('a group deactivation names the affected user and sends requests only for a
   await selectAll(page);
   await page.getByRole('button', { name: 'Akcje Grupowe' }).click();
   await page.getByRole('button', { name: 'Usuń akceptację zaznaczonych użytkowników' }).click();
-  await expect(page.getByTestId('assignments-warning')).toContainText(`${deputy.firstName} ${deputy.lastName}`);
+  await expect(page.getByRole('alert')).toContainText(`${deputy.firstName} ${deputy.lastName}`);
   expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(0);
   await page.getByRole('button', { name: 'Usuń akceptację mimo to' }).click();
   await expect(page.getByText('Pomyślnie usunięto akceptację wszystkich wybranych użytkowników')).toBeVisible();

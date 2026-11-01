@@ -1,30 +1,20 @@
 import { Collapsible } from '@base-ui/react/collapsible';
 import { CaretDownIcon } from '@phosphor-icons/react';
+import { useId } from 'react';
 
 type Props = {
   title: string;
   children: React.ReactNode;
   expandedByDefault?: true | undefined;
-  'data-testid'?: string;
-  'data-testid-toggle'?: string;
-  'data-testid-content'?: string;
 };
 
-export function AppAccordion({
-  title,
-  children,
-  expandedByDefault,
-  'data-testid': testId,
-  'data-testid-toggle': toggleTestId,
-  'data-testid-content': contentTestId,
-}: Props) {
+export function AppAccordion({ title, children, expandedByDefault }: Props) {
+  const headingId = useId();
+
   return (
-    <Collapsible.Root defaultOpen={!!expandedByDefault} data-testid={testId}>
-      <h2 className="w-full">
-        <Collapsible.Trigger
-          className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-black/2 px-4 py-4 outline-none"
-          data-testid={toggleTestId}
-        >
+    <Collapsible.Root defaultOpen={!!expandedByDefault} render={<section aria-labelledby={headingId} />}>
+      <h2 id={headingId} className="w-full">
+        <Collapsible.Trigger className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-black/2 px-4 py-4 outline-none">
           <span className="text-lg font-semibold">{title}</span>
           <span className="transition-transform duration-300 data-[panel-open]:rotate-180">
             <CaretDownIcon className="h-6 w-6" />
@@ -34,7 +24,6 @@ export function AppAccordion({
       <Collapsible.Panel
         keepMounted
         className="overflow-hidden px-4 transition-all duration-300 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0"
-        data-testid={contentTestId}
       >
         {/* A margin, not padding, so a leading child's own top margin merges into this gap. */}
         <div className="mt-4" data-accordion-content>

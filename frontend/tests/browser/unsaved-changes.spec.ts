@@ -135,7 +135,7 @@ test('a successful save leaves the form without asking', async ({ page, network 
 
 test('a file dropped as the first edit is protected', async ({ page }) => {
   await page.goto(`/applications/${applicationId}/formC?mode=edit`);
-  await dropFile(page.getByTestId('form-c-attachment-input-button'), {
+  await dropFile(page.getByRole('button', { name: 'Załączniki' }), {
     name: 'zdjecie.jpg',
     mimeType: 'image/jpeg',
     buffer: Buffer.from([0xff, 0xd8, 0xff, 0xd9]),
@@ -182,7 +182,9 @@ test.describe('pending saves', () => {
     await page.getByRole('link', { name: /Nowe zgłoszenie/ }).click();
     await notes(page).fill(UNSAVED);
     release();
-    await expect(page.getByTestId('toast-success')).toBeVisible();
+    await expect(
+      page.getByRole('region', { name: 'Notifications' }).getByRole('status').getByText('Formularz został zapisany')
+    ).toBeVisible();
     await expect(page).toHaveURL(/\/applications\/new\?draft=/);
     await expect(notes(page)).toHaveValue(UNSAVED);
   });
@@ -237,7 +239,12 @@ test.describe('edits lost when the session ends', () => {
     await recovery(page).getByRole('button', { name: 'Przywróć zmiany' }).click();
     await expect(employees(page)).toHaveValue('7');
     await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
-    await expect(page.getByTestId('form-errors').getByText(/Dane zostały w międzyczasie zmienione/)).toBeVisible();
+    await expect(
+      page
+        .getByRole('main')
+        .getByRole('alert')
+        .getByText(/Dane zostały w międzyczasie zmienione/)
+    ).toBeVisible();
     await expect(employees(page)).toHaveValue('7');
     expect(requests.bodies(`PUT /v2/applications/${applicationId}/form-b`)).toEqual([
       expect.objectContaining({ form: expect.objectContaining({ revision: 'AAAAAAAAB9E=' }) }),

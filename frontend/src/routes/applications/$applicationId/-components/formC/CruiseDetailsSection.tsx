@@ -239,7 +239,7 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
   const { isReadonly } = context;
 
   return (
-    <AppAccordion title="12. Szczegóły rejsu" expandedByDefault data-testid="form-c-cruise-details-section">
+    <AppAccordion title="12. Szczegóły rejsu" expandedByDefault>
       <p className="text-center text-xl font-semibold">Czy w ramach rejsu wystąpiło:</p>
 
       <div className="mt-8">

@@ -9,7 +9,7 @@ export function SupervisorInfoSection({ context }: { context: FormAViewModel }) 
   const { isReadonly } = context;
 
   return (
-    <AppAccordion title="11. Dane kontaktowe przełożonego" expandedByDefault data-testid="form-a-supervisor-section">
+    <AppAccordion title="11. Dane kontaktowe przełożonego" expandedByDefault>
       <div className="mx-auto max-w-180 space-y-4">
         <AppAlert variant="warning">
           <span className="text-center text-sm">
@@ -25,8 +25,6 @@ export function SupervisorInfoSection({ context }: { context: FormAViewModel }) 
               placeholder="Wprowadź adres e-mail przełożonego"
               type="email"
               disabled={isReadonly}
-              data-testid="form-a-supervisor-email-input"
-              data-testid-errors="form-a-supervisor-email-errors"
             />
           )}
         </form.AppField>

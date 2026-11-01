@@ -18,7 +18,6 @@ export function AppDesktopTable<T extends object>({
   infiniteScroll,
   virtualized,
   className,
-  'data-testid': testId,
 }: TableProps<T>) {
   const defaultButtons: React.ReactNode[] = [<AppTableClearFiltersButton key="clearFiltersBtn" table={table} />];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
@@ -29,7 +28,6 @@ export function AppDesktopTable<T extends object>({
     <div
       className={cn('mt-4 w-full overflow-x-auto', className)}
       data-toolbarless-table={allButtons.length === 0 || undefined}
-      data-testid={testId}
     >
       <table
         className={cn('min-w-full table-fixed border-collapse', virtualized && 'w-full')}

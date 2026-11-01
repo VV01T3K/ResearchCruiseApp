@@ -180,15 +180,11 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   }
 
   return (
-    <AppAccordion
-      title="2. Czas trwania zgłaszanego rejsu"
-      expandedByDefault
-      data-testid="form-a-cruise-length-section"
-    >
+    <AppAccordion title="2. Czas trwania zgłaszanego rejsu" expandedByDefault>
       <div className="space-y-4">
         <BlockadeWarning year={+year} blockades={blockades} />
         {!!blockadesError && !isReadonly && (
-          <AppAlert variant="danger" data-testid="form-a-blockades-error">
+          <AppAlert variant="danger">
             Nie udało się wczytać blokad statku, więc kolizje terminów sprawdzi dopiero zapis formularza:{' '}
             {getProblemDetail(blockadesError, 'Nieznany błąd.')}
           </AppAlert>
@@ -209,8 +205,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                       { value: 'period', inlineLabel: 'Okres dopuszczalny/optymalny' },
                     ]}
                     showRequiredAsterisk
-                    data-testid="form-a-period-selection-type"
-                    data-testid-button="form-a-period-selection-type-button"
                   />
                 )}
               </form.AppField>
@@ -304,11 +298,11 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
           )}
 
           {overlappingBlockadesForCurrentSelection.length > 0 && (
-            <div className="lg:col-span-2" data-testid="form-a-blockade-period-warning">
+            <div className="lg:col-span-2">
               <AppAlert variant="warning">
                 <div>
                   <span className="font-bold">Utrudniające blokady w wybranym zakresie:</span>
-                  <div className="mt-2 space-y-1" data-testid="form-a-blockade-collision-errors">
+                  <div className="mt-2 space-y-1">
                     {overlappingBlockadesForCurrentSelection.map((blockade) => (
                       <div
                         key={`${blockade.title}-${blockade.start.toISOString()}-${blockade.end.toISOString()}`}
@@ -352,8 +346,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     label="Liczba planowanych dób rejsowych"
                     showRequiredAsterisk
                     disabled={isReadonly}
-                    data-testid="form-a-cruise-days"
-                    data-testid-input="form-a-cruise-days-input"
                   />
                 )}
               </form.AppField>
@@ -376,9 +368,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     label="Liczba planowanych godzin rejsowych"
                     showRequiredAsterisk
                     disabled={isReadonly}
-                    data-testid="form-a-cruise-hours"
-                    data-testid-input="form-a-cruise-hours-input"
-                    data-testid-errors="form-a-cruise-hours-errors"
                   />
                 )}
               </form.AppField>
@@ -392,7 +381,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                   label="Uwagi dotyczące terminu"
                   placeholder='np. "Rejs w okresie wakacyjnym"'
                   disabled={isReadonly}
-                  data-testid="form-a-period-notes-input"
                 />
               </div>
             )}
@@ -409,7 +397,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     inlineLabel: shipUsage,
                   }))}
                   disabled={isReadonly}
-                  data-testid-button="form-a-ship-usage-button"
                 />
               </div>
             )}
@@ -433,7 +420,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                             placeholder="np. statek badawczy"
                             showRequiredAsterisk
                             disabled={isReadonly}
-                            data-testid="form-a-alternative-ship-usage-input"
                           />
                         )}
                       </form.AppField>

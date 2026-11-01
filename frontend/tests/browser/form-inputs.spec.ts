@@ -29,10 +29,10 @@ test('cruise days and hours stay in sync through typing, decimals, steppers and 
     })
   );
   await page.goto(`/applications/${applicationId}/formA?mode=edit`);
-  const days = page.getByLabel('Liczba planowanych dób rejsowych');
-  const hours = page.getByLabel('Liczba planowanych godzin rejsowych');
-  const daysField = page.getByTestId('form-a-cruise-days');
-  const hoursField = page.getByTestId('form-a-cruise-hours');
+  const days = page.getByRole('textbox', { name: 'Liczba planowanych dób rejsowych' });
+  const hours = page.getByRole('textbox', { name: 'Liczba planowanych godzin rejsowych' });
+  const daysField = page.getByRole('group', { name: 'Liczba planowanych dób rejsowych' });
+  const hoursField = page.getByRole('group', { name: 'Liczba planowanych godzin rejsowych' });
   await expect(days).toHaveValue('2');
   await expect(hours).toHaveValue('48');
 
@@ -174,7 +174,7 @@ test('form B shows server errors under row fields and the remaining reasons abov
   );
   await page.goto(`/applications/${applicationId}/formB?mode=edit`);
   await page
-    .getByTestId('form-b-cruise-day-details-section')
+    .getByRole('region', { name: '13. Szczegółowy plan zadań do realizacji podczas rejsu' })
     .getByRole('button', { name: 'Dodaj', exact: true })
     .click();
   const task = page.getByRole('textbox', { name: 'Nazwa zadania' });
@@ -185,7 +185,7 @@ test('form B shows server errors under row fields and the remaining reasons abov
   await expect(
     page.getByRole('checkbox', { name: 'Czy kierownik jest obecny na rejsie?' })
   ).toHaveAccessibleDescription('Obecność kierownika została odrzucona');
-  const formErrors = page.getByTestId('form-errors');
+  const formErrors = page.getByRole('main').getByRole('alert').filter({ hasText: 'Zgłoszenie jest zablokowane.' });
   await expect(formErrors).toContainText('Zgłoszenie jest zablokowane.');
   await expect(formErrors).toContainText('Nieprawidłowy stan wersji roboczej');
   await expect(formErrors).not.toContainText('Nazwa zadania została odrzucona');

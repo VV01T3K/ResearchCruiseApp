@@ -18,10 +18,9 @@ type Props = {
   children: React.ReactNode;
 
   disabled?: boolean;
-  'data-testid'?: string;
 };
 
-export function DropdownElementSelectorButton({ variant, options, children, disabled, 'data-testid': testId }: Props) {
+export function DropdownElementSelectorButton({ variant, options, children, disabled }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
@@ -42,7 +41,6 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
               'flex items-center gap-4 px-5 py-2.5'
             )}
             disabled={disabled}
-            data-testid={testId}
           />
         }
       >

@@ -60,7 +60,7 @@ test('rejected login explains the error and permits another attempt', async ({ p
   await page.goto('/login');
   await logIn(page, 'wrong-password');
   await expect(page.getByText('Nieprawidłowe dane logowania')).toBeVisible();
-  await expect(page.getByTestId('toast-error')).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'Notifications' }).getByRole('alert')).toHaveCount(0);
   await expect(page).toHaveURL('/login');
 
   await logIn(page);
@@ -241,7 +241,7 @@ test('a rejected registration explains why and can be resubmitted', async ({ pag
   const register = page.getByRole('button', { name: 'Zarejestruj się' });
   await register.click();
   await expect(page.getByText("Adres e-mail 'person@example.com' jest już zajęty.")).toBeVisible();
-  await expect(page.getByTestId('toast-error')).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'Notifications' }).getByRole('alert')).toHaveCount(0);
 
   await register.click();
   await expect(page).toHaveURL(/\/login$/);

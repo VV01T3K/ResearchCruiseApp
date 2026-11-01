@@ -115,11 +115,7 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
   }
 
   return (
-    <AppAccordion
-      title="11. Zadania SPUB, z którymi pokrywają się zadania zrealizowane na rejsie"
-      expandedByDefault
-      data-testid="form-c-spub-tasks-section"
-    >
+    <AppAccordion title="11. Zadania SPUB, z którymi pokrywają się zadania zrealizowane na rejsie" expandedByDefault>
       <div>
         <form.AppField name="spubTasks" mode="array">
           {(field) => (

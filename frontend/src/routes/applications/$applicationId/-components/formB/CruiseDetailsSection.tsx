@@ -42,14 +42,7 @@ const shortResearchEquipmentColumns = (
           },
         }}
       >
-        {(field) => (
-          <field.DateField
-            data-testid-button="short-equipment-from-button"
-            data-testid-errors="short-equipment-from-errors"
-            disabled={isReadonly}
-            minimalDate={allowPastDates ? undefined : new Date()}
-          />
-        )}
+        {(field) => <field.DateField disabled={isReadonly} minimalDate={allowPastDates ? undefined : new Date()} />}
       </form.AppField>
     ),
     size: 20,
@@ -65,8 +58,6 @@ const shortResearchEquipmentColumns = (
           <form.Subscribe selector={(state) => state.values.shortResearchEquipments[row.index].startDate}>
             {(startDate) => (
               <field.DateField
-                data-testid-button="short-equipment-to-button"
-                data-testid-errors="short-equipment-to-errors"
                 disabled={isReadonly}
                 selectionStartDate={startDate ? new Date(startDate) : undefined}
                 minimalDate={startDate ? new Date(startDate) : undefined}
@@ -85,14 +76,7 @@ const shortResearchEquipmentColumns = (
     enableSorting: false,
     cell: ({ row }) => (
       <form.AppField name={`shortResearchEquipments[${row.index}].name`}>
-        {(field) => (
-          <field.TextField
-            data-testid="short-equipment-name-input"
-            data-testid-errors="short-equipment-name-errors"
-            placeholder="Nazwa sprzętu"
-            disabled={isReadonly}
-          />
-        )}
+        {(field) => <field.TextField placeholder="Nazwa sprzętu" disabled={isReadonly} />}
       </form.AppField>
     ),
   },
@@ -144,14 +128,7 @@ const longResearchEquipmentColumns = (
     enableSorting: false,
     cell: ({ row }) => (
       <form.AppField name={`longResearchEquipments[${row.index}].duration`}>
-        {(field) => (
-          <field.TextField
-            data-testid="long-equipment-duration-input"
-            data-testid-errors="long-equipment-duration-errors"
-            placeholder="Czas"
-            disabled={isReadonly}
-          />
-        )}
+        {(field) => <field.TextField placeholder="Czas" disabled={isReadonly} />}
       </form.AppField>
     ),
     size: 20,
@@ -163,14 +140,7 @@ const longResearchEquipmentColumns = (
     enableSorting: false,
     cell: ({ row }) => (
       <form.AppField name={`longResearchEquipments[${row.index}].name`}>
-        {(field) => (
-          <field.TextField
-            data-testid="long-equipment-name-input"
-            data-testid-errors="long-equipment-name-errors"
-            placeholder="Nazwa sprzętu"
-            disabled={isReadonly}
-          />
-        )}
+        {(field) => <field.TextField placeholder="Nazwa sprzętu" disabled={isReadonly} />}
       </form.AppField>
     ),
   },
@@ -215,8 +185,6 @@ const portColumns = (
       >
         {(field) => (
           <field.DateField
-            data-testid-button="port-from-button"
-            data-testid-errors="port-from-errors"
             disabled={isReadonly}
             type="datetime"
             minimalDate={allowPastDates ? undefined : new Date()}
@@ -237,8 +205,6 @@ const portColumns = (
           <form.Subscribe selector={(state) => state.values.ports[row.index].startTime}>
             {(startTime) => (
               <field.DateField
-                data-testid-button="port-to-button"
-                data-testid-errors="port-to-errors"
                 disabled={isReadonly}
                 type="datetime"
                 selectionStartDate={startTime ? new Date(startTime) : undefined}
@@ -258,14 +224,7 @@ const portColumns = (
     enableSorting: false,
     cell: ({ row }) => (
       <form.AppField name={`ports[${row.index}].name`}>
-        {(field) => (
-          <field.TextField
-            data-testid="port-name-input"
-            data-testid-errors="port-name-errors"
-            placeholder="Nazwa portu"
-            disabled={isReadonly}
-          />
-        )}
+        {(field) => <field.TextField placeholder="Nazwa portu" disabled={isReadonly} />}
       </form.AppField>
     ),
   },
@@ -288,7 +247,7 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
   const [includePorts, setIncludePorts] = useState(false);
 
   return (
-    <AppAccordion title="12. Szczegóły rejsu" expandedByDefault data-testid="form-b-cruise-details-section">
+    <AppAccordion title="12. Szczegóły rejsu" expandedByDefault>
       <p className="text-center text-xl font-semibold">Czy w ramach rejsu planuje się:</p>
 
       <div className="mt-8">
@@ -310,7 +269,6 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
               buttons={() => [
                 <AppButton
                   key="new"
-                  data-testid="form-b-add-short-equipment-btn"
                   onClick={() => {
                     field.pushValue({
                       startDate: '',
@@ -361,7 +319,6 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
               buttons={() => [
                 <DropdownElementSelectorButton
                   key="new"
-                  data-testid="form-b-add-long-equipment-btn"
                   options={[
                     { value: 'Put', label: 'Pozostawienie' },
                     { value: 'Collect', label: 'Zabranie' },
@@ -408,7 +365,6 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
               buttons={() => [
                 <AppButton
                   key="new"
-                  data-testid="form-b-add-port-btn"
                   onClick={() => {
                     field.pushValue({
                       startTime: '',

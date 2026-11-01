@@ -25,15 +25,7 @@ const cruiseDayDetailsColumns = (
     accessorFn: (row) => row.number,
     cell: ({ row }) => (
       <form.AppField name={`cruiseDaysDetails[${row.index}].number`}>
-        {(field) => (
-          <field.NumberField
-            data-testid-input="cruise-day-number-input"
-            data-testid-errors="cruise-day-number-errors"
-            disabled={isReadonly}
-            minimum={0}
-            type="integer"
-          />
-        )}
+        {(field) => <field.NumberField disabled={isReadonly} minimum={0} type="integer" />}
       </form.AppField>
     ),
     size: 10,
@@ -45,15 +37,7 @@ const cruiseDayDetailsColumns = (
     accessorFn: (row) => row.hours,
     cell: ({ row }) => (
       <form.AppField name={`cruiseDaysDetails[${row.index}].hours`}>
-        {(field) => (
-          <field.NumberField
-            data-testid-input="cruise-day-hours-input"
-            data-testid-errors="cruise-day-hours-errors"
-            disabled={isReadonly}
-            minimum={0}
-            type="integer"
-          />
-        )}
+        {(field) => <field.NumberField disabled={isReadonly} minimum={0} type="integer" />}
       </form.AppField>
     ),
     size: 10,
@@ -65,14 +49,7 @@ const cruiseDayDetailsColumns = (
     accessorFn: (row) => row.taskName,
     cell: ({ row }) => (
       <form.AppField name={`cruiseDaysDetails[${row.index}].taskName`}>
-        {(field) => (
-          <field.TextField
-            data-testid="cruise-day-task-name-input"
-            data-testid-errors="cruise-day-task-name-errors"
-            disabled={isReadonly}
-            placeholder="Nazwa zadania"
-          />
-        )}
+        {(field) => <field.TextField disabled={isReadonly} placeholder="Nazwa zadania" />}
       </form.AppField>
     ),
     size: 20,
@@ -84,14 +61,7 @@ const cruiseDayDetailsColumns = (
     accessorFn: (row) => row.region,
     cell: ({ row }) => (
       <form.AppField name={`cruiseDaysDetails[${row.index}].region`}>
-        {(field) => (
-          <field.TextField
-            data-testid="cruise-day-region-input"
-            data-testid-errors="cruise-day-region-errors"
-            disabled={isReadonly}
-            placeholder="Rejon zadania"
-          />
-        )}
+        {(field) => <field.TextField disabled={isReadonly} placeholder="Rejon zadania" />}
       </form.AppField>
     ),
     size: 20,
@@ -103,14 +73,7 @@ const cruiseDayDetailsColumns = (
     accessorFn: (row) => row.position,
     cell: ({ row }) => (
       <form.AppField name={`cruiseDaysDetails[${row.index}].position`}>
-        {(field) => (
-          <field.TextField
-            data-testid="cruise-day-position-input"
-            data-testid-errors="cruise-day-position-errors"
-            disabled={isReadonly}
-            placeholder="Pozycja"
-          />
-        )}
+        {(field) => <field.TextField disabled={isReadonly} placeholder="Pozycja" />}
       </form.AppField>
     ),
     size: 20,
@@ -122,14 +85,7 @@ const cruiseDayDetailsColumns = (
     accessorFn: (row) => row.comment,
     cell: ({ row }) => (
       <form.AppField name={`cruiseDaysDetails[${row.index}].comment`}>
-        {(field) => (
-          <field.TextField
-            data-testid="cruise-day-comment-input"
-            data-testid-errors="cruise-day-comment-errors"
-            disabled={isReadonly}
-            placeholder="Uwagi"
-          />
-        )}
+        {(field) => <field.TextField disabled={isReadonly} placeholder="Uwagi" />}
       </form.AppField>
     ),
     size: 20,
@@ -174,11 +130,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
   };
 
   return (
-    <AppAccordion
-      title="13. Szczegółowy plan zadań do realizacji podczas rejsu"
-      expandedByDefault
-      data-testid="form-b-cruise-day-details-section"
-    >
+    <AppAccordion title="13. Szczegółowy plan zadań do realizacji podczas rejsu" expandedByDefault>
       <form.AppField name="cruiseDaysDetails" mode="array">
         {(field) => (
           <>
@@ -198,7 +150,6 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
                   buttons.push(
                     <AppButton
                       key="new"
-                      data-testid="form-b-add-cruise-day-task-btn"
                       onClick={() => {
                         field.pushValue({
                           number: 0,

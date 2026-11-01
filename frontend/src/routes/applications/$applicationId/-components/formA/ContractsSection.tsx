@@ -115,7 +115,6 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
     <AppAccordion
       title="7. Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze"
       expandedByDefault
-      data-testid="form-a-contracts-section"
     >
       <div>
         <form.AppField name="contracts" mode="array">
@@ -149,7 +148,6 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
                     }))}
                     variant="primary"
                     disabled={isReadonly}
-                    data-testid="form-a-add-contract-btn"
                   >
                     Dodaj nowy kontrakt
                   </DropdownElementSelectorButton>,
@@ -164,7 +162,6 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
                     }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
-                    data-testid="form-a-add-historical-contract-btn"
                   >
                     Dodaj historyczną umowę
                   </DropdownElementSelectorButton>,
@@ -173,12 +170,8 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-contracts-table"
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-contracts-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </>
           )}
         </form.AppField>

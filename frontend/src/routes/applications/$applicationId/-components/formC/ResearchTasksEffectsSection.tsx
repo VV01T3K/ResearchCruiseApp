@@ -82,11 +82,7 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
   ];
 
   return (
-    <AppAccordion
-      title="7. Zadania przypisane do rejsu - efekty rejsu"
-      expandedByDefault
-      data-testid="form-c-research-tasks-effects-section"
-    >
+    <AppAccordion title="7. Zadania przypisane do rejsu - efekty rejsu" expandedByDefault>
       <AppTable
         data={researchTasksEffects}
         columns={columns}

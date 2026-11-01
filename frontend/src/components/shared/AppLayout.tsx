@@ -10,17 +10,9 @@ type Props = {
   description?: string;
   variant?: keyof typeof variants;
   disableBackButton?: boolean;
-  'data-testid'?: string;
 };
 
-export function AppLayout({
-  title,
-  children,
-  description,
-  variant = 'default',
-  disableBackButton = false,
-  'data-testid': testId,
-}: Props) {
+export function AppLayout({ title, children, description, variant = 'default', disableBackButton = false }: Props) {
   const useWidePadding = variant === 'wide';
   return (
     <motion.div
@@ -45,9 +37,7 @@ export function AppLayout({
               <AppPreviousPageButton />
             </div>
           )}
-          <h1 className="mb-2 pt-8 text-center text-3xl font-bold md:pt-0" data-testid={testId}>
-            {title}
-          </h1>
+          <h1 className="mb-2 pt-8 text-center text-3xl font-bold md:pt-0">{title}</h1>
           {description ? <p className="text-center font-semibold text-gray-600">{description}</p> : null}
         </header>
         {children}

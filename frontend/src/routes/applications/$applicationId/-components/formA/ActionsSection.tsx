@@ -27,12 +27,7 @@ export function ActionsSection({ onSaveDraft, onPrint, disabled, context }: Prop
         </AppButton>
       )}
       {!isReadonly && (
-        <AppButton
-          type="submit"
-          className="w-64 !justify-center gap-4"
-          disabled={disabled}
-          data-testid="form-submit-btn"
-        >
+        <AppButton type="submit" className="w-64 !justify-center gap-4" disabled={disabled}>
           <PaperPlaneTiltIcon weight="fill" className="h-4 w-4" />
           Wyślij
         </AppButton>
