@@ -83,7 +83,6 @@ export function AppNumberInput({
   function handleInputChange(evt: React.ChangeEvent<HTMLInputElement>) {
     const stringInput = evt.target.value.replace(',', '.'); // float input require dot as the decimal separator
 
-    // Calculate the cursor position after removing the zeros at the beginning of the string
     let cursorPosition = evt.target.selectionStart!;
     const zerosAtBeginningRegex = /^0+/;
     const zerosAtBeginningCount = stringInput.match(zerosAtBeginningRegex)?.[0].length;

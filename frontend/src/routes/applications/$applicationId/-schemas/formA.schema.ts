@@ -538,7 +538,6 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
           }
         }
       } else if (hasPrecise && hasPeriods) {
-        // Mixed mode - user has values in both sections
         ctx.addIssue({
           code: 'custom',
           path: ['precisePeriodStart'],
