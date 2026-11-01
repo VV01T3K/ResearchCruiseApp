@@ -29,8 +29,8 @@
   "overrides": {
     "js-yaml": "^4.3.2",
     "playwright": "1.64.1",
-    "seroval": "~1.6.12",
-    "seroval-plugins": "~1.6.12",
+    "seroval": "~1.7.0",
+    "seroval-plugins": "~1.7.0",
     "source-map-js": "^1.2.2",
     "tinypool": "~2.2.0",
     "undici": "^7.30.1",
