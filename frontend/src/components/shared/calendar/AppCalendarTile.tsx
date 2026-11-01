@@ -56,7 +56,6 @@ function CalendarEventTiles({
         'h-8 truncate text-white text-sm p-2 '
       );
 
-      // calculate maximum width of the text tile based on the number of days left in the week and the event duration
       const daysInWeek = 8 - (date.getDay() === 0 ? 7 : date.getDay());
       const daysLeft = (dateToUtcDay(event.end) - dateToUtcDay(date)) / (24 * 60 * 60 * 1000) + 1;
       const width = Math.min(daysInWeek, daysLeft) * tileWidth - 20;

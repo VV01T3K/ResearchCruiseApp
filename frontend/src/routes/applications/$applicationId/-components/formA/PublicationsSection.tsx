@@ -232,7 +232,6 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                   </DropdownElementSelectorButton>,
                   <DropdownElementSelectorButton
                     key="historical"
-                    // dont show options with empty fields
                     options={groupBy(
                       initValues.historicalPublications.filter(
                         (publication) =>

@@ -127,7 +127,6 @@ public static class SentryConfiguration
 
     internal static void ScrubSensitiveData(SentryRequest request, SentryUser? user)
     {
-        // Never send the client IP address.
         if (user is not null)
         {
             user.IpAddress = null;

@@ -105,7 +105,6 @@ test('form A research tasks can be removed, added and saved, with errors that fo
   await page.goto(formA);
   const send = page.getByRole('button', { name: 'Wyślij', exact: true });
   const task = (name: string) => page.getByRole('row').filter({ hasText: name });
-  // The icon-only delete button has no accessible name yet (#491); it is the row's only button.
   const removeTask = (name: string) => task(name).getByRole('button').click();
   const addTask = async (name: string) => {
     await page.getByRole('button', { name: 'Dodaj nowe zadanie badawcze' }).click();

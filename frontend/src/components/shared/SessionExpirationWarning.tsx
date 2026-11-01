@@ -11,7 +11,7 @@ type Props = {
   onSignOut: () => Promise<void>;
 };
 
-const WARNING_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
+const WARNING_THRESHOLD_MS = 5 * 60 * 1000;
 
 function formatTimeRemaining(remainingMs: number): string {
   if (remainingMs <= 0) {

@@ -13,7 +13,7 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization.DevData;
 /// Generates or removes throwaway CruiseApplication rows (plus the handful of
 /// Cruises/Users needed to satisfy their FKs) for local manual testing of the
 /// applications list. Intended to be invoked via the "seed-applications" CLI
-/// command in Program.cs, which already restricts this to Development.
+/// command, which refuses to run outside Development.
 /// </summary>
 internal static class CruiseApplicationsTestDataSeeder
 {

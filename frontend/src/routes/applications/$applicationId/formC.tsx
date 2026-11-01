@@ -57,7 +57,7 @@ function FormCPage() {
   const defaultValues = (formC.data ?? {
     ...formCDefaultValues,
     revision: formB.data.revision,
-    shipUsage: formA.data.shipUsage ?? '', // Max length 1
+    shipUsage: formA.data.shipUsage ?? '',
     differentUsage: formA.data.differentUsage,
     permissions: formB.data.permissions,
     researchAreaDescriptions: formA.data.researchAreaDescriptions,
