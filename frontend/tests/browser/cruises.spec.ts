@@ -292,10 +292,12 @@ test('a cruise save waits for the previous one and starts from its accepted revi
   const refetch = Promise.withResolvers<void>();
   let server = item;
   let gets = 0;
+  let holdRefetch = false;
   network.use(
     getGetAvailableCruiseManagersMockHandler([admin, deputy, outsider]),
     getGetCruiseMockHandler(async () => {
-      if (++gets > 1) await refetch.promise;
+      gets++;
+      if (holdRefetch) await refetch.promise;
       return server;
     }),
     getUpdateCruiseMockHandler(async ({ request }) => {
@@ -329,6 +331,7 @@ test('a cruise save waits for the previous one and starts from its accepted revi
     await edit.click();
     await page.getByRole('combobox', { name: 'Zastępca kierownika głównego' }).click();
     await page.getByRole('option', { name: `${outsider.firstName} ${outsider.lastName}` }).click();
+    holdRefetch = true;
     await save.click();
     await expect(edit).toBeVisible();
     expect(patches().at(-1)).toEqual(
@@ -397,6 +400,32 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     sent('PUT /v2/cruises/{id}/completion'),
     sent('DELETE /v2/cruises/{id}/confirmation'),
   ]).toEqual([1, 1, 2]);
+});
+
+test('a status change stays pending until the refreshed cruise arrives', async ({ page, network }) => {
+  const item = cruise();
+  const refreshed = Promise.withResolvers<void>();
+  let confirmed = false;
+  network.use(
+    getGetCruiseMockHandler(async () => {
+      if (!confirmed) return item;
+      await refreshed.promise;
+      return { ...item, status: 'confirmed' as const };
+    }),
+    getConfirmCruiseMockHandler(() => {
+      confirmed = true;
+    })
+  );
+  await page.goto(`/cruises/${item.id}`);
+  await page.getByRole('button', { name: 'Zatwierdź rejs', exact: true }).click();
+  const dialog = page.getByRole('dialog');
+  const refetch = page.waitForRequest((request) => request.method() === 'GET' && request.url().endsWith(item.id));
+  await dialog.getByRole('button', { name: `Potwierdź rejs nr. ${item.number}` }).click();
+  await refetch;
+  await expect(dialog.getByRole('button', { name: `Potwierdź rejs nr. ${item.number}` })).toBeDisabled();
+  refreshed.resolve();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByText('Potwierdzony', { exact: true })).toBeVisible();
 });
 
 test('a rejected status undo shows the server reason and keeps the cruise status', async ({ page, network }) => {

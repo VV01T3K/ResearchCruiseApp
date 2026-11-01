@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
@@ -13,6 +14,7 @@ import { Table } from '@/components/shared/table/Table';
 import { toast } from '@/components/shared/layout/toast';
 import { UploadButton } from './-components/UploadButton';
 import {
+  getGetCurrentUserPublicationsQueryKey,
   useDeleteAllCurrentUserPublications,
   useDeleteCurrentUserPublication,
   useGetCurrentUserPublicationsSuspense,
@@ -30,12 +32,16 @@ function MyPublicationsPage() {
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = React.useState(false);
   const [isDeletingSelected, setIsDeletingSelected] = React.useState(false);
   const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense();
-  const deleteOwnPublicationMutation = useDeleteCurrentUserPublication();
+  const queryClient = useQueryClient();
+  const refreshPublications = () =>
+    queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsQueryKey() });
+  const refreshAfterSuccess = { mutation: { onSuccess: refreshPublications } };
+  const deleteOwnPublicationMutation = useDeleteCurrentUserPublication(refreshAfterSuccess);
   const deleteSelectedPublicationsMutation = useDeleteCurrentUserPublication({
     mutation: { meta: { handlesError: true }, scope: { id: 'delete-selected-publications' } },
   });
-  const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications();
-  const uploadPublicationsMutation = useImportCurrentUserPublications();
+  const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications(refreshAfterSuccess);
+  const uploadPublicationsMutation = useImportCurrentUserPublications(refreshAfterSuccess);
 
   async function deleteSelectedPublications() {
     const ids = Object.keys(selectedPublications);
@@ -43,6 +49,7 @@ function MyPublicationsPage() {
     const results = await Promise.allSettled(
       ids.map((id) => deleteSelectedPublicationsMutation.mutateAsync({ publicationId: id }))
     );
+    await refreshPublications();
     setIsDeletingSelected(false);
     const deletedIds = new Set(ids.filter((_, i) => results[i].status === 'fulfilled'));
     setSelectedPublications((selected) =>

@@ -1,6 +1,7 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
@@ -27,7 +28,7 @@ import {
   useRefillApplicationFormB,
   useUpdateApplicationFormB,
 } from '@/api/generated/endpoints/applications.gen';
-import { getErrorMessage } from '@/api/errors';
+import { ApiError, getErrorMessage } from '@/api/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
@@ -65,14 +66,16 @@ function FormBPage() {
     enabled: mode === 'preview' && isInRole(currentUser, [Role.Administrator, Role.ShipOwner]),
   });
   const canRevertToEdit = mode === 'preview' && !!application.data && canRevertFormB(application.data.status);
+  const [saved, setSaved] = useState<{ data: typeof formB.data; values: FormBValues }>();
 
-  const defaultValues = (formB.data ?? {
+  const storedValues = (formB.data ?? {
     ...formBDefaultValues,
     revision: formA.data.revision,
     permissions: formA.data.permissions,
     ugTeams: formA.data.ugTeams,
     guestTeams: formA.data.guestTeams,
   }) satisfies FormBValues;
+  const defaultValues = saved?.data === formB.data ? saved.values : storedValues;
   const schema = getFormBSubmissionSchema();
   const form = useAppForm({
     canSubmitWhenInvalid: true,
@@ -88,6 +91,11 @@ function FormBPage() {
     },
   });
   const leaveAfterSave = useLeaveAfterSave(form);
+
+  useEffect(() => {
+    if (mode !== 'edit') form.reset();
+  }, [mode, form]);
+
   const context = {
     form,
     formA: formA.data,
@@ -112,6 +120,8 @@ function FormBPage() {
         data: { form: schema.parse(values), draft: values.draft ?? false },
       });
       form.setFieldValue('revision', revision, { dontUpdateMeta: true, dontValidate: true });
+      setSaved({ data: formB.data, values: { ...values, revision } });
+      await queryClient.invalidateQueries({ queryKey: getGetApplicationFormBQueryKey(applicationId) });
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );
@@ -119,6 +129,7 @@ function FormBPage() {
     } catch (err) {
       console.error(err);
       captureHandledRefusal(values.draft ? 'form-b.draft' : 'form-b.submit', err);
+      if (err instanceof ApiError && err.status === 409) void formB.refetch();
       setServerFormErrors(form, err);
       toast.error(getErrorMessage(err, saveFailedMessage(values.draft)));
       navigateToFirstError();

@@ -50,12 +50,14 @@ function CruiseDetailsPage() {
   const cruiseQuery = useGetCruiseSuspense(cruiseId);
   const applicationQuery = useGetApplicationsForCruisePlanningSuspense({ cruiseId });
   const updateCruiseMutation = useUpdateCruise({ mutation: { meta: { handlesError: true } } });
+  const refreshCruises = () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
   const forgetCruise = () => {
     queryClient.removeQueries({ queryKey: getGetCruiseQueryKey(cruiseId) });
-    return queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
+    return refreshCruises();
   };
   const refetchOnConflict = {
     mutation: {
+      onSuccess: refreshCruises,
       // Awaited so the action stays pending until the current version is on screen.
       onError: async (error: unknown) => {
         toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
@@ -65,7 +67,6 @@ function CruiseDetailsPage() {
   };
   const confirmCruiseMutation = useConfirmCruise(refetchOnConflict);
   const deleteCruiseMutation = useDeleteCruise({
-    skipInvalidation: true,
     mutation: { meta: { handlesError: true }, onSuccess: forgetCruise },
   });
   const endCruiseMutation = useCompleteCruise(refetchOnConflict);
@@ -115,13 +116,17 @@ function CruiseDetailsPage() {
       });
       nextRevisions.current.set(revision, accepted.revision);
       const savedValues = { ...value, revision: accepted.revision };
-      setSaved({ cruise: cruiseQuery.data, values: savedValues });
+      setSaved({
+        cruise: queryClient.getQueryData<CruiseResponse>(getGetCruiseQueryKey(cruiseId))!,
+        values: savedValues,
+      });
       if (evaluate(form.state.values, value)) {
         form.reset(savedValues);
         setEditMode(false);
         setPendingDiscard(undefined);
       }
       toast.success('Rejs został zaktualizowany pomyślnie.');
+      await refreshCruises();
     } catch (error) {
       console.error(error);
       // Discarding after a conflict should land on the current server version.

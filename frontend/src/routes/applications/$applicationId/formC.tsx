@@ -1,5 +1,7 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, notFound } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
@@ -14,7 +16,10 @@ import {
   formCDefaultValues,
   getFormCSubmissionSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
+import {
+  getGetApplicationFormCQueryKey,
+  useGetApplicationCruiseSuspense,
+} from '@/api/generated/endpoints/applications.gen';
 import {
   useFormAQuery,
   useFormBQuery,
@@ -25,7 +30,7 @@ import {
   useGetApplicationFormBContextSuspense,
   useUpdateApplicationFormC,
 } from '@/api/generated/endpoints/applications.gen';
-import { getErrorMessage } from '@/api/errors';
+import { ApiError, getErrorMessage } from '@/api/errors';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
@@ -44,6 +49,7 @@ function FormCPage() {
   const { applicationId } = Route.useParams();
   const mode = Route.useSearch().mode ?? 'preview';
 
+  const queryClient = useQueryClient();
   const formA = useFormAQuery(applicationId);
   const formB = useFormBQuery(applicationId);
   const formC = useFormCQuery(applicationId);
@@ -51,10 +57,11 @@ function FormCPage() {
   const formBInitValues = useGetApplicationFormBContextSuspense();
   const cruise = useGetApplicationCruiseSuspense(applicationId);
   const updateMutation = useUpdateApplicationFormC({ mutation: { meta: { handlesError: true } } });
+  const [saved, setSaved] = useState<{ data: typeof formC.data; values: FormCValues }>();
 
   if (!formB.data) throw notFound();
 
-  const defaultValues = (formC.data ?? {
+  const storedValues = (formC.data ?? {
     ...formCDefaultValues,
     revision: formB.data.revision,
     shipUsage: formA.data.shipUsage ?? '',
@@ -81,6 +88,7 @@ function FormCPage() {
     researchEquipments: formB.data.researchEquipments,
     shipEquipmentsIds: formB.data.shipEquipmentsIds,
   }) satisfies FormCValues;
+  const defaultValues = saved?.data === formC.data ? saved.values : storedValues;
   const schema = getFormCSubmissionSchema(formAInitValues.data);
   const form = useAppForm({
     canSubmitWhenInvalid: true,
@@ -96,6 +104,11 @@ function FormCPage() {
     },
   });
   const leaveAfterSave = useLeaveAfterSave(form);
+
+  useEffect(() => {
+    if (mode !== 'edit') form.reset();
+  }, [mode, form]);
+
   const context = {
     form,
     formA: formA.data,
@@ -120,12 +133,15 @@ function FormCPage() {
         data: { form: schema.parse(values), draft: values.draft ?? false },
       });
       form.setFieldValue('revision', revision, { dontUpdateMeta: true, dontValidate: true });
+      setSaved({ data: formC.data, values: { ...values, revision } });
+      await queryClient.invalidateQueries({ queryKey: getGetApplicationFormCQueryKey(applicationId) });
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );
       await leaveAfterSave({ ...values, revision }, { to: '/applications' }).catch(console.error);
     } catch (err) {
       console.error(err);
+      if (err instanceof ApiError && err.status === 409) void formC.refetch();
       setServerFormErrors(form, err);
       toast.error(getErrorMessage(err, saveFailedMessage(values.draft)));
       navigateToFirstError();
