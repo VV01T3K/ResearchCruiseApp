@@ -3,7 +3,12 @@ import { CancelledError } from '@tanstack/react-query';
 import { notFound, redirect } from '@tanstack/react-router';
 import { expect, it, vi } from 'vite-plus/test';
 import { ApiError } from '@/api/errors';
-import { captureHandledRefusal, classifyError, isUnexplainedFailure } from '@/integrations/sentry/mutations';
+import {
+  captureHandledRefusal,
+  captureMutationFailure,
+  classifyError,
+  isReportableFailure,
+} from '@/integrations/sentry/mutations';
 
 vi.mock('@sentry/browser', () => ({ captureException: vi.fn() }));
 vi.mock('@sentry/react', async (importOriginal) => ({
@@ -27,17 +32,18 @@ it.each([
   [
     '500 with support code',
     new ApiError('Kod błędu: 0HN1', 500, { detail: 'Kod błędu: 0HN1', errorCode: '0HN1' } as never),
-    false,
+    true,
   ],
-  ['500 with field errors', new ApiError('Zły plik', 500, { errors: { file: ['Zły plik'] } }), false],
+  ['500 with field errors', new ApiError('Zły plik', 500, { errors: { file: ['Zły plik'] } }), true],
   ['unexplained 404', new ApiError('Żądanie nie powiodło się (HTTP 404)', 404), false],
   ['unexplained 400', new ApiError('Żądanie nie powiodło się (HTTP 400)', 400), true],
   ['proxy 429', new ApiError('Żądanie nie powiodło się (HTTP 429)', 429), true],
-  ['422 with field errors', new ApiError('Zła data', 422, { errors: { date: ['Zła data'] } }), false],
+  ['422 with field errors', new ApiError('Zła data', 422, { errors: { date: ['Zła data'] } }), true],
+  ['409', new ApiError('Konflikt', 409), false],
   ['wrapped 401', new Error('Session refresh failed', { cause: new ApiError('Sesja wygasła', 401) }), false],
   ['abort', new DOMException('The user aborted a request.', 'AbortError'), false],
 ] as const)('classifies %s', (_, error, expected) => {
-  expect(isUnexplainedFailure(error)).toBe(expected);
+  expect(isReportableFailure(error)).toBe(expected);
 });
 
 it.each([
@@ -70,7 +76,18 @@ it.each([
   expect(classifyError(error)).toBe(kind);
 });
 
+it('skips only form validation when reporting mutation failures', () => {
+  vi.mocked(Sentry.captureException).mockClear();
+  captureMutationFailure(new ApiError('Zła data', 422, { errors: { date: ['Zła data'] } }), ['form-b.draft']);
+  captureMutationFailure(new ApiError('Konflikt', 409), ['form-b.draft']);
+  captureMutationFailure(new ApiError('Żądanie nie powiodło się (HTTP 400)', 400), ['form-b.draft']);
+  captureMutationFailure(new ApiError('Zły plik', 500, { errors: { file: ['Zły plik'] } }), ['form-b.draft']);
+  const statuses = vi.mocked(Sentry.captureException).mock.calls.map(([error]) => (error as ApiError).status);
+  expect(statuses).toEqual([400, 500]);
+});
+
 it('reports each handled refusal once per operation and status in a session', () => {
+  vi.mocked(Sentry.captureException).mockClear();
   const storage = new Map<string, string>();
   vi.stubGlobal('sessionStorage', {
     getItem: (key: string) => storage.get(key) ?? null,
@@ -86,8 +103,8 @@ it('reports each handled refusal once per operation and status in a session', ()
   expect(calls.map(([error]) => (error as Error).name)).toContain('Handled form-b.submit refusal (HTTP 403)');
   expect(calls.map(([, hint]) => (hint as { fingerprint?: string[] }).fingerprint)).toEqual([
     ['handled-refusal', 'form-b.submit', '403'],
-    ['handled-refusal', 'form-b.submit', '400'],
     ['handled-refusal', 'form-b.draft', '403'],
+    ['handled-refusal', 'form-b.draft', '401'],
   ]);
   vi.unstubAllGlobals();
 });

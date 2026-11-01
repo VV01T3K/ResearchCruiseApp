@@ -44,23 +44,23 @@ export function isRetryableFailure(failureCount: number, error: unknown): boolea
   return failureCount < 1 && (kind === 'server' || kind === 'network');
 }
 
-export function isUnexplainedFailure(error: unknown): boolean {
-  const kind = classifyError(error);
+export function isReportableFailure(error: unknown): boolean {
+  return ['server', 'client', 'network', 'unknown'].includes(classifyError(error));
+}
+
+function isFormValidation(error: unknown): boolean {
   const cause = rootCause(error);
-  if ((kind === 'server' || kind === 'client') && cause instanceof ApiError) {
-    const problem = cause.problem ?? {};
-    return !(
-      'errorCode' in problem ||
-      Object.values(problem.errors ?? {})
-        .flat()
-        .some((message) => message.trim())
-    );
-  }
-  return kind === 'network' || kind === 'unknown';
+  return (
+    classifyError(cause) === 'client' &&
+    cause instanceof ApiError &&
+    Object.values(cause.problem?.errors ?? {})
+      .flat()
+      .some((message) => message.trim())
+  );
 }
 
 export function captureMutationFailure(error: unknown, mutationKey: readonly unknown[] | undefined): void {
-  if (!isUnexplainedFailure(error)) return;
+  if (!isReportableFailure(error) || isFormValidation(error)) return;
   const operation = mutationKey?.[0];
   const cause = rootCause(error);
   Sentry.captureException(error, {
@@ -91,7 +91,7 @@ function markFirstReport(key: string): boolean {
 export function captureHandledRefusal(operation: string, error: unknown): void {
   const cause = rootCause(error);
   const kind = classifyError(cause);
-  if (!(cause instanceof ApiError) || (kind !== 'no-access' && kind !== 'refused' && kind !== 'client')) return;
+  if (!(cause instanceof ApiError) || !['session', 'no-access', 'refused'].includes(kind)) return;
   if (!markFirstReport(`${operation}:${cause.status}`)) return;
   const refusal = new Error('Expected refusal shown to the user');
   refusal.name = `Handled ${operation} refusal (HTTP ${cause.status})`;
