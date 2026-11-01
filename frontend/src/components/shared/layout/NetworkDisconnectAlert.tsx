@@ -6,15 +6,15 @@ import { Alert } from '@/components/shared/Alert';
 import config from '@/config';
 
 export function NetworkDisconnectAlert() {
-  const [networkConnectionStatus, setNetworkConnectionStatus] = React.useState<boolean | undefined>(undefined);
+  const [status, setStatus] = React.useState<'healthy' | 'unhealthy' | 'offline'>('healthy');
 
   const { mutate } = useMutation({
     mutationFn: async () => {
       const response = await fetch(`${config.apiUrl}/health`);
-      if (!response.ok) throw new Error(`Network status request failed with status ${response.status}`);
+      return response.ok ? ('healthy' as const) : ('unhealthy' as const);
     },
-    onSuccess: () => setNetworkConnectionStatus(true),
-    onError: () => setNetworkConnectionStatus(false),
+    onSuccess: setStatus,
+    onError: () => setStatus('offline'),
     retry: false,
     meta: { skipsErrorReport: true },
   });
@@ -27,10 +27,12 @@ export function NetworkDisconnectAlert() {
 
   return (
     <AnimatePresence>
-      {networkConnectionStatus === false && (
+      {status !== 'healthy' && (
         <motion.div initial={{ y: '-100%' }} animate={{ y: 0 }} exit={{ y: '-100%' }}>
           <Alert variant="danger">
-            Brak połączenia z serwerem. Upewnij się, że masz dostęp do internetu i spróbuj ponownie.
+            {status === 'offline'
+              ? 'Brak połączenia z serwerem. Upewnij się, że masz dostęp do internetu i spróbuj ponownie.'
+              : 'Serwis ma chwilowo problemy techniczne. Twoje połączenie działa poprawnie.'}
           </Alert>
         </motion.div>
       )}

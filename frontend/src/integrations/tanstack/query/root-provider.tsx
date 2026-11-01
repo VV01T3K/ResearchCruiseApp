@@ -1,13 +1,15 @@
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
-import { captureMutationFailure } from '@/integrations/sentry/mutations';
+import { captureMutationFailure, captureQueryFailure, isRetryableFailure } from '@/integrations/sentry/mutations';
 
 export const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: isRetryableFailure } },
   queryCache: new QueryCache({
     // Failed first loads are shown by the page that needs the data; a failed background refresh
     // leaves stale data on screen, so it gets a notification.
     onError: (error, query) => {
+      captureQueryFailure(error, query.queryKey);
       if (query.state.data !== undefined) toast.error(getErrorMessage(error, 'Nie udało się odświeżyć danych'));
     },
   }),

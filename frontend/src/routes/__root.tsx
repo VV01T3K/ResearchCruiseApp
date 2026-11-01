@@ -1,4 +1,5 @@
-import { getProblemDetail } from '@/api/errors';
+import { getClient } from '@sentry/react';
+import { ApiError, getProblemDetail } from '@/api/errors';
 import {
   createRootRouteWithContext,
   ErrorComponentProps,
@@ -6,7 +7,7 @@ import {
   useRouter,
   useRouterState,
 } from '@tanstack/react-router';
-import type { QueryClient } from '@tanstack/react-query';
+import { useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { SmileyMehIcon, SmileyMeltingIcon } from '@phosphor-icons/react';
 
 import config from '@/config';
@@ -20,6 +21,8 @@ import { Navbar } from '@/components/shared/layout/Navbar';
 import { NetworkDisconnectAlert } from '@/components/shared/layout/NetworkDisconnectAlert';
 import { Toaster } from '@/components/shared/layout/Toaster';
 import { FeedbackTab } from '@/integrations/sentry/FeedbackTab';
+import { useCanSendFeedback } from '@/integrations/sentry/feedback';
+import { classifyError, isReportableFailure, rootCause } from '@/integrations/sentry/mutations';
 import { TanStackQueryDevtools } from '@/integrations/tanstack/query/devtools';
 import { AuthSession } from '@/integrations/tanstack/query/AuthSession';
 
@@ -75,6 +78,20 @@ function RootLayout() {
 }
 
 function RouteError({ error }: ErrorComponentProps) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const kind = classifyError(error);
+  const noAccess = kind === 'no-access';
+  const description = getProblemDetail(error, 'Nie udało się wczytać strony.');
+  const cause = rootCause(error);
+  const reported = isReportableFailure(error) && getClient() !== undefined;
+  const canSendFeedback = useCanSendFeedback();
+
+  async function retry() {
+    await queryClient.resetQueries({ predicate: (query) => query.state.status === 'error' });
+    await router.invalidate();
+  }
+
   return (
     <>
       <Toaster />
@@ -88,23 +105,55 @@ function RouteError({ error }: ErrorComponentProps) {
       </div>
       <Background />
       <FeedbackTab />
-      <Layout title={'Wystąpił nieoczekiwany błąd'} variant="narrow">
-        <div className="space-y-8">
-          <div className="h-60">
-            <SmileyMeltingIcon />
+      {noAccess ? (
+        <Layout title={'Nie znaleziono lub brak dostępu'} variant="narrow">
+          <div className="space-y-8">
+            <div className="h-60">
+              <SmileyMehIcon />
+            </div>
+            <div className="text-center">Ta strona nie istnieje albo nie masz do niej dostępu.</div>
+            <Button type="link" href="/" className="w-full">
+              Przejdź do strony głównej
+            </Button>
           </div>
-          <div className="flex items-center justify-center gap-2 text-lg">
-            <div>Opis błędu: </div>
-            <div className="font-semibold">{getProblemDetail(error, 'Nie udało się wczytać strony.')}</div>
+        </Layout>
+      ) : (
+        <Layout title={'Wystąpił nieoczekiwany błąd'} variant="narrow">
+          <div className="space-y-4">
+            <div className="h-16">
+              <SmileyMeltingIcon />
+            </div>
+            <div className="flex items-center justify-center gap-2 text-lg">
+              <div className="shrink-0">Opis błędu: </div>
+              <div className="font-semibold">{description}</div>
+            </div>
+            {(cause instanceof ApiError || kind === 'network') && !description.includes('Kod błędu') && (
+              <div className="text-center">
+                Kod błędu:{' '}
+                <span className="font-semibold">{cause instanceof ApiError ? `HTTP ${cause.status}` : 'NETWORK'}</span>
+              </div>
+            )}
+            {reported && (
+              <div className="text-center">
+                Błąd został automatycznie zgłoszony.
+                {canSendFeedback &&
+                  ' Jeśli chcesz dodać szczegóły, użyj przycisku „Zgłoś problem” w prawym dolnym rogu.'}
+              </div>
+            )}
+            <div className="text-center">
+              Prosimy o maila na adres <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>.
+            </div>
+            <div className="flex gap-4">
+              <Button variant="primaryOutline" className="w-full" onClick={() => void retry()}>
+                Spróbuj ponownie
+              </Button>
+              <Button type="link" href="/" className="w-full">
+                Przejdź do strony głównej
+              </Button>
+            </div>
           </div>
-          <div className="text-center">
-            Prosimy o maila na adres <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>.
-          </div>
-          <Button type="link" href="/" className="w-full">
-            Przejdź do strony głównej
-          </Button>
-        </div>
-      </Layout>
+        </Layout>
+      )}
     </>
   );
 }

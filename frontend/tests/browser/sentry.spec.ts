@@ -1,5 +1,12 @@
 import type { Page } from '@playwright/test';
-import { test, expect } from './fixtures';
+import {
+  getGetApplicationManagersMockHandler,
+  getGetApplicationsForCruisePlanningMockHandler,
+  getGetApplicationsMockHandler,
+} from '@/api/generated/mocks/applications/applications.msw.gen';
+import { getGetCruisesMockHandler } from '@/api/generated/mocks/cruises/cruises.msw.gen';
+import { getGetAvailableCruiseManagersMockHandler } from '@/api/generated/mocks/users/users.msw.gen';
+import { test, expect, fail } from './fixtures';
 import { admin } from '../data/accounts';
 
 async function captureEnvelopes(page: Page, replayRate = '') {
@@ -73,4 +80,42 @@ test.describe('signed in', () => {
       else expect(sent()).not.toContain('replay_');
     });
   }
+
+  for (const [name, path, handler] of [
+    ['a coded 500', '/cruises/new', getGetAvailableCruiseManagersMockHandler(fail(500, { errorCode: '0HN1' }))],
+    [
+      'a 422 with field errors',
+      '/cruises/new',
+      getGetAvailableCruiseManagersMockHandler(fail(422, { errors: { role: ['Zła rola'] } })),
+    ],
+    ['a list load that throws to the error page', '/applications', getGetApplicationsMockHandler(fail(500))],
+  ] as const) {
+    test(`${name} from a query is reported once`, async ({ page, network }) => {
+      const sent = await captureEnvelopes(page);
+      network.use(
+        getGetCruisesMockHandler([]),
+        getGetApplicationsForCruisePlanningMockHandler([]),
+        getGetApplicationManagersMockHandler([]),
+        handler
+      );
+      await page.goto(path);
+
+      await expect.poll(() => sent().split('"type":"event"').length - 1).toBe(1);
+      await page.waitForTimeout(1000);
+      expect(sent().split('"type":"event"').length - 1).toBe(1);
+    });
+  }
+
+  test('the error page mentions the automatic report only for a reported failure', async ({ page, network }) => {
+    await captureEnvelopes(page);
+    const notice = page.getByText(/automatycznie zgłoszony.*Zgłoś problem/);
+    network.use(getGetApplicationManagersMockHandler([]), getGetApplicationsMockHandler(fail(500)));
+    await page.goto('/applications');
+    await expect(notice).toBeVisible();
+
+    network.use(getGetApplicationsMockHandler(fail(404)));
+    await page.reload();
+    await expect(page.getByRole('heading', { name: 'Nie znaleziono lub brak dostępu' })).toBeVisible();
+    await expect(page.getByText(/automatycznie zgłoszony/)).toBeHidden();
+  });
 });

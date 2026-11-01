@@ -24,8 +24,8 @@ export function responseErrorMessage(status: number, problem?: HttpValidationPro
 
 export function getProblemDetail(error: unknown, fallback: string): string {
   if (error instanceof ApiError) return error.message;
-  if (error instanceof Error && error.cause) return getProblemDetail(error.cause, fallback);
   if (error instanceof TypeError) return 'Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.';
+  if (error instanceof Error && error.cause) return getProblemDetail(error.cause, fallback);
   return error instanceof Error && error.message ? error.message : fallback;
 }
 
