@@ -71,6 +71,18 @@ export function captureMutationFailure(error: unknown, mutationKey: readonly unk
   });
 }
 
+// The SDK marks a captured error object, so a suspense query's error rethrown to a boundary isn't sent again.
+export function captureQueryFailure(error: unknown, queryKey: readonly unknown[]): void {
+  if (!isReportableFailure(error)) return;
+  const cause = rootCause(error);
+  Sentry.captureException(error, {
+    tags: {
+      'query.key': typeof queryKey[0] === 'string' ? queryKey[0] : undefined,
+      'http.status_code': cause instanceof ApiError ? cause.status : undefined,
+    },
+  });
+}
+
 const reportedRefusalsKey = 'sentry.reportedRefusals';
 
 const reportedRefusals = new Set<string>();
