@@ -43,6 +43,11 @@ public static class ApplicationDecisionEndpoints
             return Error.ResourceNotFound().ToProblemHttpResult();
         }
 
+        if (!application.RowVersion.Matches(request.Revision))
+        {
+            return Revisions.StaleRevision();
+        }
+
         var decisionResult = ApplicationDecisionService.Decide(application, request.Accept);
         if (decisionResult != ApplicationDecisionResult.Applied)
         {

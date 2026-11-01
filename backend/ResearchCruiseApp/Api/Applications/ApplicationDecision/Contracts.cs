@@ -1,3 +1,3 @@
 namespace ResearchCruiseApp.Api.Applications;
 
-public sealed record ApplicationDecisionRequest(bool Accept);
+public sealed record ApplicationDecisionRequest(bool Accept, string? Revision);

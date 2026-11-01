@@ -21,6 +21,7 @@ public static class AcceptanceEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
@@ -32,6 +33,7 @@ public static class AcceptanceEndpoints
             .WithSummary("Deactivate a managed user.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 

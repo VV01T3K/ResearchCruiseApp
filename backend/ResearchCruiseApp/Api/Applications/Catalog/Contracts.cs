@@ -36,7 +36,8 @@ public sealed record ApplicationResponse(
     DateTime? PrecisePeriodStart,
     DateTime? PrecisePeriodEnd,
     DateTime? StartDate,
-    DateTime? EndDate
+    DateTime? EndDate,
+    string Revision
 )
 {
     public static ApplicationResponse From(CruiseApplicationSummary application)
@@ -74,7 +75,8 @@ public sealed record ApplicationResponse(
             application.PrecisePeriodStart,
             application.PrecisePeriodEnd,
             application.StartDate,
-            application.EndDate
+            application.EndDate,
+            application.Revision
         );
     }
 }

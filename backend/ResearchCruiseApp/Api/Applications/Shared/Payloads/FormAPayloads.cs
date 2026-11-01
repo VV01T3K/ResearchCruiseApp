@@ -135,6 +135,8 @@ public class CruiseApplicationSummary
 {
     public Guid Id { get; init; }
 
+    public string Revision { get; init; } = null!;
+
     public string Number { get; init; } = null!;
 
     public DateOnly Date { get; init; }

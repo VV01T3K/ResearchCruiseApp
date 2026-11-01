@@ -10,6 +10,13 @@ public static class IdentityResultExtensions
         if (identityResult.Succeeded)
             return Result.Empty;
 
+        if (
+            identityResult.Errors.Any(error =>
+                error.Code == nameof(IdentityErrorDescriber.ConcurrencyFailure)
+            )
+        )
+            return Error.Conflict(Revisions.StaleMessage);
+
         var errorMessage = string.Join(
             " ",
             identityResult.Errors.Select(e => e.Description).ToList()

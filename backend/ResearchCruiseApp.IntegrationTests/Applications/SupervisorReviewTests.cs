@@ -219,7 +219,10 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         using var supervisor = app.CreateApiClient();
         using var officeDecision = await office.PutAsJsonAsync(
             $"/v2/applications/{target.Id}/decision",
-            new ApplicationDecisionRequest(officeAccepts),
+            new ApplicationDecisionRequest(
+                officeAccepts,
+                await FormRequests.ApplicationRevision(office, target.Id)
+            ),
             ct
         );
         Assert.Equal(HttpStatusCode.NoContent, officeDecision.StatusCode);
@@ -245,6 +248,7 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         await TestUsers.Create(app, "office@example.invalid", RoleName.Shipowner);
         using var office = await TestApplications.Login(app, "office@example.invalid");
         using var supervisor = app.CreateApiClient();
+        var revision = await FormRequests.ApplicationRevision(office, target.Id);
 
         gate.Hold(db =>
             db.ChangeTracker.Entries<CruiseApplication>()
@@ -263,7 +267,7 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
             () =>
                 office.PutAsJsonAsync(
                     $"/v2/applications/{target.Id}/decision",
-                    new ApplicationDecisionRequest(true),
+                    new ApplicationDecisionRequest(true, revision),
                     ct
                 ),
             ct

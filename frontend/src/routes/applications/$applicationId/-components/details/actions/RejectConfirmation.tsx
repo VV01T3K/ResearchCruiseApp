@@ -5,8 +5,9 @@ import { AppButton } from '@/components/shared/AppButton';
 type Props = {
   onReject: () => void;
   setConfirmationMode: (value: boolean) => void;
+  disabled: boolean;
 };
-export function RejectConfirmation({ onReject, setConfirmationMode }: Props) {
+export function RejectConfirmation({ onReject, setConfirmationMode, disabled }: Props) {
   return (
     <>
       <div className="grid grid-cols-2 gap-4">
@@ -24,6 +25,7 @@ export function RejectConfirmation({ onReject, setConfirmationMode }: Props) {
         <AppButton
           className="w-36 !justify-center gap-4 lg:w-48"
           variant="danger"
+          disabled={disabled}
           onClick={() => {
             onReject();
             setConfirmationMode(false);

@@ -128,7 +128,10 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         using var officeClient = await TestApplications.Login(app, office.Email!);
         using var decision = await officeClient.PutAsJsonAsync(
             $"/v2/applications/{id}/decision",
-            new ApplicationDecisionRequest(officeAccepts),
+            new ApplicationDecisionRequest(
+                officeAccepts,
+                await FormRequests.ApplicationRevision(officeClient, id)
+            ),
             ct
         );
         Assert.Equal(HttpStatusCode.NoContent, decision.StatusCode);
