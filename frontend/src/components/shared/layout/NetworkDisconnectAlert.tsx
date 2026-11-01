@@ -1,39 +1,65 @@
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
-import { useMutation } from '@tanstack/react-query';
 
 import { Alert } from '@/components/shared/Alert';
 import config from '@/config';
 
-export function NetworkDisconnectAlert() {
-  const [networkConnectionStatus, setNetworkConnectionStatus] = React.useState<boolean | undefined>(undefined);
+const FIRST_CHECK_DELAY = 3_000;
+const LONGEST_CHECK_DELAY = 30_000;
 
-  const { mutate } = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`${config.apiUrl}/health`);
-      if (!response.ok) throw new Error(`Network status request failed with status ${response.status}`);
-    },
-    onSuccess: () => setNetworkConnectionStatus(true),
-    onError: () => setNetworkConnectionStatus(false),
-    retry: false,
-    meta: { skipsErrorReport: true },
-  });
+export function NetworkDisconnectAlert() {
+  const [status, setStatus] = React.useState<'healthy' | 'offline' | 'unhealthy'>('healthy');
 
   React.useEffect(() => {
-    mutate();
-    const intervalId = setInterval(() => mutate(), 3000);
-    return () => clearInterval(intervalId);
-  }, [mutate]);
+    let timeoutId: ReturnType<typeof setTimeout>;
+    let delay = FIRST_CHECK_DELAY;
+    let latestCheck = 0;
+
+    async function check() {
+      clearTimeout(timeoutId);
+      const thisCheck = ++latestCheck;
+      const next = await fetch(`${config.apiUrl}/health`).then(
+        (response) => (response.ok ? 'healthy' : 'unhealthy'),
+        () => 'offline' as const
+      );
+      if (thisCheck !== latestCheck) return;
+      setStatus(next);
+      timeoutId = setTimeout(() => void check(), delay);
+      delay = next === 'healthy' ? FIRST_CHECK_DELAY : Math.min(delay * 2, LONGEST_CHECK_DELAY);
+    }
+    const handleOnline = () => {
+      delay = FIRST_CHECK_DELAY;
+      void check();
+    };
+    const handleOffline = () => setStatus('offline');
+
+    void check();
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      latestCheck = -1;
+      clearTimeout(timeoutId);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   return (
-    <AnimatePresence>
-      {networkConnectionStatus === false && (
-        <motion.div initial={{ y: '-100%' }} animate={{ y: 0 }} exit={{ y: '-100%' }}>
-          <Alert variant="danger">
-            Brak połączenia z serwerem. Upewnij się, że masz dostęp do internetu i spróbuj ponownie.
-          </Alert>
-        </motion.div>
+    <>
+      <AnimatePresence>
+        {status === 'offline' && (
+          <motion.div initial={{ y: '-100%' }} animate={{ y: 0 }} exit={{ y: '-100%' }}>
+            <Alert variant="danger">
+              Brak połączenia z serwerem. Upewnij się, że masz dostęp do internetu i spróbuj ponownie.
+            </Alert>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {status === 'unhealthy' && (
+        <div className="fixed bottom-8 left-4 max-w-sm text-sm shadow-md">
+          <Alert variant="warning">Serwis ma chwilowo problemy techniczne. Twoje połączenie działa poprawnie.</Alert>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 }

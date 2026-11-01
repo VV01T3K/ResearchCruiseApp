@@ -1,11 +1,12 @@
 import * as Sentry from '@sentry/react';
+import { CancelledError } from '@tanstack/react-query';
+import { notFound, redirect } from '@tanstack/react-router';
 import { expect, it, vi } from 'vite-plus/test';
 import { ApiError } from '@/api/errors';
-import { captureHandledRefusal, isUnexplainedFailure } from '@/integrations/sentry/mutations';
+import { captureHandledRefusal, classifyError, isUnexplainedFailure } from '@/integrations/sentry/mutations';
 
 vi.mock('@sentry/react', () => ({
   captureException: vi.fn(),
-  captureMessage: vi.fn(),
 }));
 
 it.each([
@@ -34,6 +35,22 @@ it.each([
   expect(isUnexplainedFailure(error)).toBe(expected);
 });
 
+it.each([
+  ['401', new ApiError('Sesja wygasła', 401), 'session'],
+  ['403', new ApiError('Brak dostępu', 403), 'no-access'],
+  ['404', new ApiError('Nie znaleziono', 404), 'no-access'],
+  ['409', new ApiError('Konflikt', 409), 'refused'],
+  ['500', new ApiError('Błąd serwera', 500), 'server'],
+  ['router notFound', notFound(), 'control-flow'],
+  ['router redirect', redirect({ to: '/' }), 'control-flow'],
+  ['abort', new DOMException('Aborted', 'AbortError'), 'aborted'],
+  ['query cancel', new CancelledError(), 'aborted'],
+  ['network failure', new TypeError('Failed to fetch'), 'network'],
+  ['coding error', new TypeError('x is not a function'), 'unknown'],
+] as const)('classifies %s as an error kind', (_, error, kind) => {
+  expect(classifyError(error)).toBe(kind);
+});
+
 it('reports each handled refusal once per operation and status in a session', () => {
   const storage = new Map<string, string>();
   vi.stubGlobal('sessionStorage', {
@@ -45,9 +62,10 @@ it('reports each handled refusal once per operation and status in a session', ()
   captureHandledRefusal('form-b.submit', new ApiError('Błąd walidacji', 400));
   captureHandledRefusal('form-b.draft', new ApiError('Obecnie nie można przesłać formularza B.', 403));
   captureHandledRefusal('form-b.submit', new ApiError('Błąd serwera (502)', 502));
-  expect(
-    vi.mocked(Sentry.captureMessage).mock.calls.map(([, hint]) => (hint as { fingerprint?: string[] }).fingerprint)
-  ).toEqual([
+  captureHandledRefusal('form-b.draft', new ApiError('Sesja wygasła', 401));
+  const calls = vi.mocked(Sentry.captureException).mock.calls;
+  expect(calls.map(([error]) => (error as Error).name)).toContain('Handled form-b.submit refusal (HTTP 403)');
+  expect(calls.map(([, hint]) => (hint as { fingerprint?: string[] }).fingerprint)).toEqual([
     ['handled-refusal', 'form-b.submit', '403'],
     ['handled-refusal', 'form-b.submit', '400'],
     ['handled-refusal', 'form-b.draft', '403'],

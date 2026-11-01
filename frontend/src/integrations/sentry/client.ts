@@ -3,6 +3,7 @@ import type { RegisteredRouter } from '@tanstack/react-router';
 
 import config from '@/config';
 import { closeFeedback } from '@/integrations/sentry/feedback';
+import { isUnexplainedFailure } from '@/integrations/sentry/mutations';
 import { createFormBreadcrumb, parseSampleRate, scrubSensitiveUrls } from '@/integrations/sentry/utils';
 import type { UserResponse } from '@/api/generated/schemas';
 
@@ -45,6 +46,7 @@ export function initializeSentry(router: RegisteredRouter): void {
     tracePropagationTargets: [config.apiUrl],
     replaysSessionSampleRate,
     replaysOnErrorSampleRate: 1,
+    beforeSend: (event, hint) => (isUnexplainedFailure(hint.originalException) ? event : null),
   });
   if (recordReplay) pauseReplayOnSensitiveUrls(router);
 }

@@ -10,7 +10,7 @@ import {
 } from '@/api/generated/mocks/applications/applications.msw.gen';
 import type { Page } from '@playwright/test';
 import type { ApplicationResponse, ResearchTaskFields } from '@/api/generated/schemas';
-import { test, expect, fail } from './fixtures';
+import { test, expect, applicationForms, fail } from './fixtures';
 import { admin, managerAccount, publication } from '../data/accounts';
 import { application, evaluation } from '../data/cruises';
 import { applicationId, formA, formOptions } from '../data/forms';
@@ -21,6 +21,18 @@ const listRequests = 'GET /v2/applications';
 test.describe('application table', () => {
   test.use({ account: admin });
   test.beforeEach(({ network }) => network.use(getGetApplicationManagersMockHandler([application().mainManager])));
+
+  test('a failed list load ends in the error page and its button retries', async ({ page, network, requests }) => {
+    network.use(getGetApplicationsMockHandler(fail(500)));
+    await page.goto('/applications');
+    await expect(page.getByText('HTTP 500')).toBeVisible();
+    expect(requests.queries(listRequests)).toHaveLength(2);
+
+    network.use(getGetApplicationsMockHandler(listPage([application()])));
+    await page.getByRole('button', { name: 'Spróbuj ponownie' }).click();
+    await expect(page.getByRole('heading', { name: 'Zgłoszenia' })).toBeVisible();
+    await expect(page.getByRole('table')).toContainText(application().number);
+  });
 
   const changes = {
     sorted: async (page: Page) => {
@@ -238,6 +250,19 @@ test.describe('application review', () => {
     await resend.dblclick();
     await expect(resend).toBeDisabled();
     expect(requests.bodies(`POST /v2/applications/${applicationId}/supervisor-review/invitation`)).toHaveLength(1);
+  });
+
+  test('an inaccessible application offers a way back instead of a crash page', async ({ page, network, requests }) => {
+    network.use(
+      getGetApplicationMockHandler(fail(404)),
+      getGetApplicationEvaluationMockHandler(fail(404)),
+      ...applicationForms()
+    );
+    await page.goto(`/applications/${applicationId}/details`);
+    await expect(page.getByRole('heading', { name: 'Nie znaleziono lub brak dostępu' })).toBeVisible();
+    expect(requests.queries(`GET /v2/applications/${applicationId}`)).toHaveLength(1);
+    await page.getByRole('link', { name: 'Przejdź do strony głównej' }).click();
+    await expect(page).toHaveURL('/');
   });
 
   test('the evaluation shows every scored item with its details and points', async ({ page, network }) => {

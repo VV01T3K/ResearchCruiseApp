@@ -1,23 +1,50 @@
 import * as Sentry from '@sentry/react';
+import { CancelledError } from '@tanstack/react-query';
+import { isNotFound, isRedirect } from '@tanstack/react-router';
 
 import { ApiError } from '@/api/errors';
 
-function rootCause(error: unknown): unknown {
+let pageIsLeaving = false;
+globalThis.addEventListener?.('pagehide', () => (pageIsLeaving = true));
+globalThis.addEventListener?.('pageshow', () => (pageIsLeaving = false));
+
+export function rootCause(error: unknown): unknown {
   return error instanceof Error && !(error instanceof ApiError) && error.cause ? rootCause(error.cause) : error;
 }
 
-export function isUnexplainedFailure(error: unknown): boolean {
+export function classifyError(error: unknown) {
+  if (isNotFound(error) || isRedirect(error)) return 'control-flow';
   const cause = rootCause(error);
   if (cause instanceof ApiError) {
+    if (cause.status === 401) return 'session';
+    if (cause.status === 403 || cause.status === 404) return 'no-access';
+    return cause.status < 500 ? 'refused' : 'server';
+  }
+  if (cause instanceof CancelledError || (cause instanceof Error && cause.name === 'AbortError')) return 'aborted';
+  if (cause instanceof TypeError && /^(Failed to fetch|NetworkError|Load failed)/.test(cause.message)) {
+    return pageIsLeaving ? 'aborted' : 'network';
+  }
+  return 'unknown';
+}
+
+export function isRetryableFailure(failureCount: number, error: unknown): boolean {
+  const kind = classifyError(error);
+  return failureCount < 1 && (kind === 'server' || kind === 'network');
+}
+
+export function isUnexplainedFailure(error: unknown): boolean {
+  const kind = classifyError(error);
+  const cause = rootCause(error);
+  if (kind === 'server' && cause instanceof ApiError) {
     const problem = cause.problem ?? {};
-    const explained =
+    return !(
       'errorCode' in problem ||
       Object.values(problem.errors ?? {})
         .flat()
-        .some((message) => message.trim());
-    return cause.status >= 500 && !explained;
+        .some((message) => message.trim())
+    );
   }
-  return !(cause instanceof Error && cause.name === 'AbortError');
+  return kind === 'network' || kind === 'unknown';
 }
 
 export function captureMutationFailure(error: unknown, mutationKey: readonly unknown[] | undefined): void {
@@ -51,9 +78,12 @@ function markFirstReport(key: string): boolean {
 
 export function captureHandledRefusal(operation: string, error: unknown): void {
   const cause = rootCause(error);
-  if (!(cause instanceof ApiError) || cause.status < 400 || cause.status >= 500) return;
+  const kind = classifyError(cause);
+  if (!(cause instanceof ApiError) || (kind !== 'no-access' && kind !== 'refused')) return;
   if (!markFirstReport(`${operation}:${cause.status}`)) return;
-  Sentry.captureMessage(`Handled ${operation} refusal (HTTP ${cause.status})`, {
+  const refusal = new Error('Expected refusal shown to the user');
+  refusal.name = `Handled ${operation} refusal (HTTP ${cause.status})`;
+  Sentry.captureException(refusal, {
     level: 'warning',
     fingerprint: ['handled-refusal', operation, String(cause.status)],
     tags: { operation, 'http.status_code': cause.status },
