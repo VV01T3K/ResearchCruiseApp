@@ -77,7 +77,7 @@ export function captureQueryFailure(error: unknown, queryKey: readonly unknown[]
   const cause = rootCause(error);
   Sentry.captureException(error, {
     tags: {
-      'query.key': typeof queryKey[0] === 'string' ? queryKey[0] : undefined,
+      'query.key': queryKey.filter((part) => typeof part === 'string').join('/'),
       'http.status_code': cause instanceof ApiError ? cause.status : undefined,
     },
   });

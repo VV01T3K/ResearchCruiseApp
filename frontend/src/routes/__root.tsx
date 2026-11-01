@@ -120,7 +120,7 @@ function RouteError({ error }: ErrorComponentProps) {
               <SmileyMeltingIcon />
             </div>
             <div className="flex items-center justify-center gap-2 text-lg">
-              <div>Opis błędu: </div>
+              <div className="shrink-0">Opis błędu: </div>
               <div className="font-semibold">{description}</div>
             </div>
             {(cause instanceof ApiError || kind === 'network') && !description.includes('Kod błędu') && (
