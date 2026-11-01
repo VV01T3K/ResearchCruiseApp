@@ -8,8 +8,8 @@ internal static partial class ApplicationMappings
     {
         return new FormC
         {
-            ShipUsage = dto.ShipUsage,
-            DifferentUsage = dto.DifferentUsage,
+            ShipUsage = dto.ShipUsage ?? "",
+            DifferentUsage = dto.DifferentUsage ?? "",
             CollectedSamples = dto.CollectedSamples.Select(ToCollectedSample).ToList(),
             SpubReportData = dto.SpubReportData,
             AdditionalDescription = dto.AdditionalDescription,

@@ -29,21 +29,24 @@ public static class ExportEndpoints
         CancellationToken cancellationToken
     )
     {
-        if (!int.TryParse(year, out _))
+        if (!int.TryParse(year, out var parsedYear) || !PlanningEndpoints.IsValidYear(parsedYear))
         {
             return Error.InvalidArgument("Rok jest niepoprawny.").ToProblemHttpResult();
         }
 
         var cruises = await dbContext
-            .Cruises.Where(cruise => cruise.StartDate.StartsWith(year))
-            .IncludeCruiseApplications()
+            .Cruises.IncludeCruiseApplications()
                 .ThenInclude(application => application.FormA)
             .ToListAsync(cancellationToken);
         var visibleCruises = new List<DomainCruise>();
 
         foreach (var cruise in cruises)
         {
-            if (await userPermissionVerifier.CanCurrentUserViewCruise(cruise))
+            if (
+                PlanningEndpoints.TryParseUtc(cruise.StartDate, out var start)
+                && start.Year == parsedYear
+                && await userPermissionVerifier.CanCurrentUserViewCruise(cruise)
+            )
             {
                 visibleCruises.Add(cruise);
             }

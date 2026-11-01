@@ -3,7 +3,7 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
 
-internal class ContractReader(FileReader files)
+internal class ContractReader(FileReader files, ILogger<ContractReader> logger)
 {
     public async Task<ContractFields> Create(Contract contract)
     {
@@ -11,10 +11,21 @@ internal class ContractReader(FileReader files)
 
         foreach (var file in contract.Files)
         {
-            if (!string.IsNullOrEmpty(file.FileName) && file.FileContent is not null)
+            if (file.FileContent is null)
+                continue;
+
+            var name = file.FileName;
+            if (string.IsNullOrEmpty(name))
             {
-                dto.Scans.Add(await files.FromCompressed(file.FileName, file.FileContent));
+                name = $"umowa-{file.Id}";
+                logger.LogWarning(
+                    "Contract {ContractId} has unnamed file {FileId}",
+                    contract.Id,
+                    file.Id
+                );
             }
+
+            dto.Scans.Add(await files.FromCompressed(name, file.FileContent));
         }
 
         return dto;

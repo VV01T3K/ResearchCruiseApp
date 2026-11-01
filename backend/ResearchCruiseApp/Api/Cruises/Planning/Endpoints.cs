@@ -36,6 +36,7 @@ public static class PlanningEndpoints
             .MapGet("/blockades", GetBlockades)
             .WithName("GetCruiseBlockades")
             .WithSummary("Get blockade periods for a year.")
+            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .RequireAuthorization(AuthorizationPolicies.AnyKnownUser);
     }
@@ -153,12 +154,17 @@ public static class PlanningEndpoints
         return TypedResults.Ok(new AutoPlanResponse(newCruises.Count, skipped));
     }
 
-    private static async Task<Ok<List<BlockadeResponse>>> GetBlockades(
+    private static async Task<Results<Ok<List<BlockadeResponse>>, ProblemHttpResult>> GetBlockades(
         int year,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
+        if (!IsValidYear(year))
+        {
+            return Error.InvalidArgument("Rok jest niepoprawny.").ToProblemHttpResult();
+        }
+
         var blockingCruises = await GetBlockingCruisesForYear(year, dbContext, cancellationToken);
         return TypedResults.Ok(blockingCruises.Select(BlockadeResponse.From).ToList());
     }
@@ -222,6 +228,8 @@ public static class PlanningEndpoints
         && start <= end
             ? (start, end)
             : null;
+
+    internal static bool IsValidYear(int year) => year is >= 1900 and <= 3000;
 
     internal static bool TryParseUtc(string? date, out DateTime result) =>
         DateTime.TryParse(
