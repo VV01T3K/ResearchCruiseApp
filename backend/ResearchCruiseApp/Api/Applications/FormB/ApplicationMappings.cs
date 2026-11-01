@@ -6,7 +6,7 @@ internal static partial class ApplicationMappings
 {
     public static FormB ToFormB(FormBFields dto)
     {
-        return new FormB { IsCruiseManagerPresent = dto.IsCruiseManagerPresent };
+        return new FormB { IsCruiseManagerPresent = dto.IsCruiseManagerPresent ?? "" };
     }
 
     public static FormBFields ToFormBFields(FormB form)

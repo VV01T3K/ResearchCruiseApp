@@ -15,7 +15,7 @@ internal static partial class ApplicationMappings
     public static Contract ToContract(ContractFields dto) =>
         new()
         {
-            Category = dto.Category,
+            Category = dto.Category ?? "",
             InstitutionName = dto.InstitutionName,
             InstitutionUnit = dto.InstitutionUnit,
             InstitutionLocalization = dto.InstitutionLocalization,
@@ -114,13 +114,13 @@ internal static partial class ApplicationMappings
     public static Publication ToPublication(PublicationFields dto) =>
         new()
         {
-            Category = dto.Category,
+            Category = dto.Category ?? "",
             Doi = dto.Doi,
             Authors = dto.Authors,
             Title = dto.Title,
             Magazine = dto.Magazine,
             Year = dto.Year,
-            MinisterialPoints = dto.MinisterialPoints,
+            MinisterialPoints = dto.MinisterialPoints ?? "",
         };
 
     public static PublicationFields ToPublicationFields(Publication publication) =>

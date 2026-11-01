@@ -2081,6 +2081,16 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
@@ -3704,7 +3714,7 @@
           },
           "points": {
             "type": "integer",
-            "format": "int32"
+            "format": "int64"
           },
           "status": {
             "$ref": "#/components/schemas/CruiseApplicationStatus"
@@ -4172,7 +4182,7 @@
           },
           "points": {
             "type": "integer",
-            "format": "int32"
+            "format": "int64"
           },
           "cruiseId": {
             "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",

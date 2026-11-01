@@ -167,6 +167,40 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
         });
     }
 
+    [Fact]
+    public async Task Create_WhenDraftOmitsOptionalText_SavesButRejectsMissingYear()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var user = await TestUsers.Create(app, "omit@example.invalid", RoleName.CruiseManager);
+        using var client = await CreateAuthorizedClient(app, user.Email!, cancellationToken);
+
+        using var saved = await client.PostAsJsonAsync(
+            "/v2/applications",
+            new
+            {
+                draft = true,
+                form = new
+                {
+                    cruiseManagerId = user.Id,
+                    year = "2030",
+                    cruiseHours = "0",
+                    contracts = new[] { new { } },
+                    publications = new[] { new { } },
+                },
+            },
+            cancellationToken
+        );
+        using var rejected = await client.PostAsJsonAsync(
+            "/v2/applications",
+            new { draft = true, form = new { cruiseManagerId = user.Id, cruiseHours = "0" } },
+            cancellationToken
+        );
+
+        Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
+    }
+
     private static async Task<HttpClient> CreateAuthorizedClient(
         TestApplication app,
         string email,

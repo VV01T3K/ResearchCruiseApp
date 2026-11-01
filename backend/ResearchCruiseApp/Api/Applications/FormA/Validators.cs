@@ -25,6 +25,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             request => request.Draft,
             () =>
             {
+                AddYearDraftValidation();
                 AddCruiseHoursDraftValidation();
                 AddShipUsageDraftValidation();
                 AddCruiseGoalDraftValidation();
@@ -292,6 +293,11 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             .WithMessage(
                 "Wybranie obszaru badawczego albo podanie alternatywnej nazwy jest wymagane."
             );
+    }
+
+    private void AddYearDraftValidation()
+    {
+        RuleFor(request => request.Form.Year).NotNull().WithMessage("Podanie roku jest wymagane.");
     }
 
     private void AddCruiseGoalDraftValidation()

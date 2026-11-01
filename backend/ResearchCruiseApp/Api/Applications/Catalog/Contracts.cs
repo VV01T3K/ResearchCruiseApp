@@ -23,7 +23,7 @@ public sealed record ApplicationResponse(
     bool HasFormA,
     bool HasFormB,
     bool HasFormC,
-    [property: JsonNumberHandling(JsonNumberHandling.Strict)] int Points,
+    [property: JsonNumberHandling(JsonNumberHandling.Strict)] long Points,
     CruiseApplicationStatus Status,
     string EffectsDoneRate,
     string? Note,

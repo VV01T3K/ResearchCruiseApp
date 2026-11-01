@@ -219,4 +219,40 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(total, summary.GetProperty("points").GetInt32());
         Assert.Empty(app.Transport.Messages);
     }
+
+    [Fact]
+    public async Task Summary_WhenStoredScoresExceedInt32_ReturnsExactTotal()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var owner = await TestUsers.Create(app, "owner@example.invalid", RoleName.CruiseManager);
+        using var client = await TestApplications.Login(app, owner.Email!);
+        var form = FormAccessTests.Draft(Guid.Parse(owner.Id));
+        foreach (var title in new[] { "first", "second", "third" })
+            form.Publications.Add(
+                new PublicationFields
+                {
+                    Category = "subject",
+                    Title = title,
+                    MinisterialPoints = "",
+                }
+            );
+        using var response = await client.PostAsJsonAsync(
+            "/v2/applications",
+            new FormAWriteRequest { Form = form, Draft = true },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        await app.InDatabase(async db =>
+            await db.FormAPublications.ExecuteUpdateAsync(
+                row => row.SetProperty(publication => publication.Points, int.MaxValue),
+                ct
+            )
+        );
+
+        var page = await client.GetFromJsonAsync<JsonElement>("/v2/applications", ct);
+
+        var summary = Assert.Single(page.GetProperty("items").EnumerateArray());
+        Assert.Equal(3L * int.MaxValue, summary.GetProperty("points").GetInt64());
+    }
 }
