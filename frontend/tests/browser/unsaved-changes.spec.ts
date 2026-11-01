@@ -12,6 +12,7 @@ import { getGetCruiseBlockadesMockHandler } from '@/api/generated/mocks/cruises/
 import {
   getGetCurrentSessionMockHandler,
   getLoginMockHandler,
+  getLogoutMockHandler,
   getRefreshTokensMockHandler,
 } from '@/api/generated/mocks/auth/auth.msw.gen';
 import { getGetCurrentUserMockHandler } from '@/api/generated/mocks/users/users.msw.gen';
@@ -391,6 +392,41 @@ test.describe('edits lost when the session ends', () => {
   test('are not shown to another account', async ({ page, network }) => {
     await expireAndSignInAs(page, network, outsider);
     await expect(employees(page)).toHaveValue('2');
+    await expect(recovery(page)).toHaveCount(0);
+  });
+
+  async function signOutAndInFromAnotherTab(page: Page, network: NetworkFixture, account: CurrentUserResponse) {
+    network.use(
+      getGetCurrentSessionMockHandler(tokens(admin.id)),
+      getLogoutMockHandler(() =>
+        network.use(getGetCurrentSessionMockHandler(null), getGetCurrentUserMockHandler(fail(401)))
+      )
+    );
+    await page.goto(formA);
+    await notes(page).fill(UNSAVED);
+    const other = await page.context().newPage();
+    await other.goto('/');
+    await other.getByRole('button', { name: 'Wyloguj', exact: true }).click();
+    await expect(page).toHaveURL(/\/login/);
+    await expect(dialog(page)).toHaveCount(0);
+
+    network.use(getLoginMockHandler(tokens(account.id)), getGetCurrentUserMockHandler(account));
+    await other.getByLabel('E-mail').fill(account.email);
+    await other.getByLabel('Hasło', { exact: true }).fill('Password1!');
+    await other.getByRole('button', { name: 'Zaloguj', exact: true }).click();
+    await expect(page).toHaveURL(formA);
+  }
+
+  test('a sign-out in another tab keeps them, and this tab follows the sign-in there', async ({ page, network }) => {
+    await signOutAndInFromAnotherTab(page, network, admin);
+    await recovery(page).getByRole('button', { name: 'Przywróć zmiany' }).click();
+    await expect(notes(page)).toHaveValue(UNSAVED);
+  });
+
+  test('another account signing in from another tab does not get them', async ({ page, network }) => {
+    await signOutAndInFromAnotherTab(page, network, outsider);
+    await expect(notes(page)).toBeVisible();
+    await expect(notes(page)).not.toHaveValue(UNSAVED);
     await expect(recovery(page)).toHaveCount(0);
   });
 });

@@ -1,10 +1,12 @@
 import type { TokenResponse } from '@/api/generated/schemas';
 import { getCurrentSession, refreshTokens } from '@/api/generated/endpoints/auth.gen';
 
+type AuthEvent = 'manual-logout' | 'remote-login';
+
 type AuthSubscriber = (
   details: TokenResponse | undefined,
   previous: TokenResponse | undefined,
-  manualLogout: boolean
+  event: AuthEvent | undefined
 ) => void;
 
 const subscribers = new Set<AuthSubscriber>();
@@ -17,7 +19,7 @@ let authGeneration = 0;
 let logoutInProgress = false;
 let acceptBroadcastSessions = true;
 
-type AuthChannelMessage = { type: 'session'; session: TokenResponse } | { type: 'logout'; expired: boolean };
+type AuthChannelMessage = { type: 'session' | 'login'; session: TokenResponse } | { type: 'logout' };
 
 const authChannel =
   typeof window === 'undefined' || typeof window.BroadcastChannel === 'undefined'
@@ -28,10 +30,13 @@ authChannel?.addEventListener('message', (event: MessageEvent<AuthChannelMessage
   if (event.data.type === 'logout') {
     authGeneration += 1;
     acceptBroadcastSessions = false;
-    updateSession(undefined, false, !event.data.expired);
+    updateSession(undefined, false);
     return;
   }
-  if (!logoutInProgress && acceptBroadcastSessions) updateSession(event.data.session, false);
+  const login = event.data.type === 'login';
+  if (login) acceptBroadcastSessions = true;
+  if (!logoutInProgress && acceptBroadcastSessions)
+    updateSession(event.data.session, false, login ? 'remote-login' : undefined);
 });
 
 export class SessionRefreshError extends Error {
@@ -53,12 +58,12 @@ export function accountId(details: TokenResponse) {
   }
 }
 
-function updateSession(details: TokenResponse | undefined, broadcast: boolean, manualLogout = false) {
+function updateSession(details: TokenResponse | undefined, broadcast: boolean, authEvent?: AuthEvent) {
   const previous = session;
   session = details;
   sessionState = details ? 'authenticated' : 'anonymous';
   sessionRevision += 1;
-  subscribers.forEach((subscriber) => subscriber(details, previous, manualLogout));
+  subscribers.forEach((subscriber) => subscriber(details, previous, authEvent));
   if (details) concurrentRefreshWaiters.forEach((waiter) => waiter(details));
   if (details && broadcast) {
     authChannel?.postMessage({
@@ -71,6 +76,12 @@ function updateSession(details: TokenResponse | undefined, broadcast: boolean, m
 export function setSession(details: TokenResponse | undefined) {
   if (details) acceptBroadcastSessions = true;
   updateSession(details, true);
+}
+
+export function completeLogin(details: TokenResponse) {
+  acceptBroadcastSessions = true;
+  updateSession(details, false);
+  authChannel?.postMessage({ type: 'login', session: details } satisfies AuthChannelMessage);
 }
 
 export function getSession() {
@@ -156,8 +167,8 @@ export async function prepareForLogout() {
 
 export function completeLogout(expired = false) {
   acceptBroadcastSessions = false;
-  updateSession(undefined, false, !expired);
-  authChannel?.postMessage({ type: 'logout', expired } satisfies AuthChannelMessage);
+  updateSession(undefined, false, expired ? undefined : 'manual-logout');
+  authChannel?.postMessage({ type: 'logout' } satisfies AuthChannelMessage);
   logoutInProgress = false;
 }
 

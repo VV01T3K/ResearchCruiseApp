@@ -1,8 +1,9 @@
 import { hashKey, queryOptions, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { QueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 import {
+  completeLogin,
   getValidAccessToken,
   refreshSession,
   prepareForLogout,
@@ -63,9 +64,7 @@ export function useCurrentUser() {
 }
 
 export function useAuthDetails() {
-  const [authDetails, setAuthDetails] = useState(() => getSession());
-  useEffect(() => subscribeAuthDetails(setAuthDetails), []);
-  return authDetails;
+  return useSyncExternalStore(subscribeAuthDetails, getSession, getSession);
 }
 
 export function isInRole(user: UserResponse | null, allowedRoles: Role | Role[]) {
@@ -86,7 +85,7 @@ export function useSignIn() {
       return { error: getProblemDetail(error, 'Wystąpił błąd podczas logowania. Spróbuj ponownie.') };
     }
 
-    setSession(response);
+    completeLogin(response);
     try {
       // Fetched outside the query cache: sign-in reports this failure itself.
       const user = await fetchCurrentUser();
