@@ -49,17 +49,13 @@ export function SessionStatusBadge({ refreshTokenExpirationDate, onRefresh }: Pr
   return (
     <div
       title="Pozostały czas sesji"
-      data-testid="session-status-badge"
       className={`flex items-center gap-2 rounded-lg px-3 py-1 text-sm font-medium ${
         isWarning ? 'bg-red-100 text-red-700' : 'bg-white/20 text-white'
       }`}
     >
       <ClockIcon className="h-4 w-4" />
-      <span data-testid="session-status-value" className="font-mono">
-        {formatTimeRemaining(remainingMs)}
-      </span>
+      <span className="font-mono">{formatTimeRemaining(remainingMs)}</span>
       <button
-        data-testid="session-refresh-btn"
         title="Odśwież sesję"
         onClick={() => void handleRefresh()}
         disabled={isRefreshing}

@@ -66,7 +66,7 @@ export function PublicationsSection({ context }: { context: FormCViewModel }) {
   ];
 
   return (
-    <AppAccordion title="10. Publikacje" expandedByDefault data-testid="form-c-publications-section">
+    <AppAccordion title="10. Publikacje" expandedByDefault>
       <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center">
         <h3 className="text-xl">
           Publikacje kategorii <span className="font-semibold">temat</span>

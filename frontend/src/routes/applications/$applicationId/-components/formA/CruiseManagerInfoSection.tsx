@@ -9,7 +9,7 @@ export function CruiseManagerInfoSection({ context }: { context: FormAViewModel 
   const { isReadonly, initValues } = context;
 
   return (
-    <AppAccordion title="1. Kierownik zgłaszanego rejsu" expandedByDefault data-testid="form-a-cruise-manager-section">
+    <AppAccordion title="1. Kierownik zgłaszanego rejsu" expandedByDefault>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <form.AppField name="cruiseManagerId">
           {(field) => (
@@ -19,7 +19,6 @@ export function CruiseManagerInfoSection({ context }: { context: FormAViewModel 
               placeholder="Wybierz kierownika rejsu"
               allOptions={initValues.cruiseManagers.map(mapPersonToLabel)}
               disabled={isReadonly}
-              data-testid-button="form-a-cruise-manager-button"
             />
           )}
         </form.AppField>
@@ -32,8 +31,6 @@ export function CruiseManagerInfoSection({ context }: { context: FormAViewModel 
               placeholder="Wybierz zastępcę kierownika rejsu"
               allOptions={initValues.deputyManagers.map(mapPersonToLabel)}
               disabled={isReadonly}
-              data-testid-button="form-a-deputy-manager-button"
-              data-testid-errors="form-a-deputy-manager-errors"
             />
           )}
         </form.AppField>
@@ -49,7 +46,6 @@ export function CruiseManagerInfoSection({ context }: { context: FormAViewModel 
                 inlineLabel: year,
               }))}
               disabled={isReadonly}
-              data-testid-button="form-a-year-button"
             />
           )}
         </form.AppField>

@@ -61,8 +61,8 @@ test('a failed save can be retried', async ({ page, network, requests }) => {
 - Build responses from `tests/data/`. `fixtures.test.ts` checks them against the generated API
   schemas, so they stay valid when the API changes.
 - Assert what a user can observe and what the app sends. Do not assert internal state.
-- Prefer roles, labels and visible text. Use a `data-testid` only for a section or control that
-  has no accessible name yet.
+- Query by role and name, then label, then visible text. Scope with a parent such as a named
+  region. Use a `data-testid` only for a purely visual element with no accessible role.
 - Control time with `page.clock` instead of waiting.
 
 The suite runs against `vp build --mode test` served by `vp preview` on a port the system picks,
@@ -87,8 +87,7 @@ Unit and browser tests both run in `Europe/Warsaw`, the users' timezone.
 - Controlled inputs use the `withControlledValue` decorator, because Storybook's `useArgs` does not
   rerender stories under Vitest.
 - Modal stories set `docs.story.inline: false` so each portal stays in its own frame.
-- Accessibility checks default to `todo` (reported, not failing). Stories that pass set
-  `parameters.a11y.test: 'error'`.
+- Accessibility violations fail the story: `.storybook/preview.tsx` sets `a11y.test: 'error'`.
 - `@storybook/tanstack-react@10.6.0` is incompatible with our `@tanstack/router-core`, so stories
   use `@storybook/react-vite`.
 

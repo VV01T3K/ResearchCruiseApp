@@ -96,6 +96,8 @@ test('a partly failed bulk delete reports one error and keeps the failed row sel
   expect(requests.bodies(`DELETE /v2/users/me/publications/${second.id}`)).toHaveLength(0);
   releaseFirst();
   await expect(page.getByRole('cell', { name: second.title, exact: true })).toHaveCount(0);
-  await expect(page.getByTestId('toast-error')).toHaveText('Nie udało się usunąć 1 z 2 zaznaczonych publikacji');
+  await expect(
+    page.getByRole('region', { name: 'Notifications' }).getByText('Nie udało się usunąć 1 z 2 zaznaczonych publikacji')
+  ).toBeVisible();
   await expect(page.getByRole('row').filter({ hasText: first.title! }).getByRole('checkbox')).toBeChecked();
 });

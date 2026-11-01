@@ -31,10 +31,6 @@ type Props = {
   maxSizeInMb?: number;
   acceptedMimeTypes?: string[];
   allowMultiple?: boolean;
-  'data-testid'?: string;
-  'data-testid-button'?: string;
-  'data-testid-input'?: string;
-  'data-testid-errors'?: string;
 } & (
   | {
       allowMultiple: true;
@@ -65,10 +61,6 @@ export function AppFileInput({
   emptyMessage = 'Brak plików',
   maxSizeInMb = 2,
   acceptedMimeTypes,
-  'data-testid': testId,
-  'data-testid-button': buttonTestId,
-  'data-testid-input': inputTestId,
-  'data-testid-errors': errorsTestId,
 }: Props) {
   const aria = useInputAria(errors, helper);
   const files = allowMultiple ? value : value ? [value] : [];
@@ -142,7 +134,7 @@ export function AppFileInput({
   }
 
   return (
-    <div data-testid={testId}>
+    <div>
       <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <div
         className="flex w-full items-center justify-center"
@@ -180,7 +172,6 @@ export function AppFileInput({
               'w-full rounded-lg',
               hasErrors(errors) && 'focus:ring-danger focus:ring-2 focus:outline-none focus:ring-inset'
             )}
-            data-testid={buttonTestId}
           >
             <AnimatePresence>
               {!disabled && (
@@ -221,11 +212,10 @@ export function AppFileInput({
         className="hidden"
         onChange={(evt) => void handleChange(evt)}
         accept={acceptedMimeTypes?.join(',')}
-        data-testid={inputTestId}
       />
       <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <AppInputHelper id={aria.helperId} helper={helper} />
-        <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
+        <AppInputErrorsList id={aria.errorId} errors={errors} />
       </div>
     </div>
   );

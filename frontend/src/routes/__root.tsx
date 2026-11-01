@@ -53,7 +53,7 @@ function RootLayout() {
       </div>
       <AppBackground />
       <FeedbackTab />
-      <main className="flex-1" id="modal-root" data-testid="main-content">
+      <main className="flex-1" id="modal-root">
         <motion.div
           key={routerState.location.pathname}
           initial={{ opacity: 0 }}

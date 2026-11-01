@@ -24,8 +24,7 @@ type Props = {
   helper?: React.ReactNode;
   autoFocus?: boolean;
   containerClassName?: string;
-  'data-testid'?: string;
-  'data-testid-errors'?: string;
+  'aria-label'?: string;
 };
 export function AppInput({
   name,
@@ -42,8 +41,7 @@ export function AppInput({
   helper,
   autoFocus,
   containerClassName,
-  'data-testid': testId,
-  'data-testid-errors': errorsTestId,
+  'aria-label': ariaLabel,
 }: Props) {
   const aria = useInputAria(errors, helper);
   const InputElement = type === 'textarea' ? 'textarea' : 'input';
@@ -71,6 +69,7 @@ export function AppInput({
           onChange={(evt) => onChange?.(evt.target.value)}
           disabled={disabled}
           {...aria.inputProps}
+          aria-label={ariaLabel}
           className={cn(
             className,
             'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
@@ -80,14 +79,13 @@ export function AppInput({
             hasErrors(errors) && invalidInputClassName
           )}
           ref={elementRef}
-          data-testid={testId}
         />
         <AppInputErrorTriangle errors={errors} mode="absolute" />
       </div>
 
       <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <AppInputHelper id={aria.helperId} helper={helper} />
-        <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
+        <AppInputErrorsList id={aria.errorId} errors={errors} />
       </div>
     </div>
   );

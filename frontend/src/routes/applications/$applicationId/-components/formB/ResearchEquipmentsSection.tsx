@@ -23,14 +23,7 @@ const researchEquipmentsColumns = (
     header: 'Nazwa sprzętu / aparatury',
     cell: ({ row }) => (
       <form.AppField name={`researchEquipments[${row.index}].name`}>
-        {(field) => (
-          <field.TextField
-            data-testid="research-equipment-name-input"
-            data-testid-errors="research-equipment-name-errors"
-            placeholder="Wpisz nazwę sprzętu / aparatury"
-            disabled={isReadonly}
-          />
-        )}
+        {(field) => <field.TextField placeholder="Wpisz nazwę sprzętu / aparatury" disabled={isReadonly} />}
       </form.AppField>
     ),
     size: 30,
@@ -42,7 +35,6 @@ const researchEquipmentsColumns = (
         <form.AppField name={`researchEquipments[${row.index}].insuranceStartDate`}>
           {(field) => (
             <field.DateField
-              data-testid="research-equipment-insurance-start"
               onChange={(e) => field.handleChange(e ?? '')}
               label="Data rozpoczęcia ubezpieczenia"
               disabled={isReadonly}
@@ -58,7 +50,6 @@ const researchEquipmentsColumns = (
                 }
                 return (
                   <field.DateField
-                    data-testid="research-equipment-insurance-end"
                     onChange={(e) => field.handleChange(e ?? '')}
                     label="Data zakończenia ubezpieczenia"
                     disabled={isReadonly}
@@ -99,11 +90,7 @@ export function ResearchEquipmentsSection({ context }: { context: FormBViewModel
   const { isReadonly } = context;
 
   return (
-    <AppAccordion
-      title="14. Lista sprzętu i aparatury badawczej planowanej do użycia podczas rejsu"
-      expandedByDefault
-      data-testid="form-b-research-equipments-section"
-    >
+    <AppAccordion title="14. Lista sprzętu i aparatury badawczej planowanej do użycia podczas rejsu" expandedByDefault>
       <form.AppField name="researchEquipments" mode="array">
         {(field) => (
           <AppTable
@@ -119,7 +106,6 @@ export function ResearchEquipmentsSection({ context }: { context: FormBViewModel
             buttons={() => [
               <AppButton
                 key="new"
-                data-testid="form-b-add-research-equipment-btn"
                 onClick={() => {
                   field.pushValue({
                     name: '',

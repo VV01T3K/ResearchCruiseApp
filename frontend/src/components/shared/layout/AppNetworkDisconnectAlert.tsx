@@ -29,7 +29,7 @@ export function AppNetworkDisconnectAlert() {
     <AnimatePresence>
       {networkConnectionStatus === false && (
         <motion.div initial={{ y: '-100%' }} animate={{ y: 0 }} exit={{ y: '-100%' }}>
-          <AppAlert variant="danger" data-testid="server-connection-error">
+          <AppAlert variant="danger">
             Brak połączenia z serwerem. Upewnij się, że masz dostęp do internetu i spróbuj ponownie.
           </AppAlert>
         </motion.div>

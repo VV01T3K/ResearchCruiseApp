@@ -10,7 +10,7 @@ export function ShipUsageSection({ context }: { context: FormCViewModel }) {
   const { isReadonly, formAInitValues } = context;
 
   return (
-    <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault data-testid="form-c-ship-usage-section">
+    <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault>
       <form.AppField name="shipUsage">
         {(field) => (
           <div className="lg:col-span-2">

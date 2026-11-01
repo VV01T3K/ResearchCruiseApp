@@ -8,7 +8,7 @@ export function CruiseGoalSection({ context }: { context: FormAViewModel }) {
   const { isReadonly, initValues } = context;
 
   return (
-    <AppAccordion title="5. Cel rejsu" expandedByDefault data-testid="form-a-cruise-goal-section">
+    <AppAccordion title="5. Cel rejsu" expandedByDefault>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <form.AppField name="cruiseGoal">
           {(field) => (
@@ -20,8 +20,6 @@ export function CruiseGoalSection({ context }: { context: FormAViewModel }) {
               }))}
               showRequiredAsterisk
               disabled={isReadonly}
-              data-testid-button="form-a-cruise-goal-button"
-              data-testid-errors="form-a-cruise-goal-errors"
             />
           )}
         </form.AppField>
@@ -35,8 +33,6 @@ export function CruiseGoalSection({ context }: { context: FormAViewModel }) {
                   placeholder="np. szczegóły dotyczące celu rejsu"
                   disabled={!cruiseGoal || isReadonly}
                   showRequiredAsterisk
-                  data-testid="form-a-cruise-goal-description-input"
-                  data-testid-errors="form-a-cruise-goal-description-errors"
                 />
               )}
             </form.AppField>

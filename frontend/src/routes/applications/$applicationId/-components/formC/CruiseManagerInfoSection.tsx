@@ -7,7 +7,7 @@ export function CruiseManagerInfoSection({ context }: { context: FormCViewModel 
   const { formA, formAInitValues } = context;
 
   return (
-    <AppAccordion title="2. Kierownik zgłaszanego rejsu" expandedByDefault data-testid="form-c-cruise-manager-section">
+    <AppAccordion title="2. Kierownik zgłaszanego rejsu" expandedByDefault>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <AppDropdownInput
           name="cruiseManager"

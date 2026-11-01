@@ -30,12 +30,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
         cell: ({ row }) => (
           <form.AppField name={`permissions[${row.index}].description`}>
             {(field) => (
-              <field.TextField
-                data-testid="permission-description-input"
-                data-testid-errors="permission-description-errors"
-                containerClassName="mx-4"
-                disabled={isReadonly}
-              />
+              <field.TextField aria-label="Treść pozwolenia" containerClassName="mx-4" disabled={isReadonly} />
             )}
           </form.AppField>
         ),
@@ -48,14 +43,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
         enableSorting: false,
         cell: ({ row }) => (
           <form.AppField name={`permissions[${row.index}].executive`}>
-            {(field) => (
-              <field.TextField
-                data-testid="permission-executive-input"
-                data-testid-errors="permission-executive-errors"
-                className="mx-4"
-                disabled={isReadonly}
-              />
-            )}
+            {(field) => <field.TextField aria-label="Organ wydający" className="mx-4" disabled={isReadonly} />}
           </form.AppField>
         ),
         size: 20,
@@ -76,14 +64,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
         enableSorting: false,
         cell: ({ row }) => (
           <form.AppField name={`permissions[${row.index}].scan`}>
-            {(field) => (
-              <field.FileField
-                data-testid-button="permission-scan-button"
-                data-testid-errors="permission-scan-errors"
-                acceptedMimeTypes={['application/pdf']}
-                disabled={isReadonly}
-              />
-            )}
+            {(field) => <field.FileField acceptedMimeTypes={['application/pdf']} disabled={isReadonly} />}
           </form.AppField>
         ),
         size: 10,
@@ -101,11 +82,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
   }
 
   return (
-    <AppAccordion
-      title="4. Dodatkowe pozwolenia do planowanych podczas rejsu badań"
-      expandedByDefault
-      data-testid="form-b-additional-permissions-section"
-    >
+    <AppAccordion title="4. Dodatkowe pozwolenia do planowanych podczas rejsu badań" expandedByDefault>
       <form.AppField name="permissions" mode="array">
         {(field) => (
           <>
@@ -118,7 +95,6 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
               buttons={() => [
                 <AppButton
                   key="permissions.add-btn"
-                  data-testid="form-b-add-permission-btn"
                   onClick={() => {
                     field.pushValue({ description: '', executive: '' });
                     field.handleBlur();

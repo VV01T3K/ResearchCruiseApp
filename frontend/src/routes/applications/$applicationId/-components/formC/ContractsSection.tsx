@@ -115,7 +115,6 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
     <AppAccordion
       title="8. Umowy regulujące współpracę, w ramach której zostały zrealizowane zadania badawcze"
       expandedByDefault
-      data-testid="form-c-contracts-section"
     >
       <div>
         <form.AppField name="contracts" mode="array">

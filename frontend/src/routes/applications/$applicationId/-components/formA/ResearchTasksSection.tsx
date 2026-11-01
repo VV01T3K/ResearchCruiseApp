@@ -63,11 +63,7 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
   }
 
   return (
-    <AppAccordion
-      title="6. Zadania do zrealizowania w trakcie rejsu"
-      expandedByDefault
-      data-testid="form-a-research-tasks-section"
-    >
+    <AppAccordion title="6. Zadania do zrealizowania w trakcie rejsu" expandedByDefault>
       <div>
         <form.AppField name="researchTasks" mode="array">
           {(field) => (
@@ -91,7 +87,6 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                     }))}
                     variant="primary"
                     disabled={isReadonly}
-                    data-testid="form-a-add-research-task-btn"
                   >
                     Dodaj nowe zadanie badawcze
                   </DropdownElementSelectorButton>,
@@ -119,7 +114,6 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                     )}
                     variant="primaryOutline"
                     disabled={isReadonly}
-                    data-testid="form-a-add-historical-research-task-btn"
                   >
                     Dodaj historyczne zadanie badawcze
                   </DropdownElementSelectorButton>,
@@ -128,12 +122,8 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-research-tasks-table"
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-research-tasks-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </>
           )}
         </form.AppField>

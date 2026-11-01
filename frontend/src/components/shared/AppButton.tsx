@@ -16,7 +16,6 @@ type Props = {
   title?: string;
   'aria-describedby'?: string;
   'aria-invalid'?: boolean;
-  'data-testid'?: string;
 } & (
   | { type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type']; onClick?: (evt: React.MouseEvent) => void }
   | ({ type: 'link' } & Omit<AppLinkProps, 'variant'>)
@@ -35,7 +34,6 @@ export function AppButton(props: Props) {
     variant = 'primary',
     size = 'md',
     'aria-invalid': ariaInvalid,
-    'data-testid': testId,
   } = props;
 
   const button = (
@@ -56,7 +54,6 @@ export function AppButton(props: Props) {
       title={title}
       aria-describedby={ariaDescribedBy}
       aria-invalid={ariaInvalid}
-      data-testid={testId}
     >
       {children}
     </Button>

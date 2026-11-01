@@ -60,15 +60,15 @@ function LoginPage() {
   }
 
   return (
-    <AppLayout title="Logowanie" variant="narrow" disableBackButton data-testid="login-page-title">
+    <AppLayout title="Logowanie" variant="narrow" disableBackButton>
       <form noValidate onSubmit={handleSubmit} className="px-4">
         <div className="space-y-4">
           <form.AppField name="email">
-            {(field) => <field.FloatingTextField type="email" label="E-mail" data-testid="login-email-input" />}
+            {(field) => <field.FloatingTextField type="email" label="E-mail" />}
           </form.AppField>
 
           <form.AppField name="password">
-            {(field) => <field.FloatingTextField type="password" label="Hasło" data-testid="login-password-input" />}
+            {(field) => <field.FloatingTextField type="password" label="Hasło" />}
           </form.AppField>
 
           <div className="!mt-8 flex flex-wrap items-center justify-end">
@@ -78,7 +78,7 @@ function LoginPage() {
           <div className="mt-8">
             <form.Subscribe selector={(state) => state.isSubmitting}>
               {(isSubmitting) => (
-                <AppButton type="submit" className="w-full" disabled={isSubmitting} data-testid="login-submit-btn">
+                <AppButton type="submit" className="w-full" disabled={isSubmitting}>
                   Zaloguj
                 </AppButton>
               )}
