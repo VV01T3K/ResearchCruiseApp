@@ -13,15 +13,16 @@ import { CruiseApplicationStatus } from '@/api/generated/schemas';
 type Props = {
   onAccept: () => void;
   onReject: () => void;
+  disabled: boolean;
 };
-export function ActionsSection({ onAccept, onReject }: Props) {
+export function ActionsSection({ onAccept, onReject, disabled }: Props) {
   const application = useApplication();
   const [confirmationMode, setConfirmationMode] = React.useState(false);
 
   if (confirmationMode) {
     return (
       <AppActionsSection>
-        <RejectConfirmation onReject={onReject} setConfirmationMode={setConfirmationMode} />
+        <RejectConfirmation onReject={onReject} setConfirmationMode={setConfirmationMode} disabled={disabled} />
       </AppActionsSection>
     );
   }
@@ -41,7 +42,7 @@ export function ActionsSection({ onAccept, onReject }: Props) {
         <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
           <AppActionsSection>
             <RejectButton setConfirmationMode={setConfirmationMode} />
-            <AcceptButton onAccept={onAccept} />
+            <AcceptButton onAccept={onAccept} disabled={disabled} />
           </AppActionsSection>
         </AppGuard>
       );

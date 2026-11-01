@@ -7,8 +7,9 @@ import { PublicationCsvError, readPublicationCsv } from '@/lib/publications/publ
 
 type Props = {
   onUpload: (publications: ImportPublicationRequest[]) => void;
+  disabled: boolean;
 };
-export function UploadButton({ onUpload }: Props) {
+export function UploadButton({ onUpload, disabled }: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   async function handleFileChange() {
@@ -39,7 +40,9 @@ export function UploadButton({ onUpload }: Props) {
         onChange={() => void handleFileChange()}
         accept=".csv,text/csv"
       />
-      <AppButton onClick={() => inputRef.current?.click()}>Import publikacji z pliku CSV</AppButton>
+      <AppButton onClick={() => inputRef.current?.click()} disabled={disabled}>
+        Import publikacji z pliku CSV
+      </AppButton>
     </>
   );
 }

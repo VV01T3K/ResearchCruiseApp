@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Api.Users;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
@@ -16,6 +17,118 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask InitializeAsync() => await fixture.ResetAsync();
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
+
+    [Fact]
+    public async Task FormACreate_WhenSubmittedTwiceAtOnce_KeepsOnePublication()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var gate = new SaveChangesGate();
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: gate);
+        var owner = await TestUsers.Create(app, "owner@example.invalid", RoleName.CruiseManager);
+        using var client = await TestApplications.Login(app, owner.Email!);
+        var form = FormAccessTests.Draft(Guid.Parse(owner.Id));
+        form.Publications.Add(
+            new PublicationFields
+            {
+                Category = "subject",
+                Title = "Race",
+                MinisterialPoints = "",
+            }
+        );
+        Task<HttpResponseMessage> Submit() =>
+            client.PostAsJsonAsync(
+                "/v2/applications",
+                new FormAWriteRequest { Form = form, Draft = true },
+                ct
+            );
+
+        gate.Hold(InsertsPublication);
+        var (first, second) = await gate.Race(fixture.ConnectionString, Submit(), Submit, ct);
+
+        using (first)
+            Assert.Equal(HttpStatusCode.Created, first.StatusCode);
+        using (second)
+            Assert.Contains(
+                second.StatusCode,
+                new[] { HttpStatusCode.Created, HttpStatusCode.Conflict }
+            );
+        await app.InDatabase(async db => Assert.Equal(1, await db.Publications.CountAsync(ct)));
+    }
+
+    [Fact]
+    public async Task Import_WhenSentTwiceAtOnce_KeepsOneCopyOfEachPublication()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var gate = new SaveChangesGate();
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: gate);
+        var owner = await TestUsers.Create(app, "owner@example.invalid", RoleName.CruiseManager);
+        using var client = await TestApplications.Login(app, owner.Email!);
+        Task<HttpResponseMessage> Import() =>
+            client.PostAsJsonAsync(
+                ImportRoute,
+                new[] { ImportedPublication("First"), ImportedPublication("Second") },
+                ct
+            );
+
+        gate.Hold(InsertsPublication);
+        var (first, second) = await gate.Race(fixture.ConnectionString, Import(), Import, ct);
+
+        using (first)
+            Assert.Equal(HttpStatusCode.NoContent, first.StatusCode);
+        using (second)
+            Assert.Contains(
+                second.StatusCode,
+                new[] { HttpStatusCode.NoContent, HttpStatusCode.Conflict }
+            );
+        await app.InDatabase(async db =>
+        {
+            Assert.Equal(2, await db.Publications.CountAsync(ct));
+            Assert.Equal(2, await db.UserPublications.CountAsync(ct));
+        });
+    }
+
+    [Fact]
+    public async Task PublicationDelete_WhenSentTwiceAtOnce_DeletesOnceWithoutFailing()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var gate = new SaveChangesGate();
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: gate);
+        var owner = await TestUsers.Create(app, "owner@example.invalid", RoleName.CruiseManager);
+        using var client = await TestApplications.Login(app, owner.Email!);
+        using var imported = await client.PostAsJsonAsync(
+            ImportRoute,
+            new[] { ImportedPublication("Only") },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NoContent, imported.StatusCode);
+        Guid id = default;
+        await app.InDatabase(async db => id = (await db.Publications.SingleAsync(ct)).Id);
+        Task<HttpResponseMessage> Delete() =>
+            client.DeleteAsync($"/v2/users/me/publications/{id}", ct);
+
+        gate.Hold(db =>
+            db.ChangeTracker.Entries<UserPublication>()
+                .Any(entry => entry.State == EntityState.Deleted)
+        );
+        var (first, second) = await gate.Race(fixture.ConnectionString, Delete(), Delete, ct);
+
+        using (first)
+            Assert.Equal(HttpStatusCode.NoContent, first.StatusCode);
+        using (second)
+            Assert.Contains(
+                second.StatusCode,
+                new[] { HttpStatusCode.NotFound, HttpStatusCode.Conflict }
+            );
+        await app.InDatabase(async db => Assert.Equal(0, await db.Publications.CountAsync(ct)));
+    }
+
+    private const string ImportRoute = "/v2/users/me/publications/import";
+
+    private static ImportPublicationRequest ImportedPublication(string title) =>
+        new("subject", $"10.1000/{title}", "Author", title, "Journal", "2030", "100");
+
+    private static bool InsertsPublication(DbContext db) =>
+        db.ChangeTracker.Entries<Publication>().Any(entry => entry.State == EntityState.Added);
 
     [Fact]
     public async Task Publication_WhenDraftPointsAreEmpty_PersistsBothCategoriesWithZeroPoints()

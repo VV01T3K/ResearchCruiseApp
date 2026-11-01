@@ -1,5 +1,8 @@
+import { useQueryClient } from '@tanstack/react-query';
+
+import { ApiError, getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
-import { useUpdateApplicationDecision } from '@/api/generated/endpoints/applications.gen';
+import { getGetApplicationQueryKey, useUpdateApplicationDecision } from '@/api/generated/endpoints/applications.gen';
 import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 
 import { ActionsSection } from './ActionsSection';
@@ -13,11 +16,21 @@ import { SPUBTasksSection } from './SPUBTasksSection';
 
 export function DetailsView() {
   const application = useApplication();
-  const decisionMutation = useUpdateApplicationDecision();
+  const queryClient = useQueryClient();
+  const decisionMutation = useUpdateApplicationDecision({
+    mutation: {
+      onError: async (error: unknown) => {
+        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
+        if (error instanceof ApiError && error.status === 409) {
+          await queryClient.invalidateQueries({ queryKey: getGetApplicationQueryKey(application.id) });
+        }
+      },
+    },
+  });
 
   function acceptApplication() {
     decisionMutation.mutate(
-      { applicationId: application.id, data: { accept: true } },
+      { applicationId: application.id, data: { accept: true, revision: application.revision } },
       {
         onSuccess: () => {
           toast.success('Formularz został zaakceptowany');
@@ -28,7 +41,7 @@ export function DetailsView() {
 
   function rejectApplication() {
     decisionMutation.mutate(
-      { applicationId: application.id, data: { accept: false } },
+      { applicationId: application.id, data: { accept: false, revision: application.revision } },
       {
         onSuccess: () => {
           toast.success('Formularz został odrzucony');
@@ -46,7 +59,7 @@ export function DetailsView() {
       <MembersSection />
       <PublicationsSection />
       <SPUBTasksSection />
-      <ActionsSection onAccept={acceptApplication} onReject={rejectApplication} />
+      <ActionsSection onAccept={acceptApplication} onReject={rejectApplication} disabled={decisionMutation.isPending} />
     </>
   );
 }

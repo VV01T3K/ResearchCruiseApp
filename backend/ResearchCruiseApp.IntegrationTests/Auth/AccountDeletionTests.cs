@@ -1,6 +1,8 @@
 using System.Net;
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Auth;
@@ -11,6 +13,45 @@ public sealed class AccountDeletionTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask InitializeAsync() => await fixture.ResetAsync();
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
+
+    [Fact]
+    public async Task Delete_WhileTheAccountIsEdited_ReturnsConflictThenNotFoundOnceGone()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var gate = new SaveChangesGate();
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: gate);
+        var target = await TestUsers.Create(app, "target@example.invalid", RoleName.Guest);
+        await TestUsers.Create(app, "actor@example.invalid", RoleName.Administrator);
+        using var client = await TestApplications.Login(app, "actor@example.invalid");
+        var route = $"/v2/users/{target.Id}";
+
+        gate.Hold(db =>
+            db.ChangeTracker.Entries<User>()
+                .Any(entry => entry.Entity.Id == target.Id && entry.State == EntityState.Modified)
+        );
+        var (edit, delete) = await gate.Race(
+            fixture.ConnectionString,
+            client.PatchAsJsonAsync(route, new { FirstName = "Edited" }, ct),
+            () => client.DeleteAsync(route, ct),
+            ct
+        );
+
+        using (edit)
+            Assert.Equal(HttpStatusCode.NoContent, edit.StatusCode);
+        using (delete)
+            Assert.Equal(HttpStatusCode.Conflict, delete.StatusCode);
+
+        using var deleted = await client.DeleteAsync(route, ct);
+        Assert.Equal(HttpStatusCode.NoContent, deleted.StatusCode);
+        using var deletedAgain = await client.DeleteAsync(route, ct);
+        Assert.Equal(HttpStatusCode.NotFound, deletedAgain.StatusCode);
+        using var editedAfter = await client.PatchAsJsonAsync(
+            route,
+            new { FirstName = "Late" },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NotFound, editedAfter.StatusCode);
+    }
 
     [Theory]
     [InlineData("anonymous", RoleName.Guest, HttpStatusCode.Unauthorized)]
