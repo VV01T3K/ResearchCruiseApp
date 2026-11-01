@@ -7,8 +7,8 @@ import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import React from 'react';
 import { z } from 'zod';
 
-import { AppAlert } from '@/components/shared/AppAlert';
-import { AppButton } from '@/components/shared/AppButton';
+import { Alert } from '@/components/shared/Alert';
+import { Button } from '@/components/shared/Button';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { useChangeCurrentUserPassword } from '@/api/generated/endpoints/users.gen';
 
@@ -93,23 +93,23 @@ export function ChangePasswordForm() {
         <div className="mt-8">
           <form.Subscribe selector={(state) => state.isSubmitting} key={result}>
             {(isSubmitting) => (
-              <AppButton type="submit" className="w-full" disabled={isSubmitting}>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
                 Zmień hasło
-              </AppButton>
+              </Button>
             )}
           </form.Subscribe>
         </div>
 
         {result === 'success' && (
-          <AppAlert variant="success" onClose={() => setResult(undefined)}>
+          <Alert variant="success" onClose={() => setResult(undefined)}>
             Hasło zostało zmienione
-          </AppAlert>
+          </Alert>
         )}
 
         {result === 'error' && (
-          <AppAlert variant="danger" onClose={() => setResult(undefined)}>
+          <Alert variant="danger" onClose={() => setResult(undefined)}>
             Wystąpił błąd podczas zmiany hasła (sprawdź, czy podałeś poprawne hasło).
-          </AppAlert>
+          </Alert>
         )}
       </div>
     </form>

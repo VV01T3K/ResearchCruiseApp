@@ -1,10 +1,10 @@
 import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { groupBy } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
@@ -49,7 +49,7 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
+            <TableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
               }}
@@ -63,12 +63,12 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
   }
 
   return (
-    <AppAccordion title="6. Zadania do zrealizowania w trakcie rejsu" expandedByDefault>
+    <Accordion title="6. Zadania do zrealizowania w trakcie rejsu" expandedByDefault>
       <div>
         <form.AppField name="researchTasks" mode="array">
           {(field) => (
             <>
-              <AppTable
+              <Table
                 columns={getColumns((index) => {
                   field.removeValue(index);
                   field.handleBlur();
@@ -123,11 +123,11 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
+              <InputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </>
           )}
         </form.AppField>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

@@ -2,7 +2,7 @@ import type { IconWeight } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
-import { AppLink } from '@/components/shared/AppLink';
+import { Link } from '@/components/shared/Link';
 import { useWindowSize } from '@/hooks/shared/WindowSizeHook';
 import { cn } from '@/lib/utils';
 
@@ -22,7 +22,7 @@ export function GridCard({ name, className, Icon, iconWeight, description, href 
   if (isMobile) {
     return (
       <div key={name} className={className}>
-        <AppLink href={href} className="hover:no-underline">
+        <Link href={href} className="hover:no-underline">
           <motion.div
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
@@ -32,14 +32,14 @@ export function GridCard({ name, className, Icon, iconWeight, description, href 
             <h3 className="font-semibold text-primary md:text-lg xl:text-xl">{name}</h3>
             <div className={cn('absolute inset-0', isHovered ? 'bg-black/[.03]' : 'bg-transparent')} />
           </motion.div>
-        </AppLink>
+        </Link>
       </div>
     );
   }
 
   return (
     <div key={name} className={className}>
-      <AppLink href={href} className="hover:no-underline">
+      <Link href={href} className="hover:no-underline">
         <motion.div
           className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-white p-4 [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]"
           onHoverStart={() => setIsHovered(true)}
@@ -82,7 +82,7 @@ export function GridCard({ name, className, Icon, iconWeight, description, href 
 
           <div className={cn('absolute inset-0', isHovered ? 'bg-black/[.03]' : 'bg-transparent')} />
         </motion.div>
-      </AppLink>
+      </Link>
     </div>
   );
 }

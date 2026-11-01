@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AppButton } from '@/components/shared/AppButton';
+import { Button } from '@/components/shared/Button';
 import { toast } from '@/components/shared/layout/toast';
 import type { ImportPublicationRequest } from '@/api/generated/schemas';
 import { PublicationCsvError, readPublicationCsv } from '@/lib/publications/publicationCsv';
@@ -39,7 +39,7 @@ export function UploadButton({ onUpload }: Props) {
         onChange={() => void handleFileChange()}
         accept=".csv,text/csv"
       />
-      <AppButton onClick={() => inputRef.current?.click()}>Import publikacji z pliku CSV</AppButton>
+      <Button onClick={() => inputRef.current?.click()}>Import publikacji z pliku CSV</Button>
     </>
   );
 }

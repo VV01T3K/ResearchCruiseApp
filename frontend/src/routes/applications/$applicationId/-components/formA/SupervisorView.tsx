@@ -1,4 +1,4 @@
-import { AppLayout } from '@/components/shared/AppLayout';
+import { Layout } from '@/components/shared/Layout';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { ContractsSection } from '@/routes/applications/$applicationId/-components/formA/ContractsSection';
 import { CruiseGoalSection } from '@/routes/applications/$applicationId/-components/formA/CruiseGoalSection';
@@ -28,7 +28,7 @@ export function SupervisorView({ formInitValues, handleAcceptForm, handleDenyFor
     isReadonly: true,
   };
   return (
-    <AppLayout title="Formularz A">
+    <Layout title="Formularz A">
       <div className="space-y-8">
         <CruiseManagerInfoSection context={context} />
         <CruiseLengthSection context={context} />
@@ -43,6 +43,6 @@ export function SupervisorView({ formInitValues, handleAcceptForm, handleDenyFor
         <SupervisorInfoSection context={context} />
         <SupervisorActionsSection onAccept={handleAcceptForm} onDeny={handleDenyForm} />
       </div>
-    </AppLayout>
+    </Layout>
   );
 }

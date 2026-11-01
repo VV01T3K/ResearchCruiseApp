@@ -2,11 +2,11 @@ import { getErrorMessage } from '@/api/errors';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { useRef } from 'react';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppButton } from '@/components/shared/AppButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { Button } from '@/components/shared/Button';
 import { toast } from '@/components/shared/layout/toast';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -96,7 +96,7 @@ const cruiseDayDetailsColumns = (
           id: 'actions',
           cell: ({ row }) => (
             <div className="flex justify-end">
-              <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
+              <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
             </div>
           ),
           size: 10,
@@ -130,11 +130,11 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
   };
 
   return (
-    <AppAccordion title="13. Szczegółowy plan zadań do realizacji podczas rejsu" expandedByDefault>
+    <Accordion title="13. Szczegółowy plan zadań do realizacji podczas rejsu" expandedByDefault>
       <form.AppField name="cruiseDaysDetails" mode="array">
         {(field) => (
           <>
-            <AppTable
+            <Table
               data={field.state.value}
               columns={cruiseDayDetailsColumns(
                 form,
@@ -148,7 +148,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
                 const buttons = [];
                 if (!isReadonly) {
                   buttons.push(
-                    <AppButton
+                    <Button
                       key="new"
                       onClick={() => {
                         field.pushValue({
@@ -165,22 +165,22 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
                       disabled={isReadonly}
                     >
                       Dodaj
-                    </AppButton>
+                    </Button>
                   );
                   buttons.push(
-                    <AppButton
+                    <Button
                       key="import"
                       onClick={() => fileInputRef.current?.click()}
                       variant="primaryOutline"
                       disabled={isReadonly}
                     >
                       Importuj z CSV/XLSX
-                    </AppButton>
+                    </Button>
                   );
                 }
                 if (field.state.value && field.state.value.length > 0) {
                   buttons.push(
-                    <AppButton
+                    <Button
                       key="download"
                       onClick={() => {
                         const data = field.state.value;
@@ -194,7 +194,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
                       disabled={!field.state.value || field.state.value.length === 0}
                     >
                       Pobierz XLSX
-                    </AppButton>
+                    </Button>
                   );
                 }
                 return buttons;
@@ -212,6 +212,6 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
           </>
         )}
       </form.AppField>
-    </AppAccordion>
+    </Accordion>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { AppBadge } from '@/components/shared/AppBadge';
+import { Badge } from '@/components/shared/Badge';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -16,12 +16,12 @@ export function TitleBadge({ title, shipUnavailable }: Props) {
       className="cursor-pointer md:w-0 md:min-w-full"
       title={!isExpanded ? 'Kliknij, aby rozwinąć' : 'Kliknij, aby zwinąć'}
     >
-      <AppBadge
+      <Badge
         variant={shipUnavailable ? 'danger' : 'primary'}
         className={cn('!block max-w-[250px]', isExpanded ? 'break-words !whitespace-normal' : 'truncate')}
       >
         {prefix + (title ?? '')}
-      </AppBadge>
+      </Badge>
     </div>
   );
 }

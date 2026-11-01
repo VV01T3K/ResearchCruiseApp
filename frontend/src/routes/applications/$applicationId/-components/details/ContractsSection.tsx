@@ -1,9 +1,9 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppFileList } from '@/components/shared/inputs/parts/AppFileList';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { UploadedFileList } from '@/components/shared/inputs/parts/UploadedFileList';
+import { Input } from '@/components/shared/inputs/Input';
+import { Table } from '@/components/shared/table/Table';
 import {
   type ApplicationEvaluation,
   useApplicationEvaluation,
@@ -28,19 +28,19 @@ export function ContractsSection() {
       header: 'Instytucja',
       cell: ({ row }) => (
         <>
-          <AppInput
+          <Input
             name={`contracts[${row.index}].institutionName`}
             value={row.original.contract.institutionName}
             label="Nazwa instytucji"
             disabled
           />
-          <AppInput
+          <Input
             name={`contracts[${row.index}].institutionUnit`}
             value={row.original.contract.institutionUnit}
             label="Jednostka"
             disabled
           />
-          <AppInput
+          <Input
             name={`contracts[${row.index}].institutionLocalization`}
             value={row.original.contract.institutionLocalization}
             label="Lokalizacja instytucji"
@@ -53,7 +53,7 @@ export function ContractsSection() {
     {
       header: 'Opis',
       cell: ({ row }) => (
-        <AppInput
+        <Input
           name={`contracts[${row.index}].description`}
           value={row.original.contract.description}
           label="Opis"
@@ -66,7 +66,7 @@ export function ContractsSection() {
       header: 'Skany',
       enableColumnFilter: false,
       enableSorting: false,
-      cell: ({ row }) => <AppFileList files={row.original.contract.scans} disabled />,
+      cell: ({ row }) => <UploadedFileList files={row.original.contract.scans} disabled />,
       size: 20,
     },
     {
@@ -77,18 +77,18 @@ export function ContractsSection() {
   ];
 
   return (
-    <AppAccordion
+    <Accordion
       title="4. Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze"
       expandedByDefault
     >
       <div className="pb-2">
-        <AppTable
+        <Table
           data={evaluation.formAContracts}
           columns={columns}
           emptyTableMessage="Nie dodano żadnej umowy."
           disabled
         />
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

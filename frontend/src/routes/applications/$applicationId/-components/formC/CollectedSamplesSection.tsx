@@ -1,9 +1,9 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { Button } from '@/components/shared/Button';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -56,7 +56,7 @@ const collectedSamplesColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
+        <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
       </div>
     ),
     size: 5,
@@ -68,14 +68,14 @@ export function CollectedSamplesSection({ context }: { context: FormCViewModel }
   const { isReadonly } = context;
 
   return (
-    <AppAccordion title="16. Lista próbek pobranych i poddanych analizie podczas rejsu" expandedByDefault>
+    <Accordion title="16. Lista próbek pobranych i poddanych analizie podczas rejsu" expandedByDefault>
       <form.AppField name="collectedSamples" mode="array">
         {(field) => (
-          <AppTable
+          <Table
             data={field.state.value}
             columns={collectedSamplesColumns(form, (index) => field.removeValue(index), isReadonly)}
             buttons={() => [
-              <AppButton
+              <Button
                 key="new"
                 onClick={() => {
                   field.pushValue({
@@ -88,7 +88,7 @@ export function CollectedSamplesSection({ context }: { context: FormCViewModel }
                 }}
               >
                 Dodaj próbkę
-              </AppButton>,
+              </Button>,
             ]}
             variant="form"
             emptyTableMessage="Nie dodano żadnej próbki"
@@ -96,6 +96,6 @@ export function CollectedSamplesSection({ context }: { context: FormCViewModel }
           />
         )}
       </form.AppField>
-    </AppAccordion>
+    </Accordion>
   );
 }

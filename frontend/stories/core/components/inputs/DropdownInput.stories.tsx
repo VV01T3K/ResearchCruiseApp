@@ -1,0 +1,71 @@
+import { withControlledValue } from '@stories/decorators/withControlledValue';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { fn } from 'storybook/test';
+
+import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
+
+const stringOptions = [
+  { value: 'first', inlineLabel: 'First string' },
+  { value: 'second', inlineLabel: 'Second string' },
+  { value: 'third', inlineLabel: 'Third string' },
+];
+
+const meta = {
+  decorators: [withControlledValue],
+  component: DropdownInput,
+  args: {
+    name: 'Dropdown input',
+    value: '',
+    allOptions: stringOptions,
+    label: 'Dropdown input',
+    allowEmptyOption: false,
+    onChange: fn(),
+    onBlur: fn(),
+  },
+} satisfies Meta<typeof DropdownInput>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const String: Story = {
+  args: {
+    label: 'Dropdown string input',
+  },
+};
+
+export const EmptyOption: Story = {
+  args: {
+    label: 'Dropdown input with empty option',
+    allowEmptyOption: true,
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    label: 'Disabled dropdown input',
+    disabled: true,
+  },
+};
+
+export const WithHelper: Story = {
+  args: {
+    label: 'Dropdown input with helper',
+    helper: 'This is a helper text',
+  },
+};
+
+export const WithErrors: Story = {
+  args: {
+    label: 'Dropdown input with errors',
+    errors: ['This is an error message', 'This is another error message'],
+  },
+};
+
+export const WithPlaceholder: Story = {
+  args: {
+    label: 'Dropdown input with placeholder',
+    placeholder: 'Select an option (placeholder)',
+    allowEmptyOption: true,
+  },
+};

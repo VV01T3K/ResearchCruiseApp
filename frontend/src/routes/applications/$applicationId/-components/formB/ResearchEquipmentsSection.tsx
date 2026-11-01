@@ -1,9 +1,9 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { Button } from '@/components/shared/Button';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -78,7 +78,7 @@ const researchEquipmentsColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
+        <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
       </div>
     ),
     size: 5,
@@ -90,10 +90,10 @@ export function ResearchEquipmentsSection({ context }: { context: FormBViewModel
   const { isReadonly } = context;
 
   return (
-    <AppAccordion title="14. Lista sprzętu i aparatury badawczej planowanej do użycia podczas rejsu" expandedByDefault>
+    <Accordion title="14. Lista sprzętu i aparatury badawczej planowanej do użycia podczas rejsu" expandedByDefault>
       <form.AppField name="researchEquipments" mode="array">
         {(field) => (
-          <AppTable
+          <Table
             data={field.state.value}
             columns={researchEquipmentsColumns(
               form,
@@ -104,7 +104,7 @@ export function ResearchEquipmentsSection({ context }: { context: FormBViewModel
               isReadonly
             )}
             buttons={() => [
-              <AppButton
+              <Button
                 key="new"
                 onClick={() => {
                   field.pushValue({
@@ -117,13 +117,13 @@ export function ResearchEquipmentsSection({ context }: { context: FormBViewModel
                 }}
               >
                 Dodaj sprzęt / aparaturę
-              </AppButton>,
+              </Button>,
             ]}
             variant="form"
             disabled={isReadonly}
           />
         )}
       </form.AppField>
-    </AppAccordion>
+    </Accordion>
   );
 }

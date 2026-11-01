@@ -1,7 +1,7 @@
 import { getUserAssignments } from '@/api/generated/endpoints/users.gen';
 import type { UserAssignmentsResponse, UserResponse } from '@/api/generated/schemas';
-import { AppAlert } from '@/components/shared/AppAlert';
-import { AppLink } from '@/components/shared/AppLink';
+import { Alert } from '@/components/shared/Alert';
+import { Link } from '@/components/shared/Link';
 import { getApplicationStatusLabel } from '@/lib/applications/status';
 
 export type UserAssignments = { user: UserResponse; assignments: UserAssignmentsResponse };
@@ -25,17 +25,17 @@ type Props = {
 export function AssignmentsWarning({ items, action, group }: Props) {
   if (!items) {
     return (
-      <AppAlert variant="warning" iconAlign="start">
+      <Alert variant="warning" iconAlign="start">
         Nie udało się sprawdzić zgłoszeń i rejsów prowadzonych przez {group ? 'użytkowników' : 'użytkownika'}. Mogą
         wśród nich być aktywne zgłoszenia lub rejsy.
-      </AppAlert>
+      </Alert>
     );
   }
 
   const several = items.length > 1;
 
   return (
-    <AppAlert variant="warning" iconAlign="start">
+    <Alert variant="warning" iconAlign="start">
       <div className="space-y-2">
         <p className="font-semibold">
           {several ? 'Ci użytkownicy prowadzą' : 'Ten użytkownik prowadzi'} aktywne zgłoszenia lub rejsy
@@ -50,17 +50,17 @@ export function AssignmentsWarning({ items, action, group }: Props) {
             <ul className="list-disc ps-5">
               {assignments.applications.map((application) => (
                 <li key={application.id}>
-                  <AppLink href={`/applications/${application.id}`} target="_blank">
+                  <Link href={`/applications/${application.id}`} target="_blank">
                     Zgłoszenie nr {application.number}
-                  </AppLink>{' '}
+                  </Link>{' '}
                   ({application.isDeputy ? 'zastępca' : 'kierownik'}): {getApplicationStatusLabel(application.status)}
                 </li>
               ))}
               {assignments.cruises.map((cruise) => (
                 <li key={cruise.id}>
-                  <AppLink href={`/cruises/${cruise.id}`} target="_blank">
+                  <Link href={`/cruises/${cruise.id}`} target="_blank">
                     Rejs nr {cruise.number}
-                  </AppLink>{' '}
+                  </Link>{' '}
                   ({cruise.isDeputy ? 'zastępca' : 'kierownik'}): {cruise.status === 'new' ? 'Nowy' : 'Potwierdzony'}
                 </li>
               ))}
@@ -75,6 +75,6 @@ export function AssignmentsWarning({ items, action, group }: Props) {
           ich edycji. Formularze B i C może dokończyć zastępca kierownika lub administrator.
         </p>
       </div>
-    </AppAlert>
+    </Alert>
   );
 }

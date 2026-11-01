@@ -1,8 +1,8 @@
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppLink } from '@/components/shared/AppLink';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
+import { Accordion } from '@/components/shared/Accordion';
+import { Link } from '@/components/shared/Link';
+import { Input } from '@/components/shared/inputs/Input';
+import { NumberInput } from '@/components/shared/inputs/NumberInput';
+import { DatePickerInput } from '@/components/shared/inputs/dates/DatePickerInput';
 import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { canRevertFormB, getApplicationStatusLabel } from '@/lib/applications/status';
@@ -12,41 +12,41 @@ export function InformationSection() {
   const isFormBReadOnly = !canRevertFormB(application.status);
 
   return (
-    <AppAccordion title="1. Informacje o zgłoszeniu" expandedByDefault>
+    <Accordion title="1. Informacje o zgłoszeniu" expandedByDefault>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <AppInput name="number" value={application.number} label="Numer zgłoszenia:" disabled />
-        <AppDatePickerInput name="date" value={application.date} label="Data wysłania:" disabled />
-        <AppInput name="cruiseLeader" value={mapPersonToText(application.mainManager)} label="Kierownik:" disabled />
-        <AppInput
+        <Input name="number" value={application.number} label="Numer zgłoszenia:" disabled />
+        <DatePickerInput name="date" value={application.date} label="Data wysłania:" disabled />
+        <Input name="cruiseLeader" value={mapPersonToText(application.mainManager)} label="Kierownik:" disabled />
+        <Input
           name="deputyManager"
           value={mapPersonToText(application.deputyManager)}
           label="Zastępca kierownika:"
           disabled
         />
-        <AppInput name="year" value={`${application.year}`} label="Rok rejsu:" disabled />
+        <Input name="year" value={`${application.year}`} label="Rok rejsu:" disabled />
         <div className="grid grid-cols-1 gap-1">
           <strong>Formularze:</strong>
-          <AppLink href={`/applications/${application.id}/formA`} disabled={!application.hasFormA}>
+          <Link href={`/applications/${application.id}/formA`} disabled={!application.hasFormA}>
             Formularz A
-          </AppLink>
-          <AppLink
+          </Link>
+          <Link
             disabled={!application.hasFormB}
             href={`/applications/${application.id}/formB?mode=${isFormBReadOnly ? 'view' : 'preview'}`}
           >
             Formularz B
-          </AppLink>
-          <AppLink href={`/applications/${application.id}/formC`} disabled={!application.hasFormC}>
+          </Link>
+          <Link href={`/applications/${application.id}/formC`} disabled={!application.hasFormC}>
             Formularz C
-          </AppLink>
+          </Link>
         </div>
-        <AppInput
+        <Input
           name="status"
           value={getApplicationStatusLabel(application.status)}
           label="Status zgłoszenia:"
           disabled
         />
-        <AppNumberInput name="points" value={application.points} label="Punkty:" disabled />
+        <NumberInput name="points" value={application.points} label="Punkty:" disabled />
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

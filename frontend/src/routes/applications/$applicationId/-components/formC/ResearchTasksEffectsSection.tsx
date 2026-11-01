@@ -1,8 +1,8 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { useSelector } from '@tanstack/react-form';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { Table } from '@/components/shared/table/Table';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
@@ -82,8 +82,8 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
   ];
 
   return (
-    <AppAccordion title="7. Zadania przypisane do rejsu - efekty rejsu" expandedByDefault>
-      <AppTable
+    <Accordion title="7. Zadania przypisane do rejsu - efekty rejsu" expandedByDefault>
+      <Table
         data={researchTasksEffects}
         columns={columns}
         buttons={() => []}
@@ -91,6 +91,6 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
         showRequiredAsterisk
         disabled={isReadonly}
       />
-    </AppAccordion>
+    </Accordion>
   );
 }

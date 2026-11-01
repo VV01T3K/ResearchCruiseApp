@@ -11,9 +11,9 @@ import {
   PhoneIcon,
 } from '@phosphor-icons/react';
 import { z } from 'zod';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppLink } from '@/components/shared/AppLink';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Link } from '@/components/shared/Link';
 import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
 import config from '@/config';
 import { openFeedback, useCanSendFeedback } from '@/integrations/sentry/feedback';
@@ -62,7 +62,7 @@ function HelpPage() {
   }
 
   return (
-    <AppLayout
+    <Layout
       title="Pomoc"
       description="W razie problemów z aplikacją prosimy o kontakt przez maile lub formularz po lewej stronie."
     >
@@ -71,14 +71,14 @@ function HelpPage() {
           <h2 className="text-center text-2xl font-semibold">Obsługa problemów związanych z aplikacją</h2>
           <p className="mt-4 text-center">
             W razie problemów związanych z aplikacją prosimy o maila na adres{' '}
-            <AppLink href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</AppLink>.
+            <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>.
           </p>
           {canSendFeedback && (
             <div className="mt-4 mb-4 flex flex-col items-center gap-2 px-4 text-center">
               <p>Możesz też zgłosić problem bezpośrednio z aplikacji, bez otwierania programu pocztowego.</p>
-              <AppButton variant="primaryOutline" onClick={() => openFeedback({ origin: 'help' })}>
+              <Button variant="primaryOutline" onClick={() => openFeedback({ origin: 'help' })}>
                 Zgłoś problem
-              </AppButton>
+              </Button>
             </div>
           )}
           <form className="flex flex-col space-y-4 p-4" onSubmit={handleSubmit}>
@@ -89,9 +89,9 @@ function HelpPage() {
             </form.AppField>
 
             <div className="mt-8">
-              <AppButton type="submit" className="w-full">
+              <Button type="submit" className="w-full">
                 Otwórz maila z tytułem i wiadomością
-              </AppButton>
+              </Button>
             </div>
           </form>
         </div>
@@ -102,13 +102,13 @@ function HelpPage() {
             <p>81-378 Gdynia</p>
           </CompanyInfoCard>
           <CompanyInfoCard icon={<PhoneIcon weight="fill" />} title="Telefon">
-            <AppLink href="tel:+48585236631">+48 58 523 66 31</AppLink>
+            <Link href="tel:+48585236631">+48 58 523 66 31</Link>
           </CompanyInfoCard>
           <CompanyInfoCard icon={<GlobeHemisphereWestIcon />} title="Strona WWW">
-            <AppLink href="https://oceanograf.ug.edu.pl">https://oceanograf.ug.edu.pl</AppLink>
+            <Link href="https://oceanograf.ug.edu.pl">https://oceanograf.ug.edu.pl</Link>
           </CompanyInfoCard>
           <CompanyInfoCard icon={<EnvelopeSimpleIcon />} title="Email">
-            <AppLink href="mailto:office.oceanograf@ug.edu.pl">office.oceanograf@ug.edu.pl</AppLink>
+            <Link href="mailto:office.oceanograf@ug.edu.pl">office.oceanograf@ug.edu.pl</Link>
           </CompanyInfoCard>
           <CompanyInfoCard icon={<BrowsersIcon />} title="Wersja aplikacji">
             <div className="grid grid-cols-2 gap-1 text-sm text-gray-500">
@@ -120,6 +120,6 @@ function HelpPage() {
           </CompanyInfoCard>
         </div>
       </div>
-    </AppLayout>
+    </Layout>
   );
 }

@@ -2,8 +2,8 @@ import { type AnyFormApi, evaluate } from '@tanstack/react-form';
 import { useBlocker } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
-import { AppButton } from '@/components/shared/AppButton';
-import { AppModal } from '@/components/shared/AppModal';
+import { Button } from '@/components/shared/Button';
+import { Modal } from '@/components/shared/Modal';
 import { clearFormRecovery, getFormRecovery, registerRecoverableForm } from '@/integrations/tanstack/form/recovery';
 
 type Props = {
@@ -44,33 +44,33 @@ export function UnsavedChangesGuard({ form, disabled = false, recoveryKey }: Pro
 
   return (
     <>
-      <AppModal title="Odzyskane zmiany" isOpen={!!recovered} onClose={() => {}} dismissible={false}>
+      <Modal title="Odzyskane zmiany" isOpen={!!recovered} onClose={() => {}} dismissible={false}>
         <div className="space-y-4">
           <p>
             Sesja zakończyła się, zanim formularz został zapisany. Możesz przywrócić niezapisane zmiany i zapisać je
             ponownie albo je odrzucić.
           </p>
           <div className="flex flex-wrap justify-end gap-4">
-            <AppButton variant="dangerOutline" onClick={() => closeRecovery(false)}>
+            <Button variant="dangerOutline" onClick={() => closeRecovery(false)}>
               Odrzuć zmiany
-            </AppButton>
-            <AppButton onClick={() => closeRecovery(true)}>Przywróć zmiany</AppButton>
+            </Button>
+            <Button onClick={() => closeRecovery(true)}>Przywróć zmiany</Button>
           </div>
         </div>
-      </AppModal>
-      <AppModal title="Niezapisane zmiany" isOpen={blocker.status === 'blocked'} onClose={() => blocker.reset?.()}>
+      </Modal>
+      <Modal title="Niezapisane zmiany" isOpen={blocker.status === 'blocked'} onClose={() => blocker.reset?.()}>
         <div className="space-y-4">
           <p>Formularz zawiera niezapisane zmiany. Jeśli opuścisz stronę, zostaną utracone.</p>
           <div className="flex flex-wrap justify-end gap-4">
-            <AppButton variant="primaryOutline" onClick={() => blocker.reset?.()}>
+            <Button variant="primaryOutline" onClick={() => blocker.reset?.()}>
               Zostań na stronie
-            </AppButton>
-            <AppButton variant="danger" onClick={() => blocker.proceed?.()}>
+            </Button>
+            <Button variant="danger" onClick={() => blocker.proceed?.()}>
               Opuść bez zapisywania
-            </AppButton>
+            </Button>
           </div>
         </div>
-      </AppModal>
+      </Modal>
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { AppAvatar } from '@/components/shared/AppAvatar';
-import { AppLayout } from '@/components/shared/AppLayout';
+import { Avatar } from '@/components/shared/Avatar';
+import { Layout } from '@/components/shared/Layout';
 import { ChangePasswordForm } from './-components/ChangePasswordForm';
 import { EmailConfirmationBadge } from './-components/EmailConfirmationBadge';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
@@ -19,10 +19,10 @@ function AccountSettingsPage() {
   }
 
   return (
-    <AppLayout title="Ustawienia konta">
+    <Layout title="Ustawienia konta">
       <div className="space-y-8">
         <header className="flex items-center gap-4">
-          <AppAvatar fullName={`${currentUser.firstName} ${currentUser.lastName}`} />
+          <Avatar fullName={`${currentUser.firstName} ${currentUser.lastName}`} />
           <div>
             <p className="text-xl font-semibold">
               {currentUser.firstName} {currentUser.lastName}
@@ -36,6 +36,6 @@ function AccountSettingsPage() {
         <hr />
         <ChangePasswordForm />
       </div>
-    </AppLayout>
+    </Layout>
   );
 }

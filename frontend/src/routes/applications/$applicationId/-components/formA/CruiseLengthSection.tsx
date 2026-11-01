@@ -3,9 +3,9 @@ import { useSelector } from '@tanstack/react-form';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppAlert } from '@/components/shared/AppAlert';
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
+import { Accordion } from '@/components/shared/Accordion';
+import { Alert } from '@/components/shared/Alert';
+import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
@@ -177,14 +177,14 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   }
 
   return (
-    <AppAccordion title="2. Czas trwania zgłaszanego rejsu" expandedByDefault>
+    <Accordion title="2. Czas trwania zgłaszanego rejsu" expandedByDefault>
       <div className="space-y-4">
         <BlockadeWarning year={+year} blockades={blockades} />
         {!!blockadesError && !isReadonly && (
-          <AppAlert variant="danger">
+          <Alert variant="danger">
             Nie udało się wczytać blokad statku, więc kolizje terminów sprawdzi dopiero zapis formularza:{' '}
             {getProblemDetail(blockadesError, 'Nieznany błąd.')}
-          </AppAlert>
+          </Alert>
         )}
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {!isReadonly && (
@@ -296,7 +296,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
 
           {overlappingBlockadesForCurrentSelection.length > 0 && (
             <div className="lg:col-span-2">
-              <AppAlert variant="warning">
+              <Alert variant="warning">
                 <div>
                   <span className="font-bold">Utrudniające blokady w wybranym zakresie:</span>
                   <div className="mt-2 space-y-1">
@@ -311,13 +311,13 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     ))}
                   </div>
                 </div>
-              </AppAlert>
+              </Alert>
             </div>
           )}
 
           {!isReadonly && (
             <div className="lg:col-span-2">
-              <AppCheckbox
+              <Checkbox
                 name="allowPastDates"
                 checked={allowPastDates}
                 onChange={setAllowPastDates}
@@ -428,6 +428,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
           </form.Subscribe>
         </div>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

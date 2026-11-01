@@ -1,0 +1,47 @@
+import { Popover } from '@base-ui/react/popover';
+import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
+import { Header } from '@/integrations/tanstack/table/features';
+
+import { TableFilterList } from '@/components/shared/table/common/TableFilterList';
+import { TableSortingToggle } from '@/components/shared/table/common/TableSortingToggle';
+import { cn } from '@/lib/utils';
+
+type Props<TData extends object, TValue> = {
+  header: Header<TData, TValue>;
+  capabilities: { supportsDropdown: boolean; supportsFilter: boolean; supportsSort: boolean };
+  expanded: boolean;
+};
+export function DesktopTableHeaderDropdown<TData extends object, TValue>({
+  header,
+  capabilities,
+  expanded,
+}: Props<TData, TValue>) {
+  const { supportsDropdown, supportsFilter, supportsSort } = capabilities;
+
+  if (!supportsDropdown) {
+    return null;
+  }
+
+  return (
+    <Popover.Positioner className="z-50" sideOffset={4} collisionPadding={stickyBarsCollisionPadding}>
+      <Popover.Popup
+        className={cn(
+          'w-56 origin-[var(--transform-origin)] rounded-lg bg-white shadow-xl ring-1 ring-black/10',
+          'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
+          'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
+          'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0'
+        )}
+      >
+        <div className="py-1">
+          {supportsSort && <p>Sortowanie</p>}
+          {supportsSort && <TableSortingToggle header={header} expanded={expanded} />}
+
+          {supportsFilter && supportsSort && <hr className="my-0.5 h-px border-0 bg-gray-700" />}
+
+          {supportsFilter && <p>Filtrowanie</p>}
+          {supportsFilter && <TableFilterList header={header} expanded={expanded} />}
+        </div>
+      </Popover.Popup>
+    </Popover.Positioner>
+  );
+}

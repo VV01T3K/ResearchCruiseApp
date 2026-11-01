@@ -1,10 +1,10 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { Input } from '@/components/shared/inputs/Input';
+import { NumberInput } from '@/components/shared/inputs/NumberInput';
+import { YearPickerInput } from '@/components/shared/inputs/dates/YearPickerInput';
+import { Table } from '@/components/shared/table/Table';
 import {
   type ApplicationEvaluation,
   useApplicationEvaluation,
@@ -36,28 +36,28 @@ export function PublicationsSection() {
       enableSorting: false,
       cell: ({ row }) => (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <AppInput
+          <Input
             name={`publications[${row.index}].publication.doi`}
             value={row.original.publication.doi}
             label="DOI"
             showRequiredAsterisk
             disabled
           />
-          <AppInput
+          <Input
             name={`publications[${row.index}].publication.authors`}
             value={row.original.publication.authors}
             label="Autorzy"
             showRequiredAsterisk
             disabled
           />
-          <AppInput
+          <Input
             name={`publications[${row.index}].publication.title`}
             value={row.original.publication.title}
             label="Tytuł"
             showRequiredAsterisk
             disabled
           />
-          <AppInput
+          <Input
             name={`publications[${row.index}].publication.magazine`}
             value={row.original.publication.magazine}
             label="Czasopismo"
@@ -74,7 +74,7 @@ export function PublicationsSection() {
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
-        <AppYearPickerInput
+        <YearPickerInput
           name={`publications[${row.index}].publication.year`}
           value={row.original.publication.year ?? undefined}
           showRequiredAsterisk
@@ -89,7 +89,7 @@ export function PublicationsSection() {
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
-        <AppNumberInput
+        <NumberInput
           name={`publications[${row.index}].publication.ministerialPoints`}
           value={row.original.publication.ministerialPoints}
           minimum={0}
@@ -110,15 +110,15 @@ export function PublicationsSection() {
   ];
 
   return (
-    <AppAccordion title="6. Publikacje" expandedByDefault>
+    <Accordion title="6. Publikacje" expandedByDefault>
       <div className="pb-2">
-        <AppTable
+        <Table
           data={evaluation.formAPublications}
           columns={columns}
           emptyTableMessage="Nie dodano żadnej publikacji."
           disabled
         />
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

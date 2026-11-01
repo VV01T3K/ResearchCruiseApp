@@ -1,11 +1,11 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppAlert } from '@/components/shared/AppAlert';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { Alert } from '@/components/shared/Alert';
+import { Button } from '@/components/shared/Button';
+import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
@@ -81,7 +81,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
+            <TableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
               }}
@@ -140,7 +140,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
+            <TableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
               }}
@@ -237,7 +237,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />,
+            <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />,
           </div>
         ),
         size: 5,
@@ -246,13 +246,13 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
   }
 
   return (
-    <AppAccordion title="9. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
-      <AppAlert>Rejs do 12 godzin w porze dziennej - 33 osoby, powyżej 12 godzin - 16 osób</AppAlert>
+    <Accordion title="9. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
+      <Alert>Rejs do 12 godzin w porze dziennej - 33 osoby, powyżej 12 godzin - 16 osób</Alert>
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
         <form.AppField name="ugTeams" mode="array">
           {(field) => (
             <div>
-              <AppTable
+              <Table
                 columns={getUgTeamsColumns((index) => {
                   field.removeValue(index);
                   field.handleBlur();
@@ -284,21 +284,21 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
+              <InputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         </form.AppField>
         <form.AppField name="guestTeams" mode="array">
           {(field) => (
             <div>
-              <AppTable
+              <Table
                 columns={getGuestTeams((index) => {
                   field.removeValue(index);
                   field.handleBlur();
                 })}
                 data={field.state.value}
                 buttons={() => [
-                  <AppButton
+                  <Button
                     key="new"
                     variant="primary"
                     onClick={() => {
@@ -309,7 +309,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                     disabled={isReadonly}
                   >
                     Dodaj nowy zespół
-                  </AppButton>,
+                  </Button>,
                   <DropdownElementSelectorButton
                     key="historical"
                     options={formAInitValues.historicalGuestInstitutions.map((institution) => ({
@@ -330,7 +330,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
+              <InputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         </form.AppField>
@@ -338,14 +338,14 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
       <form.AppField name="crewMembers" mode="array">
         {(field) => (
           <>
-            <AppTable
+            <Table
               columns={getCrewMembersColumns((index) => {
                 field.removeValue(index);
                 field.handleBlur();
               })}
               data={field.state.value}
               buttons={() => [
-                <AppButton
+                <Button
                   key="crewMembers.add-btn"
                   onClick={() => {
                     field.pushValue({
@@ -363,17 +363,17 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                   disabled={isReadonly}
                 >
                   Dodaj członka załogi
-                </AppButton>,
+                </Button>,
               ]}
               emptyTableMessage="Nie dodano żadnego członka załogi."
               variant="form"
               disabled={isReadonly}
               errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
-            <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
+            <InputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
           </>
         )}
       </form.AppField>
-    </AppAccordion>
+    </Accordion>
   );
 }

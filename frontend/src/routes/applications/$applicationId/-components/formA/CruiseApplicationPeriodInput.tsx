@@ -1,9 +1,9 @@
 import { Slider } from '@base-ui/react/slider';
 import React from 'react';
 
-import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
-import { AppInputHelper } from '@/components/shared/inputs/parts/AppInputHelper';
-import { AppInputLabel } from '@/components/shared/inputs/parts/AppInputLabel';
+import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
+import { InputHelper } from '@/components/shared/inputs/parts/InputHelper';
+import { InputLabel } from '@/components/shared/inputs/parts/InputLabel';
 import { months } from '@/lib/calendarUtils';
 import { cn } from '@/lib/utils';
 import { getExplanationForPeriod } from '@/routes/applications/$applicationId/-components/formA/cruisePeriodExplanation';
@@ -95,7 +95,7 @@ export function CruiseApplicationPeriodInput({
   const stepPositions = Array.from(Array(25).keys()).map((i) => (i / 24) * 100);
   return (
     <div className="flex flex-col">
-      <AppInputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+      <InputLabel name={name} value={label} showRequiredAsterisk={showRequiredAsterisk} />
       <input type="hidden" name={name} value={sliderValues.join(',')} disabled={disabled} />
 
       <Slider.Root
@@ -176,8 +176,8 @@ export function CruiseApplicationPeriodInput({
 
       <p className="text-center">Wybrano okres: {getExplanationForPeriod(sliderValues[0], sliderValues[1])}</p>
       <div className="mt-2 flex flex-col justify-between text-sm">
-        <AppInputHelper id={helperId} helper={helper} />
-        <AppInputErrorsList errors={errors} />
+        <InputHelper id={helperId} helper={helper} />
+        <InputErrorsList errors={errors} />
       </div>
     </div>
   );

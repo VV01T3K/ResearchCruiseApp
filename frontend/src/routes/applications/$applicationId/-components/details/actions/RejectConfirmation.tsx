@@ -1,6 +1,6 @@
 import { XSquareIcon } from '@phosphor-icons/react';
 
-import { AppButton } from '@/components/shared/AppButton';
+import { Button } from '@/components/shared/Button';
 
 type Props = {
   onReject: () => void;
@@ -13,15 +13,15 @@ export function RejectConfirmation({ onReject, setConfirmationMode }: Props) {
         <div className="col-span-2 text-center text-sm font-semibold">
           Po odrzuceniu wymagane będzie ponowne złożenie wniosku
         </div>
-        <AppButton
+        <Button
           type="submit"
           className="w-36 !justify-center gap-4 lg:w-48"
           variant="primary"
           onClick={() => setConfirmationMode(false)}
         >
           Anuluj
-        </AppButton>
-        <AppButton
+        </Button>
+        <Button
           className="w-36 !justify-center gap-4 lg:w-48"
           variant="danger"
           onClick={() => {
@@ -31,7 +31,7 @@ export function RejectConfirmation({ onReject, setConfirmationMode }: Props) {
         >
           <XSquareIcon weight="fill" className="h-4 w-4" />
           Potwierdź odrzucenie
-        </AppButton>
+        </Button>
       </div>
     </>
   );

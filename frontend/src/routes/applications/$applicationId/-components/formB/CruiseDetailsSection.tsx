@@ -1,11 +1,11 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { useState } from 'react';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { Button } from '@/components/shared/Button';
+import { Checkbox } from '@/components/shared/inputs/Checkbox';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
@@ -91,7 +91,7 @@ const shortResearchEquipmentColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
+        <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
       </div>
     ),
     size: 10,
@@ -155,7 +155,7 @@ const longResearchEquipmentColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
+        <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
       </div>
     ),
     size: 10,
@@ -241,7 +241,7 @@ const portColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
+        <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
       </div>
     ),
     size: 10,
@@ -256,7 +256,7 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
   const [includePorts, setIncludePorts] = useState(false);
 
   return (
-    <AppAccordion title="12. Szczegóły rejsu" expandedByDefault>
+    <Accordion title="12. Szczegóły rejsu" expandedByDefault>
       <p className="text-center text-xl font-semibold">Czy w ramach rejsu planuje się:</p>
 
       <div className="mt-8">
@@ -264,7 +264,7 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
 
         <form.AppField name="shortResearchEquipments" mode="array">
           {(field) => (
-            <AppTable
+            <Table
               columns={shortResearchEquipmentColumns(
                 form,
                 (index) => {
@@ -276,7 +276,7 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
               )}
               data={field.state.value}
               buttons={() => [
-                <AppButton
+                <Button
                   key="new"
                   onClick={() => {
                     field.pushValue({
@@ -288,7 +288,7 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
                   }}
                 >
                   Dodaj sprzęt
-                </AppButton>,
+                </Button>,
               ]}
               variant="form"
               disabled={isReadonly}
@@ -299,7 +299,7 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
           {(shortEquipments) => (
             <>
               {!isReadonly && shortEquipments.length > 0 && (
-                <AppCheckbox
+                <Checkbox
                   name="includeShortResearchEquipments"
                   checked={includeShortResearchEquipments}
                   onChange={setIncludeShortResearchEquipments}
@@ -315,7 +315,7 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
         <p className="text-lg font-semibold">Pozostawienie lub zabranie sprzętu</p>
         <form.AppField name="longResearchEquipments" mode="array">
           {(field) => (
-            <AppTable
+            <Table
               columns={longResearchEquipmentColumns(
                 form,
                 (index) => {
@@ -360,7 +360,7 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
 
         <form.AppField name="ports" mode="array">
           {(field) => (
-            <AppTable
+            <Table
               columns={portColumns(
                 form,
                 (index) => {
@@ -372,7 +372,7 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
               )}
               data={field.state.value}
               buttons={() => [
-                <AppButton
+                <Button
                   key="new"
                   onClick={() => {
                     field.pushValue({
@@ -384,7 +384,7 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
                   }}
                 >
                   Dodaj port
-                </AppButton>,
+                </Button>,
               ]}
               variant="form"
               disabled={isReadonly}
@@ -395,7 +395,7 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
           {(ports) => (
             <>
               {!isReadonly && ports.length > 0 && (
-                <AppCheckbox
+                <Checkbox
                   name="includePorts"
                   checked={includePorts}
                   onChange={setIncludePorts}
@@ -406,6 +406,6 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
           )}
         </form.Subscribe>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

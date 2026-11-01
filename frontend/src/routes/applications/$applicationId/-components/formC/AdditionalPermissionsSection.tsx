@@ -1,10 +1,10 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { Button } from '@/components/shared/Button';
+import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
@@ -62,7 +62,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormCViewMo
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
+            <TableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
               }}
@@ -76,18 +76,18 @@ export function AdditionalPermissionsSection({ context }: { context: FormCViewMo
   }
 
   return (
-    <AppAccordion title="4. Dodatkowe pozwolenia do przeprowadzonych w trakcie rejsu badań" expandedByDefault>
+    <Accordion title="4. Dodatkowe pozwolenia do przeprowadzonych w trakcie rejsu badań" expandedByDefault>
       <form.AppField name="permissions" mode="array">
         {(field) => (
           <>
-            <AppTable
+            <Table
               columns={getColumns((index) => {
                 field.removeValue(index);
                 field.handleBlur();
               })}
               data={field.state.value}
               buttons={() => [
-                <AppButton
+                <Button
                   key="permissions.add-btn"
                   onClick={() => {
                     field.pushValue({ description: '', executive: '' });
@@ -96,17 +96,17 @@ export function AdditionalPermissionsSection({ context }: { context: FormCViewMo
                   disabled={isReadonly}
                 >
                   Dodaj pozwolenie
-                </AppButton>,
+                </Button>,
               ]}
               emptyTableMessage="Nie dodano żadnego pozwolenia."
               variant="form"
               disabled={isReadonly}
               errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
-            <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
+            <InputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
           </>
         )}
       </form.AppField>
-    </AppAccordion>
+    </Accordion>
   );
 }

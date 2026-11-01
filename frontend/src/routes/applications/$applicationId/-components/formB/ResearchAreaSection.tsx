@@ -1,7 +1,7 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { Table } from '@/components/shared/table/Table';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { ResearchAreaValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
 import { getResearchAreaName } from '@/lib/applications/researchArea';
@@ -28,8 +28,8 @@ export function ResearchAreaSection({ context }: { context: FormBViewModel }) {
   ];
 
   return (
-    <AppAccordion title="5. Rejony prowadzenia badań" expandedByDefault>
-      <AppTable
+    <Accordion title="5. Rejony prowadzenia badań" expandedByDefault>
+      <Table
         data={formA.researchAreaDescriptions}
         columns={columns}
         buttons={() => []}
@@ -37,6 +37,6 @@ export function ResearchAreaSection({ context }: { context: FormBViewModel }) {
         showRequiredAsterisk
         disabled={isReadonly}
       />
-    </AppAccordion>
+    </Accordion>
   );
 }

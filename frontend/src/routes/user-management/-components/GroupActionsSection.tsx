@@ -2,8 +2,8 @@ import { TrashIcon, UserCheckIcon, UserMinusIcon, WarningIcon } from '@phosphor-
 import { motion } from 'motion/react';
 import React from 'react';
 
-import { AppAlert } from '@/components/shared/AppAlert';
-import { AppButton } from '@/components/shared/AppButton';
+import { Alert } from '@/components/shared/Alert';
+import { Button } from '@/components/shared/Button';
 import { toast } from '@/components/shared/layout/toast';
 import { Role } from '@/integrations/auth/types';
 import type { UserResponse } from '@/api/generated/schemas';
@@ -123,14 +123,14 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
     <div>
       {submitError && (
         <div>
-          <AppAlert variant="danger" onClose={() => setSubmitError(undefined)}>
+          <Alert variant="danger" onClose={() => setSubmitError(undefined)}>
             {submitError}
-          </AppAlert>
+          </Alert>
         </div>
       )}
 
       {allowToRemoveUsers && (
-        <AppButton
+        <Button
           type="button"
           variant={deletionConfirmed ? 'dangerOutline' : 'danger'}
           className="w-full"
@@ -148,11 +148,11 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
               <span>Usuń zaznaczonych użytkowników</span>
             </div>
           )}
-        </AppButton>
+        </Button>
       )}
 
       <div className="mt-4">
-        <AppButton
+        <Button
           variant="success"
           className="mt-4 w-full"
           disabled={acceptUserMutation.isPending || !!submitError}
@@ -162,13 +162,13 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
             <UserCheckIcon weight="fill" className="h-4 w-4" />
             <span>Akceptuj zaznaczonych użytkowników</span>
           </div>
-        </AppButton>
+        </Button>
         {assignmentWarning !== undefined && (
           <div className="mt-4">
             <AssignmentsWarning items={assignmentWarning} action="deactivate" group />
           </div>
         )}
-        <AppButton
+        <Button
           variant="danger"
           className="mt-4 w-full"
           disabled={unAcceptUserMutation.isPending || !!submitError}
@@ -185,7 +185,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
               <span>Usuń akceptację zaznaczonych użytkowników</span>
             </div>
           )}
-        </AppButton>
+        </Button>
       </div>
     </div>
   );

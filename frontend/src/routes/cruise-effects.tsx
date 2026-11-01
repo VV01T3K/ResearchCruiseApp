@@ -2,10 +2,10 @@ import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
-import { AppBadge } from '@/components/shared/AppBadge';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppLink } from '@/components/shared/AppLink';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Badge } from '@/components/shared/Badge';
+import { Layout } from '@/components/shared/Layout';
+import { Link } from '@/components/shared/Link';
+import { Table } from '@/components/shared/table/Table';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/generated/endpoints/users.gen';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
@@ -42,14 +42,14 @@ function CruiseEffectsPage() {
     {
       header: 'Punkty',
       accessorFn: (row) => `${row.points} pkt.`,
-      cell: ({ row }) => <AppBadge>{row.original.points} pkt.</AppBadge>,
+      cell: ({ row }) => <Badge>{row.original.points} pkt.</Badge>,
       size: 10,
     },
     {
       header: 'Formularz',
       cell: ({ row }) => (
         <div className="flex flex-col gap-1">
-          <AppLink href={`/applications/${row.original.cruiseApplicationId}/formC`}>Formularz C</AppLink>
+          <Link href={`/applications/${row.original.cruiseApplicationId}/formC`}>Formularz C</Link>
         </div>
       ),
       size: 10,
@@ -58,9 +58,9 @@ function CruiseEffectsPage() {
 
   return (
     <>
-      <AppLayout title="Efekty rejsów">
-        <AppTable data={effectsQuery.data} columns={columns} emptyTableMessage="Nie znaleziono żadnego efektu rejsu" />
-      </AppLayout>
+      <Layout title="Efekty rejsów">
+        <Table data={effectsQuery.data} columns={columns} emptyTableMessage="Nie znaleziono żadnego efektu rejsu" />
+      </Layout>
     </>
   );
 }

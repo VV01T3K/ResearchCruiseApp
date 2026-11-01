@@ -1,9 +1,9 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { Button } from '@/components/shared/Button';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
@@ -77,7 +77,7 @@ const shortResearchEquipmentColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton
+        <TableDeleteRowButton
           onClick={() => {
             removeRow(row.index);
           }}
@@ -146,7 +146,7 @@ const longResearchEquipmentColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton
+        <TableDeleteRowButton
           onClick={() => {
             removeRow(row.index);
           }}
@@ -224,7 +224,7 @@ const portColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton
+        <TableDeleteRowButton
           onClick={() => {
             removeRow(row.index);
           }}
@@ -241,14 +241,14 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
   const { isReadonly } = context;
 
   return (
-    <AppAccordion title="12. Szczegóły rejsu" expandedByDefault>
+    <Accordion title="12. Szczegóły rejsu" expandedByDefault>
       <p className="text-center text-xl font-semibold">Czy w ramach rejsu wystąpiło:</p>
 
       <div className="mt-8">
         <p className="text-lg font-semibold">Wystawienie sprzętu</p>
         <form.AppField name="shortResearchEquipments" mode="array">
           {(field) => (
-            <AppTable
+            <Table
               columns={shortResearchEquipmentColumns(
                 form,
                 (index) => {
@@ -259,7 +259,7 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
               )}
               data={field.state.value}
               buttons={() => [
-                <AppButton
+                <Button
                   key="new"
                   onClick={() => {
                     field.pushValue({
@@ -271,7 +271,7 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
                   }}
                 >
                   Dodaj sprzęt
-                </AppButton>,
+                </Button>,
               ]}
               variant="form"
               disabled={isReadonly}
@@ -284,7 +284,7 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
         <p className="text-lg font-semibold">Pozostawienie lub zabranie sprzętu</p>
         <form.AppField name="longResearchEquipments" mode="array">
           {(field) => (
-            <AppTable
+            <Table
               columns={longResearchEquipmentColumns(
                 form,
                 (index) => {
@@ -328,7 +328,7 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
         <p className="text-lg font-semibold">Wchodzenie lub wychodzenie z portu</p>
         <form.AppField name="ports" mode="array">
           {(field) => (
-            <AppTable
+            <Table
               columns={portColumns(
                 form,
                 (index) => {
@@ -339,7 +339,7 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
               )}
               data={field.state.value}
               buttons={() => [
-                <AppButton
+                <Button
                   key="new"
                   onClick={() => {
                     field.pushValue({
@@ -351,7 +351,7 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
                   }}
                 >
                   Dodaj port
-                </AppButton>,
+                </Button>,
               ]}
               variant="form"
               disabled={isReadonly}
@@ -359,6 +359,6 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
           )}
         </form.AppField>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

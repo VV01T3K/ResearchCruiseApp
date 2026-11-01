@@ -1,9 +1,9 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
@@ -71,7 +71,7 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
+            <TableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
               }}
@@ -85,11 +85,11 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
   }
 
   return (
-    <AppAccordion title="4. Rejony prowadzenia badań" expandedByDefault>
+    <Accordion title="4. Rejony prowadzenia badań" expandedByDefault>
       <form.AppField name="researchAreaDescriptions" mode="array">
         {(field) => (
           <>
-            <AppTable
+            <Table
               columns={getColumns((index) => {
                 field.removeValue(index);
                 field.handleBlur();
@@ -121,10 +121,10 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
               disabled={isReadonly}
               errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
-            <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
+            <InputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
           </>
         )}
       </form.AppField>
-    </AppAccordion>
+    </Accordion>
   );
 }

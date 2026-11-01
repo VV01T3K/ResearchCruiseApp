@@ -7,9 +7,9 @@ import {
   useUpdateApplicationSupervisorReviewDecision,
 } from '@/api/generated/endpoints/applications.gen';
 import { getErrorMessage } from '@/api/errors';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppModal } from '@/components/shared/AppModal';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Modal } from '@/components/shared/Modal';
 import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';
 import { mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
@@ -58,7 +58,7 @@ function SupervisorViewPage() {
 
   if (answerMutation.isSuccess) {
     return (
-      <AppLayout title="Formularz A" disableBackButton>
+      <Layout title="Formularz A" disableBackButton>
         <div role="status" className="flex flex-col items-center gap-4 py-16 text-center">
           {accept ? (
             <CheckCircleIcon weight="fill" className="h-16 w-16 text-primary" />
@@ -70,7 +70,7 @@ function SupervisorViewPage() {
           </h2>
           <p className="text-gray-600">Dziękujemy za odpowiedź. Możesz zamknąć tę stronę.</p>
         </div>
-      </AppLayout>
+      </Layout>
     );
   }
 
@@ -81,7 +81,7 @@ function SupervisorViewPage() {
         handleAcceptForm={() => openConfirmation(true)}
         handleDenyForm={() => openConfirmation(false)}
       />
-      <AppModal
+      <Modal
         title={`Czy na pewno chcesz ${accept ? 'zaakceptować' : 'odrzucić'} zgłoszenie nr ${number}?`}
         isOpen={isConfirming}
         onClose={() => setIsConfirming(false)}
@@ -94,7 +94,7 @@ function SupervisorViewPage() {
           </p>
         )}
         <div className="mt-8 flex flex-row gap-4">
-          <AppButton
+          <Button
             variant={accept ? 'primary' : 'danger'}
             className="basis-2/3"
             onClick={() => {
@@ -107,17 +107,17 @@ function SupervisorViewPage() {
             disabled={isSending}
           >
             {accept ? 'Zaakceptuj' : 'Odrzuć'} zgłoszenie nr {number}
-          </AppButton>
-          <AppButton
+          </Button>
+          <Button
             variant="primaryOutline"
             className="basis-1/3"
             onClick={() => setIsConfirming(false)}
             disabled={isSending}
           >
             Anuluj
-          </AppButton>
+          </Button>
         </div>
-      </AppModal>
+      </Modal>
     </form.AppForm>
   );
 }

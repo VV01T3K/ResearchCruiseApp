@@ -1,5 +1,5 @@
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
+import { Accordion } from '@/components/shared/Accordion';
+import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
@@ -10,10 +10,10 @@ export function CruiseManagerInfoSection({ context }: { context: FormBViewModel 
   const { formA, formAInitValues, isReadonly } = context;
 
   return (
-    <AppAccordion title="2. Kierownik zgłaszanego rejsu" expandedByDefault>
+    <Accordion title="2. Kierownik zgłaszanego rejsu" expandedByDefault>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div>
-          <AppDropdownInput
+          <DropdownInput
             name="cruiseManager"
             value={formA.cruiseManagerId}
             allOptions={formAInitValues.cruiseManagers.map((person) => ({
@@ -25,7 +25,7 @@ export function CruiseManagerInfoSection({ context }: { context: FormBViewModel 
           />
         </div>
         <div>
-          <AppDropdownInput
+          <DropdownInput
             name="deputyManager"
             value={formA.deputyManagerId}
             allOptions={formAInitValues.deputyManagers.map((person) => ({
@@ -44,6 +44,6 @@ export function CruiseManagerInfoSection({ context }: { context: FormBViewModel 
           </form.AppField>
         </div>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

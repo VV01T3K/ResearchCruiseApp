@@ -1,10 +1,10 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { Button } from '@/components/shared/Button';
+import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
@@ -80,7 +80,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
+            <TableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
               }}
@@ -138,7 +138,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
+            <TableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
               }}
@@ -152,12 +152,12 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
   }
 
   return (
-    <AppAccordion title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
+    <Accordion title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
         <form.AppField name="ugTeams" mode="array">
           {(field) => (
             <div className="mt-auto">
-              <AppTable
+              <Table
                 className="mt-0"
                 columns={getUgTeamsColumns((index) => {
                   field.removeValue(index);
@@ -191,14 +191,14 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
+              <InputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         </form.AppField>
         <form.AppField name="guestTeams" mode="array">
           {(field) => (
             <div>
-              <AppTable
+              <Table
                 className="mt-0"
                 columns={getGuestTeams((index) => {
                   field.removeValue(index);
@@ -206,7 +206,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 })}
                 data={field.state.value}
                 buttons={() => [
-                  <AppButton
+                  <Button
                     key="new"
                     variant="primary"
                     onClick={() => {
@@ -217,7 +217,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                     disabled={isReadonly}
                   >
                     Dodaj nowy zespół
-                  </AppButton>,
+                  </Button>,
                   <DropdownElementSelectorButton
                     key="historical"
                     options={initValues.historicalGuestInstitutions.map((institution) => ({
@@ -238,11 +238,11 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
+              <InputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         </form.AppField>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

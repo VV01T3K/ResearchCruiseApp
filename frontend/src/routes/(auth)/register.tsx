@@ -6,9 +6,9 @@ import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppLink } from '@/components/shared/AppLink';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useRegisterAccount } from '@/api/generated/endpoints/auth.gen';
@@ -84,7 +84,7 @@ function RegisterPage() {
   }
 
   return (
-    <AppLayout title="Rejestracja" variant="narrow">
+    <Layout title="Rejestracja" variant="narrow">
       <form noValidate className="px-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
           <form.AppField name="email">
@@ -110,9 +110,9 @@ function RegisterPage() {
           <div className="!mt-12">
             <form.Subscribe selector={(state) => state.isSubmitting}>
               {(isSubmitting) => (
-                <AppButton type="submit" className="w-full" disabled={isSubmitting}>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
                   Zarejestruj się
-                </AppButton>
+                </Button>
               )}
             </form.Subscribe>
 
@@ -120,10 +120,10 @@ function RegisterPage() {
           </div>
 
           <p className="!mt-8">
-            Masz już konto? <AppLink href="/login">Zaloguj się</AppLink>
+            Masz już konto? <Link href="/login">Zaloguj się</Link>
           </p>
         </div>
       </form>
-    </AppLayout>
+    </Layout>
   );
 }

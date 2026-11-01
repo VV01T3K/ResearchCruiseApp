@@ -1,7 +1,7 @@
 import { routeTree } from '@/routeTree.gen';
 import { createBrowserHistory, createRouter, RouterProvider } from '@tanstack/react-router';
 
-import { AppLoader } from '@/components/shared/layout/AppLoader';
+import { Loader } from '@/components/shared/layout/Loader';
 import { accountId, subscribeAuthDetails } from '@/integrations/auth/session';
 import { reloadForAccountChange } from '@/integrations/tanstack/query/AuthSession';
 import { clearAccountQueries } from '@/integrations/tanstack/query/auth';
@@ -13,7 +13,7 @@ export const router = createRouter({
     queryClient,
   },
   history: createBrowserHistory(),
-  defaultPendingComponent: AppLoader,
+  defaultPendingComponent: Loader,
   defaultPreload: 'intent',
   scrollRestoration: true,
 });
@@ -34,6 +34,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-export function AppRouter() {
+export function RouterView() {
   return <RouterProvider router={router} />;
 }

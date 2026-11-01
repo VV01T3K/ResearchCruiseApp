@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
+import { Accordion } from '@/components/shared/Accordion';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -10,7 +10,7 @@ export function ShipUsageSection({ context }: { context: FormCViewModel }) {
   const { isReadonly, formAInitValues } = context;
 
   return (
-    <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault>
+    <Accordion title="3. Sposób wykorzystania statku" expandedByDefault>
       <form.AppField name="shipUsage">
         {(field) => (
           <div className="lg:col-span-2">
@@ -52,6 +52,6 @@ export function ShipUsageSection({ context }: { context: FormCViewModel }) {
           </div>
         )}
       </form.Subscribe>
-    </AppAccordion>
+    </Accordion>
   );
 }

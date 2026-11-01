@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppAlert } from '@/components/shared/AppAlert';
-import { AppDropdownInputOption } from '@/components/shared/inputs/AppDropdownInput';
+import { Accordion } from '@/components/shared/Accordion';
+import { Alert } from '@/components/shared/Alert';
+import { DropdownInputOption } from '@/components/shared/inputs/DropdownInput';
 import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMappers';
 import { isUnassignedPerson } from '@/lib/applications/person';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
@@ -61,7 +61,7 @@ export function ManagerSelectionSection({
   );
 
   return (
-    <AppAccordion title="3. Kierownik główny i zastępca kierownika głównego" expandedByDefault>
+    <Accordion title="3. Kierownik główny i zastępca kierownika głównego" expandedByDefault>
       {!isReadonly && (
         <AnimatePresence initial={cruiseApplicationIds.length !== 0}>
           {cruiseManagersNotAssignedToApplication.length > 0 && (
@@ -71,10 +71,10 @@ export function ManagerSelectionSection({
               exit={{ opacity: 0, height: 0 }}
               transition={{ ease: 'easeOut' }}
             >
-              <AppAlert variant="warning">
+              <Alert variant="warning">
                 Nie przypisano {cruiseManagersNotAssignedToApplication.map(mapPersonToText).join(' i ')} do żadnego
                 zgłoszenia dołączonego do rejsu.
-              </AppAlert>
+              </Alert>
             </motion.div>
           )}
         </AnimatePresence>
@@ -103,7 +103,7 @@ export function ManagerSelectionSection({
           )}
         </form.AppField>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }
 
@@ -152,7 +152,7 @@ function getAllUsersForDropdown(
   users: UserOption[],
   cruiseApplications: CruiseApplicationCandidateResponse[],
   selectedCruiseApplicationsIds: string[]
-): AppDropdownInputOption[] {
+): DropdownInputOption[] {
   const assignedUserIds = new Set<string>();
   cruiseApplications.forEach((application) => {
     if (selectedCruiseApplicationsIds.includes(application.id)) {

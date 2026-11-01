@@ -1,11 +1,11 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { MagnifyingGlassPlusIcon, TrashIcon } from '@phosphor-icons/react';
 
-import { AppAvatar } from '@/components/shared/AppAvatar';
-import { AppBadge } from '@/components/shared/AppBadge';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppGuard } from '@/components/shared/AppGuard';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Avatar } from '@/components/shared/Avatar';
+import { Badge } from '@/components/shared/Badge';
+import { Button } from '@/components/shared/Button';
+import { Guard } from '@/components/shared/Guard';
+import { Table } from '@/components/shared/table/Table';
 import { Role } from '@/integrations/auth/types';
 import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { formatDate } from '@/lib/dateUtils';
@@ -66,7 +66,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       id: 'mainCruiseManagerAvatar',
       cell: ({ row }) =>
         !isUnassignedPerson(row.original.mainManager) ? (
-          <AppAvatar
+          <Avatar
             fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
             variant="small"
           />
@@ -94,7 +94,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     },
   ];
   return (
-    <AppTable
+    <Table
       columns={columns}
       data={cruises}
       buttons={(predefinedButtons) => buttons.concat(predefinedButtons)}
@@ -113,17 +113,17 @@ type ApplicationsCellProps = {
 };
 function ApplicationsCell({ applications }: ApplicationsCellProps) {
   if (!applications || applications.length === 0) {
-    return <AppBadge variant="info">Brak zgłoszeń</AppBadge>;
+    return <Badge variant="info">Brak zgłoszeń</Badge>;
   }
   return (
     <div className="flex flex-col items-center gap-4 text-balance">
       {applications.map((application) => (
         <div className="flex flex-col gap-2" key={application.id}>
-          <AppButton type="link" href={`/applications/${application.id}/details`} variant="primaryOutline" size="sm">
+          <Button type="link" href={`/applications/${application.id}/details`} variant="primaryOutline" size="sm">
             <div className="flex w-full items-center justify-around gap-2">
-              <div>Zgłoszenie nr.{application.number}</div> <AppBadge>{application.points} pkt.</AppBadge>
+              <div>Zgłoszenie nr.{application.number}</div> <Badge>{application.points} pkt.</Badge>
             </div>
-          </AppButton>
+          </Button>
         </div>
       ))}
     </div>
@@ -137,18 +137,18 @@ type ActionsCellProps = {
 function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
   return (
     <div className="grid min-w-30 grid-cols-1 gap-2">
-      <AppButton variant="primary" type="link" size="sm" href={`/cruises/${cruise.id}`}>
+      <Button variant="primary" type="link" size="sm" href={`/cruises/${cruise.id}`}>
         Szczegóły
         <MagnifyingGlassPlusIcon className="ml-2 h-4 w-4" />
-      </AppButton>
-      <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
+      </Button>
+      <Guard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
         {cruise.status === 'new' && (
-          <AppButton variant="dangerOutline" size="sm" onClick={() => deleteCruise(cruise)}>
+          <Button variant="dangerOutline" size="sm" onClick={() => deleteCruise(cruise)}>
             Usuń
             <TrashIcon className="h-4 w-4" />
-          </AppButton>
+          </Button>
         )}
-      </AppGuard>
+      </Guard>
     </div>
   );
 }

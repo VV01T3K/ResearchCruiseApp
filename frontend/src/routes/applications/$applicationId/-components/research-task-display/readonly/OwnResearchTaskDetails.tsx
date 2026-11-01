@@ -1,6 +1,6 @@
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
+import { Input } from '@/components/shared/inputs/Input';
+import { NumberInput } from '@/components/shared/inputs/NumberInput';
+import { DatePickerInput } from '@/components/shared/inputs/dates/DatePickerInput';
 import type { OwnResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 export function OwnResearchTaskDetails({ data }: Props) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <AppInput
+      <Input
         name="researchTasks[].title"
         value={data.title}
         label="Roboczy tytuł projektu"
@@ -17,14 +17,14 @@ export function OwnResearchTaskDetails({ data }: Props) {
         disabled={true}
       />
 
-      <AppDatePickerInput
+      <DatePickerInput
         name="researchTasks[].date"
         value={data.date}
         label="Przewidywany termin składania"
         disabled={true}
       />
 
-      <AppInput
+      <Input
         name="researchTasks[].magazine"
         value={data.magazine}
         label="Czasopismo"
@@ -32,7 +32,7 @@ export function OwnResearchTaskDetails({ data }: Props) {
         disabled={true}
       />
 
-      <AppNumberInput
+      <NumberInput
         nullable
         name="researchTasks[].ministerialPoints"
         value={data.ministerialPoints}

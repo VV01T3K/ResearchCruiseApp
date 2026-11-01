@@ -1,5 +1,5 @@
-import { AppBadge } from '@/components/shared/AppBadge';
-import { AppButton } from '@/components/shared/AppButton';
+import { Badge } from '@/components/shared/Badge';
+import { Button } from '@/components/shared/Button';
 import { toast } from '@/components/shared/layout/toast';
 import { useResendConfirmationEmail } from '@/api/generated/endpoints/auth.gen';
 
@@ -12,13 +12,13 @@ export function EmailConfirmationBadge({ email, emailConfirmed }: Props) {
   const resendConfirmation = useResendConfirmationEmail();
 
   if (emailConfirmed) {
-    return <AppBadge variant="success">Potwierdzony adres e-mail</AppBadge>;
+    return <Badge variant="success">Potwierdzony adres e-mail</Badge>;
   }
 
   return (
     <span className="inline-flex items-center gap-2">
-      <AppBadge variant="danger">Niepotwierdzony adres e-mail</AppBadge>
-      <AppButton
+      <Badge variant="danger">Niepotwierdzony adres e-mail</Badge>
+      <Button
         size="xs"
         variant="primaryOutline"
         disabled={resendConfirmation.isPending}
@@ -32,7 +32,7 @@ export function EmailConfirmationBadge({ email, emailConfirmed }: Props) {
         }
       >
         Wyślij ponownie
-      </AppButton>
+      </Button>
     </span>
   );
 }

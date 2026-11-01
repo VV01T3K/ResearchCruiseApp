@@ -1,5 +1,5 @@
-import { AppActionsSection } from '@/components/shared/AppActionsSection';
-import { AppGuard } from '@/components/shared/AppGuard';
+import { FloatingActionsSection } from '@/components/shared/FloatingActionsSection';
+import { Guard } from '@/components/shared/Guard';
 import { Role } from '@/integrations/auth/types';
 import { ApplicationsSection } from './ApplicationsSection';
 import { BasicInformationSection } from './BasicInformationSection';
@@ -31,13 +31,13 @@ export function FormView({ cruise, cruiseApplications, isReadonly, buttons }: Pr
       <BasicInformationSection cruise={cruise} isReadonly={isReadonly} />
       <DateSelectionSection isReadonly={isReadonly} />
       <ManagerSelectionSection cruise={cruise} cruiseApplications={cruiseApplications} isReadonly={isReadonly} />
-      <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew]}>
+      <Guard allowedRoles={[Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew]}>
         <ApplicationsSection cruiseId={cruise?.id} cruiseApplications={cruiseApplications} isReadonly={isReadonly} />
-      </AppGuard>
+      </Guard>
       <form.FormErrors />
-      <AppGuard allowedRoles={[Role.ShipOwner, Role.Administrator]}>
-        <AppActionsSection>{buttons}</AppActionsSection>
-      </AppGuard>
+      <Guard allowedRoles={[Role.ShipOwner, Role.Administrator]}>
+        <FloatingActionsSection>{buttons}</FloatingActionsSection>
+      </Guard>
     </form>
   );
 }

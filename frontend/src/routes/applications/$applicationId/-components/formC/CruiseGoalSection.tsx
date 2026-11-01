@@ -1,16 +1,16 @@
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
+import { Accordion } from '@/components/shared/Accordion';
+import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
+import { Input } from '@/components/shared/inputs/Input';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 
 export function CruiseGoalSection({ context }: { context: FormCViewModel }) {
   const { formA, formAInitValues } = context;
 
   return (
-    <AppAccordion title="6. Cel rejsu" expandedByDefault>
+    <Accordion title="6. Cel rejsu" expandedByDefault>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div>
-          <AppDropdownInput
+          <DropdownInput
             name="cruiseGoal"
             value={formA.cruiseGoal}
             label="Cel rejsu"
@@ -22,9 +22,9 @@ export function CruiseGoalSection({ context }: { context: FormCViewModel }) {
           />
         </div>
         <div>
-          <AppInput name="cruiseGoalDescription" value={formA.cruiseGoalDescription} label="Opis" disabled />
+          <Input name="cruiseGoalDescription" value={formA.cruiseGoalDescription} label="Opis" disabled />
         </div>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

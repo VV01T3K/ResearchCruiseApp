@@ -4,7 +4,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
-import { AppLayout } from '@/components/shared/AppLayout';
+import { Layout } from '@/components/shared/Layout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { captureHandledRefusal } from '@/integrations/sentry/mutations';
@@ -149,11 +149,11 @@ function FormBPage() {
 
   return (
     <>
-      <AppLayout title="Formularz B">
+      <Layout title="Formularz B">
         <form.AppForm>
           <FormView context={context} />
         </form.AppForm>
-      </AppLayout>
+      </Layout>
       <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} recoveryKey={`${applicationId}/formB`} />
     </>
   );

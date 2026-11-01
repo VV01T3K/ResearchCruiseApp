@@ -1,15 +1,15 @@
-import { Button } from '@base-ui/react/button';
+import { Button as BaseButton } from '@base-ui/react/button';
 import { Popover } from '@base-ui/react/popover';
 import { CaretDownIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 
 import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
-import { AppButtonVariant } from '@/components/shared/AppButton';
-import { AppInput } from '@/components/shared/inputs/AppInput';
+import { ButtonVariant } from '@/components/shared/Button';
+import { Input } from '@/components/shared/inputs/Input';
 import { cn } from '@/lib/utils';
 
 type Props = {
-  variant: AppButtonVariant;
+  variant: ButtonVariant;
   options: {
     value: string;
     onClick?: () => void;
@@ -69,7 +69,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
             <div className="shrink-0 border-b border-gray-200 bg-white p-2">
               <div className="relative">
                 <MagnifyingGlassIcon className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                <AppInput
+                <Input
                   value={searchValue}
                   onChange={setSearchValue}
                   placeholder="Wyszukaj..."
@@ -86,7 +86,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
                 <ul className="p-1">
                   {filteredOptions.map((option, i) => (
                     <li key={`${option.value}${i}`}>
-                      <Button
+                      <BaseButton
                         onClick={
                           option.onClick
                             ? () => {
@@ -103,7 +103,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
                         disabled={!option.onClick}
                       >
                         {option.content ?? option.value}
-                      </Button>
+                      </BaseButton>
                     </li>
                   ))}
                 </ul>

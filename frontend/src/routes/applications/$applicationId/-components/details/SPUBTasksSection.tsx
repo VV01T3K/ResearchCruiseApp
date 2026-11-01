@@ -1,9 +1,9 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { Input } from '@/components/shared/inputs/Input';
+import { YearPickerInput } from '@/components/shared/inputs/dates/YearPickerInput';
+import { Table } from '@/components/shared/table/Table';
 import {
   type ApplicationEvaluation,
   useApplicationEvaluation,
@@ -24,7 +24,7 @@ export function SPUBTasksSection() {
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
-        <AppYearPickerInput
+        <YearPickerInput
           name={`spubTasks[${row.index}].yearFrom`}
           value={Number(row.original.spubTask.yearFrom)}
           showRequiredAsterisk
@@ -39,7 +39,7 @@ export function SPUBTasksSection() {
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
-        <AppYearPickerInput
+        <YearPickerInput
           name={`spubTasks[${row.index}].yearTo`}
           value={Number(row.original.spubTask.yearTo)}
           showRequiredAsterisk
@@ -54,12 +54,7 @@ export function SPUBTasksSection() {
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
-        <AppInput
-          name={`spubTasks[${row.index}].name`}
-          value={row.original.spubTask.name}
-          showRequiredAsterisk
-          disabled
-        />
+        <Input name={`spubTasks[${row.index}].name`} value={row.original.spubTask.name} showRequiredAsterisk disabled />
       ),
       size: 50,
     },
@@ -71,18 +66,18 @@ export function SPUBTasksSection() {
   ];
 
   return (
-    <AppAccordion
+    <Accordion
       title="7. Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
       expandedByDefault
     >
       <div>
-        <AppTable
+        <Table
           data={evaluation.formASpubTasks}
           columns={columns}
           emptyTableMessage="Nie dodano żadnego zadania."
           disabled
         />
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

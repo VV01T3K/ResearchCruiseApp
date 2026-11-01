@@ -1,6 +1,6 @@
 import { CheckIcon } from '@phosphor-icons/react';
 
-import { AppButton } from '@/components/shared/AppButton';
+import { Button } from '@/components/shared/Button';
 
 type Props = {
   onAccept: () => void;
@@ -8,10 +8,10 @@ type Props = {
 export function AcceptButton({ onAccept }: Props) {
   return (
     <>
-      <AppButton className="w-36 !justify-center gap-4 lg:w-48" variant="primary" onClick={onAccept}>
+      <Button className="w-36 !justify-center gap-4 lg:w-48" variant="primary" onClick={onAccept}>
         <CheckIcon className="h-4 w-4" />
         Zaakceptuj zgłoszenie
-      </AppButton>
+      </Button>
     </>
   );
 }

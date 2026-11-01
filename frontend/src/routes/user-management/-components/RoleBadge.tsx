@@ -1,22 +1,22 @@
-import { AppBadge } from '@/components/shared/AppBadge';
+import { Badge } from '@/components/shared/Badge';
 import { getRoleLabel, Role } from '@/integrations/auth/types';
 
 export function RoleBadge({ role }: { role: string }) {
   if (role === Role.Administrator) {
-    return <AppBadge variant="success">{getRoleLabel(role)}</AppBadge>;
+    return <Badge variant="success">{getRoleLabel(role)}</Badge>;
   }
 
   if (role === Role.ShipOwner) {
-    return <AppBadge variant="primary">{getRoleLabel(role)}</AppBadge>;
+    return <Badge variant="primary">{getRoleLabel(role)}</Badge>;
   }
 
   if (role === Role.CruiseManager) {
-    return <AppBadge variant="warning">{getRoleLabel(role)}</AppBadge>;
+    return <Badge variant="warning">{getRoleLabel(role)}</Badge>;
   }
 
   if (role === Role.ShipCrew) {
-    return <AppBadge variant="info">{getRoleLabel(role)}</AppBadge>;
+    return <Badge variant="info">{getRoleLabel(role)}</Badge>;
   }
 
-  return <AppBadge variant="warning">{getRoleLabel(role)}</AppBadge>;
+  return <Badge variant="warning">{getRoleLabel(role)}</Badge>;
 }

@@ -1,15 +1,15 @@
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
+import { Accordion } from '@/components/shared/Accordion';
+import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
+import { Input } from '@/components/shared/inputs/Input';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 
 export function ShipUsageSection({ context }: { context: FormBViewModel }) {
   const { formA, formAInitValues } = context;
 
   return (
-    <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault>
+    <Accordion title="3. Sposób wykorzystania statku" expandedByDefault>
       <div className="grid grid-cols-1 gap-4">
-        <AppDropdownInput
+        <DropdownInput
           name="shipUsage"
           value={formA.shipUsage ?? ''}
           allOptions={formAInitValues?.shipUsages.map((shipUsage, i) => ({
@@ -20,9 +20,9 @@ export function ShipUsageSection({ context }: { context: FormBViewModel }) {
           disabled
         />
         {formA.shipUsage === '4' && (
-          <AppInput name="differentUsage" value={formA.differentUsage} label="Inny sposób użycia" disabled />
+          <Input name="differentUsage" value={formA.differentUsage} label="Inny sposób użycia" disabled />
         )}
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

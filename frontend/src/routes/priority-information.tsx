@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { AppLayout } from '@/components/shared/AppLayout';
+import { Layout } from '@/components/shared/Layout';
 import { PriorityInformationCell } from '@/components/shared/PriorityInformationCell';
 import { PriorityInformationRow } from '@/components/shared/PriorityInformationRow';
 
@@ -11,7 +11,7 @@ export const Route = createFileRoute('/priority-information')({
 
 function PriorityInformationPage() {
   return (
-    <AppLayout title="Informacje o priorytetyzacji">
+    <Layout title="Informacje o priorytetyzacji">
       <div
         role="region"
         aria-label="Tabela punktacji priorytetyzacji"
@@ -325,6 +325,6 @@ function PriorityInformationPage() {
           </tbody>
         </table>
       </div>
-    </AppLayout>
+    </Layout>
   );
 }

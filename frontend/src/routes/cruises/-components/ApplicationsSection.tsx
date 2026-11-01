@@ -2,11 +2,11 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppAvatar } from '@/components/shared/AppAvatar';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLink } from '@/components/shared/AppLink';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { Avatar } from '@/components/shared/Avatar';
+import { Button } from '@/components/shared/Button';
+import { Link } from '@/components/shared/Link';
+import { Table } from '@/components/shared/table/Table';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
@@ -24,7 +24,7 @@ export function ApplicationsSection({
   const [expanded, setExpanded] = React.useState(false);
 
   return (
-    <AppAccordion title="4. Zgłoszenia przypisane do rejsu" expandedByDefault>
+    <Accordion title="4. Zgłoszenia przypisane do rejsu" expandedByDefault>
       <form.AppField name="cruiseApplicationIds" mode="array">
         {(field) => {
           const getColumns = (attached: boolean): ColumnDef<CruiseApplicationCandidateResponse>[] => [
@@ -37,9 +37,9 @@ export function ApplicationsSection({
                   {row.original.cruiseId && row.original.cruiseId !== cruiseId && (
                     <div className="text-xs whitespace-nowrap text-gray-500">
                       obecnie w rejsie{' '}
-                      <AppLink href={`/cruises/${row.original.cruiseId}`} target="_blank">
+                      <Link href={`/cruises/${row.original.cruiseId}`} target="_blank">
                         {row.original.cruiseNumber}
-                      </AppLink>
+                      </Link>
                     </div>
                   )}
                 </>
@@ -51,7 +51,7 @@ export function ApplicationsSection({
             {
               id: 'cruiseManagerAvatar',
               cell: ({ row }) => (
-                <AppAvatar
+                <Avatar
                   fullName={`${row.original.cruiseManagerFirstName} ${row.original.cruiseManagerLastName}`}
                   variant="small"
                 />
@@ -70,27 +70,27 @@ export function ApplicationsSection({
               enableSorting: false,
               cell: ({ row }) => (
                 <div className="grid grid-cols-1 gap-1">
-                  <AppLink
+                  <Link
                     href={`/applications/${row.original.id}/formA`}
                     disabled={!row.original.hasFormA}
                     target="_blank"
                   >
                     Formularz A
-                  </AppLink>
-                  <AppLink
+                  </Link>
+                  <Link
                     href={`/applications/${row.original.id}/formB`}
                     disabled={!row.original.hasFormB}
                     target="_blank"
                   >
                     Formularz B
-                  </AppLink>
-                  <AppLink
+                  </Link>
+                  <Link
                     href={`/applications/${row.original.id}/formC`}
                     disabled={!row.original.hasFormC}
                     target="_blank"
                   >
                     Formularz C
-                  </AppLink>
+                  </Link>
                 </div>
               ),
             },
@@ -100,7 +100,7 @@ export function ApplicationsSection({
                   {
                     id: 'actions',
                     cell: ({ row }) => (
-                      <AppButton
+                      <Button
                         variant={attached ? 'dangerOutline' : 'successOutline'}
                         size="sm"
                         onClick={() => {
@@ -110,7 +110,7 @@ export function ApplicationsSection({
                         }}
                       >
                         {attached ? 'Usuń' : 'Dodaj'}
-                      </AppButton>
+                      </Button>
                     ),
                     size: 5,
                   } satisfies ColumnDef<CruiseApplicationCandidateResponse>,
@@ -120,16 +120,16 @@ export function ApplicationsSection({
 
           return (
             <div>
-              <AppTable
+              <Table
                 columns={getColumns(true)}
                 data={cruiseApplications.filter((application) => field.state.value.includes(application.id))}
                 buttons={() =>
                   isReadonly
                     ? []
                     : [
-                        <AppButton onClick={() => setExpanded((prev) => !prev)} key="addNewApplication">
+                        <Button onClick={() => setExpanded((prev) => !prev)} key="addNewApplication">
                           {expanded ? 'Zakończ dołączanie zgłoszeń' : 'Dodaj nowe zgłoszenie'}
-                        </AppButton>,
+                        </Button>,
                       ]
                 }
                 emptyTableMessage="Brak załączonych zgłoszeń"
@@ -148,7 +148,7 @@ export function ApplicationsSection({
                     className="mt-4"
                   >
                     <div className="text-lg font-semibold">Zgłoszenia możliwe do załączenia</div>
-                    <AppTable
+                    <Table
                       columns={getColumns(false)}
                       data={cruiseApplications.filter((application) => !field.state.value.includes(application.id))}
                       buttons={() => []}
@@ -161,6 +161,6 @@ export function ApplicationsSection({
           );
         }}
       </form.AppField>
-    </AppAccordion>
+    </Accordion>
   );
 }

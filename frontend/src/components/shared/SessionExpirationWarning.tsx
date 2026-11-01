@@ -1,8 +1,8 @@
 import { WarningIcon } from '@phosphor-icons/react';
 import React from 'react';
 
-import { AppButton } from '@/components/shared/AppButton';
-import { AppModal } from '@/components/shared/AppModal';
+import { Button } from '@/components/shared/Button';
+import { Modal } from '@/components/shared/Modal';
 import { useSessionRemainingMs } from '@/integrations/auth/useSessionClock';
 
 type Props = {
@@ -46,7 +46,7 @@ export function SessionExpirationWarning({ expirationDate, onRefreshSession, onS
   }
 
   return (
-    <AppModal title="Sesja wygasa" isOpen={isOpen} onClose={() => {}} dismissible={false}>
+    <Modal title="Sesja wygasa" isOpen={isOpen} onClose={() => {}} dismissible={false}>
       <div className="flex flex-col gap-4">
         <div className="flex items-start gap-3 rounded-lg bg-warning-50 p-4">
           <WarningIcon weight="fill" className="mt-0.5 h-5 w-5 shrink-0 text-warning-600" />
@@ -62,14 +62,14 @@ export function SessionExpirationWarning({ expirationDate, onRefreshSession, onS
         </div>
 
         <div className="flex justify-end gap-2">
-          <AppButton variant="dangerOutline" size="sm" onClick={() => void handleSignOut()}>
+          <Button variant="dangerOutline" size="sm" onClick={() => void handleSignOut()}>
             Wyloguj
-          </AppButton>
-          <AppButton variant="primary" size="sm" onClick={() => void handleRefreshSession()} disabled={isRefreshing}>
+          </Button>
+          <Button variant="primary" size="sm" onClick={() => void handleRefreshSession()} disabled={isRefreshing}>
             {isRefreshing ? 'Odświeżanie...' : 'Odśwież sesję'}
-          </AppButton>
+          </Button>
         </div>
       </div>
-    </AppModal>
+    </Modal>
   );
 }

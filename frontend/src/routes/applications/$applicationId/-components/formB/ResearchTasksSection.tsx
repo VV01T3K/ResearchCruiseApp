@@ -1,7 +1,7 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { Table } from '@/components/shared/table/Table';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import {
@@ -31,8 +31,8 @@ export function ResearchTasksSection({ context }: { context: FormBViewModel }) {
   ];
 
   return (
-    <AppAccordion title="7. Zadania do zrealizowania w trakcie rejsu" expandedByDefault>
-      <AppTable
+    <Accordion title="7. Zadania do zrealizowania w trakcie rejsu" expandedByDefault>
+      <Table
         data={formA.researchTasks}
         columns={columns}
         buttons={() => []}
@@ -41,6 +41,6 @@ export function ResearchTasksSection({ context }: { context: FormBViewModel }) {
         variant="form"
         disabled={isReadonly}
       />
-    </AppAccordion>
+    </Accordion>
   );
 }

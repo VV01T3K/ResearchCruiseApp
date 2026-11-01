@@ -14,10 +14,10 @@ import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 import { z } from 'zod';
 
-import { AppAlert } from '@/components/shared/AppAlert';
-import { AppAvatar } from '@/components/shared/AppAvatar';
-import { AppBadge } from '@/components/shared/AppBadge';
-import { AppButton } from '@/components/shared/AppButton';
+import { Alert } from '@/components/shared/Alert';
+import { Avatar } from '@/components/shared/Avatar';
+import { Badge } from '@/components/shared/Badge';
+import { Button } from '@/components/shared/Button';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
@@ -291,7 +291,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
             <AnimatePresence>
               {(firstName || lastName) && (
                 <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
-                  <AppAvatar fullName={`${firstName} ${lastName}`} />
+                  <Avatar fullName={`${firstName} ${lastName}`} />
                 </motion.span>
               )}
             </AnimatePresence>
@@ -302,15 +302,15 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
           <div className="grid max-w-48 grid-cols-2 gap-1">
             <span>Stan Emaila:</span>
             <span className="flex">
-              <AppBadge variant={user.emailConfirmed ? 'success' : 'danger'}>
+              <Badge variant={user.emailConfirmed ? 'success' : 'danger'}>
                 {user.emailConfirmed ? 'Zweryfikowany' : 'Niezweryfikowany'}
-              </AppBadge>
+              </Badge>
             </span>
             <span>Stan Konta:</span>
             <span className="flex">
-              <AppBadge variant={user.accepted ? 'success' : 'danger'}>
+              <Badge variant={user.accepted ? 'success' : 'danger'}>
                 {user.accepted ? 'Zaakceptowane' : 'Niezaakceptowane'}
-              </AppBadge>
+              </Badge>
             </span>
           </div>
         )}
@@ -342,9 +342,9 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
 
       <div className="mt-8 space-y-4">
         {submitError && (
-          <AppAlert variant="danger" onClose={() => setSubmitError(undefined)}>
+          <Alert variant="danger" onClose={() => setSubmitError(undefined)}>
             {submitError}
-          </AppAlert>
+          </Alert>
         )}
 
         {assignmentWarning?.action === 'role' && <AssignmentsWarning items={assignmentWarning.items} action="role" />}
@@ -352,7 +352,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         <form.Subscribe selector={(state) => [selectCanSubmit(state), state.isSubmitting]}>
           {([canSubmit, isSubmitting]) => (
             <>
-              <AppButton type="submit" className="w-full" disabled={isSubmitting}>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {assignmentWarning?.action === 'role' ? (
                   <div className="flex items-center gap-4">
                     <WarningIcon weight="fill" className="h-4 w-4" />
@@ -369,10 +369,10 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                     <span>Dodaj</span>
                   </div>
                 )}
-              </AppButton>
+              </Button>
 
               {editMode && allowToRemoveUsers && (
-                <AppButton
+                <Button
                   variant={deletionConfirmed ? 'danger' : 'warning'}
                   disabled={!canSubmit || isSubmitting}
                   onClick={() => void handleUserDeletion()}
@@ -389,7 +389,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                       <span>Usuń</span>
                     </div>
                   )}
-                </AppButton>
+                </Button>
               )}
 
               {assignmentWarning?.action === 'deactivate' && (
@@ -397,7 +397,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               )}
 
               {editMode && (
-                <AppButton
+                <Button
                   variant={!user.accepted ? 'success' : 'danger'}
                   disabled={!!submitError || acceptUserMutation.isPending || unAcceptUserMutation.isPending}
                   onClick={() => void handleAccountAcceptanceToggle()}
@@ -419,11 +419,11 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                       <span>Cofnij akceptację konta</span>
                     </div>
                   )}
-                </AppButton>
+                </Button>
               )}
 
               {editMode && (
-                <AppButton
+                <Button
                   variant={passwordResetSent ? 'success' : 'primaryOutline'}
                   disabled={!!submitError || initiatePasswordResetMutation.isPending || passwordResetSent}
                   onClick={() => void handleInitiatePasswordReset()}
@@ -440,7 +440,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                       <span>Wyślij link do zmiany hasła</span>
                     </div>
                   )}
-                </AppButton>
+                </Button>
               )}
             </>
           )}

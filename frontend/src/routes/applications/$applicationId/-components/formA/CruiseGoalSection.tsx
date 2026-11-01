@@ -1,4 +1,4 @@
-import { AppAccordion } from '@/components/shared/AppAccordion';
+import { Accordion } from '@/components/shared/Accordion';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -8,7 +8,7 @@ export function CruiseGoalSection({ context }: { context: FormAViewModel }) {
   const { isReadonly, initValues } = context;
 
   return (
-    <AppAccordion title="5. Cel rejsu" expandedByDefault>
+    <Accordion title="5. Cel rejsu" expandedByDefault>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <form.AppField name="cruiseGoal">
           {(field) => (
@@ -39,6 +39,6 @@ export function CruiseGoalSection({ context }: { context: FormAViewModel }) {
           )}
         </form.Subscribe>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

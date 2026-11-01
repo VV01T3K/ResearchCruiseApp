@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { AppActionsSection } from '@/components/shared/AppActionsSection';
-import { AppGuard } from '@/components/shared/AppGuard';
+import { FloatingActionsSection } from '@/components/shared/FloatingActionsSection';
+import { Guard } from '@/components/shared/Guard';
 import { Role } from '@/integrations/auth/types';
 import { AcceptButton } from './actions/AcceptButton';
 import { RejectButton } from './actions/RejectButton';
@@ -20,30 +20,30 @@ export function ActionsSection({ onAccept, onReject }: Props) {
 
   if (confirmationMode) {
     return (
-      <AppActionsSection>
+      <FloatingActionsSection>
         <RejectConfirmation onReject={onReject} setConfirmationMode={setConfirmationMode} />
-      </AppActionsSection>
+      </FloatingActionsSection>
     );
   }
 
   switch (application.status) {
     case CruiseApplicationStatus.enum.waitingForSupervisor:
       return (
-        <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
-          <AppActionsSection>
+        <Guard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
+          <FloatingActionsSection>
             <ResendInvitationButton applicationId={application.id} />
             <RejectButton setConfirmationMode={setConfirmationMode} />
-          </AppActionsSection>
-        </AppGuard>
+          </FloatingActionsSection>
+        </Guard>
       );
     case CruiseApplicationStatus.enum.acceptedBySupervisor:
       return (
-        <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
-          <AppActionsSection>
+        <Guard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
+          <FloatingActionsSection>
             <RejectButton setConfirmationMode={setConfirmationMode} />
             <AcceptButton onAccept={onAccept} />
-          </AppActionsSection>
-        </AppGuard>
+          </FloatingActionsSection>
+        </Guard>
       );
     default:
       return null;

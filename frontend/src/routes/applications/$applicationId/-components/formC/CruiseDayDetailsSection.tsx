@@ -1,9 +1,9 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { Button } from '@/components/shared/Button';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -90,7 +90,7 @@ const cruiseDayDetailsColumns = (
     id: 'actions',
     cell: ({ row }) => (
       <div className="flex justify-end">
-        <AppTableDeleteRowButton
+        <TableDeleteRowButton
           onClick={() => {
             removeRow(row.index);
           }}
@@ -107,10 +107,10 @@ export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }
   const { isReadonly } = context;
 
   return (
-    <AppAccordion title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu" expandedByDefault>
+    <Accordion title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu" expandedByDefault>
       <form.AppField name="cruiseDaysDetails" mode="array">
         {(field) => (
-          <AppTable
+          <Table
             data={field.state.value}
             columns={cruiseDayDetailsColumns(
               form,
@@ -121,7 +121,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }
               isReadonly
             )}
             buttons={() => [
-              <AppButton
+              <Button
                 key="new"
                 onClick={() => {
                   field.pushValue({
@@ -138,13 +138,13 @@ export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }
                 disabled={isReadonly}
               >
                 Dodaj
-              </AppButton>,
+              </Button>,
             ]}
             variant="form"
             disabled={isReadonly}
           />
         )}
       </form.AppField>
-    </AppAccordion>
+    </Accordion>
   );
 }
