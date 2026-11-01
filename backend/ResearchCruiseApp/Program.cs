@@ -182,6 +182,7 @@ if (!isOpenApiGen)
 {
     // Fail before migrations/seeding or accepting requests; hosted-service validation is later.
     _ = app.Services.GetRequiredService<IOptions<SmtpSettings>>().Value;
+    _ = app.Services.GetRequiredService<IOptions<JwtSettings>>().Value;
     await app.InitializeDatabase();
 }
 
