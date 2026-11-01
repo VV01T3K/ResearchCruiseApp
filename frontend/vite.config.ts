@@ -64,7 +64,7 @@ export default defineConfig({
     ],
   },
   server: {
-    host: true, // TODO: set only for development, not for production build
+    host: true,
   },
   resolve: {
     tsconfigPaths: true,

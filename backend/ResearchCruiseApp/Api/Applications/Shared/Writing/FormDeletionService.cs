@@ -87,7 +87,7 @@ internal class FormDeletionService(
 
             if (
                 await CountUniqueFormsA(researchTask, cancellationToken) == 1
-                && // The one to ne deleted
+                && // The one to be deleted
                 await CountResearchTaskEffects(researchTask, cancellationToken) == 0
             )
             {

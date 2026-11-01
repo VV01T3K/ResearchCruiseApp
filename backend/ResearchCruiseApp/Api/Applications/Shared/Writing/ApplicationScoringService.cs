@@ -119,7 +119,6 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
     {
         Debug.Assert(cruiseApplication.FormA is not null);
 
-        // Redundant since teams have been already validated on formA creation
         var notEmptyTeamsCount = cruiseApplication.FormA.FormAUgUnits.Count(formAUgUnit =>
             uint.Parse(formAUgUnit.NoOfEmployees, CultureInfo.InvariantCulture) > 0
             || uint.Parse(formAUgUnit.NoOfStudents, CultureInfo.InvariantCulture) > 0

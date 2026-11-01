@@ -196,7 +196,6 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
   let headers = data[0].map((h) => String(h).toLowerCase().trim());
   let headerRowIndex = 0;
 
-  // Helper function to find column index by multiple possible names
   const findColumnIndex = (possibleNames: string[]): number => {
     const normalizedNames = possibleNames.map((name) => name.toLowerCase());
     for (const name of normalizedNames) {
@@ -376,9 +375,6 @@ function parsePositionString(position: string): {
   return result;
 }
 
-/**
- * Exports CruiseDayValues array to XLSX file and triggers download
- */
 export async function exportCruiseDayDetailsToXlsx(
   data: CruiseDayValues[],
   fileName: string = 'rejsu-dane.xlsx'

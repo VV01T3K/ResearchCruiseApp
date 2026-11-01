@@ -1,5 +1,3 @@
-// Calendar types for AppCalendar and related components
-
 export type CalendarEvent = {
   id?: string;
   title: string;

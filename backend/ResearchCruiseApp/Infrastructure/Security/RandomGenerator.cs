@@ -21,13 +21,11 @@ internal class RandomGenerator
         const string All = Upper + Lower + Digits + Special;
         Span<char> password = stackalloc char[SecurePasswordLength];
 
-        // ensure characters are taken from each category
         password[0] = GetRandomChar(Upper);
         password[1] = GetRandomChar(Lower);
         password[2] = GetRandomChar(Digits);
         password[3] = GetRandomChar(Special);
 
-        // fill rest
         RandomNumberGenerator.GetItems(All.AsSpan(), password[4..]);
         RandomNumberGenerator.Shuffle(password);
         return new string(password);
