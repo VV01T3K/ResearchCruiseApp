@@ -16,7 +16,7 @@ internal class UserPermissionVerifier(
     public async Task<bool> CanCurrentUserAssignRole(string roleName)
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
-        return RolePermissionRules.CanAssignRole(currentUserRoles, roleName);
+        return RolePermissionPolicy.CanAssignRole(currentUserRoles, roleName);
     }
 
     public async Task<bool> CanCurrentUserAccess(Guid otherUserId)
@@ -24,14 +24,14 @@ internal class UserPermissionVerifier(
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
 
         var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
-        return RolePermissionRules.CanAccessUser(currentUserRoles, otherUserRoles);
+        return RolePermissionPolicy.CanAccessUser(currentUserRoles, otherUserRoles);
     }
 
     public async Task<List<UserDto>> FilterAccessibleUsers(IEnumerable<UserDto> users)
     {
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
         return users
-            .Where(user => RolePermissionRules.CanAccessUser(currentUserRoles, user.Roles))
+            .Where(user => RolePermissionPolicy.CanAccessUser(currentUserRoles, user.Roles))
             .ToList();
     }
 
@@ -122,7 +122,7 @@ internal class UserPermissionVerifier(
             return currentUserId == cruiseApplication.FormA.CruiseManagerId
                 || currentUserId == cruiseApplication.FormA.DeputyManagerId;
 
-        return RolePermissionRules.CanAddApplicationForm(
+        return RolePermissionPolicy.CanAddApplicationForm(
             currentUserRoles,
             currentUserId.Value,
             cruiseApplication.FormA.CruiseManagerId,
@@ -182,6 +182,6 @@ internal class UserPermissionVerifier(
         var currentUserRoles = await identityService.GetCurrentUserRoleNames();
 
         var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
-        return RolePermissionRules.CanDeleteUser(currentUserRoles, otherUserRoles);
+        return RolePermissionPolicy.CanDeleteUser(currentUserRoles, otherUserRoles);
     }
 }
