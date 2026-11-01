@@ -1,8 +1,8 @@
 import React from 'react';
 import { useMutation } from '@tanstack/react-query';
 
-import { AppButton } from '@/components/shared/AppButton';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
+import { Button } from '@/components/shared/Button';
+import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
 import { exportCruises } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse, ExportResponse } from '@/api/generated/schemas';
 
@@ -49,16 +49,16 @@ export function ExportForm({ cruises, onDone }: Props) {
   return (
     <>
       <div className="flex flex-col space-y-4">
-        <AppDropdownInput
+        <DropdownInput
           label="Wybierz rok, dla którego chcesz wyeksportować rejsy"
           name="year"
           allOptions={possibleYears.map((year) => ({ value: year, inlineLabel: year }))}
           value={selectedYear.toString()}
           onChange={(year) => setSelectedYear(year)}
         />
-        <AppButton variant="primary" onClick={() => cruiseCsvExportMutation.mutate(selectedYear)}>
+        <Button variant="primary" onClick={() => cruiseCsvExportMutation.mutate(selectedYear)}>
           Eksportuj rejsy z roku {selectedYear} do pliku CSV
-        </AppButton>
+        </Button>
       </div>
       <a className="hidden" ref={anchorRef} />
     </>

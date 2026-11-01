@@ -1,7 +1,7 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { Table } from '@/components/shared/table/Table';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import {
   getPublicationCategoryLabel,
@@ -66,7 +66,7 @@ export function PublicationsSection({ context }: { context: FormBViewModel }) {
   ];
 
   return (
-    <AppAccordion title="10. Publikacje" expandedByDefault>
+    <Accordion title="10. Publikacje" expandedByDefault>
       <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center">
         <h3 className="text-xl">
           Publikacje kategorii <span className="font-semibold">temat</span>
@@ -97,7 +97,7 @@ export function PublicationsSection({ context }: { context: FormBViewModel }) {
         </p>
       </header>
       <div>
-        <AppTable
+        <Table
           data={formA.publications}
           buttons={() => []}
           columns={columns}
@@ -105,6 +105,6 @@ export function PublicationsSection({ context }: { context: FormBViewModel }) {
           emptyTableMessage="Nie dodano żadnej publikacji."
         />
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

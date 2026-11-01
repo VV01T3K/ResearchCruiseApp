@@ -1,7 +1,7 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { Table } from '@/components/shared/table/Table';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { SpubTaskValues } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
 
@@ -37,11 +37,11 @@ export function SPUBTasksSection({ context }: { context: FormBViewModel }) {
   ];
 
   return (
-    <AppAccordion
+    <Accordion
       title="11. Zadania SPUB, z którymi pokrywają się zadania planowane do realizacji na rejsie"
       expandedByDefault
     >
-      <AppTable
+      <Table
         data={formA.spubTasks}
         columns={columns}
         buttons={() => []}
@@ -49,6 +49,6 @@ export function SPUBTasksSection({ context }: { context: FormBViewModel }) {
         variant="table"
         disabled={isReadonly}
       />
-    </AppAccordion>
+    </Accordion>
   );
 }

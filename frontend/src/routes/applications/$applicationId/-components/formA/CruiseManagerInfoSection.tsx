@@ -1,4 +1,4 @@
-import { AppAccordion } from '@/components/shared/AppAccordion';
+import { Accordion } from '@/components/shared/Accordion';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -9,7 +9,7 @@ export function CruiseManagerInfoSection({ context }: { context: FormAViewModel 
   const { isReadonly, initValues } = context;
 
   return (
-    <AppAccordion title="1. Kierownik zgłaszanego rejsu" expandedByDefault>
+    <Accordion title="1. Kierownik zgłaszanego rejsu" expandedByDefault>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <form.AppField name="cruiseManagerId">
           {(field) => (
@@ -50,6 +50,6 @@ export function CruiseManagerInfoSection({ context }: { context: FormAViewModel 
           )}
         </form.AppField>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

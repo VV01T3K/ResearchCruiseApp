@@ -1,7 +1,7 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { Table } from '@/components/shared/table/Table';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
@@ -35,10 +35,10 @@ export function ShipEquipmentsSection({ context }: { context: FormBViewModel }) 
   const { formBInitValues, isReadonly } = context;
 
   return (
-    <AppAccordion title="15. Elementy techniczne statku wykorzystywane podczas rejsu" expandedByDefault>
+    <Accordion title="15. Elementy techniczne statku wykorzystywane podczas rejsu" expandedByDefault>
       <form.AppField name="shipEquipmentsIds">
         {() => (
-          <AppTable
+          <Table
             data={formBInitValues.shipEquipments}
             columns={shipEquipmentColumns(form, isReadonly)}
             buttons={() => []}
@@ -47,6 +47,6 @@ export function ShipEquipmentsSection({ context }: { context: FormBViewModel }) 
           />
         )}
       </form.AppField>
-    </AppAccordion>
+    </Accordion>
   );
 }

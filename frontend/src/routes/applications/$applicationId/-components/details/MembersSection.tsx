@@ -1,8 +1,8 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { NumberInput } from '@/components/shared/inputs/NumberInput';
+import { Table } from '@/components/shared/table/Table';
 import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
 import { NamedUgTeam } from '@/api/generated/schemas';
 import type { GuestTeamFields } from '@/api/generated/schemas';
@@ -27,7 +27,7 @@ export function MembersSection() {
       header: 'Liczba pracowników',
       accessorFn: (row) => row.noOfEmployees,
       cell: ({ row }) => (
-        <AppNumberInput
+        <NumberInput
           name={`ugTeams[${row.index}].noOfEmployees`}
           value={parseInt(row.original.noOfEmployees)}
           minimum={0}
@@ -49,7 +49,7 @@ export function MembersSection() {
       header: 'Liczba studentów',
       accessorFn: (row) => row.noOfStudents,
       cell: ({ row }) => (
-        <AppNumberInput
+        <NumberInput
           name={`ugTeams[${row.index}].noOfStudents`}
           value={parseInt(row.original.noOfStudents)}
           minimum={0}
@@ -82,7 +82,7 @@ export function MembersSection() {
       header: 'Liczba osób',
       accessorFn: (row) => row.noOfPersons,
       cell: ({ row }) => (
-        <AppNumberInput
+        <NumberInput
           name={`guestTeams[${row.index}].noOfPersons`}
           value={Number(row.original.noOfPersons)}
           minimum={0}
@@ -98,9 +98,9 @@ export function MembersSection() {
   ];
 
   return (
-    <AppAccordion title="5. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
+    <Accordion title="5. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
       <div className="grid grid-cols-1 gap-x-16 lg:grid-cols-2">
-        <AppTable
+        <Table
           columns={ugTeamsColumns}
           data={evaluation.ugTeams}
           emptyTableMessage="Nie dodano żadnego zespołu."
@@ -108,7 +108,7 @@ export function MembersSection() {
           className="mt-0"
         />
 
-        <AppTable
+        <Table
           columns={guestTeamsColumns}
           data={evaluation.guestTeams}
           emptyTableMessage="Nie dodano żadnego zespołu."
@@ -117,9 +117,9 @@ export function MembersSection() {
         />
 
         <div className="col-span-2">
-          <AppNumberInput name="Punkty" value={parseInt(evaluation.ugUnitsPoints)} label="Punkty" disabled />
+          <NumberInput name="Punkty" value={parseInt(evaluation.ugUnitsPoints)} label="Punkty" disabled />
         </div>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

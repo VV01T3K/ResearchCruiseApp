@@ -1,7 +1,7 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { Table } from '@/components/shared/table/Table';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import {
   type ApplicationEvaluation,
@@ -36,9 +36,9 @@ export function ResearchTasksSection() {
   ];
 
   return (
-    <AppAccordion title="2. Zadania do zrealizowania w trakcie rejsu" expandedByDefault>
+    <Accordion title="2. Zadania do zrealizowania w trakcie rejsu" expandedByDefault>
       <div className="pb-2">
-        <AppTable
+        <Table
           data={evaluation.formAResearchTasks}
           columns={columns}
           buttons={(defaultButtons) => [...defaultButtons]}
@@ -46,6 +46,6 @@ export function ResearchTasksSection() {
           disabled
         />
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

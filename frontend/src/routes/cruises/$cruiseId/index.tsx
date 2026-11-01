@@ -14,9 +14,9 @@ import {
   XIcon,
 } from '@phosphor-icons/react';
 import React from 'react';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppModal } from '@/components/shared/AppModal';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Modal } from '@/components/shared/Modal';
 import { toast } from '@/components/shared/layout/toast';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
@@ -142,26 +142,26 @@ function CruiseDetailsPage() {
     if (editMode) {
       return (
         <>
-          <AppButton
+          <Button
             className="w-36 !justify-center gap-4 lg:w-48"
             variant="primaryOutline"
             onClick={() => (form.state.isDirty ? setPendingDiscard('cancel') : discard('cancel'))}
           >
             <XIcon className="h-4 w-4" />
             Anuluj
-          </AppButton>
-          <AppButton
+          </Button>
+          <Button
             className="w-36 !justify-center gap-4 lg:w-48"
             variant="primaryOutline"
             onClick={() => (form.state.isDirty ? setPendingDiscard('revert') : discard('revert'))}
           >
             <ArrowClockwiseIcon className="h-4 w-4" />
             Cofnij zmiany
-          </AppButton>
-          <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={() => void form.handleSubmit()}>
+          </Button>
+          <Button className="w-36 !justify-center gap-4 lg:w-48" onClick={() => void form.handleSubmit()}>
             <FloppyDiskIcon weight="fill" className="h-4 w-4" />
             Zapisz rejs
-          </AppButton>
+          </Button>
         </>
       );
     }
@@ -170,7 +170,7 @@ function CruiseDetailsPage() {
       case 'new':
         return (
           <>
-            <AppButton
+            <Button
               className="w-36 !justify-center gap-4 lg:w-64"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
@@ -178,20 +178,20 @@ function CruiseDetailsPage() {
             >
               <PencilSimpleIcon className="h-4 w-4" />
               Edytuj
-            </AppButton>
-            <AppButton
+            </Button>
+            <Button
               className="w-36 !justify-center gap-4 lg:w-64"
               onClick={() => setIsConfirmAcceptanceModalOpen(true)}
             >
               <CheckIcon className="h-4 w-4" />
               Zatwierdź rejs
-            </AppButton>
+            </Button>
           </>
         );
       case 'confirmed':
         return (
           <>
-            <AppButton
+            <Button
               className="w-32 !justify-center gap-4 lg:w-40"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
@@ -199,39 +199,39 @@ function CruiseDetailsPage() {
             >
               <PencilSimpleIcon className="h-4 w-4" />
               Edytuj
-            </AppButton>
-            <AppButton
+            </Button>
+            <Button
               className="w-32 !justify-center gap-4 lg:w-40"
               variant="primaryOutline"
               onClick={() => setIsConfirmRevertModalOpen(true)}
             >
               <ArrowClockwiseIcon className="h-4 w-4" />
               Cofnij status
-            </AppButton>
-            <AppButton
+            </Button>
+            <Button
               className="w-32 !justify-center gap-4 lg:w-40"
               variant="dangerOutline"
               onClick={() => setIsConfirmDeletionModalOpen(true)}
             >
               <TrashIcon className="h-4 w-4" />
               Usuń rejs
-            </AppButton>
-            <AppButton className="w-32 !justify-center gap-4 lg:w-40" onClick={() => setIsConfirmEndModalOpen(true)}>
+            </Button>
+            <Button className="w-32 !justify-center gap-4 lg:w-40" onClick={() => setIsConfirmEndModalOpen(true)}>
               <CheckIcon className="h-4 w-4" />
               Zakończ rejs
-            </AppButton>
+            </Button>
           </>
         );
       case 'ended':
         return (
-          <AppButton
+          <Button
             className="w-36 !justify-center gap-4 lg:w-48"
             variant="dangerOutline"
             onClick={() => setIsConfirmRevertModalOpen(true)}
           >
             <ArrowClockwiseIcon className="h-4 w-4" />
             Cofnij status
-          </AppButton>
+          </Button>
         );
       default:
         return null;
@@ -240,7 +240,7 @@ function CruiseDetailsPage() {
 
   return (
     <>
-      <AppLayout title={`Szczegóły rejsu nr. ${cruiseQuery.data?.number}`}>
+      <Layout title={`Szczegóły rejsu nr. ${cruiseQuery.data?.number}`}>
         <form.AppForm>
           <FormView
             cruise={cruiseQuery.data}
@@ -249,29 +249,29 @@ function CruiseDetailsPage() {
             buttons={getButtons()}
           />
         </form.AppForm>
-      </AppLayout>
+      </Layout>
       <UnsavedChangesGuard form={form} disabled={!editMode} />
-      <AppModal title="Odrzucić zmiany?" isOpen={!!pendingDiscard} onClose={() => setPendingDiscard(undefined)}>
+      <Modal title="Odrzucić zmiany?" isOpen={!!pendingDiscard} onClose={() => setPendingDiscard(undefined)}>
         <div className="space-y-4">
           <p>Formularz zawiera niezapisane zmiany. Jeśli je odrzucisz, zostaną utracone.</p>
           <div className="flex flex-wrap justify-end gap-4">
-            <AppButton variant="primaryOutline" onClick={() => setPendingDiscard(undefined)}>
+            <Button variant="primaryOutline" onClick={() => setPendingDiscard(undefined)}>
               Wróć do edycji
-            </AppButton>
-            <AppButton variant="danger" onClick={() => pendingDiscard && discard(pendingDiscard)}>
+            </Button>
+            <Button variant="danger" onClick={() => pendingDiscard && discard(pendingDiscard)}>
               Odrzuć zmiany
-            </AppButton>
+            </Button>
           </div>
         </div>
-      </AppModal>
+      </Modal>
 
-      <AppModal
+      <Modal
         title={`Czy na pewno chcesz zatwierdzić rejs nr. ${cruiseQuery.data?.number}?`}
         isOpen={isConfirmAcceptanceModalOpen}
         onClose={() => setIsConfirmAcceptanceModalOpen(false)}
       >
         <div className="mt-8 flex flex-row gap-4">
-          <AppButton
+          <Button
             variant="primary"
             className="basis-2/3"
             onClick={() =>
@@ -283,8 +283,8 @@ function CruiseDetailsPage() {
             disabled={confirmCruiseMutation.isPending}
           >
             Potwierdź rejs nr. {cruiseQuery.data?.number}
-          </AppButton>
-          <AppButton
+          </Button>
+          <Button
             variant="primaryOutline"
             className="basis-1/3"
             onClick={() => {
@@ -293,11 +293,11 @@ function CruiseDetailsPage() {
             disabled={confirmCruiseMutation.isPending}
           >
             Anuluj
-          </AppButton>
+          </Button>
         </div>
-      </AppModal>
+      </Modal>
 
-      <AppModal
+      <Modal
         title={`Czy na pewno chcesz awaryjnie usunąć rejs nr. ${cruiseQuery.data?.number}?`}
         isOpen={isConfirmDeletionModalOpen}
         onClose={() => setIsConfirmDeletionModalOpen(false)}
@@ -305,7 +305,7 @@ function CruiseDetailsPage() {
         Rejs zostanie usunięty, a przypisane do niego zgłoszenia wrócą do statusu „Zaakceptowane” i będzie można je
         ponownie zaplanować.
         <div className="mt-4 flex flex-row gap-4">
-          <AppButton
+          <Button
             variant="danger"
             className="basis-2/3"
             onClick={() =>
@@ -329,8 +329,8 @@ function CruiseDetailsPage() {
             disabled={deleteCruiseMutation.isPending}
           >
             Potwierdź usunięcie rejsu nr. {cruiseQuery.data?.number}
-          </AppButton>
-          <AppButton
+          </Button>
+          <Button
             variant="primaryOutline"
             className="basis-1/3"
             onClick={() => {
@@ -339,17 +339,17 @@ function CruiseDetailsPage() {
             disabled={deleteCruiseMutation.isPending}
           >
             Anuluj
-          </AppButton>
+          </Button>
         </div>
-      </AppModal>
+      </Modal>
 
-      <AppModal
+      <Modal
         title={`Czy na pewno chcesz oznaczyć rejs nr. ${cruiseQuery.data?.number} jako zakończony?`}
         isOpen={isConfirmEndModalOpen}
         onClose={() => setIsConfirmEndModalOpen(false)}
       >
         <div className="mt-8 flex flex-row gap-4">
-          <AppButton
+          <Button
             variant="primary"
             className="basis-2/3"
             onClick={() =>
@@ -361,8 +361,8 @@ function CruiseDetailsPage() {
             disabled={endCruiseMutation.isPending}
           >
             Oznacz rejs nr. {cruiseQuery.data?.number} jako zakończony
-          </AppButton>
-          <AppButton
+          </Button>
+          <Button
             variant="primaryOutline"
             className="basis-1/3"
             onClick={() => {
@@ -371,11 +371,11 @@ function CruiseDetailsPage() {
             disabled={endCruiseMutation.isPending}
           >
             Anuluj
-          </AppButton>
+          </Button>
         </div>
-      </AppModal>
+      </Modal>
 
-      <AppModal
+      <Modal
         title={`Czy na pewno chcesz cofnąć status rejsu nr. ${cruiseQuery.data?.number}?`}
         isOpen={isConfirmRevertModalOpen}
         onClose={() => setIsConfirmRevertModalOpen(false)}
@@ -383,7 +383,7 @@ function CruiseDetailsPage() {
         {cruiseQuery.data?.status === 'confirmed' && <>Status rejsu zostanie zmieniony z "Potwierdzony" na "Nowy".</>}
         {cruiseQuery.data?.status === 'ended' && <>Status rejsu zostanie zmieniony z "Zakończony" na "Potwierdzony".</>}
         <div className="mt-4 flex flex-row gap-4">
-          <AppButton
+          <Button
             variant="dangerOutline"
             className="basis-2/3"
             onClick={() =>
@@ -395,8 +395,8 @@ function CruiseDetailsPage() {
             disabled={revertCruiseStatusMutation.isPending}
           >
             Cofnij status rejsu nr. {cruiseQuery.data?.number}
-          </AppButton>
-          <AppButton
+          </Button>
+          <Button
             variant="primaryOutline"
             className="basis-1/3"
             onClick={() => {
@@ -405,9 +405,9 @@ function CruiseDetailsPage() {
             disabled={revertCruiseStatusMutation.isPending}
           >
             Anuluj
-          </AppButton>
+          </Button>
         </div>
-      </AppModal>
+      </Modal>
     </>
   );
 }

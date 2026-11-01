@@ -6,14 +6,14 @@ import { ColumnFiltersState, SortingState, functionalUpdate } from '@tanstack/re
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { MagnifyingGlassPlusIcon } from '@phosphor-icons/react';
 import { useMemo, useState } from 'react';
-import { AppAvatar } from '@/components/shared/AppAvatar';
-import { AppBadge } from '@/components/shared/AppBadge';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppGuard } from '@/components/shared/AppGuard';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppLink } from '@/components/shared/AppLink';
-import { AppLoader } from '@/components/shared/layout/AppLoader';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Avatar } from '@/components/shared/Avatar';
+import { Badge } from '@/components/shared/Badge';
+import { Button } from '@/components/shared/Button';
+import { Guard } from '@/components/shared/Guard';
+import { Layout } from '@/components/shared/Layout';
+import { Link } from '@/components/shared/Link';
+import { Loader } from '@/components/shared/layout/Loader';
+import { Table } from '@/components/shared/table/Table';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
 import { formatDate, useNow } from '@/lib/dateUtils';
 import {
@@ -149,7 +149,7 @@ function ApplicationsPage() {
       accessorFn: (row) => getPersonName(row.mainManager),
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
-          <AppAvatar
+          <Avatar
             fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
             variant="small"
           />
@@ -169,18 +169,18 @@ function ApplicationsPage() {
         const isFormBReadOnly = !canRevertFormB(row.original.status);
         return (
           <div className="flex flex-col gap-1">
-            <AppLink disabled={!row.original.hasFormA} href={`/applications/${row.original.id}/formA`}>
+            <Link disabled={!row.original.hasFormA} href={`/applications/${row.original.id}/formA`}>
               Formularz A
-            </AppLink>
-            <AppLink
+            </Link>
+            <Link
               disabled={!row.original.hasFormB}
               href={`/applications/${row.original.id}/formB?mode=${isFormBReadOnly ? 'view' : 'preview'}`}
             >
               Formularz B
-            </AppLink>
-            <AppLink disabled={!row.original.hasFormC} href={`/applications/${row.original.id}/formC`}>
+            </Link>
+            <Link disabled={!row.original.hasFormC} href={`/applications/${row.original.id}/formC`}>
               Formularz C
-            </AppLink>
+            </Link>
           </div>
         );
       },
@@ -189,7 +189,7 @@ function ApplicationsPage() {
     {
       header: 'Punkty',
       accessorFn: (row) => `${row.points} pkt.`,
-      cell: ({ row }) => <AppBadge>{row.original.points} pkt.</AppBadge>,
+      cell: ({ row }) => <Badge>{row.original.points} pkt.</Badge>,
       enableSorting: false,
       enableColumnFilter: false,
       size: 87,
@@ -212,41 +212,41 @@ function ApplicationsPage() {
               : null}
           </p>
           {row.original.status === CruiseApplicationStatus.enum.draft && (
-            <AppButton
+            <Button
               className="ml-auto sm:mx-auto"
               size="sm"
               type="link"
               href={`/applications/${row.original.id}/formA?mode=edit`}
             >
               Kontynuuj wypełnianie
-            </AppButton>
+            </Button>
           )}
           {row.original.status === CruiseApplicationStatus.enum.formBRequired && (
-            <AppGuard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
-              <AppButton
+            <Guard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
+              <Button
                 className="ml-auto sm:mx-auto"
                 size="sm"
                 type="link"
                 href={`/applications/${row.original.id}/formB?mode=edit`}
               >
                 Wypełnij
-              </AppButton>
-            </AppGuard>
+              </Button>
+            </Guard>
           )}
           {row.original.status === CruiseApplicationStatus.enum.undertaken && (
             <div className="flex flex-col items-center gap-2">
-              <AppGuard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
-                <AppButton
+              <Guard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
+                <Button
                   className="ml-auto sm:mx-auto"
                   size="sm"
                   type="link"
                   href={`/applications/${row.original.id}/formC?mode=edit`}
                 >
                   Wypełnij formularz C
-                </AppButton>
-              </AppGuard>
+                </Button>
+              </Guard>
               <div>
-                <AppBadge variant="success">{row.original.effectsDoneRate} efektów</AppBadge>
+                <Badge variant="success">{row.original.effectsDoneRate} efektów</Badge>
               </div>
             </div>
           )}
@@ -258,10 +258,10 @@ function ApplicationsPage() {
       header: 'Akcje',
       cell: ({ row }) => (
         <>
-          <AppButton type="link" size="sm" href={`/applications/${row.original.id}/details`} className="flex gap-2">
+          <Button type="link" size="sm" href={`/applications/${row.original.id}/details`} className="flex gap-2">
             Szczegóły
             <MagnifyingGlassPlusIcon className="h-4 w-4" />
-          </AppButton>
+          </Button>
         </>
       ),
       size: 128,
@@ -269,13 +269,13 @@ function ApplicationsPage() {
   ];
 
   if (applicationsQuery.isPending) {
-    return <AppLoader />;
+    return <Loader />;
   }
 
   return (
     <>
-      <AppLayout title="Zgłoszenia" variant="wide">
-        <AppTable
+      <Layout title="Zgłoszenia" variant="wide">
+        <Table
           data={applications}
           virtualized
           getRowId={(application) => application.id}
@@ -301,7 +301,7 @@ function ApplicationsPage() {
             fetchNextPage: () => void applicationsQuery.fetchNextPage(),
           }}
         />
-      </AppLayout>
+      </Layout>
     </>
   );
 }

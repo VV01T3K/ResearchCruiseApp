@@ -1,4 +1,4 @@
-import { AppBadge } from '@/components/shared/AppBadge';
+import { Badge } from '@/components/shared/Badge';
 import type { CruiseResponse } from '@/api/generated/schemas';
 
 type Props = {
@@ -6,11 +6,11 @@ type Props = {
 };
 export function StatusBadge({ status }: Props) {
   if (status === 'new') {
-    return <AppBadge variant="primary">Nowy</AppBadge>;
+    return <Badge variant="primary">Nowy</Badge>;
   } else if (status === 'confirmed') {
-    return <AppBadge variant="success">Potwierdzony</AppBadge>;
+    return <Badge variant="success">Potwierdzony</Badge>;
   } else if (status === 'ended') {
-    return <AppBadge variant="info">Zakończony</AppBadge>;
+    return <Badge variant="info">Zakończony</Badge>;
   } else {
     throw new Error(`Unknown cruise status: ${String(status)}`);
   }

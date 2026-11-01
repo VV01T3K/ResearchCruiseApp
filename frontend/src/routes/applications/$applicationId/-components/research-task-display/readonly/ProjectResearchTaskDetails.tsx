@@ -1,6 +1,6 @@
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
+import { Input } from '@/components/shared/inputs/Input';
+import { NumberInput } from '@/components/shared/inputs/NumberInput';
+import { MonthPickerInput } from '@/components/shared/inputs/dates/MonthPickerInput';
 import type { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 export function ProjectResearchTaskDetails({ data }: Props) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <AppInput
+      <Input
         name="researchTasks[].title"
         value={data.title}
         label="Tytuł"
@@ -18,21 +18,16 @@ export function ProjectResearchTaskDetails({ data }: Props) {
         disabled={true}
       />
 
-      <AppMonthPickerInput
+      <MonthPickerInput
         name="researchTasks[].startDate"
         value={data.startDate}
         label="Data rozpoczęcia"
         disabled={true}
       />
 
-      <AppMonthPickerInput
-        name="researchTasks[].endDate"
-        value={data.endDate}
-        label="Data zakończenia"
-        disabled={true}
-      />
+      <MonthPickerInput name="researchTasks[].endDate" value={data.endDate} label="Data zakończenia" disabled={true} />
 
-      <AppNumberInput
+      <NumberInput
         nullable
         name="researchTasks[].financingAmount"
         value={data.financingAmount}
@@ -42,7 +37,7 @@ export function ProjectResearchTaskDetails({ data }: Props) {
         disabled={true}
       />
 
-      <AppNumberInput
+      <NumberInput
         nullable
         name="researchTasks[].securedAmount"
         value={data.securedAmount}

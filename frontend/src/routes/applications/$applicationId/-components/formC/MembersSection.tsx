@@ -1,12 +1,12 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { Button } from '@/components/shared/Button';
+import { Input } from '@/components/shared/inputs/Input';
+import { DatePickerInput } from '@/components/shared/inputs/dates/DatePickerInput';
+import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
@@ -82,7 +82,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
+            <TableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
               }}
@@ -141,7 +141,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
+            <TableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
               }}
@@ -169,14 +169,14 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
       accessorFn: (row) => `${row.title} ${row.firstName} ${row.lastName}`,
       cell: ({ row }) => (
         <div className="grid grid-cols-5 gap-2">
-          <AppInput value={formB.crewMembers[row.index].title} label="Tytuł" disabled />
-          <AppInput
+          <Input value={formB.crewMembers[row.index].title} label="Tytuł" disabled />
+          <Input
             value={formB.crewMembers[row.index].firstName}
             label="Imiona"
             containerClassName="col-span-2"
             disabled
           />
-          <AppInput
+          <Input
             value={formB.crewMembers[row.index].lastName}
             label="Nazwisko"
             containerClassName="col-span-2"
@@ -192,16 +192,16 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
       enableSorting: false,
       cell: ({ row }) => (
         <div className="grid grid-cols-2 gap-2">
-          <AppInput value={formB.crewMembers[row.index].birthPlace} label="Miejsce urodzenia" disabled />
-          <AppDatePickerInput
+          <Input value={formB.crewMembers[row.index].birthPlace} label="Miejsce urodzenia" disabled />
+          <DatePickerInput
             name="birthPlace"
             value={formB.crewMembers[row.index].birthDate}
             label="Data urodzenia"
             disabled
           />
-          <AppInput value={formB.crewMembers[row.index].documentNumber} label="Numer ID dokumentu" disabled />
+          <Input value={formB.crewMembers[row.index].documentNumber} label="Numer ID dokumentu" disabled />
 
-          <AppDatePickerInput
+          <DatePickerInput
             name="documentExpiryDate"
             value={formB.crewMembers[row.index].documentExpiryDate}
             label="Data ważności dokumentu"
@@ -217,19 +217,19 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
       enableSorting: false,
       accessorFn: (row) => row.institution,
       cell: ({ row }) => (
-        <AppInput value={formB.crewMembers[row.index].institution} placeholder="Wprowadź nazwę jednostki" disabled />
+        <Input value={formB.crewMembers[row.index].institution} placeholder="Wprowadź nazwę jednostki" disabled />
       ),
       size: 20,
     },
   ];
 
   return (
-    <AppAccordion title="9. Zespoły badawcze, które uczestniczyły w rejsie" expandedByDefault>
+    <Accordion title="9. Zespoły badawcze, które uczestniczyły w rejsie" expandedByDefault>
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
         <form.AppField name="ugTeams" mode="array">
           {(field) => (
             <div>
-              <AppTable
+              <Table
                 className="mt-0"
                 columns={getUgTeamsColumns((index) => {
                   field.removeValue(index);
@@ -262,14 +262,14 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
+              <InputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         </form.AppField>
         <form.AppField name="guestTeams" mode="array">
           {(field) => (
             <div>
-              <AppTable
+              <Table
                 className="mt-0"
                 columns={getGuestTeams((index) => {
                   field.removeValue(index);
@@ -277,7 +277,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                 })}
                 data={field.state.value}
                 buttons={() => [
-                  <AppButton
+                  <Button
                     key="new"
                     variant="primary"
                     onClick={() => {
@@ -288,7 +288,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                     disabled={isReadonly}
                   >
                     Dodaj nowy zespół
-                  </AppButton>,
+                  </Button>,
                   <DropdownElementSelectorButton
                     key="historical"
                     options={formAInitValues.historicalGuestInstitutions.map((institution) => ({
@@ -309,12 +309,12 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
+              <InputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         </form.AppField>
       </div>
-      <AppTable
+      <Table
         columns={crewMembersColumns}
         data={formB.crewMembers}
         buttons={() => []}
@@ -322,6 +322,6 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
         variant="form"
         disabled
       />
-    </AppAccordion>
+    </Accordion>
   );
 }

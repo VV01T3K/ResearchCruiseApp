@@ -1,11 +1,11 @@
 import { mapPublicationToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppYearPickerInput } from '@/components/shared/inputs/dates/AppYearPickerInput';
-import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { YearPickerInput } from '@/components/shared/inputs/dates/YearPickerInput';
+import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { groupBy } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
@@ -100,7 +100,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
         cell: ({ row }) => (
           <form.AppField name={`publications[${row.index}].year`}>
             {(field) => (
-              <AppYearPickerInput
+              <YearPickerInput
                 name={field.name}
                 value={field.state.value ?? undefined}
                 onChange={(value) => field.handleChange(value ?? null)}
@@ -130,7 +130,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
+            <TableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
               }}
@@ -144,7 +144,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
   }
 
   return (
-    <AppAccordion title="9. Publikacje" expandedByDefault>
+    <Accordion title="9. Publikacje" expandedByDefault>
       <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center">
         <h3 className="text-xl">
           Publikacje kategorii <span className="font-semibold">temat</span>
@@ -178,7 +178,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
         <form.AppField name="publications" mode="array">
           {(field) => (
             <>
-              <AppTable
+              <Table
                 columns={getColumns((index) => {
                   field.removeValue(index);
                   field.handleBlur();
@@ -266,11 +266,11 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
+              <InputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </>
           )}
         </form.AppField>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

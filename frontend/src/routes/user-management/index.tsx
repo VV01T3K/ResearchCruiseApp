@@ -4,13 +4,13 @@ import { Role, getRoleLabel } from '@/integrations/auth/types';
 import { RowSelectionState } from '@tanstack/react-table';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import React from 'react';
-import { AppAvatar } from '@/components/shared/AppAvatar';
-import { AppBadge } from '@/components/shared/AppBadge';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppModal } from '@/components/shared/AppModal';
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Avatar } from '@/components/shared/Avatar';
+import { Badge } from '@/components/shared/Badge';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Modal } from '@/components/shared/Modal';
+import { Checkbox } from '@/components/shared/inputs/Checkbox';
+import { Table } from '@/components/shared/table/Table';
 import { cn } from '@/lib/utils';
 import type { UserResponse } from '@/api/generated/schemas';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
@@ -56,7 +56,7 @@ function UserManagementPage() {
     {
       id: 'selector',
       header: ({ table }) => (
-        <AppCheckbox
+        <Checkbox
           name="selectAllUsers"
           onChange={(x) => table.toggleAllRowsSelected(x)}
           checked={table.getIsAllRowsSelected()}
@@ -64,7 +64,7 @@ function UserManagementPage() {
         />
       ),
       cell: ({ row }) => (
-        <AppCheckbox
+        <Checkbox
           name={`selectUser-${row.id}`}
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}
@@ -81,7 +81,7 @@ function UserManagementPage() {
       id: 'avatar',
       header: undefined,
       accessorFn: (row) => `${row.firstName} ${row.lastName}`,
-      cell: (cell) => <AppAvatar fullName={cell.getValue() as string} variant="small" />,
+      cell: (cell) => <Avatar fullName={cell.getValue() as string} variant="small" />,
       enableColumnFilter: false,
       enableSorting: false,
       size: 5,
@@ -102,7 +102,7 @@ function UserManagementPage() {
       header: 'Stan Konta',
       cell: (cell) => {
         const value = cell.getValue() as 'Zaakceptowane' | 'Niezaakceptowane';
-        return <AppBadge variant={value === 'Zaakceptowane' ? 'success' : 'danger'}>{value}</AppBadge>;
+        return <Badge variant={value === 'Zaakceptowane' ? 'success' : 'danger'}>{value}</Badge>;
       },
       size: 10,
     },
@@ -112,7 +112,7 @@ function UserManagementPage() {
       header: 'Stan Emaila',
       cell: (cell) => {
         const value = cell.getValue() as 'Zweryfikowany' | 'Niezweryfikowany';
-        return <AppBadge variant={value === 'Zweryfikowany' ? 'success' : 'danger'}>{value}</AppBadge>;
+        return <Badge variant={value === 'Zweryfikowany' ? 'success' : 'danger'}>{value}</Badge>;
       },
       size: 10,
     },
@@ -128,12 +128,9 @@ function UserManagementPage() {
       header: undefined,
       cell: (cell) => (
         <div className="flex items-center justify-around">
-          <AppButton
-            variant="primary"
-            onClick={() => setModalState({ state: 'editUserModal', user: cell.row.original })}
-          >
+          <Button variant="primary" onClick={() => setModalState({ state: 'editUserModal', user: cell.row.original })}>
             Edytuj
-          </AppButton>
+          </Button>
         </div>
       ),
     },
@@ -141,18 +138,18 @@ function UserManagementPage() {
 
   return (
     <>
-      <AppLayout title="Zarządzanie użytkownikami">
-        <AppTable
+      <Layout title="Zarządzanie użytkownikami">
+        <Table
           data={usersQuery.data}
           columns={columns}
           rowSelectionState={selectedUsers}
           setRowSelectionState={setSelectedUsers}
           getRowId={(row) => row.id}
           buttons={(defaultButtons) => [
-            <AppButton key="addUser" variant="primary" onClick={() => setModalState({ state: 'newUserModal' })}>
+            <Button key="addUser" variant="primary" onClick={() => setModalState({ state: 'newUserModal' })}>
               Dodaj użytkownika
-            </AppButton>,
-            <AppButton
+            </Button>,
+            <Button
               key="groupActions"
               variant="warning"
               disabled={!Object.keys(selectedUsers).length}
@@ -160,13 +157,13 @@ function UserManagementPage() {
               onClick={() => setModalState({ state: 'groupActionsModal' })}
             >
               Akcje Grupowe
-            </AppButton>,
+            </Button>,
             ...defaultButtons,
           ]}
         />
-      </AppLayout>
+      </Layout>
 
-      <AppModal
+      <Modal
         isOpen={modalState.state === 'newUserModal'}
         onClose={() => void handleModalClose()}
         title="Dodaj użytkownika"
@@ -177,8 +174,8 @@ function UserManagementPage() {
           close={() => void handleModalClose()}
           allowToRemoveUsers={false}
         />
-      </AppModal>
-      <AppModal
+      </Modal>
+      <Modal
         isOpen={modalState.state === 'groupActionsModal' && Object.keys(selectedUsers).length > 0}
         onClose={() => void handleModalClose()}
         title="Akcje grupowe"
@@ -189,8 +186,8 @@ function UserManagementPage() {
           allowToRemoveUsers={currentUserRole === Role.Administrator || currentUserRole === Role.ShipOwner}
           close={() => void handleModalClose()}
         />
-      </AppModal>
-      <AppModal
+      </Modal>
+      <Modal
         isOpen={modalState.state === 'editUserModal' && 'user' in modalState}
         onClose={() => void handleModalClose()}
         title="Edytuj użytkownika"
@@ -202,7 +199,7 @@ function UserManagementPage() {
           close={() => void handleModalClose()}
           allowToRemoveUsers={currentUserRole === Role.Administrator || currentUserRole === Role.ShipOwner}
         />
-      </AppModal>
+      </Modal>
     </>
   );
 }

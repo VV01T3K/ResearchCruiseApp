@@ -1,4 +1,4 @@
-import { AppAccordion } from '@/components/shared/AppAccordion';
+import { Accordion } from '@/components/shared/Accordion';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -8,7 +8,7 @@ export function AdditionalDescriptionSection({ context }: { context: FormCViewMo
   const { isReadonly } = context;
 
   return (
-    <AppAccordion title="18. Krótki opis podsumowujący dany rejs" expandedByDefault>
+    <Accordion title="18. Krótki opis podsumowujący dany rejs" expandedByDefault>
       <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center text-sm">
         Do ewentualnego wykorzystania do celów promocyjnych, na stronie internetowej, FB itp.; można załączyć zdjęcia w
         osobnych plikach
@@ -35,6 +35,6 @@ export function AdditionalDescriptionSection({ context }: { context: FormCViewMo
           />
         )}
       </form.AppField>
-    </AppAccordion>
+    </Accordion>
   );
 }

@@ -1,8 +1,8 @@
 import { FloppyDiskIcon, PaperPlaneTiltIcon, PrinterIcon } from '@phosphor-icons/react';
 
-import { AppActionsSection } from '@/components/shared/AppActionsSection';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppGuard } from '@/components/shared/AppGuard';
+import { FloatingActionsSection } from '@/components/shared/FloatingActionsSection';
+import { Button } from '@/components/shared/Button';
+import { Guard } from '@/components/shared/Guard';
 import { Role } from '@/integrations/auth/types';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 
@@ -17,21 +17,21 @@ export function ActionsSection({ onSaveDraft, onRevertToEdit, onPrint, disabled,
   const { isReadonly } = context;
 
   return (
-    <AppActionsSection>
-      <AppGuard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
+    <FloatingActionsSection>
+      <Guard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
         {isReadonly && !!onRevertToEdit && (
-          <AppButton
+          <Button
             className="w-64 !justify-center gap-4"
             variant="primaryOutline"
             onClick={onRevertToEdit}
             disabled={disabled}
           >
             Cofnij do edycji
-          </AppButton>
+          </Button>
         )}
-      </AppGuard>
+      </Guard>
       {!isReadonly && (
-        <AppButton
+        <Button
           className="w-64 !justify-center gap-4"
           variant="primaryOutline"
           onClick={onSaveDraft}
@@ -39,20 +39,20 @@ export function ActionsSection({ onSaveDraft, onRevertToEdit, onPrint, disabled,
         >
           <FloppyDiskIcon weight="fill" className="h-4 w-4" />
           Zapisz wersję roboczą
-        </AppButton>
+        </Button>
       )}
       {!isReadonly && (
-        <AppButton type="submit" className="w-64 !justify-center gap-4" disabled={disabled}>
+        <Button type="submit" className="w-64 !justify-center gap-4" disabled={disabled}>
           <PaperPlaneTiltIcon weight="fill" className="h-4 w-4" />
           Wyślij
-        </AppButton>
+        </Button>
       )}
       {isReadonly && (
-        <AppButton className="w-64 !justify-center gap-4" onClick={onPrint} disabled={disabled}>
+        <Button className="w-64 !justify-center gap-4" onClick={onPrint} disabled={disabled}>
           <PrinterIcon weight="fill" className="h-4 w-4" />
           Wydrukuj
-        </AppButton>
+        </Button>
       )}
-    </AppActionsSection>
+    </FloatingActionsSection>
   );
 }

@@ -1,5 +1,5 @@
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppAlert } from '@/components/shared/AppAlert';
+import { Accordion } from '@/components/shared/Accordion';
+import { Alert } from '@/components/shared/Alert';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
 import { StatusBadge } from './StatusBadge';
@@ -10,10 +10,7 @@ export function BasicInformationSection({ cruise, isReadonly }: { cruise?: Cruis
   return (
     <form.Subscribe selector={(state) => state.values.shipUnavailable}>
       {(shipUnavailable) => (
-        <AppAccordion
-          title={`1. Podstawowe informacje o ${shipUnavailable ? 'blokadzie' : 'rejsie'}`}
-          expandedByDefault
-        >
+        <Accordion title={`1. Podstawowe informacje o ${shipUnavailable ? 'blokadzie' : 'rejsie'}`} expandedByDefault>
           <>
             {cruise && (
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -29,7 +26,7 @@ export function BasicInformationSection({ cruise, isReadonly }: { cruise?: Cruis
                 </div>
               </div>
             )}
-            {!cruise && <AppAlert>Numer i status rejsu będą dostępne po jego utworzeniu</AppAlert>}
+            {!cruise && <Alert>Numer i status rejsu będą dostępne po jego utworzeniu</Alert>}
             <div className="mt-2 flex flex-col space-y-2">
               <form.AppField name="title">
                 {(field) => (
@@ -42,7 +39,7 @@ export function BasicInformationSection({ cruise, isReadonly }: { cruise?: Cruis
               </form.AppField>
             </div>
           </>
-        </AppAccordion>
+        </Accordion>
       )}
     </form.Subscribe>
   );

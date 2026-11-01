@@ -1,8 +1,8 @@
 import { useSelector } from '@tanstack/react-form';
 import { useState } from 'react';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
+import { Accordion } from '@/components/shared/Accordion';
+import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { useNow } from '@/lib/dateUtils';
 import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
@@ -18,7 +18,7 @@ export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {
   const minimalDateForStartDate = allowPastDates ? undefined : new Date(nowMs);
 
   return (
-    <AppAccordion title="2. Termin rejsu" expandedByDefault>
+    <Accordion title="2. Termin rejsu" expandedByDefault>
       <div className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <form.AppField name="startDate">
@@ -49,7 +49,7 @@ export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {
           </form.AppField>
           {!isReadonly && (
             <div className="lg:col-span-2">
-              <AppCheckbox
+              <Checkbox
                 name="allowPastDates"
                 checked={allowPastDates}
                 onChange={setAllowPastDates}
@@ -59,6 +59,6 @@ export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {
           )}
         </div>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

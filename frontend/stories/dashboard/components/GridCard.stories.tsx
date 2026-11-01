@@ -3,7 +3,7 @@ import { GlobeHemisphereWestIcon } from '@phosphor-icons/react';
 
 import { Grid } from '@/components/dashboard/Grid';
 import { GridCard } from '@/components/dashboard/GridCard';
-import AppBackground from '@/components/shared/layout/AppBackground';
+import Background from '@/components/shared/layout/Background';
 
 const meta = {
   component: GridCard,
@@ -47,7 +47,7 @@ export const WithBackground: Story = {
   decorators: [
     (Story) => (
       <>
-        <AppBackground />
+        <Background />
         <Story />
       </>
     ),

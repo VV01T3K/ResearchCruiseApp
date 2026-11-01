@@ -12,13 +12,13 @@ import { SmileyMehIcon, SmileyMeltingIcon } from '@phosphor-icons/react';
 import config from '@/config';
 import { motion } from 'motion/react';
 import { lazy, Suspense } from 'react';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppLink } from '@/components/shared/AppLink';
-import AppBackground from '@/components/shared/layout/AppBackground';
-import { AppNavbar } from '@/components/shared/layout/AppNavbar';
-import { AppNetworkDisconnectAlert } from '@/components/shared/layout/AppNetworkDisconnectAlert';
-import { AppToaster } from '@/components/shared/layout/AppToaster';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Link } from '@/components/shared/Link';
+import Background from '@/components/shared/layout/Background';
+import { Navbar } from '@/components/shared/layout/Navbar';
+import { NetworkDisconnectAlert } from '@/components/shared/layout/NetworkDisconnectAlert';
+import { Toaster } from '@/components/shared/layout/Toaster';
 import { FeedbackTab } from '@/integrations/sentry/FeedbackTab';
 import { TanStackQueryDevtools } from '@/integrations/tanstack/query/devtools';
 import { AuthSession } from '@/integrations/tanstack/query/AuthSession';
@@ -29,8 +29,8 @@ type RouterContext = {
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
-  notFoundComponent: AppPageNotFoundHandler,
-  errorComponent: AppErrorHandler,
+  notFoundComponent: NotFoundPage,
+  errorComponent: RouteError,
 });
 
 const TanStackRouterDevtools = config.dev
@@ -42,16 +42,16 @@ function RootLayout() {
 
   return (
     <AuthSession>
-      <AppToaster />
+      <Toaster />
       <div className="sticky top-0 z-100">
         <div className="relative z-100">
-          <AppNavbar />
+          <Navbar />
         </div>
         <div className="absolute z-90 w-full">
-          <AppNetworkDisconnectAlert />
+          <NetworkDisconnectAlert />
         </div>
       </div>
-      <AppBackground />
+      <Background />
       <FeedbackTab />
       <main className="flex-1" id="modal-root">
         <motion.div
@@ -74,21 +74,21 @@ function RootLayout() {
   );
 }
 
-function AppErrorHandler({ error }: ErrorComponentProps) {
+function RouteError({ error }: ErrorComponentProps) {
   return (
     <>
-      <AppToaster />
+      <Toaster />
       <div className="sticky top-0 z-100">
         <div className="relative z-100">
-          <AppNavbar />
+          <Navbar />
         </div>
         <div className="absolute z-90 w-full">
-          <AppNetworkDisconnectAlert />
+          <NetworkDisconnectAlert />
         </div>
       </div>
-      <AppBackground />
+      <Background />
       <FeedbackTab />
-      <AppLayout title={'Wystąpił nieoczekiwany błąd'} variant="narrow">
+      <Layout title={'Wystąpił nieoczekiwany błąd'} variant="narrow">
         <div className="space-y-8">
           <div className="h-60">
             <SmileyMeltingIcon />
@@ -98,21 +98,21 @@ function AppErrorHandler({ error }: ErrorComponentProps) {
             <div className="font-semibold">{getProblemDetail(error, 'Nie udało się wczytać strony.')}</div>
           </div>
           <div className="text-center">
-            Prosimy o maila na adres <AppLink href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</AppLink>.
+            Prosimy o maila na adres <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>.
           </div>
-          <AppButton type="link" href="/" className="w-full">
+          <Button type="link" href="/" className="w-full">
             Przejdź do strony głównej
-          </AppButton>
+          </Button>
         </div>
-      </AppLayout>
+      </Layout>
     </>
   );
 }
 
-function AppPageNotFoundHandler() {
+function NotFoundPage() {
   const router = useRouter();
   return (
-    <AppLayout title={'Strona nie znaleziona'} variant="narrow">
+    <Layout title={'Strona nie znaleziona'} variant="narrow">
       <div className="space-y-8">
         <div className="h-60">
           <SmileyMehIcon />
@@ -121,10 +121,10 @@ function AppPageNotFoundHandler() {
           Strona o adresie <span className="font-semibold">{router.state.location.pathname}</span> nie została
           znaleziona.
         </div>
-        <AppButton type="link" href="/" className="w-full">
+        <Button type="link" href="/" className="w-full">
           Przejdź do strony głównej
-        </AppButton>
+        </Button>
       </div>
-    </AppLayout>
+    </Layout>
   );
 }

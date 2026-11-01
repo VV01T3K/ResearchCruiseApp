@@ -2,14 +2,14 @@ import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { ArrowSquareOutIcon, PlusIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppGuard } from '@/components/shared/AppGuard';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppModal } from '@/components/shared/AppModal';
-import { AppTabs } from '@/components/shared/AppTabs';
+import { Button } from '@/components/shared/Button';
+import { Guard } from '@/components/shared/Guard';
+import { Layout } from '@/components/shared/Layout';
+import { Modal } from '@/components/shared/Modal';
+import { Tabs } from '@/components/shared/Tabs';
 import { toast } from '@/components/shared/layout/toast';
 import { Role } from '@/integrations/auth/types';
-import { Calendar } from './-components/Calendar';
+import { CruiseCalendar } from './-components/CruiseCalendar';
 import { ExportForm } from './-components/ExportForm';
 import { TableView } from './-components/TableView';
 import { useAutoPlanCruises, useDeleteCruise, useGetCruisesSuspense } from '@/api/generated/endpoints/cruises.gen';
@@ -44,41 +44,41 @@ function CruisesPage() {
   }
 
   const buttons = [
-    <AppGuard key="autoAddCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
-      <AppButton onClick={autoAddCruises} variant="primaryOutline" disabled={autoAddCruisesMutation.isPending}>
+    <Guard key="autoAddCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
+      <Button onClick={autoAddCruises} variant="primaryOutline" disabled={autoAddCruisesMutation.isPending}>
         Dodaj rejsy automatycznie
-      </AppButton>
-    </AppGuard>,
-    <AppGuard key="newCruise" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
-      <AppButton type="link" href="/cruises/new">
+      </Button>
+    </Guard>,
+    <Guard key="newCruise" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
+      <Button type="link" href="/cruises/new">
         Nowy rejs
         <PlusIcon className="ml-2 h-6 w-6" />
-      </AppButton>
-    </AppGuard>,
-    <AppGuard key="newBlockade" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
-      <AppButton type="link" href="/cruises/new?blockade=true" variant="primaryOutline">
+      </Button>
+    </Guard>,
+    <Guard key="newBlockade" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
+      <Button type="link" href="/cruises/new?blockade=true" variant="primaryOutline">
         Nowa blokada
         <PlusIcon className="ml-2 h-6 w-6" />
-      </AppButton>
-    </AppGuard>,
-    <AppGuard key="exportCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
-      <AppButton onClick={() => setIsExportModalOpen(true)} variant="primaryOutline">
+      </Button>
+    </Guard>,
+    <Guard key="exportCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
+      <Button onClick={() => setIsExportModalOpen(true)} variant="primaryOutline">
         Eksport
         <ArrowSquareOutIcon className="ml-2 h-4 w-4" />
-      </AppButton>
-    </AppGuard>,
+      </Button>
+    </Guard>,
   ];
 
   return (
     <>
-      <AppLayout title="Rejsy">
-        <AppTabs tabNames={['Lista rejsów', 'Kalendarz']}>
+      <Layout title="Rejsy">
+        <Tabs tabNames={['Lista rejsów', 'Kalendarz']}>
           <TableView cruises={cruisesQuery.data} buttons={buttons} deleteCruise={setCruiseSelectedForDeletion} />
-          <Calendar cruises={cruisesQuery.data} buttons={buttons} />
-        </AppTabs>
-      </AppLayout>
+          <CruiseCalendar cruises={cruisesQuery.data} buttons={buttons} />
+        </Tabs>
+      </Layout>
 
-      <AppModal
+      <Modal
         title={`Potwierdź usunięcie rejsu nr. ${cruiseSelectedForDeletion?.number}`}
         isOpen={!!cruiseSelectedForDeletion}
         onClose={() => setCruiseSelectedForDeletion(undefined)}
@@ -86,7 +86,7 @@ function CruisesPage() {
         Usunięcie rejsu jest nieodwracalne. Rejs zostanie usunięty, a przypisane do niego zgłoszenia wrócą do statusu
         „Zaakceptowane” i będzie można je ponownie zaplanować.
         <div className="mt-4 flex flex-row gap-4">
-          <AppButton
+          <Button
             variant="danger"
             className="basis-2/3"
             onClick={() => {
@@ -99,8 +99,8 @@ function CruisesPage() {
             disabled={deleteCruiseMutation.isPending}
           >
             Usuń rejs nr. {cruiseSelectedForDeletion?.number}
-          </AppButton>
-          <AppButton
+          </Button>
+          <Button
             variant="primaryOutline"
             className="basis-1/3"
             onClick={() => {
@@ -109,11 +109,11 @@ function CruisesPage() {
             disabled={deleteCruiseMutation.isPending}
           >
             Anuluj
-          </AppButton>
+          </Button>
         </div>
-      </AppModal>
+      </Modal>
 
-      <AppModal
+      <Modal
         title="Wynik automatycznego planowania"
         isOpen={!!autoPlanResult}
         onClose={() => setAutoPlanResult(undefined)}
@@ -126,11 +126,11 @@ function CruisesPage() {
             </li>
           ))}
         </ul>
-      </AppModal>
+      </Modal>
 
-      <AppModal title={`Eksportuj rejsy`} isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)}>
+      <Modal title={`Eksportuj rejsy`} isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)}>
         <ExportForm cruises={cruisesQuery.data} onDone={() => setIsExportModalOpen(false)} />
-      </AppModal>
+      </Modal>
     </>
   );
 }

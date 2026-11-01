@@ -1,7 +1,7 @@
 import { CheckSquareIcon, XSquareIcon } from '@phosphor-icons/react';
 
-import { AppActionsSection } from '@/components/shared/AppActionsSection';
-import { AppButton } from '@/components/shared/AppButton';
+import { FloatingActionsSection } from '@/components/shared/FloatingActionsSection';
+import { Button } from '@/components/shared/Button';
 
 type Props = {
   onAccept?: () => void;
@@ -9,15 +9,15 @@ type Props = {
 };
 export function SupervisorActionsSection({ onAccept, onDeny }: Props) {
   return (
-    <AppActionsSection>
-      <AppButton className="w-36 !justify-center gap-4 lg:w-48" variant="danger" onClick={onDeny}>
+    <FloatingActionsSection>
+      <Button className="w-36 !justify-center gap-4 lg:w-48" variant="danger" onClick={onDeny}>
         <XSquareIcon weight="fill" className="h-4 w-4" />
         Odrzuć
-      </AppButton>
-      <AppButton className="w-36 !justify-center gap-4 lg:w-48" onClick={onAccept}>
+      </Button>
+      <Button className="w-36 !justify-center gap-4 lg:w-48" onClick={onAccept}>
         <CheckSquareIcon weight="fill" className="h-4 w-4" />
         Zaakceptuj
-      </AppButton>
-    </AppActionsSection>
+      </Button>
+    </FloatingActionsSection>
   );
 }

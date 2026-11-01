@@ -1,10 +1,10 @@
 import { mapContractToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
-import { AppTable } from '@/components/shared/table/AppTable';
-import { AppTableDeleteRowButton } from '@/components/shared/table/AppTableDeleteRowButton';
+import { Accordion } from '@/components/shared/Accordion';
+import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
+import { Table } from '@/components/shared/table/Table';
+import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
@@ -98,7 +98,7 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <AppTableDeleteRowButton
+            <TableDeleteRowButton
               onClick={() => {
                 removeRow(row.index);
               }}
@@ -112,7 +112,7 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
   }
 
   return (
-    <AppAccordion
+    <Accordion
       title="8. Umowy regulujące współpracę, w ramach której zostały zrealizowane zadania badawcze"
       expandedByDefault
     >
@@ -120,7 +120,7 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
         <form.AppField name="contracts" mode="array">
           {(field) => (
             <>
-              <AppTable
+              <Table
                 columns={getColumns((index) => {
                   field.removeValue(index);
                   field.handleBlur();
@@ -171,11 +171,11 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
+              <InputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </>
           )}
         </form.AppField>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

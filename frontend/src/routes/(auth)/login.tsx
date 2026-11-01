@@ -5,9 +5,9 @@ import { loginValidationSchema } from '@/validation/auth';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppLink } from '@/components/shared/AppLink';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useSignIn } from '@/integrations/tanstack/query/auth';
@@ -60,7 +60,7 @@ function LoginPage() {
   }
 
   return (
-    <AppLayout title="Logowanie" variant="narrow" disableBackButton>
+    <Layout title="Logowanie" variant="narrow" disableBackButton>
       <form noValidate onSubmit={handleSubmit} className="px-4">
         <div className="space-y-4">
           <form.AppField name="email">
@@ -72,15 +72,15 @@ function LoginPage() {
           </form.AppField>
 
           <div className="!mt-8 flex flex-wrap items-center justify-end">
-            <AppLink href="/forgot-password">Zapomniałeś hasła?</AppLink>
+            <Link href="/forgot-password">Zapomniałeś hasła?</Link>
           </div>
 
           <div className="mt-8">
             <form.Subscribe selector={(state) => state.isSubmitting}>
               {(isSubmitting) => (
-                <AppButton type="submit" className="w-full" disabled={isSubmitting}>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
                   Zaloguj
-                </AppButton>
+                </Button>
               )}
             </form.Subscribe>
 
@@ -88,10 +88,10 @@ function LoginPage() {
           </div>
 
           <p className="!mt-8">
-            Brak konta? <AppLink href="/register">Zarejestruj się</AppLink>
+            Brak konta? <Link href="/register">Zarejestruj się</Link>
           </p>
         </div>
       </form>
-    </AppLayout>
+    </Layout>
   );
 }

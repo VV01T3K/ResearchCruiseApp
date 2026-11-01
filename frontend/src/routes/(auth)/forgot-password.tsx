@@ -7,9 +7,9 @@ import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppLink } from '@/components/shared/AppLink';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
@@ -65,19 +65,19 @@ function ForgotPasswordPage() {
 
   if (result === 'success') {
     return (
-      <AppLayout title="Przywracanie hasła" variant="narrow">
+      <Layout title="Przywracanie hasła" variant="narrow">
         <p className="text-lg">
           Link do resetowania hasła został wysłany na adres: <span className="font-bold text-primary">{email}</span>
-          <AppButton type="link" href="/login" className="mt-8 w-full">
+          <Button type="link" href="/login" className="mt-8 w-full">
             Wróć do logowania
-          </AppButton>
+          </Button>
         </p>
-      </AppLayout>
+      </Layout>
     );
   }
 
   return (
-    <AppLayout title="Przywracanie hasła" variant="narrow">
+    <Layout title="Przywracanie hasła" variant="narrow">
       <form noValidate className="px-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
           <form.AppField name="email">
@@ -88,17 +88,17 @@ function ForgotPasswordPage() {
         <div className="mt-8">
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
-              <AppButton type="submit" className="w-full" disabled={isSubmitting}>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
                 Przypomnij hasło
-              </AppButton>
+              </Button>
             )}
           </form.Subscribe>
         </div>
 
         <div className="!mt-8 flex flex-wrap items-center justify-end">
-          <AppLink href="/login">Powrót do logowania</AppLink>
+          <Link href="/login">Powrót do logowania</Link>
         </div>
       </form>
-    </AppLayout>
+    </Layout>
   );
 }

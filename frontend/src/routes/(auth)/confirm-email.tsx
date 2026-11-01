@@ -5,10 +5,10 @@ import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { CheckIcon, XIcon } from '@phosphor-icons/react';
 import React from 'react';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppLink } from '@/components/shared/AppLink';
-import { AppLoader } from '@/components/shared/layout/AppLoader';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Link } from '@/components/shared/Link';
+import { Loader } from '@/components/shared/layout/Loader';
 import { useMutation } from '@tanstack/react-query';
 import { confirmEmail } from '@/api/generated/endpoints/auth.gen';
 import { Result } from '@/integrations/auth/types';
@@ -45,13 +45,13 @@ function ConfirmEmailPage() {
   }
 
   if (!result) {
-    return <AppLoader />;
+    return <Loader />;
   }
 
   const title = result === 'success' ? 'Email został potwierdzony' : 'Błąd podczas potwierdzania emaila';
 
   return (
-    <AppLayout title={title} variant="narrow">
+    <Layout title={title} variant="narrow">
       <div className="flex flex-col items-center">
         <div className="h-60">
           {result === 'success' ? <CheckIcon className="text-success" /> : <XIcon className="text-danger" />}
@@ -63,14 +63,14 @@ function ConfirmEmailPage() {
           {result === 'error' && (
             <>
               Wystąpił błąd podczas potwierdzania emaila. Proszę skontaktować się z pomocą{' '}
-              <AppLink href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</AppLink>
+              <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>
             </>
           )}
         </div>
       </div>
-      <AppButton type="link" href="/login" className="mt-6 w-full">
+      <Button type="link" href="/login" className="mt-6 w-full">
         Wróć do logowania
-      </AppButton>
-    </AppLayout>
+      </Button>
+    </Layout>
   );
 }

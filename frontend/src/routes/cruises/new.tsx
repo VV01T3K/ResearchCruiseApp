@@ -7,9 +7,9 @@ import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { ArrowClockwiseIcon, FloppyDiskIcon } from '@phosphor-icons/react';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppModal } from '@/components/shared/AppModal';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Modal } from '@/components/shared/Modal';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
@@ -66,37 +66,37 @@ function NewCruisePage() {
 
   const buttons = (
     <>
-      <AppButton
+      <Button
         className="w-36 !justify-center gap-4 lg:w-64"
         variant="primaryOutline"
         onClick={() => (form.state.isDirty ? setIsDiscardModalOpen(true) : form.reset())}
       >
         <ArrowClockwiseIcon className="h-4 w-4" />
         Wyczyść formularz
-      </AppButton>
-      <AppButton className="w-36 !justify-center gap-4 lg:w-64" type="submit">
+      </Button>
+      <Button className="w-36 !justify-center gap-4 lg:w-64" type="submit">
         <FloppyDiskIcon weight="fill" className="h-4 w-4" />
         Zapisz
-      </AppButton>
+      </Button>
     </>
   );
 
   return (
     <>
-      <AppLayout title={search.blockade ? 'Nowa blokada' : 'Nowy rejs'}>
+      <Layout title={search.blockade ? 'Nowa blokada' : 'Nowy rejs'}>
         <form.AppForm>
           <FormView cruiseApplications={cruiseApplicationsQuery.data} isReadonly={false} buttons={buttons} />
         </form.AppForm>
-      </AppLayout>
+      </Layout>
       <UnsavedChangesGuard form={form} />
-      <AppModal title="Odrzucić zmiany?" isOpen={isDiscardModalOpen} onClose={() => setIsDiscardModalOpen(false)}>
+      <Modal title="Odrzucić zmiany?" isOpen={isDiscardModalOpen} onClose={() => setIsDiscardModalOpen(false)}>
         <div className="space-y-4">
           <p>Formularz zawiera niezapisane zmiany. Jeśli je odrzucisz, zostaną utracone.</p>
           <div className="flex flex-wrap justify-end gap-4">
-            <AppButton variant="primaryOutline" onClick={() => setIsDiscardModalOpen(false)}>
+            <Button variant="primaryOutline" onClick={() => setIsDiscardModalOpen(false)}>
               Wróć do edycji
-            </AppButton>
-            <AppButton
+            </Button>
+            <Button
               variant="danger"
               onClick={() => {
                 form.reset();
@@ -104,10 +104,10 @@ function NewCruisePage() {
               }}
             >
               Odrzuć zmiany
-            </AppButton>
+            </Button>
           </div>
         </div>
-      </AppModal>
+      </Modal>
     </>
   );
 }

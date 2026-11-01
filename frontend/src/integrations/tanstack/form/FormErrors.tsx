@@ -1,5 +1,5 @@
 import { useSelector } from '@tanstack/react-form';
-import { AppAlert } from '@/components/shared/AppAlert';
+import { Alert } from '@/components/shared/Alert';
 import { FeedbackButton } from '@/integrations/sentry/FeedbackButton';
 import { useFormContext } from './context';
 import { getFormLevelErrors } from './errors';
@@ -14,7 +14,7 @@ export function FormErrors() {
 
   return (
     <div data-error="true">
-      <AppAlert variant="danger">
+      <Alert variant="danger">
         <div className="flex-1">
           {errors.length === 1 ? (
             <p>{errors[0]}</p>
@@ -27,7 +27,7 @@ export function FormErrors() {
           )}
         </div>
         <FeedbackButton context={{ origin: 'form' }} className="ms-4" />
-      </AppAlert>
+      </Alert>
     </div>
   );
 }

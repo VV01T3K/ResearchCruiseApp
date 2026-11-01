@@ -1,9 +1,9 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Accordion } from '@/components/shared/Accordion';
+import { FileInput } from '@/components/shared/inputs/FileInput';
+import { Input } from '@/components/shared/inputs/Input';
+import { Table } from '@/components/shared/table/Table';
 import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import {
   ContractValues,
@@ -28,19 +28,19 @@ export function ContractsSection({ context }: { context: FormBViewModel }) {
       header: 'Instytucja',
       cell: ({ row }) => (
         <>
-          <AppInput
+          <Input
             name={`contracts[${row.index}].institutionName`}
             value={row.original.institutionName}
             label="Nazwa instytucji"
             disabled
           />
-          <AppInput
+          <Input
             name={`contracts[${row.index}].institutionUnit`}
             value={row.original.institutionUnit}
             label="Jednostka"
             disabled
           />
-          <AppInput
+          <Input
             name={`contracts[${row.index}].institutionLocalization`}
             value={row.original.institutionLocalization}
             label="Lokalizacja instytucji"
@@ -53,7 +53,7 @@ export function ContractsSection({ context }: { context: FormBViewModel }) {
     {
       header: 'Opis',
       cell: ({ row }) => (
-        <AppInput name={`contracts[${row.index}].description`} value={row.original.description} label="Opis" disabled />
+        <Input name={`contracts[${row.index}].description`} value={row.original.description} label="Opis" disabled />
       ),
       size: 20,
     },
@@ -62,7 +62,7 @@ export function ContractsSection({ context }: { context: FormBViewModel }) {
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
-        <AppFileInput
+        <FileInput
           name="scans"
           value={row.original.scans}
           allowMultiple={true}
@@ -77,11 +77,11 @@ export function ContractsSection({ context }: { context: FormBViewModel }) {
   ];
 
   return (
-    <AppAccordion
+    <Accordion
       title="8. Umowy regulujące współpracę, w ramach której miałyby być realizowane zadania badawcze"
       expandedByDefault
     >
-      <AppTable
+      <Table
         data={formA.contracts}
         buttons={() => []}
         columns={columns}
@@ -89,6 +89,6 @@ export function ContractsSection({ context }: { context: FormBViewModel }) {
         variant="form"
         disabled={isReadonly}
       />
-    </AppAccordion>
+    </Accordion>
   );
 }

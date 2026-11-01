@@ -11,7 +11,7 @@ import config from '@/config';
 import { iconDefaults } from '@/integrations/phosphor/iconDefaults';
 import { initializeSentry } from '@/integrations/sentry/client';
 import { TanStackQueryProvider } from '@/integrations/tanstack/query/root-provider';
-import { AppRouter, router } from '@/router';
+import { RouterView, router } from '@/router';
 
 z.config(z.locales.pl());
 initializeSentry(router);
@@ -29,7 +29,7 @@ createRoot(document.getElementById('root')!, sentryErrorHandlers).render(
     <FatalErrorBoundary>
       <IconContext.Provider value={iconDefaults}>
         <TanStackQueryProvider>
-          <AppRouter />
+          <RouterView />
         </TanStackQueryProvider>
       </IconContext.Provider>
     </FatalErrorBoundary>

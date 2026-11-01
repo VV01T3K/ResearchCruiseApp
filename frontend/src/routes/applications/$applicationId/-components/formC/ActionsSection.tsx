@@ -1,7 +1,7 @@
 import { FloppyDiskIcon, PaperPlaneTiltIcon, PrinterIcon } from '@phosphor-icons/react';
 
-import { AppActionsSection } from '@/components/shared/AppActionsSection';
-import { AppButton } from '@/components/shared/AppButton';
+import { FloatingActionsSection } from '@/components/shared/FloatingActionsSection';
+import { Button } from '@/components/shared/Button';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 
 type Props = {
@@ -14,9 +14,9 @@ export function ActionsSection({ onSaveDraft, onPrint, disabled, context }: Prop
   const { isReadonly } = context;
 
   return (
-    <AppActionsSection>
+    <FloatingActionsSection>
       {!isReadonly && (
-        <AppButton
+        <Button
           className="w-64 !justify-center gap-4"
           variant="primaryOutline"
           onClick={onSaveDraft}
@@ -24,20 +24,20 @@ export function ActionsSection({ onSaveDraft, onPrint, disabled, context }: Prop
         >
           <FloppyDiskIcon weight="fill" className="h-4 w-4" />
           Zapisz wersję roboczą
-        </AppButton>
+        </Button>
       )}
       {!isReadonly && (
-        <AppButton type="submit" className="w-64 !justify-center gap-4" disabled={disabled}>
+        <Button type="submit" className="w-64 !justify-center gap-4" disabled={disabled}>
           <PaperPlaneTiltIcon weight="fill" className="h-4 w-4" />
           Wyślij
-        </AppButton>
+        </Button>
       )}
       {isReadonly && (
-        <AppButton className="w-64 !justify-center gap-4" onClick={onPrint} disabled={disabled}>
+        <Button className="w-64 !justify-center gap-4" onClick={onPrint} disabled={disabled}>
           <PrinterIcon weight="fill" className="h-4 w-4" />
           Wydrukuj
-        </AppButton>
+        </Button>
       )}
-    </AppActionsSection>
+    </FloatingActionsSection>
   );
 }

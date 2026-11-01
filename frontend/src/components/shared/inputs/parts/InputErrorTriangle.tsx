@@ -1,0 +1,16 @@
+import { WarningIcon } from '@phosphor-icons/react';
+
+import { hasErrors } from '@/components/inputs/invalidInput';
+import { cn } from '@/lib/utils';
+
+type Props = {
+  errors: string[] | undefined;
+  mode?: 'absolute' | 'inline';
+};
+export function InputErrorTriangle({ errors, mode = 'inline' }: Props) {
+  if (!hasErrors(errors)) {
+    return null;
+  }
+
+  return <WarningIcon className={cn('text-danger h-5 w-5', mode === 'absolute' ? 'absolute top-2.5 right-5' : '')} />;
+}

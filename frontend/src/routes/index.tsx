@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
-import { AppAlert } from '@/components/shared/AppAlert';
+import { Alert } from '@/components/shared/Alert';
 import { Role } from '@/integrations/auth/types';
 import {
   AccountSettingsCard,
@@ -95,8 +95,8 @@ function DashboardPage() {
   }
 
   return (
-    <AppAlert variant="danger">
+    <Alert variant="danger">
       Brak dashboarda przypisanego do ról: {currentUser?.roles.join(', ')}. Zgłoś ten fakt administratorom strony.
-    </AppAlert>
+    </Alert>
   );
 }

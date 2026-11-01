@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
-import { AppLayout } from '@/components/shared/AppLayout';
+import { Layout } from '@/components/shared/Layout';
 import {
   getGetApplicationEvaluationSuspenseQueryOptions,
   getGetApplicationSuspenseQueryOptions,
@@ -26,8 +26,8 @@ export const Route = createFileRoute('/applications/$applicationId/details')({
 
 function DetailsPage() {
   return (
-    <AppLayout title="Szczegóły Zgłoszenia">
+    <Layout title="Szczegóły Zgłoszenia">
       <DetailsView />
-    </AppLayout>
+    </Layout>
   );
 }

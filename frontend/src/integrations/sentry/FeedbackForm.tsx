@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { z } from 'zod';
 
-import { AppButton } from '@/components/shared/AppButton';
+import { Button } from '@/components/shared/Button';
 import { toast } from '@/components/shared/layout/toast';
 import { type FeedbackAttachment, MAX_ATTACHMENTS, readAttachments } from '@/integrations/sentry/attachments';
 import { type FeedbackContext, sendFeedback } from '@/integrations/sentry/feedback';
@@ -97,9 +97,9 @@ export function FeedbackForm({ context, close }: Props) {
       </div>
       <form.Subscribe selector={(state) => state.isSubmitting}>
         {(isSubmitting) => (
-          <AppButton type="submit" className="mt-3 w-full shrink-0" disabled={isSubmitting || pendingReads > 0}>
+          <Button type="submit" className="mt-3 w-full shrink-0" disabled={isSubmitting || pendingReads > 0}>
             {isSubmitting ? 'Wysyłanie...' : 'Wyślij zgłoszenie'}
-          </AppButton>
+          </Button>
         )}
       </form.Subscribe>
     </form>

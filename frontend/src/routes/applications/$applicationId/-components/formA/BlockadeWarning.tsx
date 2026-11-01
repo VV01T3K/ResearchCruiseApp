@@ -2,7 +2,7 @@ import { Collapsible } from '@base-ui/react/collapsible';
 import { CaretDownIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'motion/react';
 
-import { AppAlert } from '@/components/shared/AppAlert';
+import { Alert } from '@/components/shared/Alert';
 import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
 
 interface Props {
@@ -21,7 +21,7 @@ export function BlockadeWarning({ year, blockades }: Props) {
           transition={{ ease: 'easeOut' }}
           className="[&_[role=alert]>svg]:mt-2.5"
         >
-          <AppAlert variant="warning" iconAlign="start">
+          <Alert variant="warning" iconAlign="start">
             <Collapsible.Root>
               <Collapsible.Trigger className="group flex w-full cursor-pointer items-center justify-between outline-none">
                 <div className="flex flex-col items-start">
@@ -44,7 +44,7 @@ export function BlockadeWarning({ year, blockades }: Props) {
                 </ul>
               </Collapsible.Panel>
             </Collapsible.Root>
-          </AppAlert>
+          </Alert>
         </motion.div>
       )}
     </AnimatePresence>

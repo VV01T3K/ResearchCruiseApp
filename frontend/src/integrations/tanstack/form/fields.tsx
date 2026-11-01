@@ -1,16 +1,16 @@
 import { useSelector } from '@tanstack/react-form';
 import { useFieldContext } from './context';
-import { AppFloatingLabelInput } from '@/components/shared/inputs/AppFloatingLabelInput';
+import { FloatingLabelInput } from '@/components/shared/inputs/FloatingLabelInput';
 
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
-import { AppFileInput } from '@/components/shared/inputs/AppFileInput';
-import { AppInput } from '@/components/shared/inputs/AppInput';
-import { AppNumberInput } from '@/components/shared/inputs/AppNumberInput';
-import { AppDatePickerInput } from '@/components/shared/inputs/dates/AppDatePickerInput';
-import { AppMonthPickerInput } from '@/components/shared/inputs/dates/AppMonthPickerInput';
-import { AppInputErrorsList } from '@/components/shared/inputs/parts/AppInputErrorsList';
-import type { FileValue } from '@/components/shared/inputs/AppFileInput';
+import { Checkbox } from '@/components/shared/inputs/Checkbox';
+import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
+import { FileInput } from '@/components/shared/inputs/FileInput';
+import { Input } from '@/components/shared/inputs/Input';
+import { NumberInput } from '@/components/shared/inputs/NumberInput';
+import { DatePickerInput } from '@/components/shared/inputs/dates/DatePickerInput';
+import { MonthPickerInput } from '@/components/shared/inputs/dates/MonthPickerInput';
+import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
+import type { FileValue } from '@/components/shared/inputs/FileInput';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 
 function useErrors() {
@@ -20,7 +20,7 @@ function useErrors() {
   return getErrors(meta, submissionAttempts);
 }
 
-type TextProps = Omit<React.ComponentProps<typeof AppInput>, 'name' | 'value' | 'onBlur' | 'onChange' | 'errors'> & {
+type TextProps = Omit<React.ComponentProps<typeof Input>, 'name' | 'value' | 'onBlur' | 'onChange' | 'errors'> & {
   value?: string;
   onChange?: (value: string) => void;
 };
@@ -32,7 +32,7 @@ type WithoutFieldProps<T> = T extends unknown
 function TextField({ value, onChange, ...props }: TextProps) {
   const field = useFieldContext<string>();
   return (
-    <AppInput
+    <Input
       {...props}
       name={field.name}
       value={value ?? field.state.value}
@@ -42,7 +42,7 @@ function TextField({ value, onChange, ...props }: TextProps) {
   );
 }
 
-type NumberProps = WithoutFieldProps<React.ComponentProps<typeof AppNumberInput>> & {
+type NumberProps = WithoutFieldProps<React.ComponentProps<typeof NumberInput>> & {
   value?: number;
   onChange?: (value: number) => void;
 };
@@ -50,7 +50,7 @@ type NumberProps = WithoutFieldProps<React.ComponentProps<typeof AppNumberInput>
 function NumberField({ value, onChange, ...props }: NumberProps) {
   const field = useFieldContext<number>();
   return (
-    <AppNumberInput
+    <NumberInput
       {...props}
       name={field.name}
       value={value ?? field.state.value}
@@ -61,11 +61,11 @@ function NumberField({ value, onChange, ...props }: NumberProps) {
 }
 
 function NullableNumberField(
-  props: WithoutFieldProps<Extract<React.ComponentProps<typeof AppNumberInput>, { nullable: true }>>
+  props: WithoutFieldProps<Extract<React.ComponentProps<typeof NumberInput>, { nullable: true }>>
 ) {
   const field = useFieldContext<number | null>();
   return (
-    <AppNumberInput
+    <NumberInput
       {...props}
       nullable
       name={field.name}
@@ -77,14 +77,14 @@ function NullableNumberField(
 }
 
 type SelectProps = Omit<
-  React.ComponentProps<typeof AppDropdownInput>,
+  React.ComponentProps<typeof DropdownInput>,
   'name' | 'value' | 'onBlur' | 'onChange' | 'errors'
 > & { onChange?: (value: string) => void };
 
 function SelectField({ onChange, ...props }: SelectProps) {
   const field = useFieldContext<string>();
   return (
-    <AppDropdownInput
+    <DropdownInput
       {...props}
       name={field.name}
       value={field.state.value}
@@ -98,7 +98,7 @@ function SelectField({ onChange, ...props }: SelectProps) {
 function BooleanSelectField(props: Omit<SelectProps, 'onChange'>) {
   const field = useFieldContext<boolean>();
   return (
-    <AppDropdownInput
+    <DropdownInput
       {...props}
       name={field.name}
       value={String(field.state.value)}
@@ -109,15 +109,12 @@ function BooleanSelectField(props: Omit<SelectProps, 'onChange'>) {
   );
 }
 
-type CheckboxProps = Omit<
-  React.ComponentProps<typeof AppCheckbox>,
-  'name' | 'checked' | 'onBlur' | 'onChange' | 'errors'
->;
+type CheckboxProps = Omit<React.ComponentProps<typeof Checkbox>, 'name' | 'checked' | 'onBlur' | 'onChange' | 'errors'>;
 
 function CheckboxField(props: CheckboxProps) {
   const field = useFieldContext<boolean>();
   return (
-    <AppCheckbox
+    <Checkbox
       {...props}
       name={field.name}
       checked={field.state.value}
@@ -131,7 +128,7 @@ function CheckboxField(props: CheckboxProps) {
 function ArrayCheckboxField({ item, ...props }: CheckboxProps & { item: string }) {
   const field = useFieldContext<string[]>();
   return (
-    <AppCheckbox
+    <Checkbox
       {...props}
       name={field.name}
       checked={field.state.value.includes(item)}
@@ -144,14 +141,14 @@ function ArrayCheckboxField({ item, ...props }: CheckboxProps & { item: string }
   );
 }
 
-type DateProps = WithoutFieldProps<React.ComponentProps<typeof AppDatePickerInput>> & {
+type DateProps = WithoutFieldProps<React.ComponentProps<typeof DatePickerInput>> & {
   onChange?: (value: string | undefined) => void;
 };
 
 function DateField({ onChange, ...props }: DateProps) {
   const field = useFieldContext<string>();
   return (
-    <AppDatePickerInput
+    <DatePickerInput
       {...props}
       name={field.name}
       value={field.state.value}
@@ -162,12 +159,12 @@ function DateField({ onChange, ...props }: DateProps) {
   );
 }
 
-type MonthProps = WithoutFieldProps<React.ComponentProps<typeof AppMonthPickerInput>>;
+type MonthProps = WithoutFieldProps<React.ComponentProps<typeof MonthPickerInput>>;
 
 function MonthField(props: MonthProps) {
   const field = useFieldContext<string | undefined>();
   return (
-    <AppMonthPickerInput
+    <MonthPickerInput
       {...props}
       name={field.name}
       value={field.state.value}
@@ -179,14 +176,14 @@ function MonthField(props: MonthProps) {
 }
 
 type FileProps = Omit<
-  Extract<React.ComponentProps<typeof AppFileInput>, { allowMultiple?: false }>,
+  Extract<React.ComponentProps<typeof FileInput>, { allowMultiple?: false }>,
   'name' | 'value' | 'onBlur' | 'onChange' | 'errors'
 >;
 
 function FileField(props: FileProps) {
   const field = useFieldContext<FileValue | undefined>();
   return (
-    <AppFileInput
+    <FileInput
       {...props}
       name={field.name}
       value={field.state.value}
@@ -198,14 +195,14 @@ function FileField(props: FileProps) {
 }
 
 type FilesProps = Omit<
-  Extract<React.ComponentProps<typeof AppFileInput>, { allowMultiple: true }>,
+  Extract<React.ComponentProps<typeof FileInput>, { allowMultiple: true }>,
   'name' | 'value' | 'onBlur' | 'onChange' | 'errors'
 >;
 
 function FilesField(props: FilesProps) {
   const field = useFieldContext<FileValue[]>();
   return (
-    <AppFileInput
+    <FileInput
       {...props}
       allowMultiple
       name={field.name}
@@ -217,10 +214,10 @@ function FilesField(props: FilesProps) {
   );
 }
 
-function FloatingTextField(props: WithoutFieldProps<React.ComponentProps<typeof AppFloatingLabelInput>>) {
+function FloatingTextField(props: WithoutFieldProps<React.ComponentProps<typeof FloatingLabelInput>>) {
   const field = useFieldContext<string>();
   return (
-    <AppFloatingLabelInput
+    <FloatingLabelInput
       {...props}
       name={field.name}
       value={field.state.value}
@@ -231,7 +228,7 @@ function FloatingTextField(props: WithoutFieldProps<React.ComponentProps<typeof 
 }
 
 function FieldErrors() {
-  return <AppInputErrorsList errors={useErrors()} />;
+  return <InputErrorsList errors={useErrors()} />;
 }
 
 export const fieldComponents = {

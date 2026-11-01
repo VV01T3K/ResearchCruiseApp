@@ -9,9 +9,9 @@ import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { CheckIcon, XIcon } from '@phosphor-icons/react';
 import React from 'react';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppLink } from '@/components/shared/AppLink';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { useResetPassword } from '@/api/generated/endpoints/auth.gen';
 import { Result } from '@/integrations/auth/types';
@@ -90,7 +90,7 @@ function ResetPasswordPage() {
   if (result) {
     const title = result === 'success' ? 'Hasło zostało zmienione' : 'Błąd podczas resetowania hasła';
     return (
-      <AppLayout title={title} variant="narrow">
+      <Layout title={title} variant="narrow">
         <div className="flex flex-col items-center">
           <div className="h-60">
             {result === 'success' ? <CheckIcon className="text-success" /> : <XIcon className="text-danger" />}
@@ -100,20 +100,20 @@ function ResetPasswordPage() {
             {result === 'error' && (
               <>
                 Wystąpił błąd podczas resetowania hasła. Proszę skontaktować się z pomocą{' '}
-                <AppLink href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</AppLink>
+                <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>
               </>
             )}
           </div>
         </div>
-        <AppButton type="link" href="/login" className="mt-6 w-full">
+        <Button type="link" href="/login" className="mt-6 w-full">
           Przejdź do logowania
-        </AppButton>
-      </AppLayout>
+        </Button>
+      </Layout>
     );
   }
 
   return (
-    <AppLayout title="Resetowanie hasła" variant="narrow">
+    <Layout title="Resetowanie hasła" variant="narrow">
       <form
         className="px-4"
         onSubmit={(e) => {
@@ -132,12 +132,12 @@ function ResetPasswordPage() {
 
         <form.Subscribe selector={(state) => state.isSubmitting}>
           {(isSubmitting) => (
-            <AppButton type="submit" className="mt-6 w-full" disabled={isSubmitting}>
+            <Button type="submit" className="mt-6 w-full" disabled={isSubmitting}>
               Zmień hasło
-            </AppButton>
+            </Button>
           )}
         </form.Subscribe>
       </form>
-    </AppLayout>
+    </Layout>
   );
 }

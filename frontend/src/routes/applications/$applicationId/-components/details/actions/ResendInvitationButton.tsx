@@ -1,7 +1,7 @@
 import { PaperPlaneTiltIcon } from '@phosphor-icons/react';
 import React from 'react';
 
-import { AppButton } from '@/components/shared/AppButton';
+import { Button } from '@/components/shared/Button';
 import { toast } from '@/components/shared/layout/toast';
 import { useResendApplicationSupervisorReviewInvitation } from '@/api/generated/endpoints/applications.gen';
 
@@ -13,7 +13,7 @@ export function ResendInvitationButton({ applicationId }: Props) {
   const [isSending, setIsSending] = React.useState(false);
 
   return (
-    <AppButton
+    <Button
       className="!justify-center gap-4 px-6"
       variant="primaryOutline"
       disabled={isSending}
@@ -30,6 +30,6 @@ export function ResendInvitationButton({ applicationId }: Props) {
     >
       <PaperPlaneTiltIcon className="h-4 w-4" />
       Wyślij ponownie do przełożonego
-    </AppButton>
+    </Button>
   );
 }

@@ -6,9 +6,9 @@ import { Role } from '@/integrations/auth/types';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { FloppyDiskIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppModal } from '@/components/shared/AppModal';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Modal } from '@/components/shared/Modal';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
@@ -122,14 +122,14 @@ function FormAPage() {
 
   return (
     <>
-      <AppLayout title="Formularz A">
+      <Layout title="Formularz A">
         <form.AppForm>
           <FormView context={context} />
         </form.AppForm>
-      </AppLayout>
+      </Layout>
       <UnsavedChangesGuard form={form} disabled={!editMode} recoveryKey={`${applicationId}/formA`} />
 
-      <AppModal
+      <Modal
         title="Zapisz wersję roboczą Formularza A"
         isOpen={isSaveDraftModalOpen}
         onClose={() => setIsSaveDraftModalOpen(false)}
@@ -146,17 +146,17 @@ function FormAPage() {
           </form.AppField>
 
           <div className="flex justify-center gap-4">
-            <AppButton
+            <Button
               className="gap-4"
               disabled={saveMutation.isPending}
               onClick={() => void submitApplicationForm(form, true)}
             >
               <FloppyDiskIcon weight="fill" className="h-4 w-4" />
               Zapisz wersję roboczą
-            </AppButton>
+            </Button>
           </div>
         </div>
-      </AppModal>
+      </Modal>
     </>
   );
 }

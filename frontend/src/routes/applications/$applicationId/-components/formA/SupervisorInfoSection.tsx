@@ -1,5 +1,5 @@
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppAlert } from '@/components/shared/AppAlert';
+import { Accordion } from '@/components/shared/Accordion';
+import { Alert } from '@/components/shared/Alert';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
@@ -9,14 +9,14 @@ export function SupervisorInfoSection({ context }: { context: FormAViewModel }) 
   const { isReadonly } = context;
 
   return (
-    <AppAccordion title="11. Dane kontaktowe przełożonego" expandedByDefault>
+    <Accordion title="11. Dane kontaktowe przełożonego" expandedByDefault>
       <div className="mx-auto max-w-180 space-y-4">
-        <AppAlert variant="warning">
+        <Alert variant="warning">
           <span className="text-center text-sm">
             Użytkownik odpowiada za podanie prawidłowego adresu e-mail przełożonego, a w przypadku fałszywych danych
             zgłoszenie może zostać odrzucone.
           </span>
-        </AppAlert>
+        </Alert>
         <form.AppField name="supervisorEmail">
           {(field) => (
             <field.TextField
@@ -29,6 +29,6 @@ export function SupervisorInfoSection({ context }: { context: FormAViewModel }) 
           )}
         </form.AppField>
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }

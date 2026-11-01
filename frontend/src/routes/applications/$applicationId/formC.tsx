@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
-import { AppLayout } from '@/components/shared/AppLayout';
+import { Layout } from '@/components/shared/Layout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
@@ -141,11 +141,11 @@ function FormCPage() {
 
   return (
     <>
-      <AppLayout title="Formularz C">
+      <Layout title="Formularz C">
         <form.AppForm>
           <FormView context={context} />
         </form.AppForm>
-      </AppLayout>
+      </Layout>
       <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} recoveryKey={`${applicationId}/formC`} />
     </>
   );

@@ -1,4 +1,4 @@
-import { AppInput } from '@/components/shared/inputs/AppInput';
+import { Input } from '@/components/shared/inputs/Input';
 import type { ThesisResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 export function ThesisResearchTaskDetails({ data }: Props) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <AppInput
+      <Input
         name="researchTasks[].author"
         value={data.author}
         label="Autor"
@@ -15,7 +15,7 @@ export function ThesisResearchTaskDetails({ data }: Props) {
         disabled={true}
       />
 
-      <AppInput
+      <Input
         name="researchTasks[].title"
         value={data.title}
         label="Tytuł"

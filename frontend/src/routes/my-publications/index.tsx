@@ -5,11 +5,11 @@ import { RowSelectionState } from '@tanstack/react-table';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { ArrowSquareOutIcon, TrashIcon } from '@phosphor-icons/react';
 import React from 'react';
-import { AppButton } from '@/components/shared/AppButton';
-import { AppLayout } from '@/components/shared/AppLayout';
-import { AppModal } from '@/components/shared/AppModal';
-import { AppCheckbox } from '@/components/shared/inputs/AppCheckbox';
-import { AppTable } from '@/components/shared/table/AppTable';
+import { Button } from '@/components/shared/Button';
+import { Layout } from '@/components/shared/Layout';
+import { Modal } from '@/components/shared/Modal';
+import { Checkbox } from '@/components/shared/inputs/Checkbox';
+import { Table } from '@/components/shared/table/Table';
 import { toast } from '@/components/shared/layout/toast';
 import { UploadButton } from './-components/UploadButton';
 import {
@@ -57,7 +57,7 @@ function MyPublicationsPage() {
     {
       id: 'selector',
       header: ({ table }) => (
-        <AppCheckbox
+        <Checkbox
           name="selectAllPublications"
           onChange={(x) => table.toggleAllRowsSelected(x)}
           checked={table.getIsAllRowsSelected()}
@@ -65,7 +65,7 @@ function MyPublicationsPage() {
         />
       ),
       cell: ({ row }) => (
-        <AppCheckbox
+        <Checkbox
           name={`selectPublication-${row.id}`}
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}
@@ -113,7 +113,7 @@ function MyPublicationsPage() {
       id: 'actions',
       header: undefined,
       cell: (cell) => (
-        <AppButton
+        <Button
           variant="dangerOutline"
           size="xs"
           disabled={deleteOwnPublicationMutation.isPending}
@@ -121,7 +121,7 @@ function MyPublicationsPage() {
         >
           <TrashIcon className="mr-2 h-3 w-3" />
           Usuń
-        </AppButton>
+        </Button>
       ),
       size: 5,
     },
@@ -129,8 +129,8 @@ function MyPublicationsPage() {
 
   return (
     <>
-      <AppLayout title="Moje publikacje">
-        <AppTable
+      <Layout title="Moje publikacje">
+        <Table
           data={ownPublicationsQuery.data}
           columns={columns}
           rowSelectionState={selectedPublications}
@@ -143,7 +143,7 @@ function MyPublicationsPage() {
               disabled={uploadPublicationsMutation.isPending}
               onUpload={(publications) => uploadPublicationsMutation.mutate({ data: publications })}
             />,
-            <AppButton
+            <Button
               key="goToRepository"
               type="link"
               variant="primaryOutline"
@@ -152,8 +152,8 @@ function MyPublicationsPage() {
             >
               Przejdź do repozytorium BG
               <ArrowSquareOutIcon className="ml-2 h-4 w-4" />
-            </AppButton>,
-            <AppButton
+            </Button>,
+            <Button
               key="removeAllPublications"
               variant="dangerOutline"
               onClick={() => setIsDeleteAllModalOpen(true)}
@@ -161,8 +161,8 @@ function MyPublicationsPage() {
             >
               <TrashIcon className="mr-2 h-4 w-4" />
               Usuń wszystkie publikacje
-            </AppButton>,
-            <AppButton
+            </Button>,
+            <Button
               key="removeSelectedPublications"
               variant="dangerOutline"
               onClick={() => void deleteSelectedPublications()}
@@ -170,19 +170,19 @@ function MyPublicationsPage() {
             >
               <TrashIcon className="mr-2 h-4 w-4" />
               Usuń zaznaczone publikacje
-            </AppButton>,
+            </Button>,
             ...defaultButtons,
           ]}
-        ></AppTable>
-      </AppLayout>
-      <AppModal
+        ></Table>
+      </Layout>
+      <Modal
         isOpen={isDeleteAllModalOpen}
         onClose={() => setIsDeleteAllModalOpen(false)}
         title="Czy na pewno chcesz usunąć wszystkie publikacje?"
       >
         Usunięcie publikacji jest nieodwracalne.
         <div className="mt-4 flex flex-row gap-4">
-          <AppButton
+          <Button
             variant="dangerOutline"
             className="basis-2/3"
             onClick={() =>
@@ -191,8 +191,8 @@ function MyPublicationsPage() {
             disabled={deleteAllOwnPublicationsMutation.isPending}
           >
             Usuń wszystkie publikacje
-          </AppButton>
-          <AppButton
+          </Button>
+          <Button
             variant="primaryOutline"
             className="basis-1/3"
             onClick={() => {
@@ -201,9 +201,9 @@ function MyPublicationsPage() {
             disabled={deleteAllOwnPublicationsMutation.isPending}
           >
             Anuluj
-          </AppButton>
+          </Button>
         </div>
-      </AppModal>
+      </Modal>
     </>
   );
 }

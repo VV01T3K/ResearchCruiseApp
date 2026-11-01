@@ -1,5 +1,5 @@
-import { AppAccordion } from '@/components/shared/AppAccordion';
-import { AppDropdownInput } from '@/components/shared/inputs/AppDropdownInput';
+import { Accordion } from '@/components/shared/Accordion';
+import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 
@@ -7,9 +7,9 @@ export function CruiseManagerInfoSection({ context }: { context: FormCViewModel 
   const { formA, formAInitValues } = context;
 
   return (
-    <AppAccordion title="2. Kierownik zgłaszanego rejsu" expandedByDefault>
+    <Accordion title="2. Kierownik zgłaszanego rejsu" expandedByDefault>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <AppDropdownInput
+        <DropdownInput
           name="cruiseManager"
           value={formA.cruiseManagerId}
           allOptions={formAInitValues.cruiseManagers.map((person) => ({
@@ -19,7 +19,7 @@ export function CruiseManagerInfoSection({ context }: { context: FormCViewModel 
           label="Kierownik rejsu"
           disabled
         />
-        <AppDropdownInput
+        <DropdownInput
           name="deputyManager"
           value={formA.deputyManagerId}
           allOptions={formAInitValues.deputyManagers.map((person) => ({
@@ -29,7 +29,7 @@ export function CruiseManagerInfoSection({ context }: { context: FormCViewModel 
           label="Zastępca kierownika rejsu"
           disabled
         />
-        <AppDropdownInput
+        <DropdownInput
           name="Rok"
           value={formA.year}
           label="Rok"
@@ -41,6 +41,6 @@ export function CruiseManagerInfoSection({ context }: { context: FormCViewModel 
           disabled
         />
       </div>
-    </AppAccordion>
+    </Accordion>
   );
 }
