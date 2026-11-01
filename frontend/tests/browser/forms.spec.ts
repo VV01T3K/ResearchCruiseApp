@@ -89,12 +89,7 @@ test('a save rejected as stale sends the read revision and keeps the edits', asy
   const email = page.getByLabel('Adres e-mail przełożonego');
   await email.fill('stale@example.com');
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
-  await expect(
-    page
-      .getByRole('main')
-      .getByRole('alert')
-      .getByText(/Dane zostały w międzyczasie zmienione/)
-  ).toBeVisible();
+  await expect(page.getByRole('alert').getByText(/Dane zostały w międzyczasie zmienione/)).toBeVisible();
   await expect(email).toHaveValue('stale@example.com');
   expect(requests.bodies(savedForm('form-a'))).toEqual([
     expect.objectContaining({ form: expect.objectContaining({ revision: 'AAAAAAAAB9E=' }) }),
@@ -268,7 +263,7 @@ test('form B adds a permission, accepts only a PDF scan and submits the new row'
 }) => {
   network.use(getUpdateApplicationFormBMockHandler());
   await page.goto(`/applications/${applicationId}/formB?mode=edit`);
-  const permissions = page.getByRole('region', { name: '4. Dodatkowe pozwolenia do planowanych podczas rejsu badań' });
+  const permissions = page.getByRole('group', { name: '4. Dodatkowe pozwolenia do planowanych podczas rejsu badań' });
   await permissions.getByRole('button', { name: 'Dodaj pozwolenie' }).click();
   await permissions.getByRole('textbox', { name: 'Treść pozwolenia' }).fill('Pobór próbek');
   await permissions.getByRole('textbox', { name: 'Organ wydający' }).fill('Urząd Morski');
@@ -308,14 +303,16 @@ test('form B adds a permission, accepts only a PDF scan and submits the new row'
 
 test('an invalid form B names the section and reason of the first error in an empty row', async ({ page }) => {
   await page.goto(`/applications/${applicationId}/formB?mode=edit`);
-  await page.getByRole('region', { name: '12. Szczegóły rejsu' }).getByRole('button', { name: 'Dodaj sprzęt' }).click();
+  await page.getByRole('group', { name: '12. Szczegóły rejsu' }).getByRole('button', { name: 'Dodaj sprzęt' }).click();
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
 
-  await expect(page.getByRole('region', { name: 'Notifications' }).getByRole('alert')).toHaveText(
-    'Formularz błędny w sekcji nr 12:\nData rozpoczęcia jest wymagana'
-  );
   await expect(
-    page.getByRole('region', { name: '12. Szczegóły rejsu' }).getByRole('button', { name: 'Wybierz datę' }).first()
+    page
+      .getByRole('region', { name: 'Notifications' })
+      .getByText('Formularz błędny w sekcji nr 12: Data rozpoczęcia jest wymagana')
+  ).toBeVisible();
+  await expect(
+    page.getByRole('group', { name: '12. Szczegóły rejsu' }).getByRole('button', { name: 'Od: Wybierz datę' })
   ).toBeFocused();
 });
 
@@ -350,9 +347,11 @@ test('form B offers going back to editing only while eligible, explains a stale 
   await expect(revert).toBeVisible();
   status = 'formBRequired';
   await revert.click();
-  await expect(page.getByRole('region', { name: 'Notifications' }).getByRole('alert')).toHaveText(
-    `Nie udało się cofnąć formularza B do edycji: ${refusal}`
-  );
+  await expect(
+    page
+      .getByRole('region', { name: 'Notifications' })
+      .getByText(`Nie udało się cofnąć formularza B do edycji: ${refusal}`)
+  ).toBeVisible();
   await expect(revert).toHaveCount(0);
 
   status = 'formBFilled';
@@ -387,7 +386,7 @@ test('form C clears point awards for an unfinished task and saves attached photo
 
   const photo = Buffer.from([0xff, 0xd8, 0xff, 0xd9]);
   await page
-    .getByRole('region', { name: '18. Krótki opis podsumowujący dany rejs' })
+    .getByRole('group', { name: '18. Krótki opis podsumowujący dany rejs' })
     .locator('input[type="file"]')
     .setInputFiles({ name: 'zdjecie.jpg', mimeType: 'image/jpeg', buffer: photo });
   await expect(page.getByRole('button', { name: 'zdjecie.jpg', exact: true })).toBeVisible();

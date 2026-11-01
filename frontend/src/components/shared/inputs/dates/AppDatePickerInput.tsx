@@ -30,6 +30,7 @@ type Props = {
   minimalDate?: Date;
   maximalDate?: Date;
   selectionStartDate?: Date;
+  'aria-label'?: string;
 } & (
   | {
       type?: 'date';
@@ -56,6 +57,7 @@ export function AppDatePickerInput({
   minimalDate,
   maximalDate,
   selectionStartDate,
+  'aria-label': ariaLabel,
 }: Props) {
   const aria = useInputAria(errors, helper);
   const selectedDate = getDateFromValue(value);
@@ -67,6 +69,17 @@ export function AppDatePickerInput({
     const now = new Date();
     return { month: now.getMonth(), year: now.getFullYear() };
   });
+
+  const shownValue = selectedDate
+    ? selectedDate.toLocaleDateString('pl-PL', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: type === 'datetime' ? '2-digit' : undefined,
+        minute: type === 'datetime' ? '2-digit' : undefined,
+      })
+    : placeholder;
+  const fieldName = ariaLabel ?? (typeof label === 'string' ? label : undefined);
 
   function handleOpenChange(open: boolean, details: Popover.Root.ChangeEventDetails) {
     if (details.reason === 'outside-press' && clearRef.current?.contains(details.event.target as Node)) {
@@ -129,17 +142,10 @@ export function AppDatePickerInput({
             name={name}
             disabled={disabled}
             {...aria.inputProps}
+            aria-label={fieldName && `${fieldName}: ${shownValue}`}
             className={pickerTriggerClassName({ disabled, errors })}
           >
-            {selectedDate
-              ? selectedDate.toLocaleDateString('pl-PL', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: type === 'datetime' ? '2-digit' : undefined,
-                  minute: type === 'datetime' ? '2-digit' : undefined,
-                })
-              : placeholder}
+            {shownValue}
             <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
               {selectedDate && !disabled && <span className="w-4" />}

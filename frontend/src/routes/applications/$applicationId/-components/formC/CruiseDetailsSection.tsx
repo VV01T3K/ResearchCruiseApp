@@ -29,7 +29,7 @@ const shortResearchEquipmentColumns = (
     enableSorting: false,
     cell: ({ row }) => (
       <form.AppField name={`shortResearchEquipments[${row.index}].startDate`}>
-        {(field) => <field.DateField disabled={isReadonly} />}
+        {(field) => <field.DateField aria-label="Od" disabled={isReadonly} />}
       </form.AppField>
     ),
     size: 20,
@@ -49,6 +49,7 @@ const shortResearchEquipmentColumns = (
               }
               return (
                 <field.DateField
+                  aria-label="Do"
                   disabled={isReadonly}
                   selectionStartDate={state ? new Date(state) : undefined}
                   minimalDate={state ? new Date(state) : undefined}
@@ -174,7 +175,7 @@ const portColumns = (
     enableSorting: false,
     cell: ({ row }) => (
       <form.AppField name={`ports[${row.index}].startTime`}>
-        {(field) => <field.DateField disabled={isReadonly} type="datetime" />}
+        {(field) => <field.DateField aria-label="Wejście" disabled={isReadonly} type="datetime" />}
       </form.AppField>
     ),
     size: 20,
@@ -194,6 +195,7 @@ const portColumns = (
               }
               return (
                 <field.DateField
+                  aria-label="Wyjście"
                   disabled={isReadonly}
                   type="datetime"
                   selectionStartDate={state ? new Date(state) : undefined}

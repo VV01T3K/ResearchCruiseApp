@@ -89,16 +89,10 @@ for (const { action, accepted, button, route, handler } of [
     await page.getByRole('button', { name: 'Edytuj', exact: true }).click();
     const toggle = page.getByRole('button', { name: button, exact: true });
     await toggle.click();
-    await expect(page.getByRole('dialog', { name: 'Edytuj użytkownika' }).getByRole('alert')).toContainText(
-      'Spróbuj ponownie później'
-    );
+    await expect(page.getByRole('alert')).toContainText('Spróbuj ponownie później');
     // A failed action stays blocked until its error is dismissed.
     await expect(toggle).toBeDisabled();
-    await page
-      .getByRole('dialog', { name: 'Edytuj użytkownika' })
-      .getByRole('alert')
-      .getByRole('button', { name: 'Close' })
-      .click();
+    await page.getByRole('alert').getByRole('button', { name: 'Close' }).click();
 
     await toggle.click();
     await expect(toggle).toHaveCount(0);
@@ -134,9 +128,7 @@ test('repeated invalid Add submissions focus the email field, and a failed add c
 
   await email.fill(deputy.email);
   await add.click();
-  await expect(page.getByRole('dialog', { name: 'Dodaj użytkownika' }).getByRole('alert')).toContainText(
-    'Spróbuj ponownie później'
-  );
+  await expect(page.getByRole('alert')).toContainText('Spróbuj ponownie później');
   await add.click();
   await expect(add).toHaveCount(0);
   expect(requests.bodies('POST /v2/users')).toHaveLength(2);

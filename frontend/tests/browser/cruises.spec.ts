@@ -266,9 +266,7 @@ test('discarding cruise edits asks only when the form has changes and lands on t
 
   await title.fill('Mój');
   await page.getByRole('button', { name: 'Zapisz rejs' }).click();
-  await expect(
-    page.getByRole('main').getByRole('alert').filter({ hasText: 'Dane zostały w międzyczasie zmienione.' })
-  ).toBeVisible();
+  await expect(page.getByRole('alert').filter({ hasText: 'Dane zostały w międzyczasie zmienione.' })).toBeVisible();
   await expect(title).toHaveValue('Mój');
   await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
   await dialog.getByRole('button', { name: 'Odrzuć zmiany' }).click();

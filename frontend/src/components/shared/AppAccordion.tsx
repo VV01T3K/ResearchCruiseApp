@@ -12,7 +12,7 @@ export function AppAccordion({ title, children, expandedByDefault }: Props) {
   const headingId = useId();
 
   return (
-    <Collapsible.Root defaultOpen={!!expandedByDefault} render={<section aria-labelledby={headingId} />}>
+    <Collapsible.Root defaultOpen={!!expandedByDefault} role="group" aria-labelledby={headingId}>
       <h2 id={headingId} className="w-full">
         <Collapsible.Trigger className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-black/2 px-4 py-4 outline-none">
           <span className="text-lg font-semibold">{title}</span>

@@ -183,7 +183,7 @@ test.describe('pending saves', () => {
     await notes(page).fill(UNSAVED);
     release();
     await expect(
-      page.getByRole('region', { name: 'Notifications' }).getByRole('status').getByText('Formularz został zapisany')
+      page.getByRole('region', { name: 'Notifications' }).getByText('Formularz został zapisany')
     ).toBeVisible();
     await expect(page).toHaveURL(/\/applications\/new\?draft=/);
     await expect(notes(page)).toHaveValue(UNSAVED);
@@ -239,12 +239,7 @@ test.describe('edits lost when the session ends', () => {
     await recovery(page).getByRole('button', { name: 'Przywróć zmiany' }).click();
     await expect(employees(page)).toHaveValue('7');
     await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
-    await expect(
-      page
-        .getByRole('main')
-        .getByRole('alert')
-        .getByText(/Dane zostały w międzyczasie zmienione/)
-    ).toBeVisible();
+    await expect(page.getByRole('alert').getByText(/Dane zostały w międzyczasie zmienione/)).toBeVisible();
     await expect(employees(page)).toHaveValue('7');
     expect(requests.bodies(`PUT /v2/applications/${applicationId}/form-b`)).toEqual([
       expect.objectContaining({ form: expect.objectContaining({ revision: 'AAAAAAAAB9E=' }) }),

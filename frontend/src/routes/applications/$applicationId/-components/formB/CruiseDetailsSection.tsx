@@ -42,7 +42,13 @@ const shortResearchEquipmentColumns = (
           },
         }}
       >
-        {(field) => <field.DateField disabled={isReadonly} minimalDate={allowPastDates ? undefined : new Date()} />}
+        {(field) => (
+          <field.DateField
+            aria-label="Od"
+            disabled={isReadonly}
+            minimalDate={allowPastDates ? undefined : new Date()}
+          />
+        )}
       </form.AppField>
     ),
     size: 20,
@@ -58,6 +64,7 @@ const shortResearchEquipmentColumns = (
           <form.Subscribe selector={(state) => state.values.shortResearchEquipments[row.index].startDate}>
             {(startDate) => (
               <field.DateField
+                aria-label="Do"
                 disabled={isReadonly}
                 selectionStartDate={startDate ? new Date(startDate) : undefined}
                 minimalDate={startDate ? new Date(startDate) : undefined}
@@ -185,6 +192,7 @@ const portColumns = (
       >
         {(field) => (
           <field.DateField
+            aria-label="Wejście"
             disabled={isReadonly}
             type="datetime"
             minimalDate={allowPastDates ? undefined : new Date()}
@@ -205,6 +213,7 @@ const portColumns = (
           <form.Subscribe selector={(state) => state.values.ports[row.index].startTime}>
             {(startTime) => (
               <field.DateField
+                aria-label="Wyjście"
                 disabled={isReadonly}
                 type="datetime"
                 selectionStartDate={startTime ? new Date(startTime) : undefined}
