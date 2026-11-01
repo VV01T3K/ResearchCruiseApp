@@ -1,6 +1,7 @@
 import { Header } from '@/integrations/tanstack/table/features';
 import { compareFilterOptions } from '@/integrations/tanstack/table/filterOptions';
 import { TrashIcon } from '@phosphor-icons/react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import React from 'react';
 
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
@@ -13,6 +14,9 @@ type Props<TData extends object, TValue> = {
   expanded: boolean;
 };
 export function TableFilterList<TData extends object, TValue>({ header, expanded }: Props<TData, TValue>) {
+  // TanStack Virtual exposes a mutable instance; read it on every render.
+  'use no memo';
+
   const filterValue = header.column.getFilterValue() as string[] | undefined;
   const [searchValue, setSearchValue] = React.useState<string>('');
 
@@ -75,6 +79,17 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
       .includes(searchValue.toLocaleLowerCase());
   }
 
+  const visibleValues = uniqueValues.filter(([value]) => matchesSearch(value));
+  const listRef = React.useRef<HTMLDivElement>(null);
+  const virtualizer = useVirtualizer({
+    count: visibleValues.length,
+    estimateSize: () => 36,
+    getItemKey: (index) => visibleValues[index][0],
+    getScrollElement: () => listRef.current,
+    overscan: 5,
+  });
+  const virtualItems = virtualizer.getVirtualItems();
+
   if (inputType) {
     return (
       <label className="block px-4 py-2 text-sm">
@@ -107,20 +122,23 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
         </div>
       </div>
 
-      <div className="max-h-32 overflow-x-auto overflow-y-auto">
-        {uniqueValues
-          .filter(([value]) => matchesSearch(value))
-          .map((value) => (
-            <TableListItem
-              key={value[0]}
-              onClick={() => toggleFilter(value[0])}
-              isRendered={supportsFilter}
-              expanded={expanded}
-            >
-              <Checkbox name={`isFilterChecked-${value[0]}`} checked={isFilterChecked(value[0])} />
-              {getFilterOptionLabel ? getFilterOptionLabel(value[0]) : value[0]}
-            </TableListItem>
-          ))}
+      <div ref={listRef} className="max-h-32 overflow-x-auto overflow-y-auto">
+        <div style={{ height: virtualizer.getTotalSize(), paddingTop: virtualItems[0]?.start ?? 0 }}>
+          {virtualItems.map(({ index, key }) => {
+            const [value] = visibleValues[index];
+            return (
+              <TableListItem
+                key={key}
+                onClick={() => toggleFilter(value)}
+                isRendered={supportsFilter}
+                expanded={expanded}
+              >
+                <Checkbox name={`isFilterChecked-${value}`} checked={isFilterChecked(value)} />
+                {getFilterOptionLabel ? getFilterOptionLabel(value) : value}
+              </TableListItem>
+            );
+          })}
+        </div>
       </div>
 
       <TableListItem

@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
-import { formatDate, parseBackendDateTime, useNow } from '@/lib/dateUtils';
+import { parseBackendDateTime, useNow } from '@/lib/dateUtils';
 
 it.each([
   ['2026-07-20T00:00:00', '2026-07-20T00:00:00.000Z'],
@@ -13,8 +13,12 @@ it.each([
 // Date-only values shift a day in only one direction per offset, so check both sides of UTC.
 describe.each(['Europe/Warsaw', 'America/Los_Angeles'])('in %s', (timeZone) => {
   const original = process.env.TZ;
-  beforeEach(() => {
+  let formatDate: typeof import('@/lib/dateUtils').formatDate;
+  beforeEach(async () => {
     process.env.TZ = timeZone;
+    // The formatters keep the time zone they were created in.
+    vi.resetModules();
+    ({ formatDate } = await import('@/lib/dateUtils'));
   });
   afterEach(() => {
     process.env.TZ = original;
@@ -23,6 +27,12 @@ describe.each(['Europe/Warsaw', 'America/Los_Angeles'])('in %s', (timeZone) => {
   it('formats date-only fields without shifting the calendar day', () => {
     expect(formatDate('2026-07-20', 'date')).toBe('20.07.2026');
     expect(formatDate('2026-07-20', 'monthYear')).toBe('07.2026');
+  });
+
+  it.each(['2026-03-08', '2026-03-29', '2026-10-25', '2026-11-01'])('keeps %s on a DST change day', (day) => {
+    const [year, month, date] = day.split('-');
+    expect(formatDate(day, 'date')).toBe(`${date}.${month}.${year}`);
+    expect(formatDate(`${day}T12:30:00`, 'dateTime')).toBe(`${date}.${month}.${year} 12:30`);
   });
 });
 
