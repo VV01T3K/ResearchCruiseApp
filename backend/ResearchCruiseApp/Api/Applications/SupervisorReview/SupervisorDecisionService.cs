@@ -3,7 +3,7 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Applications;
 
-public static class SupervisorDecisionRules
+public static class SupervisorDecisionService
 {
     public static SupervisorDecisionResult Decide(CruiseApplication application, bool accept)
     {
