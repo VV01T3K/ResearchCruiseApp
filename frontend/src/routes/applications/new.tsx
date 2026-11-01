@@ -50,7 +50,7 @@ function NewCruiseApplicationPage() {
   const { draft } = Route.useSearch();
   const currentUser = useCurrentUser()!;
   const initialStateQuery = useGetApplicationFormAContextSuspense();
-  const saving = useSaveTracking({ creates: true });
+  const saving = useSaveTracking();
   const saveMutation = useCreateApplication({
     mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
   });
@@ -97,6 +97,11 @@ function NewCruiseApplicationPage() {
   };
 
   async function saveForm(values: FormAValues) {
+    const created = saving.acceptedValues();
+    if (created) {
+      setIsSaveDraftModalOpen(false);
+      return leaveAfterSave(created, { to: '/' });
+    }
     if (saving.isSaving()) return;
     if (!values.draft) trackFormSubmit('new-application', 'valid', form.state);
     const loading = toast.loading(
@@ -112,12 +117,12 @@ function NewCruiseApplicationPage() {
       );
       await leaveAfterSave(values, { to: '/' });
     } catch (error) {
+      saving.finish();
       setServerFormErrors(form, error);
       toast.error(getErrorMessage(error, saveFailedMessage(values.draft)));
       navigateToFirstError();
       throw error;
     } finally {
-      saving.finish();
       toast.dismiss(loading);
       setIsSaveDraftModalOpen(false);
     }

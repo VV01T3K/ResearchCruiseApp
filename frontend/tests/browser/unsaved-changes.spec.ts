@@ -164,14 +164,21 @@ test.describe('pending saves', () => {
     await expect(dialog(page)).toBeVisible();
   });
 
-  test('edits made while a save is pending still ask after it succeeds', async ({ page, network }) => {
+  test('edits made while a save is pending still ask after it succeeds, and staying can save them', async ({
+    page,
+    network,
+    requests,
+  }) => {
     await page.goto(formA);
     await notes(page).fill(UNSAVED);
     const release = await holdFormASave(page, network, 'saved');
     await notes(page).fill(`${UNSAVED} i dopisek`);
     release();
-    await expect(dialog(page)).toBeVisible();
+    await dialog(page).getByRole('button', { name: 'Zostań na stronie' }).click();
     await expect(page).toHaveURL(formA);
+    await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+    await expect(page).toHaveURL('/');
+    expect(requests.bodies(`PUT /v2/applications/${applicationId}/form-a`)).toHaveLength(2);
   });
 
   test('a save that finishes after the user left does not navigate away from the next page', async ({

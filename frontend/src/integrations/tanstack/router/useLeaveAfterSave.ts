@@ -15,6 +15,9 @@ export function useLeaveAfterSave(form: Pick<AnyFormApi, 'state'>) {
 
   return async (savedValues: unknown, options: NavigateOptions) => {
     if (!isMounted.current) return;
-    await navigate({ ...options, ignoreBlocker: evaluate(form.state.values, savedValues) });
+    const ignoreBlocker = evaluate(form.state.values, savedValues);
+    const navigation = navigate({ ...options, ignoreBlocker });
+    // A blocked navigation never settles if the user stays, which would keep the form submitting.
+    if (ignoreBlocker) await navigation;
   };
 }

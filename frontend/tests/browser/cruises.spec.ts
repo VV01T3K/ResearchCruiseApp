@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { getGetApplicationsForCruisePlanningMockHandler } from '@/api/generated/mocks/applications/applications.msw.gen';
 import { readFile } from 'node:fs/promises';
 import {
@@ -51,6 +52,19 @@ test('cruise deletion requires confirmation and removes the row after saving', a
   expect(requests.bodies(`DELETE /v2/cruises/${item.id}`)).toHaveLength(1);
 });
 
+async function fillNewCruise(page: Page) {
+  await page.goto('/cruises/new');
+  await page.getByText('Wybierz datę rozpoczęcia rejsu').click();
+  await page.getByText('17', { exact: true }).click();
+  await page.getByText('Wybierz datę zakończenia rejsu').click();
+  await page.getByText('18', { exact: true }).last().click();
+  await page.getByRole('combobox', { name: 'Kierownik główny' }).click();
+  await page.getByRole('option', { name: `${manager.firstName} ${manager.lastName}` }).click();
+  await expect(page.getByRole('listbox')).toHaveCount(0);
+  await page.getByRole('combobox', { name: 'Zastępca kierownika głównego' }).click();
+  await page.getByRole('option', { name: `${deputy.firstName} ${deputy.lastName}` }).click();
+}
+
 test('a new cruise is saved once with Warsaw-midnight dates and the chosen managers, then leaves without asking', async ({
   page,
   network,
@@ -71,16 +85,7 @@ test('a new cruise is saved once with Warsaw-midnight dates and the chosen manag
       return undefined as never;
     })
   );
-  await page.goto('/cruises/new');
-  await page.getByText('Wybierz datę rozpoczęcia rejsu').click();
-  await page.getByText('17', { exact: true }).click();
-  await page.getByText('Wybierz datę zakończenia rejsu').click();
-  await page.getByText('18', { exact: true }).last().click();
-  await page.getByRole('combobox', { name: 'Kierownik główny' }).click();
-  await page.getByRole('option', { name: `${manager.firstName} ${manager.lastName}` }).click();
-  await expect(page.getByRole('listbox')).toHaveCount(0);
-  await page.getByRole('combobox', { name: 'Zastępca kierownika głównego' }).click();
-  await page.getByRole('option', { name: `${deputy.firstName} ${deputy.lastName}` }).click();
+  await fillNewCruise(page);
   await page.getByRole('button', { name: 'Zapisz' }).click();
 
   await expect
@@ -97,13 +102,46 @@ test('a new cruise is saved once with Warsaw-midnight dates and the chosen manag
       },
     ]);
 
-  // The cruise exists while its refetch is held, so further edits can't save it again or keep the page.
-  await page.locator('input[name="title"]').fill('Poprawka');
+  // The cruise exists while its refetch is held, so saving again leaves instead of creating another.
   await page.getByRole('button', { name: 'Zapisz' }).click();
-  refetch.resolve();
   await expect(page).toHaveURL('/cruises');
   await expect(page.getByRole('dialog', { name: 'Niezapisane zmiany' })).toBeHidden();
+  refetch.resolve();
   expect(requests.bodies('POST /v2/cruises')).toHaveLength(1);
+});
+
+test('an edit made during a new cruise POST asks before leaving and never repeats the POST', async ({
+  page,
+  network,
+  requests,
+}) => {
+  await page.clock.setFixedTime(new Date('2026-05-16T12:00:00Z'));
+  const response = Promise.withResolvers<void>();
+  network.use(
+    getGetCruisesMockHandler([]),
+    getGetAvailableCruiseManagersMockHandler([manager, deputy]),
+    getCreateCruiseMockHandler(async () => {
+      await response.promise;
+      return undefined as never;
+    })
+  );
+  await fillNewCruise(page);
+  const save = page.getByRole('button', { name: 'Zapisz' });
+  const title = page.locator('input[name="title"]');
+  const dialog = page.getByRole('dialog', { name: 'Niezapisane zmiany' });
+  await save.click();
+  await expect.poll(() => requests.bodies('POST /v2/cruises').length).toBe(1);
+  await title.fill('Poprawka');
+  response.resolve();
+
+  await dialog.getByRole('button', { name: 'Zostań na stronie' }).click();
+  await expect(title).toHaveValue('Poprawka');
+  await expect(page).toHaveURL('/cruises/new');
+
+  await save.click();
+  await dialog.getByRole('button', { name: 'Opuść bez zapisywania' }).click();
+  await expect(page).toHaveURL('/cruises');
+  expect(requests.bodies('POST /v2/cruises')).toEqual([expect.objectContaining({ title: null })]);
 });
 
 test('a cruise manager who is no longer available keeps their name, without an empty email', async ({
