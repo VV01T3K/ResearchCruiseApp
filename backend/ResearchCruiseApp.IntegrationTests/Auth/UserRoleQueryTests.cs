@@ -1,6 +1,7 @@
 using System.Data.Common;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using ResearchCruiseApp.Api.Users;
 using ResearchCruiseApp.Domain;
@@ -85,6 +86,64 @@ public sealed class UserRoleQueryTests(SqlFixture fixture) : IAsyncLifetime
                 CruiseApplicationStatus.Accepted,
                 $"owner{i}@example.invalid"
             );
+        var large = await Measure(4);
+
+        Assert.Equal(small, large);
+    }
+
+    [Fact]
+    public async Task CruiseList_WhenCruisesGrow_LoadRolesInBoundedQueries()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var counter = new RoleQueryCounter();
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: counter);
+        await TestUsers.Create(app, "admin@example.invalid", RoleName.Administrator);
+        using var admin = await TestApplications.Login(app, "admin@example.invalid");
+
+        async Task AddCruise(int number)
+        {
+            var application = await TestApplications.Create(
+                app,
+                CruiseApplicationStatus.Accepted,
+                $"owner{number}@example.invalid"
+            );
+            await app.InDatabase(async db =>
+            {
+                var row = await db
+                    .CruiseApplications.Include(row => row.FormA)
+                    .SingleAsync(row => row.Id == application.Id, ct);
+                db.Cruises.Add(
+                    new Cruise
+                    {
+                        Number = $"2030/{number}",
+                        StartDate = "2030-06-01T08:00:00.000Z",
+                        EndDate = "2030-06-02T08:00:00.000Z",
+                        Status = CruiseStatus.New,
+                        MainCruiseManagerId = row.FormA!.CruiseManagerId,
+                        CruiseApplications = [row],
+                    }
+                );
+                await db.SaveChangesAsync(ct);
+            });
+        }
+
+        async Task<int> Measure(int expected)
+        {
+            counter.Reset();
+            var cruises = await admin.GetFromJsonAsync<JsonElement[]>("/v2/cruises", ct);
+            Assert.Equal(expected, cruises!.Length);
+            foreach (var cruise in cruises)
+                Assert.Equal(
+                    "Researcher",
+                    cruise.GetProperty("mainManager").GetProperty("lastName").GetString()
+                );
+            return counter.Count;
+        }
+
+        await AddCruise(1);
+        var small = await Measure(1);
+        for (var i = 2; i < 5; i++)
+            await AddCruise(i);
         var large = await Measure(4);
 
         Assert.Equal(small, large);

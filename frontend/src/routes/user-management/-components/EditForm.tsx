@@ -339,7 +339,11 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               }))}
               label="Rola"
               disabled={isOwnAccount}
-              helper={isOwnAccount ? 'Nie możesz zmienić własnej roli ani usunąć własnego konta.' : undefined}
+              helper={
+                isOwnAccount
+                  ? 'Nie możesz zmienić własnej roli, cofnąć akceptacji ani usunąć własnego konta.'
+                  : undefined
+              }
             />
           )}
         </form.AppField>
@@ -404,7 +408,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               {editMode && (
                 <Button
                   variant={!user.accepted ? 'success' : 'danger'}
-                  disabled={!!submitError || acceptUserMutation.isPending || unAcceptUserMutation.isPending}
+                  disabled={
+                    !!submitError ||
+                    acceptUserMutation.isPending ||
+                    unAcceptUserMutation.isPending ||
+                    (isOwnAccount && user.accepted)
+                  }
                   onClick={() => void handleAccountAcceptanceToggle()}
                   className="w-full"
                 >

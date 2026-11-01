@@ -12,6 +12,7 @@ internal class UserPermissionVerifier(
 {
     private Expression<Func<CruiseApplication, bool>>? _applicationVisibility;
     private Func<CruiseApplication, bool>? _canViewApplication;
+    private IList<string>? _currentUserRoles;
 
     public async Task<bool> CanCurrentUserAssignRole(string roleName)
     {
@@ -71,7 +72,8 @@ internal class UserPermissionVerifier(
 
     public async Task<bool> CanCurrentUserViewCruise(Cruise cruise)
     {
-        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        var currentUserRoles = _currentUserRoles ??=
+            await identityService.GetCurrentUserRoleNames();
         var currentUserId = currentUserService.GetId();
 
         if (currentUserId is null)

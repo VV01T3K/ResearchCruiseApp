@@ -153,11 +153,6 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           )}
         </Button>
       )}
-      {allowToRemoveUsers && includesOwnAccount && (
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Nie możesz usunąć własnego konta. Odznacz je, aby usunąć pozostałych.
-        </p>
-      )}
 
       <div className="mt-4">
         <Button
@@ -179,7 +174,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
         <Button
           variant="danger"
           className="mt-4 w-full"
-          disabled={unAcceptUserMutation.isPending || !!submitError}
+          disabled={unAcceptUserMutation.isPending || !!submitError || includesOwnAccount}
           onClick={() => void handleUnAcceptSelectedUsers()}
         >
           {assignmentWarning !== undefined ? (
@@ -195,6 +190,13 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           )}
         </Button>
       </div>
+      {includesOwnAccount && (
+        <p className="mt-2 text-center text-sm text-gray-600">
+          {allowToRemoveUsers
+            ? 'Nie możesz usunąć własnego konta ani cofnąć jego akceptacji. Odznacz je, aby zmienić pozostałych.'
+            : 'Nie możesz cofnąć akceptacji własnego konta. Odznacz je, aby zmienić pozostałych.'}
+        </p>
+      )}
     </div>
   );
 }

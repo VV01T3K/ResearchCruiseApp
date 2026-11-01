@@ -1,6 +1,7 @@
 using System.Globalization;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using DomainCruise = ResearchCruiseApp.Domain.Entities.Cruise;
 
@@ -22,7 +23,7 @@ public sealed record CruiseResponse(
 {
     internal static async Task<CruiseResponse> From(
         DomainCruise cruise,
-        IdentityService identityService,
+        IReadOnlyDictionary<Guid, CruiseManagerOptionDto> managers,
         ApplicationScoringService evaluator,
         UserPermissionVerifier userPermissionVerifier
     )
@@ -43,8 +44,8 @@ public sealed record CruiseResponse(
                 );
             }
         }
-        var manager = await identityService.GetUserDtoById(cruise.MainCruiseManagerId);
-        var deputy = await identityService.GetUserDtoById(cruise.MainDeputyManagerId);
+        var manager = managers.GetValueOrDefault(cruise.MainCruiseManagerId);
+        var deputy = managers.GetValueOrDefault(cruise.MainDeputyManagerId);
 
         return new CruiseResponse(
             cruise.Id,
@@ -68,6 +69,18 @@ public sealed record CruiseResponse(
             cruise.RowVersion.ToRevision()
         );
     }
+
+    internal static Task<Dictionary<Guid, CruiseManagerOptionDto>> LoadManagers(
+        IEnumerable<DomainCruise> cruises,
+        IdentityService identityService,
+        CancellationToken cancellationToken
+    ) =>
+        identityService.GetCruiseManagerOptionsByIds(
+            cruises.SelectMany(cruise =>
+                new[] { cruise.MainCruiseManagerId, cruise.MainDeputyManagerId }
+            ),
+            cancellationToken
+        );
 }
 
 public sealed record PersonResponse(Guid Id, string FirstName, string LastName);
