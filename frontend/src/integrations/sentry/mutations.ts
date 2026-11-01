@@ -8,23 +8,35 @@ let pageIsLeaving = false;
 globalThis.addEventListener?.('pagehide', () => (pageIsLeaving = true));
 globalThis.addEventListener?.('pageshow', () => (pageIsLeaving = false));
 
-export function rootCause(error: unknown): unknown {
-  return error instanceof Error && !(error instanceof ApiError) && error.cause ? rootCause(error.cause) : error;
+function causeChain(error: unknown): unknown[] {
+  const chain = [error];
+  for (let next = error; next instanceof Error && !(next instanceof ApiError) && next.cause && chain.length < 10;) {
+    chain.push((next = next.cause));
+  }
+  return chain;
 }
 
-export function classifyError(error: unknown) {
+function classifyOne(error: unknown) {
   if (isNotFound(error) || isRedirect(error)) return 'control-flow';
-  const cause = rootCause(error);
-  if (cause instanceof ApiError) {
-    if (cause.status === 401) return 'session';
-    if (cause.status === 403 || cause.status === 404) return 'no-access';
-    return cause.status < 500 ? 'refused' : 'server';
+  if (error instanceof ApiError) {
+    if (error.status === 401) return 'session';
+    if (error.status === 403 || error.status === 404) return 'no-access';
+    if (error.status === 409) return 'refused';
+    return error.status < 500 ? 'client' : 'server';
   }
-  if (cause instanceof CancelledError || (cause instanceof Error && cause.name === 'AbortError')) return 'aborted';
-  if (cause instanceof TypeError && /^(Failed to fetch|NetworkError|Load failed)/.test(cause.message)) {
+  if (error instanceof CancelledError || (error instanceof Error && error.name === 'AbortError')) return 'aborted';
+  if (error instanceof TypeError && /^(Failed to fetch|NetworkError|Load failed)/.test(error.message)) {
     return pageIsLeaving ? 'aborted' : 'network';
   }
   return 'unknown';
+}
+
+export function rootCause(error: unknown): unknown {
+  return causeChain(error).find((cause) => classifyOne(cause) !== 'unknown') ?? error;
+}
+
+export function classifyError(error: unknown) {
+  return classifyOne(rootCause(error));
 }
 
 export function isRetryableFailure(failureCount: number, error: unknown): boolean {
@@ -35,7 +47,7 @@ export function isRetryableFailure(failureCount: number, error: unknown): boolea
 export function isUnexplainedFailure(error: unknown): boolean {
   const kind = classifyError(error);
   const cause = rootCause(error);
-  if (kind === 'server' && cause instanceof ApiError) {
+  if ((kind === 'server' || kind === 'client') && cause instanceof ApiError) {
     const problem = cause.problem ?? {};
     return !(
       'errorCode' in problem ||
@@ -79,7 +91,7 @@ function markFirstReport(key: string): boolean {
 export function captureHandledRefusal(operation: string, error: unknown): void {
   const cause = rootCause(error);
   const kind = classifyError(cause);
-  if (!(cause instanceof ApiError) || (kind !== 'no-access' && kind !== 'refused')) return;
+  if (!(cause instanceof ApiError) || (kind !== 'no-access' && kind !== 'refused' && kind !== 'client')) return;
   if (!markFirstReport(`${operation}:${cause.status}`)) return;
   const refusal = new Error('Expected refusal shown to the user');
   refusal.name = `Handled ${operation} refusal (HTTP ${cause.status})`;

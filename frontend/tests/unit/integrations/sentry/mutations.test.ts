@@ -5,7 +5,9 @@ import { expect, it, vi } from 'vite-plus/test';
 import { ApiError } from '@/api/errors';
 import { captureHandledRefusal, classifyError, isUnexplainedFailure } from '@/integrations/sentry/mutations';
 
-vi.mock('@sentry/react', () => ({
+vi.mock('@sentry/browser', () => ({ captureException: vi.fn() }));
+vi.mock('@sentry/react', async (importOriginal) => ({
+  ...(await importOriginal<typeof Sentry>()),
   captureException: vi.fn(),
 }));
 
@@ -28,7 +30,10 @@ it.each([
     false,
   ],
   ['500 with field errors', new ApiError('Zły plik', 500, { errors: { file: ['Zły plik'] } }), false],
-  ['unexplained 4xx', new ApiError('Żądanie nie powiodło się (HTTP 404)', 404), false],
+  ['unexplained 404', new ApiError('Żądanie nie powiodło się (HTTP 404)', 404), false],
+  ['unexplained 400', new ApiError('Żądanie nie powiodło się (HTTP 400)', 400), true],
+  ['proxy 429', new ApiError('Żądanie nie powiodło się (HTTP 429)', 429), true],
+  ['422 with field errors', new ApiError('Zła data', 422, { errors: { date: ['Zła data'] } }), false],
   ['wrapped 401', new Error('Session refresh failed', { cause: new ApiError('Sesja wygasła', 401) }), false],
   ['abort', new DOMException('The user aborted a request.', 'AbortError'), false],
 ] as const)('classifies %s', (_, error, expected) => {
@@ -40,6 +45,9 @@ it.each([
   ['403', new ApiError('Brak dostępu', 403), 'no-access'],
   ['404', new ApiError('Nie znaleziono', 404), 'no-access'],
   ['409', new ApiError('Konflikt', 409), 'refused'],
+  ['400', new ApiError('Błąd', 400), 'client'],
+  ['422', new ApiError('Błąd', 422), 'client'],
+  ['429', new ApiError('Za dużo żądań', 429), 'client'],
   ['500', new ApiError('Błąd serwera', 500), 'server'],
   ['router notFound', notFound(), 'control-flow'],
   ['router redirect', redirect({ to: '/' }), 'control-flow'],
@@ -48,6 +56,17 @@ it.each([
   ['network failure', new TypeError('Failed to fetch'), 'network'],
   ['coding error', new TypeError('x is not a function'), 'unknown'],
 ] as const)('classifies %s as an error kind', (_, error, kind) => {
+  expect(classifyError(error)).toBe(kind);
+});
+
+it.each([
+  ['abort', () => new DOMException('Aborted', 'AbortError'), 'aborted'],
+  ['network failure', () => new TypeError('Failed to fetch'), 'network'],
+  ['404', () => new ApiError('Nie znaleziono', 404), 'no-access'],
+] as const)('classifies a React-reported %s by its original error', (_, makeError, kind) => {
+  const error = makeError();
+  Sentry.captureReactException(error, { componentStack: '\n    at RouteError' });
+  expect((error as Error).cause).toBeInstanceOf(Error);
   expect(classifyError(error)).toBe(kind);
 });
 

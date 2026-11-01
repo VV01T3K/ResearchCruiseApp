@@ -78,7 +78,8 @@ function RootLayout() {
 function RouteError({ error }: ErrorComponentProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const noAccess = classifyError(error) === 'no-access';
+  const kind = classifyError(error);
+  const noAccess = kind === 'no-access';
   const description = getProblemDetail(error, 'Nie udało się wczytać strony.');
   const cause = rootCause(error);
 
@@ -122,9 +123,10 @@ function RouteError({ error }: ErrorComponentProps) {
               <div>Opis błędu: </div>
               <div className="font-semibold">{description}</div>
             </div>
-            {cause instanceof ApiError && !description.includes('Kod błędu') && (
+            {(cause instanceof ApiError || kind === 'network') && !description.includes('Kod błędu') && (
               <div className="text-center">
-                Kod błędu: <span className="font-semibold">HTTP {cause.status}</span>
+                Kod błędu:{' '}
+                <span className="font-semibold">{cause instanceof ApiError ? `HTTP ${cause.status}` : 'NETWORK'}</span>
               </div>
             )}
             <div className="text-center">
