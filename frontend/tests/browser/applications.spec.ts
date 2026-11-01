@@ -215,12 +215,15 @@ test.describe('application review', () => {
     const decisions = () => requests.bodies(`PUT /v2/applications/${applicationId}/decision`);
     await page.goto(`/applications/${applicationId}/details`);
     await page.getByRole('button', { name: 'Zaakceptuj zgłoszenie' }).click();
-    await expect.poll(decisions).toEqual([{ accept: true }]);
+    await expect.poll(decisions).toEqual([{ accept: true, revision: application().revision }]);
 
     await page.getByRole('button', { name: 'Odrzuć zgłoszenie' }).click();
     expect(decisions()).toHaveLength(1);
     await page.getByRole('button', { name: 'Potwierdź odrzucenie' }).click();
-    await expect.poll(decisions).toEqual([{ accept: true }, { accept: false }]);
+    await expect.poll(decisions).toEqual([
+      { accept: true, revision: application().revision },
+      { accept: false, revision: application().revision },
+    ]);
     await expect(page.getByRole('button', { name: 'Potwierdź odrzucenie' })).toHaveCount(0);
   });
 

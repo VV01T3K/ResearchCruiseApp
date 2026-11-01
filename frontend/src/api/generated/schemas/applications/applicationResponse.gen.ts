@@ -28,7 +28,8 @@ export const ApplicationResponse = zod.object({
   "precisePeriodStart": zod.iso.datetime({"offset":true}).nullable(),
   "precisePeriodEnd": zod.iso.datetime({"offset":true}).nullable(),
   "startDate": zod.iso.datetime({"offset":true}).nullable(),
-  "endDate": zod.iso.datetime({"offset":true}).nullable()
+  "endDate": zod.iso.datetime({"offset":true}).nullable(),
+  "revision": zod.string()
 });
 
 export type ApplicationResponse = zod.input<typeof ApplicationResponse>;

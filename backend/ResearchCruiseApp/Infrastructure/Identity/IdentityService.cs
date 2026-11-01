@@ -107,8 +107,6 @@ internal class IdentityService(
 
     public async Task<Result> AcceptUser(Guid id)
     {
-        await using var transaction = await dbContext.Database.BeginTransactionAsync();
-
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null)
             return Error.ResourceNotFound();
@@ -121,7 +119,6 @@ internal class IdentityService(
 
         await emailSender.SendAccountAcceptedMessage(await CreateUserDto(user));
 
-        await transaction.CommitAsync();
         return Result.Empty;
     }
 
@@ -498,8 +495,7 @@ internal class IdentityService(
         return await ExecuteAdminInvariantGuarded(
             userId,
             "Nie można usunąć ostatniego administratora",
-            () => DeleteUserCore(userId),
-            cancellationToken
+            () => DeleteUserCore(userId)
         );
     }
 
@@ -540,8 +536,7 @@ internal class IdentityService(
         return await ExecuteAdminInvariantGuarded(
             userId,
             "Nie można odebrać roli ostatniemu administratorowi",
-            () => RemoveUserRoleCore(userId, roleName),
-            cancellationToken
+            () => RemoveUserRoleCore(userId, roleName)
         );
     }
 
@@ -575,7 +570,7 @@ internal class IdentityService(
     {
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null)
-            return Error.ForbiddenOperation();
+            return Error.ResourceNotFound();
 
         var identityResult = await userManager.DeleteAsync(user);
 
@@ -591,15 +586,9 @@ internal class IdentityService(
     private async Task<Result> ExecuteAdminInvariantGuarded(
         Guid userId,
         string conflictMessage,
-        Func<Task<Result>> mutation,
-        CancellationToken cancellationToken
+        Func<Task<Result>> mutation
     )
     {
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(
-            System.Data.IsolationLevel.Serializable,
-            cancellationToken
-        );
-
         var userRoles = await GetUserRolesNames(userId);
         if (userRoles.Contains(RoleName.Administrator))
         {
@@ -608,9 +597,7 @@ internal class IdentityService(
                 return Error.Conflict(conflictMessage);
         }
 
-        var result = await mutation();
-        await transaction.CommitAsync(cancellationToken);
-        return result;
+        return await mutation();
     }
 
     private async Task<Result> UpdateUserCore(
@@ -620,11 +607,9 @@ internal class IdentityService(
         string? lastName
     )
     {
-        await using var transaction = await dbContext.Database.BeginTransactionAsync();
-
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null)
-            return Error.ForbiddenOperation();
+            return Error.ResourceNotFound();
 
         if (email is not null && email != user.Email && await UserWithEmailExists(email))
             return Error.Conflict("Użytkownik o tym adresie e-mail już istnieje");
@@ -645,7 +630,6 @@ internal class IdentityService(
             await ResendEmailConfirmationEmail(user.Email, userRoles.First());
         }
 
-        await transaction.CommitAsync();
         return Result.Empty;
     }
 

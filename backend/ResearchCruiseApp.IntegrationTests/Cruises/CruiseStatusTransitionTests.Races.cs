@@ -100,8 +100,12 @@ public sealed partial class CruiseStatusTransitionTests
             app,
             CruiseApplicationStatus.AcceptedBySupervisor
         );
+        var revision = await FormRequests.ApplicationRevision(office, id);
         Task<HttpResponseMessage> Decide(bool accept) =>
-            office.PutAsJsonAsync($"/v2/applications/{id}/decision", new { Accept = accept });
+            office.PutAsJsonAsync(
+                $"/v2/applications/{id}/decision",
+                new { Accept = accept, Revision = revision }
+            );
 
         gate.Hold(db => SavesStatus(db, id, CruiseApplicationStatus.Accepted));
         var (accepted, rejected) = await gate.Race(
@@ -114,6 +118,39 @@ public sealed partial class CruiseStatusTransitionTests
         using (accepted)
             Assert.Equal(HttpStatusCode.NoContent, accepted.StatusCode);
         await AssertConflict(rejected);
+    }
+
+    [Fact]
+    public async Task OfficeDecision_FromAStaleTab_IsRejectedButACurrentRejectionStillApplies()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var office = await Office(app);
+        var (id, _) = await TestApplications.Create(
+            app,
+            CruiseApplicationStatus.AcceptedBySupervisor
+        );
+        var route = $"/v2/applications/{id}/decision";
+        var stale = await FormRequests.ApplicationRevision(office, id);
+
+        using var accepted = await office.PutAsJsonAsync(
+            route,
+            new { Accept = true, Revision = stale },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NoContent, accepted.StatusCode);
+        await AssertConflict(
+            await office.PutAsJsonAsync(route, new { Accept = false, Revision = stale }, ct)
+        );
+        await AssertApplication(app, id, CruiseApplicationStatus.Accepted, null);
+
+        using var rejected = await office.PutAsJsonAsync(
+            route,
+            new { Accept = false, Revision = await FormRequests.ApplicationRevision(office, id) },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NoContent, rejected.StatusCode);
+        await AssertApplication(app, id, CruiseApplicationStatus.Denied, null);
     }
 
     private static bool SavesStatus(

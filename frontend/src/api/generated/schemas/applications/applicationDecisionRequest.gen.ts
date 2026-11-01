@@ -1,7 +1,8 @@
 import * as zod from 'zod';
 
 export const ApplicationDecisionRequest = zod.object({
-  "accept": zod.boolean()
+  "accept": zod.boolean(),
+  "revision": zod.string().nullable()
 });
 
 export type ApplicationDecisionRequest = zod.input<typeof ApplicationDecisionRequest>;

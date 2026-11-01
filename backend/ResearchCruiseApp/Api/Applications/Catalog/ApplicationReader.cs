@@ -45,6 +45,7 @@ internal class ApplicationReader(
                 application.Cruise is not null && !string.IsNullOrEmpty(application.Cruise.EndDate)
                     ? DateTime.Parse(application.Cruise.EndDate, CultureInfo.InvariantCulture)
                     : null,
+            Revision = application.RowVersion.ToRevision(),
         };
 
         await AddManagers(application, dto);

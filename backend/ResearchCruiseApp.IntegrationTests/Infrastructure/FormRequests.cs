@@ -60,6 +60,15 @@ internal static class FormRequests
         return cruise?["revision"]?.GetValue<string>();
     }
 
+    internal static async Task<string?> ApplicationRevision(HttpClient client, Guid applicationId)
+    {
+        var application = await client.GetFromJsonAsync<JsonObject>(
+            $"/v2/applications/{applicationId}",
+            TestContext.Current.CancellationToken
+        );
+        return application?["revision"]?.GetValue<string>();
+    }
+
     internal static async Task<string> CruiseRevisionQuery(HttpClient client, Guid cruiseId) =>
         $"?revision={Uri.EscapeDataString((await CruiseRevision(client, cruiseId))!)}";
 

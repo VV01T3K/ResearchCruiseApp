@@ -32,7 +32,7 @@ function MyPublicationsPage() {
   const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense();
   const deleteOwnPublicationMutation = useDeleteCurrentUserPublication();
   const deleteSelectedPublicationsMutation = useDeleteCurrentUserPublication({
-    mutation: { meta: { handlesError: true } },
+    mutation: { meta: { handlesError: true }, scope: { id: 'delete-selected-publications' } },
   });
   const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications();
   const uploadPublicationsMutation = useImportCurrentUserPublications();
@@ -116,6 +116,7 @@ function MyPublicationsPage() {
         <Button
           variant="dangerOutline"
           size="xs"
+          disabled={deleteOwnPublicationMutation.isPending}
           onClick={() => deleteOwnPublicationMutation.mutate({ publicationId: cell.row.original.id })}
         >
           <TrashIcon className="mr-2 h-3 w-3" />
@@ -139,6 +140,7 @@ function MyPublicationsPage() {
           buttons={(defaultButtons) => [
             <UploadButton
               key="upload"
+              disabled={uploadPublicationsMutation.isPending}
               onUpload={(publications) => uploadPublicationsMutation.mutate({ data: publications })}
             />,
             <Button

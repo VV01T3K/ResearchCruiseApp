@@ -38,8 +38,9 @@ public static class AccountsEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status409Conflict)
+            .ProducesProblem(StatusCodes.Status404NotFound)
             .WithRequestValidation<UpdateUserRequest>()
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
@@ -51,7 +52,8 @@ public static class AccountsEndpoints
             .WithSummary("Delete a managed user.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status409Conflict)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
@@ -103,6 +105,11 @@ public static class AccountsEndpoints
         CancellationToken cancellationToken
     )
     {
+        if (await identityService.GetUserDtoById(userId) is null)
+        {
+            return Error.ResourceNotFound().ToProblemHttpResult();
+        }
+
         if (!await userPermissionVerifier.CanCurrentUserAccess(userId))
         {
             return Error

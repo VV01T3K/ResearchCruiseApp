@@ -50,6 +50,10 @@ function CruiseDetailsPage() {
   const cruiseQuery = useGetCruiseSuspense(cruiseId);
   const applicationQuery = useGetApplicationsForCruisePlanningSuspense({ cruiseId });
   const updateCruiseMutation = useUpdateCruise({ mutation: { meta: { handlesError: true } } });
+  const forgetCruise = () => {
+    queryClient.removeQueries({ queryKey: getGetCruiseQueryKey(cruiseId) });
+    return queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
+  };
   const refetchOnConflict = {
     mutation: {
       // Awaited so the action stays pending until the current version is on screen.
@@ -62,12 +66,7 @@ function CruiseDetailsPage() {
   const confirmCruiseMutation = useConfirmCruise(refetchOnConflict);
   const deleteCruiseMutation = useDeleteCruise({
     skipInvalidation: true,
-    mutation: {
-      onSuccess: () => {
-        queryClient.removeQueries({ queryKey: getGetCruiseQueryKey(cruiseId) });
-        return queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
-      },
-    },
+    mutation: { meta: { handlesError: true }, onSuccess: forgetCruise },
   });
   const endCruiseMutation = useCompleteCruise(refetchOnConflict);
   const revertCruiseStatusMutation = useRemoveCruiseConfirmation(refetchOnConflict);
@@ -312,7 +311,19 @@ function CruiseDetailsPage() {
             onClick={() =>
               deleteCruiseMutation.mutate(
                 { cruiseId, params: { revision: cruiseQuery.data.revision } },
-                { onSuccess: () => void navigate({ to: '/cruises' }) }
+                {
+                  onSuccess: () => void navigate({ to: '/cruises' }),
+                  onError: (error) => {
+                    if (error instanceof ApiError && (error.status === 404 || error.status === 409)) {
+                      toast.error('Rejs został w międzyczasie usunięty lub zmieniony.');
+                      setIsConfirmDeletionModalOpen(false);
+                      void forgetCruise();
+                      void navigate({ to: '/cruises' });
+                    } else {
+                      toast.error(getErrorMessage(error, 'Nie udało się usunąć rejsu'));
+                    }
+                  },
+                }
               )
             }
             disabled={deleteCruiseMutation.isPending}

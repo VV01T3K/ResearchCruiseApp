@@ -38,6 +38,7 @@ public static class PublicationsEndpoints
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithRequestValidation<ImportPublicationRequest[]>()
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.CurrentUserPublications);
     }
 
@@ -49,6 +50,7 @@ public static class PublicationsEndpoints
             .WithSummary("Delete one publication from the current user.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.CurrentUserPublications);
     }
 
@@ -60,6 +62,7 @@ public static class PublicationsEndpoints
             .WithSummary("Delete all publications from the current user.")
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status404NotFound)
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.CurrentUserPublications);
     }
 
