@@ -194,7 +194,7 @@ internal class IdentityService(
     {
         var user = await userManager.FindByEmailAsync(email);
         if (user is null)
-            return; // According to Microsoft, responding with an error would give to much information
+            return; // According to Microsoft, responding with an error would give too much information
 
         var emailConfirmationCode = await CreateEmailConfirmationCode(user);
         var userDto = await CreateUserDto(user);

@@ -146,7 +146,7 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
                   <DropdownElementSelectorButton
                     key="historical"
                     options={initValues.historicalSpubTasks
-                      .filter((task) => task.name && task.yearFrom && task.yearTo) // dont show options with empty fields
+                      .filter((task) => task.name && task.yearFrom && task.yearTo)
                       .map((task) => ({
                         value: JSON.stringify(task),
                         content: `${task.name ?? ''} (${task.yearFrom ?? ''} - ${task.yearTo ?? ''})`,

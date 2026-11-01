@@ -60,7 +60,7 @@ function getOverlappingBlockadesForRange(
 }
 
 function getCurrentFortnight(year: string, today: Date): number {
-  // If the year is in the future, return 0 (the first fortnight so it doesn't block the slider )
+  // If the year is in the future, return 0 (the first fortnight, so it doesn't block the slider)
   if (today.getFullYear() < parseInt(year, 10)) {
     return 0;
   }
@@ -99,11 +99,9 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
 
   const nowMs = useNow((now) => now.setSeconds(0, 0));
 
-  // Initialize checkbox state based on whether saved start date is in the past
   const [allowPastDates, setAllowPastDates] = useState(() => {
     const currentFortnight = getCurrentFortnight(year, new Date(nowMs));
 
-    // Check if precisePeriodStart is in the past
     if (precisePeriodStart) {
       const startDate = new Date(precisePeriodStart);
       const today = new Date(nowMs);
@@ -113,7 +111,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
       }
     }
 
-    // Check if acceptablePeriod start is in the past (fortnight-based)
     if (isValidPeriod(acceptablePeriod)) {
       const acceptableStart = parseInt(acceptablePeriod[0], 10);
       if (acceptableStart < currentFortnight) {

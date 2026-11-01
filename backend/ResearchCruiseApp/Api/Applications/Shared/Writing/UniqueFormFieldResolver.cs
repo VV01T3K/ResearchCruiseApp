@@ -34,7 +34,6 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
         CancellationToken cancellationToken
     )
     {
-        // If the research area description has a different name, we check if this name already exists in the researchAreasRepository
         if (
             researchAreaSelection.AreaId is null
             && !string.IsNullOrEmpty(researchAreaSelection.DifferentName)
@@ -50,7 +49,7 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
                 researchAreaSelection = researchAreaSelection with
                 {
                     AreaId = researchArea.Id,
-                    DifferentName = null, // Clear the different name since we found a matching research area
+                    DifferentName = null,
                 };
             }
         }

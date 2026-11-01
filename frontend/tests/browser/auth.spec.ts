@@ -20,7 +20,6 @@ import { test, expect, fail, applicationForms } from './fixtures';
 import { admin, outsider, session } from '../data/accounts';
 import { applicationId } from '../data/forms';
 
-// The icon-only sign-out button has no accessible name yet (#491).
 const signOut = (page: Page) => page.getByRole('button', { name: 'Wyloguj', exact: true }).click();
 
 async function logIn(page: Page, password = 'Password1!') {

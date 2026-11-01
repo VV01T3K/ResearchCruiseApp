@@ -220,10 +220,6 @@ internal class CruiseEffectService(
         }
     }
 
-    /// <summary>
-    /// Returns the number of points that have been assigned to the researchTask linked with the given effect when
-    /// the cruiseApplication was evaluated before the cruise
-    /// </summary>
     private static int GetResearchTaskEvaluationBeforeCruise(
         ResearchTaskEffect effect,
         CruiseApplication cruiseApplication
