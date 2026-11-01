@@ -28,20 +28,20 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
             await EvaluateEffects(cruiseApplication, cancellationToken);
     }
 
-    public int GetPointsSum(CruiseApplication cruiseApplication)
+    public long GetPointsSum(CruiseApplication cruiseApplication)
     {
         var formA = cruiseApplication.FormA;
         if (formA is null)
             return 0;
 
         var researchTaskPoints = formA.FormAResearchTasks.Sum(formAResearchTask =>
-            formAResearchTask.Points
+            (long)formAResearchTask.Points
         );
-        var contractsPoints = formA.FormAContracts.Sum(formAContract => formAContract.Points);
+        var contractsPoints = formA.FormAContracts.Sum(formAContract => (long)formAContract.Points);
         var publicationsPoints = formA.FormAPublications.Sum(formAPublication =>
-            formAPublication.Points
+            (long)formAPublication.Points
         );
-        var spubTasksPoints = formA.FormASpubTasks.Sum(formASpubTask => formASpubTask.Points);
+        var spubTasksPoints = formA.FormASpubTasks.Sum(formASpubTask => (long)formASpubTask.Points);
 
         return researchTaskPoints
             + contractsPoints

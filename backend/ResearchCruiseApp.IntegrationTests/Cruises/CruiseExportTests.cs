@@ -19,6 +19,23 @@ public sealed class CruiseExportTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     [Theory]
+    [InlineData("/v2/cruises/blockades?year=99999")]
+    [InlineData("/v2/cruises/blockades?year=0")]
+    [InlineData("/v2/cruises/export?year=99999")]
+    [InlineData("/v2/cruises/export?year=20")]
+    public async Task Year_WhenOutOfRange_ReturnsBadRequest(string route)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var reader = await TestUsers.Create(app, "export-reader@example.invalid", RoleName.Guest);
+        using var client = await TestApplications.Login(app, reader.Email!);
+
+        using var response = await client.GetAsync(route, ct);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Theory]
     [InlineData("2024-01-15", "15.01.2024", "11:30", "13:00")]
     [InlineData("2024-07-15", "15.07.2024", "12:30", "14:00")]
     public async Task Export_WhenNamesContainCsvCharacters_PreservesColumnsUnicodeAndLocalTime(

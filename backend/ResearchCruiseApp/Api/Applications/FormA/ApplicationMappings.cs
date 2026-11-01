@@ -22,12 +22,12 @@ internal static partial class ApplicationMappings
             PrecisePeriodStart = dto.PrecisePeriodStart,
             PrecisePeriodEnd = dto.PrecisePeriodEnd,
             CruiseHours = dto.CruiseHours,
-            PeriodNotes = dto.PeriodNotes,
+            PeriodNotes = dto.PeriodNotes ?? "",
             ShipUsage = dto.ShipUsage,
-            DifferentUsage = dto.DifferentUsage,
+            DifferentUsage = dto.DifferentUsage ?? "",
             CruiseGoal = dto.CruiseGoal,
-            CruiseGoalDescription = dto.CruiseGoalDescription,
-            SupervisorEmail = dto.SupervisorEmail,
+            CruiseGoalDescription = dto.CruiseGoalDescription ?? "",
+            SupervisorEmail = dto.SupervisorEmail ?? "",
         };
     }
 
