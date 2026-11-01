@@ -1,8 +1,10 @@
 using System.Data.Common;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using ResearchCruiseApp.Api.Users;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Auth;
@@ -33,6 +35,57 @@ public sealed class UserRoleQueryTests(SqlFixture fixture) : IAsyncLifetime
         for (var i = 0; i < 5; i++)
             await Add($"manager{i}@example.invalid", RoleName.CruiseManager);
         var large = await Measure(counter, admin, office, roles);
+
+        Assert.Equal(small, large);
+    }
+
+    [Fact]
+    public async Task ApplicationLists_WhenApplicationsGrow_LoadRolesInBoundedQueries()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var counter = new RoleQueryCounter();
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: counter);
+        await TestUsers.Create(app, "admin@example.invalid", RoleName.Administrator);
+        using var admin = await TestApplications.Login(app, "admin@example.invalid");
+
+        async Task<int[]> Measure(int expected)
+        {
+            counter.Reset();
+            var page = await admin.GetFromJsonAsync<JsonElement>("/v2/applications", ct);
+            var pageCount = counter.Count;
+            var items = page.GetProperty("items").EnumerateArray().ToArray();
+            Assert.Equal(expected, items.Length);
+            foreach (var item in items)
+                Assert.EndsWith(
+                    "@example.invalid",
+                    item.GetProperty("mainManager").GetProperty("email").GetString()
+                );
+
+            counter.Reset();
+            var candidates = await admin.GetFromJsonAsync<JsonElement[]>(
+                "/v2/applications/for-cruise-planning",
+                ct
+            );
+            var candidatesCount = counter.Count;
+            Assert.Equal(expected, candidates!.Length);
+            foreach (var candidate in candidates)
+                Assert.NotEmpty(candidate.GetProperty("cruiseManagerLastName").GetString()!);
+            return [pageCount, candidatesCount];
+        }
+
+        await TestApplications.Create(
+            app,
+            CruiseApplicationStatus.Accepted,
+            "owner0@example.invalid"
+        );
+        var small = await Measure(1);
+        for (var i = 1; i < 4; i++)
+            await TestApplications.Create(
+                app,
+                CruiseApplicationStatus.Accepted,
+                $"owner{i}@example.invalid"
+            );
+        var large = await Measure(4);
 
         Assert.Equal(small, large);
     }

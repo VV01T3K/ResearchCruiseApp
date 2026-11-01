@@ -3,6 +3,7 @@ using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
 namespace ResearchCruiseApp.Api.Applications;
 
@@ -12,7 +13,23 @@ internal class ApplicationReader(
     ContractReader contracts
 )
 {
-    public async Task<CruiseApplicationSummary> Create(CruiseApplication application)
+    public Task<Dictionary<Guid, CruiseManagerOptionDto>> LoadManagers(
+        IEnumerable<CruiseApplication> applications,
+        CancellationToken cancellationToken
+    ) =>
+        identityService.GetCruiseManagerOptionsByIds(
+            applications
+                .Where(application => application.FormA is not null)
+                .SelectMany(application =>
+                    new[] { application.FormA!.CruiseManagerId, application.FormA.DeputyManagerId }
+                ),
+            cancellationToken
+        );
+
+    public CruiseApplicationSummary Create(
+        CruiseApplication application,
+        IReadOnlyDictionary<Guid, CruiseManagerOptionDto> managers
+    )
     {
         var dto = new CruiseApplicationSummary
         {
@@ -48,7 +65,7 @@ internal class ApplicationReader(
             Revision = application.RowVersion.ToRevision(),
         };
 
-        await AddManagers(application, dto);
+        AddManagers(application, dto, managers);
         dto.Points = evaluator.GetPointsSum(application);
         AddEffectsDoneRate(application, dto);
         AddCruiseDays(dto);
@@ -56,12 +73,13 @@ internal class ApplicationReader(
         return dto;
     }
 
-    public async Task<CruiseApplicationCandidateResponse> CreateCandidate(
-        CruiseApplication application
+    public CruiseApplicationCandidateResponse CreateCandidate(
+        CruiseApplication application,
+        IReadOnlyDictionary<Guid, CruiseManagerOptionDto> managers
     )
     {
         var manager = application.FormA?.CruiseManagerId is { } managerId
-            ? await identityService.GetUserDtoById(managerId)
+            ? managers.GetValueOrDefault(managerId)
             : null;
 
         return new CruiseApplicationCandidateResponse
@@ -108,11 +126,15 @@ internal class ApplicationReader(
         };
     }
 
-    private async Task AddManagers(CruiseApplication application, CruiseApplicationSummary dto)
+    private static void AddManagers(
+        CruiseApplication application,
+        CruiseApplicationSummary dto,
+        IReadOnlyDictionary<Guid, CruiseManagerOptionDto> managers
+    )
     {
         if (application.FormA?.CruiseManagerId is { } managerId)
         {
-            var manager = await identityService.GetUserDtoById(managerId);
+            var manager = managers.GetValueOrDefault(managerId);
             dto.CruiseManagerEmail = manager?.Email ?? string.Empty;
             dto.CruiseManagerFirstName = manager?.FirstName ?? string.Empty;
             dto.CruiseManagerLastName = manager?.LastName ?? string.Empty;
@@ -120,7 +142,7 @@ internal class ApplicationReader(
 
         if (application.FormA?.DeputyManagerId is { } deputyId)
         {
-            var deputy = await identityService.GetUserDtoById(deputyId);
+            var deputy = managers.GetValueOrDefault(deputyId);
             dto.DeputyManagerEmail = deputy?.Email ?? string.Empty;
             dto.DeputyManagerFirstName = deputy?.FirstName ?? string.Empty;
             dto.DeputyManagerLastName = deputy?.LastName ?? string.Empty;

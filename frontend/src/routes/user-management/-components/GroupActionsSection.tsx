@@ -6,6 +6,7 @@ import { Alert } from '@/components/shared/Alert';
 import { Button } from '@/components/shared/Button';
 import { toast } from '@/components/shared/layout/toast';
 import { Role } from '@/integrations/auth/types';
+import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import type { UserResponse } from '@/api/generated/schemas';
 import { useAcceptUser, useDeactivateUser, useDeleteUser } from '@/api/generated/endpoints/users.gen';
 import { getProblemDetail } from '@/api/errors';
@@ -20,6 +21,8 @@ type Props = {
   close: () => void;
 };
 export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUsers, close }: Props) {
+  const currentUser = useCurrentUser();
+  const includesOwnAccount = selectedUsers.some((user) => user.id === currentUser?.id);
   const [deletionConfirmed, setDeletionConfirmed] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | undefined>(undefined);
   const [assignmentWarning, setAssignmentWarning] = React.useState<UserAssignments[] | null>();
@@ -134,7 +137,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           type="button"
           variant={deletionConfirmed ? 'dangerOutline' : 'danger'}
           className="w-full"
-          disabled={deleteUserMutation.isPending || !!submitError}
+          disabled={deleteUserMutation.isPending || !!submitError || includesOwnAccount}
           onClick={() => void handleDeleteSelectedUsers()}
         >
           {deletionConfirmed ? (
@@ -149,6 +152,11 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
             </div>
           )}
         </Button>
+      )}
+      {allowToRemoveUsers && includesOwnAccount && (
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Nie możesz usunąć własnego konta. Odznacz je, aby usunąć pozostałych.
+        </p>
       )}
 
       <div className="mt-4">

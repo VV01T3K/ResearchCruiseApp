@@ -114,11 +114,12 @@ public static class CatalogEndpoints
         if (hasMore)
             applications.RemoveAt(clampedPageSize);
 
-        var visibleApplications = new List<ApplicationResponse>();
-        foreach (var application in applications)
-        {
-            visibleApplications.Add(ApplicationResponse.From(await projection.Create(application)));
-        }
+        var managers = await projection.LoadManagers(applications, cancellationToken);
+        var visibleApplications = applications
+            .Select(application =>
+                ApplicationResponse.From(projection.Create(application, managers))
+            )
+            .ToList();
 
         var nextCursor = hasMore
             ? CruiseApplicationsCursor.Encode(
@@ -192,6 +193,9 @@ public static class CatalogEndpoints
             return TypedResults.NotFound();
         }
 
-        return TypedResults.Ok(ApplicationResponse.From(await applications.Create(application)));
+        var managers = await applications.LoadManagers([application], cancellationToken);
+        return TypedResults.Ok(
+            ApplicationResponse.From(applications.Create(application, managers))
+        );
     }
 }

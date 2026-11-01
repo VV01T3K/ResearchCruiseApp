@@ -3,9 +3,11 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using ResearchCruiseApp.Api.Users;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Auth;
@@ -84,8 +86,8 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
         RoleName.Guest,
         HttpStatusCode.NoContent
     )]
-    [InlineData(RoleName.Administrator, "self+admin", RoleName.Guest, HttpStatusCode.NoContent)]
-    [InlineData(RoleName.Administrator, "self", RoleName.Guest, HttpStatusCode.Conflict)]
+    [InlineData(RoleName.Administrator, "self+admin", RoleName.Guest, HttpStatusCode.Forbidden)]
+    [InlineData(RoleName.Administrator, "self", RoleName.Guest, HttpStatusCode.Forbidden)]
     [InlineData(
         RoleName.Shipowner,
         RoleName.CruiseManager,
@@ -128,6 +130,69 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
             targetUser.Id,
             expected == HttpStatusCode.NoContent ? [requestedRole] : originalRoles
         );
+    }
+
+    [Theory]
+    [InlineData(RoleName.Administrator)]
+    [InlineData(RoleName.Shipowner)]
+    public async Task OwnAccount_RoleChangesAndDeletion_AreRefused(string role)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var actor = await TestUsers.Create(app, "actor@example.invalid", role);
+        await TestUsers.Create(app, "other-admin@example.invalid", RoleName.Administrator);
+        using var client = await TestApplications.Login(app, actor.Email!);
+        using var removed = await client.DeleteAsync($"/v2/users/{actor.Id}/roles/{role}", ct);
+        using var replaced = await client.PutAsJsonAsync(
+            $"/v2/users/{actor.Id}/role",
+            new { roleName = RoleName.Guest },
+            ct
+        );
+        using var deleted = await client.DeleteAsync($"/v2/users/{actor.Id}", ct);
+        Assert.Equal(HttpStatusCode.Forbidden, removed.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, replaced.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, deleted.StatusCode);
+        await AssertRoles(app, actor.Id, [role]);
+    }
+
+    [Fact]
+    public async Task LastAdministrator_KeepsTheRoleAfterADemotedAdministratorActs()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var demoted = await TestUsers.Create(
+            app,
+            "demoted@example.invalid",
+            RoleName.Administrator
+        );
+        var last = await TestUsers.Create(app, "last@example.invalid", RoleName.Administrator);
+        using var staleToken = await TestApplications.Login(app, demoted.Email!);
+        using var lastClient = await TestApplications.Login(app, last.Email!);
+        using var demotion = await lastClient.DeleteAsync(
+            $"/v2/users/{demoted.Id}/roles/{RoleName.Administrator}",
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NoContent, demotion.StatusCode);
+        using var refused = await staleToken.DeleteAsync(
+            $"/v2/users/{last.Id}/roles/{RoleName.Administrator}",
+            ct
+        );
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+
+        // Endpoints stop every sequential path first, so the backstop is called directly.
+        await using var scope = app.Services.CreateAsyncScope();
+        var identity = scope.ServiceProvider.GetRequiredService<IdentityService>();
+        var id = Guid.Parse(last.Id);
+        Assert.Equal(
+            ErrorType.Conflict,
+            (await identity.RemoveUserRole(id, RoleName.Administrator, ct)).Error!.Type
+        );
+        Assert.Equal(
+            ErrorType.Conflict,
+            (await identity.ReplaceUserRoles(id, RoleName.Guest)).Error!.Type
+        );
+        Assert.Equal(ErrorType.Conflict, (await identity.DeleteUser(id, ct)).Error!.Type);
+        await AssertRoles(app, last.Id, [RoleName.Administrator]);
     }
 
     [Fact]

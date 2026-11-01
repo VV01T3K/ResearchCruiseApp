@@ -1,8 +1,7 @@
-import { getErrorMessage } from '@/api/errors';
-import { toast } from '@/components/shared/layout/toast';
+import { getProblemDetail } from '@/api/errors';
 import { ResetPasswordRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { createFileRoute, Navigate } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
@@ -20,8 +19,8 @@ export const Route = createFileRoute('/(auth)/reset-password')({
   component: ResetPasswordPage,
   beforeLoad: allowOnly.unauthenticated(),
   validateSearch: z.object({
-    emailBase64: z.string().optional(),
-    resetCode: z.string().optional(),
+    emailBase64: z.string().optional().catch(undefined),
+    resetCode: z.string().optional().catch(undefined),
   }),
 });
 
@@ -50,6 +49,7 @@ const validationSchema = z
 function ResetPasswordPage() {
   const { emailBase64, resetCode } = Route.useSearch();
   const [result, setResult] = React.useState<Result | undefined>(undefined);
+  const [errorMessage, setErrorMessage] = React.useState('');
   const { mutateAsync } = useResetPassword({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
@@ -73,8 +73,8 @@ function ResetPasswordPage() {
         });
         setResult('success');
       } catch (error) {
+        setErrorMessage(getProblemDetail(error, 'Operacja nie powiodła się'));
         setResult('error');
-        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
       }
     },
     onSubmitInvalid: ({ formApi }) => {
@@ -84,7 +84,14 @@ function ResetPasswordPage() {
   });
 
   if (!emailBase64 || !resetCode) {
-    return <Navigate to="/" />;
+    return (
+      <Layout title="Nieprawidłowy link" variant="narrow">
+        <p className="text-center text-gray-600">Link do resetowania hasła jest nieprawidłowy lub niekompletny.</p>
+        <Button type="link" href="/forgot-password" className="mt-6 w-full">
+          Poproś o nowy link
+        </Button>
+      </Layout>
+    );
   }
 
   if (result) {
@@ -99,13 +106,23 @@ function ResetPasswordPage() {
             {result === 'success' && <>Hasło zostało pomyślnie zmienione. Możesz teraz się zalogować</>}
             {result === 'error' && (
               <>
-                Wystąpił błąd podczas resetowania hasła. Proszę skontaktować się z pomocą{' '}
+                {errorMessage} W razie problemów napisz na{' '}
                 <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>
               </>
             )}
           </div>
         </div>
-        <Button type="link" href="/login" className="mt-6 w-full">
+        {result === 'error' && (
+          <Button type="link" href="/forgot-password" className="mt-6 w-full">
+            Poproś o nowy link
+          </Button>
+        )}
+        <Button
+          type="link"
+          href="/login"
+          variant={result === 'error' ? 'primaryOutline' : 'primary'}
+          className="mt-6 w-full"
+        >
           Przejdź do logowania
         </Button>
       </Layout>

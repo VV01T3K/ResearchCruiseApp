@@ -22,6 +22,7 @@ import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { getRoleLabel, Role } from '@/integrations/auth/types';
+import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import {
   useAcceptUser,
   useCreateUser,
@@ -47,6 +48,8 @@ type Props = {
 };
 export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, close }: Props) {
   const editMode = !!user;
+  const currentUser = useCurrentUser();
+  const isOwnAccount = editMode && user.id === currentUser?.id;
   const [submitError, setSubmitError] = React.useState<string | undefined>(undefined);
   const [deletionConfirmed, setDeletionConfirmed] = React.useState(false);
   const [assignmentWarning, setAssignmentWarning] = React.useState<{
@@ -335,6 +338,8 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 inlineLabel: getRoleLabel(role),
               }))}
               label="Rola"
+              disabled={isOwnAccount}
+              helper={isOwnAccount ? 'Nie możesz zmienić własnej roli ani usunąć własnego konta.' : undefined}
             />
           )}
         </form.AppField>
@@ -374,7 +379,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               {editMode && allowToRemoveUsers && (
                 <Button
                   variant={deletionConfirmed ? 'danger' : 'warning'}
-                  disabled={!canSubmit || isSubmitting}
+                  disabled={!canSubmit || isSubmitting || isOwnAccount}
                   onClick={() => void handleUserDeletion()}
                   className="w-full"
                 >

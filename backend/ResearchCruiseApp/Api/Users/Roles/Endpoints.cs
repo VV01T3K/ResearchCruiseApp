@@ -92,10 +92,16 @@ public static class RolesEndpoints
         Guid userId,
         string roleName,
         UserPermissionVerifier userPermissionVerifier,
+        CurrentUserService currentUserService,
         IdentityService identityService,
         CancellationToken cancellationToken
     )
     {
+        if (currentUserService.GetId() == userId)
+        {
+            return Error.ForbiddenOperation("Nie można zmienić własnej roli").ToProblemHttpResult();
+        }
+
         if (!await userPermissionVerifier.CanCurrentUserAccess(userId))
         {
             return Error
@@ -116,10 +122,16 @@ public static class RolesEndpoints
         Guid userId,
         ReplaceUserRoleRequest request,
         UserPermissionVerifier userPermissionVerifier,
+        CurrentUserService currentUserService,
         IdentityService identityService,
         CancellationToken cancellationToken
     )
     {
+        if (currentUserService.GetId() == userId)
+        {
+            return Error.ForbiddenOperation("Nie można zmienić własnej roli").ToProblemHttpResult();
+        }
+
         if (!await userPermissionVerifier.CanCurrentUserAccess(userId))
         {
             return Error

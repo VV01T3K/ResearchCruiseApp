@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Users;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Auth;
@@ -14,6 +15,41 @@ public sealed class ManagedAccountValidationTests(SqlFixture fixture) : IAsyncLi
     public async ValueTask InitializeAsync() => await fixture.ResetAsync();
 
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
+
+    [Fact]
+    public async Task Create_WhenSameEmailIsSubmittedTwiceConcurrently_ReturnsConflictForTheLoser()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var gate = new SaveChangesGate();
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: gate);
+        await TestUsers.Create(app, "administrator@example.invalid", RoleName.Administrator);
+        await TestUsers.Create(app, "role-holder@example.invalid", RoleName.Guest);
+        using var client = await TestApplications.Login(app, "administrator@example.invalid");
+        var request = new CreateUserRequest(
+            "new@example.invalid",
+            "New",
+            "Account",
+            [RoleName.Guest]
+        );
+
+        gate.Hold(db =>
+            db.ChangeTracker.Entries<User>().Any(entry => entry.State == EntityState.Added)
+        );
+        var (created, duplicate) = await gate.Race(
+            fixture.ConnectionString,
+            client.PostAsJsonAsync("/v2/users", request, ct),
+            () => client.PostAsJsonAsync("/v2/users", request, ct),
+            ct
+        );
+
+        using (created)
+            Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        using (duplicate)
+            Assert.Equal(HttpStatusCode.Conflict, duplicate.StatusCode);
+        await app.InDatabase(async db =>
+            Assert.Equal(1, await db.Users.CountAsync(user => user.Email == request.Email, ct))
+        );
+    }
 
     [Theory]
     [InlineData(false)]
