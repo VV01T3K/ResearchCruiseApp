@@ -13,7 +13,7 @@ requirement. Apply only the area checks relevant to the changed behavior.
 
 ## Authorization and sessions
 
-- For role or resource-access changes, compare `RolePermissionRules`, backend enforcement
+- For role or resource-access changes, compare `RolePermissionPolicy`, backend enforcement
   and frontend permission helpers across list, detail, export and write paths.
   Include multiple roles and assigned cruise managers/deputies in the comparison.
 - For session changes, trace `frontend/src/integrations/auth/session.ts`,
@@ -43,7 +43,7 @@ requirement. Apply only the area checks relevant to the changed behavior.
 - For Form A changes, compare backend `Api/Applications/FormA/Validators.cs` with
   frontend form schemas for the specific save/submit action. Incomplete Form A
   drafts are valid only when they satisfy draft validation. For cruise transitions,
-  trace `CruiseLifecycleRules` through the linked application state changes.
+  trace `CruiseLifecycleService` through the linked application state changes.
 - For startup or seeding changes, inspect `ApplicationDbContextInitializer` against
   existing rows, partially seeded accounts and concurrent startup. Reference-data
   seeding runs independently of optional account seeding; preserve existing and
