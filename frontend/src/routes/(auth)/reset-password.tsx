@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
-import { CheckIcon, XIcon } from '@phosphor-icons/react';
+import { CheckIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import React from 'react';
 import { Button } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
@@ -86,7 +86,12 @@ function ResetPasswordPage() {
   if (!emailBase64 || !resetCode) {
     return (
       <Layout title="Nieprawidłowy link" variant="narrow">
-        <p className="text-center text-gray-600">Link do resetowania hasła jest nieprawidłowy lub niekompletny.</p>
+        <div className="flex flex-col items-center">
+          <div className="mb-4 h-28">
+            <WarningCircleIcon className="text-danger" />
+          </div>
+          <p className="text-center text-gray-600">Link do resetowania hasła jest nieprawidłowy lub niekompletny.</p>
+        </div>
         <Button type="link" href="/forgot-password" className="mt-6 w-full">
           Poproś o nowy link
         </Button>
@@ -99,8 +104,12 @@ function ResetPasswordPage() {
     return (
       <Layout title={title} variant="narrow">
         <div className="flex flex-col items-center">
-          <div className="h-60">
-            {result === 'success' ? <CheckIcon className="text-success" /> : <XIcon className="text-danger" />}
+          <div className="mb-4 h-28">
+            {result === 'success' ? (
+              <CheckIcon className="text-success" />
+            ) : (
+              <WarningCircleIcon className="text-danger" />
+            )}
           </div>
           <div className="text-center text-gray-600">
             {result === 'success' && <>Hasło zostało pomyślnie zmienione. Możesz teraz się zalogować</>}

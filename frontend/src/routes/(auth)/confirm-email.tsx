@@ -3,7 +3,7 @@ import { toast } from '@/components/shared/layout/toast';
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { CheckIcon, XIcon } from '@phosphor-icons/react';
+import { CheckIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import React from 'react';
 import { Button } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
@@ -50,8 +50,8 @@ function ConfirmEmailPage() {
   return (
     <Layout title={title} variant="narrow">
       <div className="flex flex-col items-center">
-        <div className="h-60">
-          {isSuccess ? <CheckIcon className="text-success" /> : <XIcon className="text-danger" />}
+        <div className="mb-4 h-28">
+          {isSuccess ? <CheckIcon className="text-success" /> : <WarningCircleIcon className="text-danger" />}
         </div>
         <div className="text-center text-gray-600">
           {isSuccess ? (
@@ -92,28 +92,32 @@ function ResendConfirmationForm() {
     },
   });
 
-  if (isSuccess) {
-    return <p className="mt-6 text-center text-gray-600">Jeśli konto istnieje, wysłaliśmy na nie nowy link.</p>;
-  }
-
   return (
-    <form
-      noValidate
-      className="mt-6 px-4"
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        void form.handleSubmit();
-      }}
-    >
-      <form.AppField name="email">{(field) => <field.FloatingTextField type="email" label="E-mail" />}</form.AppField>
-      <form.Subscribe selector={(state) => state.isSubmitting}>
-        {(isSubmitting) => (
-          <Button type="submit" className="mt-6 w-full" disabled={isSubmitting}>
-            Wyślij nowy link
-          </Button>
-        )}
-      </form.Subscribe>
-    </form>
+    <section className="mt-6 border-t border-gray-200 pt-6">
+      <h2 className="text-center font-semibold">Wyślij link ponownie</h2>
+      {isSuccess ? (
+        <p className="mt-2 text-center text-gray-600">Jeśli konto istnieje, wysłaliśmy na nie nowy link.</p>
+      ) : (
+        <form
+          noValidate
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            void form.handleSubmit();
+          }}
+        >
+          <form.AppField name="email">
+            {(field) => <field.FloatingTextField type="email" label="E-mail" />}
+          </form.AppField>
+          <form.Subscribe selector={(state) => state.isSubmitting}>
+            {(isSubmitting) => (
+              <Button type="submit" className="mt-6 w-full" disabled={isSubmitting}>
+                Wyślij nowy link
+              </Button>
+            )}
+          </form.Subscribe>
+        </form>
+      )}
+    </section>
   );
 }
