@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
 using System.Security.Claims;
@@ -9,6 +8,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NeoSmart.Utils;
 using ResearchCruiseApp.Domain;
@@ -29,7 +29,7 @@ internal class IdentityService(
     EmailSender emailSender,
     RandomGenerator randomGenerator,
     CurrentUserService currentUserService,
-    IConfiguration configuration,
+    IOptions<JwtSettings> jwtSettings,
     ApplicationDbContext dbContext,
     ILogger<IdentityService> logger
 )
@@ -736,16 +736,7 @@ internal class IdentityService(
 
     private async Task<Result<JwtSecurityToken>> CreateAccessToken(User user)
     {
-        var issuer = configuration["JWT:ValidIssuer"];
-        var audience = configuration["JWT:ValidAudience"];
-        var lifetime = int.Parse(
-            configuration["JWT:AccessTokenLifetimeSeconds"] ?? "0",
-            CultureInfo.InvariantCulture
-        );
-
-        if (issuer is null || audience is null)
-            return Error.ServerError();
-
+        var settings = jwtSettings.Value;
         var authenticationClaims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id),
@@ -755,15 +746,11 @@ internal class IdentityService(
         var roles = await userManager.GetRolesAsync(user);
         authenticationClaims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        var securityKeyResult = CreateSecurityKey();
-        if (securityKeyResult.Error is not null)
-            return securityKeyResult.Error;
-
-        var securityKey = securityKeyResult.Data;
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.Secret));
         var token = new JwtSecurityToken(
-            issuer: issuer,
-            audience: audience,
-            expires: DateTime.UtcNow.AddSeconds(lifetime),
+            issuer: settings.ValidIssuer,
+            audience: settings.ValidAudience,
+            expires: DateTime.UtcNow.AddSeconds(settings.AccessTokenLifetimeSeconds),
             claims: authenticationClaims,
             signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)
         );
@@ -773,11 +760,7 @@ internal class IdentityService(
 
     private (string token, DateTime expiry) CreateRefreshToken()
     {
-        var lifetime = int.Parse(
-            configuration["JWT:RefreshTokenLifetimeSeconds"] ?? "0",
-            CultureInfo.InvariantCulture
-        );
-        var expiry = DateTime.UtcNow.AddSeconds(lifetime);
+        var expiry = DateTime.UtcNow.AddSeconds(jwtSettings.Value.RefreshTokenLifetimeSeconds);
         var token = Convert.ToBase64String(randomGenerator.CreateSecureCodeBytes());
 
         return (token, expiry);
@@ -786,14 +769,5 @@ internal class IdentityService(
     private static string HashRefreshToken(string refreshToken)
     {
         return Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken)));
-    }
-
-    private Result<SymmetricSecurityKey> CreateSecurityKey()
-    {
-        var secret = configuration["JWT:Secret"];
-        if (secret is null)
-            return Error.ServerError();
-
-        return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
     }
 }
