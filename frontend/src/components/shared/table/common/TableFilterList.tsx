@@ -1,6 +1,8 @@
+import { Subscribe } from '@tanstack/react-table';
 import { Header } from '@/integrations/tanstack/table/features';
 import { compareFilterOptions } from '@/integrations/tanstack/table/filterOptions';
 import { TrashIcon } from '@phosphor-icons/react';
+import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual';
 import React from 'react';
 
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
@@ -13,8 +15,11 @@ type Props<TData extends object, TValue> = {
   expanded: boolean;
 };
 export function TableFilterList<TData extends object, TValue>({ header, expanded }: Props<TData, TValue>) {
-  const filterValue = header.column.getFilterValue() as string[] | undefined;
+  // TanStack Virtual exposes a mutable instance; read it on every render.
+  'use no memo';
+
   const [searchValue, setSearchValue] = React.useState<string>('');
+  const [focusedValue, setFocusedValue] = React.useState<string>();
 
   // Prefer a column-supplied static option list over deriving one from loaded rows.
   const computeUniqueValues = React.useCallback(() => {
@@ -35,11 +40,8 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [expanded]);
 
-  const areAllChecked = React.useMemo(() => {
-    return uniqueValues.every(([value]) => (filterValue ?? []).includes(value));
-  }, [filterValue, uniqueValues]);
-
   function toggleFilter(filter: string) {
+    const filterValue = header.column.getFilterValue() as string[] | undefined;
     if ((filterValue ?? []).includes(filter)) {
       const newState = (filterValue ?? []).filter((f) => f !== filter);
       header.column.setFilterValue(newState);
@@ -61,10 +63,6 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
     header.column.setFilterValue(undefined);
   }
 
-  function isFilterChecked(filter: string) {
-    return (filterValue ?? []).includes(filter);
-  }
-
   const { supportsFilter } = getCapabilities(header);
   const getFilterOptionLabel = header.column.columnDef.meta?.getFilterOptionLabel;
   const inputType = header.column.columnDef.meta?.filterInputType;
@@ -75,63 +73,106 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
       .includes(searchValue.toLocaleLowerCase());
   }
 
-  if (inputType) {
-    return (
-      <label className="block px-4 py-2 text-sm">
-        {inputType === 'number' ? 'Numer zgłoszenia' : 'Data zgłoszenia'}
-        <input
-          type={inputType}
-          className="mt-1 w-full rounded border border-gray-300 p-2"
-          value={filterValue?.[0] ?? ''}
-          onChange={(event) => header.column.setFilterValue(event.target.value ? [event.target.value] : undefined)}
-        />
-      </label>
-    );
-  }
+  const visibleValues = uniqueValues.filter(([value]) => matchesSearch(value));
+  const focusedIndex = visibleValues.findIndex(([value]) => value === focusedValue);
+  const listRef = React.useRef<HTMLDivElement>(null);
+  const virtualizer = useVirtualizer({
+    count: visibleValues.length,
+    estimateSize: () => 36,
+    getItemKey: (index) => visibleValues[index][0],
+    getScrollElement: () => listRef.current,
+    overscan: 5,
+    // Keep the focused option and its neighbours mounted so scrolling doesn't lose the keyboard position.
+    rangeExtractor: (range) => {
+      const focused = focusedIndex < 0 ? [] : [focusedIndex - 1, focusedIndex, focusedIndex + 1];
+      return [...new Set([...focused, ...defaultRangeExtractor(range)])]
+        .filter((index) => index >= 0 && index < visibleValues.length)
+        .sort((a, b) => a - b);
+    },
+  });
+  const virtualItems = virtualizer.getVirtualItems();
 
   return (
-    <>
-      <div className="inline-flex w-full items-center gap-4 px-4 py-2">
-        <div>
-          <Checkbox name="toggleAll" checked={areAllChecked} onChange={(x) => toggleAll(x)} />
-        </div>
-        <div className="relative w-full text-left">
-          <FloatingLabelInput
-            label="Szukaj"
-            name="search"
-            type="text"
-            value={searchValue}
-            onChange={setSearchValue}
-            className="text-xs"
-          />
-        </div>
-      </div>
+    <Subscribe
+      source={header.column.table.atoms.columnFilters}
+      selector={() => header.column.getFilterValue() as string[] | undefined}
+    >
+      {(filterValue) => {
+        if (inputType) {
+          return (
+            <label className="block px-4 py-2 text-sm">
+              {inputType === 'number' ? 'Numer zgłoszenia' : 'Data zgłoszenia'}
+              <input
+                type={inputType}
+                className="mt-1 w-full rounded border border-gray-300 p-2"
+                value={filterValue?.[0] ?? ''}
+                onChange={(event) =>
+                  header.column.setFilterValue(event.target.value ? [event.target.value] : undefined)
+                }
+              />
+            </label>
+          );
+        }
 
-      <div className="max-h-32 overflow-x-auto overflow-y-auto">
-        {uniqueValues
-          .filter(([value]) => matchesSearch(value))
-          .map((value) => (
+        return (
+          <>
+            <div className="inline-flex w-full items-center gap-4 px-4 py-2">
+              <div>
+                <Checkbox
+                  name="toggleAll"
+                  checked={uniqueValues.every(([value]) => (filterValue ?? []).includes(value))}
+                  onChange={(x) => toggleAll(x)}
+                />
+              </div>
+              <div className="relative w-full text-left">
+                <FloatingLabelInput
+                  label="Szukaj"
+                  name="search"
+                  type="text"
+                  value={searchValue}
+                  onChange={setSearchValue}
+                  className="text-xs"
+                />
+              </div>
+            </div>
+
+            <div ref={listRef} className="max-h-32 overflow-x-auto overflow-y-auto">
+              <div className="relative" style={{ height: virtualizer.getTotalSize() }}>
+                {virtualItems.map(({ index, key, start }) => {
+                  const [value] = visibleValues[index];
+                  return (
+                    <div
+                      key={key}
+                      className="absolute left-0 min-w-full"
+                      style={{ top: start }}
+                      onFocus={() => setFocusedValue(value)}
+                    >
+                      <TableListItem
+                        onClick={() => toggleFilter(value)}
+                        isRendered={supportsFilter}
+                        expanded={expanded}
+                      >
+                        <Checkbox name={`isFilterChecked-${value}`} checked={(filterValue ?? []).includes(value)} />
+                        {getFilterOptionLabel ? getFilterOptionLabel(value) : value}
+                      </TableListItem>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             <TableListItem
-              key={value[0]}
-              onClick={() => toggleFilter(value[0])}
+              onClick={() => clearFilters()}
               isRendered={supportsFilter}
+              disabled={!filterValue}
               expanded={expanded}
             >
-              <Checkbox name={`isFilterChecked-${value[0]}`} checked={isFilterChecked(value[0])} />
-              {getFilterOptionLabel ? getFilterOptionLabel(value[0]) : value[0]}
+              <TrashIcon className="mr-2 h-4 w-4" />
+              Wyczyść filtry
             </TableListItem>
-          ))}
-      </div>
-
-      <TableListItem
-        onClick={() => clearFilters()}
-        isRendered={supportsFilter}
-        disabled={!filterValue}
-        expanded={expanded}
-      >
-        <TrashIcon className="mr-2 h-4 w-4" />
-        Wyczyść filtry
-      </TableListItem>
-    </>
+          </>
+        );
+      }}
+    </Subscribe>
   );
 }

@@ -31,7 +31,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       accessorFn: (row) => row.number,
       sortFn: (a, b) => compareCruiseNumber(a.original.number, b.original.number),
       cell: (cell) => <span className="font-bold">{cell.getValue() as string}</span>,
-      size: 5,
+      size: 110,
     },
     {
       header: 'Tytuł',
@@ -40,27 +40,27 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       cell: ({ row }) => (
         <TitleBadge title={row.original.title ?? undefined} shipUnavailable={row.original.shipUnavailable} />
       ),
-      size: 10,
+      size: 110,
     },
     {
       header: 'Data rozpoczęcia',
       accessorFn: (row) => row.startDate,
       cell: (cell) => formatDate(cell.getValue() as string, 'dateTime'),
       enableColumnFilter: false,
-      size: 10,
+      size: 150,
     },
     {
       header: 'Data zakończenia',
       accessorFn: (row) => row.endDate,
       cell: (cell) => formatDate(cell.getValue() as string, 'dateTime'),
       enableColumnFilter: false,
-      size: 10,
+      size: 155,
     },
     {
       header: 'Status',
       accessorFn: (row) => row.status,
       cell: ({ row }) => <StatusBadge status={row.original.status} />,
-      size: 10,
+      size: 115,
     },
     {
       id: 'mainCruiseManagerAvatar',
@@ -71,32 +71,33 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
             variant="small"
           />
         ) : null,
-      size: 5,
+      size: 60,
     },
     {
       header: 'Kierownik główny',
       accessorFn: (row) => getPersonName(row.mainManager) || 'Nie przypisano',
-      size: 10,
+      size: 135,
     },
     ...(isInRole(currentUser, [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew])
       ? [
           {
             header: 'Zgłoszenia',
             cell: ({ row }) => <ApplicationsCell applications={row.original.applications} />,
-            size: 30,
+            size: 275,
           } satisfies ColumnDef<CruiseResponse>,
         ]
       : []),
     {
       id: 'actions',
       cell: ({ row }) => <ActionsCell cruise={row.original} deleteCruise={deleteCruise} />,
-      size: 10,
+      size: 135,
     },
   ];
   return (
     <Table
       columns={columns}
       data={cruises}
+      virtualized
       buttons={(predefinedButtons) => buttons.concat(predefinedButtons)}
       initialSortingState={[
         {

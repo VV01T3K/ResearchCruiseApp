@@ -299,6 +299,27 @@ test('a group deactivation names the affected user and sends requests only for a
   expect(requests.bodies(`DELETE /v2/users/${outsider.id}/acceptance`)).toHaveLength(0);
 });
 
+test('a focused filter option keeps focus and keyboard position while the list scrolls', async ({ page, network }) => {
+  network.use(
+    getGetUsersMockHandler(
+      Array.from({ length: 100 }, (_, i) =>
+        cruiseManager({ id: `user-${i}`, email: `user${String(i).padStart(3, '0')}@example.com` })
+      )
+    )
+  );
+  await page.goto('/user-management');
+  await page.getByRole('button', { name: 'Email', exact: true }).click();
+  const first = page.getByRole('menuitem', { name: 'user000@example.com' });
+  await first.focus();
+  await first.hover();
+  await page.mouse.wheel(0, 1800);
+  await expect(page.getByRole('menuitem', { name: 'user051@example.com' })).toBeVisible();
+  await expect(first).toBeFocused();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('menuitem', { name: 'user001@example.com' })).toBeFocused();
+});
+
 for (const mobile of [false, true]) {
   test(`table sorting, filtering and selection work on ${mobile ? 'mobile' : 'desktop'}`, async ({ page, network }) => {
     if (mobile) await page.setViewportSize({ width: 390, height: 844 });
@@ -324,13 +345,26 @@ for (const mobile of [false, true]) {
       const email = page.getByRole('dialog').getByText('Email', { exact: true }).locator('..');
       await email.getByText('Rosnąco', { exact: true }).click();
       await expect(rows.first()).toContainText('alpha@example.com');
+      await expect(email.getByText('Rosnąco', { exact: true })).toHaveClass(/font-bold/);
       await email.getByText('Pokaż filtry', { exact: true }).click();
       await email.getByText('zebra@example.com', { exact: true }).click();
     } else {
-      await page.getByRole('button', { name: 'Email', exact: true }).click();
+      const emailHeader = page.getByRole('button', { name: 'Email', exact: true });
+      const unsortedIcons = await emailHeader.innerHTML();
+      await emailHeader.click();
       await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
       await expect(rows.first()).toContainText('alpha@example.com');
+      await expect(page.getByRole('menuitem', { name: 'Sortuj rosnąco' })).toBeDisabled();
+      expect(await emailHeader.innerHTML()).not.toBe(unsortedIcons);
+      // A second option adds to the first; a stale list would replace it.
       await page.getByRole('menuitem', { name: 'zebra@example.com', exact: true }).click();
+      await expect(page.getByRole('menuitem', { name: 'zebra@example.com' }).locator('[aria-checked]')).toHaveAttribute(
+        'aria-checked',
+        'true'
+      );
+      await page.getByRole('menuitem', { name: 'alpha@example.com', exact: true }).click();
+      await expect(rows).toHaveCount(2);
+      await page.getByRole('menuitem', { name: 'alpha@example.com', exact: true }).click();
       await page.keyboard.press('Escape');
     }
     await expect(rows).toHaveCount(1);

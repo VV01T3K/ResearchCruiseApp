@@ -1,4 +1,4 @@
-import { flexRender } from '@tanstack/react-table';
+import { flexRender, Subscribe } from '@tanstack/react-table';
 import { Header, Table } from '@/integrations/tanstack/table/features';
 import { SortAscendingIcon, SortDescendingIcon, XIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -53,30 +53,32 @@ function FormElement<T extends object>({ header }: FormElementProps<T>) {
 }
 
 function SortFormElement<T extends object>({ header }: FormElementProps<T>) {
-  const isSorted = header.column.getIsSorted();
-
   return (
-    <div className="flex items-center justify-end gap-3">
-      <div
-        className={cn('flex items-center gap-1', isSorted === 'asc' ? 'font-bold' : '')}
-        onClick={() => header.column.toggleSorting(false)}
-      >
-        <SortAscendingIcon className="h-4 w-4" />
-        Rosnąco
-      </div>
-      <div
-        className={cn('flex items-center gap-1', isSorted === 'desc' ? 'font-bold' : '')}
-        onClick={() => header.column.toggleSorting(true)}
-      >
-        <SortDescendingIcon className="h-4 w-4" />
-        Malejąco
-      </div>
-      {isSorted && (
-        <div className="flex items-center" onClick={() => header.column.clearSorting()}>
-          <XIcon className="h-4 w-4 scale-55" />
+    <Subscribe source={header.column.table.atoms.sorting} selector={() => header.column.getIsSorted()}>
+      {(isSorted) => (
+        <div className="flex items-center justify-end gap-3">
+          <div
+            className={cn('flex items-center gap-1', isSorted === 'asc' ? 'font-bold' : '')}
+            onClick={() => header.column.toggleSorting(false)}
+          >
+            <SortAscendingIcon className="h-4 w-4" />
+            Rosnąco
+          </div>
+          <div
+            className={cn('flex items-center gap-1', isSorted === 'desc' ? 'font-bold' : '')}
+            onClick={() => header.column.toggleSorting(true)}
+          >
+            <SortDescendingIcon className="h-4 w-4" />
+            Malejąco
+          </div>
+          {isSorted && (
+            <div className="flex items-center" onClick={() => header.column.clearSorting()}>
+              <XIcon className="h-4 w-4 scale-55" />
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </Subscribe>
   );
 }
 
@@ -90,13 +92,17 @@ function FilterFormElement<T extends object>({ header }: FormElementProps<T>) {
 
   return (
     <div ref={anchorRef}>
-      <div
-        className={cn('flex items-center justify-end gap-2', header.column.getIsFiltered() ? 'font-bold' : '')}
-        onClick={() => setExpanded(!expanded)}
-      >
-        {expanded ? 'Ukryj filtry' : 'Pokaż filtry'}
-        <TableFilterIcon header={header} />
-      </div>
+      <Subscribe source={header.column.table.atoms.columnFilters} selector={() => header.column.getIsFiltered()}>
+        {(isFiltered) => (
+          <div
+            className={cn('flex items-center justify-end gap-2', isFiltered ? 'font-bold' : '')}
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? 'Ukryj filtry' : 'Pokaż filtry'}
+            <TableFilterIcon header={header} />
+          </div>
+        )}
+      </Subscribe>
       <AnimatePresence>
         {expanded && (
           <motion.div

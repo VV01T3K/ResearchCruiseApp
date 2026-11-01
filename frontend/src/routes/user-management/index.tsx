@@ -75,7 +75,7 @@ function UserManagementPage() {
       ),
       enableSorting: false,
       enableColumnFilter: false,
-      size: 5,
+      size: 60,
     },
     {
       id: 'avatar',
@@ -84,17 +84,17 @@ function UserManagementPage() {
       cell: (cell) => <Avatar fullName={cell.getValue() as string} variant="small" />,
       enableColumnFilter: false,
       enableSorting: false,
-      size: 5,
+      size: 60,
     },
     {
       accessorFn: (row) => `${row.firstName} ${row.lastName}`,
       header: 'Imię i nazwisko',
-      size: 30,
+      size: 318,
     },
     {
       accessorFn: (row) => row.email,
       header: 'Email',
-      size: 25,
+      size: 290,
     },
     {
       id: 'accountStatus',
@@ -104,7 +104,7 @@ function UserManagementPage() {
         const value = cell.getValue() as 'Zaakceptowane' | 'Niezaakceptowane';
         return <Badge variant={value === 'Zaakceptowane' ? 'success' : 'danger'}>{value}</Badge>;
       },
-      size: 10,
+      size: 145,
     },
     {
       id: 'emailStatus',
@@ -114,14 +114,14 @@ function UserManagementPage() {
         const value = cell.getValue() as 'Zweryfikowany' | 'Niezweryfikowany';
         return <Badge variant={value === 'Zweryfikowany' ? 'success' : 'danger'}>{value}</Badge>;
       },
-      size: 10,
+      size: 140,
     },
     {
       id: 'role',
       accessorFn: (row) => getRoleLabel(row.roles[0]),
       header: 'Rola',
       cell: ({ row }) => <RoleBadge role={row.original.roles[0]} />,
-      size: 10,
+      size: 125,
     },
     {
       id: 'actions',
@@ -133,6 +133,7 @@ function UserManagementPage() {
           </Button>
         </div>
       ),
+      size: 112,
     },
   ];
 
@@ -141,6 +142,7 @@ function UserManagementPage() {
       <Layout title="Zarządzanie użytkownikami">
         <Table
           data={usersQuery.data}
+          virtualized
           columns={columns}
           rowSelectionState={selectedUsers}
           setRowSelectionState={setSelectedUsers}

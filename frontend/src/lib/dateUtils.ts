@@ -2,21 +2,28 @@ import { useSyncExternalStore } from 'react';
 
 type DateFormat = 'date' | 'dateTime' | 'monthYear';
 
+const formatters: Record<DateFormat, Intl.DateTimeFormat> = {
+  date: new Intl.DateTimeFormat('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+  dateTime: new Intl.DateTimeFormat('pl-PL', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }),
+  monthYear: new Intl.DateTimeFormat('pl-PL', { month: '2-digit', year: 'numeric' }),
+};
+
 export function formatDate(value: string | Date, format: DateFormat): string {
   const date =
     value instanceof Date ? value : new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T00:00:00` : value);
-  const options: Intl.DateTimeFormatOptions =
-    format === 'monthYear'
-      ? { month: '2-digit', year: 'numeric' }
-      : format === 'dateTime'
-        ? { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
-        : { day: '2-digit', month: '2-digit', year: 'numeric' };
 
   if (Number.isNaN(date.getTime())) {
     return 'Invalid Date';
   }
 
-  return new Intl.DateTimeFormat('pl-PL', options).format(date).replace(', ', ' ');
+  return formatters[format].format(date).replace(', ', ' ');
 }
 
 export function parseBackendDateTime(value: string): Date {
