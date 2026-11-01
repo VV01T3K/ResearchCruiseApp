@@ -1,5 +1,4 @@
-import { getErrorMessage, getProblemDetail } from '@/api/errors';
-import { toast } from '@/components/shared/layout/toast';
+import { getProblemDetail } from '@/api/errors';
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -10,11 +9,7 @@ import { Layout } from '@/components/shared/Layout';
 import { Link } from '@/components/shared/Link';
 import { Loader } from '@/components/shared/layout/Loader';
 import { useMutation } from '@tanstack/react-query';
-import { confirmEmail, useResendConfirmationEmail } from '@/api/generated/endpoints/auth.gen';
-import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { formValidationLogic } from '@/integrations/tanstack/form/validation';
-import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
-import { trackFormSubmit } from '@/integrations/sentry/client';
+import { confirmEmail } from '@/api/generated/endpoints/auth.gen';
 
 export const Route = createFileRoute('/(auth)/confirm-email')({
   component: ConfirmEmailPage,
@@ -25,7 +20,7 @@ export const Route = createFileRoute('/(auth)/confirm-email')({
   }),
 });
 
-const invalidLink = 'Link potwierdzający jest nieprawidłowy lub wygasł. Poproś o nowy link.';
+const invalidLink = 'Link potwierdzający jest nieprawidłowy lub wygasł.';
 
 function ConfirmEmailPage() {
   const { userId, code } = Route.useSearch();
@@ -64,60 +59,9 @@ function ConfirmEmailPage() {
           )}
         </div>
       </div>
-      {!isSuccess && <ResendConfirmationForm />}
-      <Button type="link" href="/login" variant={isSuccess ? 'primary' : 'primaryOutline'} className="mt-6 w-full">
+      <Button type="link" href="/login" className="mt-6 w-full">
         Wróć do logowania
       </Button>
     </Layout>
-  );
-}
-
-function ResendConfirmationForm() {
-  const { mutateAsync, isSuccess } = useResendConfirmationEmail({ mutation: { meta: { handlesError: true } } });
-  const form = useAppForm({
-    defaultValues: { email: '' },
-    validationLogic: formValidationLogic,
-    validators: { onDynamic: z.object({ email: z.email('Niepoprawny adres e-mail') }) },
-    onSubmit: async ({ value, formApi }) => {
-      trackFormSubmit('resend-confirmation', 'valid', formApi.state);
-      try {
-        await mutateAsync({ data: { email: value.email } });
-      } catch (error) {
-        toast.error(getErrorMessage(error, 'Nie udało się wysłać wiadomości'));
-      }
-    },
-    onSubmitInvalid: ({ formApi }) => {
-      trackFormSubmit('resend-confirmation', 'invalid', formApi.state);
-      navigateToFirstError();
-    },
-  });
-
-  return (
-    <section className="mt-6 border-t border-gray-200 pt-6">
-      <h2 className="text-center font-semibold">Wyślij link ponownie</h2>
-      {isSuccess ? (
-        <p className="mt-2 text-center text-gray-600">Jeśli konto istnieje, wysłaliśmy na nie nowy link.</p>
-      ) : (
-        <form
-          noValidate
-          onSubmit={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            void form.handleSubmit();
-          }}
-        >
-          <form.AppField name="email">
-            {(field) => <field.FloatingTextField type="email" label="E-mail" />}
-          </form.AppField>
-          <form.Subscribe selector={(state) => state.isSubmitting}>
-            {(isSubmitting) => (
-              <Button type="submit" className="mt-6 w-full" disabled={isSubmitting}>
-                Wyślij nowy link
-              </Button>
-            )}
-          </form.Subscribe>
-        </form>
-      )}
-    </section>
   );
 }

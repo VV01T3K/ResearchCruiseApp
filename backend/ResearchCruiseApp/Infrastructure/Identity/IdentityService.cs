@@ -153,7 +153,7 @@ internal class IdentityService(
     public async Task<Result> ConfirmEmail(Guid userId, string code)
     {
         var invalidLink = Error.InvalidArgument(
-            "Link potwierdzający jest nieprawidłowy lub wygasł. Poproś o nowy link."
+            "Link potwierdzający jest nieprawidłowy lub wygasł."
         );
 
         if (await userManager.FindByIdAsync(userId.ToString()) is not { } user)
