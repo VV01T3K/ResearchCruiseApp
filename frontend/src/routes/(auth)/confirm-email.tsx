@@ -10,6 +10,7 @@ import { Link } from '@/components/shared/Link';
 import { Loader } from '@/components/shared/layout/Loader';
 import { useMutation } from '@tanstack/react-query';
 import { confirmEmail } from '@/api/generated/endpoints/auth.gen';
+import { Result } from '@/integrations/auth/types';
 
 export const Route = createFileRoute('/(auth)/confirm-email')({
   component: ConfirmEmailPage,
@@ -20,15 +21,18 @@ export const Route = createFileRoute('/(auth)/confirm-email')({
   }),
 });
 
-const invalidLink = 'Link potwierdzający jest nieprawidłowy lub wygasł.';
-
 function ConfirmEmailPage() {
   const { userId, code } = Route.useSearch();
-  const { mutate, isSuccess, error } = useMutation({
+  const [result, setResult] = React.useState<Result | undefined>(undefined);
+  const [errorMessage, setErrorMessage] = React.useState('Link potwierdzający jest nieprawidłowy lub wygasł.');
+  const { mutate } = useMutation({
     mutationFn: ({ userId, code }: { userId: string; code: string }) => confirmEmail({ userId, code }),
-    meta: { handlesError: true },
+    onSuccess: () => setResult('success'),
+    onError: (error) => {
+      setErrorMessage(getProblemDetail(error, 'Operacja nie powiodła się.'));
+      setResult('error');
+    },
   });
-  const hasLink = !!userId && !!code;
 
   React.useEffect(() => {
     if (userId && code) {
@@ -36,24 +40,29 @@ function ConfirmEmailPage() {
     }
   }, [userId, code, mutate]);
 
-  if (hasLink && !isSuccess && !error) {
+  if (userId && code && !result) {
     return <Loader />;
   }
 
-  const title = isSuccess ? 'Email został potwierdzony' : 'Błąd podczas potwierdzania emaila';
+  const title = result === 'success' ? 'Email został potwierdzony' : 'Błąd podczas potwierdzania emaila';
 
   return (
     <Layout title={title} variant="narrow">
       <div className="flex flex-col items-center">
-        <div className="mb-4 h-28">
-          {isSuccess ? <CheckIcon className="text-success" /> : <WarningCircleIcon className="text-danger" />}
+        <div className="h-60">
+          {result === 'success' ? (
+            <CheckIcon className="text-success" />
+          ) : (
+            <WarningCircleIcon className="text-danger" />
+          )}
         </div>
         <div className="text-center text-gray-600">
-          {isSuccess ? (
+          {result === 'success' && (
             <>Aby umożliwić Ci zalogowanie się, Biuro Armatora musi jeszcze zaakceptować Twoje konto</>
-          ) : (
+          )}
+          {result !== 'success' && (
             <>
-              {getProblemDetail(error, invalidLink)} W razie problemów napisz na{' '}
+              {errorMessage} W razie problemów napisz na{' '}
               <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>
             </>
           )}

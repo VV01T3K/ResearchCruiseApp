@@ -318,7 +318,7 @@ internal class IdentityService(
     public async Task<Result> ResetPassword(ResetPasswordFormDto resetPasswordFormDto)
     {
         var invalidLink = Error.InvalidArgument(
-            "Link do resetowania hasła jest nieprawidłowy lub wygasł. Poproś o nowy link."
+            "Link do resetowania hasła jest nieprawidłowy lub wygasł."
         );
 
         string email;

@@ -49,7 +49,7 @@ const validationSchema = z
 function ResetPasswordPage() {
   const { emailBase64, resetCode } = Route.useSearch();
   const [result, setResult] = React.useState<Result | undefined>(undefined);
-  const [errorMessage, setErrorMessage] = React.useState('');
+  const [errorMessage, setErrorMessage] = React.useState('Link do resetowania hasła jest nieprawidłowy lub wygasł.');
   const { mutateAsync } = useResetPassword({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
@@ -73,7 +73,7 @@ function ResetPasswordPage() {
         });
         setResult('success');
       } catch (error) {
-        setErrorMessage(getProblemDetail(error, 'Operacja nie powiodła się'));
+        setErrorMessage(getProblemDetail(error, 'Operacja nie powiodła się.'));
         setResult('error');
       }
     },
@@ -83,28 +83,12 @@ function ResetPasswordPage() {
     },
   });
 
-  if (!emailBase64 || !resetCode) {
-    return (
-      <Layout title="Nieprawidłowy link" variant="narrow">
-        <div className="flex flex-col items-center">
-          <div className="mb-4 h-28">
-            <WarningCircleIcon className="text-danger" />
-          </div>
-          <p className="text-center text-gray-600">Link do resetowania hasła jest nieprawidłowy lub niekompletny.</p>
-        </div>
-        <Button type="link" href="/forgot-password" className="mt-6 w-full">
-          Poproś o nowy link
-        </Button>
-      </Layout>
-    );
-  }
-
-  if (result) {
+  if (result || !emailBase64 || !resetCode) {
     const title = result === 'success' ? 'Hasło zostało zmienione' : 'Błąd podczas resetowania hasła';
     return (
       <Layout title={title} variant="narrow">
         <div className="flex flex-col items-center">
-          <div className="mb-4 h-28">
+          <div className="h-60">
             {result === 'success' ? (
               <CheckIcon className="text-success" />
             ) : (
@@ -113,7 +97,7 @@ function ResetPasswordPage() {
           </div>
           <div className="text-center text-gray-600">
             {result === 'success' && <>Hasło zostało pomyślnie zmienione. Możesz teraz się zalogować</>}
-            {result === 'error' && (
+            {result !== 'success' && (
               <>
                 {errorMessage} W razie problemów napisz na{' '}
                 <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>
@@ -121,17 +105,7 @@ function ResetPasswordPage() {
             )}
           </div>
         </div>
-        {result === 'error' && (
-          <Button type="link" href="/forgot-password" className="mt-6 w-full">
-            Poproś o nowy link
-          </Button>
-        )}
-        <Button
-          type="link"
-          href="/login"
-          variant={result === 'error' ? 'primaryOutline' : 'primary'}
-          className="mt-6 w-full"
-        >
+        <Button type="link" href="/login" className="mt-6 w-full">
           Przejdź do logowania
         </Button>
       </Layout>
