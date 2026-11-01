@@ -97,32 +97,6 @@ export default defineConfig({
           signal: true,
           version: 5,
           runtimeValidation: false,
-          mutationInvalidates: [
-            {
-              onMutations: ['createCruise', 'autoPlanCruises', 'deleteCruise'],
-              invalidates: ['getCruises'],
-            },
-            {
-              onMutations: ['removeCruiseConfirmation'],
-              invalidates: ['getCruises', { query: 'getCruise', params: ['cruiseId'] }],
-            },
-            {
-              onMutations: ['updateCruise', 'confirmCruise', 'completeCruise'],
-              invalidates: [{ query: 'getCruise', params: ['cruiseId'] }],
-            },
-            {
-              onMutations: ['updateApplicationDecision'],
-              invalidates: [{ query: 'getApplication', params: ['applicationId'] }],
-            },
-            {
-              onMutations: [
-                'deleteCurrentUserPublication',
-                'deleteAllCurrentUserPublications',
-                'importCurrentUserPublications',
-              ],
-              invalidates: ['getCurrentUserPublications'],
-            },
-          ],
         },
         operations: {
           ConfirmEmail: {

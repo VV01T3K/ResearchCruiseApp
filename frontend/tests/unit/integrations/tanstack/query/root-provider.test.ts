@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/react';
+import { QueryObserver } from '@tanstack/react-query';
 import { afterEach, expect, it, vi } from 'vite-plus/test';
 import { ApiError } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
@@ -10,6 +11,23 @@ afterEach(() => {
   queryClient.clear();
   vi.restoreAllMocks();
   vi.mocked(Sentry.captureException).mockClear();
+});
+
+it('refetches active queries after a successful mutation unless it opts out', async () => {
+  const queryFn = vi.fn(async () => 'dane');
+  const unsubscribe = new QueryObserver(queryClient, { queryKey: ['active'], queryFn }).subscribe(() => {});
+  await vi.waitFor(() => expect(queryFn).toHaveBeenCalledOnce());
+  const mutate = (meta?: { invalidates: boolean }) =>
+    queryClient
+      .getMutationCache()
+      .build(queryClient, { meta, mutationFn: async () => 'ok' })
+      .execute(undefined);
+
+  await mutate({ invalidates: false });
+  expect(queryFn).toHaveBeenCalledOnce();
+  await mutate();
+  expect(queryFn).toHaveBeenCalledTimes(2);
+  unsubscribe();
 });
 
 it('reports failed actions that have no local error handler', async () => {

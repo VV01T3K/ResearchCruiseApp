@@ -26,6 +26,7 @@ import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { getErrorMessage } from '@/api/errors';
@@ -49,7 +50,10 @@ function NewCruiseApplicationPage() {
   const { draft } = Route.useSearch();
   const currentUser = useCurrentUser()!;
   const initialStateQuery = useGetApplicationFormAContextSuspense();
-  const saveMutation = useCreateApplication({ mutation: { meta: { handlesError: true } } });
+  const saving = useSaveTracking();
+  const saveMutation = useCreateApplication({
+    mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
+  });
 
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
 
@@ -93,10 +97,17 @@ function NewCruiseApplicationPage() {
   };
 
   async function saveForm(values: FormAValues) {
+    const created = saving.acceptedValues();
+    if (created) {
+      setIsSaveDraftModalOpen(false);
+      return leaveAfterSave(created, { to: '/' });
+    }
+    if (saving.isSaving()) return;
     if (!values.draft) trackFormSubmit('new-application', 'valid', form.state);
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
+    saving.start(values);
     try {
       await saveMutation.mutateAsync({ data: { form: schema.parse(values), draft: values.draft ?? false } });
       toast.success(
@@ -106,6 +117,7 @@ function NewCruiseApplicationPage() {
       );
       await leaveAfterSave(values, { to: '/' });
     } catch (error) {
+      saving.finish();
       setServerFormErrors(form, error);
       toast.error(getErrorMessage(error, saveFailedMessage(values.draft)));
       navigateToFirstError();
@@ -123,7 +135,7 @@ function NewCruiseApplicationPage() {
           <FormView context={context} />
         </form.AppForm>
       </Layout>
-      <UnsavedChangesGuard form={form} recoveryKey={`new/${draft}`} />
+      <UnsavedChangesGuard form={form} recoveryKey={`new/${draft}`} saving={saving} />
 
       <Modal
         title="Zapisz wersję roboczą Formularza A"

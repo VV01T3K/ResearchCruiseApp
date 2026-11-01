@@ -21,6 +21,7 @@ import { toast } from '@/components/shared/layout/toast';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 import { FormView } from '../-components/FormView';
 import { CruiseFormSchema, type CruiseFormValues, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
@@ -49,7 +50,10 @@ function CruiseDetailsPage() {
   const queryClient = useQueryClient();
   const cruiseQuery = useGetCruiseSuspense(cruiseId);
   const applicationQuery = useGetApplicationsForCruisePlanningSuspense({ cruiseId });
-  const updateCruiseMutation = useUpdateCruise({ mutation: { meta: { handlesError: true } } });
+  const saving = useSaveTracking();
+  const updateCruiseMutation = useUpdateCruise({
+    mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
+  });
   const forgetCruise = () => {
     queryClient.removeQueries({ queryKey: getGetCruiseQueryKey(cruiseId) });
     return queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
@@ -65,8 +69,7 @@ function CruiseDetailsPage() {
   };
   const confirmCruiseMutation = useConfirmCruise(refetchOnConflict);
   const deleteCruiseMutation = useDeleteCruise({
-    skipInvalidation: true,
-    mutation: { meta: { handlesError: true }, onSuccess: forgetCruise },
+    mutation: { meta: { handlesError: true, invalidates: false }, onSuccess: forgetCruise },
   });
   const endCruiseMutation = useCompleteCruise(refetchOnConflict);
   const revertCruiseStatusMutation = useRemoveCruiseConfirmation(refetchOnConflict);
@@ -108,6 +111,8 @@ function CruiseDetailsPage() {
   async function saveCruise(value: CruiseFormValues) {
     let revision = value.revision;
     while (nextRevisions.current.has(revision)) revision = nextRevisions.current.get(revision);
+    const savedOver = queryClient.getQueryData<CruiseResponse>(getGetCruiseQueryKey(cruiseId))!;
+    saving.start(value);
     try {
       const accepted = await updateCruiseMutation.mutateAsync({
         cruiseId,
@@ -115,7 +120,7 @@ function CruiseDetailsPage() {
       });
       nextRevisions.current.set(revision, accepted.revision);
       const savedValues = { ...value, revision: accepted.revision };
-      setSaved({ cruise: cruiseQuery.data, values: savedValues });
+      setSaved({ cruise: savedOver, values: savedValues });
       if (evaluate(form.state.values, value)) {
         form.reset(savedValues);
         setEditMode(false);
@@ -129,6 +134,8 @@ function CruiseDetailsPage() {
       setServerFormErrors(form, error);
       toast.error(getErrorMessage(error, 'Nie udało się zaktualizować rejsu'));
       navigateToFirstError();
+    } finally {
+      saving.finish();
     }
   }
 
@@ -250,7 +257,7 @@ function CruiseDetailsPage() {
           />
         </form.AppForm>
       </Layout>
-      <UnsavedChangesGuard form={form} disabled={!editMode} />
+      <UnsavedChangesGuard form={form} disabled={!editMode} saving={saving} />
       <Modal title="Odrzucić zmiany?" isOpen={!!pendingDiscard} onClose={() => setPendingDiscard(undefined)}>
         <div className="space-y-4">
           <p>Formularz zawiera niezapisane zmiany. Jeśli je odrzucisz, zostaną utracone.</p>

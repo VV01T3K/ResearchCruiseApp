@@ -1,6 +1,7 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
@@ -15,11 +16,7 @@ import {
   formBDefaultValues,
   getFormBSubmissionSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import {
-  getGetApplicationFormBQueryKey,
-  getGetApplicationQueryKey,
-  useGetApplicationCruiseSuspense,
-} from '@/api/generated/endpoints/applications.gen';
+import { getGetApplicationQueryKey, useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
 import { useFormAQuery, useFormBQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
   useGetApplicationFormAContextSuspense,
@@ -27,9 +24,10 @@ import {
   useRefillApplicationFormB,
   useUpdateApplicationFormB,
 } from '@/api/generated/endpoints/applications.gen';
-import { getErrorMessage } from '@/api/errors';
+import { ApiError, getErrorMessage } from '@/api/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
@@ -58,21 +56,26 @@ function FormBPage() {
   const formAInitValues = useGetApplicationFormAContextSuspense({ applicationId });
   const formBInitValues = useGetApplicationFormBContextSuspense();
   const cruise = useGetApplicationCruiseSuspense(applicationId);
-  const updateMutation = useUpdateApplicationFormB({ mutation: { meta: { handlesError: true } } });
+  const saving = useSaveTracking();
+  const updateMutation = useUpdateApplicationFormB({
+    mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
+  });
   const revertToEditMutation = useRefillApplicationFormB({ mutation: { meta: { handlesError: true } } });
   const applicationQueryKey = getGetApplicationQueryKey(applicationId);
   const application = useApplicationQuery(applicationId, {
     enabled: mode === 'preview' && isInRole(currentUser, [Role.Administrator, Role.ShipOwner]),
   });
   const canRevertToEdit = mode === 'preview' && !!application.data && canRevertFormB(application.data.status);
+  const [saved, setSaved] = useState<{ data: typeof formB.data; values: FormBValues }>();
 
-  const defaultValues = (formB.data ?? {
+  const storedValues = (formB.data ?? {
     ...formBDefaultValues,
     revision: formA.data.revision,
     permissions: formA.data.permissions,
     ugTeams: formA.data.ugTeams,
     guestTeams: formA.data.guestTeams,
   }) satisfies FormBValues;
+  const defaultValues = saved?.data === formB.data ? saved.values : storedValues;
   const schema = getFormBSubmissionSchema();
   const form = useAppForm({
     canSubmitWhenInvalid: true,
@@ -88,6 +91,11 @@ function FormBPage() {
     },
   });
   const leaveAfterSave = useLeaveAfterSave(form);
+
+  useEffect(() => {
+    if (mode !== 'edit') form.reset();
+  }, [mode, form]);
+
   const context = {
     form,
     formA: formA.data,
@@ -106,12 +114,14 @@ function FormBPage() {
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
+    saving.start(values);
     try {
       const { revision } = await updateMutation.mutateAsync({
         applicationId,
         data: { form: schema.parse(values), draft: values.draft ?? false },
       });
       form.setFieldValue('revision', revision, { dontUpdateMeta: true, dontValidate: true });
+      setSaved({ data: formB.data, values: { ...values, revision } });
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );
@@ -119,11 +129,13 @@ function FormBPage() {
     } catch (err) {
       console.error(err);
       captureHandledRefusal(values.draft ? 'form-b.draft' : 'form-b.submit', err);
+      if (err instanceof ApiError && err.status === 409) void formB.refetch();
       setServerFormErrors(form, err);
       toast.error(getErrorMessage(err, saveFailedMessage(values.draft)));
       navigateToFirstError();
       throw err;
     } finally {
+      saving.finish();
       toast.dismiss(loading);
     }
   }
@@ -136,7 +148,6 @@ function FormBPage() {
     const loading = toast.loading('Cofanie formularza B do edycji...');
     try {
       await revertToEditMutation.mutateAsync({ applicationId });
-      await queryClient.invalidateQueries({ queryKey: getGetApplicationFormBQueryKey(applicationId) });
       await navigate({ to: `/applications/${applicationId}/formB?mode=edit` });
     } catch (err) {
       captureHandledRefusal('form-b.refill', err);
@@ -154,7 +165,12 @@ function FormBPage() {
           <FormView context={context} />
         </form.AppForm>
       </Layout>
-      <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} recoveryKey={`${applicationId}/formB`} />
+      <UnsavedChangesGuard
+        form={form}
+        disabled={mode !== 'edit'}
+        recoveryKey={`${applicationId}/formB`}
+        saving={saving}
+      />
     </>
   );
 }

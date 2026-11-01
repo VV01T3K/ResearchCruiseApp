@@ -33,6 +33,7 @@ export function ExportForm({ cruises, onDone }: Props) {
   const cruiseCsvExportMutation = useMutation({
     mutationFn: (year: string) => exportCruises({ year }),
     onSuccess: handleExportedFile,
+    meta: { invalidates: false },
   });
 
   function handleExportedFile(file: ExportResponse) {

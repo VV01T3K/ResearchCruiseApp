@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
@@ -13,6 +14,7 @@ import { Table } from '@/components/shared/table/Table';
 import { toast } from '@/components/shared/layout/toast';
 import { UploadButton } from './-components/UploadButton';
 import {
+  getGetCurrentUserPublicationsQueryKey,
   useDeleteAllCurrentUserPublications,
   useDeleteCurrentUserPublication,
   useGetCurrentUserPublicationsSuspense,
@@ -30,9 +32,10 @@ function MyPublicationsPage() {
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = React.useState(false);
   const [isDeletingSelected, setIsDeletingSelected] = React.useState(false);
   const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense();
+  const queryClient = useQueryClient();
   const deleteOwnPublicationMutation = useDeleteCurrentUserPublication();
   const deleteSelectedPublicationsMutation = useDeleteCurrentUserPublication({
-    mutation: { meta: { handlesError: true }, scope: { id: 'delete-selected-publications' } },
+    mutation: { meta: { handlesError: true, invalidates: false }, scope: { id: 'delete-selected-publications' } },
   });
   const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications();
   const uploadPublicationsMutation = useImportCurrentUserPublications();
@@ -43,6 +46,7 @@ function MyPublicationsPage() {
     const results = await Promise.allSettled(
       ids.map((id) => deleteSelectedPublicationsMutation.mutateAsync({ publicationId: id }))
     );
+    await queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsQueryKey() });
     setIsDeletingSelected(false);
     const deletedIds = new Set(ids.filter((_, i) => results[i].status === 'fulfilled'));
     setSelectedPublications((selected) =>

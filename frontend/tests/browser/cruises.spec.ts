@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { getGetApplicationsForCruisePlanningMockHandler } from '@/api/generated/mocks/applications/applications.msw.gen';
 import { readFile } from 'node:fs/promises';
 import {
@@ -51,14 +52,7 @@ test('cruise deletion requires confirmation and removes the row after saving', a
   expect(requests.bodies(`DELETE /v2/cruises/${item.id}`)).toHaveLength(1);
 });
 
-test('a new cruise is saved with Warsaw-midnight dates and the chosen managers', async ({
-  page,
-  network,
-  requests,
-}) => {
-  // Fix only the date; faked timers would also stall the comboboxes' transitions.
-  await page.clock.setFixedTime(new Date('2026-05-16T12:00:00Z'));
-  network.use(getGetCruisesMockHandler([]), getCreateCruiseMockHandler());
+async function fillNewCruise(page: Page) {
   await page.goto('/cruises/new');
   await page.getByText('Wybierz datę rozpoczęcia rejsu').click();
   await page.getByText('17', { exact: true }).click();
@@ -69,6 +63,29 @@ test('a new cruise is saved with Warsaw-midnight dates and the chosen managers',
   await expect(page.getByRole('listbox')).toHaveCount(0);
   await page.getByRole('combobox', { name: 'Zastępca kierownika głównego' }).click();
   await page.getByRole('option', { name: `${deputy.firstName} ${deputy.lastName}` }).click();
+}
+
+test('a new cruise is saved once with Warsaw-midnight dates and the chosen managers, then leaves without asking', async ({
+  page,
+  network,
+  requests,
+}) => {
+  // Fix only the date; faked timers would also stall the comboboxes' transitions.
+  await page.clock.setFixedTime(new Date('2026-05-16T12:00:00Z'));
+  const refetch = Promise.withResolvers<void>();
+  let created = false;
+  network.use(
+    getGetCruisesMockHandler([]),
+    getGetAvailableCruiseManagersMockHandler(async () => {
+      if (created) await refetch.promise;
+      return [manager, deputy];
+    }),
+    getCreateCruiseMockHandler(() => {
+      created = true;
+      return undefined as never;
+    })
+  );
+  await fillNewCruise(page);
   await page.getByRole('button', { name: 'Zapisz' }).click();
 
   await expect
@@ -84,6 +101,47 @@ test('a new cruise is saved with Warsaw-midnight dates and the chosen managers',
         shipUnavailable: false,
       },
     ]);
+
+  // The cruise exists while its refetch is held, so saving again leaves instead of creating another.
+  await page.getByRole('button', { name: 'Zapisz' }).click();
+  await expect(page).toHaveURL('/cruises');
+  await expect(page.getByRole('dialog', { name: 'Niezapisane zmiany' })).toBeHidden();
+  refetch.resolve();
+  expect(requests.bodies('POST /v2/cruises')).toHaveLength(1);
+});
+
+test('an edit made during a new cruise POST asks before leaving and never repeats the POST', async ({
+  page,
+  network,
+  requests,
+}) => {
+  await page.clock.setFixedTime(new Date('2026-05-16T12:00:00Z'));
+  const response = Promise.withResolvers<void>();
+  network.use(
+    getGetCruisesMockHandler([]),
+    getGetAvailableCruiseManagersMockHandler([manager, deputy]),
+    getCreateCruiseMockHandler(async () => {
+      await response.promise;
+      return undefined as never;
+    })
+  );
+  await fillNewCruise(page);
+  const save = page.getByRole('button', { name: 'Zapisz' });
+  const title = page.locator('input[name="title"]');
+  const dialog = page.getByRole('dialog', { name: 'Niezapisane zmiany' });
+  await save.click();
+  await expect.poll(() => requests.bodies('POST /v2/cruises').length).toBe(1);
+  await title.fill('Poprawka');
+  response.resolve();
+
+  await dialog.getByRole('button', { name: 'Zostań na stronie' }).click();
+  await expect(title).toHaveValue('Poprawka');
+  await expect(page).toHaveURL('/cruises/new');
+
+  await save.click();
+  await dialog.getByRole('button', { name: 'Opuść bez zapisywania' }).click();
+  await expect(page).toHaveURL('/cruises');
+  expect(requests.bodies('POST /v2/cruises')).toEqual([expect.objectContaining({ title: null })]);
 });
 
 test('a cruise manager who is no longer available keeps their name, without an empty email', async ({
@@ -292,16 +350,18 @@ test('a cruise save waits for the previous one and starts from its accepted revi
   const refetch = Promise.withResolvers<void>();
   let server = item;
   let gets = 0;
+  let holdRefetch = false;
   network.use(
     getGetAvailableCruiseManagersMockHandler([admin, deputy, outsider]),
     getGetCruiseMockHandler(async () => {
-      if (++gets > 1) await refetch.promise;
+      gets++;
+      if (holdRefetch) await refetch.promise;
       return server;
     }),
     getUpdateCruiseMockHandler(async ({ request }) => {
-      const { title } = (await request.json()) as CruiseResponse;
+      const title = ((await request.json()) as CruiseResponse).title?.trim() ?? null;
       if (title === 'Starszy') await olderResponse.promise;
-      server = { ...server, title, revision: `after-${title}` };
+      server = { ...server, title, revision: server.title === title ? `${server.revision}+` : `after-${title}` };
       return { revision: server.revision };
     })
   );
@@ -318,25 +378,36 @@ test('a cruise save waits for the previous one and starts from its accepted revi
     await expect.poll(() => patches().length).toBe(1);
     await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
     await page.getByRole('dialog', { name: 'Odrzucić zmiany?' }).getByRole('button', { name: 'Odrzuć zmiany' }).click();
-    await title.fill('Nowszy');
+    await title.fill('Nowszy ');
     await save.click();
     expect(patches()).toHaveLength(1);
     olderResponse.resolve();
     await expect(edit).toBeVisible();
-    expect(patches()[1]).toEqual(expect.objectContaining({ title: 'Nowszy', revision: 'after-Starszy' }));
+    expect(patches()[1]).toEqual(expect.objectContaining({ revision: 'after-Starszy' }));
     await expect.poll(() => gets).toBe(3);
+    // The refetched server version replaces the submitted values.
+    await expect(title).toHaveValue('Nowszy');
+
+    // A save without edits gets a new revision from the refetch and still closes the form.
+    await edit.click();
+    await save.click();
+    await expect(edit).toBeVisible();
+    await expect.poll(() => patches().length).toBe(3);
 
     await edit.click();
     await page.getByRole('combobox', { name: 'Zastępca kierownika głównego' }).click();
     await page.getByRole('option', { name: `${outsider.firstName} ${outsider.lastName}` }).click();
+    holdRefetch = true;
     await save.click();
-    await expect(edit).toBeVisible();
+    await expect.poll(() => patches().length).toBe(4);
     expect(patches().at(-1)).toEqual(
-      expect.objectContaining({ title: 'Nowszy', deputyManagerId: outsider.id, revision: 'after-Nowszy' })
+      expect.objectContaining({ title: 'Nowszy', deputyManagerId: outsider.id, revision: 'after-Nowszy+' })
     );
 
+    // The save is accepted and only its refetch is pending, so leaving doesn't warn.
     await page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
     await expect(page).toHaveURL('/');
+    await expect(page.getByRole('dialog', { name: 'Niezapisane zmiany' })).toBeHidden();
     await page.goBack();
     // The cached cruise predates the saves, so editing waits for the refetch.
     await expect(edit).toBeDisabled();
@@ -397,6 +468,32 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     sent('PUT /v2/cruises/{id}/completion'),
     sent('DELETE /v2/cruises/{id}/confirmation'),
   ]).toEqual([1, 1, 2]);
+});
+
+test('a status change stays pending until the refreshed cruise arrives', async ({ page, network }) => {
+  const item = cruise();
+  const refreshed = Promise.withResolvers<void>();
+  let confirmed = false;
+  network.use(
+    getGetCruiseMockHandler(async () => {
+      if (!confirmed) return item;
+      await refreshed.promise;
+      return { ...item, status: 'confirmed' as const };
+    }),
+    getConfirmCruiseMockHandler(() => {
+      confirmed = true;
+    })
+  );
+  await page.goto(`/cruises/${item.id}`);
+  await page.getByRole('button', { name: 'Zatwierdź rejs', exact: true }).click();
+  const dialog = page.getByRole('dialog');
+  const refetch = page.waitForRequest((request) => request.method() === 'GET' && request.url().endsWith(item.id));
+  await dialog.getByRole('button', { name: `Potwierdź rejs nr. ${item.number}` }).click();
+  await refetch;
+  await expect(dialog.getByRole('button', { name: `Potwierdź rejs nr. ${item.number}` })).toBeDisabled();
+  refreshed.resolve();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByText('Potwierdzony', { exact: true })).toBeVisible();
 });
 
 test('a rejected status undo shows the server reason and keeps the cruise status', async ({ page, network }) => {

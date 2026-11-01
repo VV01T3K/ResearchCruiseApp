@@ -75,7 +75,7 @@ export function isInRole(user: UserResponse | null, allowedRoles: Role | Role[])
 
 export function useSignIn() {
   const queryClient = useQueryClient();
-  const { mutateAsync: login } = useLogin({ mutation: { meta: { handlesError: true } } });
+  const { mutateAsync: login } = useLogin({ mutation: { meta: { handlesError: true, invalidates: false } } });
 
   return async (email: string, password: string): Promise<SignInResult> => {
     let response;

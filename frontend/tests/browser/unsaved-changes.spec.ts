@@ -1,10 +1,14 @@
 import type { Page } from '@playwright/test';
 import type { NetworkFixture } from '@msw/playwright';
 import {
+  getGetApplicationFormAMockHandler,
   getGetApplicationFormBMockHandler,
+  getGetApplicationFormCMockHandler,
   getUpdateApplicationFormAMockHandler,
   getUpdateApplicationFormBMockHandler,
+  getUpdateApplicationFormCMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
+import { getGetCruiseBlockadesMockHandler } from '@/api/generated/mocks/cruises/cruises.msw.gen';
 import {
   getGetCurrentSessionMockHandler,
   getLoginMockHandler,
@@ -15,7 +19,7 @@ import type { CurrentUserResponse } from '@/api/generated/schemas';
 import { HttpResponse } from 'msw';
 import { test, expect, applicationForms, dropFile, fail } from './fixtures';
 import { admin, outsider, session } from '../data/accounts';
-import { applicationId, formB } from '../data/forms';
+import { applicationId, formA as formAFields, formB, formC } from '../data/forms';
 
 const UNSAVED = 'Notatka, której nie zapisano';
 const formA = `/applications/${applicationId}/formA?mode=edit`;
@@ -160,14 +164,21 @@ test.describe('pending saves', () => {
     await expect(dialog(page)).toBeVisible();
   });
 
-  test('edits made while a save is pending still ask after it succeeds', async ({ page, network }) => {
+  test('edits made while a save is pending still ask after it succeeds, and staying can save them', async ({
+    page,
+    network,
+    requests,
+  }) => {
     await page.goto(formA);
     await notes(page).fill(UNSAVED);
     const release = await holdFormASave(page, network, 'saved');
     await notes(page).fill(`${UNSAVED} i dopisek`);
     release();
-    await expect(dialog(page)).toBeVisible();
+    await dialog(page).getByRole('button', { name: 'Zostań na stronie' }).click();
     await expect(page).toHaveURL(formA);
+    await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+    await expect(page).toHaveURL('/');
+    expect(requests.bodies(`PUT /v2/applications/${applicationId}/form-a`)).toHaveLength(2);
   });
 
   test('a save that finishes after the user left does not navigate away from the next page', async ({
@@ -187,6 +198,137 @@ test.describe('pending saves', () => {
     ).toBeVisible();
     await expect(page).toHaveURL(/\/applications\/new\?draft=/);
     await expect(notes(page)).toHaveValue(UNSAVED);
+  });
+});
+
+test.describe('returning to view mode', () => {
+  const employees = (page: Page) => page.locator('input[name="ugTeams[0].noOfEmployees"]');
+  const description = (page: Page) => page.getByLabel('Dodatkowy opis');
+  const draft = 'Zapisz wersję roboczą';
+  const forms = [
+    {
+      name: 'A',
+      route: 'form-a',
+      field: notes,
+      save: 'Wyślij',
+      stored: (revision: string) => getGetApplicationFormAMockHandler({ ...formAFields(), revision }),
+      update: getUpdateApplicationFormAMockHandler,
+    },
+    {
+      name: 'B',
+      route: 'form-b',
+      field: employees,
+      save: draft,
+      stored: (revision: string) => getGetApplicationFormBMockHandler({ ...formB(), revision }),
+      update: getUpdateApplicationFormBMockHandler,
+    },
+    {
+      name: 'C',
+      route: 'form-c',
+      field: description,
+      save: draft,
+      stored: (revision: string) => getGetApplicationFormCMockHandler({ ...formC(), revision }),
+      update: getUpdateApplicationFormCMockHandler,
+    },
+  ];
+
+  /** No app link switches a mounted form's mode except form B's revert, so this enters edit mode as it does. */
+  async function switchToEdit(page: Page, form: string) {
+    await page.evaluate(
+      (href) => window.history.pushState({ __TSR_index: window.history.state.__TSR_index + 1 }, '', href),
+      `/applications/${applicationId}/form${form}?mode=edit`
+    );
+    await expect(page).toHaveURL(/mode=edit/);
+  }
+
+  async function discardToView(page: Page) {
+    await page.goBack();
+    await dialog(page).getByRole('button', { name: 'Opuść bez zapisywania' }).click();
+    await expect(page).toHaveURL(/mode=view/);
+  }
+
+  for (const { name, route, field, save, stored, update } of forms) {
+    test(`form ${name} shows the saved version after a discard`, async ({ page, network, requests }) => {
+      const puts = () => requests.bodies(`PUT /v2/applications/${applicationId}/${route}`);
+      const { promise: released, resolve: release } = Promise.withResolvers<void>();
+      await page.goto(`/applications/${applicationId}/form${name}?mode=view`);
+      const original = await field(page).inputValue();
+
+      await switchToEdit(page, name);
+      await field(page).fill('3');
+      await discardToView(page);
+      await expect(field(page)).toHaveValue(original);
+
+      network.use(
+        update(async () => {
+          await released;
+          return { revision: 'AAAAAAAAB9I=' };
+        })
+      );
+      await switchToEdit(page, name);
+      await field(page).fill('4');
+      await page.getByRole('button', { name: save, exact: true }).click();
+      await expect.poll(() => puts().length).toBe(1);
+      await field(page).fill('5');
+      release();
+      await dialog(page).getByRole('button', { name: 'Zostań na stronie' }).click();
+      await discardToView(page);
+      await expect(field(page)).toHaveValue('4');
+
+      network.use(
+        update(() => {
+          network.use(stored('AAAAAAAAB9M='));
+          throw HttpResponse.json({ detail: 'Dane zostały w międzyczasie zmienione.' }, { status: 409 });
+        })
+      );
+      await switchToEdit(page, name);
+      await page.getByRole('button', { name: save, exact: true }).click();
+      await expect(page.getByRole('alert').getByText(/Dane zostały w międzyczasie zmienione/)).toBeVisible();
+      expect(puts()[1]).toEqual(
+        expect.objectContaining({ form: expect.objectContaining({ revision: 'AAAAAAAAB9I=' }) })
+      );
+      await discardToView(page);
+      await expect(field(page)).toHaveValue(original);
+
+      network.use(update({ revision: 'AAAAAAAAB9U=' }));
+      await switchToEdit(page, name);
+      await page.getByRole('button', { name: save, exact: true }).click();
+      await expect.poll(() => puts().length).toBe(3);
+      expect(puts()[2]).toEqual(
+        expect.objectContaining({ form: expect.objectContaining({ revision: 'AAAAAAAAB9M=' }) })
+      );
+    });
+  }
+
+  test('form C drops a discarded attachment and form A follows the restored year', async ({ page, network }) => {
+    await page.goto(`/applications/${applicationId}/formC?mode=view`);
+    await expect(description(page)).toBeVisible();
+    await switchToEdit(page, 'C');
+    await dropFile(page.getByRole('button', { name: 'Załączniki' }), {
+      name: 'niezapisane.jpg',
+      mimeType: 'image/jpeg',
+      buffer: Buffer.from([0xff, 0xd8, 0xff, 0xd9]),
+    });
+    await expect(page.getByRole('button', { name: 'niezapisane.jpg', exact: true })).toBeVisible();
+    await discardToView(page);
+    await expect(page.getByRole('button', { name: 'niezapisane.jpg', exact: true })).toHaveCount(0);
+
+    network.use(
+      getGetCruiseBlockadesMockHandler(({ request }) =>
+        new URL(request.url).searchParams.get('year') === '2027'
+          ? [{ title: 'Blokada 2027', startDate: '2027-06-01T00:00:00Z', endDate: '2027-06-03T00:00:00Z' }]
+          : []
+      )
+    );
+    await page.goto(`/applications/${applicationId}/formA?mode=view`);
+    await expect(notes(page)).toBeVisible();
+    await switchToEdit(page, 'A');
+    await page.getByRole('combobox', { name: 'Rok' }).click();
+    await page.getByRole('option', { name: '2027' }).click();
+    await expect(page.getByText('Blokady statku w roku 2027')).toBeVisible();
+    await discardToView(page);
+    await expect(page.getByRole('combobox', { name: 'Rok' })).toHaveText(/2026/);
+    await expect(page.getByText('Blokady statku w roku')).toHaveCount(0);
   });
 });
 

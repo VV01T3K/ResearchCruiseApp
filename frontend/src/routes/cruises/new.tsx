@@ -15,6 +15,7 @@ import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { FormView } from './-components/FormView';
 import { CruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
@@ -33,7 +34,10 @@ export const Route = createFileRoute('/cruises/new')({
 
 function NewCruisePage() {
   const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense();
-  const createCruiseMutation = useCreateCruise({ mutation: { meta: { handlesError: true } } });
+  const saving = useSaveTracking();
+  const createCruiseMutation = useCreateCruise({
+    mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
+  });
   const search = Route.useSearch();
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
 
@@ -49,12 +53,17 @@ function NewCruisePage() {
       navigateToFirstError({ toast: true });
     },
     onSubmit: async ({ value, formApi }) => {
+      const created = saving.acceptedValues();
+      if (created) return leaveAfterSave(created, { to: '/cruises' });
+      if (saving.isSaving()) return;
       trackFormSubmit('new-cruise', 'valid', formApi.state);
+      saving.start(value);
       try {
         await createCruiseMutation.mutateAsync({ data: CruiseFormSchema.parse(value) });
         toast.success('Rejs został utworzony pomyślnie.');
         await leaveAfterSave(value, { to: '/cruises' });
       } catch (error) {
+        saving.finish();
         console.error(error);
         setServerFormErrors(form, error);
         toast.error(getErrorMessage(error, 'Nie udało się utworzyć rejsu'));
@@ -88,7 +97,7 @@ function NewCruisePage() {
           <FormView cruiseApplications={cruiseApplicationsQuery.data} isReadonly={false} buttons={buttons} />
         </form.AppForm>
       </Layout>
-      <UnsavedChangesGuard form={form} />
+      <UnsavedChangesGuard form={form} saving={saving} />
       <Modal title="Odrzucić zmiany?" isOpen={isDiscardModalOpen} onClose={() => setIsDiscardModalOpen(false)}>
         <div className="space-y-4">
           <p>Formularz zawiera niezapisane zmiany. Jeśli je odrzucisz, zostaną utracone.</p>

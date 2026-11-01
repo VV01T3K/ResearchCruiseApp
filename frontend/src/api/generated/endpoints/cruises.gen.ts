@@ -1,9 +1,7 @@
 import {
-  matchQuery,
   queryOptions as queryOptionsBuilder,
   useMutation,
   useQuery,
-  useQueryClient,
   useSuspenseQuery
 } from '@tanstack/react-query';
 import type {
@@ -11,7 +9,6 @@ import type {
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
   MutationFunction,
-  MutationFunctionContext,
   QueryClient,
   QueryFunction,
   QueryKey,
@@ -196,7 +193,7 @@ return customFetch<void>(getCreateCruiseUrl(),
 export const getCreateCruiseMutationKey = () => ['createCruise'] as const;
 
 export const getCreateCruiseMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCruise>>, TError,CreateCruiseMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCruise>>, TError,CreateCruiseMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createCruise>>, TError,CreateCruiseMutationVariables, TContext> => {
 
 const mutationKey = getCreateCruiseMutationKey();
@@ -215,17 +212,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  createCruise(data,requestOptions)
         }
 
-  const onSuccess = (data: Awaited<ReturnType<typeof createCruise>>, variables: CreateCruiseMutationVariables, onMutateResult: TContext, context: MutationFunctionContext) => {
-        if (!options?.skipInvalidation) {
-        queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
-        }
-        mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
-      };
 
 
 
 
-  return  { ...mutationOptions, mutationFn, onSuccess }}
+
+  return  { mutationFn, ...mutationOptions }}
 
     export type CreateCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof createCruise>>>
     export type CreateCruiseMutationBody = CreateRequest
@@ -236,15 +228,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Create a cruise.
  */
 export const useCreateCruise = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCruise>>, TError,CreateCruiseMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCruise>>, TError,CreateCruiseMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createCruise>>,
         TError,
         CreateCruiseMutationVariables,
         TContext
       > => {
-      const backupQueryClient = useQueryClient();
-      return useMutation(getCreateCruiseMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
+      return useMutation(getCreateCruiseMutationOptions(options), queryClient);
     }
     export const getGetCruiseUrl = (cruiseId: string,) => {
 
@@ -378,7 +369,7 @@ return customFetch<RevisionResponse>(getUpdateCruiseUrl(cruiseId),
 export const getUpdateCruiseMutationKey = () => ['updateCruise'] as const;
 
 export const getUpdateCruiseMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCruise>>, TError,UpdateCruiseMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCruise>>, TError,UpdateCruiseMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateCruise>>, TError,UpdateCruiseMutationVariables, TContext> => {
 
 const mutationKey = getUpdateCruiseMutationKey();
@@ -397,17 +388,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  updateCruise(cruiseId,data,requestOptions)
         }
 
-  const onSuccess = (data: Awaited<ReturnType<typeof updateCruise>>, variables: UpdateCruiseMutationVariables, onMutateResult: TContext, context: MutationFunctionContext) => {
-        if (!options?.skipInvalidation) {
-        queryClient.invalidateQueries({ queryKey: getGetCruiseQueryKey(variables.cruiseId) });
-        }
-        mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
-      };
 
 
 
 
-  return  { ...mutationOptions, mutationFn, onSuccess }}
+
+  return  { mutationFn, ...mutationOptions }}
 
     export type UpdateCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof updateCruise>>>
     export type UpdateCruiseMutationBody = UpdateRequest
@@ -418,15 +404,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Update a cruise.
  */
 export const useUpdateCruise = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCruise>>, TError,UpdateCruiseMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCruise>>, TError,UpdateCruiseMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateCruise>>,
         TError,
         UpdateCruiseMutationVariables,
         TContext
       > => {
-      const backupQueryClient = useQueryClient();
-      return useMutation(getUpdateCruiseMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
+      return useMutation(getUpdateCruiseMutationOptions(options), queryClient);
     }
     export const getDeleteCruiseUrl = (cruiseId: string,
     params?: DeleteCruiseParams,) => {
@@ -466,7 +451,7 @@ export const deleteCruise = async (cruiseId: string,
 export const getDeleteCruiseMutationKey = () => ['deleteCruise'] as const;
 
 export const getDeleteCruiseMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCruise>>, TError,DeleteCruiseMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCruise>>, TError,DeleteCruiseMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteCruise>>, TError,DeleteCruiseMutationVariables, TContext> => {
 
 const mutationKey = getDeleteCruiseMutationKey();
@@ -485,17 +470,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  deleteCruise(cruiseId,params,requestOptions)
         }
 
-  const onSuccess = (data: Awaited<ReturnType<typeof deleteCruise>>, variables: DeleteCruiseMutationVariables, onMutateResult: TContext, context: MutationFunctionContext) => {
-        if (!options?.skipInvalidation) {
-        queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
-        }
-        mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
-      };
 
 
 
 
-  return  { ...mutationOptions, mutationFn, onSuccess }}
+
+  return  { mutationFn, ...mutationOptions }}
 
     export type DeleteCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof deleteCruise>>>
 
@@ -506,15 +486,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Delete a cruise.
  */
 export const useDeleteCruise = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCruise>>, TError,DeleteCruiseMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCruise>>, TError,DeleteCruiseMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteCruise>>,
         TError,
         DeleteCruiseMutationVariables,
         TContext
       > => {
-      const backupQueryClient = useQueryClient();
-      return useMutation(getDeleteCruiseMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
+      return useMutation(getDeleteCruiseMutationOptions(options), queryClient);
     }
     export const getConfirmCruiseUrl = (cruiseId: string,
     params?: ConfirmCruiseParams,) => {
@@ -554,7 +533,7 @@ export const confirmCruise = async (cruiseId: string,
 export const getConfirmCruiseMutationKey = () => ['confirmCruise'] as const;
 
 export const getConfirmCruiseMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmCruise>>, TError,ConfirmCruiseMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmCruise>>, TError,ConfirmCruiseMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof confirmCruise>>, TError,ConfirmCruiseMutationVariables, TContext> => {
 
 const mutationKey = getConfirmCruiseMutationKey();
@@ -573,17 +552,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  confirmCruise(cruiseId,params,requestOptions)
         }
 
-  const onSuccess = (data: Awaited<ReturnType<typeof confirmCruise>>, variables: ConfirmCruiseMutationVariables, onMutateResult: TContext, context: MutationFunctionContext) => {
-        if (!options?.skipInvalidation) {
-        queryClient.invalidateQueries({ queryKey: getGetCruiseQueryKey(variables.cruiseId) });
-        }
-        mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
-      };
 
 
 
 
-  return  { ...mutationOptions, mutationFn, onSuccess }}
+
+  return  { mutationFn, ...mutationOptions }}
 
     export type ConfirmCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof confirmCruise>>>
 
@@ -594,15 +568,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Confirm a cruise.
  */
 export const useConfirmCruise = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmCruise>>, TError,ConfirmCruiseMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmCruise>>, TError,ConfirmCruiseMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof confirmCruise>>,
         TError,
         ConfirmCruiseMutationVariables,
         TContext
       > => {
-      const backupQueryClient = useQueryClient();
-      return useMutation(getConfirmCruiseMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
+      return useMutation(getConfirmCruiseMutationOptions(options), queryClient);
     }
     export const getRemoveCruiseConfirmationUrl = (cruiseId: string,
     params?: RemoveCruiseConfirmationParams,) => {
@@ -642,7 +615,7 @@ export const removeCruiseConfirmation = async (cruiseId: string,
 export const getRemoveCruiseConfirmationMutationKey = () => ['removeCruiseConfirmation'] as const;
 
 export const getRemoveCruiseConfirmationMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeCruiseConfirmation>>, TError,RemoveCruiseConfirmationMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeCruiseConfirmation>>, TError,RemoveCruiseConfirmationMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof removeCruiseConfirmation>>, TError,RemoveCruiseConfirmationMutationVariables, TContext> => {
 
 const mutationKey = getRemoveCruiseConfirmationMutationKey();
@@ -661,17 +634,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  removeCruiseConfirmation(cruiseId,params,requestOptions)
         }
 
-  const onSuccess = (data: Awaited<ReturnType<typeof removeCruiseConfirmation>>, variables: RemoveCruiseConfirmationMutationVariables, onMutateResult: TContext, context: MutationFunctionContext) => {
-        if (!options?.skipInvalidation) {
-        queryClient.invalidateQueries({ predicate: (query) => [getGetCruisesQueryKey(), getGetCruiseQueryKey(variables.cruiseId)].some((queryKey) => matchQuery({ queryKey }, query)) });
-        }
-        mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
-      };
 
 
 
 
-  return  { ...mutationOptions, mutationFn, onSuccess }}
+
+  return  { mutationFn, ...mutationOptions }}
 
     export type RemoveCruiseConfirmationMutationResult = NonNullable<Awaited<ReturnType<typeof removeCruiseConfirmation>>>
 
@@ -682,15 +650,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Revert the latest cruise lifecycle state.
  */
 export const useRemoveCruiseConfirmation = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeCruiseConfirmation>>, TError,RemoveCruiseConfirmationMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeCruiseConfirmation>>, TError,RemoveCruiseConfirmationMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof removeCruiseConfirmation>>,
         TError,
         RemoveCruiseConfirmationMutationVariables,
         TContext
       > => {
-      const backupQueryClient = useQueryClient();
-      return useMutation(getRemoveCruiseConfirmationMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
+      return useMutation(getRemoveCruiseConfirmationMutationOptions(options), queryClient);
     }
     export const getCompleteCruiseUrl = (cruiseId: string,
     params?: CompleteCruiseParams,) => {
@@ -730,7 +697,7 @@ export const completeCruise = async (cruiseId: string,
 export const getCompleteCruiseMutationKey = () => ['completeCruise'] as const;
 
 export const getCompleteCruiseMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeCruise>>, TError,CompleteCruiseMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeCruise>>, TError,CompleteCruiseMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof completeCruise>>, TError,CompleteCruiseMutationVariables, TContext> => {
 
 const mutationKey = getCompleteCruiseMutationKey();
@@ -749,17 +716,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  completeCruise(cruiseId,params,requestOptions)
         }
 
-  const onSuccess = (data: Awaited<ReturnType<typeof completeCruise>>, variables: CompleteCruiseMutationVariables, onMutateResult: TContext, context: MutationFunctionContext) => {
-        if (!options?.skipInvalidation) {
-        queryClient.invalidateQueries({ queryKey: getGetCruiseQueryKey(variables.cruiseId) });
-        }
-        mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
-      };
 
 
 
 
-  return  { ...mutationOptions, mutationFn, onSuccess }}
+
+  return  { mutationFn, ...mutationOptions }}
 
     export type CompleteCruiseMutationResult = NonNullable<Awaited<ReturnType<typeof completeCruise>>>
 
@@ -770,15 +732,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Mark a cruise as completed.
  */
 export const useCompleteCruise = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeCruise>>, TError,CompleteCruiseMutationVariables, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeCruise>>, TError,CompleteCruiseMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof completeCruise>>,
         TError,
         CompleteCruiseMutationVariables,
         TContext
       > => {
-      const backupQueryClient = useQueryClient();
-      return useMutation(getCompleteCruiseMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
+      return useMutation(getCompleteCruiseMutationOptions(options), queryClient);
     }
     export const getAutoPlanCruisesUrl = () => {
 
@@ -809,7 +770,7 @@ export const autoPlanCruises = async ( options?: Parameters<typeof customFetch>[
 export const getAutoPlanCruisesMutationKey = () => ['autoPlanCruises'] as const;
 
 export const getAutoPlanCruisesMutationOptions = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(queryClient: QueryClient, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof autoPlanCruises>>, TError,void, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof autoPlanCruises>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof autoPlanCruises>>, TError,void, TContext> => {
 
 const mutationKey = getAutoPlanCruisesMutationKey();
@@ -828,17 +789,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  autoPlanCruises(requestOptions)
         }
 
-  const onSuccess = (data: Awaited<ReturnType<typeof autoPlanCruises>>, variables: void, onMutateResult: TContext, context: MutationFunctionContext) => {
-        if (!options?.skipInvalidation) {
-        queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
-        }
-        mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
-      };
 
 
 
 
-  return  { ...mutationOptions, mutationFn, onSuccess }}
+
+  return  { mutationFn, ...mutationOptions }}
 
     export type AutoPlanCruisesMutationResult = NonNullable<Awaited<ReturnType<typeof autoPlanCruises>>>
 
@@ -849,15 +805,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Automatically plan eligible cruises.
  */
 export const useAutoPlanCruises = <TError = ErrorType<ProblemDetails>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof autoPlanCruises>>, TError,void, TContext>, skipInvalidation?: boolean, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof autoPlanCruises>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof autoPlanCruises>>,
         TError,
         void,
         TContext
       > => {
-      const backupQueryClient = useQueryClient();
-      return useMutation(getAutoPlanCruisesMutationOptions(queryClient ?? backupQueryClient, options), queryClient);
+      return useMutation(getAutoPlanCruisesMutationOptions(options), queryClient);
     }
     export const getGetCruiseBlockadesUrl = (params: GetCruiseBlockadesParams,) => {
   const normalizedParams = new URLSearchParams();
