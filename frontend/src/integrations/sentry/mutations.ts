@@ -91,7 +91,7 @@ function markFirstReport(key: string): boolean {
 export function captureHandledRefusal(operation: string, error: unknown): void {
   const cause = rootCause(error);
   const kind = classifyError(cause);
-  if (!(cause instanceof ApiError) || !['session', 'no-access', 'refused'].includes(kind)) return;
+  if (!(cause instanceof ApiError) || !['no-access', 'refused'].includes(kind)) return;
   if (!markFirstReport(`${operation}:${cause.status}`)) return;
   const refusal = new Error('Expected refusal shown to the user');
   refusal.name = `Handled ${operation} refusal (HTTP ${cause.status})`;

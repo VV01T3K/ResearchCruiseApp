@@ -104,7 +104,6 @@ it('reports each handled refusal once per operation and status in a session', ()
   expect(calls.map(([, hint]) => (hint as { fingerprint?: string[] }).fingerprint)).toEqual([
     ['handled-refusal', 'form-b.submit', '403'],
     ['handled-refusal', 'form-b.draft', '403'],
-    ['handled-refusal', 'form-b.draft', '401'],
   ]);
   vi.unstubAllGlobals();
 });
