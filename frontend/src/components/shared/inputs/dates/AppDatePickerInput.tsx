@@ -30,9 +30,7 @@ type Props = {
   minimalDate?: Date;
   maximalDate?: Date;
   selectionStartDate?: Date;
-  'data-testid'?: string;
-  'data-testid-button'?: string;
-  'data-testid-errors'?: string;
+  'aria-label'?: string;
 } & (
   | {
       type?: 'date';
@@ -59,9 +57,7 @@ export function AppDatePickerInput({
   minimalDate,
   maximalDate,
   selectionStartDate,
-  'data-testid': testId,
-  'data-testid-button': buttonTestId,
-  'data-testid-errors': errorsTestId,
+  'aria-label': ariaLabel,
 }: Props) {
   const aria = useInputAria(errors, helper);
   const selectedDate = getDateFromValue(value);
@@ -73,6 +69,17 @@ export function AppDatePickerInput({
     const now = new Date();
     return { month: now.getMonth(), year: now.getFullYear() };
   });
+
+  const shownValue = selectedDate
+    ? selectedDate.toLocaleDateString('pl-PL', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: type === 'datetime' ? '2-digit' : undefined,
+        minute: type === 'datetime' ? '2-digit' : undefined,
+      })
+    : placeholder;
+  const fieldName = ariaLabel ?? (typeof label === 'string' ? label : undefined);
 
   function handleOpenChange(open: boolean, details: Popover.Root.ChangeEventDetails) {
     if (details.reason === 'outside-press' && clearRef.current?.contains(details.event.target as Node)) {
@@ -126,7 +133,7 @@ export function AppDatePickerInput({
 
   return (
     <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
-      <div className="flex flex-col" data-testid={testId}>
+      <div className="flex flex-col">
         <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div className="relative">
           <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
@@ -135,18 +142,10 @@ export function AppDatePickerInput({
             name={name}
             disabled={disabled}
             {...aria.inputProps}
+            aria-label={fieldName && `${fieldName}: ${shownValue}`}
             className={pickerTriggerClassName({ disabled, errors })}
-            data-testid={buttonTestId}
           >
-            {selectedDate
-              ? selectedDate.toLocaleDateString('pl-PL', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: type === 'datetime' ? '2-digit' : undefined,
-                  minute: type === 'datetime' ? '2-digit' : undefined,
-                })
-              : placeholder}
+            {shownValue}
             <span className="flex items-center gap-2">
               <AppInputErrorTriangle errors={errors} />
               {selectedDate && !disabled && <span className="w-4" />}
@@ -164,7 +163,7 @@ export function AppDatePickerInput({
         </div>
         <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper id={aria.helperId} helper={helper} />
-          <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
+          <AppInputErrorsList id={aria.errorId} errors={errors} />
         </div>
       </div>
       <PickerPopup aria-label="Wybierz datę">

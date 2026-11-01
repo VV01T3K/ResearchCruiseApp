@@ -32,9 +32,6 @@ type Props = {
   allowEmptyOption?: boolean;
   placeholder?: string;
   defaultValue?: string;
-  'data-testid'?: string;
-  'data-testid-button'?: string;
-  'data-testid-errors'?: string;
 };
 
 export function AppDropdownInput({
@@ -51,9 +48,6 @@ export function AppDropdownInput({
   allowEmptyOption = false,
   placeholder = 'Wybierz',
   defaultValue = '',
-  'data-testid': testId,
-  'data-testid-button': buttonTestId,
-  'data-testid-errors': errorsTestId,
 }: Props) {
   const aria = useInputAria(errors, helper);
   const allPossibleOptions = React.useMemo(() => {
@@ -80,7 +74,7 @@ export function AppDropdownInput({
   );
 
   return (
-    <div className="flex flex-col" data-testid={testId}>
+    <div className="flex flex-col">
       <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
 
       <Select.Root
@@ -107,7 +101,6 @@ export function AppDropdownInput({
             disabled && 'cursor-not-allowed bg-gray-200',
             hasErrors(errors) && invalidInputClassName
           )}
-          data-testid={buttonTestId}
         >
           <Select.Value>{() => selectedOption?.inlineLabel ?? placeholder}</Select.Value>
           <span className="flex items-center gap-2">
@@ -164,7 +157,7 @@ export function AppDropdownInput({
 
       <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <AppInputHelper id={aria.helperId} helper={helper} />
-        <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
+        <AppInputErrorsList id={aria.errorId} errors={errors} />
       </div>
     </div>
   );

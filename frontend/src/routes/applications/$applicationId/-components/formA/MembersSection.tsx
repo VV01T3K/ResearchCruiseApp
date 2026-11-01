@@ -152,11 +152,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
   }
 
   return (
-    <AppAccordion
-      title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie"
-      expandedByDefault
-      data-testid="form-a-members-section"
-    >
+    <AppAccordion title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
         <form.AppField name="ugTeams" mode="array">
           {(field) => (
@@ -186,7 +182,6 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                     }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
-                    data-testid="form-a-add-ug-unit-btn"
                   >
                     Dodaj jednostkę UG
                   </DropdownElementSelectorButton>,
@@ -195,12 +190,8 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-ug-teams-table"
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-ug-teams-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         </form.AppField>
@@ -224,7 +215,6 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                     }}
                     className="flex items-center gap-4"
                     disabled={isReadonly}
-                    data-testid="form-a-add-guest-team-btn"
                   >
                     Dodaj nowy zespół
                   </AppButton>,
@@ -239,7 +229,6 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                     }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
-                    data-testid="form-a-add-historical-team-btn"
                   >
                     Dodaj historyczny zespół
                   </DropdownElementSelectorButton>,
@@ -248,12 +237,8 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-guest-teams-table"
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-guest-teams-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         </form.AppField>

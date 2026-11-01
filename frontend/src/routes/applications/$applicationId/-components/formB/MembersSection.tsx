@@ -44,7 +44,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
           <form.AppField name={`ugTeams[${row.index}].noOfEmployees`}>
             {(field) => (
               <field.NumberField
-                data-testid="ug-team-employees"
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
@@ -66,7 +65,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
           <form.AppField name={`ugTeams[${row.index}].noOfStudents`}>
             {(field) => (
               <field.NumberField
-                data-testid="ug-team-students"
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
@@ -112,14 +110,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         accessorFn: (row) => row.name,
         cell: ({ row }) => (
           <form.AppField name={`guestTeams[${row.index}].name`}>
-            {(field) => (
-              <field.TextField
-                data-testid="guest-team-name-input"
-                data-testid-errors="guest-team-name-errors"
-                containerClassName="mx-4"
-                disabled={isReadonly}
-              />
-            )}
+            {(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
           </form.AppField>
         ),
         size: 60,
@@ -133,8 +124,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
           <form.AppField name={`guestTeams[${row.index}].noOfPersons`}>
             {(field) => (
               <field.NumberField
-                data-testid-input="guest-team-people-input"
-                data-testid-errors="guest-team-people-errors"
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
@@ -181,38 +170,15 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         cell: ({ row }) => (
           <div className="grid grid-cols-5 gap-2">
             <form.AppField name={`crewMembers[${row.index}].title`}>
-              {(field) => (
-                <field.TextField
-                  data-testid="crew-member-title-input"
-                  data-testid-errors="crew-member-title-errors"
-                  label="Tytuł"
-                  disabled={isReadonly}
-                />
-              )}
+              {(field) => <field.TextField label="Tytuł" disabled={isReadonly} />}
             </form.AppField>
 
             <form.AppField name={`crewMembers[${row.index}].firstName`}>
-              {(field) => (
-                <field.TextField
-                  data-testid="crew-member-names-input"
-                  data-testid-errors="crew-member-names-errors"
-                  label="Imiona"
-                  containerClassName="col-span-2"
-                  disabled={isReadonly}
-                />
-              )}
+              {(field) => <field.TextField label="Imiona" containerClassName="col-span-2" disabled={isReadonly} />}
             </form.AppField>
 
             <form.AppField name={`crewMembers[${row.index}].lastName`}>
-              {(field) => (
-                <field.TextField
-                  data-testid="crew-member-surname-input"
-                  data-testid-errors="crew-member-surname-errors"
-                  label="Nazwisko"
-                  containerClassName="col-span-2"
-                  disabled={isReadonly}
-                />
-              )}
+              {(field) => <field.TextField label="Nazwisko" containerClassName="col-span-2" disabled={isReadonly} />}
             </form.AppField>
           </div>
         ),
@@ -225,21 +191,12 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         cell: ({ row }) => (
           <div className="grid grid-cols-2 gap-2">
             <form.AppField name={`crewMembers[${row.index}].birthPlace`}>
-              {(field) => (
-                <field.TextField
-                  data-testid="crew-member-birthplace-input"
-                  data-testid-errors="crew-member-birthplace-errors"
-                  label="Miejsce urodzenia"
-                  disabled={isReadonly}
-                />
-              )}
+              {(field) => <field.TextField label="Miejsce urodzenia" disabled={isReadonly} />}
             </form.AppField>
 
             <form.AppField name={`crewMembers[${row.index}].birthDate`}>
               {(field) => (
                 <field.DateField
-                  data-testid-button="crew-member-birthdate-button"
-                  data-testid-errors="crew-member-birthdate-errors"
                   onChange={(e) => field.handleChange(e ?? '')}
                   label="Data urodzenia"
                   disabled={isReadonly}
@@ -248,21 +205,12 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
             </form.AppField>
 
             <form.AppField name={`crewMembers[${row.index}].documentNumber`}>
-              {(field) => (
-                <field.TextField
-                  data-testid="crew-member-document-id-input"
-                  data-testid-errors="crew-member-document-id-errors"
-                  label="Numer ID dokumentu"
-                  disabled={isReadonly}
-                />
-              )}
+              {(field) => <field.TextField label="Numer ID dokumentu" disabled={isReadonly} />}
             </form.AppField>
 
             <form.AppField name={`crewMembers[${row.index}].documentExpiryDate`}>
               {(field) => (
                 <field.DateField
-                  data-testid-button="crew-member-document-expiry-button"
-                  data-testid-errors="crew-member-document-expiry-errors"
                   onChange={(e) => field.handleChange(e ?? '')}
                   label="Data ważności dokumentu"
                   disabled={isReadonly}
@@ -280,14 +228,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         accessorFn: (row) => row.institution,
         cell: ({ row }) => (
           <form.AppField name={`crewMembers[${row.index}].institution`}>
-            {(field) => (
-              <field.TextField
-                data-testid="crew-member-institution-input"
-                data-testid-errors="crew-member-institution-errors"
-                placeholder="Wprowadź nazwę jednostki"
-                disabled={isReadonly}
-              />
-            )}
+            {(field) => <field.TextField placeholder="Wprowadź nazwę jednostki" disabled={isReadonly} />}
           </form.AppField>
         ),
         size: 20,
@@ -305,11 +246,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
   }
 
   return (
-    <AppAccordion
-      title="9. Zespoły badawcze, które miałyby uczestniczyć w rejsie"
-      expandedByDefault
-      data-testid="form-b-members-section"
-    >
+    <AppAccordion title="9. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
       <AppAlert>Rejs do 12 godzin w porze dziennej - 33 osoby, powyżej 12 godzin - 16 osób</AppAlert>
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
         <form.AppField name="ugTeams" mode="array">
@@ -324,7 +261,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 buttons={() => [
                   <DropdownElementSelectorButton
                     key="new"
-                    data-testid="form-b-add-ug-unit-btn"
                     options={formAInitValues.ugUnits.map((unit) => ({
                       value: unit.name,
                       content: unit.name,
@@ -348,10 +284,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-b-ug-teams-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         </form.AppField>
@@ -368,7 +301,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                   <AppButton
                     key="new"
                     variant="primary"
-                    data-testid="form-b-add-guest-team-btn"
                     onClick={() => {
                       field.pushValue({ name: '', noOfPersons: 0 });
                       field.handleBlur();
@@ -380,7 +312,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                   </AppButton>,
                   <DropdownElementSelectorButton
                     key="historical"
-                    data-testid="form-b-add-historical-guest-team-btn"
                     options={formAInitValues.historicalGuestInstitutions.map((institution) => ({
                       value: institution,
                       onClick: () => {
@@ -399,10 +330,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-b-guest-teams-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </div>
           )}
         </form.AppField>
@@ -419,7 +347,6 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
               buttons={() => [
                 <AppButton
                   key="crewMembers.add-btn"
-                  data-testid="form-b-add-crew-member-btn"
                   onClick={() => {
                     field.pushValue({
                       title: '',
@@ -443,10 +370,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
               disabled={isReadonly}
               errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
-            <AppInputErrorsList
-              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-              data-testid="form-b-crew-members-errors"
-            />
+            <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
           </>
         )}
       </form.AppField>

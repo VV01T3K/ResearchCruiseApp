@@ -85,7 +85,7 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
   }
 
   return (
-    <AppAccordion title="4. Rejony prowadzenia badań" expandedByDefault data-testid="form-a-research-area-section">
+    <AppAccordion title="4. Rejony prowadzenia badań" expandedByDefault>
       <form.AppField name="researchAreaDescriptions" mode="array">
         {(field) => (
           <>
@@ -112,7 +112,6 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
                   }))}
                   variant="primary"
                   disabled={isReadonly}
-                  data-testid="form-a-add-research-area-btn"
                 >
                   Dodaj rejon
                 </DropdownElementSelectorButton>,
@@ -121,12 +120,8 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
               variant="form"
               disabled={isReadonly}
               errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-              data-testid="form-a-research-areas-table"
             />
-            <AppInputErrorsList
-              errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-              data-testid="form-a-research-areas-errors"
-            />
+            <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
           </>
         )}
       </form.AppField>

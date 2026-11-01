@@ -8,11 +8,7 @@ export function SPUBReportDataSection({ context }: { context: FormCViewModel }) 
   const { isReadonly } = context;
 
   return (
-    <AppAccordion
-      title="17. Dodatkowe dane do raportu SPUB"
-      expandedByDefault
-      data-testid="form-c-spub-report-data-section"
-    >
+    <AppAccordion title="17. Dodatkowe dane do raportu SPUB" expandedByDefault>
       <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center text-sm">
         Wpisać czy podczas rejsu były pozyskane dane do ekspertyzy lub do oceny oddziaływań na środowisko przy
         współpracy z otoczeniem gospodarczym i biznesowym lub w celach popularnonaukowych, edukacyjnych,

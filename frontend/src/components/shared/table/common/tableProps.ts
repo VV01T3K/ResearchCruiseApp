@@ -21,5 +21,4 @@ export type TableProps<T extends object> = {
   infiniteScroll?: InfiniteScrollProps;
   virtualized?: boolean;
   className?: string;
-  'data-testid'?: string;
 };

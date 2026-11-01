@@ -68,11 +68,7 @@ export function CollectedSamplesSection({ context }: { context: FormCViewModel }
   const { isReadonly } = context;
 
   return (
-    <AppAccordion
-      title="16. Lista próbek pobranych i poddanych analizie podczas rejsu"
-      expandedByDefault
-      data-testid="form-c-collected-samples-section"
-    >
+    <AppAccordion title="16. Lista próbek pobranych i poddanych analizie podczas rejsu" expandedByDefault>
       <form.AppField name="collectedSamples" mode="array">
         {(field) => (
           <AppTable
@@ -81,7 +77,6 @@ export function CollectedSamplesSection({ context }: { context: FormCViewModel }
             buttons={() => [
               <AppButton
                 key="new"
-                data-testid="form-c-add-sample-btn"
                 onClick={() => {
                   field.pushValue({
                     type: '',

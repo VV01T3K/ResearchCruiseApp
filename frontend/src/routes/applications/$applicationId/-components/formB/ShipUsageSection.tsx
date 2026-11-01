@@ -7,7 +7,7 @@ export function ShipUsageSection({ context }: { context: FormBViewModel }) {
   const { formA, formAInitValues } = context;
 
   return (
-    <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault data-testid="form-b-ship-usage-section">
+    <AppAccordion title="3. Sposób wykorzystania statku" expandedByDefault>
       <div className="grid grid-cols-1 gap-4">
         <AppDropdownInput
           name="shipUsage"

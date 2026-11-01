@@ -10,7 +10,7 @@ export function CruiseInfoSection({ context }: { context: FormCViewModel }) {
   const { cruise } = context;
 
   return (
-    <AppAccordion title="1. Informacje o rejsie" expandedByDefault data-testid="form-c-cruise-info-section">
+    <AppAccordion title="1. Informacje o rejsie" expandedByDefault>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
         <div className="grid grid-cols-1 gap-0 md:col-span-2 md:grid-cols-2 md:gap-2">
           <span className="font-semibold">Numer rejsu:</span>

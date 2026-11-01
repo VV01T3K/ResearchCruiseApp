@@ -26,9 +26,6 @@ type Props = {
   disabled?: boolean;
   helper?: React.ReactNode;
   placeholder?: string;
-  'data-testid'?: string;
-  'data-testid-button'?: string;
-  'data-testid-errors'?: string;
 };
 export function AppYearPickerInput({
   name,
@@ -41,9 +38,6 @@ export function AppYearPickerInput({
   disabled,
   helper,
   placeholder = 'Wybierz rok',
-  'data-testid': testId,
-  'data-testid-button': buttonTestId,
-  'data-testid-errors': errorsTestId,
 }: Props) {
   const aria = useInputAria(errors, helper);
   const [visibleDecade, setVisibleDecade] = React.useState(() => decadeOf(new Date().getFullYear()));
@@ -80,7 +74,7 @@ export function AppYearPickerInput({
 
   return (
     <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
-      <div className="flex flex-col" data-testid={testId}>
+      <div className="flex flex-col">
         <AppInputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div className="relative">
           <input type="hidden" name={name} value={selectedYear ?? ''} disabled={disabled} />
@@ -89,7 +83,6 @@ export function AppYearPickerInput({
             disabled={disabled}
             {...aria.inputProps}
             className={pickerTriggerClassName({ disabled, errors })}
-            data-testid={buttonTestId}
           >
             {selectedYear ?? placeholder}
             <span className="flex items-center gap-2">
@@ -109,7 +102,7 @@ export function AppYearPickerInput({
         </div>
         <div className={cn('flex flex-row justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <AppInputHelper id={aria.helperId} helper={helper} />
-          <AppInputErrorsList id={aria.errorId} errors={errors} data-testid={errorsTestId} />
+          <AppInputErrorsList id={aria.errorId} errors={errors} />
         </div>
       </div>
 

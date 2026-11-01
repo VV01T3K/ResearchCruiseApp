@@ -35,11 +35,7 @@ export function ShipEquipmentsSection({ context }: { context: FormBViewModel }) 
   const { formBInitValues, isReadonly } = context;
 
   return (
-    <AppAccordion
-      title="15. Elementy techniczne statku wykorzystywane podczas rejsu"
-      expandedByDefault
-      data-testid="form-b-ship-equipments-section"
-    >
+    <AppAccordion title="15. Elementy techniczne statku wykorzystywane podczas rejsu" expandedByDefault>
       <form.AppField name="shipEquipmentsIds">
         {() => (
           <AppTable

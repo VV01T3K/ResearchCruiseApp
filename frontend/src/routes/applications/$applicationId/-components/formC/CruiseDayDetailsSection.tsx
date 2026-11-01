@@ -107,11 +107,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }
   const { isReadonly } = context;
 
   return (
-    <AppAccordion
-      title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu"
-      expandedByDefault
-      data-testid="form-c-cruise-day-details-section"
-    >
+    <AppAccordion title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu" expandedByDefault>
       <form.AppField name="cruiseDaysDetails" mode="array">
         {(field) => (
           <AppTable

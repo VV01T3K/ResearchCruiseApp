@@ -59,23 +59,13 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <form.AppField name={`publications[${row.index}].doi`}>
               {(field) => (
-                <field.TextField
-                  label="DOI"
-                  placeholder='np. "10.1016/j.jmarsys.2019.03.007"'
-                  disabled={isReadonly}
-                  data-testid="form-a-publication-doi-input"
-                />
+                <field.TextField label="DOI" placeholder='np. "10.1016/j.jmarsys.2019.03.007"' disabled={isReadonly} />
               )}
             </form.AppField>
 
             <form.AppField name={`publications[${row.index}].authors`}>
               {(field) => (
-                <field.TextField
-                  label="Autorzy"
-                  placeholder='np. "Kowalski J., Nowak A."'
-                  disabled={isReadonly}
-                  data-testid="form-a-publication-authors-input"
-                />
+                <field.TextField label="Autorzy" placeholder='np. "Kowalski J., Nowak A."' disabled={isReadonly} />
               )}
             </form.AppField>
 
@@ -85,7 +75,6 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                   label="Tytuł"
                   placeholder='np. "The impact of sea level rise on the coastal zone"'
                   disabled={isReadonly}
-                  data-testid="form-a-publication-title-input"
                 />
               )}
             </form.AppField>
@@ -96,7 +85,6 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                   label="Czasopismo"
                   placeholder='np. "Journal of Marine Systems"'
                   disabled={isReadonly}
-                  data-testid="form-a-publication-magazine-input"
                 />
               )}
             </form.AppField>
@@ -120,7 +108,6 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
                 label="Rok"
                 disabled={isReadonly}
-                data-testid-button="form-a-publication-year-button"
               />
             )}
           </form.AppField>
@@ -134,15 +121,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
         enableSorting: false,
         cell: ({ row }) => (
           <form.AppField name={`publications[${row.index}].ministerialPoints`}>
-            {(field) => (
-              <field.NumberField
-                minimum={0}
-                step={10}
-                label="Punkty"
-                disabled={isReadonly}
-                data-testid-input="form-a-publication-points-input"
-              />
-            )}
+            {(field) => <field.NumberField minimum={0} step={10} label="Punkty" disabled={isReadonly} />}
           </form.AppField>
         ),
         size: 10,
@@ -165,7 +144,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
   }
 
   return (
-    <AppAccordion title="9. Publikacje" expandedByDefault data-testid="form-a-publications-section">
+    <AppAccordion title="9. Publikacje" expandedByDefault>
       <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center">
         <h3 className="text-xl">
           Publikacje kategorii <span className="font-semibold">temat</span>
@@ -226,7 +205,6 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                     }))}
                     variant="primary"
                     disabled={isReadonly}
-                    data-testid="form-a-add-publication-btn"
                   >
                     Dodaj nową publikację
                   </DropdownElementSelectorButton>,
@@ -280,7 +258,6 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                     ])}
                     variant="primaryOutline"
                     disabled={isReadonly}
-                    data-testid="form-a-add-historical-publication-btn"
                   >
                     Dodaj historyczną publikację
                   </DropdownElementSelectorButton>,
@@ -288,12 +265,8 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-publications-table"
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-publications-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </>
           )}
         </form.AppField>

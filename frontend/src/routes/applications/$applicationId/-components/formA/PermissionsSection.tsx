@@ -64,11 +64,7 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
   }
 
   return (
-    <AppAccordion
-      title="3. Dodatkowe pozwolenia do planowanych podczas rejsu badań"
-      expandedByDefault
-      data-testid="form-a-permissions-section"
-    >
+    <AppAccordion title="3. Dodatkowe pozwolenia do planowanych podczas rejsu badań" expandedByDefault>
       <div>
         <form.AppField name="permissions" mode="array">
           {(field) => (
@@ -91,7 +87,6 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
                       field.handleBlur();
                     }}
                     disabled={isReadonly}
-                    data-testid="form-a-add-permission-btn"
                   >
                     Dodaj pozwolenie
                   </AppButton>,
@@ -100,12 +95,8 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
                 variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-permissions-table"
               />
-              <AppInputErrorsList
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                data-testid="form-a-permissions-errors"
-              />
+              <AppInputErrorsList errors={getErrors(field.state.meta, form.state.submissionAttempts)} />
             </>
           )}
         </form.AppField>

@@ -8,24 +8,13 @@ type Props = {
   onClose?: () => void;
   variant?: keyof typeof variants;
   iconAlign?: 'center' | 'start';
-  'data-testid'?: string;
 };
 
-export function AppAlert({
-  children,
-  onClose,
-  variant = 'primary',
-  iconAlign = 'center',
-  'data-testid': testId,
-}: Props) {
+export function AppAlert({ children, onClose, variant = 'primary', iconAlign = 'center' }: Props) {
   const Icon = variants[variant].icon;
 
   return (
-    <div
-      className={cn('flex items-center rounded-lg p-4', variants[variant].containerClassName)}
-      role="alert"
-      data-testid={testId}
-    >
+    <div className={cn('flex items-center rounded-lg p-4', variants[variant].containerClassName)} role="alert">
       <Icon
         weight={variants[variant].weight}
         className={cn('mr-4 h-6 w-6', iconAlign === 'start' && 'shrink-0 self-start')}

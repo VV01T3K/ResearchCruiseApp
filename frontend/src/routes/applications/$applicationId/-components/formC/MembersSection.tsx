@@ -224,11 +224,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
   ];
 
   return (
-    <AppAccordion
-      title="9. Zespoły badawcze, które uczestniczyły w rejsie"
-      expandedByDefault
-      data-testid="form-c-members-section"
-    >
+    <AppAccordion title="9. Zespoły badawcze, które uczestniczyły w rejsie" expandedByDefault>
       <div className="grid grid-cols-1 gap-16 xl:grid-cols-2">
         <form.AppField name="ugTeams" mode="array">
           {(field) => (

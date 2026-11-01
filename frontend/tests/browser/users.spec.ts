@@ -181,7 +181,7 @@ test('demoting or deactivating a manager of active records warns and needs a sec
   await page.goto('/user-management');
   const row = page.getByRole('row').filter({ hasText: deputy.email });
   const dialog = page.getByRole('dialog', { name: 'Edytuj użytkownika' });
-  const warning = dialog.getByTestId('assignments-warning');
+  const warning = dialog.getByRole('alert');
   await row.getByRole('button', { name: 'Edytuj' }).click();
   await dialog.getByRole('combobox').click();
   await page.getByRole('option', { name: 'Gość' }).click();
@@ -291,7 +291,7 @@ test('a group deactivation names the affected user and sends requests only for a
   await selectAll(page);
   await page.getByRole('button', { name: 'Akcje Grupowe' }).click();
   await page.getByRole('button', { name: 'Usuń akceptację zaznaczonych użytkowników' }).click();
-  await expect(page.getByTestId('assignments-warning')).toContainText(`${deputy.firstName} ${deputy.lastName}`);
+  await expect(page.getByRole('alert')).toContainText(`${deputy.firstName} ${deputy.lastName}`);
   expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(0);
   await page.getByRole('button', { name: 'Usuń akceptację mimo to' }).click();
   await expect(page.getByText('Pomyślnie usunięto akceptację wszystkich wybranych użytkowników')).toBeVisible();

@@ -86,7 +86,7 @@ export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
   }
 
   return (
-    <AppAccordion title="5. Rejony prowadzenia badań" expandedByDefault data-testid="form-c-research-area-section">
+    <AppAccordion title="5. Rejony prowadzenia badań" expandedByDefault>
       <form.AppField name="researchAreaDescriptions" mode="array">
         {(field) => (
           <>

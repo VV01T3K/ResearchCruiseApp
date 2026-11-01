@@ -23,7 +23,6 @@ export function AppMobileTable<T extends object>({
   infiniteScroll,
   virtualized,
   className,
-  'data-testid': testId,
 }: TableProps<T>) {
   const [isFilterModalOpen, setIsFilterModalOpen] = React.useState(false);
 
@@ -37,10 +36,7 @@ export function AppMobileTable<T extends object>({
 
   return (
     <>
-      <div
-        className={cn('flex flex-col flex-wrap', variant === 'form' ? 'text-center' : '', className)}
-        data-testid={testId}
-      >
+      <div className={cn('flex flex-col flex-wrap', variant === 'form' ? 'text-center' : '', className)}>
         {allButtons.length > 0 && (
           <div className="m-4 flex flex-col gap-4">
             {allButtons.map((x, id) => (

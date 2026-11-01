@@ -13,7 +13,7 @@ export function FormErrors() {
   if (errors.length === 0) return null;
 
   return (
-    <div data-error="true" data-testid="form-errors">
+    <div data-error="true">
       <AppAlert variant="danger">
         <div className="flex-1">
           {errors.length === 1 ? (
