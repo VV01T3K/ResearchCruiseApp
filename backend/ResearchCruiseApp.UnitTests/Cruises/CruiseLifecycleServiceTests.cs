@@ -4,7 +4,7 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.UnitTests.Cruises;
 
-public sealed class CruiseLifecycleRulesTests
+public sealed class CruiseLifecycleServiceTests
 {
     public static TheoryData<CruiseApplicationStatus> Statuses =>
         new(Enum.GetValues<CruiseApplicationStatus>());
@@ -17,7 +17,7 @@ public sealed class CruiseLifecycleRulesTests
     {
         var application = new CruiseApplication { Status = status };
 
-        var requested = CruiseLifecycleRules.RequestFormB([application]);
+        var requested = CruiseLifecycleService.RequestFormB([application]);
 
         var expected = status switch
         {
@@ -36,7 +36,7 @@ public sealed class CruiseLifecycleRulesTests
     {
         var (cruise, application) = CruiseWith(CruiseStatus.Confirmed, status);
 
-        var result = CruiseLifecycleRules.Complete(cruise);
+        var result = CruiseLifecycleService.Complete(cruise);
 
         var expected = status switch
         {
@@ -61,7 +61,7 @@ public sealed class CruiseLifecycleRulesTests
         {
             var (cruise, application) = CruiseWith(cruiseStatus, status);
 
-            var result = CruiseLifecycleRules.Complete(cruise);
+            var result = CruiseLifecycleService.Complete(cruise);
 
             Assert.Equal(
                 (expected, cruiseStatus, status),
@@ -78,7 +78,7 @@ public sealed class CruiseLifecycleRulesTests
     {
         var (cruise, application) = CruiseWith(CruiseStatus.Confirmed, status);
 
-        var result = CruiseLifecycleRules.Revert(cruise);
+        var result = CruiseLifecycleService.Revert(cruise);
 
         Assert.Equal(
             status switch
@@ -107,7 +107,7 @@ public sealed class CruiseLifecycleRulesTests
     {
         var (cruise, application) = CruiseWith(CruiseStatus.Ended, status);
 
-        var result = CruiseLifecycleRules.Revert(cruise);
+        var result = CruiseLifecycleService.Revert(cruise);
 
         Assert.Equal(
             status switch
@@ -135,7 +135,7 @@ public sealed class CruiseLifecycleRulesTests
         {
             var (cruise, application) = CruiseWith(CruiseStatus.New, status);
 
-            var result = CruiseLifecycleRules.Revert(cruise);
+            var result = CruiseLifecycleService.Revert(cruise);
 
             Assert.Equal(
                 (CruiseLifecycleResult.AlreadyNew, CruiseStatus.New, status),
@@ -167,7 +167,7 @@ public sealed class CruiseLifecycleRulesTests
             ],
         };
 
-        var result = CruiseLifecycleRules.Revert(cruise);
+        var result = CruiseLifecycleService.Revert(cruise);
 
         Assert.Equal(CruiseLifecycleResult.HasReportedApplications, result);
         Assert.Equal(cruiseStatus, cruise.Status);

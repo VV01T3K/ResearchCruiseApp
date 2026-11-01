@@ -43,7 +43,7 @@ public static class ApplicationDecisionEndpoints
             return Error.ResourceNotFound().ToProblemHttpResult();
         }
 
-        var decisionResult = ApplicationDecisionRules.Decide(application, request.Accept);
+        var decisionResult = ApplicationDecisionService.Decide(application, request.Accept);
         if (decisionResult != ApplicationDecisionResult.Applied)
         {
             return decisionResult switch

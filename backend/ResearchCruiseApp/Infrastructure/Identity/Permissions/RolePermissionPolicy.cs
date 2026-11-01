@@ -2,7 +2,7 @@ using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
-public static class RolePermissionRules
+public static class RolePermissionPolicy
 {
     public static bool CanAssignRole(IList<string> currentUserRoles, string roleName)
     {

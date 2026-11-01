@@ -13,7 +13,7 @@
       ]
     },
     {
-      "path": "backend/ResearchCruiseApp/Infrastructure/Identity/Permissions/RolePermissionRules.cs",
+      "path": "backend/ResearchCruiseApp/Infrastructure/Identity/Permissions/RolePermissionPolicy.cs",
       "description": "Existing role and assignment logic; compare endpoint-specific authorization and frontend permissions.",
       "scope": [
         "backend/ResearchCruiseApp/Api/**",
@@ -38,7 +38,7 @@
       ]
     },
     {
-      "path": "backend/ResearchCruiseApp/Api/Cruises/Lifecycle/CruiseLifecycleRules.cs",
+      "path": "backend/ResearchCruiseApp/Api/Cruises/Lifecycle/CruiseLifecycleService.cs",
       "description": "Cruise lifecycle transitions and their effects on linked application states.",
       "scope": [
         "backend/ResearchCruiseApp/Api/Cruises/**",
