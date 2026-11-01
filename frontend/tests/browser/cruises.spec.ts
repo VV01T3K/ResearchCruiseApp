@@ -51,14 +51,26 @@ test('cruise deletion requires confirmation and removes the row after saving', a
   expect(requests.bodies(`DELETE /v2/cruises/${item.id}`)).toHaveLength(1);
 });
 
-test('a new cruise is saved with Warsaw-midnight dates and the chosen managers', async ({
+test('a new cruise is saved once with Warsaw-midnight dates and the chosen managers, then leaves without asking', async ({
   page,
   network,
   requests,
 }) => {
   // Fix only the date; faked timers would also stall the comboboxes' transitions.
   await page.clock.setFixedTime(new Date('2026-05-16T12:00:00Z'));
-  network.use(getGetCruisesMockHandler([]), getCreateCruiseMockHandler());
+  const refetch = Promise.withResolvers<void>();
+  let created = false;
+  network.use(
+    getGetCruisesMockHandler([]),
+    getGetAvailableCruiseManagersMockHandler(async () => {
+      if (created) await refetch.promise;
+      return [manager, deputy];
+    }),
+    getCreateCruiseMockHandler(() => {
+      created = true;
+      return undefined as never;
+    })
+  );
   await page.goto('/cruises/new');
   await page.getByText('Wybierz datę rozpoczęcia rejsu').click();
   await page.getByText('17', { exact: true }).click();
@@ -84,6 +96,14 @@ test('a new cruise is saved with Warsaw-midnight dates and the chosen managers',
         shipUnavailable: false,
       },
     ]);
+
+  // The cruise exists while its refetch is held, so further edits can't save it again or keep the page.
+  await page.locator('input[name="title"]').fill('Poprawka');
+  await page.getByRole('button', { name: 'Zapisz' }).click();
+  refetch.resolve();
+  await expect(page).toHaveURL('/cruises');
+  await expect(page.getByRole('dialog', { name: 'Niezapisane zmiany' })).toBeHidden();
+  expect(requests.bodies('POST /v2/cruises')).toHaveLength(1);
 });
 
 test('a cruise manager who is no longer available keeps their name, without an empty email', async ({

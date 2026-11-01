@@ -1,6 +1,6 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { createFileRoute, notFound } from '@tanstack/react-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
@@ -29,7 +29,8 @@ import {
 import { ApiError, getErrorMessage } from '@/api/errors';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { type SavingValues, UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 
@@ -51,9 +52,9 @@ function FormCPage() {
   const formAInitValues = useGetApplicationFormAContextSuspense({ applicationId });
   const formBInitValues = useGetApplicationFormBContextSuspense();
   const cruise = useGetApplicationCruiseSuspense(applicationId);
-  const saving = useRef<SavingValues>(undefined);
+  const saving = useSaveTracking();
   const updateMutation = useUpdateApplicationFormC({
-    mutation: { meta: { handlesError: true, onAccepted: () => saving.current && (saving.current.accepted = true) } },
+    mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
   });
   const [saved, setSaved] = useState<{ data: typeof formC.data; values: FormCValues }>();
 
@@ -125,7 +126,7 @@ function FormCPage() {
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
-    saving.current = { values };
+    saving.start(values);
     try {
       const { revision } = await updateMutation.mutateAsync({
         applicationId,
@@ -145,7 +146,7 @@ function FormCPage() {
       navigateToFirstError();
       throw err;
     } finally {
-      saving.current = undefined;
+      saving.finish();
       toast.dismiss(loading);
     }
   }

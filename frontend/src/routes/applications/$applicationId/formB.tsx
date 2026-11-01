@@ -1,7 +1,7 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
@@ -26,7 +26,8 @@ import {
 } from '@/api/generated/endpoints/applications.gen';
 import { ApiError, getErrorMessage } from '@/api/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { type SavingValues, UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
@@ -55,9 +56,9 @@ function FormBPage() {
   const formAInitValues = useGetApplicationFormAContextSuspense({ applicationId });
   const formBInitValues = useGetApplicationFormBContextSuspense();
   const cruise = useGetApplicationCruiseSuspense(applicationId);
-  const saving = useRef<SavingValues>(undefined);
+  const saving = useSaveTracking();
   const updateMutation = useUpdateApplicationFormB({
-    mutation: { meta: { handlesError: true, onAccepted: () => saving.current && (saving.current.accepted = true) } },
+    mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
   });
   const revertToEditMutation = useRefillApplicationFormB({ mutation: { meta: { handlesError: true } } });
   const applicationQueryKey = getGetApplicationQueryKey(applicationId);
@@ -113,7 +114,7 @@ function FormBPage() {
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
-    saving.current = { values };
+    saving.start(values);
     try {
       const { revision } = await updateMutation.mutateAsync({
         applicationId,
@@ -134,7 +135,7 @@ function FormBPage() {
       navigateToFirstError();
       throw err;
     } finally {
-      saving.current = undefined;
+      saving.finish();
       toast.dismiss(loading);
     }
   }

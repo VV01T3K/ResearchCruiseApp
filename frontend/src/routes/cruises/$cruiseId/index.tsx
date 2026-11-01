@@ -20,7 +20,8 @@ import { Modal } from '@/components/shared/Modal';
 import { toast } from '@/components/shared/layout/toast';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { type SavingValues, UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 import { FormView } from '../-components/FormView';
 import { CruiseFormSchema, type CruiseFormValues, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
@@ -49,9 +50,9 @@ function CruiseDetailsPage() {
   const queryClient = useQueryClient();
   const cruiseQuery = useGetCruiseSuspense(cruiseId);
   const applicationQuery = useGetApplicationsForCruisePlanningSuspense({ cruiseId });
-  const saving = React.useRef<SavingValues>(undefined);
+  const saving = useSaveTracking();
   const updateCruiseMutation = useUpdateCruise({
-    mutation: { meta: { handlesError: true, onAccepted: () => saving.current && (saving.current.accepted = true) } },
+    mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
   });
   const forgetCruise = () => {
     queryClient.removeQueries({ queryKey: getGetCruiseQueryKey(cruiseId) });
@@ -111,7 +112,7 @@ function CruiseDetailsPage() {
     let revision = value.revision;
     while (nextRevisions.current.has(revision)) revision = nextRevisions.current.get(revision);
     const savedOver = queryClient.getQueryData<CruiseResponse>(getGetCruiseQueryKey(cruiseId))!;
-    saving.current = { values: value };
+    saving.start(value);
     try {
       const accepted = await updateCruiseMutation.mutateAsync({
         cruiseId,
@@ -134,7 +135,7 @@ function CruiseDetailsPage() {
       toast.error(getErrorMessage(error, 'Nie udało się zaktualizować rejsu'));
       navigateToFirstError();
     } finally {
-      saving.current = undefined;
+      saving.finish();
     }
   }
 

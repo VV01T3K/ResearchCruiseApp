@@ -5,15 +5,14 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/shared/Button';
 import { Modal } from '@/components/shared/Modal';
 import { clearFormRecovery, getFormRecovery, registerRecoverableForm } from '@/integrations/tanstack/form/recovery';
+import type { SaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
 
 type Props = {
   form: Pick<AnyFormApi, 'state' | 'setFieldValue'>;
   disabled?: boolean;
   recoveryKey?: string;
-  saving?: { readonly current?: SavingValues };
+  saving?: Pick<SaveTracking, 'isSaved'>;
 };
-
-export type SavingValues = { values: unknown; accepted?: boolean };
 
 export function UnsavedChangesGuard({ form, disabled = false, recoveryKey, saving }: Props) {
   const [recovered, setRecovered] = useState(() =>
@@ -35,7 +34,7 @@ export function UnsavedChangesGuard({ form, disabled = false, recoveryKey, savin
   }
 
   // An accepted save only waits for its refetch, so leaving loses nothing unless the user edited since.
-  const isSaved = () => !!saving?.current?.accepted && evaluate(form.state.values, saving.current.values);
+  const isSaved = () => !!saving?.isSaved(form.state.values);
   const hasUnsavedChanges = () => !disabled && form.state.isDirty && !isSaved();
 
   const blocker = useBlocker({
