@@ -1,7 +1,7 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
@@ -26,7 +26,7 @@ import {
 } from '@/api/generated/endpoints/applications.gen';
 import { ApiError, getErrorMessage } from '@/api/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { type SavingValues, UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
@@ -55,7 +55,10 @@ function FormBPage() {
   const formAInitValues = useGetApplicationFormAContextSuspense({ applicationId });
   const formBInitValues = useGetApplicationFormBContextSuspense();
   const cruise = useGetApplicationCruiseSuspense(applicationId);
-  const updateMutation = useUpdateApplicationFormB({ mutation: { meta: { handlesError: true } } });
+  const saving = useRef<SavingValues>(undefined);
+  const updateMutation = useUpdateApplicationFormB({
+    mutation: { meta: { handlesError: true, onAccepted: () => saving.current && (saving.current.accepted = true) } },
+  });
   const revertToEditMutation = useRefillApplicationFormB({ mutation: { meta: { handlesError: true } } });
   const applicationQueryKey = getGetApplicationQueryKey(applicationId);
   const application = useApplicationQuery(applicationId, {
@@ -110,6 +113,7 @@ function FormBPage() {
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
+    saving.current = { values };
     try {
       const { revision } = await updateMutation.mutateAsync({
         applicationId,
@@ -130,6 +134,7 @@ function FormBPage() {
       navigateToFirstError();
       throw err;
     } finally {
+      saving.current = undefined;
       toast.dismiss(loading);
     }
   }
@@ -159,7 +164,12 @@ function FormBPage() {
           <FormView context={context} />
         </form.AppForm>
       </Layout>
-      <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} recoveryKey={`${applicationId}/formB`} />
+      <UnsavedChangesGuard
+        form={form}
+        disabled={mode !== 'edit'}
+        recoveryKey={`${applicationId}/formB`}
+        saving={saving}
+      />
     </>
   );
 }

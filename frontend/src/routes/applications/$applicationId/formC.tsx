@@ -1,6 +1,6 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { createFileRoute, notFound } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
@@ -29,7 +29,7 @@ import {
 import { ApiError, getErrorMessage } from '@/api/errors';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { type SavingValues, UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 
@@ -51,7 +51,10 @@ function FormCPage() {
   const formAInitValues = useGetApplicationFormAContextSuspense({ applicationId });
   const formBInitValues = useGetApplicationFormBContextSuspense();
   const cruise = useGetApplicationCruiseSuspense(applicationId);
-  const updateMutation = useUpdateApplicationFormC({ mutation: { meta: { handlesError: true } } });
+  const saving = useRef<SavingValues>(undefined);
+  const updateMutation = useUpdateApplicationFormC({
+    mutation: { meta: { handlesError: true, onAccepted: () => saving.current && (saving.current.accepted = true) } },
+  });
   const [saved, setSaved] = useState<{ data: typeof formC.data; values: FormCValues }>();
 
   if (!formB.data) throw notFound();
@@ -122,6 +125,7 @@ function FormCPage() {
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
+    saving.current = { values };
     try {
       const { revision } = await updateMutation.mutateAsync({
         applicationId,
@@ -141,6 +145,7 @@ function FormCPage() {
       navigateToFirstError();
       throw err;
     } finally {
+      saving.current = undefined;
       toast.dismiss(loading);
     }
   }
@@ -156,7 +161,12 @@ function FormCPage() {
           <FormView context={context} />
         </form.AppForm>
       </Layout>
-      <UnsavedChangesGuard form={form} disabled={mode !== 'edit'} recoveryKey={`${applicationId}/formC`} />
+      <UnsavedChangesGuard
+        form={form}
+        disabled={mode !== 'edit'}
+        recoveryKey={`${applicationId}/formC`}
+        saving={saving}
+      />
     </>
   );
 }

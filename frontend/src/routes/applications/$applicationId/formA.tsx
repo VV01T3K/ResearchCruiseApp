@@ -6,7 +6,7 @@ import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { FloppyDiskIcon } from '@phosphor-icons/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
 import { Modal } from '@/components/shared/Modal';
@@ -27,7 +27,7 @@ import {
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
+import { type SavingValues, UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { ApiError, getErrorMessage } from '@/api/errors';
@@ -46,7 +46,10 @@ function FormAPage() {
 
   const currentUser = useCurrentUser()!;
   const initialStateQuery = useGetApplicationFormAContextSuspense({ applicationId });
-  const saveMutation = useUpdateApplicationFormA({ mutation: { meta: { handlesError: true } } });
+  const saving = useRef<SavingValues>(undefined);
+  const saveMutation = useUpdateApplicationFormA({
+    mutation: { meta: { handlesError: true, onAccepted: () => saving.current && (saving.current.accepted = true) } },
+  });
   const formA = useFormAQuery(applicationId);
 
   const editMode = mode === 'edit';
@@ -101,6 +104,7 @@ function FormAPage() {
     const loading = toast.loading(
       values.draft ? 'Zapisywanie wersji roboczej formularza...' : 'Zapisywanie formularza...'
     );
+    saving.current = { values };
     try {
       const { revision } = await saveMutation.mutateAsync({
         applicationId,
@@ -121,6 +125,7 @@ function FormAPage() {
       navigateToFirstError();
       throw error;
     } finally {
+      saving.current = undefined;
       toast.dismiss(loading);
       setIsSaveDraftModalOpen(false);
     }
@@ -133,7 +138,7 @@ function FormAPage() {
           <FormView context={context} />
         </form.AppForm>
       </Layout>
-      <UnsavedChangesGuard form={form} disabled={!editMode} recoveryKey={`${applicationId}/formA`} />
+      <UnsavedChangesGuard form={form} disabled={!editMode} recoveryKey={`${applicationId}/formA`} saving={saving} />
 
       <Modal
         title="Zapisz wersję roboczą Formularza A"

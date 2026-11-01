@@ -10,9 +10,12 @@ type Props = {
   form: Pick<AnyFormApi, 'state' | 'setFieldValue'>;
   disabled?: boolean;
   recoveryKey?: string;
+  saving?: { readonly current?: SavingValues };
 };
 
-export function UnsavedChangesGuard({ form, disabled = false, recoveryKey }: Props) {
+export type SavingValues = { values: unknown; accepted?: boolean };
+
+export function UnsavedChangesGuard({ form, disabled = false, recoveryKey, saving }: Props) {
   const [recovered, setRecovered] = useState(() =>
     recoveryKey && !disabled ? getFormRecovery(recoveryKey) : undefined
   );
@@ -31,7 +34,9 @@ export function UnsavedChangesGuard({ form, disabled = false, recoveryKey }: Pro
     setRecovered(undefined);
   }
 
-  const hasUnsavedChanges = () => !disabled && form.state.isDirty;
+  // An accepted save only waits for its refetch, so leaving loses nothing unless the user edited since.
+  const isSaved = () => !!saving?.current?.accepted && evaluate(form.state.values, saving.current.values);
+  const hasUnsavedChanges = () => !disabled && form.state.isDirty && !isSaved();
 
   const blocker = useBlocker({
     shouldBlockFn: ({ current, next }) =>
