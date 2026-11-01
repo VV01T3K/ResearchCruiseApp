@@ -2,7 +2,7 @@ import { Subscribe } from '@tanstack/react-table';
 import { Header } from '@/integrations/tanstack/table/features';
 import { compareFilterOptions } from '@/integrations/tanstack/table/filterOptions';
 import { TrashIcon } from '@phosphor-icons/react';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual';
 import React from 'react';
 
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
@@ -19,6 +19,7 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
   'use no memo';
 
   const [searchValue, setSearchValue] = React.useState<string>('');
+  const [focusedValue, setFocusedValue] = React.useState<string>();
 
   // Prefer a column-supplied static option list over deriving one from loaded rows.
   const computeUniqueValues = React.useCallback(() => {
@@ -73,6 +74,7 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
   }
 
   const visibleValues = uniqueValues.filter(([value]) => matchesSearch(value));
+  const focusedIndex = visibleValues.findIndex(([value]) => value === focusedValue);
   const listRef = React.useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
     count: visibleValues.length,
@@ -80,6 +82,13 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
     getItemKey: (index) => visibleValues[index][0],
     getScrollElement: () => listRef.current,
     overscan: 5,
+    // Keep the focused option and its neighbours mounted so scrolling doesn't lose the keyboard position.
+    rangeExtractor: (range) => {
+      const focused = focusedIndex < 0 ? [] : [focusedIndex - 1, focusedIndex, focusedIndex + 1];
+      return [...new Set([...focused, ...defaultRangeExtractor(range)])]
+        .filter((index) => index >= 0 && index < visibleValues.length)
+        .sort((a, b) => a - b);
+    },
   });
   const virtualItems = virtualizer.getVirtualItems();
 
@@ -128,19 +137,25 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
             </div>
 
             <div ref={listRef} className="max-h-32 overflow-x-auto overflow-y-auto">
-              <div style={{ height: virtualizer.getTotalSize(), paddingTop: virtualItems[0]?.start ?? 0 }}>
-                {virtualItems.map(({ index, key }) => {
+              <div className="relative" style={{ height: virtualizer.getTotalSize() }}>
+                {virtualItems.map(({ index, key, start }) => {
                   const [value] = visibleValues[index];
                   return (
-                    <TableListItem
+                    <div
                       key={key}
-                      onClick={() => toggleFilter(value)}
-                      isRendered={supportsFilter}
-                      expanded={expanded}
+                      className="absolute left-0 min-w-full"
+                      style={{ top: start }}
+                      onFocus={() => setFocusedValue(value)}
                     >
-                      <Checkbox name={`isFilterChecked-${value}`} checked={(filterValue ?? []).includes(value)} />
-                      {getFilterOptionLabel ? getFilterOptionLabel(value) : value}
-                    </TableListItem>
+                      <TableListItem
+                        onClick={() => toggleFilter(value)}
+                        isRendered={supportsFilter}
+                        expanded={expanded}
+                      >
+                        <Checkbox name={`isFilterChecked-${value}`} checked={(filterValue ?? []).includes(value)} />
+                        {getFilterOptionLabel ? getFilterOptionLabel(value) : value}
+                      </TableListItem>
+                    </div>
                   );
                 })}
               </div>
