@@ -119,8 +119,8 @@ function RouteError({ error }: ErrorComponentProps) {
         </Layout>
       ) : (
         <Layout title={'Wystąpił nieoczekiwany błąd'} variant="narrow">
-          <div className="space-y-8">
-            <div className="h-60">
+          <div className="space-y-4">
+            <div className="h-16">
               <SmileyMeltingIcon />
             </div>
             <div className="flex items-center justify-center gap-2 text-lg">
