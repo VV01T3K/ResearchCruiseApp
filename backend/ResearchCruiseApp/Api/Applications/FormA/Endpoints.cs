@@ -231,7 +231,7 @@ public static class FormAEndpoints
                 )
             );
 
-        return CruiseBlockadeRules.HasNoFreeWindow(
+        return CruiseWindowAvailability.HasNoFreeWindow(
             request.PrecisePeriodStart.Value,
             request.PrecisePeriodEnd.Value,
             cruiseDurationDays,

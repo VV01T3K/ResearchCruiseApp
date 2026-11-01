@@ -99,7 +99,7 @@ public static class LifecycleEndpoints
         }
 
         cruise.Status = CruiseStatus.Confirmed;
-        var formBRequested = CruiseLifecycleRules.RequestFormB(cruise.CruiseApplications);
+        var formBRequested = CruiseLifecycleService.RequestFormB(cruise.CruiseApplications);
         await CruiseConfirmationEmails.Send(cruise, formBRequested, emailSender, identityService);
 
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -126,7 +126,7 @@ public static class LifecycleEndpoints
             return Revisions.StaleRevision();
         }
 
-        var result = CruiseLifecycleRules.Revert(cruise);
+        var result = CruiseLifecycleService.Revert(cruise);
         if (result == CruiseLifecycleResult.AlreadyNew)
         {
             return Error.InvalidArgument("Rejs jest już w stanie 'Nowy'").ToProblemHttpResult();
@@ -165,7 +165,7 @@ public static class LifecycleEndpoints
             return Revisions.StaleRevision();
         }
 
-        var result = CruiseLifecycleRules.Complete(cruise);
+        var result = CruiseLifecycleService.Complete(cruise);
         if (result == CruiseLifecycleResult.NotConfirmed)
             return Error.InvalidArgument("Rejs nie został potwierdzony").ToProblemHttpResult();
         if (result == CruiseLifecycleResult.NotCompletable)

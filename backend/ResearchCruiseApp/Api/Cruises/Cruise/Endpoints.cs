@@ -211,7 +211,7 @@ public static class CruiseEndpoints
         }
 
         if (cruise.Status == CruiseStatus.Confirmed)
-            formBRequested = CruiseLifecycleRules.RequestFormB(newCruiseApplications);
+            formBRequested = CruiseLifecycleService.RequestFormB(newCruiseApplications);
 
         cruise.CruiseApplications = newCruiseApplications;
         // Managers of applications already on the cruise were told when it was confirmed.

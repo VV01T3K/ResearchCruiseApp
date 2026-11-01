@@ -42,7 +42,7 @@ public sealed class CruiseBlockadeTests
             _ => throw new ArgumentOutOfRangeException(nameof(arrangement)),
         };
 
-        var actual = CruiseBlockadeRules.HasNoFreeWindow(start, end, duration, blockades);
+        var actual = CruiseWindowAvailability.HasNoFreeWindow(start, end, duration, blockades);
 
         Assert.Equal(unavailable, actual);
     }
