@@ -14,7 +14,7 @@ services:
       SmtpSettings__SmtpUsername: ${SMTP_USERNAME:?Set SMTP_USERNAME}
       SmtpSettings__SmtpPassword: ${SMTP_PASSWORD:?Set SMTP_PASSWORD}
       Sentry__Dsn: ${SENTRY_DSN_BACKEND:-}
-      Sentry__TracesSampleRate: ${SENTRY_TRACES_SAMPLE_RATE:-0.4}
+      Sentry__TracesSampleRate: ${SENTRY_TRACES_SAMPLE_RATE:-1}
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     ports:
@@ -30,7 +30,7 @@ services:
     environment:
       API_URL: http://backend:8080/
       SENTRY_DSN: ${SENTRY_DSN_FRONTEND:-}
-      SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0.4}
-      SENTRY_REPLAYS_SESSION_SAMPLE_RATE: ${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-0.4}
+      SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-1}
+      SENTRY_REPLAYS_SESSION_SAMPLE_RATE: ${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-1}
     ports:
       - 8080:8080

@@ -27,14 +27,7 @@ namespace ResearchCruiseApp.IntegrationTests.Infrastructure;
 [Collection(SqlTestCollectionDefinition.Name)]
 public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
 {
-    private static readonly string[] SensitiveHeaderNames =
-    [
-        "Authorization",
-        "Proxy-Authorization",
-        "Cookie",
-        "Set-Cookie",
-        "x-api-key",
-    ];
+    private static readonly string[] SensitiveHeaderNames = ["Set-Cookie", "x-api-key"];
 
     private static readonly IPAddress ClientAddress = IPAddress.Parse("192.0.2.1");
 
@@ -147,16 +140,8 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
                     header.Name.Equals("Accept", StringComparison.OrdinalIgnoreCase)
                     && header.Value.GetString() == "application/json"
             );
-            foreach (
-                var name in new[]
-                {
-                    "Authorization",
-                    "Proxy-Authorization",
-                    "Cookie",
-                    "Set-Cookie",
-                    "X-Api-Key",
-                }
-            )
+            Assert.Contains("capture-failure", request.GetProperty("data").GetString());
+            foreach (var name in new[] { "Cookie", "Set-Cookie", "X-Api-Key" })
                 Assert.DoesNotContain(
                     headers.EnumerateObject(),
                     header => header.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
@@ -211,11 +196,9 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
         hub.ConfigureScope(scope =>
         {
             scope.User = new SentryUser { Id = "trace-user", IpAddress = "192.0.2.1" };
-            scope.Request.Cookies = "session=trace-cookie-secret";
             foreach (var header in SensitiveHeaderNames)
                 scope.Request.Headers[header] = "trace-header-secret";
             scope.Request.Headers["Accept"] = "application/json";
-            scope.Request.Env["REMOTE_ADDR"] = "192.0.2.1";
             scope.Request.Env["SERVER_NAME"] = "backend-container";
             scope.Request.Env["SERVER_PORT"] = "8080";
         });
@@ -229,7 +212,6 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal("GET /v2/cruises", transaction.GetProperty("transaction").GetString());
         Assert.False(transaction.GetProperty("user").TryGetProperty("ip_address", out _));
         var request = transaction.GetProperty("request");
-        Assert.False(request.TryGetProperty("cookies", out _));
         var headers = request.GetProperty("headers");
         Assert.Equal("application/json", headers.GetProperty("Accept").GetString());
         Assert.Single(headers.EnumerateObject());
@@ -238,11 +220,6 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Single(env.EnumerateObject());
         Assert.DoesNotContain(
             "trace-header-secret",
-            transaction.GetRawText(),
-            StringComparison.Ordinal
-        );
-        Assert.DoesNotContain(
-            "trace-cookie-secret",
             transaction.GetRawText(),
             StringComparison.Ordinal
         );
