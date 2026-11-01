@@ -1,3 +1,4 @@
+import { getClient } from '@sentry/react';
 import { ApiError, getProblemDetail } from '@/api/errors';
 import {
   createRootRouteWithContext,
@@ -20,7 +21,8 @@ import { Navbar } from '@/components/shared/layout/Navbar';
 import { NetworkDisconnectAlert } from '@/components/shared/layout/NetworkDisconnectAlert';
 import { Toaster } from '@/components/shared/layout/Toaster';
 import { FeedbackTab } from '@/integrations/sentry/FeedbackTab';
-import { classifyError, rootCause } from '@/integrations/sentry/mutations';
+import { useCanSendFeedback } from '@/integrations/sentry/feedback';
+import { classifyError, isReportableFailure, rootCause } from '@/integrations/sentry/mutations';
 import { TanStackQueryDevtools } from '@/integrations/tanstack/query/devtools';
 import { AuthSession } from '@/integrations/tanstack/query/AuthSession';
 
@@ -82,6 +84,8 @@ function RouteError({ error }: ErrorComponentProps) {
   const noAccess = kind === 'no-access';
   const description = getProblemDetail(error, 'Nie udało się wczytać strony.');
   const cause = rootCause(error);
+  const reported = isReportableFailure(error) && getClient() !== undefined;
+  const canSendFeedback = useCanSendFeedback();
 
   async function retry() {
     await queryClient.resetQueries({ predicate: (query) => query.state.status === 'error' });
@@ -127,6 +131,13 @@ function RouteError({ error }: ErrorComponentProps) {
               <div className="text-center">
                 Kod błędu:{' '}
                 <span className="font-semibold">{cause instanceof ApiError ? `HTTP ${cause.status}` : 'NETWORK'}</span>
+              </div>
+            )}
+            {reported && (
+              <div className="text-center">
+                Błąd został automatycznie zgłoszony.
+                {canSendFeedback &&
+                  ' Jeśli możesz dodać szczegóły, użyj przycisku „Zgłoś problem” w prawym dolnym rogu.'}
               </div>
             )}
             <div className="text-center">

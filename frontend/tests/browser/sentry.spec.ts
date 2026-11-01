@@ -105,4 +105,17 @@ test.describe('signed in', () => {
       expect(sent().split('"type":"event"').length - 1).toBe(1);
     });
   }
+
+  test('the error page mentions the automatic report only for a reported failure', async ({ page, network }) => {
+    await captureEnvelopes(page);
+    const notice = page.getByText(/automatycznie zgłoszony.*Zgłoś problem/);
+    network.use(getGetApplicationManagersMockHandler([]), getGetApplicationsMockHandler(fail(500)));
+    await page.goto('/applications');
+    await expect(notice).toBeVisible();
+
+    network.use(getGetApplicationsMockHandler(fail(404)));
+    await page.reload();
+    await expect(page.getByRole('heading', { name: 'Nie znaleziono lub brak dostępu' })).toBeVisible();
+    await expect(page.getByText(/automatycznie zgłoszony/)).toBeHidden();
+  });
 });

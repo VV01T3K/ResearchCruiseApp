@@ -26,6 +26,7 @@ test.describe('application table', () => {
     network.use(getGetApplicationsMockHandler(fail(500)));
     await page.goto('/applications');
     await expect(page.getByText('HTTP 500')).toBeVisible();
+    await expect(page.getByText(/automatycznie zgłoszony/)).toBeHidden();
     expect(requests.queries(listRequests)).toHaveLength(2);
 
     network.use(getGetApplicationsMockHandler(listPage([application()])));
