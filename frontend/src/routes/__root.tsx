@@ -137,7 +137,7 @@ function RouteError({ error }: ErrorComponentProps) {
               <div className="text-center">
                 Błąd został automatycznie zgłoszony.
                 {canSendFeedback &&
-                  ' Jeśli możesz dodać szczegóły, użyj przycisku „Zgłoś problem” w prawym dolnym rogu.'}
+                  ' Jeśli chcesz dodać szczegóły, użyj przycisku „Zgłoś problem” w prawym dolnym rogu.'}
               </div>
             )}
             <div className="text-center">
