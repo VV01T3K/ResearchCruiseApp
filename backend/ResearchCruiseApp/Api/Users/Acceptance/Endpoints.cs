@@ -57,9 +57,17 @@ public static class AcceptanceEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Deactivate(
         Guid userId,
         UserPermissionVerifier userPermissionVerifier,
+        CurrentUserService currentUserService,
         IdentityService identityService
     )
     {
+        if (currentUserService.GetId() == userId)
+        {
+            return Error
+                .ForbiddenOperation("Nie można cofnąć akceptacji własnego konta")
+                .ToProblemHttpResult();
+        }
+
         if (!await userPermissionVerifier.CanUserDeactivate(userId))
         {
             return Error.ForbiddenOperation().ToProblemHttpResult();

@@ -43,18 +43,21 @@ public sealed class PasswordRecoveryTests(SqlFixture fixture) : IAsyncLifetime
         var query = QueryHelpers.ParseQuery(Link(mail.Payload.Body, "reset-password").Query);
         const string replacement = "ReplacementPassword2!";
 
-        using var invalid = await client.PostAsJsonAsync(
-            "/v2/auth/password-reset",
-            new
-            {
-                EmailBase64 = query["emailBase64"].ToString(),
-                ResetCode = "aW52YWxpZA",
-                Password = replacement,
-                PasswordConfirm = replacement,
-            },
-            ct
-        );
-        Assert.Equal(HttpStatusCode.Unauthorized, invalid.StatusCode);
+        foreach (var badCode in new[] { "aW52YWxpZA", "not base64!" })
+        {
+            using var invalid = await client.PostAsJsonAsync(
+                "/v2/auth/password-reset",
+                new
+                {
+                    EmailBase64 = query["emailBase64"].ToString(),
+                    ResetCode = badCode,
+                    Password = replacement,
+                    PasswordConfirm = replacement,
+                },
+                ct
+            );
+            Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
+        }
         await app.InDatabase(async db =>
         {
             var stored = await db.Users.SingleAsync(ct);
@@ -103,7 +106,7 @@ public sealed class PasswordRecoveryTests(SqlFixture fixture) : IAsyncLifetime
         );
 
         using var replay = await client.PostAsJsonAsync("/v2/auth/password-reset", reset, ct);
-        Assert.Equal(HttpStatusCode.Unauthorized, replay.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, replay.StatusCode);
         await app.InDatabase(async db =>
         {
             Assert.Equal(replacementHash, (await db.Users.SingleAsync(ct)).RefreshToken);

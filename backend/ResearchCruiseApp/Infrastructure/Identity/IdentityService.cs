@@ -70,6 +70,19 @@ internal class IdentityService(
             .ToList();
     }
 
+    public async Task<Dictionary<Guid, CruiseManagerOptionDto>> GetCruiseManagerOptionsByIds(
+        IEnumerable<Guid> ids,
+        CancellationToken cancellationToken
+    )
+    {
+        var userIds = ids.Select(id => id.ToString()).Distinct().ToList();
+        var users = await userManager
+            .Users.Where(user => userIds.Contains(user.Id))
+            .ToListAsync(cancellationToken);
+
+        return users.Select(UserMappings.ToCruiseManagerOptionDto).ToDictionary(user => user.Id);
+    }
+
     public async Task<List<CruiseManagerOptionDto>> GetAllCruiseManagersDtos(
         CancellationToken cancellationToken
     )
@@ -139,8 +152,12 @@ internal class IdentityService(
 
     public async Task<Result> ConfirmEmail(Guid userId, string code)
     {
+        var invalidLink = Error.InvalidArgument(
+            "Link potwierdzający jest nieprawidłowy lub wygasł."
+        );
+
         if (await userManager.FindByIdAsync(userId.ToString()) is not { } user)
-            return Error.UnknownIdentity();
+            return invalidLink;
 
         try
         {
@@ -148,12 +165,12 @@ internal class IdentityService(
         }
         catch (FormatException)
         {
-            return Error.UnknownIdentity();
+            return invalidLink;
         }
 
         var result = await userManager.ConfirmEmailAsync(user, code);
 
-        return result.Succeeded ? Result.Empty : Error.UnknownIdentity();
+        return result.Succeeded ? Result.Empty : invalidLink;
     }
 
     public async Task<Result> RegisterUser(RegisterFormDto registerForm, string roleName)
@@ -300,20 +317,26 @@ internal class IdentityService(
 
     public async Task<Result> ResetPassword(ResetPasswordFormDto resetPasswordFormDto)
     {
-        var emailBytes = UrlBase64.Decode(resetPasswordFormDto.EmailBase64);
-        if (emailBytes is null)
-            return Error.UnknownIdentity();
+        var invalidLink = Error.InvalidArgument(
+            "Link do resetowania hasła jest nieprawidłowy lub wygasł."
+        );
 
-        var email = Encoding.UTF8.GetString(emailBytes);
+        string email;
+        string resetCode;
+        try
+        {
+            email = Encoding.UTF8.GetString(UrlBase64.Decode(resetPasswordFormDto.EmailBase64));
+            resetCode = Encoding.UTF8.GetString(UrlBase64.Decode(resetPasswordFormDto.ResetCode));
+        }
+        catch (FormatException)
+        {
+            return invalidLink;
+        }
+
         var user = await userManager.FindByEmailAsync(email);
         if (user is null)
-            return Error.ForbiddenOperation();
+            return invalidLink;
 
-        var resetCodeBytes = UrlBase64.Decode(resetPasswordFormDto.ResetCode);
-        if (resetCodeBytes is null)
-            return Error.UnknownIdentity();
-
-        var resetCode = Encoding.UTF8.GetString(resetCodeBytes);
         var refreshToken = user.RefreshToken;
         var refreshTokenExpiry = user.RefreshTokenExpiry;
         user.RefreshToken = null;
@@ -329,7 +352,7 @@ internal class IdentityService(
 
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiry = refreshTokenExpiry;
-        return Error.UnknownIdentity();
+        return invalidLink;
     }
 
     public async Task<Result<SeedUserStatus>> EnsureSeedUserWithRole(
@@ -420,8 +443,6 @@ internal class IdentityService(
         IReadOnlyCollection<string> roleNames
     )
     {
-        await using var transaction = await dbContext.Database.BeginTransactionAsync();
-
         var result = await CreateUserWithRoles(email, firstName, lastName, password, roleNames);
         if (!result.IsSuccess)
             return result.Error!;
@@ -432,7 +453,6 @@ internal class IdentityService(
             password
         );
 
-        await transaction.CommitAsync();
         return Result.Empty;
     }
 

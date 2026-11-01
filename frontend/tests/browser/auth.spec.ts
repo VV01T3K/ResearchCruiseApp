@@ -289,6 +289,12 @@ test('password reset carries the emailed token and the new password', async ({ p
   ]);
 });
 
+test('a reset link without parameters shows the error page instead of redirecting', async ({ page }) => {
+  await page.goto('/reset-password');
+  await expect(page.getByRole('heading', { name: 'Błąd podczas resetowania hasła' })).toBeVisible();
+  await expect(page).toHaveURL('/reset-password');
+});
+
 test('email confirmation sends the link parameters', async ({ page, network, requests }) => {
   network.use(getConfirmEmailMockHandler());
   await page.goto(`/confirm-email?userId=${admin.id}&code=confirmation-token`);

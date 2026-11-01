@@ -18,7 +18,6 @@ public static class EmailConfirmationEndpoints
             .WithName("ConfirmEmail")
             .WithSummary("Confirm an account email.")
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
             .AllowAnonymous();
     }
 

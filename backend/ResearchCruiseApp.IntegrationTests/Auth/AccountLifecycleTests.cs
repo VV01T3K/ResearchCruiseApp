@@ -50,7 +50,7 @@ public sealed class AccountLifecycleTests(SqlFixture fixture) : IAsyncLifetime
             $"/v2/auth/confirm-email?userId={userId}&code=invalid",
             ct
         );
-        Assert.Equal(HttpStatusCode.Unauthorized, invalid.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
         await AssertAccount(app, userId, false, false, false);
         using var confirmed = await client.GetAsync("/v2/auth/confirm-email" + link.Query, ct);
         Assert.Equal(HttpStatusCode.NoContent, confirmed.StatusCode);

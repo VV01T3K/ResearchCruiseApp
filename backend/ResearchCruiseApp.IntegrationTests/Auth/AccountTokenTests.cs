@@ -60,7 +60,7 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
                 confirmation,
                 (rejectedCode, token.Identity)
             );
-            Assert.Equal(HttpStatusCode.Unauthorized, rejected.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
             Assert.False(rejected.Headers.Contains("Set-Cookie"));
             await AssertUnchanged(app, original);
             await AssertUnchanged(app, otherOriginal);
@@ -128,7 +128,7 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
             confirmation,
             (firstToken.Code, secondToken.Identity)
         );
-        Assert.Equal(HttpStatusCode.Unauthorized, wrongUser.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, wrongUser.StatusCode);
         await AssertUnchanged(app, originalFirst);
         await AssertUnchanged(app, originalSecond);
         using var correctSecond = await UseToken(client, confirmation, secondToken);
@@ -157,7 +157,7 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         var correct = confirmation ? confirm : reset;
         var wrong = confirmation ? reset : confirm;
         using var rejected = await UseToken(client, confirmation, (wrong.Code, correct.Identity));
-        Assert.Equal(HttpStatusCode.Unauthorized, rejected.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
         await AssertUnchanged(app, original);
         using var accepted = await UseToken(client, confirmation, correct);
         Assert.Equal(HttpStatusCode.NoContent, accepted.StatusCode);
@@ -215,10 +215,10 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         var original = await ReadAccount(app, user.Id);
         Assert.NotEqual(user.SecurityStamp, original.SecurityStamp);
         using var staleConfirmation = await UseToken(client, true, confirm);
-        Assert.Equal(HttpStatusCode.Unauthorized, staleConfirmation.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, staleConfirmation.StatusCode);
         await AssertUnchanged(app, original);
         using var resetReplay = await UseToken(client, false, reset);
-        Assert.Equal(HttpStatusCode.Unauthorized, resetReplay.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, resetReplay.StatusCode);
         await AssertUnchanged(app, original);
         using var resent = await client.PostAsJsonAsync(
             "/v2/auth/resend-confirmation-email",

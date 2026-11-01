@@ -1,13 +1,12 @@
-import { getErrorMessage } from '@/api/errors';
-import { toast } from '@/components/shared/layout/toast';
+import { getProblemDetail } from '@/api/errors';
 import { ResetPasswordRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { createFileRoute, Navigate } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
-import { CheckIcon, XIcon } from '@phosphor-icons/react';
+import { CheckIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import React from 'react';
 import { Button } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
@@ -20,8 +19,8 @@ export const Route = createFileRoute('/(auth)/reset-password')({
   component: ResetPasswordPage,
   beforeLoad: allowOnly.unauthenticated(),
   validateSearch: z.object({
-    emailBase64: z.string().optional(),
-    resetCode: z.string().optional(),
+    emailBase64: z.string().optional().catch(undefined),
+    resetCode: z.string().optional().catch(undefined),
   }),
 });
 
@@ -50,6 +49,7 @@ const validationSchema = z
 function ResetPasswordPage() {
   const { emailBase64, resetCode } = Route.useSearch();
   const [result, setResult] = React.useState<Result | undefined>(undefined);
+  const [errorMessage, setErrorMessage] = React.useState('Link do resetowania hasła jest nieprawidłowy lub wygasł.');
   const { mutateAsync } = useResetPassword({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
@@ -73,8 +73,8 @@ function ResetPasswordPage() {
         });
         setResult('success');
       } catch (error) {
+        setErrorMessage(getProblemDetail(error, 'Operacja nie powiodła się.'));
         setResult('error');
-        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
       }
     },
     onSubmitInvalid: ({ formApi }) => {
@@ -83,23 +83,23 @@ function ResetPasswordPage() {
     },
   });
 
-  if (!emailBase64 || !resetCode) {
-    return <Navigate to="/" />;
-  }
-
-  if (result) {
+  if (result || !emailBase64 || !resetCode) {
     const title = result === 'success' ? 'Hasło zostało zmienione' : 'Błąd podczas resetowania hasła';
     return (
       <Layout title={title} variant="narrow">
         <div className="flex flex-col items-center">
           <div className="h-60">
-            {result === 'success' ? <CheckIcon className="text-success" /> : <XIcon className="text-danger" />}
+            {result === 'success' ? (
+              <CheckIcon className="text-success" />
+            ) : (
+              <WarningCircleIcon className="text-danger" />
+            )}
           </div>
           <div className="text-center text-gray-600">
             {result === 'success' && <>Hasło zostało pomyślnie zmienione. Możesz teraz się zalogować</>}
-            {result === 'error' && (
+            {result !== 'success' && (
               <>
-                Wystąpił błąd podczas resetowania hasła. Proszę skontaktować się z pomocą{' '}
+                {errorMessage} W razie problemów napisz na{' '}
                 <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>
               </>
             )}

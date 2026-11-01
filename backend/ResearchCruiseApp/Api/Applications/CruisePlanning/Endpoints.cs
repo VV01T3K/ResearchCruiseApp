@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
@@ -32,7 +33,7 @@ public static class CruisePlanningEndpoints
             .IncludeFormAPoints()
             .IncludeCruise()
             .ToListAsync(cancellationToken);
-        var visibleApplications = new List<CruiseApplicationCandidateResponse>();
+        var visibleApplications = new List<CruiseApplication>();
 
         foreach (var application in applications)
         {
@@ -47,10 +48,15 @@ public static class CruisePlanningEndpoints
                 && await userPermissionVerifier.CanCurrentUserViewCruiseApplication(application)
             )
             {
-                visibleApplications.Add(await projection.CreateCandidate(application));
+                visibleApplications.Add(application);
             }
         }
 
-        return TypedResults.Ok(visibleApplications);
+        var managers = await projection.LoadManagers(visibleApplications, cancellationToken);
+        return TypedResults.Ok(
+            visibleApplications
+                .Select(application => projection.CreateCandidate(application, managers))
+                .ToList()
+        );
     }
 }

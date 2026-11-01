@@ -4,6 +4,7 @@ using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Api.Cruises.Shared;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 using ResearchCruiseApp.Infrastructure.Persistence;
+using DomainCruise = ResearchCruiseApp.Domain.Entities.Cruise;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
@@ -79,20 +80,24 @@ public static class ListsEndpoints
         if (!read.IsSuccess)
             return read.Error!.ToProblemHttpResult();
 
-        var visibleCruises = new List<CruiseResponse>();
+        var cruises = new List<DomainCruise>();
         foreach (var cruise in read.Data!)
         {
             if (await userPermissionVerifier.CanCurrentUserViewCruise(cruise))
-            {
-                visibleCruises.Add(
-                    await CruiseResponse.From(
-                        cruise,
-                        identityService,
-                        evaluator,
-                        userPermissionVerifier
-                    )
-                );
-            }
+                cruises.Add(cruise);
+        }
+
+        var managers = await CruiseResponse.LoadManagers(
+            cruises,
+            identityService,
+            cancellationToken
+        );
+        var visibleCruises = new List<CruiseResponse>();
+        foreach (var cruise in cruises)
+        {
+            visibleCruises.Add(
+                await CruiseResponse.From(cruise, managers, evaluator, userPermissionVerifier)
+            );
         }
 
         return TypedResults.Ok(visibleCruises);
@@ -145,8 +150,13 @@ public static class ListsEndpoints
             return TypedResults.NotFound();
         }
 
+        var managers = await CruiseResponse.LoadManagers(
+            [cruise],
+            identityService,
+            cancellationToken
+        );
         return TypedResults.Ok(
-            await CruiseResponse.From(cruise, identityService, evaluator, userPermissionVerifier)
+            await CruiseResponse.From(cruise, managers, evaluator, userPermissionVerifier)
         );
     }
 }

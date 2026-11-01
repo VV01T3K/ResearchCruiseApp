@@ -23,8 +23,8 @@ public static class AccountsEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
             .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status409Conflict)
             .WithRequestValidation<CreateUserRequest>()
+            .WithSerializableTransaction()
             .RequireAuthorization(AuthorizationPolicies.AdministratorsOrShipowners);
     }
 
@@ -131,10 +131,18 @@ public static class AccountsEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Delete(
         Guid userId,
         UserPermissionVerifier userPermissionVerifier,
+        CurrentUserService currentUserService,
         IdentityService identityService,
         CancellationToken cancellationToken
     )
     {
+        if (currentUserService.GetId() == userId)
+        {
+            return Error
+                .ForbiddenOperation("Nie można usunąć własnego konta")
+                .ToProblemHttpResult();
+        }
+
         if (!await userPermissionVerifier.CanUserDeleteOtherUsers(userId))
         {
             return Error.ForbiddenOperation().ToProblemHttpResult();

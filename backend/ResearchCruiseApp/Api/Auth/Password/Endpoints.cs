@@ -30,8 +30,6 @@ public static class PasswordEndpoints
             .WithName("ResetPassword")
             .WithSummary("Reset an account password.")
             .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status403Forbidden)
             .WithRequestValidation<ResetPasswordRequest>()
             .AllowAnonymous();
     }
