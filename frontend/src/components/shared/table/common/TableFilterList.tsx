@@ -1,3 +1,4 @@
+import { Subscribe } from '@tanstack/react-table';
 import { Header } from '@/integrations/tanstack/table/features';
 import { compareFilterOptions } from '@/integrations/tanstack/table/filterOptions';
 import { TrashIcon } from '@phosphor-icons/react';
@@ -17,7 +18,6 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
   // TanStack Virtual exposes a mutable instance; read it on every render.
   'use no memo';
 
-  const filterValue = header.column.getFilterValue() as string[] | undefined;
   const [searchValue, setSearchValue] = React.useState<string>('');
 
   // Prefer a column-supplied static option list over deriving one from loaded rows.
@@ -39,11 +39,8 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [expanded]);
 
-  const areAllChecked = React.useMemo(() => {
-    return uniqueValues.every(([value]) => (filterValue ?? []).includes(value));
-  }, [filterValue, uniqueValues]);
-
   function toggleFilter(filter: string) {
+    const filterValue = header.column.getFilterValue() as string[] | undefined;
     if ((filterValue ?? []).includes(filter)) {
       const newState = (filterValue ?? []).filter((f) => f !== filter);
       header.column.setFilterValue(newState);
@@ -63,10 +60,6 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
 
   function clearFilters() {
     header.column.setFilterValue(undefined);
-  }
-
-  function isFilterChecked(filter: string) {
-    return (filterValue ?? []).includes(filter);
   }
 
   const { supportsFilter } = getCapabilities(header);
@@ -90,66 +83,81 @@ export function TableFilterList<TData extends object, TValue>({ header, expanded
   });
   const virtualItems = virtualizer.getVirtualItems();
 
-  if (inputType) {
-    return (
-      <label className="block px-4 py-2 text-sm">
-        {inputType === 'number' ? 'Numer zgłoszenia' : 'Data zgłoszenia'}
-        <input
-          type={inputType}
-          className="mt-1 w-full rounded border border-gray-300 p-2"
-          value={filterValue?.[0] ?? ''}
-          onChange={(event) => header.column.setFilterValue(event.target.value ? [event.target.value] : undefined)}
-        />
-      </label>
-    );
-  }
-
   return (
-    <>
-      <div className="inline-flex w-full items-center gap-4 px-4 py-2">
-        <div>
-          <Checkbox name="toggleAll" checked={areAllChecked} onChange={(x) => toggleAll(x)} />
-        </div>
-        <div className="relative w-full text-left">
-          <FloatingLabelInput
-            label="Szukaj"
-            name="search"
-            type="text"
-            value={searchValue}
-            onChange={setSearchValue}
-            className="text-xs"
-          />
-        </div>
-      </div>
+    <Subscribe
+      source={header.column.table.atoms.columnFilters}
+      selector={() => header.column.getFilterValue() as string[] | undefined}
+    >
+      {(filterValue) => {
+        if (inputType) {
+          return (
+            <label className="block px-4 py-2 text-sm">
+              {inputType === 'number' ? 'Numer zgłoszenia' : 'Data zgłoszenia'}
+              <input
+                type={inputType}
+                className="mt-1 w-full rounded border border-gray-300 p-2"
+                value={filterValue?.[0] ?? ''}
+                onChange={(event) =>
+                  header.column.setFilterValue(event.target.value ? [event.target.value] : undefined)
+                }
+              />
+            </label>
+          );
+        }
 
-      <div ref={listRef} className="max-h-32 overflow-x-auto overflow-y-auto">
-        <div style={{ height: virtualizer.getTotalSize(), paddingTop: virtualItems[0]?.start ?? 0 }}>
-          {virtualItems.map(({ index, key }) => {
-            const [value] = visibleValues[index];
-            return (
-              <TableListItem
-                key={key}
-                onClick={() => toggleFilter(value)}
-                isRendered={supportsFilter}
-                expanded={expanded}
-              >
-                <Checkbox name={`isFilterChecked-${value}`} checked={isFilterChecked(value)} />
-                {getFilterOptionLabel ? getFilterOptionLabel(value) : value}
-              </TableListItem>
-            );
-          })}
-        </div>
-      </div>
+        return (
+          <>
+            <div className="inline-flex w-full items-center gap-4 px-4 py-2">
+              <div>
+                <Checkbox
+                  name="toggleAll"
+                  checked={uniqueValues.every(([value]) => (filterValue ?? []).includes(value))}
+                  onChange={(x) => toggleAll(x)}
+                />
+              </div>
+              <div className="relative w-full text-left">
+                <FloatingLabelInput
+                  label="Szukaj"
+                  name="search"
+                  type="text"
+                  value={searchValue}
+                  onChange={setSearchValue}
+                  className="text-xs"
+                />
+              </div>
+            </div>
 
-      <TableListItem
-        onClick={() => clearFilters()}
-        isRendered={supportsFilter}
-        disabled={!filterValue}
-        expanded={expanded}
-      >
-        <TrashIcon className="mr-2 h-4 w-4" />
-        Wyczyść filtry
-      </TableListItem>
-    </>
+            <div ref={listRef} className="max-h-32 overflow-x-auto overflow-y-auto">
+              <div style={{ height: virtualizer.getTotalSize(), paddingTop: virtualItems[0]?.start ?? 0 }}>
+                {virtualItems.map(({ index, key }) => {
+                  const [value] = visibleValues[index];
+                  return (
+                    <TableListItem
+                      key={key}
+                      onClick={() => toggleFilter(value)}
+                      isRendered={supportsFilter}
+                      expanded={expanded}
+                    >
+                      <Checkbox name={`isFilterChecked-${value}`} checked={(filterValue ?? []).includes(value)} />
+                      {getFilterOptionLabel ? getFilterOptionLabel(value) : value}
+                    </TableListItem>
+                  );
+                })}
+              </div>
+            </div>
+
+            <TableListItem
+              onClick={() => clearFilters()}
+              isRendered={supportsFilter}
+              disabled={!filterValue}
+              expanded={expanded}
+            >
+              <TrashIcon className="mr-2 h-4 w-4" />
+              Wyczyść filtry
+            </TableListItem>
+          </>
+        );
+      }}
+    </Subscribe>
   );
 }

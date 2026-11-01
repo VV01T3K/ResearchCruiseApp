@@ -324,13 +324,26 @@ for (const mobile of [false, true]) {
       const email = page.getByRole('dialog').getByText('Email', { exact: true }).locator('..');
       await email.getByText('Rosnąco', { exact: true }).click();
       await expect(rows.first()).toContainText('alpha@example.com');
+      await expect(email.getByText('Rosnąco', { exact: true })).toHaveClass(/font-bold/);
       await email.getByText('Pokaż filtry', { exact: true }).click();
       await email.getByText('zebra@example.com', { exact: true }).click();
     } else {
-      await page.getByRole('button', { name: 'Email', exact: true }).click();
+      const emailHeader = page.getByRole('button', { name: 'Email', exact: true });
+      const unsortedIcons = await emailHeader.innerHTML();
+      await emailHeader.click();
       await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
       await expect(rows.first()).toContainText('alpha@example.com');
+      await expect(page.getByRole('menuitem', { name: 'Sortuj rosnąco' })).toBeDisabled();
+      expect(await emailHeader.innerHTML()).not.toBe(unsortedIcons);
+      // A second option adds to the first; a stale list would replace it.
       await page.getByRole('menuitem', { name: 'zebra@example.com', exact: true }).click();
+      await expect(page.getByRole('menuitem', { name: 'zebra@example.com' }).locator('[aria-checked]')).toHaveAttribute(
+        'aria-checked',
+        'true'
+      );
+      await page.getByRole('menuitem', { name: 'alpha@example.com', exact: true }).click();
+      await expect(rows).toHaveCount(2);
+      await page.getByRole('menuitem', { name: 'alpha@example.com', exact: true }).click();
       await page.keyboard.press('Escape');
     }
     await expect(rows).toHaveCount(1);
