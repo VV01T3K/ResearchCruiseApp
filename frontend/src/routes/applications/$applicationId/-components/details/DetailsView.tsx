@@ -19,7 +19,6 @@ export function DetailsView() {
   const queryClient = useQueryClient();
   const decisionMutation = useUpdateApplicationDecision({
     mutation: {
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetApplicationQueryKey(application.id) }),
       onError: async (error: unknown) => {
         toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
         if (error instanceof ApiError && error.status === 409) {

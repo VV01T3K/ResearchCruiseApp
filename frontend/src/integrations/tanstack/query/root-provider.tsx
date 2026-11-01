@@ -12,6 +12,9 @@ export const queryClient = new QueryClient({
     },
   }),
   mutationCache: new MutationCache({
+    // Returned so that a mutation stays pending until the active queries have refetched.
+    onSuccess: (_data, _variables, _context, mutation) =>
+      mutation.meta?.invalidates === false ? undefined : queryClient.invalidateQueries(),
     onError: (error, _variables, _context, mutation) => {
       if (!mutation.meta?.skipsErrorReport) captureMutationFailure(error, mutation.options.mutationKey);
       if (!mutation.options.onError && !mutation.meta?.handlesError) {
@@ -20,6 +23,12 @@ export const queryClient = new QueryClient({
     },
   }),
 });
+
+declare module '@tanstack/react-query' {
+  interface Register {
+    mutationMeta: { handlesError?: boolean; skipsErrorReport?: boolean; invalidates?: boolean };
+  }
+}
 
 export function TanStackQueryProvider({ children }: { children: React.ReactNode }) {
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;

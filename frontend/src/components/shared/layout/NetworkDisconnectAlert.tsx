@@ -16,7 +16,7 @@ export function NetworkDisconnectAlert() {
     onSuccess: () => setNetworkConnectionStatus(true),
     onError: () => setNetworkConnectionStatus(false),
     retry: false,
-    meta: { skipsErrorReport: true },
+    meta: { skipsErrorReport: true, invalidates: false },
   });
 
   React.useEffect(() => {

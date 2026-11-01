@@ -16,11 +16,7 @@ import {
   formBDefaultValues,
   getFormBSubmissionSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import {
-  getGetApplicationFormBQueryKey,
-  getGetApplicationQueryKey,
-  useGetApplicationCruiseSuspense,
-} from '@/api/generated/endpoints/applications.gen';
+import { getGetApplicationQueryKey, useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
 import { useFormAQuery, useFormBQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
   useGetApplicationFormAContextSuspense,
@@ -121,7 +117,6 @@ function FormBPage() {
       });
       form.setFieldValue('revision', revision, { dontUpdateMeta: true, dontValidate: true });
       setSaved({ data: formB.data, values: { ...values, revision } });
-      await queryClient.invalidateQueries({ queryKey: getGetApplicationFormBQueryKey(applicationId) });
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );
@@ -147,7 +142,6 @@ function FormBPage() {
     const loading = toast.loading('Cofanie formularza B do edycji...');
     try {
       await revertToEditMutation.mutateAsync({ applicationId });
-      await queryClient.invalidateQueries({ queryKey: getGetApplicationFormBQueryKey(applicationId) });
       await navigate({ to: `/applications/${applicationId}/formB?mode=edit` });
     } catch (err) {
       captureHandledRefusal('form-b.refill', err);

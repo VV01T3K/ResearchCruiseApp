@@ -1,6 +1,5 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { useSelector } from '@tanstack/react-form';
-import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -22,7 +21,6 @@ import {
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useFormAQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
-  getGetApplicationFormAQueryKey,
   useGetApplicationFormAContextSuspense,
   useUpdateApplicationFormA,
 } from '@/api/generated/endpoints/applications.gen';
@@ -46,7 +44,6 @@ function FormAPage() {
   const { applicationId } = Route.useParams();
   const mode = Route.useSearch().mode ?? 'view';
 
-  const queryClient = useQueryClient();
   const currentUser = useCurrentUser()!;
   const initialStateQuery = useGetApplicationFormAContextSuspense({ applicationId });
   const saveMutation = useUpdateApplicationFormA({ mutation: { meta: { handlesError: true } } });
@@ -111,7 +108,6 @@ function FormAPage() {
       });
       form.setFieldValue('revision', revision, { dontUpdateMeta: true, dontValidate: true });
       setSaved({ data: formA.data, values: { ...values, revision } });
-      await queryClient.invalidateQueries({ queryKey: getGetApplicationFormAQueryKey(applicationId) });
       toast.success(
         values.draft
           ? 'Formularz został zapisany jako wersja robocza'

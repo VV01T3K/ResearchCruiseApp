@@ -1,5 +1,4 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
-import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, notFound } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
@@ -16,10 +15,7 @@ import {
   formCDefaultValues,
   getFormCSubmissionSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import {
-  getGetApplicationFormCQueryKey,
-  useGetApplicationCruiseSuspense,
-} from '@/api/generated/endpoints/applications.gen';
+import { useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
 import {
   useFormAQuery,
   useFormBQuery,
@@ -49,7 +45,6 @@ function FormCPage() {
   const { applicationId } = Route.useParams();
   const mode = Route.useSearch().mode ?? 'preview';
 
-  const queryClient = useQueryClient();
   const formA = useFormAQuery(applicationId);
   const formB = useFormBQuery(applicationId);
   const formC = useFormCQuery(applicationId);
@@ -134,7 +129,6 @@ function FormCPage() {
       });
       form.setFieldValue('revision', revision, { dontUpdateMeta: true, dontValidate: true });
       setSaved({ data: formC.data, values: { ...values, revision } });
-      await queryClient.invalidateQueries({ queryKey: getGetApplicationFormCQueryKey(applicationId) });
       toast.success(
         values.draft ? 'Formularz został zapisany jako wersja robocza' : 'Formularz został wysłany pomyślnie.'
       );

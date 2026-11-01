@@ -1,6 +1,5 @@
 import { getErrorMessage } from '@/api/errors';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
-import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { z } from 'zod';
@@ -19,7 +18,7 @@ import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChang
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { FormView } from './-components/FormView';
 import { CruiseFormSchema, cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
-import { getGetCruisesQueryKey, useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
+import { useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
 
 const searchSchema = z.object({
@@ -34,13 +33,7 @@ export const Route = createFileRoute('/cruises/new')({
 
 function NewCruisePage() {
   const cruiseApplicationsQuery = useGetApplicationsForCruisePlanningSuspense();
-  const queryClient = useQueryClient();
-  const createCruiseMutation = useCreateCruise({
-    mutation: {
-      meta: { handlesError: true },
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() }),
-    },
-  });
+  const createCruiseMutation = useCreateCruise({ mutation: { meta: { handlesError: true } } });
   const search = Route.useSearch();
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
 

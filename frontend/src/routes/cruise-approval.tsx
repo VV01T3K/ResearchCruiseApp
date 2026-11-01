@@ -40,7 +40,9 @@ function SupervisorViewPage() {
       },
     }
   );
-  const answerMutation = useUpdateApplicationSupervisorReviewDecision({ mutation: { meta: { handlesError: true } } });
+  const answerMutation = useUpdateApplicationSupervisorReviewDecision({
+    mutation: { meta: { handlesError: true, invalidates: false } },
+  });
   const [accept, setAccept] = React.useState(true);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [isSending, setIsSending] = React.useState(false);

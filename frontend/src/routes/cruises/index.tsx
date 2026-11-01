@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { ArrowSquareOutIcon, PlusIcon } from '@phosphor-icons/react';
@@ -13,12 +12,7 @@ import { Role } from '@/integrations/auth/types';
 import { CruiseCalendar } from './-components/CruiseCalendar';
 import { ExportForm } from './-components/ExportForm';
 import { TableView } from './-components/TableView';
-import {
-  getGetCruisesQueryKey,
-  useAutoPlanCruises,
-  useDeleteCruise,
-  useGetCruisesSuspense,
-} from '@/api/generated/endpoints/cruises.gen';
+import { useAutoPlanCruises, useDeleteCruise, useGetCruisesSuspense } from '@/api/generated/endpoints/cruises.gen';
 import type { AutoPlanResponse, CruiseResponse } from '@/api/generated/schemas';
 
 export const Route = createFileRoute('/cruises/')({
@@ -28,12 +22,8 @@ export const Route = createFileRoute('/cruises/')({
 
 function CruisesPage() {
   const cruisesQuery = useGetCruisesSuspense();
-  const queryClient = useQueryClient();
-  const refreshCruises = {
-    mutation: { onSuccess: () => queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() }) },
-  };
-  const deleteCruiseMutation = useDeleteCruise(refreshCruises);
-  const autoAddCruisesMutation = useAutoPlanCruises(refreshCruises);
+  const deleteCruiseMutation = useDeleteCruise();
+  const autoAddCruisesMutation = useAutoPlanCruises();
 
   const [cruiseSelectedForDeletion, setCruiseSelectedForDeletion] = useState<CruiseResponse | undefined>(undefined);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);

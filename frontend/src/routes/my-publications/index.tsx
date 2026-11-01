@@ -33,15 +33,12 @@ function MyPublicationsPage() {
   const [isDeletingSelected, setIsDeletingSelected] = React.useState(false);
   const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense();
   const queryClient = useQueryClient();
-  const refreshPublications = () =>
-    queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsQueryKey() });
-  const refreshAfterSuccess = { mutation: { onSuccess: refreshPublications } };
-  const deleteOwnPublicationMutation = useDeleteCurrentUserPublication(refreshAfterSuccess);
+  const deleteOwnPublicationMutation = useDeleteCurrentUserPublication();
   const deleteSelectedPublicationsMutation = useDeleteCurrentUserPublication({
-    mutation: { meta: { handlesError: true }, scope: { id: 'delete-selected-publications' } },
+    mutation: { meta: { handlesError: true, invalidates: false }, scope: { id: 'delete-selected-publications' } },
   });
-  const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications(refreshAfterSuccess);
-  const uploadPublicationsMutation = useImportCurrentUserPublications(refreshAfterSuccess);
+  const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications();
+  const uploadPublicationsMutation = useImportCurrentUserPublications();
 
   async function deleteSelectedPublications() {
     const ids = Object.keys(selectedPublications);
@@ -49,7 +46,7 @@ function MyPublicationsPage() {
     const results = await Promise.allSettled(
       ids.map((id) => deleteSelectedPublicationsMutation.mutateAsync({ publicationId: id }))
     );
-    await refreshPublications();
+    await queryClient.invalidateQueries({ queryKey: getGetCurrentUserPublicationsQueryKey() });
     setIsDeletingSelected(false);
     const deletedIds = new Set(ids.filter((_, i) => results[i].status === 'fulfilled'));
     setSelectedPublications((selected) =>

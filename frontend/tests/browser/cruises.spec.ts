@@ -301,9 +301,9 @@ test('a cruise save waits for the previous one and starts from its accepted revi
       return server;
     }),
     getUpdateCruiseMockHandler(async ({ request }) => {
-      const { title } = (await request.json()) as CruiseResponse;
+      const title = ((await request.json()) as CruiseResponse).title?.trim() ?? null;
       if (title === 'Starszy') await olderResponse.promise;
-      server = { ...server, title, revision: `after-${title}` };
+      server = { ...server, title, revision: server.title === title ? `${server.revision}+` : `after-${title}` };
       return { revision: server.revision };
     })
   );
@@ -320,25 +320,37 @@ test('a cruise save waits for the previous one and starts from its accepted revi
     await expect.poll(() => patches().length).toBe(1);
     await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
     await page.getByRole('dialog', { name: 'Odrzucić zmiany?' }).getByRole('button', { name: 'Odrzuć zmiany' }).click();
-    await title.fill('Nowszy');
+    await title.fill('Nowszy ');
     await save.click();
     expect(patches()).toHaveLength(1);
     olderResponse.resolve();
     await expect(edit).toBeVisible();
-    expect(patches()[1]).toEqual(expect.objectContaining({ title: 'Nowszy', revision: 'after-Starszy' }));
+    expect(patches()[1]).toEqual(expect.objectContaining({ revision: 'after-Starszy' }));
     await expect.poll(() => gets).toBe(3);
+    // The refetched server version replaces the submitted values.
+    await expect(title).toHaveValue('Nowszy');
+
+    // A save without edits gets a new revision from the refetch and still closes the form.
+    await edit.click();
+    await save.click();
+    await expect(edit).toBeVisible();
+    await expect.poll(() => patches().length).toBe(3);
 
     await edit.click();
     await page.getByRole('combobox', { name: 'Zastępca kierownika głównego' }).click();
     await page.getByRole('option', { name: `${outsider.firstName} ${outsider.lastName}` }).click();
     holdRefetch = true;
     await save.click();
-    await expect(edit).toBeVisible();
+    await expect.poll(() => patches().length).toBe(4);
     expect(patches().at(-1)).toEqual(
-      expect.objectContaining({ title: 'Nowszy', deputyManagerId: outsider.id, revision: 'after-Nowszy' })
+      expect.objectContaining({ title: 'Nowszy', deputyManagerId: outsider.id, revision: 'after-Nowszy+' })
     );
 
     await page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
+    await page
+      .getByRole('dialog', { name: 'Niezapisane zmiany' })
+      .getByRole('button', { name: 'Opuść bez zapisywania' })
+      .click();
     await expect(page).toHaveURL('/');
     await page.goBack();
     // The cached cruise predates the saves, so editing waits for the refetch.
