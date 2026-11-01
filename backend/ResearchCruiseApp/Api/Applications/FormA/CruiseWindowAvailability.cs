@@ -1,6 +1,6 @@
 namespace ResearchCruiseApp.Api.Applications;
 
-public static class CruiseBlockadeRules
+public static class CruiseWindowAvailability
 {
     public static bool HasNoFreeWindow(
         DateTime start,

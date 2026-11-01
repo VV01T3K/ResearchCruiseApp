@@ -99,7 +99,7 @@ public static class SupervisorReviewEndpoints
         )
             return Error.ResourceNotFound().ToProblemHttpResult();
 
-        var decisionResult = SupervisorDecisionRules.Decide(application, request.Accept);
+        var decisionResult = SupervisorDecisionService.Decide(application, request.Accept);
         if (decisionResult != SupervisorDecisionResult.Applied)
         {
             return decisionResult switch

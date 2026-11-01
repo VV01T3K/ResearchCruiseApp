@@ -3,7 +3,7 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Cruises;
 
-public static class CruiseLifecycleRules
+public static class CruiseLifecycleService
 {
     // Only accepted applications are asked for Form B; a submitted one is kept.
     public static List<CruiseApplication> RequestFormB(IEnumerable<CruiseApplication> applications)
