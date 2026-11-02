@@ -293,6 +293,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
     ctx: z.RefinementCtx
   ) => {
     const totalCruiseHours = cruiseDays * 24 + cruiseHours;
+    if (!Number.isFinite(totalCruiseHours)) return;
     if (periodSelectionType === 'period') {
       if (acceptablePeriod !== '') {
         const acceptableAnalysis = hasEnoughFreeSlotInPeriod(year, acceptablePeriod, totalCruiseHours);

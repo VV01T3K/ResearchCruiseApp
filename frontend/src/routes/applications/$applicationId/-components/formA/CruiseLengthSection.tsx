@@ -326,7 +326,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
             </div>
           )}
 
-          <form.Subscribe selector={(state) => state.values.cruiseDays * 24 + state.values.cruiseHours}>
+          <form.Subscribe selector={(state) => state.values.cruiseDays * 24 + Number(state.values.cruiseHours)}>
             {(totalCruiseHours) => (
               <form.AppField name="cruiseDays">
                 {(field) => (
@@ -349,7 +349,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
             )}
           </form.Subscribe>
 
-          <form.Subscribe selector={(state) => state.values.cruiseDays * 24 + state.values.cruiseHours}>
+          <form.Subscribe selector={(state) => state.values.cruiseDays * 24 + Number(state.values.cruiseHours)}>
             {(totalCruiseHours) => (
               <form.AppField name="cruiseHours">
                 {(field) => (
