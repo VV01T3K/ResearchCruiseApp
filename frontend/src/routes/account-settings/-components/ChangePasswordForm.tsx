@@ -35,7 +35,7 @@ const validationSchema = z
   });
 
 export function ChangePasswordForm() {
-  const [result, setResult] = React.useState<'success' | 'error'>();
+  const [result, setResult] = React.useState<'error'>();
   const { mutateAsync } = useChangeCurrentUserPassword({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
@@ -59,7 +59,8 @@ export function ChangePasswordForm() {
         toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
         return;
       }
-      setResult('success');
+      setResult(undefined);
+      toast.success('Hasło zostało zmienione. Zaloguj się nowym hasłem.');
       formApi.reset();
     },
     onSubmitInvalid: ({ formApi }) => {
@@ -99,12 +100,6 @@ export function ChangePasswordForm() {
             )}
           </form.Subscribe>
         </div>
-
-        {result === 'success' && (
-          <Alert variant="success" onClose={() => setResult(undefined)}>
-            Hasło zostało zmienione
-          </Alert>
-        )}
 
         {result === 'error' && (
           <Alert variant="danger" onClose={() => setResult(undefined)}>

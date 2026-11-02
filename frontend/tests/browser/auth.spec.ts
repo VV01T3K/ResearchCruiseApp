@@ -133,6 +133,21 @@ test.describe('authenticated session', () => {
     expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain(session().accessToken);
   });
 
+  test('a session ended on another device returns to login without an error message', async ({ page, network }) => {
+    await page.clock.install();
+    await page.goto('/user-management');
+    await expect(page.getByRole('button', { name: 'Dodaj użytkownika' })).toBeVisible();
+    network.use(
+      getGetUsersMockHandler(fail(401)),
+      getGetCurrentUserMockHandler(fail(401)),
+      getRefreshTokensMockHandler(fail(401))
+    );
+    await page.clock.fastForward(2 * 60_000);
+    await page.evaluate(() => window.dispatchEvent(new Event('visibilitychange')));
+    await expect(page).toHaveURL(/\/login/);
+    await expect(page.getByRole('region', { name: 'Notifications' }).getByRole('dialog')).toHaveCount(0);
+  });
+
   test('logout propagates between tabs', async ({ page, context, network }) => {
     network.use(getLogoutMockHandler());
     await page.goto('/user-management');
@@ -199,13 +214,15 @@ test.describe('authenticated session', () => {
     });
   }
 
-  test('a password change sends the current and the new password', async ({ page, network, requests }) => {
+  test('a password change sends both passwords and ends the session', async ({ page, network, requests }) => {
     network.use(getChangeCurrentUserPasswordMockHandler());
     await page.goto('/account-settings');
     await page.locator('input[name="password"]').fill('CurrentPass1');
     await page.locator('input[name="newPassword"]').fill('NewStrongPass1');
     await page.locator('input[name="repeatedNewPassword"]').fill('NewStrongPass1');
+    network.use(getGetCurrentUserMockHandler(fail(401)), getRefreshTokensMockHandler(fail(401)));
     await page.getByRole('button', { name: 'Zmień hasło' }).click();
+    await expect(page).toHaveURL(/\/login/);
     await expect(page.getByText('Hasło zostało zmienione')).toBeVisible();
     expect(requests.bodies('PATCH /v2/users/me/password')).toEqual([
       { password: 'CurrentPass1', newPassword: 'NewStrongPass1' },
