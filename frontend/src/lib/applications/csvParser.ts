@@ -1,6 +1,5 @@
 import Papa from 'papaparse';
-import { readSheet, type SheetData } from 'read-excel-file/browser';
-import writeXlsxFile from 'write-excel-file/browser';
+import type { SheetData } from 'read-excel-file/browser';
 
 import { toast } from '@/components/shared/layout/toast';
 import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
@@ -165,6 +164,7 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
 export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseDayValues[]> {
   let data: SheetData;
   try {
+    const { readSheet } = await import('read-excel-file/browser');
     data = await readSheet(file);
   } catch (error) {
     console.error(error);
@@ -363,6 +363,7 @@ export async function exportCruiseDayDetailsToXlsx(
 
     const allData = [headers, ...exportRows];
 
+    const { default: writeXlsxFile } = await import('write-excel-file/browser');
     await writeXlsxFile(allData, { sheet: 'Dane' }).toFile(fileName);
     toast.success(`Plik ${fileName} został pobierany`);
   } catch (error) {

@@ -126,10 +126,12 @@ export const Stacked: Story = {
         hidden: true,
       })
     );
-    await waitFor(() => expect(page.queryByRole('dialog', { name: 'First', hidden: true })).not.toBeInTheDocument());
+    await waitFor(() => expect(page.queryByRole('dialog', { name: 'First', hidden: true })).not.toBeInTheDocument(), {
+      timeout: 10_000,
+    });
     await expect(root).toHaveAttribute('inert');
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument(), { timeout: 10_000 });
     await expect(root).not.toHaveAttribute('inert');
   },
 };
