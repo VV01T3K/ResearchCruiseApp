@@ -62,9 +62,11 @@ function CruiseDetailsPage() {
   const updateCruiseMutation = useUpdateCruise({
     mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
   });
-  const forgetCruise = () => {
+  const navigate = useNavigate();
+  const forgetCruise = async () => {
+    await queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey(), refetchType: 'none' });
+    await navigate({ to: '/cruises' });
     queryClient.removeQueries({ queryKey: getGetCruiseQueryKey(cruiseId) });
-    return queryClient.invalidateQueries({ queryKey: getGetCruisesQueryKey() });
   };
   const refetchOnConflict = {
     mutation: {
@@ -81,8 +83,6 @@ function CruiseDetailsPage() {
   });
   const endCruiseMutation = useCompleteCruise(refetchOnConflict);
   const revertCruiseStatusMutation = useRemoveCruiseConfirmation(refetchOnConflict);
-
-  const navigate = useNavigate();
 
   const [editMode, setEditMode] = React.useState(false);
   const [isConfirmAcceptanceModalOpen, setIsConfirmAcceptanceModalOpen] = React.useState(false);
@@ -339,13 +339,11 @@ function CruiseDetailsPage() {
               deleteCruiseMutation.mutate(
                 { cruiseId, params: { revision: cruiseQuery.data.revision } },
                 {
-                  onSuccess: () => void navigate({ to: '/cruises' }),
                   onError: (error) => {
                     if (error instanceof ApiError && (error.status === 404 || error.status === 409)) {
                       toast.error('Rejs został w międzyczasie usunięty lub zmieniony.');
                       setIsConfirmDeletionModalOpen(false);
                       void forgetCruise();
-                      void navigate({ to: '/cruises' });
                     } else {
                       toast.error(getErrorMessage(error, 'Nie udało się usunąć rejsu'));
                     }

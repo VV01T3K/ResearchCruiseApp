@@ -41,7 +41,7 @@ const TanStackRouterDevtools = config.dev
   : () => null;
 
 function RootLayout() {
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const pathname = useRouterState({ select: (state) => state.matches.at(-1)?.pathname });
 
   return (
     <AuthSession>

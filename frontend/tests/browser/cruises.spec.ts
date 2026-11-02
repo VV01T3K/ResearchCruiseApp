@@ -437,7 +437,8 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     getGetCruiseMockHandler(item),
     getConfirmCruiseMockHandler(() => showStatus((status = 'confirmed'))),
     getCompleteCruiseMockHandler(() => showStatus((status = 'ended'))),
-    getRemoveCruiseConfirmationMockHandler(() => showStatus((status = status === 'ended' ? 'confirmed' : 'new')))
+    getRemoveCruiseConfirmationMockHandler(() => showStatus((status = status === 'ended' ? 'confirmed' : 'new'))),
+    getDeleteCruiseMockHandler()
   );
   await page.goto(`/cruises/${item.id}`);
   const dialog = page.getByRole('dialog');
@@ -473,6 +474,13 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     sent('PUT /v2/cruises/{id}/completion'),
     sent('DELETE /v2/cruises/{id}/confirmation'),
   ]).toEqual([1, 1, 2]);
+
+  const fetches = requests.queries(`GET /v2/cruises/${item.id}`).length;
+  await button('Usuń rejs').click();
+  await dialog.getByRole('button', { name: `Potwierdź usunięcie rejsu nr. ${item.number}` }).click();
+  await expect(page.getByRole('heading', { name: 'Rejsy' })).toBeVisible();
+  expect(requests.queries(`DELETE /v2/cruises/${item.id}`)).toHaveLength(1);
+  expect(requests.queries(`GET /v2/cruises/${item.id}`)).toHaveLength(fetches);
 });
 
 test('a status change stays pending until the refreshed cruise arrives', async ({ page, network }) => {
