@@ -16,10 +16,17 @@ public class GlobalizationService(TimeProvider clock)
             TimeZoneInfo.ConvertTime(clock.GetUtcNow(), GetTimeZoneInfo()).DateTime
         );
 
-    public DateTime GetPolishDay(DateTime utc) =>
-        TimeZoneInfo
-            .ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), GetTimeZoneInfo())
+    public DateTime GetPolishDayStartUtc(DateTime utc)
+    {
+        var timeZone = GetTimeZoneInfo();
+        var day = TimeZoneInfo
+            .ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), timeZone)
             .Date;
+        return TimeZoneInfo.ConvertTimeToUtc(
+            DateTime.SpecifyKind(day, DateTimeKind.Unspecified),
+            timeZone
+        );
+    }
 
     public string GetIsoUtcString(DateTime date)
     {

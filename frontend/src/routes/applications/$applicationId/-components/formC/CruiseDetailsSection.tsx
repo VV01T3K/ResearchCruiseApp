@@ -5,7 +5,7 @@ import { Button } from '@/components/shared/Button';
 import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import { parseCalendarDate, parsePolishDay } from '@/lib/dateUtils';
+import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -45,7 +45,7 @@ const shortResearchEquipmentColumns = (
         {(field) => (
           <form.Subscribe selector={(state) => state.values.shortResearchEquipments[row.index].startDate}>
             {(state) => {
-              if (state && field.state.value && parsePolishDay(state) > parsePolishDay(field.state.value)) {
+              if (state && field.state.value && parsePolishDayStart(state) > parsePolishDayStart(field.state.value)) {
                 field.handleChange(state);
               }
               return (

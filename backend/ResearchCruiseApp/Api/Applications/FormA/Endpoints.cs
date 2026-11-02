@@ -1,7 +1,7 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Api.Cruises;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
@@ -226,19 +226,13 @@ public static class FormAEndpoints
             .Where(cruise =>
                 cruise.ShipUnavailable
                 && (cruise.Status == CruiseStatus.New || cruise.Status == CruiseStatus.Confirmed)
-                && DateTime.TryParse(cruise.StartDate, out _)
-                && DateTime.TryParse(cruise.EndDate, out _)
             )
-            .Select(cruise =>
-                (
-                    DateTime.Parse(cruise.StartDate, CultureInfo.InvariantCulture),
-                    DateTime.Parse(cruise.EndDate, CultureInfo.InvariantCulture)
-                )
-            );
+            .Select(PlanningEndpoints.ParsePeriod)
+            .OfType<(DateTime Start, DateTime End)>();
 
         return CruiseWindowAvailability.HasNoFreeWindow(
-            globalizationService.GetPolishDay(request.PrecisePeriodStart.Value),
-            globalizationService.GetPolishDay(request.PrecisePeriodEnd.Value),
+            globalizationService.GetPolishDayStartUtc(request.PrecisePeriodStart.Value),
+            globalizationService.GetPolishDayStartUtc(request.PrecisePeriodEnd.Value),
             cruiseDurationDays,
             blockades
         )

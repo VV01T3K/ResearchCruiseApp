@@ -265,7 +265,7 @@ public static class PlanningEndpoints
             timeZone
         );
 
-    private static (DateTime Start, DateTime End)? ParsePeriod(DomainCruise cruise) =>
+    internal static (DateTime Start, DateTime End)? ParsePeriod(DomainCruise cruise) =>
         TryParseUtc(cruise.StartDate, out var start)
         && TryParseUtc(cruise.EndDate, out var end)
         && start <= end

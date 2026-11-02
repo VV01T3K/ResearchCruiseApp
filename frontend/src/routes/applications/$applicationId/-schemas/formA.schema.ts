@@ -2,8 +2,8 @@ import { submissionSchema } from '@/integrations/tanstack/form/schema';
 import { literal, z } from 'zod';
 
 import { groupBy } from '@/lib/utils';
-import { parsePolishDay } from '@/lib/dateUtils';
-import { getPeriodEdgeDatePoint, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
+import { parsePolishDayStart } from '@/lib/dateUtils';
+import { getPeriodEdgeDatePoint, getPeriodEdgeDateString, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
 import {
   ContractValuesInputSchema,
   ContractValuesSchema,
@@ -240,8 +240,8 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
 
     if (cruiseHours <= 0) return { canFitCruise: true, overlappingBlockades: [] };
 
-    const start = parsePolishDay(precisePeriodStart);
-    const end = parsePolishDay(precisePeriodEnd);
+    const start = parsePolishDayStart(precisePeriodStart);
+    const end = parsePolishDayStart(precisePeriodEnd);
     const cruiseDurationDays = cruiseHours / 24;
 
     return analyzeCruiseSlot(start, end, cruiseDurationDays);
@@ -273,8 +273,8 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
       return { canFitCruise: true, overlappingBlockades: [] };
     }
 
-    const start = getPeriodEdgeDatePoint(parsedYear, startEdge);
-    const end = getPeriodEdgeDatePoint(parsedYear, endEdge);
+    const start = parsePolishDayStart(getPeriodEdgeDateString(parsedYear, startEdge));
+    const end = parsePolishDayStart(getPeriodEdgeDateString(parsedYear, endEdge));
     const cruiseDurationDays = cruiseHours / 24;
 
     return analyzeCruiseSlot(start, end, cruiseDurationDays);
@@ -324,8 +324,8 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
     }
     if (!precisePeriodStart || !precisePeriodEnd) return;
 
-    const start = parsePolishDay(precisePeriodStart);
-    const end = parsePolishDay(precisePeriodEnd);
+    const start = parsePolishDayStart(precisePeriodStart);
+    const end = parsePolishDayStart(precisePeriodEnd);
     const cruiseDurationDays = totalCruiseHours / 24;
 
     if ((end.getTime() - start.getTime()) / DAY_IN_MILLISECONDS < cruiseDurationDays) {
@@ -501,7 +501,7 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
         if (
           precisePeriodStart &&
           precisePeriodEnd &&
-          parsePolishDay(precisePeriodStart) > parsePolishDay(precisePeriodEnd)
+          parsePolishDayStart(precisePeriodStart) > parsePolishDayStart(precisePeriodEnd)
         ) {
           ctx.addIssue({
             code: 'custom',

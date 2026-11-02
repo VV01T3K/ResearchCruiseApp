@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -8,6 +9,7 @@ using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Auth;
+using ResearchCruiseApp.IntegrationTests.Cruises;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
@@ -216,14 +218,35 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData("2030-05-17T00:00:00Z", "2030-05-17T22:00:00Z", HttpStatusCode.Created)]
-    [InlineData("2030-05-16T22:00:00Z", "2030-05-18T00:00:00Z", HttpStatusCode.Created)]
-    [InlineData("2030-05-17T00:00:00Z", "2030-05-16T22:00:00Z", HttpStatusCode.BadRequest)]
-    [InlineData("2030-05-18T00:00:00Z", "2030-05-16T22:00:00Z", HttpStatusCode.BadRequest)]
+    [InlineData("2030-05-17T00:00:00Z", "2030-05-17T22:00:00Z", 24, HttpStatusCode.Created)]
+    [InlineData("2030-05-16T22:00:00Z", "2030-05-18T00:00:00Z", 24, HttpStatusCode.Created)]
+    [InlineData("2030-05-17T00:00:00Z", "2030-05-16T22:00:00Z", 24, HttpStatusCode.BadRequest)]
+    [InlineData("2030-05-18T00:00:00Z", "2030-05-16T22:00:00Z", 24, HttpStatusCode.BadRequest)]
+    [InlineData("2030-03-31T00:00:00Z", "2030-04-01T00:00:00Z", 24, HttpStatusCode.BadRequest)]
+    [InlineData("2030-10-27T00:00:00Z", "2030-10-28T00:00:00Z", 25, HttpStatusCode.Created)]
+    [InlineData(
+        "2030-05-16T22:00:00Z",
+        "2030-05-17T22:00:00Z",
+        24,
+        HttpStatusCode.Created,
+        "2030-05-17T22:00:00.000Z",
+        "2030-05-18T22:00:00.000Z"
+    )]
+    [InlineData(
+        "2030-03-30T23:00:00Z",
+        "2030-03-31T22:00:00Z",
+        1,
+        HttpStatusCode.Conflict,
+        "2030-03-30T23:00:00.000Z",
+        "2030-03-31T22:00:00.000Z"
+    )]
     public async Task Submit_ComparesPrecisePeriodAsPolishDays(
         string start,
         string end,
-        HttpStatusCode expected
+        int cruiseHours,
+        HttpStatusCode expected,
+        string? blockadeStart = null,
+        string? blockadeEnd = null
     )
     {
         var ct = TestContext.Current.CancellationToken;
@@ -238,6 +261,8 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         await app.InDatabase(async db =>
         {
             db.UgUnits.Add(unit);
+            if (blockadeStart is not null)
+                db.Cruises.Add(AutoPlanTests.Existing("2029/1", blockadeStart, blockadeEnd!, true));
             await db.SaveChangesAsync(ct);
         });
         using var client = await TestApplications.Login(app, manager.Email!);
@@ -246,6 +271,7 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
             .AsObject();
         form["PrecisePeriodStart"] = start;
         form["PrecisePeriodEnd"] = end;
+        form["CruiseHours"] = cruiseHours.ToString(CultureInfo.InvariantCulture);
 
         using var response = await FormRequests.Write(
             client,

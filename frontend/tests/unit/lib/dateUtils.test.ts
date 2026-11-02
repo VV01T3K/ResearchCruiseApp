@@ -16,13 +16,13 @@ describe.each(['Europe/Warsaw', 'America/Los_Angeles', 'Pacific/Kiritimati'])('i
   const original = process.env.TZ;
   let formatDate: typeof import('@/lib/dateUtils').formatDate;
   let parseCalendarDate: typeof import('@/lib/dateUtils').parseCalendarDate;
-  let parsePolishDay: typeof import('@/lib/dateUtils').parsePolishDay;
+  let parsePolishDayStart: typeof import('@/lib/dateUtils').parsePolishDayStart;
   let toCalendarDateValue: typeof import('@/lib/dateUtils').toCalendarDateValue;
   beforeEach(async () => {
     process.env.TZ = timeZone;
     // The formatters keep the time zone they were created in.
     vi.resetModules();
-    ({ formatDate, parseCalendarDate, parsePolishDay, toCalendarDateValue } = await import('@/lib/dateUtils'));
+    ({ formatDate, parseCalendarDate, parsePolishDayStart, toCalendarDateValue } = await import('@/lib/dateUtils'));
   });
   afterEach(() => {
     process.env.TZ = original;
@@ -55,7 +55,17 @@ describe.each(['Europe/Warsaw', 'America/Los_Angeles', 'Pacific/Kiritimati'])('i
     ['2026-07-15T00:00:00', '2026-07-15'],
   ])('reads %s as %s', (stored, calendarDate) => {
     expect(toCalendarDateValue(parseCalendarDate(stored))).toBe(calendarDate);
-    expect(parsePolishDay(stored).toISOString()).toBe(`${calendarDate}T00:00:00.000Z`);
+  });
+
+  it.each([
+    ['2026-03-29', '2026-03-28T23:00:00.000Z'],
+    ['2026-03-30', '2026-03-29T22:00:00.000Z'],
+    ['2026-10-25', '2026-10-24T22:00:00.000Z'],
+    ['2026-10-26', '2026-10-25T23:00:00.000Z'],
+    ['2026-03-28T23:30:00Z', '2026-03-28T23:00:00.000Z'],
+    ['2026-05-16T22:00:00', '2026-05-16T22:00:00.000Z'],
+  ])('starts the Polish day of %s at %s', (stored, instant) => {
+    expect(parsePolishDayStart(stored).toISOString()).toBe(instant);
   });
 
   it('shows the same time as Poland', () => {

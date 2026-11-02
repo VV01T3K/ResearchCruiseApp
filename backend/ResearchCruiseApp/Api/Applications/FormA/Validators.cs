@@ -103,8 +103,10 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                     .Must(dto =>
                         dto.PrecisePeriodStart is not null
                         && dto.PrecisePeriodEnd is not null
-                        && _globalizationService.GetPolishDay(dto.PrecisePeriodEnd.Value)
-                            >= _globalizationService.GetPolishDay(dto.PrecisePeriodStart.Value)
+                        && _globalizationService.GetPolishDayStartUtc(dto.PrecisePeriodEnd.Value)
+                            >= _globalizationService.GetPolishDayStartUtc(
+                                dto.PrecisePeriodStart.Value
+                            )
                     )
                     .WithMessage(
                         "Data zakończenia dokładnego terminu nie może być wcześniejsza niż data rozpoczęcia."
@@ -164,8 +166,8 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             return false;
 
         var periodDays = (
-            _globalizationService.GetPolishDay(dto.PrecisePeriodEnd.Value)
-            - _globalizationService.GetPolishDay(dto.PrecisePeriodStart.Value)
+            _globalizationService.GetPolishDayStartUtc(dto.PrecisePeriodEnd.Value)
+            - _globalizationService.GetPolishDayStartUtc(dto.PrecisePeriodStart.Value)
         ).TotalDays;
         return periodDays >= cruiseDurationDays;
     }

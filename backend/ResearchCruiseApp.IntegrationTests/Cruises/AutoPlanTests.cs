@@ -237,7 +237,7 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Single(blockades!);
     }
 
-    private static Cruise Existing(
+    internal static Cruise Existing(
         string number,
         string start,
         string end,

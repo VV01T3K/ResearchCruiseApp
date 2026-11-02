@@ -25,6 +25,8 @@ const calendarDateFormatter = new Intl.DateTimeFormat('en-CA', {
   year: 'numeric',
 });
 
+const hourFormatter = new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', hourCycle: 'h23' });
+
 export function formatDate(value: string | Date, format: DateFormat): string {
   const date = value instanceof Date ? value : parseBackendDateTime(value);
 
@@ -39,14 +41,24 @@ export function parseBackendDateTime(value: string): Date {
   return new Date(/(?:Z|[+-]\d{2}:\d{2}|^\d{4}-\d{2}-\d{2})$/i.test(value) ? value : `${value}Z`);
 }
 
-export function parsePolishDay(value: string): Date {
+export function parsePolishDayStart(value: string): Date {
   const date = parseBackendDateTime(value);
-  return Number.isNaN(date.getTime()) ? date : new Date(calendarDateFormatter.format(date));
+  if (Number.isNaN(date.getTime())) {
+    return date;
+  }
+
+  const utcMidnight = new Date(calendarDateFormatter.format(date));
+  return new Date(utcMidnight.getTime() - Number(hourFormatter.format(utcMidnight)) * 3_600_000);
 }
 
 export function parseCalendarDate(value: string): Date {
-  const day = parsePolishDay(value);
-  return Number.isNaN(day.getTime()) ? day : new Date(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate());
+  const date = parseBackendDateTime(value);
+  if (Number.isNaN(date.getTime())) {
+    return date;
+  }
+
+  const [year, month, day] = calendarDateFormatter.format(date).split('-').map(Number);
+  return new Date(year, month - 1, day);
 }
 
 export function toCalendarDateValue(date: Date): string {
