@@ -1,11 +1,11 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 
 import {
   getApplicationFormB,
   getApplicationFormC,
   getGetApplicationFormBQueryKey,
+  getGetApplicationFormASuspenseQueryOptions,
   getGetApplicationFormCQueryKey,
-  useGetApplicationFormASuspense,
 } from '@/api/generated/endpoints/applications.gen';
 import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -14,12 +14,12 @@ import { mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/
 import { mapFormBToValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { mapFormCToValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 
-export function useFormAQuery(applicationId: string) {
-  return useGetApplicationFormASuspense(applicationId, { query: { select: mapFormAToValues } });
+export function formAQueryOptions(applicationId: string) {
+  return getGetApplicationFormASuspenseQueryOptions(applicationId, { query: { select: mapFormAToValues } });
 }
 
-export function useFormBQuery(applicationId: string) {
-  return useSuspenseQuery({
+export function formBQueryOptions(applicationId: string) {
+  return queryOptions({
     queryKey: getGetApplicationFormBQueryKey(applicationId),
     queryFn: async ({ signal }) => {
       try {
@@ -34,8 +34,8 @@ export function useFormBQuery(applicationId: string) {
   });
 }
 
-export function useFormCQuery(applicationId: string) {
-  return useSuspenseQuery({
+export function formCQueryOptions(applicationId: string) {
+  return queryOptions({
     queryKey: getGetApplicationFormCQueryKey(applicationId),
     queryFn: async ({ signal }) => {
       try {

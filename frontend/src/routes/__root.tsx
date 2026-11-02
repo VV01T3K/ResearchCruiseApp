@@ -41,7 +41,7 @@ const TanStackRouterDevtools = config.dev
   : () => null;
 
 function RootLayout() {
-  const routerState = useRouterState();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   return (
     <AuthSession>
@@ -58,7 +58,7 @@ function RootLayout() {
       <FeedbackTab />
       <main className="flex-1" id="modal-root">
         <motion.div
-          key={routerState.location.pathname}
+          key={pathname}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

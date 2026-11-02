@@ -3,7 +3,7 @@ import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
-import { useIsMutating, useQueryClient } from '@tanstack/react-query';
+import { useIsMutating, useQueryClient, useSuspenseQueries } from '@tanstack/react-query';
 import { evaluate } from '@tanstack/react-form';
 import {
   ArrowClockwiseIcon,
@@ -22,17 +22,17 @@ import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
-import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
+import { getGetApplicationsForCruisePlanningSuspenseQueryOptions } from '@/api/generated/endpoints/applications.gen';
 import { FormView } from '../-components/FormView';
 import { CruiseFormSchema, type CruiseFormValues, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
 import {
   getGetCruiseQueryKey,
+  getGetCruiseSuspenseQueryOptions,
   getGetCruisesQueryKey,
   getUpdateCruiseMutationKey,
   useCompleteCruise,
   useConfirmCruise,
   useDeleteCruise,
-  useGetCruiseSuspense,
   useRemoveCruiseConfirmation,
   useUpdateCruise,
   type UpdateCruiseMutationVariables,
@@ -48,8 +48,12 @@ function CruiseDetailsPage() {
   const { cruiseId } = Route.useParams();
 
   const queryClient = useQueryClient();
-  const cruiseQuery = useGetCruiseSuspense(cruiseId);
-  const applicationQuery = useGetApplicationsForCruisePlanningSuspense({ cruiseId });
+  const [cruiseQuery, applicationQuery] = useSuspenseQueries({
+    queries: [
+      getGetCruiseSuspenseQueryOptions(cruiseId),
+      getGetApplicationsForCruisePlanningSuspenseQueryOptions({ cruiseId }),
+    ],
+  });
   const saving = useSaveTracking();
   const updateCruiseMutation = useUpdateCruise({
     mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },

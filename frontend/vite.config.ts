@@ -70,7 +70,7 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   plugins: lazyPlugins(() => [
-    tanstackRouter(),
+    tanstackRouter({ autoCodeSplitting: true }),
     viteReact(),
     babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),

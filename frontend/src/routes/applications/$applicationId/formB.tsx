@@ -1,5 +1,5 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
@@ -16,11 +16,17 @@ import {
   formBDefaultValues,
   getFormBSubmissionSchema,
 } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { getGetApplicationQueryKey, useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
-import { useFormAQuery, useFormBQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
-  useGetApplicationFormAContextSuspense,
-  useGetApplicationFormBContextSuspense,
+  getGetApplicationCruiseSuspenseQueryOptions,
+  getGetApplicationQueryKey,
+} from '@/api/generated/endpoints/applications.gen';
+import {
+  formAQueryOptions,
+  formBQueryOptions,
+} from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
+import {
+  getGetApplicationFormAContextSuspenseQueryOptions,
+  getGetApplicationFormBContextSuspenseQueryOptions,
   useRefillApplicationFormB,
   useUpdateApplicationFormB,
 } from '@/api/generated/endpoints/applications.gen';
@@ -51,11 +57,15 @@ function FormBPage() {
   const queryClient = useQueryClient();
   const currentUser = useCurrentUser();
 
-  const formA = useFormAQuery(applicationId);
-  const formB = useFormBQuery(applicationId);
-  const formAInitValues = useGetApplicationFormAContextSuspense({ applicationId });
-  const formBInitValues = useGetApplicationFormBContextSuspense();
-  const cruise = useGetApplicationCruiseSuspense(applicationId);
+  const [formA, formB, formAInitValues, formBInitValues, cruise] = useSuspenseQueries({
+    queries: [
+      formAQueryOptions(applicationId),
+      formBQueryOptions(applicationId),
+      getGetApplicationFormAContextSuspenseQueryOptions({ applicationId }),
+      getGetApplicationFormBContextSuspenseQueryOptions(),
+      getGetApplicationCruiseSuspenseQueryOptions(applicationId),
+    ],
+  });
   const saving = useSaveTracking();
   const updateMutation = useUpdateApplicationFormB({
     mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
