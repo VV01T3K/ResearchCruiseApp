@@ -39,14 +39,14 @@ export function parseBackendDateTime(value: string): Date {
   return new Date(/(?:Z|[+-]\d{2}:\d{2}|^\d{4}-\d{2}-\d{2})$/i.test(value) ? value : `${value}Z`);
 }
 
-export function parseCalendarDate(value: string): Date {
+export function parsePolishDay(value: string): Date {
   const date = parseBackendDateTime(value);
-  if (Number.isNaN(date.getTime())) {
-    return date;
-  }
+  return Number.isNaN(date.getTime()) ? date : new Date(calendarDateFormatter.format(date));
+}
 
-  const [year, month, day] = calendarDateFormatter.format(date).split('-').map(Number);
-  return new Date(year, month - 1, day);
+export function parseCalendarDate(value: string): Date {
+  const day = parsePolishDay(value);
+  return Number.isNaN(day.getTime()) ? day : new Date(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate());
 }
 
 export function toCalendarDateValue(date: Date): string {

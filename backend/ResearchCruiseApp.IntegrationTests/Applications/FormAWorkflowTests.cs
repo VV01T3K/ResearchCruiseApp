@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications;
@@ -212,6 +213,49 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         await app.InDatabase(async db =>
             Assert.Single(await db.CruiseApplications.ToListAsync(ct))
         );
+    }
+
+    [Theory]
+    [InlineData("2030-05-17T00:00:00Z", "2030-05-17T22:00:00Z", HttpStatusCode.Created)]
+    [InlineData("2030-05-16T22:00:00Z", "2030-05-18T00:00:00Z", HttpStatusCode.Created)]
+    [InlineData("2030-05-17T00:00:00Z", "2030-05-16T22:00:00Z", HttpStatusCode.BadRequest)]
+    [InlineData("2030-05-18T00:00:00Z", "2030-05-16T22:00:00Z", HttpStatusCode.BadRequest)]
+    public async Task Submit_ComparesPrecisePeriodAsPolishDays(
+        string start,
+        string end,
+        HttpStatusCode expected
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var manager = await TestUsers.Create(
+            app,
+            "manager@example.invalid",
+            RoleName.CruiseManager
+        );
+        var deputy = await TestUsers.Create(app, "deputy@example.invalid", RoleName.CruiseManager);
+        var unit = new UgUnit { Name = "Synthetic faculty", IsActive = true };
+        await app.InDatabase(async db =>
+        {
+            db.UgUnits.Add(unit);
+            await db.SaveChangesAsync(ct);
+        });
+        using var client = await TestApplications.Login(app, manager.Email!);
+        var form = JsonSerializer
+            .SerializeToNode(CompleteForm(Guid.Parse(manager.Id), Guid.Parse(deputy.Id), unit.Id))!
+            .AsObject();
+        form["PrecisePeriodStart"] = start;
+        form["PrecisePeriodEnd"] = end;
+
+        using var response = await FormRequests.Write(
+            client,
+            "/v2/applications",
+            form,
+            false,
+            true
+        );
+
+        Assert.Equal(expected, response.StatusCode);
     }
 
     internal static FormAFields CompleteForm(Guid manager, Guid deputy, Guid unit) =>

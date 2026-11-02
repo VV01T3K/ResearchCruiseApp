@@ -5,7 +5,7 @@ import { Button } from '@/components/shared/Button';
 import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import { parseCalendarDate } from '@/lib/dateUtils';
+import { parseCalendarDate, parsePolishDay } from '@/lib/dateUtils';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
 import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -52,7 +52,7 @@ const researchEquipmentsColumns = (
             >
               {(insuranceStartDate) => {
                 const startDate = insuranceStartDate ?? undefined;
-                if (startDate && field.state.value && startDate > field.state.value) {
+                if (startDate && field.state.value && parsePolishDay(startDate) > parsePolishDay(field.state.value)) {
                   field.handleChange(startDate);
                 }
                 return (

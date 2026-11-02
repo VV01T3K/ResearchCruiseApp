@@ -55,6 +55,7 @@ public static class FormAEndpoints
         ApplicationDbContext dbContext,
         ApplicationScoringService cruiseApplicationEvaluator,
         SupervisorInvitationService cruiseApplicationsService,
+        GlobalizationService globalizationService,
         CancellationToken cancellationToken
     )
     {
@@ -63,6 +64,7 @@ public static class FormAEndpoints
             var periodValidation = await ValidatePrecisePeriodAgainstBlockades(
                 request.Form,
                 dbContext,
+                globalizationService,
                 cancellationToken
             );
             if (!periodValidation.IsSuccess)
@@ -159,6 +161,7 @@ public static class FormAEndpoints
             var periodValidation = await ValidatePrecisePeriodAgainstBlockades(
                 request.Form,
                 dbContext,
+                globalizationService,
                 cancellationToken
             );
             if (!periodValidation.IsSuccess)
@@ -202,6 +205,7 @@ public static class FormAEndpoints
     private static async Task<Result> ValidatePrecisePeriodAgainstBlockades(
         FormAFields request,
         ApplicationDbContext dbContext,
+        GlobalizationService globalizationService,
         CancellationToken cancellationToken
     )
     {
@@ -233,8 +237,8 @@ public static class FormAEndpoints
             );
 
         return CruiseWindowAvailability.HasNoFreeWindow(
-            request.PrecisePeriodStart.Value,
-            request.PrecisePeriodEnd.Value,
+            globalizationService.GetPolishDay(request.PrecisePeriodStart.Value),
+            globalizationService.GetPolishDay(request.PrecisePeriodEnd.Value),
             cruiseDurationDays,
             blockades
         )

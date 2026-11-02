@@ -2,7 +2,7 @@ import { submissionSchema } from '@/integrations/tanstack/form/schema';
 import { literal, z } from 'zod';
 
 import { groupBy } from '@/lib/utils';
-import { parseBackendDateTime } from '@/lib/dateUtils';
+import { parsePolishDay } from '@/lib/dateUtils';
 import { getPeriodEdgeDatePoint, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
 import {
   ContractValuesInputSchema,
@@ -240,8 +240,8 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
 
     if (cruiseHours <= 0) return { canFitCruise: true, overlappingBlockades: [] };
 
-    const start = parseBackendDateTime(precisePeriodStart);
-    const end = parseBackendDateTime(precisePeriodEnd);
+    const start = parsePolishDay(precisePeriodStart);
+    const end = parsePolishDay(precisePeriodEnd);
     const cruiseDurationDays = cruiseHours / 24;
 
     return analyzeCruiseSlot(start, end, cruiseDurationDays);
@@ -324,8 +324,8 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
     }
     if (!precisePeriodStart || !precisePeriodEnd) return;
 
-    const start = parseBackendDateTime(precisePeriodStart);
-    const end = parseBackendDateTime(precisePeriodEnd);
+    const start = parsePolishDay(precisePeriodStart);
+    const end = parsePolishDay(precisePeriodEnd);
     const cruiseDurationDays = totalCruiseHours / 24;
 
     if ((end.getTime() - start.getTime()) / DAY_IN_MILLISECONDS < cruiseDurationDays) {
@@ -498,7 +498,11 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
             message: 'Dokładny termin zakończenia rejsu jest wymagany',
           });
         }
-        if (precisePeriodStart && precisePeriodEnd && precisePeriodStart > precisePeriodEnd) {
+        if (
+          precisePeriodStart &&
+          precisePeriodEnd &&
+          parsePolishDay(precisePeriodStart) > parsePolishDay(precisePeriodEnd)
+        ) {
           ctx.addIssue({
             code: 'custom',
             path: ['precisePeriodEnd'],

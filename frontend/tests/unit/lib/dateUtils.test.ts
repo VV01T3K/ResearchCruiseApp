@@ -16,12 +16,13 @@ describe.each(['Europe/Warsaw', 'America/Los_Angeles', 'Pacific/Kiritimati'])('i
   const original = process.env.TZ;
   let formatDate: typeof import('@/lib/dateUtils').formatDate;
   let parseCalendarDate: typeof import('@/lib/dateUtils').parseCalendarDate;
+  let parsePolishDay: typeof import('@/lib/dateUtils').parsePolishDay;
   let toCalendarDateValue: typeof import('@/lib/dateUtils').toCalendarDateValue;
   beforeEach(async () => {
     process.env.TZ = timeZone;
     // The formatters keep the time zone they were created in.
     vi.resetModules();
-    ({ formatDate, parseCalendarDate, toCalendarDateValue } = await import('@/lib/dateUtils'));
+    ({ formatDate, parseCalendarDate, parsePolishDay, toCalendarDateValue } = await import('@/lib/dateUtils'));
   });
   afterEach(() => {
     process.env.TZ = original;
@@ -54,6 +55,7 @@ describe.each(['Europe/Warsaw', 'America/Los_Angeles', 'Pacific/Kiritimati'])('i
     ['2026-07-15T00:00:00', '2026-07-15'],
   ])('reads %s as %s', (stored, calendarDate) => {
     expect(toCalendarDateValue(parseCalendarDate(stored))).toBe(calendarDate);
+    expect(parsePolishDay(stored).toISOString()).toBe(`${calendarDate}T00:00:00.000Z`);
   });
 
   it('shows the same time as Poland', () => {

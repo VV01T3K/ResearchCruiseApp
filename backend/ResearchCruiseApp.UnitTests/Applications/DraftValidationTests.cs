@@ -1,12 +1,14 @@
 using System.Text.Json;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Infrastructure.Files;
+using ResearchCruiseApp.Infrastructure.Localization;
 
 namespace ResearchCruiseApp.UnitTests.Applications;
 
 public sealed class DraftValidationTests
 {
     private static readonly FileInspector FileInspector = new();
+    private static readonly GlobalizationService Globalization = new(TimeProvider.System);
 
     [Fact]
     public void Validate_WhenDraftHasPartialNestedObjects_AcceptsDraftButRejectsSubmission()
@@ -21,7 +23,9 @@ public sealed class DraftValidationTests
             """{"Form":{"ShipUsage":"","DifferentUsage":"","Permissions":[{}],"CollectedSamples":[{"Type":"water","Amount":"","Analysis":"","Publishing":""}],"CruiseDaysDetails":[{"Number":"","Hours":"","TaskName":"started","Region":"","Position":"","Comment":""}]},"Draft":true}"""
         )!;
 
-        Assert.Empty(new FormAWriteRequestValidator(FileInspector).Validate(formA).Errors);
+        Assert.Empty(
+            new FormAWriteRequestValidator(FileInspector, Globalization).Validate(formA).Errors
+        );
         Assert.Empty(new FormBWriteRequestValidator(FileInspector).Validate(formB).Errors);
         Assert.Empty(new FormCWriteRequestValidator(FileInspector).Validate(formC).Errors);
         Assert.False(

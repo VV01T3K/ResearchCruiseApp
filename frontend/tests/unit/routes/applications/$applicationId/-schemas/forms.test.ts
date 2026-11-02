@@ -313,6 +313,25 @@ describe('application submission', () => {
     );
   });
 
+  it.each([
+    ['2026-05-17', '2026-05-17T22:00:00', true],
+    ['2026-05-16T22:00:00', '2026-05-18', true],
+    ['2026-05-17', '2026-05-16T22:00:00', false],
+    ['2026-05-18', '2026-05-16T22:00:00', false],
+  ])('compares precise dates %s and %s as Polish days', (precisePeriodStart, precisePeriodEnd, valid) => {
+    const result = schemaA.safeParse({
+      ...a(),
+      periodSelectionType: 'precise',
+      acceptablePeriod: '',
+      optimalPeriod: '',
+      cruiseDays: 1,
+      cruiseHours: 0,
+      precisePeriodStart,
+      precisePeriodEnd,
+    });
+    expect(result.success).toBe(valid);
+  });
+
   it('requires a PDF permission scan only after form A', () => {
     const permission = { description: 'Pobór próbek', executive: 'Urząd Morski' };
     expect(schemaA.safeParse({ ...a(), permissions: [permission] }).success).toBe(true);

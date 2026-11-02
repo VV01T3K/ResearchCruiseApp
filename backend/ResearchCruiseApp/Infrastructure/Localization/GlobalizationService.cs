@@ -16,6 +16,11 @@ public class GlobalizationService(TimeProvider clock)
             TimeZoneInfo.ConvertTime(clock.GetUtcNow(), GetTimeZoneInfo()).DateTime
         );
 
+    public DateTime GetPolishDay(DateTime utc) =>
+        TimeZoneInfo
+            .ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), GetTimeZoneInfo())
+            .Date;
+
     public string GetIsoUtcString(DateTime date)
     {
         if (date.Kind != DateTimeKind.Unspecified)

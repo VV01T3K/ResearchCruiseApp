@@ -11,7 +11,7 @@ import { getErrors } from '@/integrations/tanstack/form/errors';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applications/periodUtils';
-import { formatDate, parseBackendDateTime, parseCalendarDate, useNow } from '@/lib/dateUtils';
+import { formatDate, parseCalendarDate, parsePolishDay, useNow } from '@/lib/dateUtils';
 import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
 
@@ -37,8 +37,8 @@ function getOverlappingBlockadesForRange(
     return [];
   }
 
-  const start = parseBackendDateTime(rangeStart);
-  const end = parseBackendDateTime(rangeEnd);
+  const start = parsePolishDay(rangeStart);
+  const end = parsePolishDay(rangeEnd);
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
     return [];
   }

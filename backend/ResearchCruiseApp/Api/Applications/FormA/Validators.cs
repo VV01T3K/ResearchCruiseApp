@@ -8,10 +8,15 @@ namespace ResearchCruiseApp.Api.Applications;
 public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteRequest>
 {
     private readonly FileInspector _fileInspector;
+    private readonly GlobalizationService _globalizationService;
 
-    public FormAWriteRequestValidator(FileInspector fileInspector)
+    public FormAWriteRequestValidator(
+        FileInspector fileInspector,
+        GlobalizationService globalizationService
+    )
     {
         _fileInspector = fileInspector;
+        _globalizationService = globalizationService;
 
         AddDraftValidation();
         AddNonDraftValidation();
@@ -98,7 +103,8 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                     .Must(dto =>
                         dto.PrecisePeriodStart is not null
                         && dto.PrecisePeriodEnd is not null
-                        && dto.PrecisePeriodEnd >= dto.PrecisePeriodStart
+                        && _globalizationService.GetPolishDay(dto.PrecisePeriodEnd.Value)
+                            >= _globalizationService.GetPolishDay(dto.PrecisePeriodStart.Value)
                     )
                     .WithMessage(
                         "Data zakończenia dokładnego terminu nie może być wcześniejsza niż data rozpoczęcia."
@@ -150,14 +156,17 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
         );
     }
 
-    private static bool HasEnoughPrecisePeriodForCruise(FormAFields dto)
+    private bool HasEnoughPrecisePeriodForCruise(FormAFields dto)
     {
         if (dto.PrecisePeriodStart is null || dto.PrecisePeriodEnd is null)
             return false;
         if (!TryGetCruiseDurationDays(dto.CruiseHours, out var cruiseDurationDays))
             return false;
 
-        var periodDays = (dto.PrecisePeriodEnd.Value - dto.PrecisePeriodStart.Value).TotalDays;
+        var periodDays = (
+            _globalizationService.GetPolishDay(dto.PrecisePeriodEnd.Value)
+            - _globalizationService.GetPolishDay(dto.PrecisePeriodStart.Value)
+        ).TotalDays;
         return periodDays >= cruiseDurationDays;
     }
 
