@@ -79,16 +79,7 @@ function ApplicationsPage() {
       id: 'number',
       header: 'Nr',
       accessorFn: (row) => row.number,
-      cell: ({ row }) => (
-        <>
-          <span className="whitespace-nowrap">{row.original.number}</span>
-          {row.original.invalidStoredValues.length > 0 && (
-            <Badge variant="danger" className="mt-1 whitespace-normal">
-              Niepoprawne dane: {row.original.invalidStoredValues.join(', ')}
-            </Badge>
-          )}
-        </>
-      ),
+      cell: ({ row }) => <span className="whitespace-nowrap">{row.original.number}</span>,
       sortDescFirst: true,
       meta: { filterInputType: 'number' },
       size: 86,
@@ -220,6 +211,11 @@ function ApplicationsPage() {
               ? ` (${row.original.note.trim()})`
               : null}
           </p>
+          {row.original.invalidStoredValues.length > 0 && (
+            <p className="mb-2 text-center text-xs font-medium text-danger-dark">
+              Niepoprawne dane: {row.original.invalidStoredValues.join(', ')}
+            </p>
+          )}
           {row.original.status === CruiseApplicationStatus.enum.draft && (
             <Button
               className="ml-auto sm:mx-auto"
