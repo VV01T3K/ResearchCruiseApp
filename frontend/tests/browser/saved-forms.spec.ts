@@ -83,17 +83,18 @@ test('an unreadable stored flag in form C blocks saving until it is fixed', asyn
   const route = `PUT /v2/applications/${applicationId}/form-c`;
   await page.goto(`/applications/${applicationId}/formC?mode=edit`);
 
-  const warning = page.locator('[data-error="true"]', {
-    hasText: 'Nie udało się odczytać wcześniej zapisanej odpowiedzi: „tak”. Wprowadź ją jeszcze raz.',
-  });
-  await expect(warning).toBeVisible();
+  const done = page.getByRole('checkbox', { name: 'Zrealizowane' });
+  // Each blocked save adds one error toast, which is a dialog.
+  const errorToasts = page.getByRole('dialog');
+  await expect(done).toHaveAttribute('aria-invalid', 'true');
   await page.getByRole('button', { name: 'Zapisz wersję roboczą', exact: true }).click();
+  await expect(errorToasts).toHaveCount(1);
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
-  await expect(page.getByText(/Formularz błędny w sekcji nr \d+:/).first()).toContainText('Nie udało się odczytać');
+  await expect(errorToasts).toHaveCount(2);
   expect(requests.bodies(route)).toEqual([]);
 
-  await page.getByRole('checkbox', { name: 'Zrealizowane' }).click();
-  await expect(warning).toBeHidden();
+  await done.click();
+  await expect(done).not.toHaveAttribute('aria-invalid', 'true');
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
   await expect
     .poll(() => requests.bodies(route))
