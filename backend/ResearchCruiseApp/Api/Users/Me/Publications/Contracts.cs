@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Users;
@@ -26,6 +27,11 @@ public sealed record ImportPublicationRequest(
         };
     }
 }
+
+public sealed record ImportPublicationsResponse(
+    [property: JsonNumberHandling(JsonNumberHandling.Strict)] int Imported,
+    [property: JsonNumberHandling(JsonNumberHandling.Strict)] int AlreadyExisting
+);
 
 public sealed record DeletePublicationRequest(Guid PublicationId);
 

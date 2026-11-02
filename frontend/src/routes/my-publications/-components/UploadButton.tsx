@@ -1,3 +1,4 @@
+import { CircleNotchIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { Button } from '@/components/shared/Button';
@@ -7,9 +8,9 @@ import { PublicationCsvError, readPublicationCsv } from '@/lib/publications/publ
 
 type Props = {
   onUpload: (publications: ImportPublicationRequest[]) => void;
-  disabled: boolean;
+  isImporting: boolean;
 };
-export function UploadButton({ onUpload, disabled }: Props) {
+export function UploadButton({ onUpload, isImporting }: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   async function handleFileChange() {
@@ -40,8 +41,15 @@ export function UploadButton({ onUpload, disabled }: Props) {
         onChange={() => void handleFileChange()}
         accept=".csv,text/csv"
       />
-      <Button onClick={() => inputRef.current?.click()} disabled={disabled}>
-        Import publikacji z pliku CSV
+      <Button onClick={() => inputRef.current?.click()} disabled={isImporting}>
+        {isImporting ? (
+          <>
+            <CircleNotchIcon className="mr-2 h-4 w-4 animate-spin" />
+            Importowanie publikacji…
+          </>
+        ) : (
+          'Import publikacji z pliku CSV'
+        )}
       </Button>
     </>
   );
