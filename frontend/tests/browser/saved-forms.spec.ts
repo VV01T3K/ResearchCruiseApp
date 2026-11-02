@@ -64,3 +64,50 @@ for (const { name, saved, handlers, shown } of forms) {
     await expect.poll(() => requests.bodies(route)).toEqual([{ draft: false, form: saved }]);
   });
 }
+
+test('an unreadable stored flag in form C blocks saving until it is fixed', async ({ page, network, requests }) => {
+  const saved = filledFormC();
+  const unreadable = {
+    ...saved,
+    researchTasksEffects: saved.researchTasksEffects?.map((task) => ({
+      ...task,
+      done: 'tak',
+      managerConditionMet: 'false',
+    })),
+  };
+  network.use(
+    getGetApplicationFormCMockHandler(unreadable),
+    getUpdateApplicationFormCMockHandler(),
+    ...applicationForms()
+  );
+  const route = `PUT /v2/applications/${applicationId}/form-c`;
+  await page.goto(`/applications/${applicationId}/formC?mode=edit`);
+
+  const warning = page.locator('[data-error="true"]', {
+    hasText: 'Nie udało się odczytać wcześniej zapisanej odpowiedzi: „tak”. Wprowadź ją jeszcze raz.',
+  });
+  await expect(warning).toBeVisible();
+  await page.getByRole('button', { name: 'Zapisz wersję roboczą', exact: true }).click();
+  await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+  await expect(page.getByText(/Formularz błędny w sekcji nr \d+:/).first()).toContainText('nieczytelna');
+  expect(requests.bodies(route)).toEqual([]);
+
+  await page.getByRole('checkbox', { name: 'Zrealizowane' }).click();
+  await expect(warning).toBeHidden();
+  await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+  await expect
+    .poll(() => requests.bodies(route))
+    .toEqual([
+      {
+        draft: false,
+        form: {
+          ...saved,
+          researchTasksEffects: saved.researchTasksEffects?.map((task) => ({
+            ...task,
+            done: 'true',
+            managerConditionMet: 'false',
+          })),
+        },
+      },
+    ]);
+});

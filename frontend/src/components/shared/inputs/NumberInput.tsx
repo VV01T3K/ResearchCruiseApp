@@ -41,7 +41,7 @@ function roundToType(value: number, type: 'integer' | 'float', precision: number
 }
 
 function formatValue(value: number | null, type: 'integer' | 'float', precision: number) {
-  return value === null ? '' : String(roundToType(value, type, precision));
+  return Number.isFinite(value) ? String(roundToType(Number(value), type, precision)) : '';
 }
 
 type Props = CommonProps &
@@ -135,7 +135,7 @@ export function NumberInput({
       <div className="flex items-center" role="group" aria-label={typeof label === 'string' ? label : ariaLabel}>
         {!disabled && (
           <NumberInputButton
-            onClick={() => updateValue((value ?? 0) - step)}
+            onClick={() => updateValue((Number(value) || 0) - step)}
             side="left"
             disabled={false}
             inputToFocus={inputRef}
@@ -166,7 +166,7 @@ export function NumberInput({
         </div>
         {!disabled && (
           <NumberInputButton
-            onClick={() => updateValue((value ?? 0) + step)}
+            onClick={() => updateValue((Number(value) || 0) + step)}
             side="right"
             disabled={false}
             inputToFocus={inputRef}

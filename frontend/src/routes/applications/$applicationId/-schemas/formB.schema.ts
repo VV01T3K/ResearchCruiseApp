@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { FormBFields } from '@/api/generated/schemas';
 import { groupBy } from '@/lib/utils';
+import { storedBoolean, storedNumber } from '@/routes/applications/$applicationId/-schemas/storedValues';
 import {
   CrewMemberValuesInputSchema,
   CrewMemberValuesSchema,
@@ -146,7 +147,7 @@ function buildFormBFieldsSchema(inputSchema: z.ZodType<FormBValues, FormBValues>
 export function mapFormBToValues(form: FormBFields): FormBValues {
   return {
     revision: form.revision ?? undefined,
-    isCruiseManagerPresent: form.isCruiseManagerPresent === 'true',
+    isCruiseManagerPresent: storedBoolean(form.isCruiseManagerPresent),
     permissions: (form.permissions ?? []).map((permission) => ({
       description: permission.description ?? '',
       executive: permission.executive ?? '',
@@ -154,12 +155,12 @@ export function mapFormBToValues(form: FormBFields): FormBValues {
     })),
     ugTeams: (form.ugTeams ?? []).map((team) => ({
       ugUnitId: team.ugUnitId ?? '',
-      noOfEmployees: toNumber(team.noOfEmployees),
-      noOfStudents: toNumber(team.noOfStudents),
+      noOfEmployees: storedNumber(team.noOfEmployees),
+      noOfStudents: storedNumber(team.noOfStudents),
     })),
     guestTeams: (form.guestTeams ?? []).map((team) => ({
       name: team.name ?? '',
-      noOfPersons: toNumber(team.noOfPersons),
+      noOfPersons: storedNumber(team.noOfPersons),
     })),
     crewMembers: (form.crewMembers ?? []).map((member) => ({
       title: member.title ?? '',
@@ -187,8 +188,8 @@ export function mapFormBToValues(form: FormBFields): FormBValues {
       endTime: port.endTime ?? '',
     })),
     cruiseDaysDetails: (form.cruiseDaysDetails ?? []).map((day) => ({
-      number: toNumber(day.number),
-      hours: toNumber(day.hours),
+      number: storedNumber(day.number),
+      hours: storedNumber(day.hours),
       taskName: day.taskName ?? '',
       region: day.region ?? '',
       position: day.position ?? '',
@@ -198,15 +199,10 @@ export function mapFormBToValues(form: FormBFields): FormBValues {
       name: equipment.name ?? '',
       insuranceStartDate: equipment.insuranceStartDate ?? null,
       insuranceEndDate: equipment.insuranceEndDate ?? null,
-      permission: equipment.permission === 'true',
+      permission: storedBoolean(equipment.permission),
     })),
     shipEquipmentsIds: form.shipEquipmentsIds ?? [],
   };
-}
-
-function toNumber(value: string | null | undefined): number {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : 0;
 }
 
 export function getFormBSubmissionSchema() {

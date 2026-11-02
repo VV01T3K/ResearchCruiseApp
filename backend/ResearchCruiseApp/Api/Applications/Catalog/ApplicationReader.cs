@@ -240,7 +240,7 @@ internal class ApplicationReader(
         CruiseApplicationSummary dto
     )
     {
-        if (application.FormC is null)
+        if (application.FormC is null || application.FormC.ResearchTaskEffects.Count == 0)
             return;
 
         var effects = application.FormC.ResearchTaskEffects;

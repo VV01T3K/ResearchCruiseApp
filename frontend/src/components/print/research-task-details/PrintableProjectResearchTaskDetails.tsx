@@ -22,11 +22,16 @@ export function PrintableProjectResearchTaskDetails({ data }: Props) {
       </div>
       <div className="flex items-center justify-between">
         <span>Kwota finansowania: </span>
-        <span>{data.financingAmount?.toFixed(2) ?? '-'} zł</span>
+        <span>
+          {typeof data.financingAmount === 'number' ? data.financingAmount.toFixed(2) : (data.financingAmount ?? '-')}{' '}
+          zł
+        </span>
       </div>
       <div className="flex items-center justify-between">
         <span>Środki zabezpieczone na realizację rejsu: </span>
-        <span>{data.securedAmount?.toFixed(2) ?? '-'} zł</span>
+        <span>
+          {typeof data.securedAmount === 'number' ? data.securedAmount.toFixed(2) : (data.securedAmount ?? '-')} zł
+        </span>
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ export function PrintableProjectPreparationResearchTaskDetails({ data }: Props) 
       </div>
       <div className="flex items-center justify-between">
         <span>Otrzymano decyzję o finansowaniu?: </span>
-        <span>{data.financingApproved ? 'Tak' : 'Nie'}</span>
+        <span>{data.financingApproved === true ? 'Tak' : 'Nie'}</span>
       </div>
     </div>
   );
