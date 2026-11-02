@@ -2,7 +2,12 @@ import { expect, it } from 'vite-plus/test';
 import { cruise } from '@tests/data/cruises';
 import { manager, deputy } from '@tests/data/accounts';
 import { emptyGuid } from '@/lib/applications/person';
-import { CruiseFormSchema, cruiseFormDefaultValues, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
+import {
+  CruiseFormSchema,
+  cruiseFormDefaultValues,
+  findOverlappingCruises,
+  mapCruiseToValues,
+} from '@/routes/cruises/-schemas/form.schema';
 
 it('writes the shared create/update cruise API shape', () => {
   expect(CruiseFormSchema.parse(mapCruiseToValues(cruise()))).toEqual({
@@ -26,6 +31,7 @@ it.each([
 
 it.each([
   ['endDate', { endDate: '2026-05-01T00:00:00Z' }],
+  ['endDate', { endDate: '2026-06-01T08:00:00Z' }],
   ['deputyManagerId', { mainManagerId: manager.id, deputyManagerId: manager.id }],
   ['title', { title: '  ', shipUnavailable: true }],
 ])('rejects invalid %s', (path, change) => {
@@ -47,4 +53,15 @@ it.each([
     ...change,
   };
   expect(CruiseFormSchema.parse(values)).toMatchObject({ mainManagerId, deputyManagerId: emptyGuid });
+});
+
+it('counts only real overlaps with other cruises and active blockades', () => {
+  const other = cruise();
+  const start = '2026-06-02T11:00:00Z';
+  const end = '2026-06-03T00:00:00Z';
+  expect(findOverlappingCruises([other], start, end)).toEqual([]);
+  expect(findOverlappingCruises([other], '2026-06-02T10:00:00Z', end)).toEqual([other]);
+  expect(findOverlappingCruises([other], '2026-06-02T10:00:00Z', end, other.id)).toEqual([]);
+  const endedBlockade = { ...other, shipUnavailable: true, status: 'ended' as const };
+  expect(findOverlappingCruises([endedBlockade], '2026-06-02T10:00:00Z', end)).toEqual([]);
 });

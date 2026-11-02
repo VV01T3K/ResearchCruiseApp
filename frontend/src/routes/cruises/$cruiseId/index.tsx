@@ -84,6 +84,7 @@ function CruiseDetailsPage() {
   const [pendingDiscard, setPendingDiscard] = React.useState<'cancel' | 'revert'>();
   const [saved, setSaved] = React.useState<{ cruise: CruiseResponse; values: CruiseFormValues }>();
   const saveQueue = React.useRef(Promise.resolve());
+  const queuedValues = React.useRef<CruiseFormValues>(undefined);
   // Our own accepted saves replace the revision they were based on.
   const nextRevisions = React.useRef(new Map<string | undefined, string>());
   const isSavedBaseline = saved?.cruise === cruiseQuery.data;
@@ -102,6 +103,8 @@ function CruiseDetailsPage() {
       navigateToFirstError({ toast: true });
     },
     onSubmit: ({ value }) => {
+      if (evaluate(value, queuedValues.current)) return saveQueue.current;
+      queuedValues.current = value;
       const save = saveQueue.current.then(() => saveCruise(value));
       saveQueue.current = save;
       return save;
@@ -136,6 +139,7 @@ function CruiseDetailsPage() {
       navigateToFirstError();
     } finally {
       saving.finish();
+      if (queuedValues.current === value) queuedValues.current = undefined;
     }
   }
 
