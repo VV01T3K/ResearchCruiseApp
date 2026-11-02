@@ -88,6 +88,10 @@ export function getSession() {
   return session;
 }
 
+export function getAuthGeneration() {
+  return authGeneration;
+}
+
 export function subscribeAuthDetails(subscriber: AuthSubscriber) {
   subscribers.add(subscriber);
   return () => {
@@ -104,11 +108,7 @@ async function refresh(): Promise<TokenResponse | undefined> {
       details = sessionState === 'unknown' ? await getCurrentSession() : await refreshTokens();
     } catch (error) {
       const status = typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
-      const sessionReplaced =
-        sessionRevision !== revisionBeforeRefresh &&
-        session !== undefined &&
-        !logoutInProgress &&
-        authGeneration === generationBeforeRefresh;
+      const sessionReplaced = sessionRevision !== revisionBeforeRefresh && session !== undefined && !logoutInProgress;
       if (status === 401 && sessionReplaced) return session;
       if (status !== 409) throw error;
 

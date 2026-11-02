@@ -4,6 +4,7 @@ import { useCallback, useSyncExternalStore } from 'react';
 
 import {
   completeLogin,
+  getAuthGeneration,
   getValidAccessToken,
   refreshSession,
   prepareForLogout,
@@ -77,12 +78,18 @@ export function useSignIn() {
   const { mutateAsync: login } = useLogin({ mutation: { meta: { handlesError: true, invalidates: false } } });
 
   return async (email: string, password: string): Promise<SignInResult> => {
+    const generation = getAuthGeneration();
     let response;
     try {
       response = await login({ data: { email, password } });
     } catch (error) {
       clearSession(queryClient);
       return { error: getProblemDetail(error, 'Wystąpił błąd podczas logowania. Spróbuj ponownie.') };
+    }
+
+    if (!getSession() && getAuthGeneration() !== generation) {
+      await logoutSession().catch(() => undefined);
+      return { error: 'Wylogowano w innej karcie. Zaloguj się ponownie.' };
     }
 
     completeLogin(response);
