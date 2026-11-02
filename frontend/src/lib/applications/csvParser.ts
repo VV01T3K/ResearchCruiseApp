@@ -1,8 +1,12 @@
+import Papa from 'papaparse';
 import { readSheet, type SheetData } from 'read-excel-file/browser';
 import writeXlsxFile from 'write-excel-file/browser';
 
 import { toast } from '@/components/shared/layout/toast';
 import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
+
+const MAX_IMPORT_FILE_BYTES = 1024 * 1024;
+const MAX_IMPORT_ROWS = 1000;
 
 /**
  * Parses a CSV string and converts it to an array of CruiseDayValues objects
@@ -12,16 +16,19 @@ import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/t
  * Missing columns will be filled with empty strings instead of throwing an error
  */
 export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValues[] {
-  const lines = csvContent.trim().split('\n');
+  const text = csvContent.trim();
+  const delimiter = text.split('\n', 1)[0].includes(';') ? ';' : ',';
+  const { data: lines, errors } = Papa.parse<string[]>(text, { delimiter, skipEmptyLines: 'greedy' });
+
+  if (errors.length > 0) {
+    throw new Error('Nie udało się odczytać pliku CSV. Sprawdź zamknięcie cudzysłowów.');
+  }
 
   if (lines.length < 2) {
     throw new Error('Plik CSV musi zawierać wiersz nagłówka i przynajmniej jeden wiersz danych');
   }
 
-  const headerLine = lines[0];
-  const delimiter = headerLine.includes(';') ? ';' : ',';
-
-  let headers = parseCSVLine(headerLine, delimiter).map((h) => h.toLowerCase().trim());
+  let headers: string[];
   let headerRowIndex = 0;
 
   let columnIndices: Record<string, number>;
@@ -31,7 +38,7 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
   let lonHeaderIndex = -1;
 
   do {
-    headers = parseCSVLine(lines[headerRowIndex], delimiter).map((h) => h.toLowerCase().trim());
+    headers = lines[headerRowIndex].map((h) => h.toLowerCase().trim());
 
     const findColumnIndex = (possibleNames: string[]): number => {
       const normalizedNames = possibleNames.map((name) => name.toLowerCase());
@@ -88,13 +95,7 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
   const rows: CruiseDayValues[] = [];
 
   for (let i = headerRowIndex + 1; i < lines.length; i++) {
-    const line = lines[i].trim();
-
-    if (!line) {
-      continue;
-    }
-
-    const values = parseCSVLine(line, delimiter);
+    const values = lines[i];
 
     let positionString = '';
     if (columnIndices.latDd !== -1 && columnIndices.latMm !== -1 && columnIndices.latDir !== -1) {
@@ -145,35 +146,6 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
   return rows;
 }
 
-function parseCSVLine(line: string, delimiter: string): string[] {
-  const result: string[] = [];
-  let current = '';
-  let insideQuotes = false;
-
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    const nextChar = line[i + 1];
-
-    if (char === '"') {
-      if (insideQuotes && nextChar === '"') {
-        current += '"';
-        i++; // Skip next quote
-      } else {
-        insideQuotes = !insideQuotes;
-      }
-    } else if (char === delimiter && !insideQuotes) {
-      result.push(current);
-      current = '';
-    } else {
-      current += char;
-    }
-  }
-
-  result.push(current);
-
-  return result;
-}
-
 /**
  * Parses an XLSX file and converts it to an array of CruiseDayValues objects
  * Supports the same columns as CSV: number/day/dzien, hours/godziny/liczba godzin, taskName/task name/nazwa zadania/zadanie, region/rejon, position/pozycja, comment/uwagi
@@ -184,9 +156,8 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
   try {
     data = await readSheet(file);
   } catch (error) {
-    throw new Error(
-      `Nie udało się przeanalizować pliku XLSX: ${error instanceof Error ? error.message : 'Nieznany błąd'}`
-    );
+    console.error(error);
+    throw new Error('Nie udało się przeanalizować pliku XLSX. Sprawdź, czy plik nie jest uszkodzony.');
   }
 
   if (data.length < 2) {
@@ -318,18 +289,37 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
  * Parses either CSV or XLSX file based on file extension
  * Missing columns will be filled with empty strings instead of throwing an error
  */
-export async function parseCruiseDayDetailsFromFile(file: File): Promise<CruiseDayValues[]> {
+export async function parseCruiseDayDetailsFromFile(file: File, cruiseHours: number): Promise<CruiseDayValues[]> {
+  if (file.size > MAX_IMPORT_FILE_BYTES) {
+    throw new Error('Plik jest zbyt duży. Maksymalny rozmiar to 1 MB.');
+  }
+
   const fileName = file.name.toLowerCase();
+  let rows: CruiseDayValues[];
 
   if (fileName.endsWith('.xlsx')) {
-    return parseCruiseDayDetailsFromXlsx(file);
+    rows = await parseCruiseDayDetailsFromXlsx(file);
+  } else if (fileName.endsWith('.csv') || fileName.endsWith('.txt')) {
+    rows = parseCruiseDayDetailsFromCsv(await file.text());
+  } else {
+    throw new Error('Nieobsługiwany format pliku. Użyj plików CSV lub XLSX.');
   }
 
-  if (fileName.endsWith('.csv') || fileName.endsWith('.txt')) {
-    return parseCruiseDayDetailsFromCsv(await file.text());
+  if (rows.length > MAX_IMPORT_ROWS) {
+    throw new Error(`Plik zawiera zbyt wiele wierszy. Maksymalna liczba to ${MAX_IMPORT_ROWS}.`);
   }
 
-  throw new Error('Nieobsługiwany format pliku. Użyj plików CSV lub XLSX.');
+  const maxDay = Math.ceil(cruiseHours / 24);
+  rows.forEach((row, index) => {
+    if (row.number < 0 || row.number > maxDay) {
+      throw new Error(`Wiersz ${index + 1}: dzień ${row.number} jest poza zakresem rejsu (0–${maxDay}).`);
+    }
+    if (row.hours < 0 || row.hours > cruiseHours) {
+      throw new Error(`Wiersz ${index + 1}: liczba godzin ${row.hours} jest poza zakresem rejsu (0–${cruiseHours}).`);
+    }
+  });
+
+  return rows;
 }
 
 function parsePositionString(position: string): {
@@ -355,7 +345,7 @@ function parsePositionString(position: string): {
 
   const parts = position.split(' - ');
   const coordinatesPart = parts[0];
-  result.pointName = parts[1] ? parts[1].trim() : '';
+  result.pointName = parts.slice(1).join(' - ').trim();
 
   const coordParts = coordinatesPart.split(',');
   if (coordParts.length >= 1) {

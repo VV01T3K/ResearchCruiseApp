@@ -13,6 +13,9 @@ import { formBDefaultValues } from '@/routes/applications/$applicationId/-schema
 import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
 import { exportCruiseDayDetailsToXlsx, parseCruiseDayDetailsFromFile } from '@/lib/applications/csvParser';
 
+const cruiseDayKey = (row: CruiseDayValues) =>
+  JSON.stringify([row.number, row.hours, row.taskName, row.region, row.position, row.comment]);
+
 const cruiseDayDetailsColumns = (
   form: FormBFormApi,
   removeRow: (index: number) => void,
@@ -116,10 +119,15 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
 
     const toastId = toast.loading(`Wczytywanie pliku ${file.name}...`);
     try {
-      const rows = await parseCruiseDayDetailsFromFile(file);
+      const rows = await parseCruiseDayDetailsFromFile(file, context.formA.cruiseDays * 24 + context.formA.cruiseHours);
       const currentRows = form.getFieldValue('cruiseDaysDetails') || [];
       form.setFieldValue('cruiseDaysDetails', [...currentRows, ...rows]);
-      toast.success(`Wczytano ${rows.length} wierszy z pliku ${file.name}.`);
+      const currentKeys = new Set(currentRows.map(cruiseDayKey));
+      const duplicates = rows.filter((row) => currentKeys.has(cruiseDayKey(row))).length;
+      toast.success(
+        `Wczytano ${rows.length} wierszy z pliku ${file.name}.` +
+          (duplicates > 0 ? ` Uwaga: ${duplicates} z nich było już w tabeli, sprawdź duplikaty.` : '')
+      );
     } catch (error) {
       console.error(error);
       toast.error(getErrorMessage(error, `Nie udało się wczytać pliku ${file.name}`));

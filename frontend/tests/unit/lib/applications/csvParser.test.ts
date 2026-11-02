@@ -49,7 +49,7 @@ describe('parseCruiseDayDetailsFromFile', () => {
   it.each(['dni.csv', 'dni.txt'])('reads %s as CSV text', async (name) => {
     const file = new File(['Dzien;Godziny;Zadanie\n1;12;Pomiary CTD'], name);
 
-    await expect(parseCruiseDayDetailsFromFile(file)).resolves.toMatchObject([
+    await expect(parseCruiseDayDetailsFromFile(file, 24)).resolves.toMatchObject([
       { number: 1, hours: 12, taskName: 'Pomiary CTD' },
     ]);
   });
@@ -57,7 +57,16 @@ describe('parseCruiseDayDetailsFromFile', () => {
   it('rejects other formats instead of reading them as CSV', async () => {
     const file = new File(['binary'], 'dni.xls');
 
-    await expect(parseCruiseDayDetailsFromFile(file)).rejects.toThrow('Nieobsługiwany format pliku');
+    await expect(parseCruiseDayDetailsFromFile(file, 24)).rejects.toThrow('Nieobsługiwany format pliku');
+  });
+
+  it.each([
+    ['Dzien;Godziny\n8;1', 'Wiersz 1: dzień 8'],
+    ['Dzien;Godziny\n1;1\n1;-5', 'Wiersz 2: liczba godzin -5'],
+    [`Dzien\n${'1\n'.repeat(1001)}`, 'zbyt wiele wierszy'],
+    ['x'.repeat(1024 * 1024 + 1), 'zbyt duży'],
+  ])('rejects impossible imports: %#', async (content, message) => {
+    await expect(parseCruiseDayDetailsFromFile(new File([content], 'dni.csv'), 168)).rejects.toThrow(message);
   });
 });
 
@@ -92,6 +101,15 @@ it('imports Polish headers, CRLF, coordinates and a named station', () => {
       comment: '',
     },
   ]);
+});
+it('keeps a quoted multi-line cell in one row', () => {
+  expect(parseCruiseDayDetailsFromCsv('day;comment;hours\n1;"linia 1\nlinia 2";8\n2;;4')).toMatchObject([
+    { number: 1, comment: 'linia 1\nlinia 2', hours: 8 },
+    { number: 2, comment: '', hours: 4 },
+  ]);
+});
+it('rejects an unclosed quote', () => {
+  expect(() => parseCruiseDayDetailsFromCsv('day;comment\n1;"bez końca')).toThrow('zamknięcie cudzysłowów');
 });
 it('rejects a header without data rows', () => {
   expect(() => parseCruiseDayDetailsFromCsv('day,hours')).toThrow(
