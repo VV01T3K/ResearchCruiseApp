@@ -122,7 +122,7 @@ function MyPublicationsPage() {
     },
     {
       id: 'actions',
-      header: undefined,
+      header: () => <span className="sr-only">Akcje</span>,
       cell: (cell) => (
         <Button
           variant="dangerOutline"

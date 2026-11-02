@@ -71,6 +71,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
       },
       {
         id: 'actions',
+        header: () => <span className="sr-only">Akcje</span>,
         cell: ({ row }) => (
           <div className="flex justify-end">
             <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />

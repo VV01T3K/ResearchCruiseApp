@@ -55,6 +55,7 @@ export function ApplicationsSection({
             },
             {
               id: 'cruiseManagerAvatar',
+              header: () => <span className="sr-only">Zdjęcie</span>,
               cell: ({ row }) => (
                 <Avatar
                   fullName={`${row.original.cruiseManagerFirstName} ${row.original.cruiseManagerLastName}`}
@@ -104,6 +105,7 @@ export function ApplicationsSection({
               ? [
                   {
                     id: 'actions',
+                    header: () => <span className="sr-only">Akcje</span>,
                     cell: ({ row }) => (
                       <Button
                         variant={attached ? 'dangerOutline' : 'successOutline'}

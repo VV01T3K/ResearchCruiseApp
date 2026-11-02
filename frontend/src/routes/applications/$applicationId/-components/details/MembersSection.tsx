@@ -42,6 +42,7 @@ export function MembersSection() {
     },
     {
       id: 'padding',
+      header: () => <span className="sr-only">Odstęp</span>,
       cell: () => null,
       size: 10,
     },

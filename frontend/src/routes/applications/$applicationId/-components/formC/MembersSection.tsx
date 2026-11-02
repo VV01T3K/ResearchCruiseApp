@@ -80,6 +80,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
       },
       {
         id: 'actions',
+        header: () => <span className="sr-only">Akcje</span>,
         cell: ({ row }) => (
           <div className="flex justify-end">
             <TableDeleteRowButton
@@ -139,6 +140,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
       },
       {
         id: 'actions',
+        header: () => <span className="sr-only">Akcje</span>,
         cell: ({ row }) => (
           <div className="flex justify-end">
             <TableDeleteRowButton

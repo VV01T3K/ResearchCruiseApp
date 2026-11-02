@@ -76,6 +76,7 @@ const shortResearchEquipmentColumns = (
   },
   {
     id: 'actions',
+    header: () => <span className="sr-only">Akcje</span>,
     cell: ({ row }) => (
       <div className="flex justify-end">
         <TableDeleteRowButton
@@ -145,6 +146,7 @@ const longResearchEquipmentColumns = (
   },
   {
     id: 'actions',
+    header: () => <span className="sr-only">Akcje</span>,
     cell: ({ row }) => (
       <div className="flex justify-end">
         <TableDeleteRowButton
@@ -223,6 +225,7 @@ const portColumns = (
   },
   {
     id: 'actions',
+    header: () => <span className="sr-only">Akcje</span>,
     cell: ({ row }) => (
       <div className="flex justify-end">
         <TableDeleteRowButton

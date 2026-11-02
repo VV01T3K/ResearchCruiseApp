@@ -14,8 +14,11 @@ export function TableSortingIcon<TData extends object, TValue>({ header }: { hea
   return (
     <span className="inline-flex shrink-0 items-center">
       <Icon weight="bold" className="size-3.5" />
-      <Subscribe source={column.table.atoms.sorting} selector={(sorting) => sorting.length > 1}>
-        {(isMultiSorted) => isMultiSorted && <span className="text-xs tabular-nums">{column.getSortIndex() + 1}</span>}
+      <Subscribe
+        source={column.table.atoms.sorting}
+        selector={(sorting) => (sorting.length > 1 ? column.getSortIndex() + 1 : null)}
+      >
+        {(position) => position && <span className="text-xs tabular-nums">{position}</span>}
       </Subscribe>
     </span>
   );

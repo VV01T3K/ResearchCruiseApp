@@ -369,6 +369,13 @@ for (const mobile of [false, true]) {
       await expect(rows).toHaveCount(2);
       await page.getByRole('option', { name: 'alpha@example.com', exact: true }).click();
       await page.keyboard.press('Escape');
+      const multiSort = (name: RegExp) => page.getByRole('button', { name }).click({ modifiers: ['Shift'] });
+      await multiSort(/^Rola/);
+      await multiSort(/^Imię i nazwisko/);
+      await multiSort(/^Rola/);
+      await multiSort(/^Rola/);
+      await expect(page.getByRole('button', { name: 'Email 1' })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Imię i nazwisko 2' })).toBeVisible();
     }
     await expect(rows).toHaveCount(1);
     await expect(rows).toContainText('zebra@example.com');
