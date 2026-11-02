@@ -23,7 +23,8 @@ test.use({ account: admin });
 test.beforeEach(({ network }) =>
   network.use(
     getGetApplicationsForCruisePlanningMockHandler([]),
-    getGetAvailableCruiseManagersMockHandler([admin, deputy])
+    getGetAvailableCruiseManagersMockHandler([admin, deputy]),
+    getGetCruisesMockHandler([])
   )
 );
 
@@ -129,7 +130,7 @@ test('an edit made during a new cruise POST asks before leaving and never repeat
   const save = page.getByRole('button', { name: 'Zapisz' });
   const title = page.locator('input[name="title"]');
   const dialog = page.getByRole('dialog', { name: 'Niezapisane zmiany' });
-  await save.click();
+  await save.dblclick();
   await expect.poll(() => requests.bodies('POST /v2/cruises').length).toBe(1);
   await title.fill('Poprawka');
   response.resolve();
@@ -374,7 +375,7 @@ test('a cruise save waits for the previous one and starts from its accepted revi
   try {
     await edit.click();
     await title.fill('Starszy');
-    await save.click();
+    await save.dblclick();
     await expect.poll(() => patches().length).toBe(1);
     await page.getByRole('button', { name: 'Cofnij zmiany' }).click();
     await page.getByRole('dialog', { name: 'Odrzucić zmiany?' }).getByRole('button', { name: 'Odrzuć zmiany' }).click();
