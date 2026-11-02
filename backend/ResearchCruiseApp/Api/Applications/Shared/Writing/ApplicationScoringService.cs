@@ -175,6 +175,7 @@ internal class ApplicationScoringService(ApplicationDbContext dbContext)
         cruiseApplication.EffectsPoints = await dbContext
             .UserEffects.Where(userEffect =>
                 userEffect.UserId == cruiseApplication.FormA!.CruiseManagerId
+                && userEffect.Effect.FormC.CruiseApplication != null
             )
             .Select(userEffect => userEffect.Points)
             .SumAsync(cancellationToken);

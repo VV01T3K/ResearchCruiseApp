@@ -12,6 +12,8 @@ namespace ResearchCruiseApp.Api.Cruises;
 
 public static class PlanningEndpoints
 {
+    private const int MaxAutoPlanCruiseHours = 1_000_000;
+
     public static void Map(RouteGroupBuilder group)
     {
         MapAutoPlan(group);
@@ -45,6 +47,7 @@ public static class PlanningEndpoints
         YearBasedKeyGenerator yearBasedKeyGenerator,
         ApplicationDbContext dbContext,
         GlobalizationService globalizationService,
+        ILogger<AutoPlanResponse> logger,
         CancellationToken cancellationToken
     )
     {
@@ -98,7 +101,24 @@ public static class PlanningEndpoints
                 continue;
             }
 
-            var (start, end, windowEnd) = GetAutoCalculatedDates(application.FormA, timeZone);
+            if (
+                GetAutoCalculatedDates(application.FormA, timeZone)
+                is not var (start, end, windowEnd)
+            )
+            {
+                logger.LogError(
+                    "Application {ApplicationId} has stored values auto-plan cannot read",
+                    application.Id
+                );
+                skipped.Add(
+                    SkippedApplicationResponse.From(
+                        application,
+                        "Zgłoszenie ma niepoprawny lub brakujący zapisany termin albo czas trwania."
+                    )
+                );
+                continue;
+            }
+
             var reason =
                 end > windowEnd
                     ? "Czas trwania rejsu nie mieści się w terminie zgłoszenia."
@@ -190,31 +210,50 @@ public static class PlanningEndpoints
             .ToList();
     }
 
-    private static (DateTime Start, DateTime End, DateTime WindowEnd) GetAutoCalculatedDates(
+    private static (DateTime Start, DateTime End, DateTime WindowEnd)? GetAutoCalculatedDates(
         FormA formA,
         TimeZoneInfo timeZone
     )
     {
-        var (windowStart, windowEnd) = formA
-            is { PrecisePeriodStart: not null, PrecisePeriodEnd: not null }
-            ? (formA.PrecisePeriodStart.Value.Date, formA.PrecisePeriodEnd.Value.Date)
-            : (
-                GetPeriodEdgeDate(formA.Year, formA.OptimalPeriodBeg!),
-                GetPeriodEdgeDate(formA.Year, formA.OptimalPeriodEnd!)
-            );
+        if (
+            !int.TryParse(
+                formA.CruiseHours,
+                NumberStyles.None,
+                CultureInfo.InvariantCulture,
+                out var hours
+            )
+            || hours > MaxAutoPlanCruiseHours
+        )
+            return null;
+
+        DateTime windowStart;
+        DateTime windowEnd;
+        if (formA is { PrecisePeriodStart: not null, PrecisePeriodEnd: not null })
+        {
+            windowStart = formA.PrecisePeriodStart.Value.Date;
+            windowEnd = formA.PrecisePeriodEnd.Value.Date;
+        }
+        else if (
+            TryParseYear(formA.Year, out var year)
+            && TryParsePeriodEdge(formA.OptimalPeriodBeg, out var startEdge)
+            && TryParsePeriodEdge(formA.OptimalPeriodEnd, out var endEdge)
+        )
+        {
+            windowStart = GetPeriodEdgeDate(year, startEdge);
+            windowEnd = GetPeriodEdgeDate(year, endEdge);
+        }
+        else
+        {
+            return null;
+        }
+
         var start = ToUtcAtEight(windowStart, timeZone);
 
-        return (
-            start,
-            start.AddHours(int.Parse(formA.CruiseHours, CultureInfo.InvariantCulture)),
-            ToUtcAtEight(windowEnd, timeZone)
-        );
+        return (start, start.AddHours(hours), ToUtcAtEight(windowEnd, timeZone));
     }
 
-    private static DateTime GetPeriodEdgeDate(string year, string edge) =>
-        new DateTime(int.Parse(year, CultureInfo.InvariantCulture), 1, 1)
-            .AddMonths(int.Parse(edge, CultureInfo.InvariantCulture) / 2)
-            .AddDays(int.Parse(edge, CultureInfo.InvariantCulture) % 2 * 14);
+    private static DateTime GetPeriodEdgeDate(int year, int edge) =>
+        new DateTime(year, 1, 1).AddMonths(edge / 2).AddDays(edge % 2 * 14);
 
     private static DateTime ToUtcAtEight(DateTime date, TimeZoneInfo timeZone) =>
         TimeZoneInfo.ConvertTimeToUtc(
@@ -230,6 +269,14 @@ public static class PlanningEndpoints
             : null;
 
     internal static bool IsValidYear(int year) => year is >= 1900 and <= 3000;
+
+    internal static bool TryParseYear(string? year, out int result) =>
+        int.TryParse(year, NumberStyles.None, CultureInfo.InvariantCulture, out result)
+        && IsValidYear(result);
+
+    internal static bool TryParsePeriodEdge(string? edge, out int result) =>
+        int.TryParse(edge, NumberStyles.None, CultureInfo.InvariantCulture, out result)
+        && result is >= 0 and <= 24;
 
     internal static bool TryParseUtc(string? date, out DateTime result) =>
         DateTime.TryParse(

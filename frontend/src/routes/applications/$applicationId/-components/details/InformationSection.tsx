@@ -1,4 +1,5 @@
 import { Accordion } from '@/components/shared/Accordion';
+import { Alert } from '@/components/shared/Alert';
 import { Link } from '@/components/shared/Link';
 import { Input } from '@/components/shared/inputs/Input';
 import { NumberInput } from '@/components/shared/inputs/NumberInput';
@@ -13,6 +14,11 @@ export function InformationSection() {
 
   return (
     <Accordion title="1. Informacje o zgłoszeniu" expandedByDefault>
+      {application.invalidStoredValues.length > 0 && (
+        <div className="mb-4">
+          <Alert variant="danger">Niepoprawne zapisane dane: {application.invalidStoredValues.join(', ')}.</Alert>
+        </div>
+      )}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Input name="number" value={application.number} label="Numer zgłoszenia:" disabled />
         <DatePickerInput name="date" value={application.date} label="Data wysłania:" disabled />
@@ -23,7 +29,7 @@ export function InformationSection() {
           label="Zastępca kierownika:"
           disabled
         />
-        <Input name="year" value={`${application.year}`} label="Rok rejsu:" disabled />
+        <Input name="year" value={application.year?.toString() ?? 'Niepoprawna wartość'} label="Rok rejsu:" disabled />
         <div className="grid grid-cols-1 gap-1">
           <strong>Formularze:</strong>
           <Link href={`/applications/${application.id}/formA`} disabled={!application.hasFormA}>

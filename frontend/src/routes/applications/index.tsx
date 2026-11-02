@@ -79,7 +79,16 @@ function ApplicationsPage() {
       id: 'number',
       header: 'Nr',
       accessorFn: (row) => row.number,
-      cell: ({ row }) => <span className="whitespace-nowrap">{row.original.number}</span>,
+      cell: ({ row }) => (
+        <>
+          <span className="whitespace-nowrap">{row.original.number}</span>
+          {row.original.invalidStoredValues.length > 0 && (
+            <Badge variant="danger" className="mt-1 whitespace-normal">
+              Niepoprawne dane: {row.original.invalidStoredValues.join(', ')}
+            </Badge>
+          )}
+        </>
+      ),
       sortDescFirst: true,
       meta: { filterInputType: 'number' },
       size: 86,
@@ -96,7 +105,7 @@ function ApplicationsPage() {
     {
       id: 'year',
       header: 'Rok rejsu',
-      accessorFn: (row) => row.year.toString(),
+      accessorFn: (row) => row.year?.toString() ?? '-',
       sortDescFirst: true,
       meta: { filterOptions: yearFilterOptions },
       size: 91,

@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
+import { Alert } from '@/components/shared/Alert';
 import { Badge } from '@/components/shared/Badge';
 import { Layout } from '@/components/shared/Layout';
 import { Link } from '@/components/shared/Link';
@@ -9,7 +10,7 @@ import { Table } from '@/components/shared/table/Table';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/generated/endpoints/users.gen';
 import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
-import type { CruiseEffectResponse } from '@/api/generated/schemas';
+import type { CruiseEffectsResponse } from '@/api/generated/schemas';
 import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 
 export const Route = createFileRoute('/cruise-effects')({
@@ -17,14 +18,17 @@ export const Route = createFileRoute('/cruise-effects')({
   beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew),
 });
 
-function mapEffectsToValues(effects: CruiseEffectResponse[]) {
-  return effects.map(({ effect, ...response }) => ({ ...response, effect: mapResearchTaskToValues(effect) }));
+function mapEffectsToValues({ items, skippedCount }: CruiseEffectsResponse) {
+  return {
+    skippedCount,
+    items: items.map(({ effect, ...response }) => ({ ...response, effect: mapResearchTaskToValues(effect) })),
+  };
 }
 
 function CruiseEffectsPage() {
   const effectsQuery = useGetCurrentUserCruiseEffectsSuspense({ query: { select: mapEffectsToValues } });
 
-  const columns: ColumnDef<ReturnType<typeof mapEffectsToValues>[number]>[] = [
+  const columns: ColumnDef<ReturnType<typeof mapEffectsToValues>['items'][number]>[] = [
     {
       header: 'Lp.',
       cell: ({ row }) => `${row.index + 1}`,
@@ -59,7 +63,19 @@ function CruiseEffectsPage() {
   return (
     <>
       <Layout title="Efekty rejsów">
-        <Table data={effectsQuery.data} columns={columns} emptyTableMessage="Nie znaleziono żadnego efektu rejsu" />
+        {effectsQuery.data.skippedCount > 0 && (
+          <div className="mb-4">
+            <Alert variant="warning">
+              Pominięte efekty: {effectsQuery.data.skippedCount}. Ich formularz C nie jest powiązany z żadnym
+              zgłoszeniem, więc nie są też liczone do punktacji.
+            </Alert>
+          </div>
+        )}
+        <Table
+          data={effectsQuery.data.items}
+          columns={columns}
+          emptyTableMessage="Nie znaleziono żadnego efektu rejsu"
+        />
       </Layout>
     </>
   );
