@@ -29,7 +29,7 @@ export function InformationSection() {
           label="Zastępca kierownika:"
           disabled
         />
-        <Input name="year" value={application.year?.toString() ?? 'Niepoprawna wartość'} label="Rok rejsu:" disabled />
+        <Input name="year" value={application.year?.toString() ?? 'Błędne dane'} label="Rok rejsu:" disabled />
         <div className="grid grid-cols-1 gap-1">
           <strong>Formularze:</strong>
           <Link href={`/applications/${application.id}/formA`} disabled={!application.hasFormA}>

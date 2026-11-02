@@ -113,7 +113,7 @@ public static class PlanningEndpoints
                 skipped.Add(
                     SkippedApplicationResponse.From(
                         application,
-                        "Zgłoszenie ma niepoprawny lub brakujący zapisany rok, termin albo czas trwania."
+                        "Część danych tego zgłoszenia (rok, termin lub czas trwania) jest błędna. Skontaktuj się z Biurem Armatora lub zgłoś problem."
                     )
                 );
                 continue;

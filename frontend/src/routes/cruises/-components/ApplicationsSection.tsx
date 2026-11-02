@@ -49,7 +49,7 @@ export function ApplicationsSection({
             },
             {
               header: 'Rok rejsu',
-              accessorFn: (row) => row.year ?? 'Niepoprawna wartość',
+              accessorFn: (row) => row.year ?? 'Błędne dane',
               enableColumnFilter: !attached,
               size: 20,
             },
