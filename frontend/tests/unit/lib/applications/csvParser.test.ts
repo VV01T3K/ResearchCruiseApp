@@ -41,7 +41,7 @@ describe('parseCruiseDayDetailsFromXlsx', () => {
       },
       {
         number: 2,
-        hours: 6.5,
+        hours: 7,
         taskName: 'Połów',
         region: 'Rynna Słupska',
         position: '',
@@ -62,7 +62,13 @@ describe('parseCruiseDayDetailsFromXlsx', () => {
   });
 
   it('keeps positions through export and re-import', async () => {
-    const positions = ['54 30.5 N, 18 45.2 E - P1', 'Stacja pomiarowa Głębia Gdańska A', 'Głębia - P2', ''];
+    const positions = [
+      '54 30.5 N, 18 45.2 E - P1',
+      'Stacja pomiarowa Głębia Gdańska A',
+      '116 stacja Gdańsk Nowy Port',
+      'Głębia - P2',
+      '',
+    ];
     await exportCruiseDayDetailsToXlsx(
       positions.map((position) => ({
         number: 1,
@@ -82,7 +88,7 @@ describe('parseCruiseDayDetailsFromXlsx', () => {
   it('rejects files that are not spreadsheets', async () => {
     const file = new File(['not a spreadsheet'], 'broken.xlsx');
 
-    await expect(parseCruiseDayDetailsFromXlsx(file)).rejects.toThrow('Nie udało się przeanalizować pliku XLSX');
+    await expect(parseCruiseDayDetailsFromXlsx(file)).rejects.toThrow('Nie udało się odczytać pliku XLSX');
   });
 });
 
@@ -112,9 +118,9 @@ describe('parseCruiseDayDetailsFromFile', () => {
     await expect(parseCruiseDayDetailsFromFile(new File([content], 'dni.csv'))).rejects.toThrow(message);
   });
 
-  it('reads decimal-comma hours and reports the spreadsheet row', async () => {
-    await expect(parseCruiseDayDetailsFromFile(new File(['Dzien;Godziny\n1;5,5'], 'dni.csv'))).resolves.toMatchObject([
-      { number: 1, hours: 5.5 },
+  it('rounds decimal-comma hours and reports the spreadsheet row', async () => {
+    await expect(parseCruiseDayDetailsFromFile(new File(['Dzien;Godziny\n1;6,5'], 'dni.csv'))).resolves.toMatchObject([
+      { number: 1, hours: 7 },
     ]);
     const file = await xlsxFile([['Tytuł'], ['Dzien', 'Godziny'], [1, 1], [null, null], [1, '-5,5']]);
     await expect(parseCruiseDayDetailsFromXlsx(file)).rejects.toThrow('Wiersz 5: liczba godzin');
@@ -171,6 +177,11 @@ it('rejects an incomplete set of coordinate columns', () => {
   expect(() => parseCruiseDayDetailsFromCsv('day,LAT\n1,54')).toThrow(
     'Jeśli jedna z kolumn latitude(LAT), longitude(LONG) lub "Nazwa Punktu" jest obecna, wszystkie trzy muszą być obecne'
   );
+});
+it('detects the delimiter after a leading blank line', () => {
+  expect(parseCruiseDayDetailsFromCsv('\ndzien;godziny;zadanie\n1;8;Pomiary')).toMatchObject([
+    { number: 1, hours: 8, taskName: 'Pomiary' },
+  ]);
 });
 it('allows missing optional columns', () => {
   expect(parseCruiseDayDetailsFromCsv('day\n1')).toEqual([

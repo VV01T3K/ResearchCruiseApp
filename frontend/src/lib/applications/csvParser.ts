@@ -49,7 +49,12 @@ function checkRow(row: CruiseDayValues, fileRow: number) {
  */
 export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValues[] {
   const text = csvContent.replace(/^\uFEFF/, '').trimEnd();
-  const delimiter = text.split('\n', 1)[0].includes(';') ? ';' : ',';
+  const delimiter = text
+    .split('\n')
+    .find((line) => line.trim())
+    ?.includes(';')
+    ? ';'
+    : ',';
   const { data: lines, errors } = Papa.parse<string[]>(text, { delimiter });
 
   if (errors.length > 0) {
@@ -134,7 +139,7 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
 
     const row: CruiseDayValues = {
       number: toNumber(values[columnIndices.number]),
-      hours: toNumber(values[columnIndices.hours]),
+      hours: Math.round(toNumber(values[columnIndices.hours])),
       taskName: String(values[columnIndices.taskName] || '').trim(),
       region: String(values[columnIndices.region] || '').trim(),
       position: joinPosition(values, columnIndices),
@@ -163,7 +168,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
     data = await readSheet(file);
   } catch (error) {
     console.error(error);
-    throw new Error('Nie udało się przeanalizować pliku XLSX. Sprawdź, czy plik nie jest uszkodzony.');
+    throw new Error('Nie udało się odczytać pliku XLSX. Sprawdź, czy plik nie jest uszkodzony.');
   }
 
   if (data.length < 2) {
@@ -244,7 +249,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
 
     const cruiseDay: CruiseDayValues = {
       number: toNumber(row[columnIndices.number]),
-      hours: toNumber(row[columnIndices.hours]),
+      hours: Math.round(toNumber(row[columnIndices.hours])),
       taskName: String(row[columnIndices.taskName] || '').trim(),
       region: String(row[columnIndices.region] || '').trim(),
       position: joinPosition(row, columnIndices),
@@ -311,7 +316,7 @@ function parsePositionString(position: string): {
   if (!position) return result;
 
   const parts = position.split(' - ');
-  if (!/^\s*-?\d/.test(parts[0])) {
+  if (!/^\s*-?\d+(?:[.,]\d+)?\s+\d+(?:[.,]\d+)?\s+[NSEW]\b/i.test(parts[0])) {
     result.pointName = position.trim();
     return result;
   }
