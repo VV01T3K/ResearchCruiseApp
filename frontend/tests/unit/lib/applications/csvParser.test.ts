@@ -112,6 +112,8 @@ describe('parseCruiseDayDetailsFromFile', () => {
     ['Dzien;Godziny\n1,5;1', 'Wiersz 2: dzień'],
     ['Tytuł;\nDzien;Godziny\n1;1\n\n1;-5,5', 'Wiersz 5: liczba godzin musi być liczbą od 0 do 24.'],
     ['Dzien;Godziny\n1;25', 'Wiersz 2: liczba godzin'],
+    ['Dzien;Godziny\n1;24,4', 'Wiersz 2: liczba godzin'],
+    ['Dzien;Godziny\n1;-0,4', 'Wiersz 2: liczba godzin'],
     [`Dzien\n${'1\n'.repeat(1001)}`, 'zbyt wiele wierszy'],
     ['x'.repeat(1024 * 1024 + 1), 'zbyt duży'],
   ])('rejects impossible imports: %#', async (content, message) => {

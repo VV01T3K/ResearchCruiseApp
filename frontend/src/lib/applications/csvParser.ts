@@ -139,7 +139,7 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
 
     const row: CruiseDayValues = {
       number: toNumber(values[columnIndices.number]),
-      hours: Math.round(toNumber(values[columnIndices.hours])),
+      hours: toNumber(values[columnIndices.hours]),
       taskName: String(values[columnIndices.taskName] || '').trim(),
       region: String(values[columnIndices.region] || '').trim(),
       position: joinPosition(values, columnIndices),
@@ -147,7 +147,7 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
     };
 
     checkRow(row, i + 1);
-    rows.push(row);
+    rows.push({ ...row, hours: Math.round(row.hours) });
   }
 
   if (rows.length === 0) {
@@ -249,7 +249,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
 
     const cruiseDay: CruiseDayValues = {
       number: toNumber(row[columnIndices.number]),
-      hours: Math.round(toNumber(row[columnIndices.hours])),
+      hours: toNumber(row[columnIndices.hours]),
       taskName: String(row[columnIndices.taskName] || '').trim(),
       region: String(row[columnIndices.region] || '').trim(),
       position: joinPosition(row, columnIndices),
@@ -257,7 +257,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
     };
 
     checkRow(cruiseDay, i + 1);
-    rows.push(cruiseDay);
+    rows.push({ ...cruiseDay, hours: Math.round(cruiseDay.hours) });
   }
 
   if (rows.length === 0) {
