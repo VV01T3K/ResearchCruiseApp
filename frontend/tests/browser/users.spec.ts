@@ -266,7 +266,7 @@ test('a group deletion deletes every selected user and reports the ones that fai
   await dialog.getByRole('button', { name: 'Usuń zaznaczonych użytkowników' }).click();
   expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(0);
   await dialog.getByRole('button', { name: 'Na pewno?' }).click();
-  await expect(page.getByText('Usunięto część osób. Błąd przy 1 użytkownikach', { exact: true })).toBeVisible();
+  await expect(page.getByText('Usunięto część osób. Błąd przy 1 użytkowniku', { exact: true })).toBeVisible();
   await expect(page.getByRole('row').filter({ hasText: deputy.email })).toHaveCount(0);
   await expect(page.getByRole('row').filter({ hasText: outsider.email })).toBeVisible();
   expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(1);
