@@ -49,14 +49,28 @@ export function navigateToFirstError({ toast: showToast = false } = {}): void {
     const target = document.querySelector<HTMLElement>('[aria-invalid="true"], [data-error="true"]');
     if (!target) return;
 
-    const closedPanel = target.closest<HTMLElement>('[data-closed]');
-    closedPanel?.parentElement?.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')?.click();
-
-    requestAnimationFrame(() => {
+    const reveal = () => {
       if (target.matches('[data-error="true"]')) target.tabIndex = -1;
       target.focus({ preventScroll: true });
       target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
+    };
+
+    const closedPanel = target.closest<HTMLElement>('[data-closed]');
+    if (!closedPanel) {
+      requestAnimationFrame(reveal);
+      return;
+    }
+
+    closedPanel.parentElement?.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')?.click();
+    const fallback = setTimeout(reveal, 500);
+    closedPanel.addEventListener(
+      'transitionend',
+      () => {
+        clearTimeout(fallback);
+        reveal();
+      },
+      { once: true }
+    );
   });
 }
 
