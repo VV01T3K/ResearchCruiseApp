@@ -9,7 +9,7 @@ import { Calendar } from '@/components/shared/calendar/Calendar';
 import { getGetCruisesQueryKey, useUpdateCruise } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
 import { getPersonName, isUnassignedPerson } from '@/lib/applications/person';
-import { CruiseFormSchema, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
+import { CruiseFormSchema, mapCruiseToValues } from '@/features/cruises/schemas/form.schema';
 
 type Props = {
   cruises: CruiseResponse[];

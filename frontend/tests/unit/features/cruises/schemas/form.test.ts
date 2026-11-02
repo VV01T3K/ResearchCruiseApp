@@ -7,7 +7,7 @@ import {
   cruiseFormDefaultValues,
   findOverlappingCruises,
   mapCruiseToValues,
-} from '@/routes/cruises/-schemas/form.schema';
+} from '@/features/cruises/schemas/form.schema';
 
 it('writes the shared create/update cruise API shape', () => {
   expect(CruiseFormSchema.parse(mapCruiseToValues(cruise()))).toEqual({

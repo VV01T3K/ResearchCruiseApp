@@ -9,9 +9,9 @@ import { Modal } from '@/components/shared/Modal';
 import { Tabs } from '@/components/shared/Tabs';
 import { toast } from '@/components/shared/layout/toast';
 import { Role } from '@/integrations/auth/types';
-import { CruiseCalendar } from './-components/CruiseCalendar';
-import { ExportForm } from './-components/ExportForm';
-import { TableView } from './-components/TableView';
+import { CruiseCalendar } from '@/features/cruises/components/CruiseCalendar';
+import { ExportForm } from '@/features/cruises/components/ExportForm';
+import { TableView } from '@/features/cruises/components/TableView';
 import { useAutoPlanCruises, useDeleteCruise, useGetCruisesSuspense } from '@/api/generated/endpoints/cruises.gen';
 import type { AutoPlanResponse, CruiseResponse } from '@/api/generated/schemas';
 

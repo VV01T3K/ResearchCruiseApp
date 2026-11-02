@@ -9,7 +9,7 @@ import { Link } from '@/components/shared/Link';
 import { Table } from '@/components/shared/table/Table';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
-import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
+import { cruiseFormDefaultValues } from '@/features/cruises/schemas/form.schema';
 
 export function ApplicationsSection({
   cruiseId,

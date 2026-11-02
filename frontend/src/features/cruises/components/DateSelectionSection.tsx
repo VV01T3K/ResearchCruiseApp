@@ -8,7 +8,7 @@ import { Alert } from '@/components/shared/Alert';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { formatDate, useNow } from '@/lib/dateUtils';
-import { cruiseFormDefaultValues, findOverlappingCruises } from '@/routes/cruises/-schemas/form.schema';
+import { cruiseFormDefaultValues, findOverlappingCruises } from '@/features/cruises/schemas/form.schema';
 
 export function DateSelectionSection({ cruiseId, isReadonly }: { cruiseId?: string; isReadonly: boolean }) {
   const form = useTypedAppFormContext({ defaultValues: cruiseFormDefaultValues });
