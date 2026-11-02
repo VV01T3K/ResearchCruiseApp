@@ -3,7 +3,7 @@ import { Accordion } from '@/components/shared/Accordion';
 import { Badge } from '@/components/shared/Badge';
 import { Button } from '@/components/shared/Button';
 import { formatDate } from '@/lib/dateUtils';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
 import type { CruiseResponse } from '@/api/generated/schemas';
 
 export function CruiseInfoSection({ context }: { context: FormBViewModel }) {

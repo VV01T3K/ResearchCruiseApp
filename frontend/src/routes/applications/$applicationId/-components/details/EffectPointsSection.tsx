@@ -1,6 +1,6 @@
 import { Accordion } from '@/components/shared/Accordion';
 import { Input } from '@/components/shared/inputs/Input';
-import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
+import { useApplicationEvaluation } from '@/features/applications/hooks/useApplicationDetails';
 
 export function EffectPointsSection() {
   const evaluation = useApplicationEvaluation();

@@ -1,5 +1,5 @@
 import { Input } from '@/components/shared/inputs/Input';
-import type { OtherResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { OtherResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
   data: OtherResearchTaskValues;

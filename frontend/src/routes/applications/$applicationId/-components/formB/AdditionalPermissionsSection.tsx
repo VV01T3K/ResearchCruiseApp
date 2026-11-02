@@ -7,9 +7,9 @@ import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
-import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { PermissionValues } from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
+import { formBDefaultValues } from '@/features/applications/schemas/formB.schema';
+import { PermissionValues } from '@/features/applications/schemas/types/PermissionValues';
 
 export function AdditionalPermissionsSection({ context }: { context: FormBViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formBDefaultValues });

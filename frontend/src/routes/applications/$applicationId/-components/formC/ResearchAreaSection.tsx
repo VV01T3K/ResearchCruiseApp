@@ -6,9 +6,9 @@ import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
-import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { ResearchAreaValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
+import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
+import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
+import { ResearchAreaValues } from '@/features/applications/schemas/types/ResearchAreaValues';
 import { getResearchAreaName } from '@/lib/applications/researchArea';
 
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';

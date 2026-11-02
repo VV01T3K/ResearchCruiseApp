@@ -19,7 +19,7 @@ import { ResearchTasksSection } from './ResearchTasksSection';
 import { ShipEquipmentsSection } from './ShipEquipmentsSection';
 import { ShipUsageSection } from './ShipUsageSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
-import { useFormBContext, type FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
+import { useFormBContext, type FormBViewModel } from '@/features/applications/models/formB-view-model';
 
 type Props = {
   context: FormBViewModel & {

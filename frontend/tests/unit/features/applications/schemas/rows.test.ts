@@ -5,17 +5,17 @@ import {
   getFormADraftFieldsSchema,
   getFormAValidationSchema,
   mapFormAToValues,
-} from '@/routes/applications/$applicationId/-schemas/formA.schema';
+} from '@/features/applications/schemas/formA.schema';
 import {
   getFormBDraftFieldsSchema,
   getFormBValidationSchema,
   mapFormBToValues,
-} from '@/routes/applications/$applicationId/-schemas/formB.schema';
+} from '@/features/applications/schemas/formB.schema';
 import {
   getFormCDraftFieldsSchema,
   getFormCValidationSchema,
   mapFormCToValues,
-} from '@/routes/applications/$applicationId/-schemas/formC.schema';
+} from '@/features/applications/schemas/formC.schema';
 
 type RowCase = {
   section: string;

@@ -2,8 +2,8 @@ import { AnimatePresence, motion } from 'motion/react';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
-import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
+import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
 
 export function ShipUsageSection({ context }: { context: FormCViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });

@@ -2,7 +2,7 @@ import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
 import { Input } from '@/components/shared/inputs/Input';
 import { DatePickerInput } from '@/components/shared/inputs/dates/DatePickerInput';
 import { useUnreadableErrors } from '@/integrations/tanstack/form/unreadableValues';
-import type { ProjectPreparationResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { ProjectPreparationResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
   data: ProjectPreparationResearchTaskValues;

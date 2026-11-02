@@ -46,7 +46,8 @@
         "backend/ResearchCruiseApp/Domain/**",
         "frontend/src/features/cruises/**",
         "frontend/src/routes/cruises/**",
-        "frontend/src/routes/applications/**"
+        "frontend/src/routes/applications/**",
+        "frontend/src/features/applications/**"
       ]
     }
   ]

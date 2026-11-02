@@ -22,7 +22,7 @@ import { ShipEquipmentsSection } from './ShipEquipmentsSection';
 import { ShipUsageSection } from './ShipUsageSection';
 import { SPUBReportDataSection } from './SPUBReportDataSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
-import { useFormCContext, type FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import { useFormCContext, type FormCViewModel } from '@/features/applications/models/formC-view-model';
 
 type Props = {
   context: FormCViewModel & {

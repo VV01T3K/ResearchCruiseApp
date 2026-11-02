@@ -3,7 +3,7 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { Accordion } from '@/components/shared/Accordion';
 import { NumberInput } from '@/components/shared/inputs/NumberInput';
 import { Table } from '@/components/shared/table/Table';
-import { useApplicationEvaluation } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
+import { useApplicationEvaluation } from '@/features/applications/hooks/useApplicationDetails';
 import { NamedUgTeam } from '@/api/generated/schemas';
 import type { GuestTeamFields } from '@/api/generated/schemas';
 

@@ -4,10 +4,7 @@ import { OwnResearchTaskDetails } from '@/routes/applications/$applicationId/-co
 import { ProjectPreparationResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ProjectPreparationResearchTaskDetails';
 import { ProjectResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ProjectResearchTaskDetails';
 import { ThesisResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ThesisResearchTaskDetails';
-import {
-  ResearchTaskType,
-  type ResearchTaskValues,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { ResearchTaskType, type ResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
   data: ResearchTaskValues;

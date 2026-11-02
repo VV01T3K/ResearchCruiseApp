@@ -4,7 +4,7 @@ import { Link } from '@/components/shared/Link';
 import { Input } from '@/components/shared/inputs/Input';
 import { NumberInput } from '@/components/shared/inputs/NumberInput';
 import { DatePickerInput } from '@/components/shared/inputs/dates/DatePickerInput';
-import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
+import { useApplication } from '@/features/applications/hooks/useApplicationDetails';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { canRevertFormB, getApplicationStatusLabel } from '@/lib/applications/status';
 

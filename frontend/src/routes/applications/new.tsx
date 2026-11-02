@@ -17,7 +17,7 @@ import {
   type FormAValues,
   formADefaultValues,
   getFormASubmissionSchema,
-} from '@/routes/applications/$applicationId/-schemas/formA.schema';
+} from '@/features/applications/schemas/formA.schema';
 import {
   useCreateApplication,
   useGetApplicationFormAContextSuspense,

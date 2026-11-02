@@ -2,7 +2,7 @@ import Papa from 'papaparse';
 import type { SheetData } from 'read-excel-file/browser';
 
 import { toast } from '@/components/shared/layout/toast';
-import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
+import { CruiseDayValues } from '@/features/applications/schemas/types/CruiseDayValues';
 
 const MAX_IMPORT_FILE_BYTES = 1024 * 1024;
 const MAX_IMPORT_ROWS = 1000;

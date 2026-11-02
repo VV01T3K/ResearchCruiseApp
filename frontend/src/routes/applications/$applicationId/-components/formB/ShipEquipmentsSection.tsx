@@ -3,8 +3,8 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { Accordion } from '@/components/shared/Accordion';
 import { Table } from '@/components/shared/table/Table';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
-import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import type { FormBFormApi, FormBViewModel } from '@/features/applications/models/formB-view-model';
+import { formBDefaultValues } from '@/features/applications/schemas/formB.schema';
 import { ShipEquipmentOption } from '@/api/generated/schemas';
 
 const shipEquipmentColumns = (form: FormBFormApi, isReadonly: boolean): ColumnDef<ShipEquipmentOption>[] => [

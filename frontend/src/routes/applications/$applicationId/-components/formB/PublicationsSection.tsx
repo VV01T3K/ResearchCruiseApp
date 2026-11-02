@@ -2,11 +2,11 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Table } from '@/components/shared/table/Table';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
 import {
   getPublicationCategoryLabel,
   PublicationValues,
-} from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+} from '@/features/applications/schemas/types/PublicationValues';
 
 export function PublicationsSection({ context }: { context: FormBViewModel }) {
   const { formA } = context;

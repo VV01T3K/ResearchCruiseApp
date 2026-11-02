@@ -5,7 +5,7 @@ import { ProjectPreparationResearchTaskThumbnail } from '@/routes/applications/$
 import { ProjectResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ProjectResearchTaskThumbnail';
 import { ThesisResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ThesisResearchTaskThumbnail';
 import type { ResearchTaskFields } from '@/api/generated/schemas';
-import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { ResearchTaskType } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
   task: ResearchTaskFields;

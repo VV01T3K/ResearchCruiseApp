@@ -3,43 +3,37 @@ import { z } from 'zod';
 
 import { FormBFields } from '@/api/generated/schemas';
 import { groupBy } from '@/lib/utils';
-import { storedBoolean, storedNumber } from '@/routes/applications/$applicationId/-schemas/storedValues';
+import { storedBoolean, storedNumber } from '@/features/applications/schemas/storedValues';
 import {
   CrewMemberValuesInputSchema,
   CrewMemberValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/CrewMemberValues';
+} from '@/features/applications/schemas/types/CrewMemberValues';
 import {
   CruiseDayValuesInputSchema,
   CruiseDayValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
+} from '@/features/applications/schemas/types/CruiseDayValues';
 import {
   GuestTeamValuesInputSchema,
   GuestTeamValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+} from '@/features/applications/schemas/types/GuestTeamValues';
 import {
   LongResearchEquipmentValuesInputSchema,
   LongResearchEquipmentValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
+} from '@/features/applications/schemas/types/LongResearchEquipmentValues';
 import {
   PermissionValuesInputSchema,
   PermissionValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
-import {
-  PortCallValuesInputSchema,
-  PortCallValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
+} from '@/features/applications/schemas/types/PermissionValues';
+import { PortCallValuesInputSchema, PortCallValuesSchema } from '@/features/applications/schemas/types/PortCallValues';
 import {
   ResearchEquipmentValuesInputSchema,
   ResearchEquipmentValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
+} from '@/features/applications/schemas/types/ResearchEquipmentValues';
 import {
   ShortResearchEquipmentValuesInputSchema,
   ShortResearchEquipmentValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
-import {
-  UgTeamValuesInputSchema,
-  UgTeamValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
+} from '@/features/applications/schemas/types/ShortResearchEquipmentValues';
+import { UgTeamValuesInputSchema, UgTeamValuesSchema } from '@/features/applications/schemas/types/UgTeamValues';
 
 const FormBInputSchema = z.object({
   draft: z.boolean().optional(),

@@ -9,11 +9,11 @@ import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowBu
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
-import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
-import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { LongResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
-import { PortCallValues } from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
-import { ShortResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
+import type { FormBFormApi, FormBViewModel } from '@/features/applications/models/formB-view-model';
+import { formBDefaultValues } from '@/features/applications/schemas/formB.schema';
+import { LongResearchEquipmentValues } from '@/features/applications/schemas/types/LongResearchEquipmentValues';
+import { PortCallValues } from '@/features/applications/schemas/types/PortCallValues';
+import { ShortResearchEquipmentValues } from '@/features/applications/schemas/types/ShortResearchEquipmentValues';
 
 const shortResearchEquipmentColumns = (
   form: FormBFormApi,

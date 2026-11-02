@@ -1,4 +1,4 @@
-import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { CruisePeriodType } from '@/features/applications/schemas/types/FormAValues';
 import { parseBackendDateTime } from '@/lib/dateUtils';
 
 export const MAX_PERIOD_EDGE_VALUE = 24;

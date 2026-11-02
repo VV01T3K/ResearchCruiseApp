@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { MAX_MINISTERIAL_POINTS } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { MAX_MINISTERIAL_POINTS } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 export enum PublicationCategory {
   Subject = 'subject',

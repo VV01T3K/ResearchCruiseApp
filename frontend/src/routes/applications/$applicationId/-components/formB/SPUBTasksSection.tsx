@@ -2,8 +2,8 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Table } from '@/components/shared/table/Table';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
-import { SpubTaskValues } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
+import { SpubTaskValues } from '@/features/applications/schemas/types/SpubTaskValues';
 
 export function SPUBTasksSection({ context }: { context: FormBViewModel }) {
   const { formA, isReadonly } = context;

@@ -1,7 +1,7 @@
 import { Accordion } from '@/components/shared/Accordion';
 import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
-import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
 
 export function CruiseManagerInfoSection({ context }: { context: FormCViewModel }) {
   const { formA, formAInitValues } = context;

@@ -6,10 +6,10 @@ import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
-import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
-import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { ResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
+import type { FormCFormApi, FormCViewModel } from '@/features/applications/models/formC-view-model';
+import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
+import type { FormCValues } from '@/features/applications/schemas/formC.schema';
+import { ResearchEquipmentValues } from '@/features/applications/schemas/types/ResearchEquipmentValues';
 
 const researchEquipmentsColumns = (
   form: FormCFormApi,

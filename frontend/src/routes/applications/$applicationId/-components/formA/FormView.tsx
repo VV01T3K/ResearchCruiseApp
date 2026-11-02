@@ -15,9 +15,9 @@ import { ResearchAreaSection } from '@/routes/applications/$applicationId/-compo
 import { ResearchTasksSection } from '@/routes/applications/$applicationId/-components/formA/ResearchTasksSection';
 import { SPUBTasksSection } from '@/routes/applications/$applicationId/-components/formA/SPUBTasksSection';
 import { SupervisorInfoSection } from '@/routes/applications/$applicationId/-components/formA/SupervisorInfoSection';
-import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
+import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
 
 type Props = {
   context: FormAViewModel & {

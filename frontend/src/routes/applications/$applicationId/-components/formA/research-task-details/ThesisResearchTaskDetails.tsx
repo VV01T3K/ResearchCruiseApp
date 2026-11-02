@@ -1,8 +1,8 @@
 import { Row } from '@/integrations/tanstack/table/features';
 
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { ThesisResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
+import { ThesisResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
   row: Row<ThesisResearchTaskValues>;

@@ -1,7 +1,7 @@
 import { Accordion } from '@/components/shared/Accordion';
 import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
 import { Input } from '@/components/shared/inputs/Input';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
 
 export function ShipUsageSection({ context }: { context: FormBViewModel }) {
   const { formA, formAInitValues } = context;

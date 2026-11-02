@@ -6,9 +6,9 @@ import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
-import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
-import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { ResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
+import type { FormBFormApi, FormBViewModel } from '@/features/applications/models/formB-view-model';
+import { formBDefaultValues } from '@/features/applications/schemas/formB.schema';
+import { ResearchEquipmentValues } from '@/features/applications/schemas/types/ResearchEquipmentValues';
 
 const researchEquipmentsColumns = (
   form: FormBFormApi,

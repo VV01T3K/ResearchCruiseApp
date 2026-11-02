@@ -3,7 +3,7 @@ import { Accordion } from '@/components/shared/Accordion';
 import { Badge } from '@/components/shared/Badge';
 import { Button } from '@/components/shared/Button';
 import { formatDate } from '@/lib/dateUtils';
-import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
+import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
 import type { CruiseResponse } from '@/api/generated/schemas';
 
 export function CruiseInfoSection({ context }: { context: FormCViewModel }) {

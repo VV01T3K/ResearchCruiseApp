@@ -7,7 +7,7 @@ import { Table } from '@/components/shared/table/Table';
 import {
   type ApplicationEvaluation,
   useApplicationEvaluation,
-} from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
+} from '@/features/applications/hooks/useApplicationDetails';
 
 export function SPUBTasksSection() {
   const evaluation = useApplicationEvaluation();

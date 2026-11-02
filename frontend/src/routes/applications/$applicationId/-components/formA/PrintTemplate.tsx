@@ -8,13 +8,13 @@ import {
 import { PrintableResearchTaskDetails } from '@/components/print/research-task-details/PrintableResearchTaskDetails';
 import { PrintingPage } from '@/components/print/layout/PrintingPage';
 import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';
-import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
-import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
+import type { FormAValues } from '@/features/applications/schemas/formA.schema';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
-import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
-import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+import { getContractCategoryName } from '@/features/applications/schemas/types/ContractValues';
+import { getPublicationCategoryLabel } from '@/features/applications/schemas/types/PublicationValues';
 import { getResearchAreaName } from '@/lib/applications/researchArea';
-import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { getTaskName } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
   values: FormAValues;

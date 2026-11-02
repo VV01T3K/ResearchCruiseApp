@@ -7,10 +7,7 @@ import { submissionSchema } from '@/integrations/tanstack/form/schema';
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { getErrors, setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { ApiError } from '@/api/errors';
-import {
-  formBDefaultValues,
-  getFormBSubmissionSchema,
-} from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import { formBDefaultValues, getFormBSubmissionSchema } from '@/features/applications/schemas/formB.schema';
 
 describe('application form submission', () => {
   it('waits for blur and clears errors while correcting before the first submission', async () => {

@@ -2,7 +2,7 @@ import { FloppyDiskIcon, PaperPlaneTiltIcon, PrinterIcon } from '@phosphor-icons
 
 import { FloatingActionsSection } from '@/components/shared/FloatingActionsSection';
 import { Button } from '@/components/shared/Button';
-import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
+import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
 
 type Props = {
   onSaveDraft?: () => void;

@@ -9,11 +9,11 @@ import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowBu
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
-import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { CrewMemberValues } from '@/routes/applications/$applicationId/-schemas/types/CrewMemberValues';
-import { GuestTeamValues } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
-import { UgTeamValues } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
+import { formBDefaultValues } from '@/features/applications/schemas/formB.schema';
+import { CrewMemberValues } from '@/features/applications/schemas/types/CrewMemberValues';
+import { GuestTeamValues } from '@/features/applications/schemas/types/GuestTeamValues';
+import { UgTeamValues } from '@/features/applications/schemas/types/UgTeamValues';
 
 export function MembersSection({ context }: { context: FormBViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formBDefaultValues });

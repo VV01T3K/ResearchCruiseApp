@@ -8,10 +8,10 @@ import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowBu
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
-import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { GuestTeamValues } from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
-import { UgTeamValues } from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
+import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
+import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
+import { GuestTeamValues } from '@/features/applications/schemas/types/GuestTeamValues';
+import { UgTeamValues } from '@/features/applications/schemas/types/UgTeamValues';
 
 export function MembersSection({ context }: { context: FormAViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });

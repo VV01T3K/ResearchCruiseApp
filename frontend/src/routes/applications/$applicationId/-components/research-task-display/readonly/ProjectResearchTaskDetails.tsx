@@ -2,7 +2,7 @@ import { Input } from '@/components/shared/inputs/Input';
 import { NumberInput } from '@/components/shared/inputs/NumberInput';
 import { MonthPickerInput } from '@/components/shared/inputs/dates/MonthPickerInput';
 import { useUnreadableErrors } from '@/integrations/tanstack/form/unreadableValues';
-import type { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { ProjectResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
   data: ProjectResearchTaskValues;

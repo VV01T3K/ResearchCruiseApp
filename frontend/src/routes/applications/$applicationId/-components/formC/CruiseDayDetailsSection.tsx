@@ -5,9 +5,9 @@ import { Button } from '@/components/shared/Button';
 import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
-import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
+import type { FormCFormApi, FormCViewModel } from '@/features/applications/models/formC-view-model';
+import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
+import { CruiseDayValues } from '@/features/applications/schemas/types/CruiseDayValues';
 
 const cruiseDayDetailsColumns = (
   form: FormCFormApi,

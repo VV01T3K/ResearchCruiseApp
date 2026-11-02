@@ -1,7 +1,7 @@
 import { Accordion } from '@/components/shared/Accordion';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
-import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
+import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
 import { mapPersonToLabel } from '@/lib/applications/PersonMappers';
 
 export function CruiseManagerInfoSection({ context }: { context: FormAViewModel }) {

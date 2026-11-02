@@ -9,8 +9,8 @@ import { useUnreadableErrors } from '@/integrations/tanstack/form/unreadableValu
 import {
   type ApplicationEvaluation,
   useApplicationEvaluation,
-} from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
-import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+} from '@/features/applications/hooks/useApplicationDetails';
+import { getPublicationCategoryLabel } from '@/features/applications/schemas/types/PublicationValues';
 
 export function PublicationsSection() {
   const evaluation = useApplicationEvaluation();

@@ -4,11 +4,8 @@ import { Accordion } from '@/components/shared/Accordion';
 import { FileInput } from '@/components/shared/inputs/FileInput';
 import { Input } from '@/components/shared/inputs/Input';
 import { Table } from '@/components/shared/table/Table';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
-import {
-  ContractValues,
-  getContractCategoryName,
-} from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
+import { ContractValues, getContractCategoryName } from '@/features/applications/schemas/types/ContractValues';
 
 export function ContractsSection({ context }: { context: FormBViewModel }) {
   const { formA, isReadonly } = context;

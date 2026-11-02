@@ -8,11 +8,11 @@ import { Alert } from '@/components/shared/Alert';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { getErrors } from '@/integrations/tanstack/form/errors';
-import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
-import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
+import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
 import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applications/periodUtils';
 import { formatDate, parseCalendarDate, parsePolishDayStart, useNow } from '@/lib/dateUtils';
-import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { CruisePeriodType } from '@/features/applications/schemas/types/FormAValues';
 import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
 
 import { CruiseApplicationPeriodInput } from './CruiseApplicationPeriodInput';
