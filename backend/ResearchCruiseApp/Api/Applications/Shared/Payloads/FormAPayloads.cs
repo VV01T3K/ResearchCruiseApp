@@ -142,7 +142,7 @@ public class CruiseApplicationSummary
     public DateOnly Date { get; init; }
 
     [JsonNumberHandling(JsonNumberHandling.Strict)]
-    public int Year { get; init; }
+    public int? Year { get; init; }
 
     public Guid CruiseManagerId { get; init; }
 
@@ -195,6 +195,8 @@ public class CruiseApplicationSummary
     public DateTime? StartDate { get; init; }
 
     public DateTime? EndDate { get; init; }
+
+    public List<string> InvalidStoredValues { get; init; } = [];
 }
 
 // Lighter-weight than CruiseApplicationSummary: only the fields the cruise-planning
@@ -206,7 +208,7 @@ public class CruiseApplicationCandidateResponse
     public required string Number { get; init; }
 
     [JsonNumberHandling(JsonNumberHandling.Strict)]
-    public required int Year { get; init; }
+    public required int? Year { get; init; }
 
     public required Guid CruiseManagerId { get; init; }
 

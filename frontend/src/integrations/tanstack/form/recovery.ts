@@ -6,12 +6,12 @@ let owner: string | undefined;
 let activeForm: { key: string; form: Pick<AnyFormApi, 'state'> } | undefined;
 const recoveries = new Map<string, Record<string, unknown>>();
 
-subscribeAuthDetails((details, previous, manualLogout) => {
+subscribeAuthDetails((details, previous, event) => {
   if (details) {
     if (owner && accountId(details) !== owner) discardFormRecovery();
     return;
   }
-  if (manualLogout) return discardFormRecovery();
+  if (event === 'manual-logout') return discardFormRecovery();
   const previousOwner = previous && accountId(previous);
   if (!previousOwner || !activeForm?.form.state.isDirty) return;
   owner = previousOwner;

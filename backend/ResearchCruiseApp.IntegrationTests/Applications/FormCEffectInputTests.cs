@@ -83,7 +83,10 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
         var scores = await client.GetFromJsonAsync<JsonElement>("/v2/users/me/cruise-effects", ct);
         Assert.Equal(
             expected.ToString(CultureInfo.InvariantCulture),
-            Assert.Single(scores.EnumerateArray()).GetProperty("points").GetString()
+            Assert
+                .Single(scores.GetProperty("items").EnumerateArray())
+                .GetProperty("points")
+                .GetString()
         );
         await app.Dispatch(ct);
         Assert.Empty(app.Transport.Messages);

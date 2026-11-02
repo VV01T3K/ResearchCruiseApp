@@ -5,6 +5,7 @@ import { Input } from '@/components/shared/inputs/Input';
 import { NumberInput } from '@/components/shared/inputs/NumberInput';
 import { YearPickerInput } from '@/components/shared/inputs/dates/YearPickerInput';
 import { Table } from '@/components/shared/table/Table';
+import { useUnreadableErrors } from '@/integrations/tanstack/form/unreadableValues';
 import {
   type ApplicationEvaluation,
   useApplicationEvaluation,
@@ -73,14 +74,12 @@ export function PublicationsSection() {
       accessorFn: (row) => row.publication.year,
       enableColumnFilter: false,
       enableSorting: false,
-      cell: ({ row }) => (
-        <YearPickerInput
-          name={`publications[${row.index}].publication.year`}
-          value={row.original.publication.year ?? undefined}
-          showRequiredAsterisk
-          disabled
-        />
-      ),
+      cell: function YearCell({ row }) {
+        const name = `publications[${row.index}].publication.year`;
+        const { year } = row.original.publication;
+        const errors = useUnreadableErrors(name, year, true);
+        return <YearPickerInput name={name} value={year ?? undefined} errors={errors} showRequiredAsterisk disabled />;
+      },
       size: 10,
     },
     {
@@ -88,15 +87,21 @@ export function PublicationsSection() {
       accessorFn: (row) => row.publication.ministerialPoints,
       enableColumnFilter: false,
       enableSorting: false,
-      cell: ({ row }) => (
-        <NumberInput
-          name={`publications[${row.index}].publication.ministerialPoints`}
-          value={row.original.publication.ministerialPoints}
-          minimum={0}
-          showRequiredAsterisk
-          disabled
-        />
-      ),
+      cell: function MinisterialPointsCell({ row }) {
+        const name = `publications[${row.index}].publication.ministerialPoints`;
+        const { ministerialPoints } = row.original.publication;
+        const errors = useUnreadableErrors(name, ministerialPoints, true);
+        return (
+          <NumberInput
+            name={name}
+            value={ministerialPoints}
+            errors={errors}
+            minimum={0}
+            showRequiredAsterisk
+            disabled
+          />
+        );
+      },
       size: 10,
     },
     {

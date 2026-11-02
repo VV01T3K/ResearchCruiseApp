@@ -1,12 +1,14 @@
 import { Input } from '@/components/shared/inputs/Input';
 import { NumberInput } from '@/components/shared/inputs/NumberInput';
 import { DatePickerInput } from '@/components/shared/inputs/dates/DatePickerInput';
+import { useUnreadableErrors } from '@/integrations/tanstack/form/unreadableValues';
 import type { OwnResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 
 type Props = {
   data: OwnResearchTaskValues;
 };
 export function OwnResearchTaskDetails({ data }: Props) {
+  const pointsErrors = useUnreadableErrors('researchTasks[].ministerialPoints', data.ministerialPoints, true);
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <Input
@@ -36,6 +38,7 @@ export function OwnResearchTaskDetails({ data }: Props) {
         nullable
         name="researchTasks[].ministerialPoints"
         value={data.ministerialPoints}
+        errors={pointsErrors}
         minimum={0}
         step={10}
         label="Przewidywane punkty ministerialne"

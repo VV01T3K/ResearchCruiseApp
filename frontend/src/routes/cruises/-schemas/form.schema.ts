@@ -19,11 +19,11 @@ export const CruiseFormInputSchema = z
     revision: z.string().optional(),
   })
   .superRefine(({ startDate, endDate, mainManagerId, deputyManagerId, shipUnavailable, title }, ctx) => {
-    if (new Date(startDate) > new Date(endDate)) {
+    if (new Date(startDate) >= new Date(endDate)) {
       ctx.addIssue({
         code: 'custom',
         path: ['endDate'],
-        message: 'Data rozpoczęcia rejsu nie może być późniejsza niż data zakończenia rejsu',
+        message: 'Data zakończenia rejsu musi być późniejsza niż data rozpoczęcia rejsu',
       });
     }
 
@@ -72,4 +72,16 @@ export function mapCruiseToValues(cruise: CruiseResponse): CruiseFormValues {
     shipUnavailable: cruise.shipUnavailable,
     revision: cruise.revision,
   };
+}
+
+export function findOverlappingCruises(cruises: CruiseResponse[], startDate: string, endDate: string, ownId?: string) {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  return cruises.filter(
+    (cruise) =>
+      cruise.id !== ownId &&
+      (!cruise.shipUnavailable || cruise.status !== 'ended') &&
+      new Date(cruise.startDate) < end &&
+      start < new Date(cruise.endDate)
+  );
 }

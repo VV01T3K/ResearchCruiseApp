@@ -1,7 +1,13 @@
 using System.Globalization;
+using System.Text.Json.Serialization;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Users;
+
+public sealed record CruiseEffectsResponse(
+    List<CruiseEffectResponse> Items,
+    [property: JsonNumberHandling(JsonNumberHandling.Strict)] int SkippedCount
+);
 
 public sealed record CruiseEffectResponse(
     Guid Id,

@@ -64,3 +64,51 @@ for (const { name, saved, handlers, shown } of forms) {
     await expect.poll(() => requests.bodies(route)).toEqual([{ draft: false, form: saved }]);
   });
 }
+
+test('an unreadable stored flag in form C blocks saving until it is fixed', async ({ page, network, requests }) => {
+  const saved = filledFormC();
+  const unreadable = {
+    ...saved,
+    researchTasksEffects: saved.researchTasksEffects?.map((task) => ({
+      ...task,
+      done: 'tak',
+      managerConditionMet: 'false',
+    })),
+  };
+  network.use(
+    getGetApplicationFormCMockHandler(unreadable),
+    getUpdateApplicationFormCMockHandler(),
+    ...applicationForms()
+  );
+  const route = `PUT /v2/applications/${applicationId}/form-c`;
+  await page.goto(`/applications/${applicationId}/formC?mode=edit`);
+
+  const done = page.getByRole('checkbox', { name: 'Zrealizowane' });
+  // Each blocked save adds one error toast, which is a dialog.
+  const errorToasts = page.getByRole('dialog');
+  await expect(done).toHaveAttribute('aria-invalid', 'true');
+  await page.getByRole('button', { name: 'Zapisz wersję roboczą', exact: true }).click();
+  await expect(errorToasts).toHaveCount(1);
+  await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+  await expect(errorToasts).toHaveCount(2);
+  expect(requests.bodies(route)).toEqual([]);
+
+  await done.click();
+  await expect(done).not.toHaveAttribute('aria-invalid', 'true');
+  await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+  await expect
+    .poll(() => requests.bodies(route))
+    .toEqual([
+      {
+        draft: false,
+        form: {
+          ...saved,
+          researchTasksEffects: saved.researchTasksEffects?.map((task) => ({
+            ...task,
+            done: 'true',
+            managerConditionMet: 'false',
+          })),
+        },
+      },
+    ]);
+});

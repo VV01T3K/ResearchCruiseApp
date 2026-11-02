@@ -1,8 +1,10 @@
 import { hashKey, queryOptions, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { QueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 import {
+  completeLogin,
+  getAuthGeneration,
   getValidAccessToken,
   refreshSession,
   prepareForLogout,
@@ -63,9 +65,7 @@ export function useCurrentUser() {
 }
 
 export function useAuthDetails() {
-  const [authDetails, setAuthDetails] = useState(() => getSession());
-  useEffect(() => subscribeAuthDetails(setAuthDetails), []);
-  return authDetails;
+  return useSyncExternalStore(subscribeAuthDetails, getSession, getSession);
 }
 
 export function isInRole(user: UserResponse | null, allowedRoles: Role | Role[]) {
@@ -78,6 +78,7 @@ export function useSignIn() {
   const { mutateAsync: login } = useLogin({ mutation: { meta: { handlesError: true, invalidates: false } } });
 
   return async (email: string, password: string): Promise<SignInResult> => {
+    const generation = getAuthGeneration();
     let response;
     try {
       response = await login({ data: { email, password } });
@@ -86,7 +87,12 @@ export function useSignIn() {
       return { error: getProblemDetail(error, 'Wystąpił błąd podczas logowania. Spróbuj ponownie.') };
     }
 
-    setSession(response);
+    if (!getSession() && getAuthGeneration() !== generation) {
+      await logoutSession().catch(() => undefined);
+      return { error: 'Wylogowano w innej karcie. Zaloguj się ponownie.' };
+    }
+
+    completeLogin(response);
     try {
       // Fetched outside the query cache: sign-in reports this failure itself.
       const user = await fetchCurrentUser();

@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { FormCFields } from '@/api/generated/schemas';
 import { groupBy } from '@/lib/utils';
+import { storedBoolean, storedNumber } from '@/routes/applications/$applicationId/-schemas/storedValues';
 import {
   CollectedSampleValuesInputSchema,
   CollectedSampleValuesSchema,
@@ -245,12 +246,12 @@ export function mapFormCToValues(form: FormCFields): FormCValues {
     })),
     ugTeams: (form.ugTeams ?? []).map((team) => ({
       ugUnitId: team.ugUnitId ?? '',
-      noOfEmployees: toNumber(team.noOfEmployees),
-      noOfStudents: toNumber(team.noOfStudents),
+      noOfEmployees: storedNumber(team.noOfEmployees),
+      noOfStudents: storedNumber(team.noOfStudents),
     })),
     guestTeams: (form.guestTeams ?? []).map((team) => ({
       name: team.name ?? '',
-      noOfPersons: toNumber(team.noOfPersons),
+      noOfPersons: storedNumber(team.noOfPersons),
     })),
     contracts: (form.contracts ?? []).map(mapContractToValues),
     spubTasks: (form.spubTasks ?? []).map(mapSpubTaskToValues),
@@ -266,9 +267,9 @@ export function mapFormCToValues(form: FormCFields): FormCValues {
     })),
     researchTasksEffects: (form.researchTasksEffects ?? []).map((task) => ({
       ...mapResearchTaskToValues(task),
-      done: task.done === 'true',
-      managerConditionMet: task.managerConditionMet === 'true',
-      deputyConditionMet: task.deputyConditionMet === 'true',
+      done: storedBoolean(task.done),
+      managerConditionMet: storedBoolean(task.managerConditionMet),
+      deputyConditionMet: storedBoolean(task.deputyConditionMet),
       publicationMinisterialPoints: task.publicationMinisterialPoints ?? null,
     })),
     ports: (form.ports ?? []).map((port) => ({
@@ -277,8 +278,8 @@ export function mapFormCToValues(form: FormCFields): FormCValues {
       endTime: port.endTime ?? '',
     })),
     cruiseDaysDetails: (form.cruiseDaysDetails ?? []).map((day) => ({
-      number: toNumber(day.number),
-      hours: toNumber(day.hours),
+      number: storedNumber(day.number),
+      hours: storedNumber(day.hours),
       taskName: day.taskName ?? '',
       region: day.region ?? '',
       position: day.position ?? '',
@@ -288,12 +289,12 @@ export function mapFormCToValues(form: FormCFields): FormCValues {
       name: equipment.name ?? '',
       insuranceStartDate: equipment.insuranceStartDate ?? null,
       insuranceEndDate: equipment.insuranceEndDate ?? null,
-      permission: equipment.permission === 'true',
+      permission: storedBoolean(equipment.permission),
     })),
     shipEquipmentsIds: form.shipEquipmentsIds ?? [],
     collectedSamples: (form.collectedSamples ?? []).map((sample) => ({
       type: sample.type ?? '',
-      amount: toNumber(sample.amount),
+      amount: storedNumber(sample.amount),
       analysis: sample.analysis ?? '',
       publishing: sample.publishing ?? '',
     })),
@@ -301,11 +302,6 @@ export function mapFormCToValues(form: FormCFields): FormCValues {
     additionalDescription: form.additionalDescription ?? '',
     photos: (form.photos ?? []).map((photo) => ({ name: photo.name ?? '', content: photo.content ?? '' })),
   };
-}
-
-function toNumber(value: string | null | undefined): number {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : 0;
 }
 
 export function getFormCSubmissionSchema(formAInitValues: FormAOptions) {

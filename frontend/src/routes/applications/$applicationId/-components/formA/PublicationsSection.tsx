@@ -2,7 +2,6 @@ import { mapPublicationToValues } from '@/routes/applications/$applicationId/-sc
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
-import { YearPickerInput } from '@/components/shared/inputs/dates/YearPickerInput';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
@@ -99,17 +98,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
         enableSorting: false,
         cell: ({ row }) => (
           <form.AppField name={`publications[${row.index}].year`}>
-            {(field) => (
-              <YearPickerInput
-                name={field.name}
-                value={field.state.value ?? undefined}
-                onChange={(value) => field.handleChange(value ?? null)}
-                onBlur={field.handleBlur}
-                errors={getErrors(field.state.meta, form.state.submissionAttempts)}
-                label="Rok"
-                disabled={isReadonly}
-              />
-            )}
+            {(field) => <field.YearField label="Rok" disabled={isReadonly} />}
           </form.AppField>
         ),
         size: 10,

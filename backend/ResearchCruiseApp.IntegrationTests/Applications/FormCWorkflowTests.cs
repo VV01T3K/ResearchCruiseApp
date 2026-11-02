@@ -40,6 +40,10 @@ public sealed class FormCWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         );
         Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
         await AssertState(app, CruiseApplicationStatus.Undertaken, "first.png");
+        Assert.Contains(
+            "\"effectsDoneRate\":\"0\"",
+            await manager.GetStringAsync("/v2/applications", ct)
+        );
         using var read = await manager.GetAsync(route, ct);
         Assert.Equal(HttpStatusCode.OK, read.StatusCode);
         var body = await read.Content.ReadFromJsonAsync<FormCFields>(ct);
