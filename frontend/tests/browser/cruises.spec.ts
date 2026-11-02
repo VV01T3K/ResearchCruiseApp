@@ -411,7 +411,7 @@ test('a cruise save waits for the previous one and starts from its accepted revi
 
     // The save is accepted and only its refetch is pending, so leaving doesn't warn.
     await page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
-    await expect(page).toHaveURL('/');
+    await expect(page.getByRole('link', { name: /Harmonogram rejsów/ })).toBeVisible();
     await expect(page.getByRole('dialog', { name: 'Niezapisane zmiany' })).toBeHidden();
     await page.goBack();
     // The cached cruise predates the saves, so editing waits for the refetch.
