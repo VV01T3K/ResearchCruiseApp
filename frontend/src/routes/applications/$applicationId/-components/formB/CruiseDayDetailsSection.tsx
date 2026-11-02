@@ -16,6 +16,12 @@ import { exportCruiseDayDetailsToXlsx, parseCruiseDayDetailsFromFile } from '@/l
 const cruiseDayKey = (row: CruiseDayValues) =>
   JSON.stringify([row.number, row.hours, row.taskName, row.region, row.position, row.comment]);
 
+function rowsWord(count: number) {
+  const form = new Intl.PluralRules('pl').select(count);
+  if (form === 'one') return 'wiersz';
+  return form === 'few' ? 'wiersze' : 'wierszy';
+}
+
 const cruiseDayDetailsColumns = (
   form: FormBFormApi,
   removeRow: (index: number) => void,
@@ -125,7 +131,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
       const currentKeys = new Set(currentRows.map(cruiseDayKey));
       const duplicates = rows.filter((row) => currentKeys.has(cruiseDayKey(row))).length;
       toast.success(
-        `Wczytano ${rows.length} wierszy z pliku ${file.name}.` +
+        `Wczytano ${rows.length} ${rowsWord(rows.length)} z pliku ${file.name}.` +
           (duplicates > 0 ? ` Uwaga: ${duplicates} z nich było już w tabeli, sprawdź duplikaty.` : '')
       );
     } catch (error) {

@@ -368,7 +368,7 @@ export async function exportCruiseDayDetailsToXlsx(
 
     const { default: writeXlsxFile } = await import('write-excel-file/browser');
     await writeXlsxFile(allData, { sheet: 'Dane' }).toFile(fileName);
-    toast.success(`Plik ${fileName} został pobierany`);
+    toast.success(`Plik ${fileName} został pobrany`);
   } catch (error) {
     toast.error('Nie udało się przygotować pliku XLSX. Sprawdź połączenie z internetem i spróbuj ponownie.');
     console.error('XLSX Export Error:', error);
