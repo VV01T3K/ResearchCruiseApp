@@ -54,7 +54,7 @@ export function convertPeriodNumberToDate(periodNumber: string, year: number): D
   const num = parseInt(periodNumber);
   const startDay = num % 2 === 0 ? 1 : 15;
   const startMonth = Math.floor(num / 2) + 1;
-  return new Date(year, startMonth - 1, startDay, 8, 0, 0);
+  return new Date(Date.UTC(year, startMonth - 1, startDay, 8));
 }
 
 function parseBackendDateTimeType(value: string): Date {

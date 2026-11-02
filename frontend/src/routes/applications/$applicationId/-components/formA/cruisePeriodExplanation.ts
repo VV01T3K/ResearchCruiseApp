@@ -1,3 +1,5 @@
+import { parseBackendDateTime } from '@/lib/dateUtils';
+
 function getPointAtTime(position: number): string {
   const pointAtTimeMonths = [
     'stycznia',
@@ -31,8 +33,7 @@ export function formatLocalDateStringFromUtcString(utcString?: string): string {
   if (!utcString) {
     return '-';
   }
-  const normalized = utcString.endsWith('Z') ? utcString : `${utcString}Z`;
-  const date = new Date(normalized);
+  const date = parseBackendDateTime(utcString);
   if (isNaN(date.getTime())) return '-';
 
   return date.toLocaleString('pl-PL', {

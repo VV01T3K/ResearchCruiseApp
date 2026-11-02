@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications;
@@ -93,6 +94,41 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal("2", team.NoOfEmployees);
         Assert.Equal("0", team.NoOfStudents);
         Assert.Empty(app.Transport.Messages);
+    }
+
+    [Theory]
+    [InlineData("2030-05-15", "2030-05-15T00:00:00")]
+    [InlineData("2030-05-14T22:00:00.000Z", "2030-05-14T22:00:00")]
+    public async Task Draft_KeepsCalendarAndLegacyDatesThroughLoadAndSave(
+        string sent,
+        string preciseAfterRead
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var user = await TestUsers.Create(app, "dates@example.invalid", RoleName.CruiseManager);
+        using var client = await CreateAuthorizedClient(app, user.Email!, ct);
+        var form = JsonSerializer
+            .SerializeToNode(FormAccessTests.Draft(Guid.Parse(user.Id)))!
+            .AsObject();
+        form["PrecisePeriodStart"] = sent;
+        form["PrecisePeriodEnd"] = sent;
+        form["ResearchTasks"] = new JsonArray(new JsonObject { ["Type"] = "10", ["Date"] = sent });
+        using (var created = await FormRequests.Write(client, "/v2/applications", form, true, true))
+            Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        var route = "";
+        await app.InDatabase(async db =>
+            route = $"/v2/applications/{(await db.CruiseApplications.SingleAsync(ct)).Id}/form-a"
+        );
+
+        var loaded = JsonNode.Parse(await FormRequests.Read(client, route))!.AsObject();
+        using (var saved = await FormRequests.Write(client, route, loaded, true))
+            Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
+
+        var read = JsonNode.Parse(await FormRequests.Read(client, route))!;
+        Assert.Equal(preciseAfterRead, read["precisePeriodStart"]!.GetValue<string>());
+        Assert.Equal(preciseAfterRead, read["precisePeriodEnd"]!.GetValue<string>());
+        Assert.Equal(sent, read["researchTasks"]![0]!["date"]!.GetValue<string>());
     }
 
     [Fact]

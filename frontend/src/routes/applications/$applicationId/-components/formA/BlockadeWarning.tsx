@@ -3,6 +3,7 @@ import { CaretDownIcon } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'motion/react';
 
 import { Alert } from '@/components/shared/Alert';
+import { formatDate } from '@/lib/dateUtils';
 import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
 
 interface Props {
@@ -36,9 +37,8 @@ export function BlockadeWarning({ year, blockades }: Props) {
                 <ul className="mt-3 space-y-1">
                   {blockades.map((blockade: BlockadePeriod) => (
                     <li key={`${blockade.startDate}-${blockade.endDate}`} className="text-sm">
-                      <span className="font-bold">{blockade.title}</span>:{' '}
-                      {new Date(blockade.startDate).toLocaleDateString('pl-PL')} -{' '}
-                      {new Date(blockade.endDate).toLocaleDateString('pl-PL')}
+                      <span className="font-bold">{blockade.title}</span>: {formatDate(blockade.startDate, 'date')} -{' '}
+                      {formatDate(blockade.endDate, 'date')}
                     </li>
                   ))}
                 </ul>

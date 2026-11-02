@@ -2,6 +2,7 @@ import { submissionSchema } from '@/integrations/tanstack/form/schema';
 import { literal, z } from 'zod';
 
 import { groupBy } from '@/lib/utils';
+import { parseBackendDateTime } from '@/lib/dateUtils';
 import { getPeriodEdgeDatePoint, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
 import {
   ContractValuesInputSchema,
@@ -239,8 +240,8 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
 
     if (cruiseHours <= 0) return { canFitCruise: true, overlappingBlockades: [] };
 
-    const start = new Date(precisePeriodStart);
-    const end = new Date(precisePeriodEnd);
+    const start = parseBackendDateTime(precisePeriodStart);
+    const end = parseBackendDateTime(precisePeriodEnd);
     const cruiseDurationDays = cruiseHours / 24;
 
     return analyzeCruiseSlot(start, end, cruiseDurationDays);
@@ -323,8 +324,8 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
     }
     if (!precisePeriodStart || !precisePeriodEnd) return;
 
-    const start = new Date(precisePeriodStart);
-    const end = new Date(precisePeriodEnd);
+    const start = parseBackendDateTime(precisePeriodStart);
+    const end = parseBackendDateTime(precisePeriodEnd);
     const cruiseDurationDays = totalCruiseHours / 24;
 
     if ((end.getTime() - start.getTime()) / DAY_IN_MILLISECONDS < cruiseDurationDays) {

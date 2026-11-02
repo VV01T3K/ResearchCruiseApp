@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import { Button } from '@/components/shared/Button';
 import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
+import { parseCalendarDate } from '@/lib/dateUtils';
 import { exportCruises } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse, ExportResponse } from '@/api/generated/schemas';
 
@@ -15,7 +16,7 @@ export function ExportForm({ cruises, onDone }: Props) {
   const possibleYears = React.useMemo(() => {
     return cruises
       .reduce((acc, cruise) => {
-        const year = new Date(cruise.startDate).getFullYear().toString();
+        const year = parseCalendarDate(cruise.startDate).getFullYear().toString();
         if (!acc.includes(year)) {
           acc.push(year);
         }

@@ -5,7 +5,10 @@ using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence;
 
-internal class YearBasedKeyGenerator(ApplicationDbContext dbContext)
+internal class YearBasedKeyGenerator(
+    ApplicationDbContext dbContext,
+    GlobalizationService globalizationService
+)
 {
     public async Task<string> GenerateKey<T>(
         IQueryable<T> entities,
@@ -22,7 +25,9 @@ internal class YearBasedKeyGenerator(ApplicationDbContext dbContext)
         where T : Entity, IYearBasedNumbered
     {
         await Lock<T>(cancellationToken);
-        var currentYear = DateTime.Now.Year.ToString(CultureInfo.InvariantCulture);
+        var currentYear = globalizationService
+            .GetCurrentDate()
+            .Year.ToString(CultureInfo.InvariantCulture);
         var ordinalNumberStartIdx = currentYear.Length + 1;
         var existingEntities = await entities.ToListAsync(cancellationToken);
         var maxCurrentYearOrdinalNumber =

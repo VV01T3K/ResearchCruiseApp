@@ -21,7 +21,7 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
-        var year = DateTime.Now.Year;
+        var year = app.Clock.GetUtcNow().Year;
         var manager = await TestUsers.Create(
             app,
             "manager@example.invalid",
@@ -55,6 +55,47 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
                 cruises.Select(cruise => Assert.Single(cruise.CruiseApplications).Id).Order()
             );
         });
+    }
+
+    [Theory]
+    [InlineData(5, 31, 22, 6, 29, 22)]
+    [InlineData(6, 1, 0, 6, 30, 0)]
+    public async Task AutoPlan_ReadsPrecisePeriodAsPolishDays(
+        int startMonth,
+        int startDay,
+        int startHour,
+        int endMonth,
+        int endDay,
+        int endHour
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var manager = await TestUsers.Create(
+            app,
+            "manager@example.invalid",
+            RoleName.CruiseManager
+        );
+        var office = await TestUsers.Create(app, "office@example.invalid", RoleName.Administrator);
+        using var client = await TestApplications.Login(app, office.Email!);
+        await app.InDatabase(async db =>
+        {
+            db.CruiseApplications.Add(
+                Precise(
+                    Guid.Parse(manager.Id),
+                    new DateTime(2030, startMonth, startDay, startHour, 0, 0),
+                    new DateTime(2030, endMonth, endDay, endHour, 0, 0)
+                )
+            );
+            await db.SaveChangesAsync(ct);
+        });
+
+        using var response = await client.PostAsync("/v2/cruises/auto-plan", null, ct);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        await app.InDatabase(async db =>
+            Assert.Equal("2030-06-01T06:00:00.000Z", (await db.Cruises.SingleAsync(ct)).StartDate)
+        );
     }
 
     [Fact]

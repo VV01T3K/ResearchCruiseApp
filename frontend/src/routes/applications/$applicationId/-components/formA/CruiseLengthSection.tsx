@@ -11,7 +11,7 @@ import { getErrors } from '@/integrations/tanstack/form/errors';
 import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
 import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applications/periodUtils';
-import { useNow } from '@/lib/dateUtils';
+import { formatDate, parseBackendDateTime, parseCalendarDate, useNow } from '@/lib/dateUtils';
 import { CruisePeriodType } from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
 import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
 
@@ -37,8 +37,8 @@ function getOverlappingBlockadesForRange(
     return [];
   }
 
-  const start = new Date(rangeStart);
-  const end = new Date(rangeEnd);
+  const start = parseBackendDateTime(rangeStart);
+  const end = parseBackendDateTime(rangeEnd);
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
     return [];
   }
@@ -103,7 +103,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
     const currentFortnight = getCurrentFortnight(year, new Date(nowMs));
 
     if (precisePeriodStart) {
-      const startDate = new Date(precisePeriodStart);
+      const startDate = parseCalendarDate(precisePeriodStart);
       const today = new Date(nowMs);
       today.setHours(0, 0, 0, 0);
       if (startDate < today) {
@@ -230,10 +230,10 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                         type="date"
                         showRequiredAsterisk
                         disabled={isReadonly}
-                        selectionStartDate={precisePeriodStart ? new Date(precisePeriodStart) : undefined}
+                        selectionStartDate={precisePeriodStart ? parseCalendarDate(precisePeriodStart) : undefined}
                         minimalDate={
                           precisePeriodStart && !allowPastDates
-                            ? new Date(precisePeriodStart)
+                            ? parseCalendarDate(precisePeriodStart)
                             : allowPastDates
                               ? undefined
                               : new Date(nowMs)
@@ -305,8 +305,8 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                         key={`${blockade.title}-${blockade.start.toISOString()}-${blockade.end.toISOString()}`}
                         className="text-sm"
                       >
-                        <span className="font-bold">{blockade.title}</span>:{' '}
-                        {blockade.start.toLocaleDateString('pl-PL')} - {blockade.end.toLocaleDateString('pl-PL')}
+                        <span className="font-bold">{blockade.title}</span>: {formatDate(blockade.start, 'date')} -{' '}
+                        {formatDate(blockade.end, 'date')}
                       </div>
                     ))}
                   </div>

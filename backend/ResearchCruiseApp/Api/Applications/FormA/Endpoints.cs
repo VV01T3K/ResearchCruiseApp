@@ -137,6 +137,7 @@ public static class FormAEndpoints
         FormDeletionService formsService,
         SupervisorInvitationService cruiseApplicationsService,
         ApplicationScoringService cruiseApplicationEvaluator,
+        GlobalizationService globalizationService,
         CancellationToken cancellationToken
     )
     {
@@ -173,7 +174,7 @@ public static class FormAEndpoints
             application.Note = request.Form.Note;
         else
         {
-            application.Date = DateOnly.FromDateTime(DateTime.Now);
+            application.Date = globalizationService.GetCurrentDate();
             application.Status = CruiseApplicationStatus.WaitingForSupervisor;
         }
         application.FormA = formAResult.Data!;

@@ -31,6 +31,7 @@ internal class IdentityService(
     CurrentUserService currentUserService,
     IOptions<JwtSettings> jwtSettings,
     ApplicationDbContext dbContext,
+    TimeProvider clock,
     ILogger<IdentityService> logger
 )
 {
@@ -242,7 +243,7 @@ internal class IdentityService(
             || !user.Accepted
             || !user.EmailConfirmed
             || user.RefreshTokenExpiry is null
-            || user.RefreshTokenExpiry < DateTime.UtcNow
+            || user.RefreshTokenExpiry < clock.GetUtcNow().UtcDateTime
         )
             return Error.UnknownIdentity();
 
@@ -723,7 +724,7 @@ internal class IdentityService(
         var loginResponseDto = new LoginResponseDto
         {
             AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
-            AccessTokenExpirationDate = accessToken?.ValidTo ?? DateTime.UtcNow,
+            AccessTokenExpirationDate = accessToken?.ValidTo ?? clock.GetUtcNow().UtcDateTime,
             RefreshToken = refreshToken,
             RefreshTokenExpirationDate = refreshTokenExpiry.ToUniversalTime(),
         };
@@ -754,7 +755,7 @@ internal class IdentityService(
         var token = new JwtSecurityToken(
             issuer: settings.ValidIssuer,
             audience: settings.ValidAudience,
-            expires: DateTime.UtcNow.AddSeconds(settings.AccessTokenLifetimeSeconds),
+            expires: clock.GetUtcNow().UtcDateTime.AddSeconds(settings.AccessTokenLifetimeSeconds),
             claims: authenticationClaims,
             signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)
         );
@@ -764,7 +765,9 @@ internal class IdentityService(
 
     private (string token, DateTime expiry) CreateRefreshToken()
     {
-        var expiry = DateTime.UtcNow.AddSeconds(jwtSettings.Value.RefreshTokenLifetimeSeconds);
+        var expiry = clock
+            .GetUtcNow()
+            .UtcDateTime.AddSeconds(jwtSettings.Value.RefreshTokenLifetimeSeconds);
         var token = Convert.ToBase64String(randomGenerator.CreateSecureCodeBytes());
 
         return (token, expiry);

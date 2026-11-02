@@ -16,7 +16,7 @@ public sealed class GlobalizationServiceTests
         CultureInfo.CurrentCulture = new CultureInfo(culture);
         try
         {
-            var service = new GlobalizationService();
+            var service = new GlobalizationService(TimeProvider.System);
 
             Assert.Equal(
                 "2026-07-01T10:30:00.000Z",
@@ -28,5 +28,26 @@ public sealed class GlobalizationServiceTests
         {
             CultureInfo.CurrentCulture = previous;
         }
+    }
+
+    [Theory]
+    [InlineData("2026-12-31T22:59:59Z", "2026-12-31")]
+    [InlineData("2026-12-31T23:00:00Z", "2027-01-01")]
+    [InlineData("2026-12-31T23:30:00Z", "2027-01-01")]
+    [InlineData("2026-07-01T21:59:59Z", "2026-07-01")]
+    [InlineData("2026-07-01T22:00:00Z", "2026-07-02")]
+    public void GetCurrentDate_FollowsThePolishCalendar(string utcNow, string expected)
+    {
+        var clock = new FixedClock(DateTimeOffset.Parse(utcNow, CultureInfo.InvariantCulture));
+
+        Assert.Equal(
+            DateOnly.Parse(expected, CultureInfo.InvariantCulture),
+            new GlobalizationService(clock).GetCurrentDate()
+        );
+    }
+
+    private sealed class FixedClock(DateTimeOffset now) : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow() => now;
     }
 }

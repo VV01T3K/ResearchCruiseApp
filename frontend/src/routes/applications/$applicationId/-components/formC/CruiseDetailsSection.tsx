@@ -5,6 +5,7 @@ import { Button } from '@/components/shared/Button';
 import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import { parseCalendarDate } from '@/lib/dateUtils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
 import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
@@ -51,8 +52,8 @@ const shortResearchEquipmentColumns = (
                 <field.DateField
                   aria-label="Do"
                   disabled={isReadonly}
-                  selectionStartDate={state ? new Date(state) : undefined}
-                  minimalDate={state ? new Date(state) : undefined}
+                  selectionStartDate={state ? parseCalendarDate(state) : undefined}
+                  minimalDate={state ? parseCalendarDate(state) : undefined}
                 />
               );
             }}

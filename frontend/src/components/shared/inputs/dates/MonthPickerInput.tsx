@@ -5,6 +5,7 @@ import { useInputAria } from '@/components/inputs/useInputAria';
 import { CalendarDotIcon } from '@phosphor-icons/react';
 import React from 'react';
 
+import { parseCalendarDate, toCalendarDateValue } from '@/lib/dateUtils';
 import { MonthPicker } from '@/components/shared/inputs/dates/MonthPicker';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { InputErrorTriangle } from '@/components/shared/inputs/parts/InputErrorTriangle';
@@ -113,7 +114,7 @@ function getDateFromValue(value: string | undefined): Date | undefined {
     return undefined;
   }
 
-  return new Date(value);
+  return parseCalendarDate(value);
 }
 
 function getValueFromDate(date: Date | undefined): string | undefined {
@@ -121,5 +122,5 @@ function getValueFromDate(date: Date | undefined): string | undefined {
     return undefined;
   }
 
-  return date.toISOString();
+  return toCalendarDateValue(date);
 }

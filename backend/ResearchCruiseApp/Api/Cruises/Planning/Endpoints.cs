@@ -231,8 +231,12 @@ public static class PlanningEndpoints
         DateTime windowEnd;
         if (formA is { PrecisePeriodStart: not null, PrecisePeriodEnd: not null })
         {
-            windowStart = formA.PrecisePeriodStart.Value.Date;
-            windowEnd = formA.PrecisePeriodEnd.Value.Date;
+            windowStart = TimeZoneInfo
+                .ConvertTimeFromUtc(formA.PrecisePeriodStart.Value, timeZone)
+                .Date;
+            windowEnd = TimeZoneInfo
+                .ConvertTimeFromUtc(formA.PrecisePeriodEnd.Value, timeZone)
+                .Date;
         }
         else if (
             TryParsePeriodEdge(formA.OptimalPeriodBeg, out var startEdge)

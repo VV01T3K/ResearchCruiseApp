@@ -203,9 +203,8 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
     expect.objectContaining({
       form: expect.objectContaining({
         periodSelectionType: 'precise',
-        // Midnight in Warsaw on 17 and 19 May, and no period alongside the dates.
-        precisePeriodStart: '2026-05-16T22:00:00.000Z',
-        precisePeriodEnd: '2026-05-18T22:00:00.000Z',
+        precisePeriodStart: '2026-05-17T00:00:00Z',
+        precisePeriodEnd: '2026-05-19T00:00:00Z',
         acceptablePeriod: null,
         optimalPeriod: null,
       }),

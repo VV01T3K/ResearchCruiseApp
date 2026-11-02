@@ -30,14 +30,14 @@ public sealed class LoginTests(SqlFixture fixture) : IAsyncLifetime
         var user = await TestUsers.Create(app, "login@example.invalid");
         using var client = app.CreateApiClient();
 
-        var before = DateTime.UtcNow;
+        var before = app.Clock.GetUtcNow().UtcDateTime;
         using var response = await client.PostAsJsonAsync(
             "/v2/auth/login",
             new { Email = user.Email, Password = TestUsers.Password },
             cancellationToken
         );
 
-        var after = DateTime.UtcNow;
+        var after = app.Clock.GetUtcNow().UtcDateTime;
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var body = await JsonDocument.ParseAsync(
             await response.Content.ReadAsStreamAsync(cancellationToken),
