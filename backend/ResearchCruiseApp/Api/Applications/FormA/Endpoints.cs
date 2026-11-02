@@ -1,7 +1,7 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Api.Cruises;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
@@ -55,6 +55,7 @@ public static class FormAEndpoints
         ApplicationDbContext dbContext,
         ApplicationScoringService cruiseApplicationEvaluator,
         SupervisorInvitationService cruiseApplicationsService,
+        GlobalizationService globalizationService,
         CancellationToken cancellationToken
     )
     {
@@ -63,6 +64,7 @@ public static class FormAEndpoints
             var periodValidation = await ValidatePrecisePeriodAgainstBlockades(
                 request.Form,
                 dbContext,
+                globalizationService,
                 cancellationToken
             );
             if (!periodValidation.IsSuccess)
@@ -137,6 +139,7 @@ public static class FormAEndpoints
         FormDeletionService formsService,
         SupervisorInvitationService cruiseApplicationsService,
         ApplicationScoringService cruiseApplicationEvaluator,
+        GlobalizationService globalizationService,
         CancellationToken cancellationToken
     )
     {
@@ -158,6 +161,7 @@ public static class FormAEndpoints
             var periodValidation = await ValidatePrecisePeriodAgainstBlockades(
                 request.Form,
                 dbContext,
+                globalizationService,
                 cancellationToken
             );
             if (!periodValidation.IsSuccess)
@@ -173,7 +177,7 @@ public static class FormAEndpoints
             application.Note = request.Form.Note;
         else
         {
-            application.Date = DateOnly.FromDateTime(DateTime.Now);
+            application.Date = globalizationService.GetCurrentDate();
             application.Status = CruiseApplicationStatus.WaitingForSupervisor;
         }
         application.FormA = formAResult.Data!;
@@ -201,6 +205,7 @@ public static class FormAEndpoints
     private static async Task<Result> ValidatePrecisePeriodAgainstBlockades(
         FormAFields request,
         ApplicationDbContext dbContext,
+        GlobalizationService globalizationService,
         CancellationToken cancellationToken
     )
     {
@@ -221,19 +226,13 @@ public static class FormAEndpoints
             .Where(cruise =>
                 cruise.ShipUnavailable
                 && (cruise.Status == CruiseStatus.New || cruise.Status == CruiseStatus.Confirmed)
-                && DateTime.TryParse(cruise.StartDate, out _)
-                && DateTime.TryParse(cruise.EndDate, out _)
             )
-            .Select(cruise =>
-                (
-                    DateTime.Parse(cruise.StartDate, CultureInfo.InvariantCulture),
-                    DateTime.Parse(cruise.EndDate, CultureInfo.InvariantCulture)
-                )
-            );
+            .Select(PlanningEndpoints.ParsePeriod)
+            .OfType<(DateTime Start, DateTime End)>();
 
         return CruiseWindowAvailability.HasNoFreeWindow(
-            request.PrecisePeriodStart.Value,
-            request.PrecisePeriodEnd.Value,
+            globalizationService.GetPolishDayStartUtc(request.PrecisePeriodStart.Value),
+            globalizationService.GetPolishDayStartUtc(request.PrecisePeriodEnd.Value),
             cruiseDurationDays,
             blockades
         )

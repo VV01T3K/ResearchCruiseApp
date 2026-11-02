@@ -26,6 +26,7 @@ public static class ExportEndpoints
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
         CsvExporter csvExporter,
+        GlobalizationService globalizationService,
         CancellationToken cancellationToken
     )
     {
@@ -39,12 +40,13 @@ public static class ExportEndpoints
                 .ThenInclude(application => application.FormA)
             .ToListAsync(cancellationToken);
         var visibleCruises = new List<DomainCruise>();
+        var timeZone = globalizationService.GetTimeZoneInfo();
 
         foreach (var cruise in cruises)
         {
             if (
                 PlanningEndpoints.TryParseUtc(cruise.StartDate, out var start)
-                && start.Year == parsedYear
+                && TimeZoneInfo.ConvertTimeFromUtc(start, timeZone).Year == parsedYear
                 && await userPermissionVerifier.CanCurrentUserViewCruise(cruise)
             )
             {

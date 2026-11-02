@@ -15,7 +15,8 @@ internal class FormInitValuesReader(
     ContractReader contracts,
     ApplicationDbContext dbContext,
     CurrentUserService currentUserService,
-    UserPermissionVerifier userPermissionVerifier
+    UserPermissionVerifier userPermissionVerifier,
+    GlobalizationService globalizationService
 )
 {
     public async Task<FormAOptions> CreateFormA(
@@ -113,8 +114,10 @@ internal class FormInitValuesReader(
             DeputyManagers = [],
             Years =
             [
-                DateTime.Now.Year.ToString(CultureInfo.InvariantCulture),
-                (DateTime.Now.Year + 1).ToString(CultureInfo.InvariantCulture),
+                globalizationService.GetCurrentDate().Year.ToString(CultureInfo.InvariantCulture),
+                (globalizationService.GetCurrentDate().Year + 1).ToString(
+                    CultureInfo.InvariantCulture
+                ),
             ],
             ShipUsages = FormAValuesConstants.ShipUsages,
             StandardSpubTasks = FormAValuesConstants.StandardSpubTasks,

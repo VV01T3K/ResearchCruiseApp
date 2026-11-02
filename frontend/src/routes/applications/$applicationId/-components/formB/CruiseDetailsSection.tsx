@@ -8,6 +8,7 @@ import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { LongResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
@@ -36,7 +37,7 @@ const shortResearchEquipmentColumns = (
         listeners={{
           onChange: ({ value }) => {
             const endDate = form.getFieldValue(`shortResearchEquipments[${row.index}].endDate`);
-            if (value && endDate && value > endDate) {
+            if (value && endDate && parsePolishDayStart(value) > parsePolishDayStart(endDate)) {
               form.setFieldValue(`shortResearchEquipments[${row.index}].endDate`, value);
             }
           },
@@ -66,8 +67,8 @@ const shortResearchEquipmentColumns = (
               <field.DateField
                 aria-label="Do"
                 disabled={isReadonly}
-                selectionStartDate={startDate ? new Date(startDate) : undefined}
-                minimalDate={startDate ? new Date(startDate) : undefined}
+                selectionStartDate={startDate ? parseCalendarDate(startDate) : undefined}
+                minimalDate={startDate ? parseCalendarDate(startDate) : undefined}
               />
             )}
           </form.Subscribe>

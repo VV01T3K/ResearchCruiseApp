@@ -313,6 +313,27 @@ describe('application submission', () => {
     );
   });
 
+  it.each([
+    ['2026-05-17', '2026-05-17T22:00:00', true],
+    ['2026-05-16T22:00:00', '2026-05-18', true],
+    ['2026-05-17', '2026-05-16T22:00:00', false],
+    ['2026-05-18', '2026-05-16T22:00:00', false],
+    ['2026-03-29', '2026-03-30', false],
+    ['2026-10-25', '2026-10-26', true],
+  ])('compares precise dates %s and %s as Polish days', (precisePeriodStart, precisePeriodEnd, valid) => {
+    const result = schemaA.safeParse({
+      ...a(),
+      periodSelectionType: 'precise',
+      acceptablePeriod: '',
+      optimalPeriod: '',
+      cruiseDays: 1,
+      cruiseHours: 0,
+      precisePeriodStart,
+      precisePeriodEnd,
+    });
+    expect(result.success).toBe(valid);
+  });
+
   it('requires a PDF permission scan only after form A', () => {
     const permission = { description: 'Pobór próbek', executive: 'Urząd Morski' };
     expect(schemaA.safeParse({ ...a(), permissions: [permission] }).success).toBe(true);
@@ -447,7 +468,26 @@ describe('ship availability', () => {
       { title: 'Przegląd', startDate: '2026-06-04T00:00:00Z', endDate: '2026-06-06T00:00:00Z' },
     ]);
     expect(blocked.safeParse(precise())).toMatchObject(issueAt(['precisePeriodEnd']));
-    expect(blocked.safeParse({ ...precise(), precisePeriodEnd: '2026-06-08T00:00:00Z' }).success).toBe(true);
+    expect(blocked.safeParse({ ...precise(), precisePeriodEnd: '2026-06-09T00:00:00Z' }).success).toBe(true);
+  });
+
+  it.each([
+    ['2026-05-16T22:00:00', '2026-05-17T22:00:00', 24, '2026-05-17T22:00:00Z', '2026-05-18T22:00:00Z', true],
+    ['2026-05-17', '2026-05-18', 24, '2026-05-17T22:00:00Z', '2026-05-18T22:00:00Z', true],
+    ['2026-05-16T22:00:00', '2026-05-17T22:00:00', 24, '2026-05-17T21:00:00Z', '2026-05-18T22:00:00Z', false],
+    ['2026-03-28T23:00:00', '2026-03-29T22:00:00', 1, '2026-03-28T23:00:00Z', '2026-03-29T22:00:00Z', false],
+    ['2026-03-29', '2026-03-30', 1, '2026-03-28T23:00:00Z', '2026-03-29T22:00:00Z', false],
+    ['2026-03-29', '2026-03-30', 1, '2026-03-28T23:00:00Z', '2026-03-29T21:00:00Z', true],
+  ])('compares the period %s to %s with blockades as real times', (start, end, hours, from, to, valid) => {
+    const blocked = getFormAValidationSchema(options, [{ title: 'Remont', startDate: from, endDate: to }]);
+    const result = blocked.safeParse({
+      ...precise(),
+      cruiseDays: Math.floor(hours / 24),
+      cruiseHours: hours % 24,
+      precisePeriodStart: start,
+      precisePeriodEnd: end,
+    });
+    expect(result.success).toBe(valid);
   });
 
   it('does not reject a slot that only touches the end of a blockade', () => {

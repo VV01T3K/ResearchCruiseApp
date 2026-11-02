@@ -5,7 +5,7 @@ import { useInputAria } from '@/components/inputs/useInputAria';
 import { CalendarDotIcon, CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import React from 'react';
 import { Button } from '@/components/shared/Button';
-import { parseBackendDateTime } from '@/lib/dateUtils';
+import { parseBackendDateTime, parseCalendarDate, toCalendarDateValue } from '@/lib/dateUtils';
 import { MonthPickerPopover } from '@/components/shared/inputs/dates/MonthPickerPopover';
 import { TimePickerInput } from '@/components/shared/inputs/dates/TimePickerInput';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
@@ -60,7 +60,7 @@ export function DatePickerInput({
   'aria-label': ariaLabel,
 }: Props) {
   const aria = useInputAria(errors, helper);
-  const selectedDate = getDateFromValue(value);
+  const selectedDate = getDateFromValue(value, type);
   const [hoveredDate, setHoveredDate] = React.useState<Date | undefined>(undefined);
   const [expanded, setExpanded] = React.useState(false);
   const clearRef = React.useRef<HTMLButtonElement>(null);
@@ -128,7 +128,7 @@ export function DatePickerInput({
       newDate = maximalDate;
     }
 
-    onChange?.(getValueFromDate(newDate));
+    onChange?.(getValueFromDate(newDate, type));
   }
 
   return (
@@ -224,7 +224,7 @@ export function DatePickerInput({
                 const newDate = new Date(selectedDate ?? new Date());
                 newDate.setHours(x?.hours ?? 0);
                 newDate.setMinutes(x?.minutes ?? 0);
-                onChange?.(getValueFromDate(newDate));
+                onChange?.(getValueFromDate(newDate, type));
               }}
               onBlur={onBlur}
               minuteStep={minuteStep}
@@ -252,19 +252,19 @@ export function DatePickerInput({
   );
 }
 
-function getDateFromValue(value: string | undefined): Date | undefined {
+function getDateFromValue(value: string | undefined, type: 'date' | 'datetime'): Date | undefined {
   if (!value) {
     return undefined;
   }
-  return parseBackendDateTime(value);
+  return type === 'date' ? parseCalendarDate(value) : parseBackendDateTime(value);
 }
 
-function getValueFromDate(date: Date | undefined): string | undefined {
+function getValueFromDate(date: Date | undefined, type: 'date' | 'datetime'): string | undefined {
   if (!date) {
     return undefined;
   }
 
-  return date.toISOString();
+  return type === 'date' ? toCalendarDateValue(date) : date.toISOString();
 }
 
 type CalendarDateTileProps = {

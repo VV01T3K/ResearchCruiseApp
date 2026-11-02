@@ -13,7 +13,7 @@ internal class ApplicationFactory(
     {
         var newCruiseApplication = new CruiseApplication
         {
-            Date = GetCurrentDate(),
+            Date = globalizationService.GetCurrentDate(),
             FormA = formA,
             FormB = null,
             FormC = null,
@@ -25,14 +25,5 @@ internal class ApplicationFactory(
         };
 
         return newCruiseApplication;
-    }
-
-    private DateOnly GetCurrentDate()
-    {
-        var localDateTime = TimeZoneInfo.ConvertTimeFromUtc(
-            DateTime.UtcNow,
-            globalizationService.GetTimeZoneInfo()
-        );
-        return DateOnly.FromDateTime(localDateTime);
     }
 }

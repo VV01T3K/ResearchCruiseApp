@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications;
@@ -7,6 +9,7 @@ using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Auth;
+using ResearchCruiseApp.IntegrationTests.Cruises;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Applications;
@@ -212,6 +215,73 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         await app.InDatabase(async db =>
             Assert.Single(await db.CruiseApplications.ToListAsync(ct))
         );
+    }
+
+    [Theory]
+    [InlineData("2030-05-17T00:00:00Z", "2030-05-17T22:00:00Z", 24, HttpStatusCode.Created)]
+    [InlineData("2030-05-16T22:00:00Z", "2030-05-18T00:00:00Z", 24, HttpStatusCode.Created)]
+    [InlineData("2030-05-17T00:00:00Z", "2030-05-16T22:00:00Z", 24, HttpStatusCode.BadRequest)]
+    [InlineData("2030-05-18T00:00:00Z", "2030-05-16T22:00:00Z", 24, HttpStatusCode.BadRequest)]
+    [InlineData("2030-03-31T00:00:00Z", "2030-04-01T00:00:00Z", 24, HttpStatusCode.BadRequest)]
+    [InlineData("2030-10-27T00:00:00Z", "2030-10-28T00:00:00Z", 25, HttpStatusCode.Created)]
+    [InlineData(
+        "2030-05-16T22:00:00Z",
+        "2030-05-17T22:00:00Z",
+        24,
+        HttpStatusCode.Created,
+        "2030-05-17T22:00:00.000Z",
+        "2030-05-18T22:00:00.000Z"
+    )]
+    [InlineData(
+        "2030-03-30T23:00:00Z",
+        "2030-03-31T22:00:00Z",
+        1,
+        HttpStatusCode.Conflict,
+        "2030-03-30T23:00:00.000Z",
+        "2030-03-31T22:00:00.000Z"
+    )]
+    public async Task Submit_ComparesPrecisePeriodAsPolishDays(
+        string start,
+        string end,
+        int cruiseHours,
+        HttpStatusCode expected,
+        string? blockadeStart = null,
+        string? blockadeEnd = null
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var manager = await TestUsers.Create(
+            app,
+            "manager@example.invalid",
+            RoleName.CruiseManager
+        );
+        var deputy = await TestUsers.Create(app, "deputy@example.invalid", RoleName.CruiseManager);
+        var unit = new UgUnit { Name = "Synthetic faculty", IsActive = true };
+        await app.InDatabase(async db =>
+        {
+            db.UgUnits.Add(unit);
+            if (blockadeStart is not null)
+                db.Cruises.Add(AutoPlanTests.Existing("2029/1", blockadeStart, blockadeEnd!, true));
+            await db.SaveChangesAsync(ct);
+        });
+        using var client = await TestApplications.Login(app, manager.Email!);
+        var form = JsonSerializer
+            .SerializeToNode(CompleteForm(Guid.Parse(manager.Id), Guid.Parse(deputy.Id), unit.Id))!
+            .AsObject();
+        form["PrecisePeriodStart"] = start;
+        form["PrecisePeriodEnd"] = end;
+        form["CruiseHours"] = cruiseHours.ToString(CultureInfo.InvariantCulture);
+
+        using var response = await FormRequests.Write(
+            client,
+            "/v2/applications",
+            form,
+            false,
+            true
+        );
+
+        Assert.Equal(expected, response.StatusCode);
     }
 
     internal static FormAFields CompleteForm(Guid manager, Guid deputy, Guid unit) =>

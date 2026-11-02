@@ -2,7 +2,7 @@
 
 namespace ResearchCruiseApp.Infrastructure.Localization;
 
-public class GlobalizationService
+public class GlobalizationService(TimeProvider clock)
 {
     private const string CultureInfoId = "pl-pl";
     private const string TimeZoneInfoId = "Central European Standard Time";
@@ -10,6 +10,23 @@ public class GlobalizationService
     public CultureInfo GetCultureInfo() => new(CultureInfoId);
 
     public TimeZoneInfo GetTimeZoneInfo() => TimeZoneInfo.FindSystemTimeZoneById(TimeZoneInfoId);
+
+    public DateOnly GetCurrentDate() =>
+        DateOnly.FromDateTime(
+            TimeZoneInfo.ConvertTime(clock.GetUtcNow(), GetTimeZoneInfo()).DateTime
+        );
+
+    public DateTime GetPolishDayStartUtc(DateTime utc)
+    {
+        var timeZone = GetTimeZoneInfo();
+        var day = TimeZoneInfo
+            .ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), timeZone)
+            .Date;
+        return TimeZoneInfo.ConvertTimeToUtc(
+            DateTime.SpecifyKind(day, DateTimeKind.Unspecified),
+            timeZone
+        );
+    }
 
     public string GetIsoUtcString(DateTime date)
     {

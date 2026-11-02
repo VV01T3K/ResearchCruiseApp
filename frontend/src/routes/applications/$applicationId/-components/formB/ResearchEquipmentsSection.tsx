@@ -5,6 +5,7 @@ import { Button } from '@/components/shared/Button';
 import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
+import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
 import type { FormBFormApi, FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
 import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
 import { ResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
@@ -45,7 +46,7 @@ const researchEquipmentsColumns = (
           {(field) => (
             <form.Subscribe selector={(state) => state.values.researchEquipments[row.index].insuranceStartDate}>
               {(state) => {
-                if (state && field.state.value && state > field.state.value) {
+                if (state && field.state.value && parsePolishDayStart(state) > parsePolishDayStart(field.state.value)) {
                   field.handleChange(state);
                 }
                 return (
@@ -53,8 +54,8 @@ const researchEquipmentsColumns = (
                     onChange={(e) => field.handleChange(e ?? '')}
                     label="Data zakończenia ubezpieczenia"
                     disabled={isReadonly}
-                    selectionStartDate={state ? new Date(state) : undefined}
-                    minimalDate={state ? new Date(state) : undefined}
+                    selectionStartDate={state ? parseCalendarDate(state) : undefined}
+                    minimalDate={state ? parseCalendarDate(state) : undefined}
                   />
                 );
               }}
