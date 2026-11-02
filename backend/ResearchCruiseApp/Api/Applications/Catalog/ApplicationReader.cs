@@ -1,6 +1,8 @@
+using System.Collections.Concurrent;
 using System.Globalization;
 using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Api.Cruises;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
@@ -10,9 +12,19 @@ namespace ResearchCruiseApp.Api.Applications;
 internal class ApplicationReader(
     ApplicationScoringService evaluator,
     IdentityService identityService,
-    ContractReader contracts
+    ContractReader contracts,
+    ILogger<ApplicationReader> logger
 )
 {
+    private static readonly ConcurrentDictionary<Guid, byte> ReportedApplications = new();
+
+    private static readonly string[] StoredCruiseDateFormats =
+    [
+        "yyyy-MM-ddTHH:mm:ss.FFFFFFFK",
+        "yyyy-MM-dd HH:mm:ss.FFFFFFF",
+        "yyyy-MM-dd",
+    ];
+
     public Task<Dictionary<Guid, CruiseManagerOptionDto>> LoadManagers(
         IEnumerable<CruiseApplication> applications,
         CancellationToken cancellationToken
@@ -31,14 +43,42 @@ internal class ApplicationReader(
         IReadOnlyDictionary<Guid, CruiseManagerOptionDto> managers
     )
     {
+        var form = application.FormA;
+        var cruise = application.Cruise;
+        var hasValidAcceptablePeriod = HasValidPeriod(
+            form?.AcceptablePeriodBeg,
+            form?.AcceptablePeriodEnd
+        );
+        var hasValidOptimalPeriod = HasValidPeriod(form?.OptimalPeriodBeg, form?.OptimalPeriodEnd);
+        var year = ReadYear(form);
+        var hasValidCruiseDates =
+            TryReadCruiseDate(cruise?.StartDate, out var startDate)
+            & TryReadCruiseDate(cruise?.EndDate, out var endDate);
+        var invalidValues = new (bool IsValid, string Label)[]
+        {
+            (year is not null, "rok rejsu"),
+            (hasValidCruiseDates, "data rejsu"),
+            (hasValidAcceptablePeriod && hasValidOptimalPeriod, "okres rejsu"),
+            (
+                form is null
+                    || form.FormAResearchTasks.All(task =>
+                        HasValidAmount(task.ResearchTask.FinancingAmount)
+                    ),
+                "kwota finansowania"
+            ),
+        }
+            .Where(value => !value.IsValid)
+            .Select(value => value.Label)
+            .ToList();
+        if (invalidValues.Count > 0)
+            LogInvalidValues(application, invalidValues);
+
         var dto = new CruiseApplicationSummary
         {
             Id = application.Id,
             Number = application.Number.ToString(CultureInfo.InvariantCulture),
             Date = application.Date,
-            Year = application.FormA is null
-                ? default
-                : int.Parse(application.FormA.Year, CultureInfo.InvariantCulture),
+            Year = year,
             CruiseManagerId = application.FormA?.CruiseManagerId ?? Guid.Empty,
             DeputyManagerId = application.FormA?.DeputyManagerId ?? Guid.Empty,
             HasFormA = application.FormA is not null,
@@ -47,21 +87,15 @@ internal class ApplicationReader(
             Status = application.Status,
             Note = application.Note,
             CruiseHours = application.FormA?.CruiseHours,
-            AcceptablePeriodBeg = application.FormA?.AcceptablePeriodBeg,
-            AcceptablePeriodEnd = application.FormA?.AcceptablePeriodEnd,
-            OptimalPeriodBeg = application.FormA?.OptimalPeriodBeg,
-            OptimalPeriodEnd = application.FormA?.OptimalPeriodEnd,
+            AcceptablePeriodBeg = hasValidAcceptablePeriod ? form?.AcceptablePeriodBeg : null,
+            AcceptablePeriodEnd = hasValidAcceptablePeriod ? form?.AcceptablePeriodEnd : null,
+            OptimalPeriodBeg = hasValidOptimalPeriod ? form?.OptimalPeriodBeg : null,
+            OptimalPeriodEnd = hasValidOptimalPeriod ? form?.OptimalPeriodEnd : null,
             PrecisePeriodStart = application.FormA?.PrecisePeriodStart,
             PrecisePeriodEnd = application.FormA?.PrecisePeriodEnd,
-            StartDate =
-                application.Cruise is not null
-                && !string.IsNullOrEmpty(application.Cruise.StartDate)
-                    ? DateTime.Parse(application.Cruise.StartDate, CultureInfo.InvariantCulture)
-                    : null,
-            EndDate =
-                application.Cruise is not null && !string.IsNullOrEmpty(application.Cruise.EndDate)
-                    ? DateTime.Parse(application.Cruise.EndDate, CultureInfo.InvariantCulture)
-                    : null,
+            StartDate = startDate,
+            EndDate = endDate,
+            InvalidStoredValues = invalidValues,
             Revision = application.RowVersion.ToRevision(),
         };
 
@@ -81,14 +115,15 @@ internal class ApplicationReader(
         var manager = application.FormA?.CruiseManagerId is { } managerId
             ? managers.GetValueOrDefault(managerId)
             : null;
+        var year = ReadYear(application.FormA);
+        if (year is null)
+            LogInvalidValues(application, ["rok rejsu"]);
 
         return new CruiseApplicationCandidateResponse
         {
             Id = application.Id,
             Number = application.Number.ToString(CultureInfo.InvariantCulture),
-            Year = application.FormA is null
-                ? default
-                : int.Parse(application.FormA.Year, CultureInfo.InvariantCulture),
+            Year = year,
             CruiseManagerId = application.FormA?.CruiseManagerId ?? Guid.Empty,
             DeputyManagerId = application.FormA?.DeputyManagerId ?? Guid.Empty,
             HasFormA = application.FormA is not null,
@@ -125,6 +160,57 @@ internal class ApplicationReader(
             EffectsPoints = application.EffectsPoints.ToString(CultureInfo.InvariantCulture),
         };
     }
+
+    private void LogInvalidValues(CruiseApplication application, List<string> invalidValues)
+    {
+        if (ReportedApplications.TryAdd(application.Id, 0))
+            logger.LogError(
+                "Application {ApplicationId} has invalid stored values: {InvalidValues}",
+                application.Id,
+                invalidValues
+            );
+    }
+
+    private static int? ReadYear(FormA? form) =>
+        form is null ? 0
+        : PlanningEndpoints.TryParseYear(form.Year, out var year) ? year
+        : null;
+
+    private static bool TryReadCruiseDate(string? stored, out DateTime? date)
+    {
+        date = null;
+        if (string.IsNullOrEmpty(stored))
+            return true;
+
+        if (
+            !DateTime.TryParseExact(
+                stored,
+                StoredCruiseDateFormats,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.RoundtripKind,
+                out var parsed
+            )
+        )
+            return false;
+
+        date = parsed;
+        return true;
+    }
+
+    private static bool HasValidPeriod(string? start, string? end) =>
+        string.IsNullOrEmpty(start) && string.IsNullOrEmpty(end)
+        || PlanningEndpoints.TryParsePeriodEdge(start, out var startEdge)
+            && PlanningEndpoints.TryParsePeriodEdge(end, out var endEdge)
+            && startEdge <= endEdge;
+
+    private static bool HasValidAmount(string? amount) =>
+        string.IsNullOrEmpty(amount)
+        || decimal.TryParse(
+            amount,
+            NumberStyles.AllowDecimalPoint,
+            CultureInfo.InvariantCulture,
+            out _
+        );
 
     private static void AddManagers(
         CruiseApplication application,

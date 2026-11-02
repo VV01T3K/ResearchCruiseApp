@@ -47,7 +47,12 @@ export function ApplicationsSection({
               enableColumnFilter: !attached,
               size: 5,
             },
-            { header: 'Rok rejsu', accessorFn: (row) => row.year, enableColumnFilter: !attached, size: 20 },
+            {
+              header: 'Rok rejsu',
+              accessorFn: (row) => row.year ?? 'Błędne dane',
+              enableColumnFilter: !attached,
+              size: 20,
+            },
             {
               id: 'cruiseManagerAvatar',
               cell: ({ row }) => (

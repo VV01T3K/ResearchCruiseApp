@@ -9,7 +9,7 @@ export const cruiseApplicationCandidateResponseCruiseIdRegExp = new RegExp('^[0-
 export const CruiseApplicationCandidateResponse = zod.object({
   "id": zod.string().regex(cruiseApplicationCandidateResponseIdRegExp),
   "number": zod.string(),
-  "year": zod.int(),
+  "year": zod.int().nullable(),
   "cruiseManagerId": zod.string().regex(cruiseApplicationCandidateResponseCruiseManagerIdRegExp),
   "cruiseManagerFirstName": zod.string(),
   "cruiseManagerLastName": zod.string(),

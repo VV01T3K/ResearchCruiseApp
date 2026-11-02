@@ -27,6 +27,7 @@ export function application(): ApplicationResponse {
     precisePeriodEnd: null,
     startDate: null,
     endDate: null,
+    invalidStoredValues: [],
     revision: 'AAAAAAAAB9E=',
   };
 }

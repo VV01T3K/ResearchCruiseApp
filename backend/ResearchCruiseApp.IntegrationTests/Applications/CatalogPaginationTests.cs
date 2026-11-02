@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
+using ResearchCruiseApp.Api.Cruises;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
@@ -369,7 +370,90 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
-    private static CruiseApplication Create(Guid id, Guid ownerId, string year = "2030") =>
+    [Fact]
+    public async Task Page_WhenStoredYearIsMalformed_MarksOnlyThatRowAndAutoPlanSkipsIt()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var owner = await TestUsers.Create(app, "catalog@example.invalid", RoleName.Administrator);
+        var malformed = Create(
+            Guid.NewGuid(),
+            Guid.Parse(owner.Id),
+            "oops",
+            new DateTime(2030, 6, 1)
+        );
+        var healthy = Create(Guid.NewGuid(), Guid.Parse(owner.Id));
+        await app.InDatabase(async db =>
+        {
+            db.CruiseApplications.AddRange(malformed, healthy);
+            await db.SaveChangesAsync(ct);
+        });
+        using var client = await TestApplications.Login(app, owner.Email!);
+
+        var items = await GetItems(client, ct);
+        using var planned = await client.PostAsync("/v2/cruises/auto-plan", null, ct);
+
+        var row = Assert.Single(items, item => item.Id == malformed.Id);
+        Assert.Null(row.Year);
+        Assert.Equal(["rok rejsu"], row.InvalidStoredValues);
+        var other = Assert.Single(items, item => item.Id == healthy.Id);
+        Assert.Equal(2030, other.Year);
+        Assert.Empty(other.InvalidStoredValues);
+        var plan = await planned.Content.ReadFromJsonAsync<AutoPlanResponse>(ct);
+        Assert.Equal(0, plan!.PlannedCount);
+        Assert.Contains(plan.Skipped, skipped => skipped.ApplicationId == malformed.Id);
+    }
+
+    [Fact]
+    public async Task Page_WhenStoredCruiseDateIsMalformed_MarksOnlyThatRow()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var owner = await TestUsers.Create(app, "catalog@example.invalid", RoleName.Administrator);
+        var malformed = Create(Guid.NewGuid(), Guid.Parse(owner.Id));
+        var healthy = Create(Guid.NewGuid(), Guid.Parse(owner.Id));
+        await app.InDatabase(async db =>
+        {
+            db.CruiseApplications.Add(healthy);
+            db.Cruises.Add(
+                new Cruise
+                {
+                    Number = "2030/1",
+                    StartDate = "2026-99-99",
+                    EndDate = "2030-01-16T08:00:00.000Z",
+                    CruiseApplications = [malformed],
+                }
+            );
+            await db.SaveChangesAsync(ct);
+        });
+        using var client = await TestApplications.Login(app, owner.Email!);
+
+        var items = await GetItems(client, ct);
+
+        var row = Assert.Single(items, item => item.Id == malformed.Id);
+        Assert.Null(row.StartDate);
+        Assert.Equal(["data rejsu"], row.InvalidStoredValues);
+        Assert.Empty(Assert.Single(items, item => item.Id == healthy.Id).InvalidStoredValues);
+    }
+
+    private static async Task<List<ApplicationResponse>> GetItems(
+        HttpClient client,
+        CancellationToken ct
+    ) =>
+        (
+            await client.GetFromJsonAsync<ApplicationsPageResponse>(
+                "/v2/applications",
+                JsonOptions,
+                ct
+            )
+        )!.Items;
+
+    private static CruiseApplication Create(
+        Guid id,
+        Guid ownerId,
+        string year = "2030",
+        DateTime? preciseStart = null
+    ) =>
         new()
         {
             Id = id,
@@ -380,6 +464,8 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
                 CruiseManagerId = ownerId,
                 DeputyManagerId = ownerId,
                 Year = year,
+                PrecisePeriodStart = preciseStart,
+                PrecisePeriodEnd = preciseStart?.AddDays(29),
                 CruiseHours = "24",
                 PeriodNotes = "",
                 DifferentUsage = "",

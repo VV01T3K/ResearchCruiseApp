@@ -240,11 +240,11 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
         });
         Assert.Empty(
             (
-                await manager.GetFromJsonAsync<List<CruiseEffectResponse>>(
+                await manager.GetFromJsonAsync<CruiseEffectsResponse>(
                     "/v2/users/me/cruise-effects",
                     ct
                 )
-            )!
+            )!.Items
         );
         using var submitted = await manager.PutFormAsync(
             route,
@@ -269,11 +269,11 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
         await AssertEffects(app, deputyClient, application.Id, deputyId, deputyScores);
         Assert.Empty(
             (
-                await unrelatedClient.GetFromJsonAsync<List<CruiseEffectResponse>>(
+                await unrelatedClient.GetFromJsonAsync<CruiseEffectsResponse>(
                     "/v2/users/me/cruise-effects",
                     ct
                 )
-            )!
+            )!.Items
         );
         await app.InDatabase(async db =>
         {
@@ -427,6 +427,55 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
         });
     }
 
+    [Fact]
+    public async Task Effects_WhenFormCHasNoApplication_AreSkippedFromDisplayAndScoring()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var application = await TestApplications.Create(app, CruiseApplicationStatus.Undertaken);
+        await app.InDatabase(async db =>
+        {
+            var managerId = (await db.CruiseApplications.Include(row => row.FormA).SingleAsync(ct))
+                .FormA!
+                .CruiseManagerId;
+            var form = new FormC { ShipUsage = "0", DifferentUsage = "" };
+            form.ResearchTaskEffects.Add(
+                new ResearchTaskEffect
+                {
+                    ResearchTask = new ResearchTask
+                    {
+                        Type = ResearchTaskType.OtherResearchTask,
+                        Title = "Orphaned",
+                    },
+                    Done = "true",
+                    ManagerConditionMet = "true",
+                    DeputyConditionMet = "true",
+                    UserEffects = [new UserEffect { UserId = managerId, Points = 200 }],
+                }
+            );
+            db.Add(form);
+            await db.SaveChangesAsync(ct);
+        });
+        using var manager = await TestApplications.Login(app, application.OwnerEmail);
+
+        var response = await manager.GetFromJsonAsync<CruiseEffectsResponse>(
+            "/v2/users/me/cruise-effects",
+            ct
+        );
+
+        Assert.Empty(response!.Items);
+        Assert.Equal(1, response.SkippedCount);
+        await app.InDatabase(async db =>
+        {
+            var stored = await db
+                .CruiseApplications.IncludeForms()
+                .IncludeFormAContent()
+                .SingleAsync(ct);
+            await new ApplicationScoringService(db).Evaluate(stored, isDraft: false, ct);
+            Assert.Equal(0, stored.EffectsPoints);
+        });
+    }
+
     private static async Task AssertEffects(
         TestApplication app,
         HttpClient client,
@@ -436,11 +485,10 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
     )
     {
         var ct = TestContext.Current.CancellationToken;
-        var effects = await client.GetFromJsonAsync<List<CruiseEffectResponse>>(
-            "/v2/users/me/cruise-effects",
-            ct
-        );
-        Assert.Equal(expected.Count, effects!.Count);
+        var effects = (
+            await client.GetFromJsonAsync<CruiseEffectsResponse>("/v2/users/me/cruise-effects", ct)
+        )!.Items;
+        Assert.Equal(expected.Count, effects.Count);
         foreach (var score in expected)
         {
             var effect = Assert.Single(effects, effect => effect.Effect.Title == score.Key);
