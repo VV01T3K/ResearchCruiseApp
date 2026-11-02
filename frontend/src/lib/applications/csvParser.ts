@@ -1,8 +1,44 @@
+import Papa from 'papaparse';
 import { readSheet, type SheetData } from 'read-excel-file/browser';
 import writeXlsxFile from 'write-excel-file/browser';
 
 import { toast } from '@/components/shared/layout/toast';
 import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
+
+const MAX_IMPORT_FILE_BYTES = 1024 * 1024;
+const MAX_IMPORT_ROWS = 1000;
+const MAX_DAY = 366;
+const MAX_DAY_HOURS = 24;
+
+const toNumber = (value: SheetData[number][number] | undefined) =>
+  typeof value === 'number'
+    ? value
+    : Number(
+        String(value ?? '')
+          .trim()
+          .replace(',', '.')
+      ) || 0;
+
+function joinPosition(cells: SheetData[number], columns: Record<string, number>): string {
+  const cell = (index: number) => (index === -1 ? '' : String(cells[index] ?? '').trim());
+  const group = (...indices: number[]) => indices.map(cell).filter(Boolean).join(' ');
+  const coordinates = [
+    group(columns.latDd, columns.latMm, columns.latDir),
+    group(columns.lonDd, columns.lonMm, columns.lonDir),
+  ]
+    .filter(Boolean)
+    .join(', ');
+  return [coordinates, cell(columns.pointName)].filter(Boolean).join(' - ');
+}
+
+function checkRow(row: CruiseDayValues, fileRow: number) {
+  if (!Number.isInteger(row.number) || row.number < 0 || row.number > MAX_DAY) {
+    throw new Error(`Wiersz ${fileRow}: dzień musi być liczbą całkowitą od 0 do ${MAX_DAY}.`);
+  }
+  if (row.hours < 0 || row.hours > MAX_DAY_HOURS) {
+    throw new Error(`Wiersz ${fileRow}: liczba godzin musi być liczbą od 0 do ${MAX_DAY_HOURS}.`);
+  }
+}
 
 /**
  * Parses a CSV string and converts it to an array of CruiseDayValues objects
@@ -12,16 +48,26 @@ import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/t
  * Missing columns will be filled with empty strings instead of throwing an error
  */
 export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValues[] {
-  const lines = csvContent.trim().split('\n');
+  const text = csvContent.replace(/^\uFEFF/, '').trimEnd();
+  const delimiter = text
+    .split('\n')
+    .find((line) => line.trim())
+    ?.includes(';')
+    ? ';'
+    : ',';
+  const { data: lines, errors } = Papa.parse<string[]>(text, { delimiter });
+
+  if (errors.length > 0) {
+    throw new Error(
+      'Nie udało się odczytać pliku. Sprawdź, czy to plik CSV lub XLSX zapisany z arkusza kalkulacyjnego.'
+    );
+  }
 
   if (lines.length < 2) {
     throw new Error('Plik CSV musi zawierać wiersz nagłówka i przynajmniej jeden wiersz danych');
   }
 
-  const headerLine = lines[0];
-  const delimiter = headerLine.includes(';') ? ';' : ',';
-
-  let headers = parseCSVLine(headerLine, delimiter).map((h) => h.toLowerCase().trim());
+  let headers: string[];
   let headerRowIndex = 0;
 
   let columnIndices: Record<string, number>;
@@ -31,7 +77,7 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
   let lonHeaderIndex = -1;
 
   do {
-    headers = parseCSVLine(lines[headerRowIndex], delimiter).map((h) => h.toLowerCase().trim());
+    headers = lines[headerRowIndex].map((h) => h.toLowerCase().trim());
 
     const findColumnIndex = (possibleNames: string[]): number => {
       const normalizedNames = possibleNames.map((name) => name.toLowerCase());
@@ -88,54 +134,20 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
   const rows: CruiseDayValues[] = [];
 
   for (let i = headerRowIndex + 1; i < lines.length; i++) {
-    const line = lines[i].trim();
-
-    if (!line) {
-      continue;
-    }
-
-    const values = parseCSVLine(line, delimiter);
-
-    let positionString = '';
-    if (columnIndices.latDd !== -1 && columnIndices.latMm !== -1 && columnIndices.latDir !== -1) {
-      const latDd = String(values[columnIndices.latDd] || '').trim();
-      const latMm = String(values[columnIndices.latMm] || '').trim();
-      const latDir = String(values[columnIndices.latDir] || '').trim();
-      positionString = `${latDd} ${latMm} ${latDir},`;
-    }
-
-    if (columnIndices.lonDd !== -1 && columnIndices.lonMm !== -1 && columnIndices.lonDir !== -1) {
-      const lonDd = String(values[columnIndices.lonDd] || '').trim();
-      const lonMm = String(values[columnIndices.lonMm] || '').trim();
-      const lonDir = String(values[columnIndices.lonDir] || '').trim();
-      if (positionString) {
-        positionString += ` ${lonDd} ${lonMm} ${lonDir}`;
-      } else {
-        positionString = `${lonDd} ${lonMm} ${lonDir}`;
-      }
-    }
-
-    if (columnIndices.pointName !== -1) {
-      const pointName = String(values[columnIndices.pointName] || '').trim();
-      if (pointName) {
-        if (positionString) {
-          positionString += ` - ${pointName}`;
-        } else {
-          positionString = pointName;
-        }
-      }
-    }
+    const values = lines[i];
+    if (values.every((cell) => !cell.trim())) continue;
 
     const row: CruiseDayValues = {
-      number: Number(values[columnIndices.number]) || 0,
-      hours: Number(values[columnIndices.hours]) || 0,
+      number: toNumber(values[columnIndices.number]),
+      hours: toNumber(values[columnIndices.hours]),
       taskName: String(values[columnIndices.taskName] || '').trim(),
       region: String(values[columnIndices.region] || '').trim(),
-      position: positionString,
+      position: joinPosition(values, columnIndices),
       comment: String(values[columnIndices.comment] || '').trim(),
     };
 
-    rows.push(row);
+    checkRow(row, i + 1);
+    rows.push({ ...row, hours: Math.round(row.hours) });
   }
 
   if (rows.length === 0) {
@@ -143,35 +155,6 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
   }
 
   return rows;
-}
-
-function parseCSVLine(line: string, delimiter: string): string[] {
-  const result: string[] = [];
-  let current = '';
-  let insideQuotes = false;
-
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    const nextChar = line[i + 1];
-
-    if (char === '"') {
-      if (insideQuotes && nextChar === '"') {
-        current += '"';
-        i++; // Skip next quote
-      } else {
-        insideQuotes = !insideQuotes;
-      }
-    } else if (char === delimiter && !insideQuotes) {
-      result.push(current);
-      current = '';
-    } else {
-      current += char;
-    }
-  }
-
-  result.push(current);
-
-  return result;
 }
 
 /**
@@ -184,9 +167,8 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
   try {
     data = await readSheet(file);
   } catch (error) {
-    throw new Error(
-      `Nie udało się przeanalizować pliku XLSX: ${error instanceof Error ? error.message : 'Nieznany błąd'}`
-    );
+    console.error(error);
+    throw new Error('Nie udało się odczytać pliku XLSX. Sprawdź, czy plik nie jest uszkodzony.');
   }
 
   if (data.length < 2) {
@@ -265,46 +247,17 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
       continue;
     }
 
-    let positionString = '';
-    if (columnIndices.latDd !== -1 && columnIndices.latMm !== -1 && columnIndices.latDir !== -1) {
-      const latDd = String(row[columnIndices.latDd] || '').trim();
-      const latMm = String(row[columnIndices.latMm] || '').trim();
-      const latDir = String(row[columnIndices.latDir] || '').trim();
-      positionString = `${latDd} ${latMm} ${latDir},`;
-    }
-
-    if (columnIndices.lonDd !== -1 && columnIndices.lonMm !== -1 && columnIndices.lonDir !== -1) {
-      const lonDd = String(row[columnIndices.lonDd] || '').trim();
-      const lonMm = String(row[columnIndices.lonMm] || '').trim();
-      const lonDir = String(row[columnIndices.lonDir] || '').trim();
-      if (positionString) {
-        positionString += ` ${lonDd} ${lonMm} ${lonDir}`;
-      } else {
-        positionString = `${lonDd} ${lonMm} ${lonDir}`;
-      }
-    }
-
-    if (columnIndices.pointName !== -1) {
-      const pointName = String(row[columnIndices.pointName] || '').trim();
-      if (pointName) {
-        if (positionString) {
-          positionString += ` - ${pointName}`;
-        } else {
-          positionString = pointName;
-        }
-      }
-    }
-
     const cruiseDay: CruiseDayValues = {
-      number: Number(row[columnIndices.number]) || 0,
-      hours: Number(row[columnIndices.hours]) || 0,
+      number: toNumber(row[columnIndices.number]),
+      hours: toNumber(row[columnIndices.hours]),
       taskName: String(row[columnIndices.taskName] || '').trim(),
       region: String(row[columnIndices.region] || '').trim(),
-      position: positionString,
+      position: joinPosition(row, columnIndices),
       comment: String(row[columnIndices.comment] || '').trim(),
     };
 
-    rows.push(cruiseDay);
+    checkRow(cruiseDay, i + 1);
+    rows.push({ ...cruiseDay, hours: Math.round(cruiseDay.hours) });
   }
 
   if (rows.length === 0) {
@@ -319,17 +272,26 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
  * Missing columns will be filled with empty strings instead of throwing an error
  */
 export async function parseCruiseDayDetailsFromFile(file: File): Promise<CruiseDayValues[]> {
+  if (file.size > MAX_IMPORT_FILE_BYTES) {
+    throw new Error('Plik jest zbyt duży. Maksymalny rozmiar to 1 MB.');
+  }
+
   const fileName = file.name.toLowerCase();
+  let rows: CruiseDayValues[];
 
   if (fileName.endsWith('.xlsx')) {
-    return parseCruiseDayDetailsFromXlsx(file);
+    rows = await parseCruiseDayDetailsFromXlsx(file);
+  } else if (fileName.endsWith('.csv') || fileName.endsWith('.txt')) {
+    rows = parseCruiseDayDetailsFromCsv(await file.text());
+  } else {
+    throw new Error('Nieobsługiwany format pliku. Użyj plików CSV lub XLSX.');
   }
 
-  if (fileName.endsWith('.csv') || fileName.endsWith('.txt')) {
-    return parseCruiseDayDetailsFromCsv(await file.text());
+  if (rows.length > MAX_IMPORT_ROWS) {
+    throw new Error(`Plik zawiera zbyt wiele wierszy. Maksymalna liczba to ${MAX_IMPORT_ROWS}.`);
   }
 
-  throw new Error('Nieobsługiwany format pliku. Użyj plików CSV lub XLSX.');
+  return rows;
 }
 
 function parsePositionString(position: string): {
@@ -354,8 +316,12 @@ function parsePositionString(position: string): {
   if (!position) return result;
 
   const parts = position.split(' - ');
+  if (!/^\s*-?\d+(?:[.,]\d+)?\s+\d+(?:[.,]\d+)?\s+[NSEW]\b/i.test(parts[0])) {
+    result.pointName = position.trim();
+    return result;
+  }
   const coordinatesPart = parts[0];
-  result.pointName = parts[1] ? parts[1].trim() : '';
+  result.pointName = parts.slice(1).join(' - ').trim();
 
   const coordParts = coordinatesPart.split(',');
   if (coordParts.length >= 1) {
