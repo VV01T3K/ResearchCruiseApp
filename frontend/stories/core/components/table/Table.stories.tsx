@@ -88,17 +88,20 @@ export const FormVariant: Story = {
 
 export const Sorted: Story = {
   args: { initialSortingState: [{ id: 'Name', desc: false }] },
-  play: async ({ canvas, userEvent }) => {
+  play: async ({ canvas, canvasElement, userEvent }) => {
     const rows = () => canvas.getAllByRole('row').filter((row) => within(row).queryAllByRole('cell').length > 0);
     await expect(rows()[0]).toHaveTextContent('Jane Doe');
-    await userEvent.dblClick(canvas.getByRole('button', { name: 'Age' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Sortuj i filtruj: Age' }));
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await page.findByRole('button', { name: 'Sortuj malejąco' }));
     await waitFor(() => expect(rows()[0]).toHaveTextContent('John Smith'));
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
   },
 };
 
 export const FilterOpen: Story = {
   play: async ({ canvas, canvasElement, userEvent }) => {
-    await userEvent.click(canvas.getByRole('button', { name: 'Filtruj: Name' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Sortuj i filtruj: Name' }));
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(await page.findByRole('option', { name: 'Jane Doe' }));
     await expect(canvas.getByRole('list', { name: 'Aktywne filtry' })).toHaveTextContent('Jane Doe');

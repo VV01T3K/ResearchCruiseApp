@@ -308,7 +308,7 @@ test('a long filter list keeps its keyboard position while the list scrolls', as
     )
   );
   await page.goto('/user-management');
-  const filter = page.getByRole('button', { name: 'Filtruj: Email' });
+  const filter = page.getByRole('button', { name: 'Sortuj i filtruj: Email' });
   await filter.click();
   const search = page.getByRole('combobox');
   const active = page.locator('[role="option"][data-highlighted]');
@@ -358,10 +358,14 @@ for (const mobile of [false, true]) {
     } else {
       const emailColumn = page.getByRole('columnheader', { name: /^Email/ });
       await expect(emailColumn).toHaveAttribute('aria-sort', 'none');
-      await page.getByRole('button', { name: 'Email', exact: true }).click();
+      const emailMenu = page.getByRole('button', { name: 'Sortuj i filtruj: Email' });
+      await emailMenu.click();
+      await page.getByRole('button', { name: 'Sortuj rosnąco' }).click();
       await expect(rows.first()).toContainText('alpha@example.com');
       await expect(emailColumn).toHaveAttribute('aria-sort', 'ascending');
-      await page.getByRole('button', { name: 'Filtruj: Email' }).click();
+      await expect(emailMenu).toBeFocused();
+      await emailMenu.click();
+      await expect(page.getByRole('button', { name: 'Sortuj rosnąco' })).toHaveAttribute('aria-pressed', 'true');
       // A second option adds to the first; a stale list would replace it.
       await page.getByRole('option', { name: 'zebra@example.com', exact: true }).click();
       await expect(page.getByRole('option', { name: 'zebra@example.com' })).toHaveAttribute('aria-selected', 'true');
@@ -369,13 +373,16 @@ for (const mobile of [false, true]) {
       await expect(rows).toHaveCount(2);
       await page.getByRole('option', { name: 'alpha@example.com', exact: true }).click();
       await page.keyboard.press('Escape');
-      const multiSort = (name: RegExp) => page.getByRole('button', { name }).click({ modifiers: ['Shift'] });
-      await multiSort(/^Rola/);
-      await multiSort(/^Imię i nazwisko/);
-      await multiSort(/^Rola/);
-      await multiSort(/^Rola/);
-      await expect(page.getByRole('button', { name: 'Email 1' })).toBeVisible();
-      await expect(page.getByRole('button', { name: 'Imię i nazwisko 2' })).toBeVisible();
+      // Sorting another column replaces the current sort.
+      const roleMenu = page.getByRole('dialog', { name: 'Sortuj i filtruj: Rola' });
+      await page.getByRole('button', { name: /^Sortuj i filtruj: Rola/ }).click();
+      await roleMenu.getByRole('button', { name: 'Sortuj malejąco' }).click();
+      const roleColumn = page.getByRole('columnheader', { name: /^Rola/ });
+      await expect(roleColumn).toHaveAttribute('aria-sort', 'descending');
+      await expect(emailColumn).toHaveAttribute('aria-sort', 'none');
+      await page.getByRole('button', { name: /^Sortuj i filtruj: Rola/ }).click();
+      await roleMenu.getByRole('button', { name: 'Wyłącz sortowanie' }).click();
+      await expect(roleColumn).toHaveAttribute('aria-sort', 'none');
     }
     await expect(rows).toHaveCount(1);
     await expect(rows).toContainText('zebra@example.com');

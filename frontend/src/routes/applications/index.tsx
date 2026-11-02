@@ -297,7 +297,6 @@ function ApplicationsPage() {
               return next.length ? next : DEFAULT_SORTING_STATE;
             })
           }
-          enableMultiSort={false}
           enableSortingRemoval={false}
           manualSorting
           manualFiltering
