@@ -49,14 +49,34 @@ export function navigateToFirstError({ toast: showToast = false } = {}): void {
     const target = document.querySelector<HTMLElement>('[aria-invalid="true"], [data-error="true"]');
     if (!target) return;
 
-    const closedPanel = target.closest<HTMLElement>('[data-closed]');
-    closedPanel?.parentElement?.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')?.click();
-
-    requestAnimationFrame(() => {
+    const reveal = () => {
       if (target.matches('[data-error="true"]')) target.tabIndex = -1;
       target.focus({ preventScroll: true });
       target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
+    };
+
+    const closedPanel = target.closest<HTMLElement>('[data-closed]');
+    if (!closedPanel) {
+      requestAnimationFrame(reveal);
+      return;
+    }
+
+    closedPanel.parentElement?.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')?.click();
+    const listener = new AbortController();
+    const finish = () => {
+      listener.abort();
+      clearTimeout(fallback);
+      reveal();
+    };
+    const fallback = setTimeout(finish, 1000);
+    closedPanel.addEventListener(
+      'transitionend',
+      (event) => {
+        // A section still closing ends its transition here too, before the panel has grown.
+        if (event.target === closedPanel && closedPanel.matches('[data-open]:not([data-starting-style])')) finish();
+      },
+      { signal: listener.signal }
+    );
   });
 }
 
