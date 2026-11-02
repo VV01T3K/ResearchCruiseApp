@@ -299,7 +299,7 @@ test('a group deactivation names the affected user and sends requests only for a
   expect(requests.bodies(`DELETE /v2/users/${outsider.id}/acceptance`)).toHaveLength(0);
 });
 
-test('a focused filter option keeps focus and keyboard position while the list scrolls', async ({ page, network }) => {
+test('a long filter list keeps its keyboard position while the list scrolls', async ({ page, network }) => {
   network.use(
     getGetUsersMockHandler(
       Array.from({ length: 100 }, (_, i) =>
@@ -308,16 +308,23 @@ test('a focused filter option keeps focus and keyboard position while the list s
     )
   );
   await page.goto('/user-management');
-  await page.getByRole('button', { name: 'Email', exact: true }).click();
-  const first = page.getByRole('menuitem', { name: 'user000@example.com' });
-  await first.focus();
-  await first.hover();
+  const filter = page.getByRole('button', { name: 'Filtruj: Email' });
+  await filter.click();
+  const search = page.getByRole('combobox');
+  const active = page.locator('[role="option"][data-highlighted]');
+  await search.press('ArrowDown');
+  await search.press('ArrowDown');
+  await expect(active).toHaveAttribute('aria-posinset', '2');
+  const second = page.getByRole('option', { name: 'user001@example.com' });
+  await second.hover();
   await page.mouse.wheel(0, 1800);
-  await expect(page.getByRole('menuitem', { name: 'user051@example.com' })).toBeVisible();
-  await expect(first).toBeFocused();
-  await page.keyboard.press('Tab');
-  await page.keyboard.press('Tab');
-  await expect(page.getByRole('menuitem', { name: 'user001@example.com' })).toBeFocused();
+  await expect(page.getByRole('option', { name: 'user056@example.com' })).toBeVisible();
+  await search.press('ArrowUp');
+  await expect(page.locator(`[id="${await search.getAttribute('aria-activedescendant')}"]`)).toBeInViewport();
+  await search.press('Enter');
+  await expect(page.getByRole('option', { selected: true })).toHaveCount(1);
+  await search.press('Escape');
+  await expect(filter).toBeFocused();
 });
 
 for (const mobile of [false, true]) {
@@ -349,22 +356,18 @@ for (const mobile of [false, true]) {
       await email.getByText('Pokaż filtry', { exact: true }).click();
       await email.getByText('zebra@example.com', { exact: true }).click();
     } else {
-      const emailHeader = page.getByRole('button', { name: 'Email', exact: true });
-      const unsortedIcons = await emailHeader.innerHTML();
-      await emailHeader.click();
-      await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
+      const emailColumn = page.getByRole('columnheader', { name: /^Email/ });
+      await expect(emailColumn).toHaveAttribute('aria-sort', 'none');
+      await page.getByRole('button', { name: 'Email', exact: true }).click();
       await expect(rows.first()).toContainText('alpha@example.com');
-      await expect(page.getByRole('menuitem', { name: 'Sortuj rosnąco' })).toBeDisabled();
-      expect(await emailHeader.innerHTML()).not.toBe(unsortedIcons);
+      await expect(emailColumn).toHaveAttribute('aria-sort', 'ascending');
+      await page.getByRole('button', { name: 'Filtruj: Email' }).click();
       // A second option adds to the first; a stale list would replace it.
-      await page.getByRole('menuitem', { name: 'zebra@example.com', exact: true }).click();
-      await expect(page.getByRole('menuitem', { name: 'zebra@example.com' }).locator('[aria-checked]')).toHaveAttribute(
-        'aria-checked',
-        'true'
-      );
-      await page.getByRole('menuitem', { name: 'alpha@example.com', exact: true }).click();
+      await page.getByRole('option', { name: 'zebra@example.com', exact: true }).click();
+      await expect(page.getByRole('option', { name: 'zebra@example.com' })).toHaveAttribute('aria-selected', 'true');
+      await page.getByRole('option', { name: 'alpha@example.com', exact: true }).click();
       await expect(rows).toHaveCount(2);
-      await page.getByRole('menuitem', { name: 'alpha@example.com', exact: true }).click();
+      await page.getByRole('option', { name: 'alpha@example.com', exact: true }).click();
       await page.keyboard.press('Escape');
     }
     await expect(rows).toHaveCount(1);

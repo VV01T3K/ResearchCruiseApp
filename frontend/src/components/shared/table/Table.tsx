@@ -20,6 +20,7 @@ type Props<T extends object> = {
   sortingState?: SortingState;
   setSortingState?: OnChangeFn<SortingState>;
   enableMultiSort?: boolean;
+  enableSortingRemoval?: boolean;
   manualSorting?: boolean;
   manualFiltering?: boolean;
   getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string;
@@ -45,6 +46,7 @@ export function Table<T extends object>({
   sortingState,
   setSortingState,
   enableMultiSort = true,
+  enableSortingRemoval,
   manualSorting = false,
   manualFiltering = false,
   getRowId,
@@ -68,6 +70,8 @@ export function Table<T extends object>({
     ...(setColumnFiltersState !== undefined && { onColumnFiltersChange: setColumnFiltersState }),
     ...(setSortingState !== undefined && { onSortingChange: setSortingState }),
     enableMultiSort,
+    enableSortingRemoval,
+    sortDescFirst: false,
     manualSorting,
     manualFiltering,
     state: {

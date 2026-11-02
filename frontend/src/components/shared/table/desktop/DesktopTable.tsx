@@ -4,7 +4,8 @@ import { hasErrors } from '@/components/inputs/invalidInput';
 import { TableClearFiltersButton } from '@/components/shared/table/common/TableClearFiltersButton';
 import { TableInfiniteScrollTrigger } from '@/components/shared/table/common/TableInfiniteScrollTrigger';
 import { TableProps } from '@/components/shared/table/common/tableProps';
-import { DesktopTableHeader } from '@/components/shared/table/desktop/DesktopTableHeader';
+import { DesktopTableHeader } from '@/integrations/tanstack/table/DesktopTableHeader';
+import { TableActiveFilters } from '@/integrations/tanstack/table/TableActiveFilters';
 import { TableBody } from '@/integrations/tanstack/table/TableBody';
 import { TableCell } from '@/integrations/tanstack/table/TableCell';
 import { cn } from '@/lib/utils';
@@ -52,7 +53,10 @@ export function DesktopTable<T extends object>({
                     .reduce((a, b) => a + b, 0)
                 )}
               >
-                <div className="mb-4 flex flex-wrap justify-end gap-4">{allButtons}</div>
+                <div className="mb-4 flex flex-wrap items-center justify-end gap-4">
+                  <TableActiveFilters table={table} />
+                  {allButtons}
+                </div>
               </th>
             </tr>
           )}

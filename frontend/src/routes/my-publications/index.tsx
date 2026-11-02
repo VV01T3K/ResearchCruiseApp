@@ -68,6 +68,7 @@ function MyPublicationsPage() {
       id: 'selector',
       header: ({ table }) => (
         <Checkbox
+          aria-label="Zaznacz wszystkie publikacje"
           name="selectAllPublications"
           onChange={(x) => table.toggleAllRowsSelected(x)}
           checked={table.getIsAllRowsSelected()}

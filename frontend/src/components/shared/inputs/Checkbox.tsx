@@ -1,7 +1,7 @@
 import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import { Checkbox as BaseCheckbox } from '@base-ui/react/checkbox';
-import { CheckIcon } from '@phosphor-icons/react';
+import { CheckIcon, MinusIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
@@ -14,6 +14,7 @@ type Props = {
   name: string;
   checked: boolean;
 
+  indeterminate?: boolean;
   variant?: keyof typeof variants;
   size?: keyof typeof sizes;
   onBlur?: () => void;
@@ -29,6 +30,7 @@ type Props = {
 export function Checkbox({
   name,
   checked,
+  indeterminate,
   variant = 'primary',
   size = 'sm',
   onBlur,
@@ -50,6 +52,7 @@ export function Checkbox({
         <BaseCheckbox.Root
           name={name}
           checked={checked}
+          indeterminate={indeterminate}
           onCheckedChange={(checked) => onChange?.(checked === true)}
           onBlur={onBlur}
           disabled={disabled}
@@ -58,15 +61,13 @@ export function Checkbox({
           className={cn(
             'flex items-center justify-center rounded-md border border-gray-300 transition-all duration-300',
             sizes[size],
-            checked && variants[variant][disabled ? 'disabled' : 'enabled'],
-            !checked && (disabled ? 'bg-gray-100' : 'bg-white hover:border-gray-400'),
+            (checked || indeterminate) && variants[variant][disabled ? 'disabled' : 'enabled'],
+            !checked && !indeterminate && (disabled ? 'bg-gray-100' : 'bg-white hover:border-gray-400'),
             disabled ? 'cursor-default' : 'cursor-pointer',
             hasErrors(errors) && 'border-danger hover:border-danger focus:ring-danger focus:ring-1 focus:outline-none'
           )}
         >
-          <BaseCheckbox.Indicator>
-            <CheckIcon />
-          </BaseCheckbox.Indicator>
+          <BaseCheckbox.Indicator>{indeterminate ? <MinusIcon /> : <CheckIcon />}</BaseCheckbox.Indicator>
         </BaseCheckbox.Root>
         <InputErrorTriangle errors={errors} />
       </div>

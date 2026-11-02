@@ -57,6 +57,7 @@ function UserManagementPage() {
       id: 'selector',
       header: ({ table }) => (
         <Checkbox
+          aria-label="Zaznacz wszystkich użytkowników"
           name="selectAllUsers"
           onChange={(x) => table.toggleAllRowsSelected(x)}
           checked={table.getIsAllRowsSelected()}

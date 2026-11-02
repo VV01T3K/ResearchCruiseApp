@@ -90,7 +90,7 @@ function ApplicationsPage() {
       accessorFn: (row) => row.date,
       cell: ({ row }) => <span className="whitespace-nowrap">{row.original.date}</span>,
       sortDescFirst: true,
-      meta: { filterInputType: 'date' },
+      meta: { filterInputType: 'date', getFilterOptionLabel: (value) => formatDate(value, 'date') },
       size: 98,
     },
     {
@@ -99,14 +99,14 @@ function ApplicationsPage() {
       accessorFn: (row) => row.year?.toString() ?? '-',
       sortDescFirst: true,
       meta: { filterOptions: yearFilterOptions },
-      size: 91,
+      size: 118,
     },
     {
       header: 'Liczba dni',
       accessorFn: (row) => (row.cruiseDays !== null ? `${parseFloat(row.cruiseDays.toFixed(2))}` : '-'),
       enableSorting: false,
       enableColumnFilter: false,
-      size: 74,
+      size: 66,
     },
     {
       header: 'Okres optymalny / dopuszczalny',
@@ -124,7 +124,7 @@ function ApplicationsPage() {
       },
       enableColumnFilter: false,
       enableSorting: false,
-      size: 129,
+      size: 123,
     },
     {
       header: 'Data rejsu',
@@ -184,7 +184,7 @@ function ApplicationsPage() {
           </div>
         );
       },
-      size: 112,
+      size: 106,
     },
     {
       header: 'Punkty',
@@ -192,7 +192,7 @@ function ApplicationsPage() {
       cell: ({ row }) => <Badge>{row.original.points} pkt.</Badge>,
       enableSorting: false,
       enableColumnFilter: false,
-      size: 87,
+      size: 80,
     },
     {
       id: 'status',
@@ -298,6 +298,7 @@ function ApplicationsPage() {
             })
           }
           enableMultiSort={false}
+          enableSortingRemoval={false}
           manualSorting
           manualFiltering
           columnFiltersState={columnFilters}

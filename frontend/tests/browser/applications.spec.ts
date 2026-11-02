@@ -38,11 +38,10 @@ test.describe('application table', () => {
   const changes = {
     sorted: async (page: Page) => {
       await page.getByRole('button', { name: 'Nr', exact: true }).click();
-      await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
     },
     'filtered by year': async (page: Page) => {
-      await page.getByRole('button', { name: 'Rok rejsu', exact: true }).click();
-      await page.getByRole('menuitem', { name: '2026', exact: true }).click();
+      await page.getByRole('button', { name: 'Filtruj: Rok rejsu' }).click();
+      await page.getByRole('option', { name: '2026', exact: true }).click();
     },
   };
 
@@ -96,15 +95,15 @@ test.describe('application table', () => {
     await page.goto('/applications');
     await expect(page.getByRole('cell', { name: '2026/17', exact: true })).toBeVisible();
 
-    await page.getByRole('button', { name: 'Nr', exact: true }).click();
+    await page.getByRole('button', { name: 'Filtruj: Nr' }).click();
     await page.getByLabel('Numer zgłoszenia').fill('999');
     await expect(page.getByRole('cell', { name: '2026/17', exact: true })).toHaveCount(0);
     expect(requests.queries(listRequests).at(-1)).toMatchObject({ number: '999' });
     await page.keyboard.press('Escape');
 
-    await page.getByRole('button', { name: 'Kierownik', exact: true }).click();
+    await page.getByRole('button', { name: 'Filtruj: Kierownik' }).click();
     await page.getByLabel('Szukaj').fill('other@example.com');
-    await page.getByRole('menuitem', { name: `${other.firstName} ${other.lastName} (other@example.com)` }).click();
+    await page.getByRole('option', { name: `${other.firstName} ${other.lastName} (other@example.com)` }).click();
     await expect.poll(() => requests.queries(listRequests).at(-1)).toMatchObject({ cruiseManager: other.id });
     await page.keyboard.press('Escape');
 
