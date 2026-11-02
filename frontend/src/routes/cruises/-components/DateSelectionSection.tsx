@@ -1,16 +1,24 @@
 import { useSelector } from '@tanstack/react-form';
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import { getGetCruisesSuspenseQueryOptions } from '@/api/generated/endpoints/cruises.gen';
 import { Accordion } from '@/components/shared/Accordion';
+import { Alert } from '@/components/shared/Alert';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import { useNow } from '@/lib/dateUtils';
-import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
+import { formatDate, useNow } from '@/lib/dateUtils';
+import { cruiseFormDefaultValues, findOverlappingCruises } from '@/routes/cruises/-schemas/form.schema';
 
-export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {
+export function DateSelectionSection({ cruiseId, isReadonly }: { cruiseId?: string; isReadonly: boolean }) {
   const form = useTypedAppFormContext({ defaultValues: cruiseFormDefaultValues });
   const cruiseStart = useSelector(form.store, (state) => state.values.startDate);
+  const cruiseEnd = useSelector(form.store, (state) => state.values.endDate);
   const cruiseStartDate = cruiseStart !== '' ? new Date(cruiseStart) : undefined;
+  const cruisesQuery = useQuery({ ...getGetCruisesSuspenseQueryOptions(), enabled: !isReadonly });
+  const overlapping = isReadonly
+    ? []
+    : findOverlappingCruises(cruisesQuery.data ?? [], cruiseStart, cruiseEnd, cruiseId);
 
   const [allowPastDates, setAllowPastDates] = useState(false);
   const nowMs = useNow((now) => now.setSeconds(0, 0));
@@ -58,6 +66,23 @@ export function DateSelectionSection({ isReadonly }: { isReadonly: boolean }) {
             </div>
           )}
         </div>
+        {overlapping.length > 0 && (
+          <Alert variant="warning">
+            <div>
+              <span className="font-bold">Termin pokrywa się z innymi wpisami, ale można go zapisać:</span>
+              <ul className="mt-2 space-y-1 text-sm">
+                {overlapping.map((cruise) => (
+                  <li key={cruise.id}>
+                    <span className="font-bold">
+                      {cruise.shipUnavailable ? `Blokada ${cruise.title}` : `Rejs ${cruise.number}`}
+                    </span>
+                    : {formatDate(cruise.startDate, 'dateTime')} - {formatDate(cruise.endDate, 'dateTime')}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Alert>
+        )}
       </div>
     </Accordion>
   );
