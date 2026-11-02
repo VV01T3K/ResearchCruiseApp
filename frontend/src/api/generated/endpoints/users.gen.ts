@@ -22,6 +22,7 @@ import type {
   CruiseManagerResponse,
   CurrentUserResponse,
   ImportPublicationRequest,
+  ImportPublicationsResponse,
   ProblemDetails,
   PublicationResponse,
   ReplaceUserRoleRequest,
@@ -489,7 +490,7 @@ export const useDeleteAllCurrentUserPublications = <TError = ErrorType<ProblemDe
 /**
  * @summary Import publications for the current user.
  */
-export const importCurrentUserPublications = async (importPublicationRequest: ImportPublicationRequest[], options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+export const importCurrentUserPublications = async (importPublicationRequest: ImportPublicationRequest[], options?: Parameters<typeof customFetch>[1]): Promise<ImportPublicationsResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -505,7 +506,7 @@ export const importCurrentUserPublications = async (importPublicationRequest: Im
     }
     return headers;
   };
-return customFetch<void>(getImportCurrentUserPublicationsUrl(),
+return customFetch<ImportPublicationsResponse>(getImportCurrentUserPublicationsUrl(),
   {
     ...options,
     method: 'POST',

@@ -6,9 +6,13 @@ namespace ResearchCruiseApp.Api.Users;
 public sealed class ImportPublicationsValidator : AbstractValidator<ImportPublicationRequest[]>
 {
     private const int MaxLength = 1024;
+    private const int MaxRows = 5000;
 
     public ImportPublicationsValidator()
     {
+        RuleFor(requests => requests)
+            .Must(requests => requests.Length <= MaxRows)
+            .WithMessage($"Plik może zawierać najwyżej {MaxRows} publikacji.");
         RuleForEach(requests => requests)
             .NotNull()
             .ChildRules(publication =>

@@ -74,12 +74,53 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         var (first, second) = await gate.Race(fixture.ConnectionString, Import(), Import, ct);
 
         using (first)
-            Assert.Equal(HttpStatusCode.NoContent, first.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, first.StatusCode);
         using (second)
             Assert.Contains(
                 second.StatusCode,
-                new[] { HttpStatusCode.NoContent, HttpStatusCode.Conflict }
+                new[] { HttpStatusCode.OK, HttpStatusCode.Conflict }
             );
+        await app.InDatabase(async db =>
+        {
+            Assert.Equal(2, await db.Publications.CountAsync(ct));
+            Assert.Equal(2, await db.UserPublications.CountAsync(ct));
+        });
+    }
+
+    [Fact]
+    public async Task Import_ReportsCountsAndMatchesExistingRowsLikeTheDatabase()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var owner = await TestUsers.Create(app, "owner@example.invalid", RoleName.CruiseManager);
+        using var client = await TestApplications.Login(app, owner.Email!);
+        using var seeded = await client.PostAsJsonAsync(
+            ImportRoute,
+            new[] { ImportedPublication("Existing") },
+            ct
+        );
+        seeded.EnsureSuccessStatusCode();
+
+        using var imported = await client.PostAsJsonAsync(
+            ImportRoute,
+            new[]
+            {
+                ImportedPublication("Existing"),
+                ImportedPublication("EXISTING"),
+                ImportedPublication("New"),
+                ImportedPublication("New"),
+                ImportedPublication("No points") with
+                {
+                    MinisterialPoints = "0",
+                },
+            },
+            ct
+        );
+
+        Assert.Equal(
+            new ImportPublicationsResponse(1, 3, 1),
+            await imported.Content.ReadFromJsonAsync<ImportPublicationsResponse>(ct)
+        );
         await app.InDatabase(async db =>
         {
             Assert.Equal(2, await db.Publications.CountAsync(ct));
@@ -100,7 +141,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             new[] { ImportedPublication("Only") },
             ct
         );
-        Assert.Equal(HttpStatusCode.NoContent, imported.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, imported.StatusCode);
         Guid id = default;
         await app.InDatabase(async db => id = (await db.Publications.SingleAsync(ct)).Id);
         Task<HttpResponseMessage> Delete() =>

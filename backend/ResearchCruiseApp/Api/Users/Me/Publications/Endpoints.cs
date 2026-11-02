@@ -91,7 +91,7 @@ public static class PublicationsEndpoints
         );
     }
 
-    private static async Task<Results<NoContent, NotFound>> Import(
+    private static async Task<Results<Ok<ImportPublicationsResponse>, NotFound>> Import(
         ImportPublicationRequest[] requests,
         CurrentUserService currentUserService,
         ApplicationDbContext dbContext,
@@ -104,50 +104,80 @@ public static class PublicationsEndpoints
             return TypedResults.NotFound();
         }
 
+        var rows = requests.Where(request => request.MinisterialPoints != "0").ToList();
+        var titles = rows.Select(request => request.Title).Distinct().ToList();
+
+        var existingPublications = (
+            await dbContext
+                .Publications.Where(publication => titles.Contains(publication.Title))
+                .ToListAsync(cancellationToken)
+        )
+            .DistinctBy(DatabaseEqualityKey)
+            .ToDictionary(DatabaseEqualityKey);
+        var linkedPublicationIds = await dbContext
+            .UserPublications.Where(userPublication => userPublication.UserId == currentUserId)
+            .Select(userPublication => userPublication.Publication.Id)
+            .ToHashSetAsync(cancellationToken);
+
         var alreadyAddedPublications = new HashSet<Publication>();
+        var imported = 0;
 
-        foreach (var request in requests)
+        foreach (var request in rows)
         {
-            if (request.MinisterialPoints == "0")
-            {
-                continue;
-            }
-
             var candidate = request.ToEntity();
-            var publication =
-                alreadyAddedPublications.FirstOrDefault(existing => existing.Equals(candidate))
-                ?? await dbContext.Publications.FirstOrDefaultAsync(
-                    Publication.EqualsByExpression(candidate),
-                    cancellationToken
-                )
-                ?? candidate;
-
-            if (!alreadyAddedPublications.Contains(publication))
+            if (!alreadyAddedPublications.TryGetValue(candidate, out var publication))
             {
-                var userPublication = new UserPublication { UserId = currentUserId.Value };
-
-                var alreadyLinked = await dbContext
-                    .UserPublications.Include(userPublication => userPublication.Publication)
-                    .AnyAsync(
-                        userPublication =>
-                            userPublication.UserId == currentUserId.Value
-                            && userPublication.Publication.Id == publication.Id,
-                        cancellationToken
-                    );
-
-                if (!alreadyLinked)
-                {
-                    publication.UserPublications.Add(userPublication);
-                    if (publication.Id == Guid.Empty)
-                        await dbContext.Publications.AddAsync(publication, cancellationToken);
-                }
+                publication =
+                    existingPublications.GetValueOrDefault(DatabaseEqualityKey(candidate))
+                    ?? candidate;
             }
 
-            alreadyAddedPublications.Add(publication);
+            if (
+                alreadyAddedPublications.Add(publication)
+                && !linkedPublicationIds.Contains(publication.Id)
+            )
+            {
+                publication.UserPublications.Add(
+                    new UserPublication { UserId = currentUserId.Value }
+                );
+                if (publication.Id == Guid.Empty)
+                    await dbContext.Publications.AddAsync(publication, cancellationToken);
+                imported++;
+            }
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
-        return TypedResults.NoContent();
+        return TypedResults.Ok(
+            new ImportPublicationsResponse(
+                imported,
+                rows.Count - imported,
+                requests.Length - rows.Count
+            )
+        );
+    }
+
+    // SQL Server compares these columns case-insensitively and ignores trailing spaces.
+    private static (
+        string?,
+        string?,
+        string?,
+        string?,
+        string?,
+        string?,
+        string?
+    ) DatabaseEqualityKey(Publication publication)
+    {
+        static string? Normalize(string? value) => value?.TrimEnd().ToUpperInvariant();
+
+        return (
+            Normalize(publication.Category),
+            Normalize(publication.Doi),
+            Normalize(publication.Authors),
+            Normalize(publication.Title),
+            Normalize(publication.Magazine),
+            Normalize(publication.Year),
+            Normalize(publication.MinisterialPoints)
+        );
     }
 
     private static async Task<Results<NoContent, NotFound>> Delete(

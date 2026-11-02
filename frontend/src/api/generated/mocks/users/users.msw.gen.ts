@@ -18,6 +18,7 @@ import type {
   CruiseEffectResponse,
   CruiseManagerResponse,
   CurrentUserResponse,
+  ImportPublicationsResponse,
   PublicationResponse,
   UserAssignmentsResponse,
   UserResponse
@@ -29,6 +30,8 @@ export const getGetCurrentUserResponseMock = (overrideResponse: Partial<Extract<
 export const getGetCurrentUserCruiseEffectsResponseMock = (): CruiseEffectResponse[] => (Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.helpers.fromRegExp("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"), userId: faker.helpers.fromRegExp("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"), effect: {type: faker.string.alpha({length: {min: 10, max: 20}}), title: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), magazine: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), author: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), institution: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), date: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), startDate: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), endDate: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), financingAmount: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), financingApproved: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), description: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), securedAmount: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), ministerialPoints: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), done: faker.string.alpha({length: {min: 10, max: 20}}), publicationMinisterialPoints: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), managerConditionMet: faker.string.alpha({length: {min: 10, max: 20}}), deputyConditionMet: faker.string.alpha({length: {min: 10, max: 20}})}, points: faker.string.alpha({length: {min: 10, max: 20}}), cruiseApplicationId: faker.string.alpha({length: {min: 10, max: 20}})})))
 
 export const getGetCurrentUserPublicationsResponseMock = (): PublicationResponse[] => (Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.helpers.fromRegExp("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"), category: faker.string.alpha({length: {min: 10, max: 20}}), doi: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), authors: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), title: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), magazine: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), year: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), ministerialPoints: faker.string.alpha({length: {min: 10, max: 20}})})))
+
+export const getImportCurrentUserPublicationsResponseMock = (overrideResponse: Partial<Extract<ImportPublicationsResponse, object>> = {}): ImportPublicationsResponse => ({imported: faker.number.int(), alreadyExisting: faker.number.int(), skippedWithoutPoints: faker.number.int(), ...overrideResponse})
 
 export const getGetUsersResponseMock = (): UserResponse[] => (Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.helpers.fromRegExp("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"), email: faker.string.alpha({length: {min: 10, max: 20}}), firstName: faker.string.alpha({length: {min: 10, max: 20}}), lastName: faker.string.alpha({length: {min: 10, max: 20}}), roles: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => (faker.string.alpha({length: {min: 10, max: 20}}))), emailConfirmed: faker.datatype.boolean(), accepted: faker.datatype.boolean()})))
 
@@ -93,12 +96,14 @@ export const getDeleteAllCurrentUserPublicationsMockHandler = (overrideResponse?
   }, options)
 }
 
-export const getImportCurrentUserPublicationsMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+export const getImportCurrentUserPublicationsMockHandler = (overrideResponse?: ImportPublicationsResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<ImportPublicationsResponse> | ImportPublicationsResponse), options?: RequestHandlerOptions) => {
   return http.post('*/v2/users/me/publications/import', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
-  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
-    return new HttpResponse(null,
-      { status: 204
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getImportCurrentUserPublicationsResponseMock(),
+      { status: 200
       })
   }, options)
 }

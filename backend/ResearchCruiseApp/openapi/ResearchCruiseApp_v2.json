@@ -574,8 +574,15 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportPublicationsResponse"
+                }
+              }
+            }
           },
           "404": {
             "description": "Not Found",
@@ -5213,6 +5220,28 @@
           },
           "ministerialPoints": {
             "type": "string"
+          }
+        }
+      },
+      "ImportPublicationsResponse": {
+        "required": [
+          "imported",
+          "alreadyExisting",
+          "skippedWithoutPoints"
+        ],
+        "type": "object",
+        "properties": {
+          "imported": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "alreadyExisting": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skippedWithoutPoints": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

@@ -38,7 +38,21 @@ function MyPublicationsPage() {
     mutation: { meta: { handlesError: true, invalidates: false }, scope: { id: 'delete-selected-publications' } },
   });
   const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications();
-  const uploadPublicationsMutation = useImportCurrentUserPublications();
+  const uploadPublicationsMutation = useImportCurrentUserPublications({
+    mutation: {
+      onSuccess: ({ imported, alreadyExisting, skippedWithoutPoints }) => {
+        if (imported === 0 && alreadyExisting === 0) {
+          toast.error(
+            `Nie zaimportowano żadnej publikacji. Pominięto wszystkie wiersze pliku (${skippedWithoutPoints}), ponieważ mają 0 punktów ministerialnych.`
+          );
+          return;
+        }
+        toast.success(
+          `Zaimportowano: ${imported}. Już na liście: ${alreadyExisting}. Pominięto (0 punktów ministerialnych): ${skippedWithoutPoints}.`
+        );
+      },
+    },
+  });
 
   async function deleteSelectedPublications() {
     const ids = Object.keys(selectedPublications);
@@ -144,7 +158,7 @@ function MyPublicationsPage() {
           buttons={(defaultButtons) => [
             <UploadButton
               key="upload"
-              disabled={uploadPublicationsMutation.isPending}
+              isImporting={uploadPublicationsMutation.isPending}
               onUpload={(publications) => uploadPublicationsMutation.mutate({ data: publications })}
             />,
             <Button
