@@ -5255,8 +5255,7 @@
       "ImportPublicationsResponse": {
         "required": [
           "imported",
-          "alreadyExisting",
-          "skippedWithoutPoints"
+          "alreadyExisting"
         ],
         "type": "object",
         "properties": {
@@ -5265,10 +5264,6 @@
             "format": "int32"
           },
           "alreadyExisting": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "skippedWithoutPoints": {
             "type": "integer",
             "format": "int32"
           }

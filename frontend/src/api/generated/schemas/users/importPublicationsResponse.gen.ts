@@ -2,8 +2,7 @@ import * as zod from 'zod';
 
 export const ImportPublicationsResponse = zod.object({
   "imported": zod.int(),
-  "alreadyExisting": zod.int(),
-  "skippedWithoutPoints": zod.int()
+  "alreadyExisting": zod.int()
 });
 
 export type ImportPublicationsResponse = zod.input<typeof ImportPublicationsResponse>;

@@ -40,16 +40,8 @@ function MyPublicationsPage() {
   const deleteAllOwnPublicationsMutation = useDeleteAllCurrentUserPublications();
   const uploadPublicationsMutation = useImportCurrentUserPublications({
     mutation: {
-      onSuccess: ({ imported, alreadyExisting, skippedWithoutPoints }) => {
-        if (imported === 0 && alreadyExisting === 0) {
-          toast.error(
-            `Nie zaimportowano żadnej publikacji. Pominięto wszystkie wiersze pliku (${skippedWithoutPoints}), ponieważ mają 0 punktów ministerialnych.`
-          );
-          return;
-        }
-        toast.success(
-          `Zaimportowano: ${imported}. Już na liście: ${alreadyExisting}. Pominięto (0 punktów ministerialnych): ${skippedWithoutPoints}.`
-        );
+      onSuccess: ({ imported, alreadyExisting }) => {
+        toast.success(`Zaimportowano: ${imported}. Już na liście: ${alreadyExisting}.`);
       },
     },
   });

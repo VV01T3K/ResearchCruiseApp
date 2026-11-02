@@ -104,8 +104,7 @@ public static class PublicationsEndpoints
             return TypedResults.NotFound();
         }
 
-        var rows = requests.Where(request => request.MinisterialPoints != "0").ToList();
-        var titles = rows.Select(request => request.Title).Distinct().ToList();
+        var titles = requests.Select(request => request.Title).Distinct().ToList();
 
         var existingPublications = (
             await dbContext
@@ -122,7 +121,7 @@ public static class PublicationsEndpoints
         var alreadyAddedPublications = new HashSet<Publication>();
         var imported = 0;
 
-        foreach (var request in rows)
+        foreach (var request in requests)
         {
             var candidate = request.ToEntity();
             if (!alreadyAddedPublications.TryGetValue(candidate, out var publication))
@@ -148,11 +147,7 @@ public static class PublicationsEndpoints
 
         await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.Ok(
-            new ImportPublicationsResponse(
-                imported,
-                rows.Count - imported,
-                requests.Length - rows.Count
-            )
+            new ImportPublicationsResponse(imported, requests.Length - imported)
         );
     }
 

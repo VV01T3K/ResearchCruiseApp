@@ -18,7 +18,7 @@ test('a Windows-1250 CSV upload submits the parsed publications and refreshes th
     getGetCurrentUserPublicationsMockHandler([]),
     getImportCurrentUserPublicationsMockHandler(() => {
       network.use(getGetCurrentUserPublicationsMockHandler([publication()]));
-      return { imported: 1, alreadyExisting: 0, skippedWithoutPoints: 0 };
+      return { imported: 1, alreadyExisting: 0 };
     })
   );
   await page.goto('/my-publications');

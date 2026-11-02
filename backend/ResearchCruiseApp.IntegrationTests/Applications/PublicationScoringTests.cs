@@ -109,16 +109,12 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
                 ImportedPublication("EXISTING"),
                 ImportedPublication("New"),
                 ImportedPublication("New"),
-                ImportedPublication("No points") with
-                {
-                    MinisterialPoints = "0",
-                },
             },
             ct
         );
 
         Assert.Equal(
-            new ImportPublicationsResponse(1, 3, 1),
+            new ImportPublicationsResponse(1, 3),
             await imported.Content.ReadFromJsonAsync<ImportPublicationsResponse>(ct)
         );
         await app.InDatabase(async db =>
@@ -126,6 +122,57 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Equal(2, await db.Publications.CountAsync(ct));
             Assert.Equal(2, await db.UserPublications.CountAsync(ct));
         });
+    }
+
+    [Fact]
+    public async Task Import_WhenPointsAreZero_KeepsRowSelectableInFormAWithZeroScore()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var owner = await TestUsers.Create(app, "owner@example.invalid", RoleName.CruiseManager);
+        using var client = await TestApplications.Login(app, owner.Email!);
+        using var imported = await client.PostAsJsonAsync(
+            ImportRoute,
+            new[] { ImportedPublication("Zero") with { MinisterialPoints = "0" } },
+            ct
+        );
+        Assert.Equal(
+            new ImportPublicationsResponse(1, 0),
+            await imported.Content.ReadFromJsonAsync<ImportPublicationsResponse>(ct)
+        );
+
+        var publications = await client.GetFromJsonAsync<List<PublicationResponse>>(
+            "/v2/users/me/publications",
+            ct
+        );
+        Assert.Equal("0", Assert.Single(publications!).MinisterialPoints);
+        var context = await client.GetFromJsonAsync<JsonElement>(
+            "/v2/applications/form-a/context",
+            ct
+        );
+        var historical = Assert
+            .Single(context.GetProperty("historicalPublications").EnumerateArray())
+            .Deserialize<PublicationFields>(JsonSerializerOptions.Web)!;
+        Assert.Equal("0", historical.MinisterialPoints);
+
+        var form = FormAccessTests.Draft(Guid.Parse(owner.Id));
+        form.Publications.Add(historical);
+        using var created = await client.PostAsJsonAsync(
+            "/v2/applications",
+            new FormAWriteRequest { Form = form, Draft = true },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        Guid id = default;
+        await app.InDatabase(async db =>
+        {
+            id = (await db.CruiseApplications.SingleAsync(ct)).Id;
+            Assert.Equal(1, await db.Publications.CountAsync(ct));
+            Assert.Equal("0", (await db.Publications.SingleAsync(ct)).MinisterialPoints);
+            Assert.Equal(0, (await db.FormAPublications.SingleAsync(ct)).Points);
+        });
+        var summary = await client.GetFromJsonAsync<JsonElement>($"/v2/applications/{id}", ct);
+        Assert.Equal(0, summary.GetProperty("points").GetInt32());
     }
 
     [Fact]

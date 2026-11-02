@@ -30,8 +30,7 @@ public sealed record ImportPublicationRequest(
 
 public sealed record ImportPublicationsResponse(
     [property: JsonNumberHandling(JsonNumberHandling.Strict)] int Imported,
-    [property: JsonNumberHandling(JsonNumberHandling.Strict)] int AlreadyExisting,
-    [property: JsonNumberHandling(JsonNumberHandling.Strict)] int SkippedWithoutPoints
+    [property: JsonNumberHandling(JsonNumberHandling.Strict)] int AlreadyExisting
 );
 
 public sealed record DeletePublicationRequest(Guid PublicationId);
