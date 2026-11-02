@@ -8,5 +8,5 @@ export function useUnreadableErrors(name: string, value: unknown, disabled?: boo
     if (unreadable) reportUnreadableValue(name);
   }, [unreadable, name]);
   if (!unreadable) return undefined;
-  return [`Zapisana wartość „${value}” jest nieczytelna${disabled ? '' : ' — popraw ją'}`];
+  return [`Nierozpoznana wartość z bazy: „${value}”.${disabled ? '' : ' Ustaw ją ponownie.'}`];
 }

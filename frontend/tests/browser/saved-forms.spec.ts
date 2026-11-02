@@ -84,7 +84,7 @@ test('an unreadable stored flag in form C blocks saving until it is fixed', asyn
   await page.goto(`/applications/${applicationId}/formC?mode=edit`);
 
   const warning = page.locator('[data-error="true"]', {
-    hasText: 'Zapisana wartość „tak” jest nieczytelna — popraw ją',
+    hasText: 'Nierozpoznana wartość z bazy: „tak”. Ustaw ją ponownie.',
   });
   await expect(warning).toBeVisible();
   await page.getByRole('button', { name: 'Zapisz wersję roboczą', exact: true }).click();
