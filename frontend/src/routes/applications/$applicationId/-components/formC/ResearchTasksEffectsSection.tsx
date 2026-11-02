@@ -5,10 +5,10 @@ import { Accordion } from '@/components/shared/Accordion';
 import { Table } from '@/components/shared/table/Table';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
-import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
-import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
+import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
+import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
+import { getTaskName } from '@/features/applications/schemas/types/ResearchTaskValues';
+import { ResearchTaskEffectValues } from '@/features/applications/schemas/types/ResearchTaskEffectValues';
 
 export function ResearchTasksEffectsSection({ context }: { context: FormCViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });

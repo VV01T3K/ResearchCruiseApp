@@ -2,8 +2,8 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Table } from '@/components/shared/table/Table';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
-import { ResearchAreaValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
+import { ResearchAreaValues } from '@/features/applications/schemas/types/ResearchAreaValues';
 import { getResearchAreaName } from '@/lib/applications/researchArea';
 
 export function ResearchAreaSection({ context }: { context: FormBViewModel }) {

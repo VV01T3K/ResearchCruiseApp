@@ -13,7 +13,7 @@ import {
   ResearchTaskValues,
   ResearchTaskType,
   ThesisResearchTaskValues,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+} from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
   data: ResearchTaskValues;

@@ -1,9 +1,6 @@
 import { z } from 'zod';
 
-import {
-  FormFileValuesInputSchema,
-  FormFileValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/FormFileValues';
+import { FormFileValuesInputSchema, FormFileValuesSchema } from '@/features/applications/schemas/types/FormFileValues';
 
 export const PermissionValuesInputSchema = z.object({
   description: z.string(),

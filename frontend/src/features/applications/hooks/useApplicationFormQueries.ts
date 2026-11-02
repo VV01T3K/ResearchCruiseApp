@@ -7,13 +7,13 @@ import {
   getGetApplicationFormASuspenseQueryOptions,
   getGetApplicationFormCQueryKey,
 } from '@/api/generated/endpoints/applications.gen';
-import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import type { FormCValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import type { FormBValues } from '@/features/applications/schemas/formB.schema';
+import type { FormCValues } from '@/features/applications/schemas/formC.schema';
 import { ApiError } from '@/api/errors';
 import { groupedQueryStaleTime } from '@/integrations/tanstack/query/root-provider';
-import { mapFormAToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { mapFormBToValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
-import { mapFormCToValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import { mapFormAToValues } from '@/features/applications/schemas/formA.schema';
+import { mapFormBToValues } from '@/features/applications/schemas/formB.schema';
+import { mapFormCToValues } from '@/features/applications/schemas/formC.schema';
 
 export function formAQueryOptions(applicationId: string) {
   return getGetApplicationFormASuspenseQueryOptions(applicationId, {

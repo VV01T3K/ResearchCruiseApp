@@ -7,7 +7,7 @@ import { AcceptButton } from './actions/AcceptButton';
 import { RejectButton } from './actions/RejectButton';
 import { RejectConfirmation } from './actions/RejectConfirmation';
 import { ResendInvitationButton } from './actions/ResendInvitationButton';
-import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
+import { useApplication } from '@/features/applications/hooks/useApplicationDetails';
 import { CruiseApplicationStatus } from '@/api/generated/schemas';
 
 type Props = {

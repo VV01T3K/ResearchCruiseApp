@@ -1,6 +1,6 @@
 import { formatDate } from '@/lib/dateUtils';
 
-import { OwnResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { OwnResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
   data: OwnResearchTaskValues;

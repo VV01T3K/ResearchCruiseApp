@@ -1,5 +1,5 @@
 import { Input } from '@/components/shared/inputs/Input';
-import type { DidacticsResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { DidacticsResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
   data: DidacticsResearchTaskValues;

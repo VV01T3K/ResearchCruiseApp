@@ -20,7 +20,7 @@ import {
   CruiseApplicationsFilter,
   CruiseApplicationsSort,
   useCruiseApplicationsInfiniteQuery,
-} from '@/routes/applications/-hooks/useApplications';
+} from '@/features/applications/hooks/useApplications';
 import { ApplicationResponse, CruiseApplicationStatus } from '@/api/generated/schemas';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { getPersonName } from '@/lib/applications/person';

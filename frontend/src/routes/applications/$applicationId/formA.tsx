@@ -19,8 +19,8 @@ import {
   type FormAValues,
   formADefaultValues,
   getFormASubmissionSchema,
-} from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { formAQueryOptions } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
+} from '@/features/applications/schemas/formA.schema';
+import { formAQueryOptions } from '@/features/applications/hooks/useApplicationFormQueries';
 import {
   getGetApplicationFormAContextSuspenseQueryOptions,
   useUpdateApplicationFormA,

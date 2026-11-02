@@ -3,7 +3,7 @@ import { z } from 'zod';
 import {
   ResearchTaskValuesInputSchema,
   ResearchTaskValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+} from '@/features/applications/schemas/types/ResearchTaskValues';
 
 const effectFields = {
   done: z.boolean(),

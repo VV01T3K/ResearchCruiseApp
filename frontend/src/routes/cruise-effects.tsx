@@ -9,9 +9,9 @@ import { Link } from '@/components/shared/Link';
 import { Table } from '@/components/shared/table/Table';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
 import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/generated/endpoints/users.gen';
-import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { getTaskName } from '@/features/applications/schemas/types/ResearchTaskValues';
 import type { CruiseEffectsResponse } from '@/api/generated/schemas';
-import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { mapResearchTaskToValues } from '@/features/applications/schemas/formA.schema';
 
 export const Route = createFileRoute('/cruise-effects')({
   component: CruiseEffectsPage,

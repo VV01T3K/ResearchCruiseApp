@@ -1,4 +1,4 @@
-import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { mapResearchTaskToValues } from '@/features/applications/schemas/formA.schema';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
@@ -11,14 +11,14 @@ import { DropdownElementSelectorButton } from '@/routes/applications/$applicatio
 import { ResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ResearchTaskThumbnail';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ResearchTaskDetails';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
-import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
+import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
 import {
   getEmptyTask,
   getTaskName,
   ResearchTaskValues,
   taskTypes,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+} from '@/features/applications/schemas/types/ResearchTaskValues';
 
 export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });

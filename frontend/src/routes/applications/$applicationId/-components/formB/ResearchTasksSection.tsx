@@ -3,11 +3,8 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { Accordion } from '@/components/shared/Accordion';
 import { Table } from '@/components/shared/table/Table';
 import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
-import {
-  getTaskName,
-  ResearchTaskValues,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
+import { getTaskName, ResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 export function ResearchTasksSection({ context }: { context: FormBViewModel }) {
   const { formA, isReadonly } = context;

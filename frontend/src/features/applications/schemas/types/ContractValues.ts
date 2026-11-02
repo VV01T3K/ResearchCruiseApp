@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { FormFileValuesSchema } from '@/routes/applications/$applicationId/-schemas/types/FormFileValues';
+import { FormFileValuesSchema } from '@/features/applications/schemas/types/FormFileValues';
 
 export function getContractCategoryName(category: string | undefined): string {
   return category === 'domestic' ? 'Krajowa' : 'Międzynarodowa';

@@ -15,15 +15,12 @@ import {
   type FormBValues,
   formBDefaultValues,
   getFormBSubmissionSchema,
-} from '@/routes/applications/$applicationId/-schemas/formB.schema';
+} from '@/features/applications/schemas/formB.schema';
 import {
   getGetApplicationCruiseSuspenseQueryOptions,
   getGetApplicationQueryKey,
 } from '@/api/generated/endpoints/applications.gen';
-import {
-  formAQueryOptions,
-  formBQueryOptions,
-} from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
+import { formAQueryOptions, formBQueryOptions } from '@/features/applications/hooks/useApplicationFormQueries';
 import {
   getGetApplicationFormAContextSuspenseQueryOptions,
   getGetApplicationFormBContextSuspenseQueryOptions,

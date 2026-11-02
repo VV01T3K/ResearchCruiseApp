@@ -18,26 +18,22 @@ import {
   getFormADraftFieldsSchema,
   mapFormAToValues,
   mapResearchTaskToValues,
-} from '@/routes/applications/$applicationId/-schemas/formA.schema';
+} from '@/features/applications/schemas/formA.schema';
 import {
   formBDefaultValues,
   getFormBValidationSchema,
   getFormBFieldsSchema,
   getFormBDraftFieldsSchema,
   mapFormBToValues,
-} from '@/routes/applications/$applicationId/-schemas/formB.schema';
+} from '@/features/applications/schemas/formB.schema';
 import {
   formCDefaultValues,
   getFormCValidationSchema,
   getFormCFieldsSchema,
   getFormCDraftFieldsSchema,
   mapFormCToValues,
-} from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import {
-  storedBoolean,
-  storedNullableNumber,
-  storedNumber,
-} from '@/routes/applications/$applicationId/-schemas/storedValues';
+} from '@/features/applications/schemas/formC.schema';
+import { storedBoolean, storedNullableNumber, storedNumber } from '@/features/applications/schemas/storedValues';
 
 const options = formOptions();
 const a = () => mapFormAToValues(formA());

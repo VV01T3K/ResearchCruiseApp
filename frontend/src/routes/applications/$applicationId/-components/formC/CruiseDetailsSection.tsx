@@ -7,11 +7,11 @@ import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowBu
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
-import type { FormCFormApi, FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
-import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { LongResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
-import { PortCallValues } from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
-import { ShortResearchEquipmentValues } from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
+import type { FormCFormApi, FormCViewModel } from '@/features/applications/models/formC-view-model';
+import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
+import { LongResearchEquipmentValues } from '@/features/applications/schemas/types/LongResearchEquipmentValues';
+import { PortCallValues } from '@/features/applications/schemas/types/PortCallValues';
+import { ShortResearchEquipmentValues } from '@/features/applications/schemas/types/ShortResearchEquipmentValues';
 
 const shortResearchEquipmentColumns = (
   form: FormCFormApi,

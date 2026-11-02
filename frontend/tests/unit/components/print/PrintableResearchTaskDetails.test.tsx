@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vite-plus/test';
 import { PrintableResearchTaskDetails } from '@/components/print/research-task-details/PrintableResearchTaskDetails';
-import { mapResearchTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { mapResearchTaskToValues } from '@/features/applications/schemas/formA.schema';
 
 const print = (task: Parameters<typeof mapResearchTaskToValues>[0]) =>
   renderToStaticMarkup(<PrintableResearchTaskDetails data={mapResearchTaskToValues(task)} />);

@@ -4,7 +4,7 @@ import { FloatingActionsSection } from '@/components/shared/FloatingActionsSecti
 import { Button } from '@/components/shared/Button';
 import { Guard } from '@/components/shared/Guard';
 import { Role } from '@/integrations/auth/types';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
 
 type Props = {
   onSaveDraft: () => void;

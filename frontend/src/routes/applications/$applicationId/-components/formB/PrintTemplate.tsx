@@ -5,13 +5,13 @@ import { cn } from '@/lib/utils';
 import { PrintableResearchTaskDetails } from '@/components/print/research-task-details/PrintableResearchTaskDetails';
 import { PrintingPage } from '@/components/print/layout/PrintingPage';
 import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
-import type { FormBValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
+import type { FormBValues } from '@/features/applications/schemas/formB.schema';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
-import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
-import { getPublicationCategoryLabel } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+import { getContractCategoryName } from '@/features/applications/schemas/types/ContractValues';
+import { getPublicationCategoryLabel } from '@/features/applications/schemas/types/PublicationValues';
 import { getResearchAreaName } from '@/lib/applications/researchArea';
-import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { getTaskName } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 function getAction(action: 'Put' | 'Collect'): string {
   if (action === 'Put') {

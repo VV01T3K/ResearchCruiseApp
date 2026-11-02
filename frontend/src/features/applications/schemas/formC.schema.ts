@@ -3,69 +3,54 @@ import { z } from 'zod';
 
 import { FormCFields } from '@/api/generated/schemas';
 import { groupBy } from '@/lib/utils';
-import { storedBoolean, storedNumber } from '@/routes/applications/$applicationId/-schemas/storedValues';
+import { storedBoolean, storedNumber } from '@/features/applications/schemas/storedValues';
 import {
   CollectedSampleValuesInputSchema,
   CollectedSampleValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/CollectedSampleValues';
-import {
-  ContractValuesInputSchema,
-  ContractValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+} from '@/features/applications/schemas/types/CollectedSampleValues';
+import { ContractValuesInputSchema, ContractValuesSchema } from '@/features/applications/schemas/types/ContractValues';
 import {
   CruiseDayValuesInputSchema,
   CruiseDayValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
-import {
-  FormFileValuesInputSchema,
-  FormFileValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/FormFileValues';
+} from '@/features/applications/schemas/types/CruiseDayValues';
+import { FormFileValuesInputSchema, FormFileValuesSchema } from '@/features/applications/schemas/types/FormFileValues';
 import {
   GuestTeamValuesInputSchema,
   GuestTeamValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+} from '@/features/applications/schemas/types/GuestTeamValues';
 import {
   LongResearchEquipmentValuesInputSchema,
   LongResearchEquipmentValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/LongResearchEquipmentValues';
+} from '@/features/applications/schemas/types/LongResearchEquipmentValues';
 import {
   PermissionValuesInputSchema,
   PermissionWithFileValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
-import {
-  PortCallValuesInputSchema,
-  PortCallValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/PortCallValues';
+} from '@/features/applications/schemas/types/PermissionValues';
+import { PortCallValuesInputSchema, PortCallValuesSchema } from '@/features/applications/schemas/types/PortCallValues';
 import {
   ResearchEquipmentValuesInputSchema,
   ResearchEquipmentValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchEquipmentValues';
+} from '@/features/applications/schemas/types/ResearchEquipmentValues';
 import {
   ResearchTaskEffectValuesInputSchema,
   ResearchTaskEffectValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
+} from '@/features/applications/schemas/types/ResearchTaskEffectValues';
 import {
   ShortResearchEquipmentValuesInputSchema,
   ShortResearchEquipmentValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/ShortResearchEquipmentValues';
-import {
-  SpubTaskValuesInputSchema,
-  SpubTaskValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
-import {
-  UgTeamValuesInputSchema,
-  UgTeamValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
+} from '@/features/applications/schemas/types/ShortResearchEquipmentValues';
+import { SpubTaskValuesInputSchema, SpubTaskValuesSchema } from '@/features/applications/schemas/types/SpubTaskValues';
+import { UgTeamValuesInputSchema, UgTeamValuesSchema } from '@/features/applications/schemas/types/UgTeamValues';
 import { FormAOptions } from '@/api/generated/schemas';
 import {
   getResearchAreaValuesSchema,
   ResearchAreaValuesInputSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
+} from '@/features/applications/schemas/types/ResearchAreaValues';
 import {
   mapContractToValues,
   mapResearchTaskToValues,
   mapSpubTaskToValues,
-} from '@/routes/applications/$applicationId/-schemas/formA.schema';
+} from '@/features/applications/schemas/formA.schema';
 
 const FormCInputSchema = z.object({
   draft: z.boolean().optional(),

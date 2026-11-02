@@ -1,9 +1,9 @@
 import type { ApplicationCruiseResponse } from '@/api/generated/schemas';
-import type { FormAValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import type { FormAValues } from '@/features/applications/schemas/formA.schema';
 import type { FormAOptions } from '@/api/generated/schemas';
 import type { FormBOptions } from '@/api/generated/schemas';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import { formBDefaultValues } from '@/features/applications/schemas/formB.schema';
 
 export function useFormBContext() {
   return useTypedAppFormContext({ defaultValues: formBDefaultValues });

@@ -10,7 +10,7 @@ import {
   mapPublicationToValues,
   mapResearchTaskToValues,
   mapSpubTaskToValues,
-} from '@/routes/applications/$applicationId/-schemas/formA.schema';
+} from '@/features/applications/schemas/formA.schema';
 
 function useApplicationId() {
   return useParams({ from: '/applications/$applicationId/details' }).applicationId;

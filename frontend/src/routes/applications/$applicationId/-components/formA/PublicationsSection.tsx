@@ -1,4 +1,4 @@
-import { mapPublicationToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { mapPublicationToValues } from '@/features/applications/schemas/formA.schema';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
@@ -9,13 +9,13 @@ import { getErrors } from '@/integrations/tanstack/form/errors';
 import { groupBy } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormAViewModel } from '@/routes/applications/$applicationId/-models/formA-view-model';
-import { formADefaultValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
+import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
 import {
   getPublicationCategoryLabel,
   PublicationCategory,
   PublicationValues,
-} from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+} from '@/features/applications/schemas/types/PublicationValues';
 
 export function PublicationsSection({ context }: { context: FormAViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });

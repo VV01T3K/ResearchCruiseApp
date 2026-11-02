@@ -6,8 +6,8 @@ import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-compo
 import {
   type ApplicationEvaluation,
   useApplicationEvaluation,
-} from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
-import { getTaskName } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+} from '@/features/applications/hooks/useApplicationDetails';
+import { getTaskName } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 export function ResearchTasksSection() {
   const evaluation = useApplicationEvaluation();

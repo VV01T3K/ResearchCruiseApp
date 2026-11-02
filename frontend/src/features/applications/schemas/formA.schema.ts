@@ -4,39 +4,27 @@ import { literal, z } from 'zod';
 import { groupBy } from '@/lib/utils';
 import { parsePolishDayStart } from '@/lib/dateUtils';
 import { getPeriodEdgeDatePoint, getPeriodEdgeDateString, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
-import {
-  ContractValuesInputSchema,
-  ContractValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
-import {
-  CruiseGoal,
-  CruisePeriodValidationSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/FormAValues';
+import { ContractValuesInputSchema, ContractValuesSchema } from '@/features/applications/schemas/types/ContractValues';
+import { CruiseGoal, CruisePeriodValidationSchema } from '@/features/applications/schemas/types/FormAValues';
 import {
   GuestTeamValuesInputSchema,
   GuestTeamValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/GuestTeamValues';
+} from '@/features/applications/schemas/types/GuestTeamValues';
 import {
   PermissionValuesInputSchema,
   PermissionValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/PermissionValues';
+} from '@/features/applications/schemas/types/PermissionValues';
 import {
   PublicationValuesInputSchema,
   PublicationValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+} from '@/features/applications/schemas/types/PublicationValues';
 import {
   MAX_RESEARCH_TASKS,
   ResearchTaskValuesInputSchema,
   ResearchTaskValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
-import {
-  SpubTaskValuesInputSchema,
-  SpubTaskValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
-import {
-  UgTeamValuesInputSchema,
-  UgTeamValuesSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/UgTeamValues';
+} from '@/features/applications/schemas/types/ResearchTaskValues';
+import { SpubTaskValuesInputSchema, SpubTaskValuesSchema } from '@/features/applications/schemas/types/SpubTaskValues';
+import { UgTeamValuesInputSchema, UgTeamValuesSchema } from '@/features/applications/schemas/types/UgTeamValues';
 import {
   FormAFields,
   type BlockadeResponse as BlockadePeriod,
@@ -49,14 +37,10 @@ import {
 import {
   getResearchAreaValuesSchema,
   ResearchAreaValuesInputSchema,
-} from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
-import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
-import { PublicationCategory } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
-import {
-  storedBoolean,
-  storedNullableNumber,
-  storedNumber,
-} from '@/routes/applications/$applicationId/-schemas/storedValues';
+} from '@/features/applications/schemas/types/ResearchAreaValues';
+import { ResearchTaskType } from '@/features/applications/schemas/types/ResearchTaskValues';
+import { PublicationCategory } from '@/features/applications/schemas/types/PublicationValues';
+import { storedBoolean, storedNullableNumber, storedNumber } from '@/features/applications/schemas/storedValues';
 
 const FormAInputSchema = z.object({
   draft: z.boolean().optional(),

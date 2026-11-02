@@ -7,8 +7,8 @@ import { Table } from '@/components/shared/table/Table';
 import {
   type ApplicationEvaluation,
   useApplicationEvaluation,
-} from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
-import { getContractCategoryName } from '@/routes/applications/$applicationId/-schemas/types/ContractValues';
+} from '@/features/applications/hooks/useApplicationDetails';
+import { getContractCategoryName } from '@/features/applications/schemas/types/ContractValues';
 
 export function ContractsSection() {
   const evaluation = useApplicationEvaluation();

@@ -2,8 +2,8 @@ import { Accordion } from '@/components/shared/Accordion';
 import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormBViewModel } from '@/routes/applications/$applicationId/-models/formB-view-model';
-import { formBDefaultValues } from '@/routes/applications/$applicationId/-schemas/formB.schema';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
+import { formBDefaultValues } from '@/features/applications/schemas/formB.schema';
 
 export function CruiseManagerInfoSection({ context }: { context: FormBViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formBDefaultValues });

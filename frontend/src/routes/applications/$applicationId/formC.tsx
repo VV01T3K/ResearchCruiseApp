@@ -15,20 +15,20 @@ import {
   type FormCValues,
   formCDefaultValues,
   getFormCSubmissionSchema,
-} from '@/routes/applications/$applicationId/-schemas/formC.schema';
+} from '@/features/applications/schemas/formC.schema';
 import { getGetApplicationCruiseSuspenseQueryOptions } from '@/api/generated/endpoints/applications.gen';
 import {
   formAQueryOptions,
   formBQueryOptions,
   formCQueryOptions,
-} from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
+} from '@/features/applications/hooks/useApplicationFormQueries';
 import {
   getGetApplicationFormAContextSuspenseQueryOptions,
   getGetApplicationFormBContextSuspenseQueryOptions,
   useUpdateApplicationFormC,
 } from '@/api/generated/endpoints/applications.gen';
 import { ApiError, getErrorMessage } from '@/api/errors';
-import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
+import { ResearchTaskEffectValues } from '@/features/applications/schemas/types/ResearchTaskEffectValues';
 import { groupedQueryStaleTime } from '@/integrations/tanstack/query/root-provider';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';

@@ -1,6 +1,6 @@
 import { formatDate } from '@/lib/dateUtils';
 
-import { ProjectResearchTaskValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
+import { ProjectResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
   data: ProjectResearchTaskValues;

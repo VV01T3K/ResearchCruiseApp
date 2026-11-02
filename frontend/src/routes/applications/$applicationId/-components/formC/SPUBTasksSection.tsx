@@ -1,4 +1,4 @@
-import { mapSpubTaskToValues } from '@/routes/applications/$applicationId/-schemas/formA.schema';
+import { mapSpubTaskToValues } from '@/features/applications/schemas/formA.schema';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
@@ -10,9 +10,9 @@ import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowBu
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
-import type { FormCViewModel } from '@/routes/applications/$applicationId/-models/formC-view-model';
-import { formCDefaultValues } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { SpubTaskValues } from '@/routes/applications/$applicationId/-schemas/types/SpubTaskValues';
+import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
+import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
+import { SpubTaskValues } from '@/features/applications/schemas/types/SpubTaskValues';
 
 export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });

@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ApiError, getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { getGetApplicationQueryKey, useUpdateApplicationDecision } from '@/api/generated/endpoints/applications.gen';
-import { useApplication } from '@/routes/applications/$applicationId/-hooks/useApplicationDetails';
+import { useApplication } from '@/features/applications/hooks/useApplicationDetails';
 
 import { ActionsSection } from './ActionsSection';
 import { ContractsSection } from './ContractsSection';
