@@ -4,8 +4,7 @@ import { useRouterState } from '@tanstack/react-router';
 import { motion } from 'motion/react';
 
 export default function Background() {
-  const routerState = useRouterState();
-  const isHomepage = routerState.location.pathname === '/';
+  const isHomepage = useRouterState({ select: (state) => state.location.pathname === '/' });
 
   const variants = {
     transparent: {

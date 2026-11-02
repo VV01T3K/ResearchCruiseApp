@@ -3,6 +3,9 @@ import { getErrorMessage } from '@/api/errors';
 import { toast } from '@/components/shared/layout/toast';
 import { captureMutationFailure, captureQueryFailure, isRetryableFailure } from '@/integrations/sentry/mutations';
 
+// A group waits for its slowest query; results that finished earlier must still count as fresh at mount.
+export const groupedQueryStaleTime = 10_000;
+
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: isRetryableFailure } },
   queryCache: new QueryCache({

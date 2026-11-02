@@ -1,5 +1,6 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
 import { useSelector } from '@tanstack/react-form';
+import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
@@ -19,13 +20,14 @@ import {
   formADefaultValues,
   getFormASubmissionSchema,
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
-import { useFormAQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
+import { formAQueryOptions } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
-  useGetApplicationFormAContextSuspense,
+  getGetApplicationFormAContextSuspenseQueryOptions,
   useUpdateApplicationFormA,
 } from '@/api/generated/endpoints/applications.gen';
 import { useGetCruiseBlockades } from '@/api/generated/endpoints/cruises.gen';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
+import { groupedQueryStaleTime } from '@/integrations/tanstack/query/root-provider';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
@@ -46,12 +48,19 @@ function FormAPage() {
   const mode = Route.useSearch().mode ?? 'view';
 
   const currentUser = useCurrentUser()!;
-  const initialStateQuery = useGetApplicationFormAContextSuspense({ applicationId });
+  const [initialStateQuery, formA] = useSuspenseQueries({
+    queries: [
+      getGetApplicationFormAContextSuspenseQueryOptions(
+        { applicationId },
+        { query: { staleTime: groupedQueryStaleTime } }
+      ),
+      formAQueryOptions(applicationId),
+    ],
+  });
   const saving = useSaveTracking();
   const saveMutation = useUpdateApplicationFormA({
     mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
   });
-  const formA = useFormAQuery(applicationId);
 
   const editMode = mode === 'edit';
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);

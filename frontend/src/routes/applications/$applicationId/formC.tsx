@@ -1,4 +1,5 @@
 import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplicationForm';
+import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute, notFound } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
@@ -15,19 +16,20 @@ import {
   formCDefaultValues,
   getFormCSubmissionSchema,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
-import { useGetApplicationCruiseSuspense } from '@/api/generated/endpoints/applications.gen';
+import { getGetApplicationCruiseSuspenseQueryOptions } from '@/api/generated/endpoints/applications.gen';
 import {
-  useFormAQuery,
-  useFormBQuery,
-  useFormCQuery,
+  formAQueryOptions,
+  formBQueryOptions,
+  formCQueryOptions,
 } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
-  useGetApplicationFormAContextSuspense,
-  useGetApplicationFormBContextSuspense,
+  getGetApplicationFormAContextSuspenseQueryOptions,
+  getGetApplicationFormBContextSuspenseQueryOptions,
   useUpdateApplicationFormC,
 } from '@/api/generated/endpoints/applications.gen';
 import { ApiError, getErrorMessage } from '@/api/errors';
 import { ResearchTaskEffectValues } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskEffectValues';
+import { groupedQueryStaleTime } from '@/integrations/tanstack/query/root-provider';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
@@ -46,12 +48,19 @@ function FormCPage() {
   const { applicationId } = Route.useParams();
   const mode = Route.useSearch().mode ?? 'preview';
 
-  const formA = useFormAQuery(applicationId);
-  const formB = useFormBQuery(applicationId);
-  const formC = useFormCQuery(applicationId);
-  const formAInitValues = useGetApplicationFormAContextSuspense({ applicationId });
-  const formBInitValues = useGetApplicationFormBContextSuspense();
-  const cruise = useGetApplicationCruiseSuspense(applicationId);
+  const [formA, formB, formC, formAInitValues, formBInitValues, cruise] = useSuspenseQueries({
+    queries: [
+      formAQueryOptions(applicationId),
+      formBQueryOptions(applicationId),
+      formCQueryOptions(applicationId),
+      getGetApplicationFormAContextSuspenseQueryOptions(
+        { applicationId },
+        { query: { staleTime: groupedQueryStaleTime } }
+      ),
+      getGetApplicationFormBContextSuspenseQueryOptions({ query: { staleTime: groupedQueryStaleTime } }),
+      getGetApplicationCruiseSuspenseQueryOptions(applicationId, { query: { staleTime: groupedQueryStaleTime } }),
+    ],
+  });
   const saving = useSaveTracking();
   const updateMutation = useUpdateApplicationFormC({
     mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
