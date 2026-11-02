@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
@@ -7,6 +8,8 @@ namespace ResearchCruiseApp.Api.Users;
 
 public static class CruiseEffectsEndpoints
 {
+    private static readonly ConcurrentDictionary<Guid, byte> ReportedOrphans = new();
+
     public static void Map(RouteGroupBuilder group)
     {
         group
@@ -42,10 +45,11 @@ public static class CruiseEffectsEndpoints
             .Where(userEffect => userEffect.Effect.FormC.CruiseApplication is null)
             .Select(userEffect => userEffect.Id)
             .ToList();
-        if (orphanedIds.Count > 0)
+        var unreportedIds = orphanedIds.Where(id => ReportedOrphans.TryAdd(id, 0)).ToList();
+        if (unreportedIds.Count > 0)
             logger.LogError(
                 "Skipped user effects whose Form C has no application: {UserEffectIds}",
-                orphanedIds
+                unreportedIds
             );
 
         return TypedResults.Ok(

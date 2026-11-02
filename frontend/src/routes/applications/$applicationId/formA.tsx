@@ -7,7 +7,6 @@ import { Role } from '@/integrations/auth/types';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { FloppyDiskIcon } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
-import { Alert } from '@/components/shared/Alert';
 import { Button } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
 import { Modal } from '@/components/shared/Modal';
@@ -22,7 +21,6 @@ import {
 } from '@/routes/applications/$applicationId/-schemas/formA.schema';
 import { useFormAQuery } from '@/routes/applications/$applicationId/-hooks/useApplicationFormQueries';
 import {
-  useGetApplicationSuspense,
   useGetApplicationFormAContextSuspense,
   useUpdateApplicationFormA,
 } from '@/api/generated/endpoints/applications.gen';
@@ -54,7 +52,6 @@ function FormAPage() {
     mutation: { meta: { handlesError: true, onAccepted: saving.onAccepted } },
   });
   const formA = useFormAQuery(applicationId);
-  const invalidStoredValues = useGetApplicationSuspense(applicationId).data.invalidStoredValues;
 
   const editMode = mode === 'edit';
   const [isSaveDraftModalOpen, setIsSaveDraftModalOpen] = useState(false);
@@ -138,11 +135,6 @@ function FormAPage() {
   return (
     <>
       <Layout title="Formularz A">
-        {invalidStoredValues.length > 0 && (
-          <div className="mb-4">
-            <Alert variant="danger">Niepoprawne zapisane dane: {invalidStoredValues.join(', ')}.</Alert>
-          </div>
-        )}
         <form.AppForm>
           <FormView context={context} />
         </form.AppForm>

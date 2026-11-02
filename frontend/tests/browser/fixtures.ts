@@ -13,7 +13,6 @@ import {
   getGetApplicationFormBMockHandler,
   getGetApplicationFormCMockHandler,
   getGetApplicationManagersMockHandler,
-  getGetApplicationMockHandler,
   getGetApplicationsMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
 import { getGetCruiseBlockadesMockHandler } from '@/api/generated/mocks/cruises/cruises.msw.gen';
@@ -122,7 +121,6 @@ export function applicationForms() {
   return [
     getGetApplicationManagersMockHandler([]),
     getGetApplicationsMockHandler({ items: [application()], nextCursor: null }),
-    getGetApplicationMockHandler(application()),
     getGetApplicationFormAContextMockHandler(formOptions()),
     getGetApplicationFormBContextMockHandler({ shipEquipments: [] }),
     getGetCruiseBlockadesMockHandler([]),

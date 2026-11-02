@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Globalization;
 using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Api.Applications.Shared;
@@ -15,6 +16,8 @@ internal class ApplicationReader(
     ILogger<ApplicationReader> logger
 )
 {
+    private static readonly ConcurrentDictionary<Guid, byte> ReportedApplications = new();
+
     private static readonly string[] StoredCruiseDateFormats =
     [
         "yyyy-MM-ddTHH:mm:ss.FFFFFFFK",
@@ -158,12 +161,15 @@ internal class ApplicationReader(
         };
     }
 
-    private void LogInvalidValues(CruiseApplication application, List<string> invalidValues) =>
-        logger.LogError(
-            "Application {ApplicationId} has invalid stored values: {InvalidValues}",
-            application.Id,
-            invalidValues
-        );
+    private void LogInvalidValues(CruiseApplication application, List<string> invalidValues)
+    {
+        if (ReportedApplications.TryAdd(application.Id, 0))
+            logger.LogError(
+                "Application {ApplicationId} has invalid stored values: {InvalidValues}",
+                application.Id,
+                invalidValues
+            );
+    }
 
     private static int? ReadYear(FormA? form) =>
         form is null ? 0

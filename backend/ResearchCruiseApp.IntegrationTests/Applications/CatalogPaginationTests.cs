@@ -376,7 +376,12 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
         var owner = await TestUsers.Create(app, "catalog@example.invalid", RoleName.Administrator);
-        var malformed = Create(Guid.NewGuid(), Guid.Parse(owner.Id), "oops");
+        var malformed = Create(
+            Guid.NewGuid(),
+            Guid.Parse(owner.Id),
+            "oops",
+            new DateTime(2030, 6, 1)
+        );
         var healthy = Create(Guid.NewGuid(), Guid.Parse(owner.Id));
         await app.InDatabase(async db =>
         {
@@ -443,7 +448,12 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
             )
         )!.Items;
 
-    private static CruiseApplication Create(Guid id, Guid ownerId, string year = "2030") =>
+    private static CruiseApplication Create(
+        Guid id,
+        Guid ownerId,
+        string year = "2030",
+        DateTime? preciseStart = null
+    ) =>
         new()
         {
             Id = id,
@@ -454,6 +464,8 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
                 CruiseManagerId = ownerId,
                 DeputyManagerId = ownerId,
                 Year = year,
+                PrecisePeriodStart = preciseStart,
+                PrecisePeriodEnd = preciseStart?.AddDays(29),
                 CruiseHours = "24",
                 PeriodNotes = "",
                 DifferentUsage = "",

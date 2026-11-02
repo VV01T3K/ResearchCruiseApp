@@ -113,7 +113,7 @@ public static class PlanningEndpoints
                 skipped.Add(
                     SkippedApplicationResponse.From(
                         application,
-                        "Zgłoszenie ma niepoprawny lub brakujący zapisany termin albo czas trwania."
+                        "Zgłoszenie ma niepoprawny lub brakujący zapisany rok, termin albo czas trwania."
                     )
                 );
                 continue;
@@ -216,7 +216,8 @@ public static class PlanningEndpoints
     )
     {
         if (
-            !int.TryParse(
+            !TryParseYear(formA.Year, out var year)
+            || !int.TryParse(
                 formA.CruiseHours,
                 NumberStyles.None,
                 CultureInfo.InvariantCulture,
@@ -234,8 +235,7 @@ public static class PlanningEndpoints
             windowEnd = formA.PrecisePeriodEnd.Value.Date;
         }
         else if (
-            TryParseYear(formA.Year, out var year)
-            && TryParsePeriodEdge(formA.OptimalPeriodBeg, out var startEdge)
+            TryParsePeriodEdge(formA.OptimalPeriodBeg, out var startEdge)
             && TryParsePeriodEdge(formA.OptimalPeriodEnd, out var endEdge)
         )
         {
