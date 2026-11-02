@@ -181,8 +181,22 @@ internal class IdentityService(
         if (!userManager.SupportsUserEmail)
             return Error.ServiceUnavailable();
 
-        var user = CreateUser(registerForm);
-        var identityResult = await userManager.CreateAsync(user, registerForm.Password);
+        var user = await userManager.FindByEmailAsync(registerForm.Email);
+        if (user is { EmailConfirmed: true } or { Accepted: true })
+            return IdentityResult
+                .Failed(userManager.ErrorDescriber.DuplicateEmail(registerForm.Email))
+                .ToApplicationResult();
+
+        IdentityResult identityResult;
+        if (user is null)
+        {
+            user = CreateUser(registerForm);
+            identityResult = await userManager.CreateAsync(user, registerForm.Password);
+        }
+        else
+        {
+            identityResult = await ResetUnconfirmedUser(user, registerForm);
+        }
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
@@ -199,6 +213,23 @@ internal class IdentityService(
 
         await transaction.CommitAsync();
         return identityResult.ToApplicationResult();
+    }
+
+    private async Task<IdentityResult> ResetUnconfirmedUser(User user, RegisterFormDto registerForm)
+    {
+        user.FirstName = registerForm.FirstName;
+        user.LastName = registerForm.LastName;
+
+        var identityResult = await userManager.RemoveFromRolesAsync(
+            user,
+            await userManager.GetRolesAsync(user)
+        );
+        if (identityResult.Succeeded)
+            identityResult = await userManager.RemovePasswordAsync(user);
+
+        return identityResult.Succeeded
+            ? await userManager.AddPasswordAsync(user, registerForm.Password)
+            : identityResult;
     }
 
     public async Task<bool> CanUserLogin(string email, string password)

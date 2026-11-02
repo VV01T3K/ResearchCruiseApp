@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ResearchCruiseApp.Domain;
@@ -147,6 +148,117 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Single(await db.EmailOutboxMessages.ToListAsync(ct));
         });
     }
+
+    [Fact]
+    public async Task Register_WhenEmailBelongsToUnconfirmedAccount_ReplacesItAndItsOldLink()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        await EnsureRegistrationRole(app);
+        using var client = app.CreateApiClient();
+        const string email = "again@example.invalid";
+        const string newPassword = "ReplacementPassword2!";
+
+        using var first = await Register(client, email, TestUsers.Password, "Original", ct);
+        Assert.Equal(HttpStatusCode.Created, first.StatusCode);
+        await app.Dispatch(ct);
+        var oldLink = PasswordRecoveryTests.Link(
+            app.Transport.Messages[^1].Payload.Body,
+            "confirm-email"
+        );
+
+        using var second = await Register(client, email, newPassword, "Replaced", ct);
+        Assert.Equal(first.StatusCode, second.StatusCode);
+        Assert.Equal(
+            await first.Content.ReadAsStringAsync(ct),
+            await second.Content.ReadAsStringAsync(ct)
+        );
+        await app.Dispatch(ct);
+        var newLink = PasswordRecoveryTests.Link(
+            app.Transport.Messages[^1].Payload.Body,
+            "confirm-email"
+        );
+
+        Assert.Equal(
+            QueryHelpers.ParseQuery(oldLink.Query)["userId"],
+            QueryHelpers.ParseQuery(newLink.Query)["userId"]
+        );
+        await app.InDatabase(async db =>
+        {
+            Assert.Equal("Replaced", (await db.Users.SingleAsync(ct)).FirstName);
+            Assert.Single(await db.UserRoles.ToListAsync(ct));
+        });
+        using var oldConfirm = await client.GetAsync("/v2/auth/confirm-email" + oldLink.Query, ct);
+        Assert.Equal(HttpStatusCode.BadRequest, oldConfirm.StatusCode);
+        using var newConfirm = await client.GetAsync("/v2/auth/confirm-email" + newLink.Query, ct);
+        Assert.Equal(HttpStatusCode.NoContent, newConfirm.StatusCode);
+
+        await app.InDatabase(db =>
+            db.Users.ExecuteUpdateAsync(set => set.SetProperty(user => user.Accepted, true), ct)
+        );
+        using var login = await client.PostAsJsonAsync(
+            "/v2/auth/login",
+            new { Email = email, Password = newPassword },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.OK, login.StatusCode);
+    }
+
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public async Task Register_WhenEmailBelongsToConfirmedOrAcceptedAccount_IsRefused(
+        bool emailConfirmed,
+        bool accepted
+    )
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        await EnsureRegistrationRole(app);
+        var existing = await TestUsers.Create(app, "old@example.invalid", RoleName.CruiseManager);
+        const string email = "changed@example.invalid";
+        await app.InDatabase(db =>
+            db.Users.ExecuteUpdateAsync(
+                set =>
+                    set.SetProperty(user => user.Email, email)
+                        .SetProperty(user => user.NormalizedEmail, email.ToUpperInvariant())
+                        .SetProperty(user => user.EmailConfirmed, emailConfirmed)
+                        .SetProperty(user => user.Accepted, accepted),
+                ct
+            )
+        );
+        using var client = app.CreateApiClient();
+
+        using var response = await Register(client, email, "ReplacementPassword2!", "Replaced", ct);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        await app.InDatabase(async db =>
+        {
+            var stored = Assert.Single(await db.Users.ToListAsync(ct));
+            Assert.Equal(existing.PasswordHash, stored.PasswordHash);
+            Assert.Equal(existing.FirstName, stored.FirstName);
+            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
+        });
+    }
+
+    private static Task<HttpResponseMessage> Register(
+        HttpClient client,
+        string email,
+        string password,
+        string firstName,
+        CancellationToken ct
+    ) =>
+        client.PostAsJsonAsync(
+            "/v2/auth/register",
+            new
+            {
+                Email = email,
+                Password = password,
+                FirstName = firstName,
+                LastName = "Researcher",
+            },
+            ct
+        );
 
     internal static async Task EnsureRegistrationRole(TestApplication app)
     {
