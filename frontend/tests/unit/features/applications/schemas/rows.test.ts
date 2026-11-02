@@ -118,14 +118,15 @@ const cases: RowCase[] = [
       type: '4',
       title: 'Projekt',
       financingAmount: 1500,
-      startDate: '2026-01',
-      endDate: '2026-12',
+      startDate: '2026-01-01',
+      endDate: '2026-12-01',
       securedAmount: 200,
     },
     required: ['title', 'startDate', 'endDate'],
     invalid: [
       ['financingAmount', -1],
       ['securedAmount', -0.01],
+      ['endDate', '2025-12-01'],
     ],
   },
   {
