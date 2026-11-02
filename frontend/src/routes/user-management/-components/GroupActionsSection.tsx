@@ -7,6 +7,7 @@ import { Button } from '@/components/shared/Button';
 import { toast } from '@/components/shared/layout/toast';
 import { Role } from '@/integrations/auth/types';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
+import { plural } from '@/lib/plural';
 import type { UserResponse } from '@/api/generated/schemas';
 import { useAcceptUser, useDeactivateUser, useDeleteUser } from '@/api/generated/endpoints/users.gen';
 import { getProblemDetail } from '@/api/errors';
@@ -71,7 +72,9 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
     } else if (failedCount === selectedUsers.length) {
       toast.error('Nie udało się usunąć żadnego z użytkowników');
     } else {
-      toast.error(`Usunięto część osób. Błąd przy ${failedCount} użytkownikach`);
+      toast.error(
+        `Usunięto część osób. Błąd przy ${failedCount} ${plural(failedCount, 'użytkowniku', 'użytkownikach', 'użytkownikach')}`
+      );
     }
     close();
   }
@@ -90,7 +93,9 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
     if (failedCount === 0) {
       toast.success('Pomyślnie zaakceptowano wszystkich wybranych użytkowników');
     } else {
-      toast.error(`Nie udało się zaakceptować ${failedCount} użytkowników`);
+      toast.error(
+        `Nie udało się zaakceptować ${failedCount} ${plural(failedCount, 'użytkownika', 'użytkowników', 'użytkowników')}`
+      );
     }
     close();
   }
@@ -117,7 +122,9 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
     if (failedCount === 0) {
       toast.success('Pomyślnie usunięto akceptację wszystkich wybranych użytkowników');
     } else {
-      toast.error(`Nie udało się usunąć akceptacji ${failedCount} użytkowników`);
+      toast.error(
+        `Nie udało się usunąć akceptacji ${failedCount} ${plural(failedCount, 'użytkownika', 'użytkowników', 'użytkowników')}`
+      );
     }
     close();
   }

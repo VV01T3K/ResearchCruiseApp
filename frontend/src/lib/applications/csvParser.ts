@@ -1,6 +1,5 @@
 import Papa from 'papaparse';
-import { readSheet, type SheetData } from 'read-excel-file/browser';
-import writeXlsxFile from 'write-excel-file/browser';
+import type { SheetData } from 'read-excel-file/browser';
 
 import { toast } from '@/components/shared/layout/toast';
 import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/types/CruiseDayValues';
@@ -163,6 +162,10 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
  * Missing columns will be filled with empty strings instead of throwing an error
  */
 export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseDayValues[]> {
+  const { readSheet } = await import('read-excel-file/browser').catch((error: unknown) => {
+    console.error(error);
+    throw new Error('Sprawdź połączenie z internetem i spróbuj ponownie.');
+  });
   let data: SheetData;
   try {
     data = await readSheet(file);
@@ -363,11 +366,11 @@ export async function exportCruiseDayDetailsToXlsx(
 
     const allData = [headers, ...exportRows];
 
+    const { default: writeXlsxFile } = await import('write-excel-file/browser');
     await writeXlsxFile(allData, { sheet: 'Dane' }).toFile(fileName);
-    toast.success(`Plik ${fileName} został pobierany`);
+    toast.success(`Plik ${fileName} został pobrany`);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
-    toast.error(`Błąd podczas eksportowania do XLSX: ${errorMessage}`);
+    toast.error('Nie udało się przygotować pliku XLSX. Sprawdź połączenie z internetem i spróbuj ponownie.');
     console.error('XLSX Export Error:', error);
   }
 }

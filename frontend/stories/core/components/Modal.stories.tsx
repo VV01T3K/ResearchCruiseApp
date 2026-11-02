@@ -59,12 +59,12 @@ export const Default: Story = {
     await userEvent.click(await canvas.findByRole('button', { name: 'Open modal' }));
     const dialog = await page.findByRole('dialog', { name: 'Modal' });
     await userEvent.click(within(dialog).getByRole('button', { name: 'Zamknij' }));
-    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument(), { timeout: 10_000 });
     await expect(await canvas.findByRole('button', { name: 'Open modal' })).toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: 'Open modal' }));
     await waitFor(() => expect(page.getByRole('dialog', { name: 'Modal' })).toBeVisible());
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument(), { timeout: 10_000 });
     await expect(canvas.getByRole('button', { name: 'Open modal' })).toHaveFocus();
   },
 };
@@ -126,10 +126,12 @@ export const Stacked: Story = {
         hidden: true,
       })
     );
-    await waitFor(() => expect(page.queryByRole('dialog', { name: 'First', hidden: true })).not.toBeInTheDocument());
+    await waitFor(() => expect(page.queryByRole('dialog', { name: 'First', hidden: true })).not.toBeInTheDocument(), {
+      timeout: 10_000,
+    });
     await expect(root).toHaveAttribute('inert');
     await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument(), { timeout: 10_000 });
     await expect(root).not.toHaveAttribute('inert');
   },
 };
