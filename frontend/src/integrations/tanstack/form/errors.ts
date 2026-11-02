@@ -62,14 +62,20 @@ export function navigateToFirstError({ toast: showToast = false } = {}): void {
     }
 
     closedPanel.parentElement?.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')?.click();
-    const fallback = setTimeout(reveal, 500);
+    const listener = new AbortController();
+    const finish = () => {
+      listener.abort();
+      clearTimeout(fallback);
+      reveal();
+    };
+    const fallback = setTimeout(finish, 1000);
     closedPanel.addEventListener(
       'transitionend',
-      () => {
-        clearTimeout(fallback);
-        reveal();
+      (event) => {
+        // A section still closing ends its transition here too, before the panel has grown.
+        if (event.target === closedPanel && closedPanel.matches('[data-open]:not([data-starting-style])')) finish();
       },
-      { once: true }
+      { signal: listener.signal }
     );
   });
 }
