@@ -11,7 +11,7 @@ import { isUnassignedPerson } from '@/lib/applications/person';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
 import { UserOption } from '@/api/generated/schemas';
-import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
+import { cruiseFormDefaultValues } from '@/features/cruises/schemas/form.schema';
 import { getGetAvailableCruiseManagersSuspenseQueryOptions } from '@/api/generated/endpoints/users.gen';
 import type { CruiseManagerResponse, CruiseResponse } from '@/api/generated/schemas';
 

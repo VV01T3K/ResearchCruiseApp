@@ -7,7 +7,7 @@ import { DateSelectionSection } from './DateSelectionSection';
 import { ManagerSelectionSection } from './ManagerSelectionSection';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
-import { cruiseFormDefaultValues } from '@/routes/cruises/-schemas/form.schema';
+import { cruiseFormDefaultValues } from '@/features/cruises/schemas/form.schema';
 import type { CruiseResponse } from '@/api/generated/schemas';
 
 type Props = {

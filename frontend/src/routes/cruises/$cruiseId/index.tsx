@@ -24,8 +24,8 @@ import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
 import { getGetApplicationsForCruisePlanningSuspenseQueryOptions } from '@/api/generated/endpoints/applications.gen';
-import { FormView } from '../-components/FormView';
-import { CruiseFormSchema, type CruiseFormValues, mapCruiseToValues } from '@/routes/cruises/-schemas/form.schema';
+import { FormView } from '@/features/cruises/components/FormView';
+import { CruiseFormSchema, type CruiseFormValues, mapCruiseToValues } from '@/features/cruises/schemas/form.schema';
 import {
   getGetCruiseQueryKey,
   getGetCruiseSuspenseQueryOptions,
