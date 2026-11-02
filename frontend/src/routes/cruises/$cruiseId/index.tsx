@@ -190,7 +190,7 @@ function CruiseDetailsPage() {
         return (
           <>
             <Button
-              className="w-36 !justify-center gap-4 lg:w-64"
+              className="w-36 !justify-center gap-4 lg:w-48"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
               disabled={isEditBlocked}
@@ -199,7 +199,15 @@ function CruiseDetailsPage() {
               Edytuj
             </Button>
             <Button
-              className="w-36 !justify-center gap-4 lg:w-64"
+              className="w-36 !justify-center gap-4 lg:w-48"
+              variant="dangerOutline"
+              onClick={() => setIsConfirmDeletionModalOpen(true)}
+            >
+              <TrashIcon className="h-4 w-4" />
+              Usuń rejs
+            </Button>
+            <Button
+              className="w-36 !justify-center gap-4 lg:w-48"
               onClick={() => setIsConfirmAcceptanceModalOpen(true)}
             >
               <CheckIcon className="h-4 w-4" />
@@ -317,7 +325,7 @@ function CruiseDetailsPage() {
       </Modal>
 
       <Modal
-        title={`Czy na pewno chcesz awaryjnie usunąć rejs nr. ${cruiseQuery.data?.number}?`}
+        title={`Czy na pewno chcesz usunąć rejs nr. ${cruiseQuery.data?.number}?`}
         isOpen={isConfirmDeletionModalOpen}
         onClose={() => setIsConfirmDeletionModalOpen(false)}
       >

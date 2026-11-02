@@ -143,7 +143,7 @@ function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
         <MagnifyingGlassPlusIcon className="ml-2 h-4 w-4" />
       </Button>
       <Guard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
-        {cruise.status === 'new' && (
+        {(cruise.status === 'new' || cruise.status === 'confirmed') && (
           <Button variant="dangerOutline" size="sm" onClick={() => deleteCruise(cruise)}>
             Usuń
             <TrashIcon className="h-4 w-4" />

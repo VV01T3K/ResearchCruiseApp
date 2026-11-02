@@ -31,15 +31,19 @@ test.beforeEach(({ network }) =>
 const confirmed = (): CruiseResponse => ({ ...cruise(), status: 'confirmed' });
 
 test('cruise deletion requires confirmation and removes the row after saving', async ({ page, network, requests }) => {
-  const item = cruise();
+  const item = confirmed();
+  const ended: CruiseResponse = { ...cruise(), status: 'ended', title: 'Zakończony rejs' };
   network.use(
-    getGetCruisesMockHandler([item]),
-    getDeleteCruiseMockHandler(() => network.use(getGetCruisesMockHandler([])))
+    getGetCruisesMockHandler([item, ended]),
+    getDeleteCruiseMockHandler(() => network.use(getGetCruisesMockHandler([ended])))
   );
   await page.goto('/cruises');
   const row = page.getByRole('row').filter({ hasText: item.title! });
   const dialog = page.getByRole('dialog');
 
+  await expect(
+    page.getByRole('row').filter({ hasText: ended.title! }).getByRole('button', { name: 'Usuń', exact: true })
+  ).toHaveCount(0);
   await row.getByRole('button', { name: 'Usuń', exact: true }).click();
   await expect(dialog).toContainText(item.number);
   await dialog.getByRole('button', { name: 'Anuluj' }).click();
@@ -444,7 +448,7 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     for (const action of absent) await expect(button(action)).toHaveCount(0);
   };
 
-  await expectStatus('Nowy', ['Edytuj', 'Zatwierdź rejs'], ['Zakończ rejs', 'Cofnij status']);
+  await expectStatus('Nowy', ['Edytuj', 'Zatwierdź rejs', 'Usuń rejs'], ['Zakończ rejs', 'Cofnij status']);
   await button('Zatwierdź rejs').click();
   await dialog.getByRole('button', { name: `Potwierdź rejs nr. ${item.number}` }).click();
   await expectStatus('Potwierdzony', ['Edytuj', 'Zakończ rejs', 'Cofnij status', 'Usuń rejs'], ['Zatwierdź rejs']);
