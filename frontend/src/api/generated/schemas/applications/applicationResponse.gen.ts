@@ -9,7 +9,7 @@ export const ApplicationResponse = zod.object({
   "id": zod.string().regex(applicationResponseIdRegExp),
   "number": zod.string(),
   "date": zod.iso.date(),
-  "year": zod.int(),
+  "year": zod.int().nullable(),
   "mainManager": ApplicationPersonResponse,
   "deputyManager": ApplicationPersonResponse,
   "hasFormA": zod.boolean(),
@@ -29,6 +29,7 @@ export const ApplicationResponse = zod.object({
   "precisePeriodEnd": zod.iso.datetime({"offset":true}).nullable(),
   "startDate": zod.iso.datetime({"offset":true}).nullable(),
   "endDate": zod.iso.datetime({"offset":true}).nullable(),
+  "invalidStoredValues": zod.array(zod.string()),
   "revision": zod.string()
 });
 

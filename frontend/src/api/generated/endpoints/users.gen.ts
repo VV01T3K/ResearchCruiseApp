@@ -18,7 +18,7 @@ import type {
 import type {
   ChangePasswordRequest,
   CreateUserRequest,
-  CruiseEffectResponse,
+  CruiseEffectsResponse,
   CruiseManagerResponse,
   CurrentUserResponse,
   ImportPublicationRequest,
@@ -241,9 +241,9 @@ export const useChangeCurrentUserPassword = <TError = ErrorType<ProblemDetails>,
 /**
  * @summary Get cruise effects for the current user.
  */
-export const getCurrentUserCruiseEffects = async ( options?: Parameters<typeof customFetch>[1]): Promise<CruiseEffectResponse[]> => {
+export const getCurrentUserCruiseEffects = async ( options?: Parameters<typeof customFetch>[1]): Promise<CruiseEffectsResponse> => {
 
-  return customFetch<CruiseEffectResponse[]>(getGetCurrentUserCruiseEffectsUrl(),
+  return customFetch<CruiseEffectsResponse>(getGetCurrentUserCruiseEffectsUrl(),
   {
     ...options,
     method: 'GET'

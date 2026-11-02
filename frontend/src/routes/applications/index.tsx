@@ -96,7 +96,7 @@ function ApplicationsPage() {
     {
       id: 'year',
       header: 'Rok rejsu',
-      accessorFn: (row) => row.year.toString(),
+      accessorFn: (row) => row.year?.toString() ?? '-',
       sortDescFirst: true,
       meta: { filterOptions: yearFilterOptions },
       size: 91,
@@ -211,6 +211,11 @@ function ApplicationsPage() {
               ? ` (${row.original.note.trim()})`
               : null}
           </p>
+          {row.original.invalidStoredValues.length > 0 && (
+            <p className="mb-2 text-center text-xs font-medium text-danger-dark">
+              Niepoprawne dane: {row.original.invalidStoredValues.join(', ')}
+            </p>
+          )}
           {row.original.status === CruiseApplicationStatus.enum.draft && (
             <Button
               className="ml-auto sm:mx-auto"
@@ -246,7 +251,11 @@ function ApplicationsPage() {
                 </Button>
               </Guard>
               <div>
-                <Badge variant="success">{row.original.effectsDoneRate} efektów</Badge>
+                {row.original.effectsDoneRate === '0' ? (
+                  <Badge variant="info">Brak zapisanych efektów</Badge>
+                ) : (
+                  <Badge variant="success">{row.original.effectsDoneRate} efektów</Badge>
+                )}
               </div>
             </div>
           )}

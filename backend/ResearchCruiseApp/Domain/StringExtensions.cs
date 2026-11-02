@@ -4,8 +4,7 @@ public static class StringExtensions
 {
     public static bool ToBool(this string value)
     {
-        return !string.IsNullOrEmpty(value)
-            && !value.Equals("false", StringComparison.OrdinalIgnoreCase);
+        return string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
     }
 
     public static T ToEnum<T>(this string value)

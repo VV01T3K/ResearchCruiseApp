@@ -17,7 +17,7 @@ public sealed record ApplicationResponse(
     Guid Id,
     string Number,
     DateOnly Date,
-    [property: JsonNumberHandling(JsonNumberHandling.Strict)] int Year,
+    [property: JsonNumberHandling(JsonNumberHandling.Strict)] int? Year,
     ApplicationPersonResponse MainManager,
     ApplicationPersonResponse DeputyManager,
     bool HasFormA,
@@ -37,6 +37,7 @@ public sealed record ApplicationResponse(
     DateTime? PrecisePeriodEnd,
     DateTime? StartDate,
     DateTime? EndDate,
+    List<string> InvalidStoredValues,
     string Revision
 )
 {
@@ -76,6 +77,7 @@ public sealed record ApplicationResponse(
             application.PrecisePeriodEnd,
             application.StartDate,
             application.EndDate,
+            application.InvalidStoredValues,
             application.Revision
         );
     }

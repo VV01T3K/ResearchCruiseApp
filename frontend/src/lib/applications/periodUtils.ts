@@ -62,7 +62,7 @@ function parseBackendDateTimeType(value: string): Date {
 }
 
 type DisplayPeriodSource = {
-  year: number;
+  year: number | null;
   precisePeriodStart: string | null;
   precisePeriodEnd: string | null;
   optimalPeriodBeg: string | null;
@@ -76,6 +76,8 @@ export function getDisplayPeriod(row: DisplayPeriodSource) {
   if (row.precisePeriodStart && row.precisePeriodEnd) {
     start = parseBackendDateTimeType(row.precisePeriodStart); // we receive date in UTC from backend but without Z on end
     end = parseBackendDateTimeType(row.precisePeriodEnd);
+  } else if (row.year === null) {
+    return { start, end };
   } else if (row.optimalPeriodBeg && row.optimalPeriodEnd) {
     start = convertPeriodNumberToDate(row.optimalPeriodBeg, row.year);
     end = convertPeriodNumberToDate(row.optimalPeriodEnd, row.year);

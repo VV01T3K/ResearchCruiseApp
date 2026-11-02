@@ -185,7 +185,7 @@ describe('another tab', () => {
     await vi.waitFor(() => expect(auth.getSession()?.accessToken).toBe('other-tab'));
   });
 
-  it('ignores a session it broadcasts after this tab logged out', async () => {
+  it('after this tab logged out, ignores a session it broadcasts but adopts a login', async () => {
     auth.setSession(session());
     await auth.prepareForLogout();
     auth.completeLogout();
@@ -196,5 +196,7 @@ describe('another tab', () => {
     await vi.waitFor(() => expect(tokensSeen).toHaveLength(1));
     expect(tokensSeen).toEqual([undefined]);
     await expect(auth.getValidAccessToken()).resolves.toBeUndefined();
+    otherTab.postMessage({ type: 'login', session: { ...session(), accessToken: 'signed-in' } });
+    await vi.waitFor(() => expect(auth.getSession()?.accessToken).toBe('signed-in'));
   });
 });

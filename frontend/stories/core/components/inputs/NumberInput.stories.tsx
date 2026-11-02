@@ -77,6 +77,6 @@ export const ResyncsDraftOnTypeChange: Story = {
 export const NotANumberValue: Story = {
   args: { value: NaN },
   play: async ({ canvas }) => {
-    await expect(canvas.getByRole('textbox')).toHaveValue('NaN');
+    await expect(canvas.getByRole('textbox')).toHaveValue('');
   },
 };

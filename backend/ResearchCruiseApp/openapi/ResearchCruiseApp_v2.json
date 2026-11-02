@@ -426,10 +426,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CruiseEffectResponse"
-                  }
+                  "$ref": "#/components/schemas/CruiseEffectsResponse"
                 }
               }
             }
@@ -3655,6 +3652,7 @@
           "precisePeriodEnd",
           "startDate",
           "endDate",
+          "invalidStoredValues",
           "revision"
         ],
         "type": "object",
@@ -3671,7 +3669,10 @@
             "format": "date"
           },
           "year": {
-            "type": "integer",
+            "type": [
+              "null",
+              "integer"
+            ],
             "format": "int32"
           },
           "mainManager": {
@@ -3769,6 +3770,12 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "invalidStoredValues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "revision": {
             "type": "string"
@@ -4131,7 +4138,10 @@
             "type": "string"
           },
           "year": {
-            "type": "integer",
+            "type": [
+              "null",
+              "integer"
+            ],
             "format": "int32"
           },
           "cruiseManagerId": {
@@ -4308,6 +4318,25 @@
           },
           "cruiseApplicationId": {
             "type": "string"
+          }
+        }
+      },
+      "CruiseEffectsResponse": {
+        "required": [
+          "items",
+          "skippedCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CruiseEffectResponse"
+            }
+          },
+          "skippedCount": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
