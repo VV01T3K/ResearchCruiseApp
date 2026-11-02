@@ -8,5 +8,7 @@ export function useUnreadableErrors(name: string, value: unknown, disabled?: boo
     if (unreadable) reportUnreadableValue(name);
   }, [unreadable, name]);
   if (!unreadable) return undefined;
-  return [`Nie udało się odczytać wcześniej zapisanej odpowiedzi: „${value}”.${disabled ? '' : ' Wprowadź ją jeszcze raz.'}`];
+  return [
+    `Nie udało się odczytać wcześniej zapisanej odpowiedzi: „${value}”.${disabled ? '' : ' Wprowadź ją jeszcze raz.'}`,
+  ];
 }
