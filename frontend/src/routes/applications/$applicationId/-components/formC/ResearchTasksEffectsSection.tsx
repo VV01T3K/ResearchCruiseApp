@@ -58,7 +58,7 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
                       size="md"
                       label="Czy naliczyć punkty kierownikowi?"
                       labelPosition="top"
-                      disabled={isReadonly || !taskDone}
+                      disabled={isReadonly || taskDone !== true}
                     />
                   )}
                 </form.AppField>
@@ -68,7 +68,7 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
                       size="md"
                       label="Czy naliczyć punkty zastępcy?"
                       labelPosition="top"
-                      disabled={isReadonly || !taskDone}
+                      disabled={isReadonly || taskDone !== true}
                     />
                   )}
                 </form.AppField>

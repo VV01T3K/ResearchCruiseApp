@@ -53,7 +53,7 @@ export function PrintTemplate({ ref, context, values }: Props) {
           <span>Zastępca kierownika rejsu: </span>
           <span>{mapPersonToText(formAInitValues.deputyManagers.find((x) => x.id === formA.deputyManagerId))}</span>
           <span>Czy kierownik jest obecny na rejsie: </span>
-          <span>{values.isCruiseManagerPresent ? 'Tak' : 'Nie'}</span>
+          <span>{values.isCruiseManagerPresent === true ? 'Tak' : 'Nie'}</span>
         </div>
       </PrintingPageSection>
 
@@ -407,7 +407,7 @@ export function PrintTemplate({ ref, context, values }: Props) {
                 {!x.insuranceStartDate && !x.insuranceEndDate ? 'Nie zgłoszono' : ''}
               </div>
               <div className={cn(i > 0 ? 'mt-4' : '', 'col-span-2 grid place-items-center')}>
-                {x.permission ? 'Tak' : 'Nie'}
+                {x.permission === true ? 'Tak' : 'Nie'}
               </div>
             </Fragment>
           ))}

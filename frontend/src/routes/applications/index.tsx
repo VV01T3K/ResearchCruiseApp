@@ -246,7 +246,11 @@ function ApplicationsPage() {
                 </Button>
               </Guard>
               <div>
-                <Badge variant="success">{row.original.effectsDoneRate} efektów</Badge>
+                {row.original.effectsDoneRate === '0' ? (
+                  <Badge variant="info">Brak zapisanych efektów</Badge>
+                ) : (
+                  <Badge variant="success">{row.original.effectsDoneRate} efektów</Badge>
+                )}
               </div>
             </div>
           )}

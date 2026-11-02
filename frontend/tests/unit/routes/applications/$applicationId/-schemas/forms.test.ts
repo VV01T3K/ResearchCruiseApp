@@ -33,6 +33,11 @@ import {
   getFormCDraftFieldsSchema,
   mapFormCToValues,
 } from '@/routes/applications/$applicationId/-schemas/formC.schema';
+import {
+  storedBoolean,
+  storedNullableNumber,
+  storedNumber,
+} from '@/routes/applications/$applicationId/-schemas/storedValues';
 
 const options = formOptions();
 const a = () => mapFormAToValues(formA());
@@ -59,6 +64,59 @@ describe('saved applications', () => {
   ] as const)('a completely filled form %s validates and saves back unchanged', (_, saved, values, schema, fields) => {
     expect(schema.safeParse(values).error?.issues ?? []).toEqual([]);
     expect(fields.parse(values)).toEqual(saved);
+  });
+});
+
+describe('stored values', () => {
+  it.each([
+    [storedBoolean, 'true', true],
+    [storedBoolean, 'True', true],
+    [storedBoolean, 'FALSE', false],
+    [storedBoolean, null, false],
+    [storedBoolean, '0', '0'],
+    [storedBoolean, '1', '1'],
+    [storedBoolean, '', ''],
+    [storedBoolean, 'tak', 'tak'],
+    [storedNumber, '12.5', 12.5],
+    [storedNumber, null, 0],
+    [storedNumber, '', 0],
+    [storedNumber, '12h', '12h'],
+    [storedNumber, 'Infinity', 'Infinity'],
+    [storedNullableNumber, '12', 12],
+    [storedNullableNumber, '', null],
+    [storedNullableNumber, '12h', '12h'],
+  ] as const)('%o reads %j as %j', (read, stored, expected) => {
+    expect(read(stored)).toBe(expected);
+  });
+
+  it('blocks both saves on an unreadable editable value and names the field', () => {
+    const saved = filledFormC();
+    const values = mapFormCToValues({
+      ...saved,
+      researchTasksEffects: saved.researchTasksEffects?.map((task) => ({ ...task, done: 'tak' })),
+    });
+    const path = ['researchTasksEffects', 0, 'done'];
+    expect(schemaC.safeParse(values)).toMatchObject(issueAt(path));
+    expect(getFormCDraftFieldsSchema().safeParse(values)).toMatchObject(issueAt(path));
+  });
+
+  it('saves a read-only unreadable task detail in form C back unchanged', () => {
+    const task = filledFormA().researchTasks?.find(({ type }) => type === '4');
+    const form = {
+      ...filledFormC(),
+      researchTasksEffects: [
+        {
+          ...task,
+          financingAmount: '12 tys.',
+          done: 'true',
+          managerConditionMet: 'false',
+          deputyConditionMet: 'false',
+          publicationMinisterialPoints: null,
+        },
+      ],
+    };
+    const fields = getFormCFieldsSchema(options).parse(mapFormCToValues(form));
+    expect(fields.researchTasksEffects?.[0].financingAmount).toBe('12 tys.');
   });
 });
 

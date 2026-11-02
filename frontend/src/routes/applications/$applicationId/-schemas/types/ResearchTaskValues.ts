@@ -135,7 +135,7 @@ export const ResearchTaskValuesDraftValidationSchema = z.object({
   type: z.enum([taskTypes[0], ...taskTypes.slice(1)]),
 });
 
-export const ResearchTaskValuesSchema = z.union([
+export const ResearchTaskValuesSchema = z.discriminatedUnion('type', [
   ThesisResearchTaskValuesSchema,
   ProjectPreparationResearchTaskValuesSchema,
   ProjectResearchTaskValuesSchema,
@@ -143,7 +143,7 @@ export const ResearchTaskValuesSchema = z.union([
   OwnResearchTaskValuesSchema,
   OtherResearchTaskValuesSchema,
 ]);
-export const ResearchTaskValuesInputSchema = z.union([
+export const ResearchTaskValuesInputSchema = z.discriminatedUnion('type', [
   ThesisResearchTaskInputSchema,
   ProjectPreparationResearchTaskInputSchema,
   ProjectResearchTaskInputSchema,

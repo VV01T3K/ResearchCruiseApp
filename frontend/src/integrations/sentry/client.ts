@@ -97,6 +97,16 @@ export function setSentryUser(user: UserResponse | undefined): void {
   Sentry.setAttributes(roleTags);
 }
 
+const reportedUnreadableValues = new Set<string>();
+
+// The value itself can be personal data, so only the field name and the page's URL are sent.
+export function reportUnreadableValue(field: string): void {
+  const key = `${window.location.pathname} ${field}`;
+  if (reportedUnreadableValues.has(key)) return;
+  reportedUnreadableValues.add(key);
+  Sentry.captureMessage('Unreadable stored form value', { level: 'warning', tags: { form_field: field } });
+}
+
 export function trackFormSubmit(
   formName: string,
   outcome: 'valid' | 'invalid',

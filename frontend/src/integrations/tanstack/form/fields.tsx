@@ -11,13 +11,22 @@ import { DatePickerInput } from '@/components/shared/inputs/dates/DatePickerInpu
 import { MonthPickerInput } from '@/components/shared/inputs/dates/MonthPickerInput';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import type { FileValue } from '@/components/shared/inputs/FileInput';
+import { YearPickerInput } from '@/components/shared/inputs/dates/YearPickerInput';
 import { getErrors } from '@/integrations/tanstack/form/errors';
+import { useUnreadableErrors } from '@/integrations/tanstack/form/unreadableValues';
 
 function useErrors() {
   const field = useFieldContext<unknown>();
   const submissionAttempts = useSelector(field.form.store, (state) => state.submissionAttempts);
   const meta = useSelector(field.store, (state) => state.meta);
   return getErrors(meta, submissionAttempts);
+}
+
+function useStoredValueErrors(disabled: boolean | undefined) {
+  const field = useFieldContext<unknown>();
+  const value = useSelector(field.store, (state) => state.value);
+  const errors = useErrors();
+  return useUnreadableErrors(field.name, value, disabled) ?? errors;
 }
 
 type TextProps = Omit<React.ComponentProps<typeof Input>, 'name' | 'value' | 'onBlur' | 'onChange' | 'errors'> & {
@@ -55,7 +64,7 @@ function NumberField({ value, onChange, ...props }: NumberProps) {
       name={field.name}
       value={value ?? field.state.value}
       onChange={onChange ?? field.handleChange}
-      errors={useErrors()}
+      errors={useStoredValueErrors(props.disabled)}
     />
   );
 }
@@ -71,7 +80,7 @@ function NullableNumberField(
       name={field.name}
       value={field.state.value}
       onChange={field.handleChange}
-      errors={useErrors()}
+      errors={useStoredValueErrors(props.disabled)}
     />
   );
 }
@@ -104,7 +113,7 @@ function BooleanSelectField(props: Omit<SelectProps, 'onChange'>) {
       value={String(field.state.value)}
       onBlur={field.handleBlur}
       onChange={(value) => field.handleChange(value === 'true')}
-      errors={useErrors()}
+      errors={useStoredValueErrors(props.disabled)}
     />
   );
 }
@@ -117,10 +126,10 @@ function CheckboxField(props: CheckboxProps) {
     <Checkbox
       {...props}
       name={field.name}
-      checked={field.state.value}
+      checked={field.state.value === true}
       onBlur={field.handleBlur}
       onChange={field.handleChange}
-      errors={useErrors()}
+      errors={useStoredValueErrors(props.disabled)}
     />
   );
 }
@@ -137,6 +146,22 @@ function ArrayCheckboxField({ item, ...props }: CheckboxProps & { item: string }
         field.handleChange((values) => (checked ? [...values, item] : values.filter((value) => value !== item)))
       }
       errors={useErrors()}
+    />
+  );
+}
+
+type YearProps = WithoutFieldProps<React.ComponentProps<typeof YearPickerInput>>;
+
+function YearField(props: YearProps) {
+  const field = useFieldContext<number | null>();
+  return (
+    <YearPickerInput
+      {...props}
+      name={field.name}
+      value={typeof field.state.value === 'number' ? field.state.value : undefined}
+      onBlur={field.handleBlur}
+      onChange={(value) => field.handleChange(value ?? null)}
+      errors={useStoredValueErrors(props.disabled)}
     />
   );
 }
@@ -241,6 +266,7 @@ export const fieldComponents = {
   CheckboxField,
   ArrayCheckboxField,
   DateField,
+  YearField,
   MonthField,
   FileField,
   FilesField,

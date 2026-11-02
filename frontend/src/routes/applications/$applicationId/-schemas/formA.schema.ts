@@ -51,6 +51,11 @@ import {
 } from '@/routes/applications/$applicationId/-schemas/types/ResearchAreaValues';
 import { ResearchTaskType } from '@/routes/applications/$applicationId/-schemas/types/ResearchTaskValues';
 import { PublicationCategory } from '@/routes/applications/$applicationId/-schemas/types/PublicationValues';
+import {
+  storedBoolean,
+  storedNullableNumber,
+  storedNumber,
+} from '@/routes/applications/$applicationId/-schemas/storedValues';
 
 const FormAInputSchema = z.object({
   draft: z.boolean().optional(),
@@ -660,6 +665,7 @@ function toApiDateTime(value: string): string | null {
 export function mapFormAToValues(form: FormAFields): FormAValues {
   const acceptablePeriod = CruisePeriodValidationSchema.safeParse(form.acceptablePeriod ?? '').data ?? '';
   const optimalPeriod = CruisePeriodValidationSchema.safeParse(form.optimalPeriod ?? '').data ?? '';
+  const storedHours = storedNumber(form.cruiseHours);
 
   return {
     revision: form.revision ?? undefined,
@@ -677,8 +683,8 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
           : 'period',
     precisePeriodStart: form.precisePeriodStart ?? '',
     precisePeriodEnd: form.precisePeriodEnd ?? '',
-    cruiseDays: Math.floor(toNumber(form.cruiseHours) / 24),
-    cruiseHours: toNumber(form.cruiseHours) % 24,
+    cruiseDays: Number.isFinite(storedHours) ? Math.floor(storedHours / 24) : 0,
+    cruiseHours: Number.isFinite(storedHours) ? storedHours % 24 : storedHours,
     periodNotes: form.periodNotes ?? '',
     shipUsage: form.shipUsage ?? '',
     differentUsage: form.differentUsage ?? '',
@@ -704,12 +710,12 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
     ugTeams: (form.ugTeams ?? []).map((team) => ({
       ...team,
       ugUnitId: team.ugUnitId ?? '',
-      noOfEmployees: toNumber(team.noOfEmployees),
-      noOfStudents: toNumber(team.noOfStudents),
+      noOfEmployees: storedNumber(team.noOfEmployees),
+      noOfStudents: storedNumber(team.noOfStudents),
     })),
     guestTeams: (form.guestTeams ?? []).map((team) => ({
       name: team.name ?? '',
-      noOfPersons: toNumber(team.noOfPersons),
+      noOfPersons: storedNumber(team.noOfPersons),
     })),
     publications: (form.publications ?? []).map(mapPublicationToValues),
     spubTasks: (form.spubTasks ?? []).map(mapSpubTaskToValues),
@@ -733,7 +739,7 @@ function mapResearchTaskTypeFieldsToValues(task: ResearchTaskFields): FormAValue
         type: task.type,
         title: task.title ?? '',
         date: task.date ?? '',
-        financingApproved: task.financingApproved === 'true',
+        financingApproved: storedBoolean(task.financingApproved),
       };
     case ResearchTaskType.DomesticProject:
     case ResearchTaskType.ForeignProject:
@@ -743,10 +749,10 @@ function mapResearchTaskTypeFieldsToValues(task: ResearchTaskFields): FormAValue
       return {
         type: task.type,
         title: task.title ?? '',
-        financingAmount: toNullableNumber(task.financingAmount),
+        financingAmount: storedNullableNumber(task.financingAmount),
         startDate: task.startDate ?? '',
         endDate: task.endDate ?? '',
-        securedAmount: toNullableNumber(task.securedAmount),
+        securedAmount: storedNullableNumber(task.securedAmount),
       };
     case ResearchTaskType.Didactics:
       return { type: task.type, description: task.description ?? '' };
@@ -756,22 +762,11 @@ function mapResearchTaskTypeFieldsToValues(task: ResearchTaskFields): FormAValue
         title: task.title ?? '',
         date: task.date ?? '',
         magazine: task.magazine ?? '',
-        ministerialPoints: toNullableNumber(task.ministerialPoints),
+        ministerialPoints: storedNullableNumber(task.ministerialPoints),
       };
     default:
       return { type: ResearchTaskType.OtherResearchTask, description: task.description ?? '' };
   }
-}
-
-function toNumber(value: string | null | undefined): number {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-
-function toNullableNumber(value: string | null | undefined): number | null {
-  if (value === null || value === undefined || value === '') return null;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : null;
 }
 
 export function getFormASubmissionSchema(
@@ -808,8 +803,8 @@ export function mapPublicationToValues(publication: PublicationFields): FormAVal
     authors: publication.authors ?? '',
     title: publication.title ?? '',
     magazine: publication.magazine ?? '',
-    year: toNullableNumber(publication.year),
-    ministerialPoints: toNumber(publication.ministerialPoints),
+    year: storedNullableNumber(publication.year),
+    ministerialPoints: storedNumber(publication.ministerialPoints),
   };
 }
 
