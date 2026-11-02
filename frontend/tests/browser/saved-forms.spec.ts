@@ -89,7 +89,7 @@ test('an unreadable stored flag in form C blocks saving until it is fixed', asyn
   await expect(warning).toBeVisible();
   await page.getByRole('button', { name: 'Zapisz wersję roboczą', exact: true }).click();
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
-  await expect(page.getByText(/Formularz błędny w sekcji nr \d+:/).first()).toContainText('nieczytelna');
+  await expect(page.getByText(/Formularz błędny w sekcji nr \d+:/).first()).toContainText('Nie udało się odczytać');
   expect(requests.bodies(route)).toEqual([]);
 
   await page.getByRole('checkbox', { name: 'Zrealizowane' }).click();
