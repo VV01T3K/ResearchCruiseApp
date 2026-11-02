@@ -1,11 +1,20 @@
-import { describe, expect, it } from 'vite-plus/test';
+import { describe, expect, it, vi } from 'vite-plus/test';
 import writeXlsxFile from 'write-excel-file/node';
 
 import {
+  exportCruiseDayDetailsToXlsx,
   parseCruiseDayDetailsFromCsv,
   parseCruiseDayDetailsFromFile,
   parseCruiseDayDetailsFromXlsx,
 } from '@/lib/applications/csvParser';
+
+const exported = vi.hoisted(() => ({ rows: [] as (string | number | null)[][] }));
+vi.mock('write-excel-file/browser', () => ({
+  default: (rows: (string | number | null)[][]) => {
+    exported.rows = rows;
+    return { toFile: async () => {} };
+  },
+}));
 
 async function xlsxFile(rows: (string | number | null)[][]): Promise<File> {
   const buffer = await writeXlsxFile(rows).toBuffer();
@@ -22,8 +31,22 @@ describe('parseCruiseDayDetailsFromXlsx', () => {
     ]);
 
     await expect(parseCruiseDayDetailsFromXlsx(file)).resolves.toEqual([
-      { number: 1, hours: 12, taskName: 'Pomiary CTD', region: 'Głębia Gdańska', position: '', comment: 'Brak' },
-      { number: 2, hours: 6.5, taskName: 'Połów', region: 'Rynna Słupska', position: '', comment: '' },
+      {
+        number: 1,
+        hours: 12,
+        taskName: 'Pomiary CTD',
+        region: 'Głębia Gdańska',
+        position: '',
+        comment: 'Brak',
+      },
+      {
+        number: 2,
+        hours: 6.5,
+        taskName: 'Połów',
+        region: 'Rynna Słupska',
+        position: '',
+        comment: '',
+      },
     ]);
   });
 
@@ -38,6 +61,24 @@ describe('parseCruiseDayDetailsFromXlsx', () => {
     expect(row.position).toBe('54 30.5 N, 18 45.2 E - P1');
   });
 
+  it('keeps positions through export and re-import', async () => {
+    const positions = ['54 30.5 N, 18 45.2 E - P1', 'Stacja pomiarowa Głębia Gdańska A', 'Głębia - P2', ''];
+    await exportCruiseDayDetailsToXlsx(
+      positions.map((position) => ({
+        number: 1,
+        hours: 1,
+        taskName: '',
+        region: '',
+        position,
+        comment: '',
+      }))
+    );
+
+    const rows = await parseCruiseDayDetailsFromXlsx(await xlsxFile(exported.rows));
+
+    expect(rows.map((row) => row.position)).toEqual(positions.slice(0, -1));
+  });
+
   it('rejects files that are not spreadsheets', async () => {
     const file = new File(['not a spreadsheet'], 'broken.xlsx');
 
@@ -49,7 +90,7 @@ describe('parseCruiseDayDetailsFromFile', () => {
   it.each(['dni.csv', 'dni.txt'])('reads %s as CSV text', async (name) => {
     const file = new File(['Dzien;Godziny;Zadanie\n1;12;Pomiary CTD'], name);
 
-    await expect(parseCruiseDayDetailsFromFile(file, 24)).resolves.toMatchObject([
+    await expect(parseCruiseDayDetailsFromFile(file)).resolves.toMatchObject([
       { number: 1, hours: 12, taskName: 'Pomiary CTD' },
     ]);
   });
@@ -57,16 +98,26 @@ describe('parseCruiseDayDetailsFromFile', () => {
   it('rejects other formats instead of reading them as CSV', async () => {
     const file = new File(['binary'], 'dni.xls');
 
-    await expect(parseCruiseDayDetailsFromFile(file, 24)).rejects.toThrow('Nieobsługiwany format pliku');
+    await expect(parseCruiseDayDetailsFromFile(file)).rejects.toThrow('Nieobsługiwany format pliku');
   });
 
   it.each([
-    ['Dzien;Godziny\n8;1', 'Wiersz 1: dzień 8'],
-    ['Dzien;Godziny\n1;1\n1;-5', 'Wiersz 2: liczba godzin -5'],
+    ['Dzien;Godziny\n367;1', 'Wiersz 2: dzień musi być liczbą całkowitą od 0 do 366.'],
+    ['Dzien;Godziny\n1,5;1', 'Wiersz 2: dzień'],
+    ['Tytuł;\nDzien;Godziny\n1;1\n\n1;-5,5', 'Wiersz 5: liczba godzin musi być liczbą od 0 do 24.'],
+    ['Dzien;Godziny\n1;25', 'Wiersz 2: liczba godzin'],
     [`Dzien\n${'1\n'.repeat(1001)}`, 'zbyt wiele wierszy'],
     ['x'.repeat(1024 * 1024 + 1), 'zbyt duży'],
   ])('rejects impossible imports: %#', async (content, message) => {
-    await expect(parseCruiseDayDetailsFromFile(new File([content], 'dni.csv'), 168)).rejects.toThrow(message);
+    await expect(parseCruiseDayDetailsFromFile(new File([content], 'dni.csv'))).rejects.toThrow(message);
+  });
+
+  it('reads decimal-comma hours and reports the spreadsheet row', async () => {
+    await expect(parseCruiseDayDetailsFromFile(new File(['Dzien;Godziny\n1;5,5'], 'dni.csv'))).resolves.toMatchObject([
+      { number: 1, hours: 5.5 },
+    ]);
+    const file = await xlsxFile([['Tytuł'], ['Dzien', 'Godziny'], [1, 1], [null, null], [1, '-5,5']]);
+    await expect(parseCruiseDayDetailsFromXlsx(file)).rejects.toThrow('Wiersz 5: liczba godzin');
   });
 });
 
@@ -109,7 +160,7 @@ it('keeps a quoted multi-line cell in one row', () => {
   ]);
 });
 it('rejects an unclosed quote', () => {
-  expect(() => parseCruiseDayDetailsFromCsv('day;comment\n1;"bez końca')).toThrow('zamknięcie cudzysłowów');
+  expect(() => parseCruiseDayDetailsFromCsv('day;comment\n1;"bez końca')).toThrow('Nie udało się odczytać pliku.');
 });
 it('rejects a header without data rows', () => {
   expect(() => parseCruiseDayDetailsFromCsv('day,hours')).toThrow(

@@ -7,6 +7,38 @@ import { CruiseDayValues } from '@/routes/applications/$applicationId/-schemas/t
 
 const MAX_IMPORT_FILE_BYTES = 1024 * 1024;
 const MAX_IMPORT_ROWS = 1000;
+const MAX_DAY = 366;
+const MAX_DAY_HOURS = 24;
+
+const toNumber = (value: SheetData[number][number] | undefined) =>
+  typeof value === 'number'
+    ? value
+    : Number(
+        String(value ?? '')
+          .trim()
+          .replace(',', '.')
+      ) || 0;
+
+function joinPosition(cells: SheetData[number], columns: Record<string, number>): string {
+  const cell = (index: number) => (index === -1 ? '' : String(cells[index] ?? '').trim());
+  const group = (...indices: number[]) => indices.map(cell).filter(Boolean).join(' ');
+  const coordinates = [
+    group(columns.latDd, columns.latMm, columns.latDir),
+    group(columns.lonDd, columns.lonMm, columns.lonDir),
+  ]
+    .filter(Boolean)
+    .join(', ');
+  return [coordinates, cell(columns.pointName)].filter(Boolean).join(' - ');
+}
+
+function checkRow(row: CruiseDayValues, fileRow: number) {
+  if (!Number.isInteger(row.number) || row.number < 0 || row.number > MAX_DAY) {
+    throw new Error(`Wiersz ${fileRow}: dzień musi być liczbą całkowitą od 0 do ${MAX_DAY}.`);
+  }
+  if (row.hours < 0 || row.hours > MAX_DAY_HOURS) {
+    throw new Error(`Wiersz ${fileRow}: liczba godzin musi być liczbą od 0 do ${MAX_DAY_HOURS}.`);
+  }
+}
 
 /**
  * Parses a CSV string and converts it to an array of CruiseDayValues objects
@@ -16,12 +48,14 @@ const MAX_IMPORT_ROWS = 1000;
  * Missing columns will be filled with empty strings instead of throwing an error
  */
 export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValues[] {
-  const text = csvContent.trim();
+  const text = csvContent.replace(/^\uFEFF/, '').trimEnd();
   const delimiter = text.split('\n', 1)[0].includes(';') ? ';' : ',';
-  const { data: lines, errors } = Papa.parse<string[]>(text, { delimiter, skipEmptyLines: 'greedy' });
+  const { data: lines, errors } = Papa.parse<string[]>(text, { delimiter });
 
   if (errors.length > 0) {
-    throw new Error('Nie udało się odczytać pliku CSV. Sprawdź zamknięcie cudzysłowów.');
+    throw new Error(
+      'Nie udało się odczytać pliku. Sprawdź, czy to plik CSV lub XLSX zapisany z arkusza kalkulacyjnego.'
+    );
   }
 
   if (lines.length < 2) {
@@ -96,46 +130,18 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
 
   for (let i = headerRowIndex + 1; i < lines.length; i++) {
     const values = lines[i];
-
-    let positionString = '';
-    if (columnIndices.latDd !== -1 && columnIndices.latMm !== -1 && columnIndices.latDir !== -1) {
-      const latDd = String(values[columnIndices.latDd] || '').trim();
-      const latMm = String(values[columnIndices.latMm] || '').trim();
-      const latDir = String(values[columnIndices.latDir] || '').trim();
-      positionString = `${latDd} ${latMm} ${latDir},`;
-    }
-
-    if (columnIndices.lonDd !== -1 && columnIndices.lonMm !== -1 && columnIndices.lonDir !== -1) {
-      const lonDd = String(values[columnIndices.lonDd] || '').trim();
-      const lonMm = String(values[columnIndices.lonMm] || '').trim();
-      const lonDir = String(values[columnIndices.lonDir] || '').trim();
-      if (positionString) {
-        positionString += ` ${lonDd} ${lonMm} ${lonDir}`;
-      } else {
-        positionString = `${lonDd} ${lonMm} ${lonDir}`;
-      }
-    }
-
-    if (columnIndices.pointName !== -1) {
-      const pointName = String(values[columnIndices.pointName] || '').trim();
-      if (pointName) {
-        if (positionString) {
-          positionString += ` - ${pointName}`;
-        } else {
-          positionString = pointName;
-        }
-      }
-    }
+    if (values.every((cell) => !cell.trim())) continue;
 
     const row: CruiseDayValues = {
-      number: Number(values[columnIndices.number]) || 0,
-      hours: Number(values[columnIndices.hours]) || 0,
+      number: toNumber(values[columnIndices.number]),
+      hours: toNumber(values[columnIndices.hours]),
       taskName: String(values[columnIndices.taskName] || '').trim(),
       region: String(values[columnIndices.region] || '').trim(),
-      position: positionString,
+      position: joinPosition(values, columnIndices),
       comment: String(values[columnIndices.comment] || '').trim(),
     };
 
+    checkRow(row, i + 1);
     rows.push(row);
   }
 
@@ -236,45 +242,16 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
       continue;
     }
 
-    let positionString = '';
-    if (columnIndices.latDd !== -1 && columnIndices.latMm !== -1 && columnIndices.latDir !== -1) {
-      const latDd = String(row[columnIndices.latDd] || '').trim();
-      const latMm = String(row[columnIndices.latMm] || '').trim();
-      const latDir = String(row[columnIndices.latDir] || '').trim();
-      positionString = `${latDd} ${latMm} ${latDir},`;
-    }
-
-    if (columnIndices.lonDd !== -1 && columnIndices.lonMm !== -1 && columnIndices.lonDir !== -1) {
-      const lonDd = String(row[columnIndices.lonDd] || '').trim();
-      const lonMm = String(row[columnIndices.lonMm] || '').trim();
-      const lonDir = String(row[columnIndices.lonDir] || '').trim();
-      if (positionString) {
-        positionString += ` ${lonDd} ${lonMm} ${lonDir}`;
-      } else {
-        positionString = `${lonDd} ${lonMm} ${lonDir}`;
-      }
-    }
-
-    if (columnIndices.pointName !== -1) {
-      const pointName = String(row[columnIndices.pointName] || '').trim();
-      if (pointName) {
-        if (positionString) {
-          positionString += ` - ${pointName}`;
-        } else {
-          positionString = pointName;
-        }
-      }
-    }
-
     const cruiseDay: CruiseDayValues = {
-      number: Number(row[columnIndices.number]) || 0,
-      hours: Number(row[columnIndices.hours]) || 0,
+      number: toNumber(row[columnIndices.number]),
+      hours: toNumber(row[columnIndices.hours]),
       taskName: String(row[columnIndices.taskName] || '').trim(),
       region: String(row[columnIndices.region] || '').trim(),
-      position: positionString,
+      position: joinPosition(row, columnIndices),
       comment: String(row[columnIndices.comment] || '').trim(),
     };
 
+    checkRow(cruiseDay, i + 1);
     rows.push(cruiseDay);
   }
 
@@ -289,7 +266,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
  * Parses either CSV or XLSX file based on file extension
  * Missing columns will be filled with empty strings instead of throwing an error
  */
-export async function parseCruiseDayDetailsFromFile(file: File, cruiseHours: number): Promise<CruiseDayValues[]> {
+export async function parseCruiseDayDetailsFromFile(file: File): Promise<CruiseDayValues[]> {
   if (file.size > MAX_IMPORT_FILE_BYTES) {
     throw new Error('Plik jest zbyt duży. Maksymalny rozmiar to 1 MB.');
   }
@@ -308,16 +285,6 @@ export async function parseCruiseDayDetailsFromFile(file: File, cruiseHours: num
   if (rows.length > MAX_IMPORT_ROWS) {
     throw new Error(`Plik zawiera zbyt wiele wierszy. Maksymalna liczba to ${MAX_IMPORT_ROWS}.`);
   }
-
-  const maxDay = Math.ceil(cruiseHours / 24);
-  rows.forEach((row, index) => {
-    if (row.number < 0 || row.number > maxDay) {
-      throw new Error(`Wiersz ${index + 1}: dzień ${row.number} jest poza zakresem rejsu (0–${maxDay}).`);
-    }
-    if (row.hours < 0 || row.hours > cruiseHours) {
-      throw new Error(`Wiersz ${index + 1}: liczba godzin ${row.hours} jest poza zakresem rejsu (0–${cruiseHours}).`);
-    }
-  });
 
   return rows;
 }
@@ -344,6 +311,10 @@ function parsePositionString(position: string): {
   if (!position) return result;
 
   const parts = position.split(' - ');
+  if (!/^\s*-?\d/.test(parts[0])) {
+    result.pointName = position.trim();
+    return result;
+  }
   const coordinatesPart = parts[0];
   result.pointName = parts.slice(1).join(' - ').trim();
 

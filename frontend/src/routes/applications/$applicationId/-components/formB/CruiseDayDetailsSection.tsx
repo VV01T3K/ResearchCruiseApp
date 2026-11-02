@@ -119,7 +119,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
 
     const toastId = toast.loading(`Wczytywanie pliku ${file.name}...`);
     try {
-      const rows = await parseCruiseDayDetailsFromFile(file, context.formA.cruiseDays * 24 + context.formA.cruiseHours);
+      const rows = await parseCruiseDayDetailsFromFile(file);
       const currentRows = form.getFieldValue('cruiseDaysDetails') || [];
       form.setFieldValue('cruiseDaysDetails', [...currentRows, ...rows]);
       const currentKeys = new Set(currentRows.map(cruiseDayKey));
