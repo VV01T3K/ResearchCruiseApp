@@ -162,9 +162,12 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
  * Missing columns will be filled with empty strings instead of throwing an error
  */
 export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseDayValues[]> {
+  const { readSheet } = await import('read-excel-file/browser').catch((error: unknown) => {
+    console.error(error);
+    throw new Error('Sprawdź połączenie z internetem i spróbuj ponownie.');
+  });
   let data: SheetData;
   try {
-    const { readSheet } = await import('read-excel-file/browser');
     data = await readSheet(file);
   } catch (error) {
     console.error(error);
@@ -367,8 +370,7 @@ export async function exportCruiseDayDetailsToXlsx(
     await writeXlsxFile(allData, { sheet: 'Dane' }).toFile(fileName);
     toast.success(`Plik ${fileName} został pobierany`);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
-    toast.error(`Błąd podczas eksportowania do XLSX: ${errorMessage}`);
+    toast.error('Nie udało się przygotować pliku XLSX. Sprawdź połączenie z internetem i spróbuj ponownie.');
     console.error('XLSX Export Error:', error);
   }
 }
