@@ -19,6 +19,7 @@ import { Layout } from '@/components/shared/Layout';
 import { Modal } from '@/components/shared/Modal';
 import { toast } from '@/components/shared/layout/toast';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
+import { groupedQueryStaleTime } from '@/integrations/tanstack/query/root-provider';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
@@ -50,8 +51,11 @@ function CruiseDetailsPage() {
   const queryClient = useQueryClient();
   const [cruiseQuery, applicationQuery] = useSuspenseQueries({
     queries: [
-      getGetCruiseSuspenseQueryOptions(cruiseId),
-      getGetApplicationsForCruisePlanningSuspenseQueryOptions({ cruiseId }),
+      getGetCruiseSuspenseQueryOptions(cruiseId, { query: { staleTime: groupedQueryStaleTime } }),
+      getGetApplicationsForCruisePlanningSuspenseQueryOptions(
+        { cruiseId },
+        { query: { staleTime: groupedQueryStaleTime } }
+      ),
     ],
   });
   const saving = useSaveTracking();

@@ -31,6 +31,7 @@ import {
   useUpdateApplicationFormB,
 } from '@/api/generated/endpoints/applications.gen';
 import { ApiError, getErrorMessage } from '@/api/errors';
+import { groupedQueryStaleTime } from '@/integrations/tanstack/query/root-provider';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChangesGuard';
 import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
@@ -61,9 +62,12 @@ function FormBPage() {
     queries: [
       formAQueryOptions(applicationId),
       formBQueryOptions(applicationId),
-      getGetApplicationFormAContextSuspenseQueryOptions({ applicationId }),
-      getGetApplicationFormBContextSuspenseQueryOptions(),
-      getGetApplicationCruiseSuspenseQueryOptions(applicationId),
+      getGetApplicationFormAContextSuspenseQueryOptions(
+        { applicationId },
+        { query: { staleTime: groupedQueryStaleTime } }
+      ),
+      getGetApplicationFormBContextSuspenseQueryOptions({ query: { staleTime: groupedQueryStaleTime } }),
+      getGetApplicationCruiseSuspenseQueryOptions(applicationId, { query: { staleTime: groupedQueryStaleTime } }),
     ],
   });
   const saving = useSaveTracking();
