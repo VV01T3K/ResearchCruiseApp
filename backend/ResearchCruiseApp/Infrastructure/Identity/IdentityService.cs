@@ -207,7 +207,9 @@ internal class IdentityService(
                 identityResult = await userManager.CreateAsync(user, registerForm.Password);
             }
             catch (DbUpdateException exception)
-                when (exception.InnerException is SqlException { Number: 2601 or 2627 })
+                when (exception.InnerException is SqlException { Number: 2601 } sqlException
+                    && sqlException.Message.Contains("UserNameIndex")
+                )
             {
                 return alreadyTaken;
             }
