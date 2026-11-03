@@ -133,20 +133,40 @@ test.describe('authenticated session', () => {
     expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain(session().accessToken);
   });
 
-  test('a session ended on another device returns to login without an error message', async ({ page, network }) => {
-    await page.clock.install();
-    await page.goto('/user-management');
-    await expect(page.getByRole('button', { name: 'Dodaj użytkownika' })).toBeVisible();
-    network.use(
-      getGetUsersMockHandler(fail(401)),
-      getGetCurrentUserMockHandler(fail(401)),
-      getRefreshTokensMockHandler(fail(401))
-    );
-    await page.clock.fastForward(2 * 60_000);
-    await page.evaluate(() => window.dispatchEvent(new Event('visibilitychange')));
-    await expect(page).toHaveURL(/\/login/);
-    await expect(page.getByRole('region', { name: 'Notifications' }).getByRole('dialog')).toHaveCount(0);
-  });
+  for (const action of ['a background refresh', 'a password change'] as const) {
+    test(`after a session ended on another device, ${action} returns to login without an error message`, async ({
+      page,
+      network,
+    }) => {
+      if (action === 'a background refresh') await page.clock.install();
+      await page.goto(action === 'a background refresh' ? '/user-management' : '/account-settings');
+      await expect(
+        action === 'a background refresh'
+          ? page.getByRole('button', { name: 'Dodaj użytkownika' })
+          : page.locator('input[name="password"]')
+      ).toBeVisible();
+      network.use(
+        getGetUsersMockHandler(fail(401)),
+        getGetCurrentUserMockHandler(fail(401)),
+        getRefreshTokensMockHandler(fail(401)),
+        getChangeCurrentUserPasswordMockHandler(fail(401))
+      );
+      if (action === 'a background refresh') {
+        await page.clock.fastForward(2 * 60_000);
+        await page.evaluate(() => window.dispatchEvent(new Event('visibilitychange')));
+      } else {
+        await page.locator('input[name="password"]').fill('CurrentPass1');
+        await page.locator('input[name="newPassword"]').fill('NewStrongPass1');
+        await page.locator('input[name="repeatedNewPassword"]').fill('NewStrongPass1');
+        await page.getByRole('button', { name: 'Zmień hasło' }).click();
+      }
+      await expect(page).toHaveURL(/\/login/);
+      await expect(page.getByLabel('E-mail')).toBeVisible();
+      // Read once: a retrying check would pass after the toast closes itself.
+      await page.waitForTimeout(500);
+      expect(await page.getByRole('region', { name: 'Notifications' }).textContent()).toBe('');
+    });
+  }
 
   test('logout propagates between tabs', async ({ page, context, network }) => {
     network.use(getLogoutMockHandler());

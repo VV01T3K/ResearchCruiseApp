@@ -35,6 +35,7 @@ import { UnsavedChangesGuard } from '@/integrations/tanstack/router/UnsavedChang
 import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking';
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
+import { classifyError } from '@/integrations/sentry/mutations';
 
 export const Route = createFileRoute('/applications/$applicationId/formC')({
   component: FormCPage,
@@ -151,7 +152,7 @@ function FormCPage() {
       console.error(err);
       if (err instanceof ApiError && err.status === 409) void formC.refetch();
       setServerFormErrors(form, err);
-      toast.error(getErrorMessage(err, saveFailedMessage(values.draft)));
+      if (classifyError(err) !== 'session') toast.error(getErrorMessage(err, saveFailedMessage(values.draft)));
       navigateToFirstError();
       throw err;
     } finally {

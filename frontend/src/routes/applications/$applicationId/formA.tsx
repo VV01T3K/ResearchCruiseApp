@@ -34,6 +34,7 @@ import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking'
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { ApiError, getErrorMessage } from '@/api/errors';
+import { classifyError } from '@/integrations/sentry/mutations';
 
 export const Route = createFileRoute('/applications/$applicationId/formA')({
   component: FormAPage,
@@ -131,7 +132,7 @@ function FormAPage() {
     } catch (error) {
       if (error instanceof ApiError && error.status === 409) void formA.refetch();
       setServerFormErrors(form, error);
-      toast.error(getErrorMessage(error, saveFailedMessage(values.draft)));
+      if (classifyError(error) !== 'session') toast.error(getErrorMessage(error, saveFailedMessage(values.draft)));
       navigateToFirstError();
       throw error;
     } finally {

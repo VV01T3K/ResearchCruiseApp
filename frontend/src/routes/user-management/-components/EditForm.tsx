@@ -34,6 +34,7 @@ import {
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
 import { getProblemDetail } from '@/api/errors';
 import { AssignmentsWarning, findActiveAssignments, type UserAssignments } from './AssignmentsWarning';
+import { classifyError } from '@/integrations/sentry/mutations';
 
 const editingRoles: string[] = [Role.Administrator, Role.ShipOwner, Role.CruiseManager];
 
@@ -158,6 +159,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         } catch (err) {
           toast.dismiss(loading);
           console.error(err);
+          if (classifyError(err) === 'session') return;
           toast.error('Nie udało się edytować użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
         }
       } else {
@@ -172,6 +174,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         } catch (err) {
           toast.dismiss(loading);
           console.error(err);
+          if (classifyError(err) === 'session') return;
           toast.error('Nie udało się dodać użytkownika. Sprawdź, czy wszystkie pola są wypełnione poprawnie.');
         }
       }
@@ -229,6 +232,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
     } catch (err) {
       toast.dismiss(loading);
       console.error(err);
+      if (classifyError(err) === 'session') return;
       toast.error('Nie udało się usunąć użytkownika');
     }
   }
@@ -248,6 +252,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
       } catch (err) {
         toast.dismiss(loading);
         console.error(err);
+        if (classifyError(err) === 'session') return;
         toast.error('Nie udało się zaakceptować konta użytkownika');
       }
     } else {
@@ -264,6 +269,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
       } catch (err) {
         toast.dismiss(loading);
         console.error(err);
+        if (classifyError(err) === 'session') return;
         toast.error('Nie udało się cofnąć akceptacji konta użytkownika');
       }
     }

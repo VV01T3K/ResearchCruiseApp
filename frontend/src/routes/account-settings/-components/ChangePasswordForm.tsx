@@ -11,6 +11,7 @@ import { Alert } from '@/components/shared/Alert';
 import { Button } from '@/components/shared/Button';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { useChangeCurrentUserPassword } from '@/api/generated/endpoints/users.gen';
+import { classifyError } from '@/integrations/sentry/mutations';
 
 const validationSchema = z
   .object({
@@ -55,6 +56,7 @@ export function ChangePasswordForm() {
           data: { password: value.password, newPassword: value.newPassword } satisfies ChangePasswordRequest,
         });
       } catch (error) {
+        if (classifyError(error) === 'session') return;
         setResult('error');
         toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
         return;

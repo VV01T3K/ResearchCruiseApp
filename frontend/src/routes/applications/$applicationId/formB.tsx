@@ -8,7 +8,7 @@ import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { Layout } from '@/components/shared/Layout';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
-import { captureHandledRefusal } from '@/integrations/sentry/mutations';
+import { classifyError, captureHandledRefusal } from '@/integrations/sentry/mutations';
 import { navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
 import { FormView } from './-components/formB/FormView';
 import {
@@ -142,7 +142,7 @@ function FormBPage() {
       captureHandledRefusal(values.draft ? 'form-b.draft' : 'form-b.submit', err);
       if (err instanceof ApiError && err.status === 409) void formB.refetch();
       setServerFormErrors(form, err);
-      toast.error(getErrorMessage(err, saveFailedMessage(values.draft)));
+      if (classifyError(err) !== 'session') toast.error(getErrorMessage(err, saveFailedMessage(values.draft)));
       navigateToFirstError();
       throw err;
     } finally {
@@ -162,7 +162,8 @@ function FormBPage() {
       await navigate({ to: `/applications/${applicationId}/formB?mode=edit` });
     } catch (err) {
       captureHandledRefusal('form-b.refill', err);
-      toast.error(getErrorMessage(err, 'Nie udało się cofnąć formularza B do edycji'));
+      if (classifyError(err) !== 'session')
+        toast.error(getErrorMessage(err, 'Nie udało się cofnąć formularza B do edycji'));
     } finally {
       toast.dismiss(loading);
       void queryClient.invalidateQueries({ queryKey: applicationQueryKey, exact: true });

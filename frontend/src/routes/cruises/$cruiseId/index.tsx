@@ -39,6 +39,7 @@ import {
   type UpdateCruiseMutationVariables,
 } from '@/api/generated/endpoints/cruises.gen';
 import type { CruiseResponse } from '@/api/generated/schemas';
+import { classifyError } from '@/integrations/sentry/mutations';
 
 export const Route = createFileRoute('/cruises/$cruiseId/')({
   component: CruiseDetailsPage,
@@ -70,7 +71,7 @@ function CruiseDetailsPage() {
     mutation: {
       // Awaited so the action stays pending until the current version is on screen.
       onError: async (error: unknown) => {
-        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
+        if (classifyError(error) !== 'session') toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
         if (error instanceof ApiError && error.status === 409) await cruiseQuery.refetch();
       },
     },
@@ -143,7 +144,7 @@ function CruiseDetailsPage() {
       // Discarding after a conflict should land on the current server version.
       if (error instanceof ApiError && error.status === 409) void cruiseQuery.refetch();
       setServerFormErrors(form, error);
-      toast.error(getErrorMessage(error, 'Nie udało się zaktualizować rejsu'));
+      if (classifyError(error) !== 'session') toast.error(getErrorMessage(error, 'Nie udało się zaktualizować rejsu'));
       navigateToFirstError();
     } finally {
       saving.finish();
@@ -338,7 +339,7 @@ function CruiseDetailsPage() {
                       setIsConfirmDeletionModalOpen(false);
                       void forgetCruise();
                       void navigate({ to: '/cruises' });
-                    } else {
+                    } else if (classifyError(error) !== 'session') {
                       toast.error(getErrorMessage(error, 'Nie udało się usunąć rejsu'));
                     }
                   },

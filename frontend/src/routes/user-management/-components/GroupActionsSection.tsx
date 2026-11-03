@@ -12,6 +12,7 @@ import type { UserResponse } from '@/api/generated/schemas';
 import { useAcceptUser, useDeactivateUser, useDeleteUser } from '@/api/generated/endpoints/users.gen';
 import { getProblemDetail } from '@/api/errors';
 import { AssignmentsWarning, findActiveAssignments, type UserAssignments } from './AssignmentsWarning';
+import { classifyError } from '@/integrations/sentry/mutations';
 
 type Props = {
   selectedUsers: UserResponse[];
@@ -66,6 +67,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
     const promises = selectedUsers.map((user) => deleteUserMutation.mutateAsync({ userId: user.id }));
     const results = await Promise.allSettled(promises);
     const failedCount = results.filter((result) => result.status === 'rejected').length;
+    if (results.some((result) => result.status === 'rejected' && classifyError(result.reason) === 'session')) return;
 
     if (failedCount === 0) {
       toast.success('Pomyślnie usunięto wszystkich wybranych użytkowników');
@@ -89,6 +91,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
     const promises = usersToAccept.map((user) => acceptUserMutation.mutateAsync({ userId: user.id }));
     const results = await Promise.allSettled(promises);
     const failedCount = results.filter((result) => result.status === 'rejected').length;
+    if (results.some((result) => result.status === 'rejected' && classifyError(result.reason) === 'session')) return;
 
     if (failedCount === 0) {
       toast.success('Pomyślnie zaakceptowano wszystkich wybranych użytkowników');
@@ -118,6 +121,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
     const promises = usersToUnAccept.map((user) => unAcceptUserMutation.mutateAsync({ userId: user.id }));
     const results = await Promise.allSettled(promises);
     const failedCount = results.filter((result) => result.status === 'rejected').length;
+    if (results.some((result) => result.status === 'rejected' && classifyError(result.reason) === 'session')) return;
 
     if (failedCount === 0) {
       toast.success('Pomyślnie usunięto akceptację wszystkich wybranych użytkowników');

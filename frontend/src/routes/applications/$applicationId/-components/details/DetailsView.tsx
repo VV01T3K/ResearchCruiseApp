@@ -13,6 +13,7 @@ import { MembersSection } from './MembersSection';
 import { PublicationsSection } from './PublicationsSection';
 import { ResearchTasksSection } from './ResearchTasksSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
+import { classifyError } from '@/integrations/sentry/mutations';
 
 export function DetailsView() {
   const application = useApplication();
@@ -20,7 +21,7 @@ export function DetailsView() {
   const decisionMutation = useUpdateApplicationDecision({
     mutation: {
       onError: async (error: unknown) => {
-        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
+        if (classifyError(error) !== 'session') toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
         if (error instanceof ApiError && error.status === 409) {
           await queryClient.invalidateQueries({ queryKey: getGetApplicationQueryKey(application.id) });
         }
