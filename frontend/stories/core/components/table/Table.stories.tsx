@@ -110,6 +110,28 @@ export const Filtered: Story = {
   },
 };
 
+export const HeaderStates: Story = {
+  args: {
+    columns: [
+      { accessorFn: (row) => row.id, header: 'ID', enableSorting: false, enableColumnFilter: false },
+      { accessorFn: (row) => row.email, header: 'Bez zmian' },
+      { accessorFn: (row) => row.name, header: 'Rosnąco' },
+      { accessorFn: (row) => row.email, header: 'Malejąco' },
+      { accessorFn: (row) => row.name, header: 'Filtr' },
+      { accessorFn: (row) => row.age, header: 'Filtr i sortowanie' },
+    ],
+    initialSortingState: [
+      { id: 'Rosnąco', desc: false },
+      { id: 'Malejąco', desc: true },
+      { id: 'Filtr i sortowanie', desc: false },
+    ],
+    columnFiltersState: [
+      { id: 'Filtr', value: ['Jane Doe'] },
+      { id: 'Filtr i sortowanie', value: [30, 32] },
+    ],
+  },
+};
+
 export const Disabled: Story = { args: { disabled: true } };
 export const EmptyWithErrors: Story = {
   args: {

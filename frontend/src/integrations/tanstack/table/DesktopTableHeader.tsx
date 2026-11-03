@@ -3,8 +3,8 @@ import { Subscribe } from '@tanstack/react-table';
 import {
   ArrowDownIcon,
   ArrowUpIcon,
+  CaretDownIcon,
   CheckIcon,
-  DotsThreeVerticalIcon,
   FunnelIcon,
   SortAscendingIcon,
   SortDescendingIcon,
@@ -29,31 +29,24 @@ export function DesktopTableHeader<TData extends object, TValue>({ header, child
 
   return (
     <Subscribe source={column.table.atoms.sorting} selector={() => column.getIsSorted()}>
-      {(isSorted) => {
-        const SortIcon = isSorted === 'asc' ? ArrowUpIcon : ArrowDownIcon;
-        return (
-          <th
-            scope="col"
-            colSpan={header.colSpan}
-            abbr={canSort || canFilter ? getColumnTitle(column) : undefined}
-            style={{ width: `${header.getSize()}px` }}
-            aria-sort={
-              !canSort ? undefined : isSorted === 'asc' ? 'ascending' : isSorted === 'desc' ? 'descending' : 'none'
-            }
-            className="border-b border-gray-200 px-1 py-2 text-sm font-semibold text-gray-700"
-          >
-            <div className="flex items-center gap-1">
-              <span
-                className={cn('inline-flex flex-1 items-center justify-center gap-1 p-1', isSorted && 'text-primary')}
-              >
-                {children}
-                {isSorted && <SortIcon weight="bold" className="size-3.5 shrink-0" />}
-              </span>
-              {(canSort || canFilter) && <ColumnMenu header={header} isSorted={isSorted} />}
-            </div>
-          </th>
-        );
-      }}
+      {(isSorted) => (
+        <th
+          scope="col"
+          colSpan={header.colSpan}
+          abbr={canSort || canFilter ? getColumnTitle(column) : undefined}
+          style={{ width: `${header.getSize()}px` }}
+          aria-sort={
+            !canSort ? undefined : isSorted === 'asc' ? 'ascending' : isSorted === 'desc' ? 'descending' : 'none'
+          }
+          className="border-b border-gray-200 px-1 py-2 text-sm font-semibold text-gray-700"
+        >
+          <div className="flex items-center justify-center gap-1">
+            {(canSort || canFilter) && <span aria-hidden className="w-9" />}
+            <span className={cn('p-1 text-center', isSorted && 'text-primary')}>{children}</span>
+            {(canSort || canFilter) && <ColumnMenu header={header} isSorted={isSorted} />}
+          </div>
+        </th>
+      )}
     </Subscribe>
   );
 }
@@ -93,25 +86,45 @@ function ColumnMenu<TData extends object, TValue>({
         source={column.table.atoms.columnFilters}
         selector={() => (column.getFilterValue() as string[] | undefined)?.length ?? 0}
       >
-        {(count) => (
-          <Popover.Trigger
-            aria-label={count ? `${title}, wybrano: ${count}` : title}
-            title={title}
-            className={cn(
-              'inline-flex h-6 min-w-6 shrink-0 cursor-pointer items-center justify-center gap-0.5 rounded-md border px-1 outline-none focus-visible:ring-2 focus-visible:ring-primary',
-              count
-                ? 'border-primary bg-primary-100 text-primary hover:bg-primary-200'
-                : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-100 hover:text-gray-900 data-[popup-open]:bg-gray-100'
-            )}
-          >
-            {count ? (
-              <FunnelIcon weight="fill" className="size-3.5" />
-            ) : (
-              <DotsThreeVerticalIcon weight="bold" className="size-3.5" />
-            )}
-            {count > 1 && <span className="text-xs tabular-nums">{count}</span>}
-          </Popover.Trigger>
-        )}
+        {(count) => {
+          const label = [
+            title,
+            isSorted && `posortowano ${isSorted === 'asc' ? 'rosnąco' : 'malejąco'}`,
+            count && `wybrano: ${count}`,
+          ]
+            .filter(Boolean)
+            .join(', ');
+          return (
+            <Popover.Trigger
+              aria-label={label}
+              title={label}
+              className={cn(
+                'group relative inline-flex h-6 w-9 shrink-0 cursor-pointer items-center justify-center gap-0.5 rounded-md border outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                count
+                  ? 'border-primary bg-primary-100 text-primary hover:bg-primary-200'
+                  : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-100 hover:text-gray-900 data-[popup-open]:bg-gray-100'
+              )}
+            >
+              {count ? (
+                <FunnelIcon weight="fill" className="size-3.5" />
+              ) : (
+                !isSorted && (
+                  <CaretDownIcon
+                    weight="bold"
+                    className="size-3 transition-transform duration-300 ease-out group-data-[popup-open]:rotate-180"
+                  />
+                )
+              )}
+              {isSorted === 'asc' && <ArrowUpIcon weight="bold" className="size-3.5" />}
+              {isSorted === 'desc' && <ArrowDownIcon weight="bold" className="size-3.5" />}
+              {count > 1 && (
+                <span className="absolute -top-2 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-semibold text-white tabular-nums">
+                  {count}
+                </span>
+              )}
+            </Popover.Trigger>
+          );
+        }}
       </Subscribe>
       <PickerPopup aria-label={title}>
         <div className={cn('flex max-w-[calc(100vw-2rem)] flex-col', canFilter ? 'w-80' : 'w-56')}>
