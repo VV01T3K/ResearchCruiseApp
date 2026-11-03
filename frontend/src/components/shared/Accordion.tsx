@@ -14,7 +14,7 @@ export function Accordion({ title, children, expandedByDefault }: Props) {
   return (
     <Collapsible.Root defaultOpen={!!expandedByDefault} role="group" aria-labelledby={headingId}>
       <h2 id={headingId} className="w-full">
-        <Collapsible.Trigger className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-black/2 px-4 py-4 focus-visible:outline-hidden">
+        <Collapsible.Trigger className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-black/2 px-4 py-4 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-hidden">
           <span className="text-lg font-semibold">{title}</span>
           <span className="transition-transform duration-300 data-[panel-open]:rotate-180">
             <CaretDownIcon className="h-6 w-6" />

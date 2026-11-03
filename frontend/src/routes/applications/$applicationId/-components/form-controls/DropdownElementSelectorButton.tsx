@@ -36,7 +36,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
           <button
             type="button"
             className={cn(
-              'text-white focus-visible:outline-hidden hover:cursor-pointer disabled:cursor-default',
+              'text-white hover:cursor-pointer disabled:cursor-default focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
               variants[variant],
               'flex items-center gap-4 px-5 py-2.5'
             )}

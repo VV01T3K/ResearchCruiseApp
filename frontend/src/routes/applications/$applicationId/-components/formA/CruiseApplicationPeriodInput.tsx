@@ -156,8 +156,10 @@ export function CruiseApplicationPeriodInput({
             aria-label="Początek okresu"
             aria-describedby={helper ? helperId : undefined}
             className={cn(
-              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 focus-visible:outline-hidden',
-              !disabled ? 'bg-primary-800 cursor-pointer' : 'bg-gray-400',
+              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-500',
+              !disabled
+                ? 'bg-primary-800 cursor-pointer forced-colors:bg-[CanvasText]'
+                : 'bg-gray-400 forced-colors:bg-[GrayText]',
               'data-[dragging]:scale-125'
             )}
           />
@@ -166,8 +168,10 @@ export function CruiseApplicationPeriodInput({
             aria-label="Koniec okresu"
             aria-describedby={helper ? helperId : undefined}
             className={cn(
-              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 focus-visible:outline-hidden',
-              !disabled ? 'bg-primary-800 cursor-pointer' : 'bg-gray-400',
+              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-500',
+              !disabled
+                ? 'bg-primary-800 cursor-pointer forced-colors:bg-[CanvasText]'
+                : 'bg-gray-400 forced-colors:bg-[GrayText]',
               'data-[dragging]:scale-125'
             )}
           />
