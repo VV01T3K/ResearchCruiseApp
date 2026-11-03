@@ -71,8 +71,9 @@ function CalendarEventTiles({
         </div>
       );
 
+      const isDraggable = enableDragAndDrop && event.draggable !== false;
       const renderedComponent =
-        enableDragAndDrop && event.id ? (
+        isDraggable && event.id ? (
           <DraggableCalendarEvent
             eventId={event.id}
             sourceDayUtc={dateToUtcDay(date)}
@@ -85,7 +86,7 @@ function CalendarEventTiles({
         );
 
       eventTiles.push(
-        event.link && !enableDragAndDrop ? (
+        event.link && !isDraggable ? (
           <Link href={event.link} variant="plain" key={`${event.title}-${i}`}>
             {renderedComponent}
           </Link>
