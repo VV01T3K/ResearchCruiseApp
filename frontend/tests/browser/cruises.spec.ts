@@ -606,6 +606,29 @@ test('the export downloads the CSV file of the chosen year', async ({ page, netw
   expect(requests.queries('GET /v2/cruises/export')).toEqual([{ year: '2025' }]);
 });
 
+test('calendar edit mode lets a confirmed cruise be dragged, but not an ended one', async ({ page, network }) => {
+  const ended: CruiseResponse = {
+    ...cruise(),
+    id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+    title: 'Zakończony',
+    status: 'ended',
+  };
+  network.use(getGetCruisesMockHandler([confirmed(), ended]));
+  await page.clock.setFixedTime('2026-06-10T12:00:00Z');
+  await page.goto('/cruises');
+  await page.getByRole('button', { name: 'Kalendarz', exact: true }).click();
+  await page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' }).click();
+
+  await expect(page.getByRole('button', { name: `Rejs ${confirmed().title}` }).first()).toHaveAttribute(
+    'aria-roledescription',
+    'draggable'
+  );
+  await expect(page.getByRole('link', { name: 'Rejs Zakończony' }).first()).toHaveAttribute(
+    'href',
+    `/cruises/${ended.id}`
+  );
+});
+
 test.describe(() => {
   test.use({ account: managerAccount });
 
