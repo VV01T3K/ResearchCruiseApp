@@ -64,6 +64,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     },
     {
       id: 'mainCruiseManagerAvatar',
+      header: () => <span className="sr-only">Zdjęcie</span>,
       cell: ({ row }) =>
         !isUnassignedPerson(row.original.mainManager) ? (
           <Avatar
@@ -76,19 +77,20 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     {
       header: 'Kierownik główny',
       accessorFn: (row) => getPersonName(row.mainManager) || 'Nie przypisano',
-      size: 135,
+      size: 165,
     },
     ...(isInRole(currentUser, [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew])
       ? [
           {
             header: 'Zgłoszenia',
             cell: ({ row }) => <ApplicationsCell applications={row.original.applications} />,
-            size: 275,
+            size: 245,
           } satisfies ColumnDef<CruiseResponse>,
         ]
       : []),
     {
       id: 'actions',
+      header: () => <span className="sr-only">Akcje</span>,
       cell: ({ row }) => <ActionsCell cruise={row.original} deleteCruise={deleteCruise} />,
       size: 135,
     },
