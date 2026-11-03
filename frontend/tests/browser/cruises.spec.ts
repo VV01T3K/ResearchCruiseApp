@@ -31,15 +31,19 @@ test.beforeEach(({ network }) =>
 const confirmed = (): CruiseResponse => ({ ...cruise(), status: 'confirmed' });
 
 test('cruise deletion requires confirmation and removes the row after saving', async ({ page, network, requests }) => {
-  const item = cruise();
+  const item = confirmed();
+  const ended: CruiseResponse = { ...cruise(), status: 'ended', title: 'Zakończony rejs' };
   network.use(
-    getGetCruisesMockHandler([item]),
-    getDeleteCruiseMockHandler(() => network.use(getGetCruisesMockHandler([])))
+    getGetCruisesMockHandler([item, ended]),
+    getDeleteCruiseMockHandler(() => network.use(getGetCruisesMockHandler([ended])))
   );
   await page.goto('/cruises');
   const row = page.getByRole('row').filter({ hasText: item.title! });
   const dialog = page.getByRole('dialog');
 
+  await expect(
+    page.getByRole('row').filter({ hasText: ended.title! }).getByRole('button', { name: 'Usuń', exact: true })
+  ).toHaveCount(0);
   await row.getByRole('button', { name: 'Usuń', exact: true }).click();
   await expect(dialog).toContainText(item.number);
   await dialog.getByRole('button', { name: 'Anuluj' }).click();
@@ -407,7 +411,7 @@ test('a cruise save waits for the previous one and starts from its accepted revi
 
     // The save is accepted and only its refetch is pending, so leaving doesn't warn.
     await page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
-    await expect(page).toHaveURL('/');
+    await expect(page.getByRole('link', { name: /Harmonogram rejsów/ })).toBeVisible();
     await expect(page.getByRole('dialog', { name: 'Niezapisane zmiany' })).toBeHidden();
     await page.goBack();
     // The cached cruise predates the saves, so editing waits for the refetch.
@@ -433,7 +437,8 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     getGetCruiseMockHandler(item),
     getConfirmCruiseMockHandler(() => showStatus((status = 'confirmed'))),
     getCompleteCruiseMockHandler(() => showStatus((status = 'ended'))),
-    getRemoveCruiseConfirmationMockHandler(() => showStatus((status = status === 'ended' ? 'confirmed' : 'new')))
+    getRemoveCruiseConfirmationMockHandler(() => showStatus((status = status === 'ended' ? 'confirmed' : 'new'))),
+    getDeleteCruiseMockHandler()
   );
   await page.goto(`/cruises/${item.id}`);
   const dialog = page.getByRole('dialog');
@@ -444,7 +449,7 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     for (const action of absent) await expect(button(action)).toHaveCount(0);
   };
 
-  await expectStatus('Nowy', ['Edytuj', 'Zatwierdź rejs'], ['Zakończ rejs', 'Cofnij status']);
+  await expectStatus('Nowy', ['Edytuj', 'Zatwierdź rejs', 'Usuń rejs'], ['Zakończ rejs', 'Cofnij status']);
   await button('Zatwierdź rejs').click();
   await dialog.getByRole('button', { name: `Potwierdź rejs nr. ${item.number}` }).click();
   await expectStatus('Potwierdzony', ['Edytuj', 'Zakończ rejs', 'Cofnij status', 'Usuń rejs'], ['Zatwierdź rejs']);
@@ -469,6 +474,13 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     sent('PUT /v2/cruises/{id}/completion'),
     sent('DELETE /v2/cruises/{id}/confirmation'),
   ]).toEqual([1, 1, 2]);
+
+  const fetches = requests.queries(`GET /v2/cruises/${item.id}`).length;
+  await button('Usuń rejs').click();
+  await dialog.getByRole('button', { name: `Potwierdź usunięcie rejsu nr. ${item.number}` }).click();
+  await expect(page.getByRole('heading', { name: 'Rejsy' })).toBeVisible();
+  expect(requests.queries(`DELETE /v2/cruises/${item.id}`)).toHaveLength(1);
+  expect(requests.queries(`GET /v2/cruises/${item.id}`)).toHaveLength(fetches);
 });
 
 test('a status change stays pending until the refreshed cruise arrives', async ({ page, network }) => {
