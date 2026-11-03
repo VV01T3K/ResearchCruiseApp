@@ -27,6 +27,7 @@ test('form A edits, validates and saves the entered value', async ({ page, netwo
   const send = page.getByRole('button', { name: 'Wyślij', exact: true });
 
   await email.fill('invalid');
+  await page.getByRole('button', { name: '11. Dane kontaktowe przełożonego' }).click();
   await send.click();
   await expect(email).toBeFocused();
   await expect(email).toBeInViewport();
