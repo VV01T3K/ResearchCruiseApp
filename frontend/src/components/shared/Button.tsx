@@ -36,16 +36,28 @@ export function Button(props: Props) {
     'aria-invalid': ariaInvalid,
   } = props;
 
-  const button = (
+  const classes = cn(
+    'text-white focus-visible:outline-hidden hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-default',
+    variants[variant],
+    sizes[size],
+    className,
+    variant != 'plain' ? 'flex items-center justify-around' : ''
+  );
+
+  if (props.type === 'link' && !disabled) {
+    const { variant: _, ...other } = props;
+
+    return (
+      <Link {...other} variant="plain" className={cn('h-fit w-fit', classes)}>
+        {children}
+      </Link>
+    );
+  }
+
+  return (
     <BaseButton
       type={props.type === 'link' ? 'button' : (props.type ?? 'button')}
-      className={cn(
-        'text-white outline-none hover:cursor-pointer disabled:cursor-default',
-        variants[variant],
-        sizes[size],
-        className,
-        variant != 'plain' ? 'flex items-center justify-around' : ''
-      )}
+      className={classes}
       onClick={props.type === 'link' ? undefined : props.onClick}
       disabled={disabled}
       role={role}
@@ -58,18 +70,6 @@ export function Button(props: Props) {
       {children}
     </BaseButton>
   );
-
-  if (props.type === 'link') {
-    const { variant: _, ...other } = props;
-
-    return (
-      <Link variant="plain" className={className} {...other}>
-        {button}
-      </Link>
-    );
-  }
-
-  return button;
 }
 
 const sizes = {

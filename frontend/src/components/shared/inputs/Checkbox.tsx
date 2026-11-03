@@ -61,7 +61,7 @@ export function Checkbox({
             checked && variants[variant][disabled ? 'disabled' : 'enabled'],
             !checked && (disabled ? 'bg-gray-100' : 'bg-white hover:border-gray-400'),
             disabled ? 'cursor-default' : 'cursor-pointer',
-            hasErrors(errors) && 'border-danger hover:border-danger focus:ring-danger focus:ring-1 focus:outline-none'
+            hasErrors(errors) && 'border-danger hover:border-danger focus:ring-danger focus:ring-1 focus:outline-hidden'
           )}
         >
           <BaseCheckbox.Indicator>
