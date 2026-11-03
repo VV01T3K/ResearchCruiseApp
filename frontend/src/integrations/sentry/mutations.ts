@@ -45,7 +45,7 @@ export function isRetryableFailure(failureCount: number, error: unknown): boolea
 }
 
 export function isReportableFailure(error: unknown): boolean {
-  return ['server', 'client', 'network', 'unknown'].includes(classifyError(error));
+  return ['server', 'client', 'unknown'].includes(classifyError(error));
 }
 
 function isFormValidation(error: unknown): boolean {
