@@ -99,11 +99,13 @@ export const Sorted: Story = {
   },
 };
 
-export const FilterOpen: Story = {
+export const Filtered: Story = {
   play: async ({ canvas, canvasElement, userEvent }) => {
     await userEvent.click(canvas.getByRole('button', { name: 'Sortuj i filtruj: Name' }));
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(await page.findByRole('option', { name: 'Jane Doe' }));
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument());
     await expect(canvas.getByRole('list', { name: 'Aktywne filtry' })).toHaveTextContent('Jane Doe');
   },
 };
