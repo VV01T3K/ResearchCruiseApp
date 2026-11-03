@@ -119,7 +119,7 @@ function ColumnMenu<TData extends object, TValue>({
               {isSorted === 'desc' && <ArrowDownIcon weight="bold" className="size-3.5" />}
               {count > 1 && (
                 <span className="absolute -top-2 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-semibold text-white tabular-nums">
-                  {count}
+                  <span className="[text-box:trim-both_cap_alphabetic]">{count}</span>
                 </span>
               )}
             </Popover.Trigger>
