@@ -3,8 +3,8 @@ import { Subscribe } from '@tanstack/react-table';
 import {
   ArrowDownIcon,
   ArrowUpIcon,
-  CaretDownIcon,
   CheckIcon,
+  DotsThreeVerticalIcon,
   FunnelIcon,
   SortAscendingIcon,
   SortDescendingIcon,
@@ -107,7 +107,7 @@ function ColumnMenu<TData extends object, TValue>({
             {count ? (
               <FunnelIcon weight="fill" className="size-3.5" />
             ) : (
-              <CaretDownIcon weight="bold" className="size-3" />
+              <DotsThreeVerticalIcon weight="bold" className="size-3.5" />
             )}
             {count > 1 && <span className="text-xs tabular-nums">{count}</span>}
           </Popover.Trigger>
