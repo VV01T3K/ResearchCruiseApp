@@ -68,7 +68,6 @@ export function Table<T extends object>({
     ...(setColumnFiltersState !== undefined && { onColumnFiltersChange: setColumnFiltersState }),
     ...(setSortingState !== undefined && { onSortingChange: setSortingState }),
     enableSortingRemoval,
-    sortDescFirst: false,
     manualSorting,
     manualFiltering,
     state: {
