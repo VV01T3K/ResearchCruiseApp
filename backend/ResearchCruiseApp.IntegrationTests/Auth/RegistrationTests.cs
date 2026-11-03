@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ResearchCruiseApp.Domain;
+using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Auth;
@@ -205,11 +206,13 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData(true, false)]
-    [InlineData(false, true)]
-    public async Task Register_WhenEmailBelongsToConfirmedOrAcceptedAccount_IsRefused(
+    [InlineData(true, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(false, false, true)]
+    public async Task Register_WhenEmailBelongsToConfirmedAcceptedOrReferencedAccount_IsRefused(
         bool emailConfirmed,
-        bool accepted
+        bool accepted,
+        bool referenced
     )
     {
         var ct = TestContext.Current.CancellationToken;
@@ -227,6 +230,22 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
                 ct
             )
         );
+        if (referenced)
+            await app.InDatabase(db =>
+            {
+                db.UserPublications.Add(
+                    new UserPublication
+                    {
+                        UserId = Guid.Parse(existing.Id),
+                        Publication = new Publication
+                        {
+                            Category = "subject",
+                            MinisterialPoints = "0",
+                        },
+                    }
+                );
+                return db.SaveChangesAsync(ct);
+            });
         using var client = app.CreateApiClient();
 
         using var response = await Register(client, email, "ReplacementPassword2!", "Replaced", ct);

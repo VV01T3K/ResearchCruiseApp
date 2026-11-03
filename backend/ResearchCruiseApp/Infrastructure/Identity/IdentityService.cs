@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -181,17 +182,35 @@ internal class IdentityService(
         if (!userManager.SupportsUserEmail)
             return Error.ServiceUnavailable();
 
-        var user = await userManager.FindByEmailAsync(registerForm.Email);
-        if (user is { EmailConfirmed: true } or { Accepted: true })
-            return IdentityResult
-                .Failed(userManager.ErrorDescriber.DuplicateEmail(registerForm.Email))
-                .ToApplicationResult();
+        var alreadyTaken = IdentityResult
+            .Failed(userManager.ErrorDescriber.DuplicateEmail(registerForm.Email))
+            .ToApplicationResult();
+        var normalizedEmail = userManager.NormalizeEmail(registerForm.Email);
+        var users = await userManager
+            .Users.Where(candidate => candidate.NormalizedEmail == normalizedEmail)
+            .Take(2)
+            .ToListAsync();
+        var user = users.FirstOrDefault();
+        if (
+            users.Count > 1
+            || user is { EmailConfirmed: true } or { Accepted: true }
+            || user is not null && await IsReferenced(Guid.Parse(user.Id))
+        )
+            return alreadyTaken;
 
         IdentityResult identityResult;
         if (user is null)
         {
             user = CreateUser(registerForm);
-            identityResult = await userManager.CreateAsync(user, registerForm.Password);
+            try
+            {
+                identityResult = await userManager.CreateAsync(user, registerForm.Password);
+            }
+            catch (DbUpdateException exception)
+                when (exception.InnerException is SqlException { Number: 2601 or 2627 })
+            {
+                return alreadyTaken;
+            }
         }
         else
         {
@@ -214,6 +233,16 @@ internal class IdentityService(
         await transaction.CommitAsync();
         return identityResult.ToApplicationResult();
     }
+
+    private async Task<bool> IsReferenced(Guid userId) =>
+        await dbContext.FormsA.AnyAsync(form =>
+            form.CruiseManagerId == userId || form.DeputyManagerId == userId
+        )
+        || await dbContext.Cruises.AnyAsync(cruise =>
+            cruise.MainCruiseManagerId == userId || cruise.MainDeputyManagerId == userId
+        )
+        || await dbContext.UserPublications.AnyAsync(publication => publication.UserId == userId)
+        || await dbContext.UserEffects.AnyAsync(effect => effect.UserId == userId);
 
     private async Task<IdentityResult> ResetUnconfirmedUser(User user, RegisterFormDto registerForm)
     {
