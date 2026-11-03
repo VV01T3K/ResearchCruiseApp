@@ -14,13 +14,13 @@ export function Avatar({ fullName, className, variant = 'default' }: Props) {
     return null;
   }
 
-  const color = `hsl(${map(
+  const color = `oklch(50% 0.17 ${map(
     parts.map((name) => getByteLength(name.charAt(0).toLowerCase())).reduce((a, b) => a / b),
     minRange,
     maxRange,
     0,
     360
-  )},50%,30%)`;
+  )})`;
 
   return (
     <div
