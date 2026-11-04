@@ -33,6 +33,7 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
     },
     {
       id: 'done-and-conditions',
+      header: () => <span className="sr-only">Realizacja</span>,
       cell: ({ row }) => {
         return (
           <form.Subscribe selector={(state) => state.values.researchTasksEffects[row.index].done}>

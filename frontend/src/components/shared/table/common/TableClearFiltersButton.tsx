@@ -14,8 +14,7 @@ export function TableClearFiltersButton<T extends object>({ table }: Props<T>) {
     <Button
       key="clearFiltersBtn"
       onClick={() => table.resetColumnFilters()}
-      className={isAnyFilterActive() ? '' : 'opacity-50'}
-      variant="danger"
+      variant="primaryOutline"
       disabled={!isAnyFilterActive()}
     >
       Wyczyść filtry

@@ -31,15 +31,19 @@ test.beforeEach(({ network }) =>
 const confirmed = (): CruiseResponse => ({ ...cruise(), status: 'confirmed' });
 
 test('cruise deletion requires confirmation and removes the row after saving', async ({ page, network, requests }) => {
-  const item = cruise();
+  const item = confirmed();
+  const ended: CruiseResponse = { ...cruise(), status: 'ended', title: 'Zakończony rejs' };
   network.use(
-    getGetCruisesMockHandler([item]),
-    getDeleteCruiseMockHandler(() => network.use(getGetCruisesMockHandler([])))
+    getGetCruisesMockHandler([item, ended]),
+    getDeleteCruiseMockHandler(() => network.use(getGetCruisesMockHandler([ended])))
   );
   await page.goto('/cruises');
   const row = page.getByRole('row').filter({ hasText: item.title! });
   const dialog = page.getByRole('dialog');
 
+  await expect(
+    page.getByRole('row').filter({ hasText: ended.title! }).getByRole('button', { name: 'Usuń', exact: true })
+  ).toHaveCount(0);
   await row.getByRole('button', { name: 'Usuń', exact: true }).click();
   await expect(dialog).toContainText(item.number);
   await dialog.getByRole('button', { name: 'Anuluj' }).click();
@@ -77,9 +81,10 @@ test('a new cruise is saved once with Warsaw-midnight dates and the chosen manag
   let created = false;
   network.use(
     getGetCruisesMockHandler([]),
-    getGetAvailableCruiseManagersMockHandler(async () => {
+    getGetAvailableCruiseManagersMockHandler([manager, deputy]),
+    getGetApplicationsForCruisePlanningMockHandler(async () => {
       if (created) await refetch.promise;
-      return [manager, deputy];
+      return [];
     }),
     getCreateCruiseMockHandler(() => {
       created = true;
@@ -407,7 +412,7 @@ test('a cruise save waits for the previous one and starts from its accepted revi
 
     // The save is accepted and only its refetch is pending, so leaving doesn't warn.
     await page.getByRole('link', { name: 'Portal rejsów badawczych R/V Oceanograf' }).click();
-    await expect(page).toHaveURL('/');
+    await expect(page.getByRole('link', { name: /Harmonogram rejsów/ })).toBeVisible();
     await expect(page.getByRole('dialog', { name: 'Niezapisane zmiany' })).toBeHidden();
     await page.goBack();
     // The cached cruise predates the saves, so editing waits for the refetch.
@@ -418,6 +423,33 @@ test('a cruise save waits for the previous one and starts from its accepted revi
   } finally {
     olderResponse.resolve();
     refetch.resolve();
+  }
+});
+
+test('cruise saves finish without waiting for the slow overlap check', async ({ page, network, requests }) => {
+  const item = cruise();
+  const otherCruises = Promise.withResolvers<CruiseResponse[]>();
+  network.use(
+    getGetCruiseMockHandler(item),
+    getUpdateCruiseMockHandler(),
+    getGetCruisesMockHandler(() => otherCruises.promise)
+  );
+  await page.goto(`/cruises/${item.id}`);
+  const edit = page.getByRole('button', { name: 'Edytuj', exact: true });
+
+  try {
+    for (const title of ['Pierwszy', 'Drugi']) {
+      await edit.click();
+      await page.locator('input[name="title"]').fill(title);
+      await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+      await expect(edit).toBeVisible();
+    }
+    expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toEqual([
+      expect.objectContaining({ title: 'Pierwszy' }),
+      expect.objectContaining({ title: 'Drugi' }),
+    ]);
+  } finally {
+    otherCruises.resolve([]);
   }
 });
 
@@ -433,7 +465,8 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     getGetCruiseMockHandler(item),
     getConfirmCruiseMockHandler(() => showStatus((status = 'confirmed'))),
     getCompleteCruiseMockHandler(() => showStatus((status = 'ended'))),
-    getRemoveCruiseConfirmationMockHandler(() => showStatus((status = status === 'ended' ? 'confirmed' : 'new')))
+    getRemoveCruiseConfirmationMockHandler(() => showStatus((status = status === 'ended' ? 'confirmed' : 'new'))),
+    getDeleteCruiseMockHandler()
   );
   await page.goto(`/cruises/${item.id}`);
   const dialog = page.getByRole('dialog');
@@ -444,7 +477,7 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     for (const action of absent) await expect(button(action)).toHaveCount(0);
   };
 
-  await expectStatus('Nowy', ['Edytuj', 'Zatwierdź rejs'], ['Zakończ rejs', 'Cofnij status']);
+  await expectStatus('Nowy', ['Edytuj', 'Zatwierdź rejs', 'Usuń rejs'], ['Zakończ rejs', 'Cofnij status']);
   await button('Zatwierdź rejs').click();
   await dialog.getByRole('button', { name: `Potwierdź rejs nr. ${item.number}` }).click();
   await expectStatus('Potwierdzony', ['Edytuj', 'Zakończ rejs', 'Cofnij status', 'Usuń rejs'], ['Zatwierdź rejs']);
@@ -469,6 +502,13 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
     sent('PUT /v2/cruises/{id}/completion'),
     sent('DELETE /v2/cruises/{id}/confirmation'),
   ]).toEqual([1, 1, 2]);
+
+  const fetches = requests.queries(`GET /v2/cruises/${item.id}`).length;
+  await button('Usuń rejs').click();
+  await dialog.getByRole('button', { name: `Potwierdź usunięcie rejsu nr. ${item.number}` }).click();
+  await expect(page.getByRole('heading', { name: 'Rejsy' })).toBeVisible();
+  expect(requests.queries(`DELETE /v2/cruises/${item.id}`)).toHaveLength(1);
+  expect(requests.queries(`GET /v2/cruises/${item.id}`)).toHaveLength(fetches);
 });
 
 test('a status change stays pending until the refreshed cruise arrives', async ({ page, network }) => {
@@ -604,6 +644,29 @@ test('the export downloads the CSV file of the chosen year', async ({ page, netw
   expect(file.suggestedFilename()).toBe('rejsy-2025.csv');
   expect((await readFile(await file.path())).toString()).toBe(csv);
   expect(requests.queries('GET /v2/cruises/export')).toEqual([{ year: '2025' }]);
+});
+
+test('calendar edit mode lets a confirmed cruise be dragged, but not an ended one', async ({ page, network }) => {
+  const ended: CruiseResponse = {
+    ...cruise(),
+    id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+    title: 'Zakończony',
+    status: 'ended',
+  };
+  network.use(getGetCruisesMockHandler([confirmed(), ended]));
+  await page.clock.setFixedTime('2026-06-10T12:00:00Z');
+  await page.goto('/cruises');
+  await page.getByRole('button', { name: 'Kalendarz', exact: true }).click();
+  await page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' }).click();
+
+  await expect(page.getByRole('button', { name: `Rejs ${confirmed().title}` }).first()).toHaveAttribute(
+    'aria-roledescription',
+    'draggable'
+  );
+  await expect(page.getByRole('link', { name: 'Rejs Zakończony' }).first()).toHaveAttribute(
+    'href',
+    `/cruises/${ended.id}`
+  );
 });
 
 test.describe(() => {

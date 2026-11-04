@@ -7,7 +7,7 @@ import { Fragment } from 'react/jsx-runtime';
 
 import { TableClearFiltersButton } from '@/components/shared/table/common/TableClearFiltersButton';
 import { TableFilterIcon } from '@/components/shared/table/common/TableFilterIcon';
-import { TableFilterList } from '@/components/shared/table/common/TableFilterList';
+import { TableFilterList } from '@/integrations/tanstack/table/TableFilterList';
 import { getCapabilities } from '@/components/shared/table/common/utils';
 import { useOutsideClickDetection } from '@/hooks/shared/OutsideClickDetectionHook';
 import { cn } from '@/lib/utils';
@@ -112,7 +112,7 @@ function FilterFormElement<T extends object>({ header }: FormElementProps<T>) {
             transition={{ ease: 'easeOut' }}
             className="w-full"
           >
-            <TableFilterList header={header} expanded={expanded} />
+            <TableFilterList header={header} />
           </motion.div>
         )}
       </AnimatePresence>

@@ -64,6 +64,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     },
     {
       id: 'mainCruiseManagerAvatar',
+      header: () => <span className="sr-only">Zdjęcie</span>,
       cell: ({ row }) =>
         !isUnassignedPerson(row.original.mainManager) ? (
           <Avatar
@@ -76,19 +77,20 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     {
       header: 'Kierownik główny',
       accessorFn: (row) => getPersonName(row.mainManager) || 'Nie przypisano',
-      size: 135,
+      size: 165,
     },
     ...(isInRole(currentUser, [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew])
       ? [
           {
             header: 'Zgłoszenia',
             cell: ({ row }) => <ApplicationsCell applications={row.original.applications} />,
-            size: 275,
+            size: 245,
           } satisfies ColumnDef<CruiseResponse>,
         ]
       : []),
     {
       id: 'actions',
+      header: () => <span className="sr-only">Akcje</span>,
       cell: ({ row }) => <ActionsCell cruise={row.original} deleteCruise={deleteCruise} />,
       size: 135,
     },
@@ -138,13 +140,24 @@ type ActionsCellProps = {
 function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
   return (
     <div className="grid min-w-30 grid-cols-1 gap-2">
-      <Button variant="primary" type="link" size="sm" href={`/cruises/${cruise.id}`}>
+      <Button
+        variant="primary"
+        type="link"
+        size="sm"
+        href={`/cruises/${cruise.id}`}
+        className="w-full !justify-center gap-2"
+      >
         Szczegóły
-        <MagnifyingGlassPlusIcon className="ml-2 h-4 w-4" />
+        <MagnifyingGlassPlusIcon className="h-4 w-4" />
       </Button>
       <Guard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
-        {cruise.status === 'new' && (
-          <Button variant="dangerOutline" size="sm" onClick={() => deleteCruise(cruise)}>
+        {(cruise.status === 'new' || cruise.status === 'confirmed') && (
+          <Button
+            variant="dangerOutline"
+            size="sm"
+            className="w-full !justify-center gap-2"
+            onClick={() => deleteCruise(cruise)}
+          >
             Usuń
             <TrashIcon className="h-4 w-4" />
           </Button>

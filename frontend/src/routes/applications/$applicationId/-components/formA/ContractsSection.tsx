@@ -93,6 +93,7 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
       },
       {
         id: 'actions',
+        header: () => <span className="sr-only">Akcje</span>,
         cell: ({ row }) => (
           <div className="flex justify-end">
             <TableDeleteRowButton

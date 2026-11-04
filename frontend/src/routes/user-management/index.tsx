@@ -57,6 +57,7 @@ function UserManagementPage() {
       id: 'selector',
       header: ({ table }) => (
         <Checkbox
+          aria-label="Zaznacz wszystkich użytkowników"
           name="selectAllUsers"
           onChange={(x) => table.toggleAllRowsSelected(x)}
           checked={table.getIsAllRowsSelected()}
@@ -79,7 +80,7 @@ function UserManagementPage() {
     },
     {
       id: 'avatar',
-      header: undefined,
+      header: () => <span className="sr-only">Zdjęcie</span>,
       accessorFn: (row) => `${row.firstName} ${row.lastName}`,
       cell: (cell) => <Avatar fullName={cell.getValue() as string} variant="small" />,
       enableColumnFilter: false,
@@ -125,7 +126,7 @@ function UserManagementPage() {
     },
     {
       id: 'actions',
-      header: undefined,
+      header: () => <span className="sr-only">Akcje</span>,
       cell: (cell) => (
         <div className="flex items-center justify-around">
           <Button variant="primary" onClick={() => setModalState({ state: 'editUserModal', user: cell.row.original })}>

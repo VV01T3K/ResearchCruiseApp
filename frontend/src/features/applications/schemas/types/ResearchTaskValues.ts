@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { parseCalendarDate } from '@/lib/dateUtils';
+
 export enum ResearchTaskType {
   BachelorThesis = '0',
   MasterThesis = '1',
@@ -67,12 +69,14 @@ export const ProjectResearchTaskInputSchema = z.object({
 export const ProjectResearchTaskValuesSchema = ProjectResearchTaskInputSchema.extend({
   title: z.string().nonempty('Tytuł nie może być pusty'),
   financingAmount: z
-    .number()
+    .number({ error: 'Podaj kwotę finansowania' })
     .nonnegative('Kwota finansowania musi być poprawną kwotą większą lub równą 0.00')
     .max(MAX_FINANCING_AMOUNT, `Kwota finansowania nie może przekraczać ${MAX_FINANCING_AMOUNT} zł`),
   startDate: z.string().nonempty('Data rozpoczęcia nie może być pusta'),
   endDate: z.string().nonempty('Data zakończenia nie może być pusta'),
-  securedAmount: z.number().nonnegative('Kwota zabezpieczona musi być poprawną kwotą większą lub równą 0.00'),
+  securedAmount: z
+    .number({ error: 'Podaj kwotę środków zabezpieczonych' })
+    .nonnegative('Kwota zabezpieczona musi być poprawną kwotą większą lub równą 0.00'),
 });
 export type ProjectResearchTaskValues = z.input<typeof ProjectResearchTaskInputSchema>;
 
@@ -99,7 +103,7 @@ export const OwnResearchTaskValuesSchema = OwnResearchTaskInputSchema.extend({
   date: z.string().nonempty('Data nie może być pusta'),
   magazine: z.string().nonempty('Czasopismo nie może być puste'),
   ministerialPoints: z
-    .number()
+    .number({ error: 'Podaj punkty ministerialne' })
     .int('Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0')
     .nonnegative('Punkty ministerialne muszą być liczbą całkowitą większą lub równą 0')
     .max(MAX_MINISTERIAL_POINTS, `Punkty ministerialne nie mogą przekraczać ${MAX_MINISTERIAL_POINTS}`),
@@ -135,14 +139,19 @@ export const ResearchTaskValuesDraftValidationSchema = z.object({
   type: z.enum([taskTypes[0], ...taskTypes.slice(1)]),
 });
 
-export const ResearchTaskValuesSchema = z.discriminatedUnion('type', [
-  ThesisResearchTaskValuesSchema,
-  ProjectPreparationResearchTaskValuesSchema,
-  ProjectResearchTaskValuesSchema,
-  DidacticsResearchTaskValuesSchema,
-  OwnResearchTaskValuesSchema,
-  OtherResearchTaskValuesSchema,
-]);
+export const ResearchTaskValuesSchema = z
+  .discriminatedUnion('type', [
+    ThesisResearchTaskValuesSchema,
+    ProjectPreparationResearchTaskValuesSchema,
+    ProjectResearchTaskValuesSchema,
+    DidacticsResearchTaskValuesSchema,
+    OwnResearchTaskValuesSchema,
+    OtherResearchTaskValuesSchema,
+  ])
+  .refine((task) => !('endDate' in task && parseCalendarDate(task.endDate) < parseCalendarDate(task.startDate)), {
+    path: ['endDate'],
+    message: 'Data zakończenia nie może być wcześniejsza niż data rozpoczęcia',
+  });
 export const ResearchTaskValuesInputSchema = z.discriminatedUnion('type', [
   ThesisResearchTaskInputSchema,
   ProjectPreparationResearchTaskInputSchema,
