@@ -44,6 +44,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
           <form.AppField name={`ugTeams[${row.index}].noOfEmployees`}>
             {(field) => (
               <field.NumberField
+                aria-label={`Liczba pracowników, wiersz ${row.index + 1}`}
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
@@ -65,6 +66,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
           <form.AppField name={`ugTeams[${row.index}].noOfStudents`}>
             {(field) => (
               <field.NumberField
+                aria-label={`Liczba studentów, wiersz ${row.index + 1}`}
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
@@ -125,6 +127,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
           <form.AppField name={`guestTeams[${row.index}].noOfPersons`}>
             {(field) => (
               <field.NumberField
+                aria-label={`Liczba osób, wiersz ${row.index + 1}`}
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);

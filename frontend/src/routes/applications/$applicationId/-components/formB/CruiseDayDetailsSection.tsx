@@ -29,7 +29,14 @@ const cruiseDayDetailsColumns = (
     accessorFn: (row) => row.number,
     cell: ({ row }) => (
       <form.AppField name={`cruiseDaysDetails[${row.index}].number`}>
-        {(field) => <field.NumberField disabled={isReadonly} minimum={0} type="integer" />}
+        {(field) => (
+          <field.NumberField
+            aria-label={`Dzień, wiersz ${row.index + 1}`}
+            disabled={isReadonly}
+            minimum={0}
+            type="integer"
+          />
+        )}
       </form.AppField>
     ),
     size: 10,
@@ -41,7 +48,14 @@ const cruiseDayDetailsColumns = (
     accessorFn: (row) => row.hours,
     cell: ({ row }) => (
       <form.AppField name={`cruiseDaysDetails[${row.index}].hours`}>
-        {(field) => <field.NumberField disabled={isReadonly} minimum={0} type="integer" />}
+        {(field) => (
+          <field.NumberField
+            aria-label={`Liczba godzin, wiersz ${row.index + 1}`}
+            disabled={isReadonly}
+            minimum={0}
+            type="integer"
+          />
+        )}
       </form.AppField>
     ),
     size: 10,
