@@ -55,7 +55,7 @@ it.each([
   expect(CruiseFormSchema.parse(values)).toMatchObject({ mainManagerId, deputyManagerId: emptyGuid });
 });
 
-it('counts only real overlaps with other cruises and active blockades', () => {
+it('counts only real overlaps with other non-empty cruises and active blockades', () => {
   const other = cruise();
   const start = '2026-06-02T11:00:00Z';
   const end = '2026-06-03T00:00:00Z';
@@ -64,4 +64,6 @@ it('counts only real overlaps with other cruises and active blockades', () => {
   expect(findOverlappingCruises([other], '2026-06-02T10:00:00Z', end, other.id)).toEqual([]);
   const endedBlockade = { ...other, shipUnavailable: true, status: 'ended' as const };
   expect(findOverlappingCruises([endedBlockade], '2026-06-02T10:00:00Z', end)).toEqual([]);
+  const zeroLength = { ...other, startDate: '2026-06-02T12:00:00Z', endDate: '2026-06-02T12:00:00.000Z' };
+  expect(findOverlappingCruises([zeroLength], start, end)).toEqual([]);
 });
