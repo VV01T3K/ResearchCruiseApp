@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain.Entities;
@@ -162,7 +163,8 @@ public static class PublicationsEndpoints
         string?
     ) DatabaseEqualityKey(Publication publication)
     {
-        static string? Normalize(string? value) => value?.TrimEnd().ToUpperInvariant();
+        static string? Normalize(string? value) =>
+            value?.Normalize(NormalizationForm.FormC).TrimEnd().ToUpperInvariant();
 
         return (
             Normalize(publication.Category),

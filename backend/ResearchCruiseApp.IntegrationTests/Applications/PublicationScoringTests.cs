@@ -125,6 +125,33 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Import_WhenTextDiffersOnlyByUnicodeComposition_CountsRowAsExisting()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var owner = await TestUsers.Create(app, "owner@example.invalid", RoleName.CruiseManager);
+        using var client = await TestApplications.Login(app, owner.Email!);
+        using var seeded = await client.PostAsJsonAsync(
+            ImportRoute,
+            new[] { ImportedPublication("Gda\u0144sk") },
+            ct
+        );
+        seeded.EnsureSuccessStatusCode();
+
+        using var imported = await client.PostAsJsonAsync(
+            ImportRoute,
+            new[] { ImportedPublication("Gdan\u0301sk") },
+            ct
+        );
+
+        Assert.Equal(
+            new ImportPublicationsResponse(0, 1),
+            await imported.Content.ReadFromJsonAsync<ImportPublicationsResponse>(ct)
+        );
+        await app.InDatabase(async db => Assert.Equal(1, await db.Publications.CountAsync(ct)));
+    }
+
+    [Fact]
     public async Task Import_WhenPointsAreZero_KeepsRowSelectableInFormAWithZeroScore()
     {
         var ct = TestContext.Current.CancellationToken;
