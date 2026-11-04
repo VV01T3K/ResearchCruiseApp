@@ -327,6 +327,28 @@ test('a long filter list keeps its keyboard position while the list scrolls', as
   await expect(filter).toBeFocused();
 });
 
+test('select-all under a search changes only the found options', async ({ page, network }) => {
+  network.use(
+    getGetUsersMockHandler([
+      cruiseManager({ id: 'alpha', email: 'alpha@example.com' }),
+      cruiseManager({ id: 'beta', email: 'beta@example.com' }),
+    ])
+  );
+  await page.goto('/user-management');
+  await page.getByRole('button', { name: 'Sortuj i filtruj: Email' }).click();
+  const alpha = page.getByRole('option', { name: 'alpha@example.com' });
+  await alpha.click();
+  const search = page.getByRole('combobox');
+  await search.fill('beta');
+  const selectFound = page.getByRole('checkbox', { name: 'Zaznacz znalezione' });
+  await selectFound.click();
+  await expect(page.getByRole('option', { name: 'beta@example.com' })).toHaveAttribute('aria-selected', 'true');
+  await selectFound.click();
+  await search.fill('');
+  await expect(alpha).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('option', { name: 'beta@example.com' })).toHaveAttribute('aria-selected', 'false');
+});
+
 for (const mobile of [false, true]) {
   test(`table sorting, filtering and selection work on ${mobile ? 'mobile' : 'desktop'}`, async ({ page, network }) => {
     if (mobile) await page.setViewportSize({ width: 390, height: 844 });
