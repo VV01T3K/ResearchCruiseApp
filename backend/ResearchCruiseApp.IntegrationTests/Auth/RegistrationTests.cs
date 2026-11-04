@@ -1,11 +1,13 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Auth;
@@ -141,6 +143,79 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Single(await db.UserRoles.ToListAsync(ct));
             Assert.Single(await db.EmailOutboxMessages.ToListAsync(ct));
         });
+    }
+
+    [Fact]
+    public async Task Register_WhenLegacyAccountHasPassword_RemovesItAndInvalidatesOldConfirmation()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        using var client = app.CreateApiClient();
+        const string email = "legacy@example.invalid";
+        const string chosenPassword = "OwnerPassword3!";
+        var legacy = await TestUsers.Create(app, email, RoleName.CruiseManager);
+        await app.InDatabase(db =>
+            db.Users.ExecuteUpdateAsync(
+                set =>
+                    set.SetProperty(user => user.EmailConfirmed, false)
+                        .SetProperty(user => user.Accepted, false),
+                ct
+            )
+        );
+        string oldCode;
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            var users = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var stored = await users.FindByIdAsync(legacy.Id);
+            Assert.NotNull(stored!.PasswordHash);
+            oldCode = WebEncoders.Base64UrlEncode(
+                Encoding.UTF8.GetBytes(await users.GenerateEmailConfirmationTokenAsync(stored))
+            );
+        }
+
+        using var registered = await Register(client, email, "Replaced", ct);
+        Assert.Equal(HttpStatusCode.Created, registered.StatusCode);
+        await app.Dispatch(ct);
+        var setPassword = QueryHelpers.ParseQuery(SentLink(app, email).Query);
+
+        using var oldConfirm = await client.GetAsync(
+            $"/v2/auth/confirm-email?userId={legacy.Id}&code={Uri.EscapeDataString(oldCode)}",
+            ct
+        );
+        Assert.Equal(HttpStatusCode.BadRequest, oldConfirm.StatusCode);
+        await app.InDatabase(async db =>
+        {
+            var stored = await db.Users.SingleAsync(ct);
+            Assert.Null(stored.PasswordHash);
+            Assert.False(stored.EmailConfirmed);
+        });
+        await app.InDatabase(db =>
+            db.Users.ExecuteUpdateAsync(set => set.SetProperty(user => user.Accepted, true), ct)
+        );
+        using var oldLogin = await client.PostAsJsonAsync(
+            "/v2/auth/login",
+            new { Email = email, Password = TestUsers.Password },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.Unauthorized, oldLogin.StatusCode);
+
+        using var passwordSet = await SetPassword(
+            client,
+            setPassword["emailBase64"]!,
+            setPassword["resetCode"]!,
+            chosenPassword,
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NoContent, passwordSet.StatusCode);
+        await app.InDatabase(async db =>
+            Assert.True((await db.Users.SingleAsync(ct)).EmailConfirmed)
+        );
+        using var login = await client.PostAsJsonAsync(
+            "/v2/auth/login",
+            new { Email = email, Password = chosenPassword },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.OK, login.StatusCode);
     }
 
     [Fact]
