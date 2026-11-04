@@ -1,7 +1,9 @@
+using System.Data.Common;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Api.Users;
@@ -151,19 +153,22 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         await app.InDatabase(async db => Assert.Equal(1, await db.Publications.CountAsync(ct)));
     }
 
-    [Fact]
-    public async Task Import_WhenComposedAndDecomposedRowsExist_KeepsUsersLinkedRow()
+    [Theory]
+    [InlineData("ASC")]
+    [InlineData("DESC")]
+    public async Task Import_WhenComposedAndDecomposedRowsExist_KeepsUsersLinkedRow(
+        string direction
+    )
     {
         var ct = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
+        var order = new PublicationReadOrder(direction);
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: order);
         var owner = await TestUsers.Create(app, "owner@example.invalid", RoleName.CruiseManager);
         using var client = await TestApplications.Login(app, owner.Email!);
         await app.InDatabase(async db =>
         {
             var unlinked = ImportedPublication("Gda\u0144sk").ToEntity();
-            unlinked.Id = Guid.Parse("00000000-0000-0000-0000-000000000001");
             var linked = ImportedPublication("Gdan\u0301sk").ToEntity();
-            linked.Id = Guid.Parse("00000000-0000-0000-0000-000000000002");
             linked.UserPublications.Add(new UserPublication { UserId = Guid.Parse(owner.Id) });
             db.Publications.AddRange(unlinked, linked);
             await db.SaveChangesAsync(ct);
@@ -179,7 +184,32 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             new ImportPublicationsResponse(0, 1),
             await imported.Content.ReadFromJsonAsync<ImportPublicationsResponse>(ct)
         );
+        Assert.True(order.Applied);
         await app.InDatabase(async db => Assert.Equal(1, await db.UserPublications.CountAsync(ct)));
+    }
+
+    private sealed class PublicationReadOrder(string direction) : DbCommandInterceptor
+    {
+        internal bool Applied { get; private set; }
+
+        public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(
+            DbCommand command,
+            CommandEventData eventData,
+            InterceptionResult<DbDataReader> result,
+            CancellationToken cancellationToken = default
+        )
+        {
+            if (
+                command.CommandText.Contains("FROM [Publications] AS [p]")
+                && command.CommandText.Contains("[p].[Title]")
+                && !command.CommandText.Contains("ORDER BY")
+            )
+            {
+                command.CommandText += $"\nORDER BY [p].[Id] {direction}";
+                Applied = true;
+            }
+            return base.ReaderExecutingAsync(command, eventData, result, cancellationToken);
+        }
     }
 
     [Fact]
