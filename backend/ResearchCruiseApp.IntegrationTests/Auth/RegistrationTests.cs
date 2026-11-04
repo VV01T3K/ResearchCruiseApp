@@ -183,6 +183,10 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             app.Transport.Messages[^1].Payload.Body,
             "confirm-email"
         );
+        Assert.Contains(
+            "nadal obowiązuje hasło z pierwszej rejestracji",
+            app.Transport.Messages[^1].Payload.Body
+        );
 
         Assert.Equal(
             QueryHelpers.ParseQuery(oldLink.Query)["userId"],
