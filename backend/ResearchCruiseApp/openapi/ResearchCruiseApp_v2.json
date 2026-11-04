@@ -5541,16 +5541,12 @@
       "RegisterAccountRequest": {
         "required": [
           "email",
-          "password",
           "firstName",
           "lastName"
         ],
         "type": "object",
         "properties": {
           "email": {
-            "type": "string"
-          },
-          "password": {
             "type": "string"
           },
           "firstName": {

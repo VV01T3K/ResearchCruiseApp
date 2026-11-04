@@ -280,8 +280,7 @@ test('a rejected registration explains why and can be resubmitted', async ({ pag
   await page.getByLabel('E-mail').fill('person@example.com');
   await page.getByLabel('Imię').fill('Ada');
   await page.getByLabel('Nazwisko').fill('Lovelace');
-  await page.getByLabel('Hasło', { exact: true }).fill('Password1');
-  await page.getByLabel('Potwierdź hasło').fill('Password1');
+  await expect(page.getByLabel(/Hasło/)).toHaveCount(0);
   const register = page.getByRole('button', { name: 'Zarejestruj się' });
   await register.click();
   await expect(page.getByText("Adres e-mail 'person@example.com' jest już zajęty.")).toBeVisible();
@@ -290,8 +289,10 @@ test('a rejected registration explains why and can be resubmitted', async ({ pag
   await expect(notifications.getByRole('dialog')).toHaveCount(0);
 
   await register.click();
+  await expect(page.getByText('person@example.com', { exact: true })).toBeVisible();
+  await page.getByRole('link', { name: 'Wróć do logowania' }).click();
   await expect(page).toHaveURL(/\/login$/);
-  const account = { email: 'person@example.com', firstName: 'Ada', lastName: 'Lovelace', password: 'Password1' };
+  const account = { email: 'person@example.com', firstName: 'Ada', lastName: 'Lovelace' };
   expect(requests.bodies('POST /v2/auth/register')).toEqual([account, account]);
 });
 
@@ -325,8 +326,8 @@ test('password reset carries the emailed token and the new password', async ({ p
   await page.goto('/reset-password?emailBase64=email-token&resetCode=reset-token');
   await page.getByLabel('Hasło', { exact: true }).fill('StrongPass1!');
   await page.getByLabel('Potwierdź hasło').fill('StrongPass1!');
-  await page.getByRole('button', { name: 'Zmień hasło' }).click();
-  await expect(page.getByText('Hasło zostało zmienione')).toBeVisible();
+  await page.getByRole('button', { name: 'Ustaw hasło' }).click();
+  await expect(page.getByRole('heading', { name: 'Hasło zostało ustawione' })).toBeVisible();
   expect(requests.bodies('POST /v2/auth/password-reset')).toEqual([
     { emailBase64: 'email-token', resetCode: 'reset-token', password: 'StrongPass1!', passwordConfirm: 'StrongPass1!' },
   ]);
@@ -334,7 +335,7 @@ test('password reset carries the emailed token and the new password', async ({ p
 
 test('a reset link without parameters shows the error page instead of redirecting', async ({ page }) => {
   await page.goto('/reset-password');
-  await expect(page.getByRole('heading', { name: 'Błąd podczas resetowania hasła' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Błąd podczas ustawiania hasła' })).toBeVisible();
   await expect(page).toHaveURL('/reset-password');
 });
 

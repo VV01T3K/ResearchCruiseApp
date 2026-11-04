@@ -43,7 +43,7 @@ public sealed class ProblemDetailsTests(SqlFixture fixture) : IAsyncLifetime
         await AssertProblem(
             await client.PostAsJsonAsync(
                 "/v2/auth/register",
-                new RegisterAccountRequest(user.Email!, TestUsers.Password, "Anna", "Nowak"),
+                new RegisterAccountRequest(user.Email!, "Anna", "Nowak"),
                 ct
             ),
             HttpStatusCode.BadRequest,
@@ -66,7 +66,7 @@ public sealed class ProblemDetailsTests(SqlFixture fixture) : IAsyncLifetime
 
         using var response = await client.PostAsJsonAsync(
             "/v2/auth/register",
-            new RegisterAccountRequest("anna@example.invalid", "", "", "Nowak"),
+            new RegisterAccountRequest("anna@example.invalid", "", "Nowak"),
             ct
         );
 
@@ -75,14 +75,7 @@ public sealed class ProblemDetailsTests(SqlFixture fixture) : IAsyncLifetime
         using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct));
         Assert.False(problem.RootElement.TryGetProperty("detail", out _));
         var errors = problem.RootElement.GetProperty("errors");
-        Assert.Equal(
-            ["firstName", "password"],
-            errors.EnumerateObject().Select(error => error.Name).Order()
-        );
-        Assert.Equal(
-            "Pole 'Hasło' nie może być puste.",
-            Assert.Single(errors.GetProperty("password").EnumerateArray()).GetString()
-        );
+        Assert.Equal(["firstName"], errors.EnumerateObject().Select(error => error.Name));
         Assert.Equal(
             "Pole 'Imię' nie może być puste.",
             Assert.Single(errors.GetProperty("firstName").EnumerateArray()).GetString()

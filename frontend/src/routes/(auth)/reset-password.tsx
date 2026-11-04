@@ -49,7 +49,7 @@ const validationSchema = z
 function ResetPasswordPage() {
   const { emailBase64, resetCode } = Route.useSearch();
   const [result, setResult] = React.useState<Result | undefined>(undefined);
-  const [errorMessage, setErrorMessage] = React.useState('Link do resetowania hasła jest nieprawidłowy lub wygasł.');
+  const [errorMessage, setErrorMessage] = React.useState('Link do ustawienia hasła jest nieprawidłowy lub wygasł.');
   const { mutateAsync } = useResetPassword({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
@@ -84,7 +84,7 @@ function ResetPasswordPage() {
   });
 
   if (result || !emailBase64 || !resetCode) {
-    const title = result === 'success' ? 'Hasło zostało zmienione' : 'Błąd podczas resetowania hasła';
+    const title = result === 'success' ? 'Hasło zostało ustawione' : 'Błąd podczas ustawiania hasła';
     return (
       <Layout title={title} variant="narrow">
         <div className="flex flex-col items-center">
@@ -98,8 +98,8 @@ function ResetPasswordPage() {
           <div className="text-center text-gray-600">
             {result === 'success' && (
               <>
-                Hasło zostało pomyślnie zmienione. Możesz teraz się zalogować, chyba że Twoje konto czeka jeszcze na
-                akceptację Biura Armatora.
+                Możesz się teraz zalogować. Jeśli właśnie zakładasz konto, zalogujesz się, gdy Biuro Armatora je
+                zaakceptuje. Dostaniesz wtedy wiadomość e-mail.
               </>
             )}
             {result !== 'success' && (
@@ -118,7 +118,7 @@ function ResetPasswordPage() {
   }
 
   return (
-    <Layout title="Resetowanie hasła" variant="narrow">
+    <Layout title="Ustawianie hasła" variant="narrow">
       <form
         className="px-4"
         onSubmit={(e) => {
@@ -138,7 +138,7 @@ function ResetPasswordPage() {
         <form.Subscribe selector={(state) => state.isSubmitting}>
           {(isSubmitting) => (
             <Button type="submit" className="mt-6 w-full" disabled={isSubmitting}>
-              Zmień hasło
+              Ustaw hasło
             </Button>
           )}
         </form.Subscribe>

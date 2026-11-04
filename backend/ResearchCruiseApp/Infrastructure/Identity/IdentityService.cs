@@ -200,14 +200,13 @@ internal class IdentityService(
         )
             return alreadyTaken;
 
-        var renewing = user is not null;
         IdentityResult identityResult;
         if (user is null)
         {
             user = CreateUser(registerForm);
             try
             {
-                identityResult = await userManager.CreateAsync(user, registerForm.Password);
+                identityResult = await userManager.CreateAsync(user);
             }
             catch (DbUpdateException exception)
                 when (exception.InnerException is SqlException { Number: 2601 } sqlException
@@ -226,23 +225,7 @@ internal class IdentityService(
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
-        if (renewing)
-        {
-            var resetCode = await userManager.GeneratePasswordResetTokenAsync(user);
-            await emailSender.SendPasswordResetMessage(
-                await CreateUserDto(user),
-                WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetCode)),
-                registrationRenewed: true
-            );
-        }
-        else
-        {
-            await emailSender.SendEmailConfirmationEmail(
-                await CreateUserDto(user),
-                roleName,
-                await CreateEmailConfirmationCode(user)
-            );
-        }
+        await SendRegistrationEmail(user);
 
         await transaction.CommitAsync();
         return identityResult.ToApplicationResult();
@@ -270,6 +253,11 @@ internal class IdentityService(
         var user = await userManager.FindByEmailAsync(email);
         if (user is null)
             return; // According to Microsoft, responding with an error would give too much information
+        if (user.PasswordHash is null)
+        {
+            await SendRegistrationEmail(user);
+            return;
+        }
 
         var emailConfirmationCode = await CreateEmailConfirmationCode(user);
         var userDto = await CreateUserDto(user);
@@ -389,7 +377,7 @@ internal class IdentityService(
     public async Task<Result> ResetPassword(ResetPasswordFormDto resetPasswordFormDto)
     {
         var invalidLink = Error.InvalidArgument(
-            "Link do resetowania hasła jest nieprawidłowy lub wygasł."
+            "Link do ustawienia hasła jest nieprawidłowy lub wygasł."
         );
 
         string email;
@@ -806,6 +794,16 @@ internal class IdentityService(
             RefreshTokenExpirationDate = refreshTokenExpiry.ToUniversalTime(),
         };
         return loginResponseDto;
+    }
+
+    private async Task SendRegistrationEmail(User user)
+    {
+        var resetCode = await userManager.GeneratePasswordResetTokenAsync(user);
+        await emailSender.SendPasswordResetMessage(
+            await CreateUserDto(user),
+            WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetCode)),
+            registration: true
+        );
     }
 
     private async Task<string> CreateEmailConfirmationCode(User user)

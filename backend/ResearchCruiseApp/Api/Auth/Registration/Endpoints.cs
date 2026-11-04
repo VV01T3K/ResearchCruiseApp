@@ -26,7 +26,6 @@ public static class RegistrationEndpoints
             new RegisterFormDto
             {
                 Email = request.Email,
-                Password = request.Password,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
             },

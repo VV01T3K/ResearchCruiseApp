@@ -1,7 +1,7 @@
 import { getProblemDetail } from '@/api/errors';
 import type { RegisterAccountRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
@@ -18,41 +18,21 @@ export const Route = createFileRoute('/(auth)/register')({
   beforeLoad: allowOnly.unauthenticated(),
 });
 
-const validationSchema = z
-  .object({
-    email: z.email('Niepoprawny adres e-mail'),
-    firstName: z.string().min(2, 'Imię powinno zawierać co najmniej 2 znaki'),
-    lastName: z.string().min(2, 'Nazwisko powinno zawierać co najmniej 2 znaki'),
-    password: z
-      .string()
-      .min(8, 'Hasło powinno mieć co najmniej 8 znaków')
-      .regex(
-        /\b(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}\b/,
-        'Hasło powinno zawierać jedną dużą literę, jedną małą literę oraz cyfrę'
-      ),
-    confirmPassword: z.string(),
-  })
-  .superRefine(({ password, confirmPassword }, ctx) => {
-    if (password !== confirmPassword) {
-      return ctx.addIssue({
-        code: 'custom',
-        message: 'Hasła nie są takie same',
-        path: ['confirmPassword'],
-      });
-    }
-  });
+const validationSchema = z.object({
+  email: z.email('Niepoprawny adres e-mail'),
+  firstName: z.string().min(2, 'Imię powinno zawierać co najmniej 2 znaki'),
+  lastName: z.string().min(2, 'Nazwisko powinno zawierać co najmniej 2 znaki'),
+});
 
 function RegisterPage() {
-  const navigate = useNavigate();
   const [submitError, setSubmitError] = React.useState<string>();
+  const [registeredEmail, setRegisteredEmail] = React.useState<string>();
   const { mutateAsync } = useRegisterAccount({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
       email: '',
       firstName: '',
       lastName: '',
-      password: '',
-      confirmPassword: '',
     },
     validationLogic: formValidationLogic,
     validators: {
@@ -63,13 +43,12 @@ function RegisterPage() {
 
       setSubmitError(undefined);
       try {
-        const { email, firstName, lastName, password } = value;
-        await mutateAsync({ data: { email, firstName, lastName, password } satisfies RegisterAccountRequest });
+        await mutateAsync({ data: value satisfies RegisterAccountRequest });
       } catch (error) {
         setSubmitError(getProblemDetail(error, 'Rejestracja nie powiodła się. Spróbuj ponownie.'));
         return;
       }
-      await navigate({ to: '/login' });
+      setRegisteredEmail(value.email);
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('register', 'invalid', formApi.state);
@@ -81,6 +60,23 @@ function RegisterPage() {
     e.preventDefault();
     e.stopPropagation();
     void form.handleSubmit();
+  }
+
+  if (registeredEmail) {
+    return (
+      <Layout title="Sprawdź swoją pocztę" variant="narrow">
+        <div className="space-y-4 text-lg">
+          <p>
+            Wysłaliśmy wiadomość na adres: <span className="font-bold text-primary">{registeredEmail}</span>
+          </p>
+          <p>Kliknij link z tej wiadomości i ustaw hasło, aby dokończyć rejestrację.</p>
+          <p>Potem Biuro Armatora musi zaakceptować Twoje konto. Dostaniesz wtedy wiadomość e-mail.</p>
+        </div>
+        <Button type="link" href="/login" className="mt-8 w-full">
+          Wróć do logowania
+        </Button>
+      </Layout>
+    );
   }
 
   return (
@@ -97,14 +93,6 @@ function RegisterPage() {
 
           <form.AppField name="lastName">
             {(field) => <field.FloatingTextField type="text" label="Nazwisko" />}
-          </form.AppField>
-
-          <form.AppField name="password">
-            {(field) => <field.FloatingTextField type="password" label="Hasło" />}
-          </form.AppField>
-
-          <form.AppField name="confirmPassword">
-            {(field) => <field.FloatingTextField type="password" label="Potwierdź hasło" />}
           </form.AppField>
 
           <div className="!mt-12">

@@ -78,14 +78,14 @@ internal class EmailSender(
     public async Task SendPasswordResetMessage(
         UserDto userDto,
         string resetCode,
-        bool registrationRenewed = false
+        bool registration = false
     )
     {
-        var messageTemplate = registrationRenewed
-            ? await templateFileReader.ReadRegistrationRenewedMessageTemplate()
+        var messageTemplate = registration
+            ? await templateFileReader.ReadRegistrationMessageTemplate()
             : await templateFileReader.ReadPasswordResetMessageTemplate();
-        var emailSubject = registrationRenewed
-            ? await templateFileReader.ReadRegistrationRenewedEmailSubject()
+        var emailSubject = registration
+            ? await templateFileReader.ReadRegistrationEmailSubject()
             : await templateFileReader.ReadPasswordResetEmailSubject();
         var emailBase64 = UrlBase64.Encode(Encoding.UTF8.GetBytes(userDto.Email));
 

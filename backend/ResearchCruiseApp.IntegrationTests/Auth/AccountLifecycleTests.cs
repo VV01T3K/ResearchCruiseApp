@@ -33,7 +33,6 @@ public sealed class AccountLifecycleTests(SqlFixture fixture) : IAsyncLifetime
             new
             {
                 Email = email,
-                Password = TestUsers.Password,
                 FirstName = "New",
                 LastName = "Researcher",
             },
@@ -41,19 +40,25 @@ public sealed class AccountLifecycleTests(SqlFixture fixture) : IAsyncLifetime
         );
         Assert.Equal(HttpStatusCode.Created, registered.StatusCode);
         await app.Dispatch(ct);
-        var confirmation = Assert.Single(app.Transport.Messages);
-        Assert.Equal(email, confirmation.Payload.Recipient);
-        var link = PasswordRecoveryTests.Link(confirmation.Payload.Body, "confirm-email");
-        var query = QueryHelpers.ParseQuery(link.Query);
-        var userId = query["userId"].ToString();
-
-        using var invalid = await client.GetAsync(
-            $"/v2/auth/confirm-email?userId={userId}&code=invalid",
-            ct
+        var setPasswordMail = Assert.Single(app.Transport.Messages);
+        Assert.Equal(email, setPasswordMail.Payload.Recipient);
+        var query = QueryHelpers.ParseQuery(
+            PasswordRecoveryTests.Link(setPasswordMail.Payload.Body, "reset-password").Query
         );
+        var userId = "";
+        await app.InDatabase(async db =>
+            userId = (await db.Users.SingleAsync(row => row.Email == email, ct)).Id
+        );
+
+        using var invalid = await SetPassword(client, query["emailBase64"]!, "aW52YWxpZA", ct);
         Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
         await AssertAccount(app, userId, false, false, false);
-        using var confirmed = await client.GetAsync("/v2/auth/confirm-email" + link.Query, ct);
+        using var confirmed = await SetPassword(
+            client,
+            query["emailBase64"]!,
+            query["resetCode"]!,
+            ct
+        );
         Assert.Equal(HttpStatusCode.NoContent, confirmed.StatusCode);
         await AssertAccount(app, userId, true, false, false);
         using var awaitingAcceptance = await client.PostAsJsonAsync(
@@ -103,6 +108,24 @@ public sealed class AccountLifecycleTests(SqlFixture fixture) : IAsyncLifetime
         );
         Assert.Equal(2, app.Transport.Messages.Count);
     }
+
+    private static Task<HttpResponseMessage> SetPassword(
+        HttpClient client,
+        string emailBase64,
+        string resetCode,
+        CancellationToken ct
+    ) =>
+        client.PostAsJsonAsync(
+            "/v2/auth/password-reset",
+            new
+            {
+                EmailBase64 = emailBase64,
+                ResetCode = resetCode,
+                Password = TestUsers.Password,
+                PasswordConfirm = TestUsers.Password,
+            },
+            ct
+        );
 
     private static async Task AssertAccount(
         TestApplication app,

@@ -93,12 +93,12 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         }
         else
         {
-            using var awaitingAcceptance = await client.PostAsJsonAsync(
+            using var login = await client.PostAsJsonAsync(
                 "/v2/auth/login",
                 new { Email = user.Email, Password = TestUsers.Password },
                 ct
             );
-            Assert.Equal(HttpStatusCode.Unauthorized, awaitingAcceptance.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, login.StatusCode);
         }
         Assert.Single(app.Transport.Messages);
     }
@@ -253,26 +253,15 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         var ct = TestContext.Current.CancellationToken;
         if (!confirmation)
             return await TestUsers.Create(app, email, RoleName.CruiseManager);
+        var created = await TestUsers.Create(app, "old-" + email, RoleName.CruiseManager);
         await using (var scope = app.Services.CreateAsyncScope())
-        {
-            var roles = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            if (!await roles.RoleExistsAsync(RoleName.CruiseManager))
-                Assert.True(
-                    (await roles.CreateAsync(new IdentityRole(RoleName.CruiseManager))).Succeeded
-                );
-        }
-        using var created = await client.PostAsJsonAsync(
-            "/v2/auth/register",
-            new
-            {
-                Email = email,
-                Password = TestUsers.Password,
-                FirstName = "New",
-                LastName = "Researcher",
-            },
-            ct
-        );
-        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+            Assert.True(
+                (
+                    await scope
+                        .ServiceProvider.GetRequiredService<IdentityService>()
+                        .UpdateUser(Guid.Parse(created.Id), email, null, null, ct)
+                ).IsSuccess
+            );
         User? user = null;
         await app.InDatabase(async db =>
             user = await db.Users.AsNoTracking().SingleAsync(row => row.Email == email, ct)
