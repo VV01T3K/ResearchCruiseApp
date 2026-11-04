@@ -60,6 +60,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormCViewMo
       },
       {
         id: 'actions',
+        header: () => <span className="sr-only">Akcje</span>,
         cell: ({ row }) => (
           <div className="flex justify-end">
             <TableDeleteRowButton

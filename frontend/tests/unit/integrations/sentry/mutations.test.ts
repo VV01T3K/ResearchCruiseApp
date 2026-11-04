@@ -17,8 +17,12 @@ vi.mock('@sentry/react', async (importOriginal) => ({
 }));
 
 it.each([
-  ['network rejection', new TypeError('Failed to fetch'), true],
-  ['wrapped network rejection', new Error('Session refresh failed', { cause: new TypeError('Failed to fetch') }), true],
+  ['network rejection', new TypeError('Failed to fetch'), false],
+  [
+    'wrapped network rejection',
+    new Error('Session refresh failed', { cause: new TypeError('Failed to fetch') }),
+    false,
+  ],
   ['proxy 502', new ApiError('Błąd serwera (502)', 502), true],
   ['proxy 503', new ApiError('Błąd serwera (503)', 503, {}), true],
   ['proxy 504', new ApiError('Błąd serwera (504)', 504), true],

@@ -42,6 +42,7 @@ export function MembersSection() {
     },
     {
       id: 'padding',
+      header: () => <span className="sr-only">Odstęp</span>,
       cell: () => null,
       size: 10,
     },
@@ -105,7 +106,7 @@ export function MembersSection() {
           data={evaluation.ugTeams}
           emptyTableMessage="Nie dodano żadnego zespołu."
           disabled
-          className="mt-0"
+          className="mt-0 pt-0"
         />
 
         <Table
@@ -113,7 +114,7 @@ export function MembersSection() {
           data={evaluation.guestTeams}
           emptyTableMessage="Nie dodano żadnego zespołu."
           disabled
-          className="mt-0"
+          className="mt-0 pt-0"
         />
 
         <div className="col-span-2">

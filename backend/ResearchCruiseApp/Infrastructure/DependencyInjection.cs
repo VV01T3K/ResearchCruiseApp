@@ -105,6 +105,16 @@ public static class DependencyInjection
                             Encoding.UTF8.GetBytes(jwtSettings.Value.Secret)
                         ),
                     };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = async context =>
+                        {
+                            var identityService =
+                                context.HttpContext.RequestServices.GetRequiredService<IdentityService>();
+                            if (!await identityService.IsAccessTokenCurrent(context.Principal!))
+                                context.Fail("The session has ended.");
+                        },
+                    };
                 }
             );
 

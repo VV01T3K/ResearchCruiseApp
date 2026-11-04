@@ -81,9 +81,10 @@ test('a new cruise is saved once with Warsaw-midnight dates and the chosen manag
   let created = false;
   network.use(
     getGetCruisesMockHandler([]),
-    getGetAvailableCruiseManagersMockHandler(async () => {
+    getGetAvailableCruiseManagersMockHandler([manager, deputy]),
+    getGetApplicationsForCruisePlanningMockHandler(async () => {
       if (created) await refetch.promise;
-      return [manager, deputy];
+      return [];
     }),
     getCreateCruiseMockHandler(() => {
       created = true;
@@ -422,6 +423,33 @@ test('a cruise save waits for the previous one and starts from its accepted revi
   } finally {
     olderResponse.resolve();
     refetch.resolve();
+  }
+});
+
+test('cruise saves finish without waiting for the slow overlap check', async ({ page, network, requests }) => {
+  const item = cruise();
+  const otherCruises = Promise.withResolvers<CruiseResponse[]>();
+  network.use(
+    getGetCruiseMockHandler(item),
+    getUpdateCruiseMockHandler(),
+    getGetCruisesMockHandler(() => otherCruises.promise)
+  );
+  await page.goto(`/cruises/${item.id}`);
+  const edit = page.getByRole('button', { name: 'Edytuj', exact: true });
+
+  try {
+    for (const title of ['Pierwszy', 'Drugi']) {
+      await edit.click();
+      await page.locator('input[name="title"]').fill(title);
+      await page.getByRole('button', { name: 'Zapisz rejs' }).click();
+      await expect(edit).toBeVisible();
+    }
+    expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toEqual([
+      expect.objectContaining({ title: 'Pierwszy' }),
+      expect.objectContaining({ title: 'Drugi' }),
+    ]);
+  } finally {
+    otherCruises.resolve([]);
   }
 });
 

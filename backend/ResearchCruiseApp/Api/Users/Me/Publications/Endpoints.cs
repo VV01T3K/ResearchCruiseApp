@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain.Entities;
@@ -106,17 +107,18 @@ public static class PublicationsEndpoints
 
         var titles = requests.Select(request => request.Title).Distinct().ToList();
 
+        var linkedPublicationIds = await dbContext
+            .UserPublications.Where(userPublication => userPublication.UserId == currentUserId)
+            .Select(userPublication => userPublication.Publication.Id)
+            .ToHashSetAsync(cancellationToken);
         var existingPublications = (
             await dbContext
                 .Publications.Where(publication => titles.Contains(publication.Title))
                 .ToListAsync(cancellationToken)
         )
+            .OrderByDescending(publication => linkedPublicationIds.Contains(publication.Id))
             .DistinctBy(DatabaseEqualityKey)
             .ToDictionary(DatabaseEqualityKey);
-        var linkedPublicationIds = await dbContext
-            .UserPublications.Where(userPublication => userPublication.UserId == currentUserId)
-            .Select(userPublication => userPublication.Publication.Id)
-            .ToHashSetAsync(cancellationToken);
 
         var alreadyAddedPublications = new HashSet<Publication>();
         var imported = 0;
@@ -162,7 +164,8 @@ public static class PublicationsEndpoints
         string?
     ) DatabaseEqualityKey(Publication publication)
     {
-        static string? Normalize(string? value) => value?.TrimEnd().ToUpperInvariant();
+        static string? Normalize(string? value) =>
+            value?.Normalize(NormalizationForm.FormC).TrimEnd().ToUpperInvariant();
 
         return (
             Normalize(publication.Category),
