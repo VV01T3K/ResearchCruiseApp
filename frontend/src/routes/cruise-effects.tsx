@@ -7,7 +7,7 @@ import { Badge } from '@/components/shared/Badge';
 import { Layout } from '@/components/shared/Layout';
 import { Link } from '@/components/shared/Link';
 import { Table } from '@/components/shared/table/Table';
-import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
+import { ResearchTaskDetails } from '@/features/applications/components/tasks/readonly/ResearchTaskDetails';
 import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/generated/endpoints/users.gen';
 import { getTaskName } from '@/features/applications/schemas/types/ResearchTaskValues';
 import type { CruiseEffectsResponse } from '@/api/generated/schemas';

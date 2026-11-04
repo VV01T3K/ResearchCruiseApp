@@ -3,7 +3,7 @@ import { useSelector } from '@tanstack/react-form';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Table } from '@/components/shared/table/Table';
-import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
+import { ResearchTaskDetails } from '@/features/applications/components/tasks/readonly/ResearchTaskDetails';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
 import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';

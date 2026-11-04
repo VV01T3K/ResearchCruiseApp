@@ -2,7 +2,7 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Table } from '@/components/shared/table/Table';
-import { ResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ResearchTaskDetails';
+import { ResearchTaskDetails } from '@/features/applications/components/tasks/readonly/ResearchTaskDetails';
 import {
   type ApplicationEvaluation,
   useApplicationEvaluation,
