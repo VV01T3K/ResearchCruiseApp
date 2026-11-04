@@ -6,6 +6,7 @@ import { Badge } from '@/components/shared/Badge';
 import { Button } from '@/components/shared/Button';
 import { Guard } from '@/components/shared/Guard';
 import { Table } from '@/components/shared/table/Table';
+import { useWindowSize } from '@/hooks/shared/WindowSizeHook';
 import { Role } from '@/integrations/auth/types';
 import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { formatDate } from '@/lib/dateUtils';
@@ -24,6 +25,7 @@ type Props = {
 };
 export function TableView({ cruises, deleteCruise, buttons }: Props) {
   const currentUser = useCurrentUser();
+  const { width } = useWindowSize();
   const columns: ColumnDef<CruiseResponse>[] = [
     {
       header: 'Numer',
@@ -84,7 +86,8 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
           {
             header: 'Zgłoszenia',
             cell: ({ row }) => <ApplicationsCell applications={row.original.applications} />,
-            size: 190,
+            // Narrow enough to fit 1280px; from 1400px the spare width keeps the application link on one line.
+            size: width >= 1400 ? 240 : 190,
           } satisfies ColumnDef<CruiseResponse>,
         ]
       : []),
