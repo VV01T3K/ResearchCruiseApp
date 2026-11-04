@@ -38,6 +38,7 @@ export function PublicationsSection() {
       cell: ({ row }) => (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <Input
+            aria-label={`DOI, wiersz ${row.index + 1}`}
             name={`publications[${row.index}].publication.doi`}
             value={row.original.publication.doi}
             label="DOI"
@@ -45,6 +46,7 @@ export function PublicationsSection() {
             disabled
           />
           <Input
+            aria-label={`Autorzy, wiersz ${row.index + 1}`}
             name={`publications[${row.index}].publication.authors`}
             value={row.original.publication.authors}
             label="Autorzy"
@@ -52,6 +54,7 @@ export function PublicationsSection() {
             disabled
           />
           <Input
+            aria-label={`Tytuł publikacji, wiersz ${row.index + 1}`}
             name={`publications[${row.index}].publication.title`}
             value={row.original.publication.title}
             label="Tytuł"
@@ -59,6 +62,7 @@ export function PublicationsSection() {
             disabled
           />
           <Input
+            aria-label={`Czasopismo publikacji, wiersz ${row.index + 1}`}
             name={`publications[${row.index}].publication.magazine`}
             value={row.original.publication.magazine}
             label="Czasopismo"

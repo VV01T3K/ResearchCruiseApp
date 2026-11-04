@@ -41,6 +41,7 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
             >
               {(field) => (
                 <field.TextField
+                  aria-label={`Nazwa rejonu, wiersz ${row.index + 1}`}
                   value={
                     field.state.value ?? getResearchAreaName(initValues.researchAreas, row.original.areaId ?? '') ?? ''
                   }
@@ -60,6 +61,7 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
           <form.AppField name={`researchAreaDescriptions[${row.index}].info`}>
             {(field) => (
               <field.TextField
+                aria-label={`Informacje dodatkowe, wiersz ${row.index + 1}`}
                 placeholder={isReadonly ? '' : 'np. szczegóły dotyczące celu rejsu'}
                 disabled={isReadonly}
               />

@@ -13,7 +13,14 @@ export function OtherResearchTaskDetails({ row, disabled }: Props) {
   return (
     <div>
       <form.AppField name={`researchTasks[${row.index}].description`}>
-        {(field) => <field.TextField label="Opis zadania" placeholder="Wprowadź opis zadania" disabled={disabled} />}
+        {(field) => (
+          <field.TextField
+            aria-label={`Opis zadania, wiersz ${row.index + 1}`}
+            label="Opis zadania"
+            placeholder="Wprowadź opis zadania"
+            disabled={disabled}
+          />
+        )}
       </form.AppField>
     </div>
   );
