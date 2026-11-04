@@ -64,6 +64,6 @@ it('counts only real overlaps with other non-empty cruises and active blockades'
   expect(findOverlappingCruises([other], '2026-06-02T10:00:00Z', end, other.id)).toEqual([]);
   const endedBlockade = { ...other, shipUnavailable: true, status: 'ended' as const };
   expect(findOverlappingCruises([endedBlockade], '2026-06-02T10:00:00Z', end)).toEqual([]);
-  const zeroLength = { ...other, startDate: '2026-06-02T12:00:00Z', endDate: '2026-06-02T12:00:00Z' };
+  const zeroLength = { ...other, startDate: '2026-06-02T12:00:00Z', endDate: '2026-06-02T12:00:00.000Z' };
   expect(findOverlappingCruises([zeroLength], start, end)).toEqual([]);
 });
