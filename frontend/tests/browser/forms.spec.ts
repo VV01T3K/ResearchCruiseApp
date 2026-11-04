@@ -369,7 +369,7 @@ test('form C clears point awards for an unfinished task and saves attached photo
 }) => {
   network.use(getUpdateApplicationFormCMockHandler());
   await page.goto(`/applications/${applicationId}/formC?mode=edit`);
-  const done = page.getByRole('checkbox', { name: 'Zrealizowane', exact: true });
+  const done = page.getByRole('checkbox', { name: 'Zrealizowane' });
   const awards = [
     page.getByRole('checkbox', { name: 'Czy naliczyć punkty kierownikowi?' }),
     page.getByRole('checkbox', { name: 'Czy naliczyć punkty zastępcy?' }),

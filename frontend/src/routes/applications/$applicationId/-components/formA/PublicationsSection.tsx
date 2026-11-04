@@ -37,6 +37,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
           <form.AppField name={`publications[${row.index}].category`}>
             {(field) => (
               <field.SelectField
+                aria-label={`Kategoria, wiersz ${row.index + 1}`}
                 onChange={field.handleChange as (value: string) => void}
                 allOptions={Object.values(PublicationCategory).map((role) => ({
                   value: role,
@@ -110,7 +111,15 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
         enableSorting: false,
         cell: ({ row }) => (
           <form.AppField name={`publications[${row.index}].ministerialPoints`}>
-            {(field) => <field.NumberField minimum={0} step={10} label="Punkty" disabled={isReadonly} />}
+            {(field) => (
+              <field.NumberField
+                aria-label={`Punkty, wiersz ${row.index + 1}`}
+                minimum={0}
+                step={10}
+                label="Punkty"
+                disabled={isReadonly}
+              />
+            )}
           </form.AppField>
         ),
         size: 10,

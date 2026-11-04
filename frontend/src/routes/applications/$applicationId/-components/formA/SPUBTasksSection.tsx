@@ -86,6 +86,7 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
           <form.AppField name={`spubTasks[${row.index}].name`}>
             {(field) => (
               <field.SelectField
+                aria-label={`Nazwa zadania, wiersz ${row.index + 1}`}
                 allOptions={initValues?.standardSpubTasks.map((taskName) => ({
                   value: taskName,
                   inlineLabel: taskName,

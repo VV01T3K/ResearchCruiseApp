@@ -29,7 +29,13 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
         enableSorting: false,
         cell: ({ row }) => (
           <form.AppField name={`permissions[${row.index}].description`}>
-            {(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
+            {(field) => (
+              <field.TextField
+                aria-label={`Treść pozwolenia, wiersz ${row.index + 1}`}
+                containerClassName="mx-4"
+                disabled={isReadonly}
+              />
+            )}
           </form.AppField>
         ),
         size: 45,
@@ -41,7 +47,13 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
         enableSorting: false,
         cell: ({ row }) => (
           <form.AppField name={`permissions[${row.index}].executive`}>
-            {(field) => <field.TextField className="mx-4" disabled={isReadonly} />}
+            {(field) => (
+              <field.TextField
+                aria-label={`Organ wydający, wiersz ${row.index + 1}`}
+                className="mx-4"
+                disabled={isReadonly}
+              />
+            )}
           </form.AppField>
         ),
         size: 45,

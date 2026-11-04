@@ -114,7 +114,13 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
         accessorFn: (row) => row.name,
         cell: ({ row }) => (
           <form.AppField name={`guestTeams[${row.index}].name`}>
-            {(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
+            {(field) => (
+              <field.TextField
+                aria-label={`Instytucja, wiersz ${row.index + 1}`}
+                containerClassName="mx-4"
+                disabled={isReadonly}
+              />
+            )}
           </form.AppField>
         ),
         size: 60,

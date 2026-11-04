@@ -32,6 +32,7 @@ type Props = {
   allowEmptyOption?: boolean;
   placeholder?: string;
   defaultValue?: string;
+  'aria-label'?: string;
 };
 
 export function DropdownInput({
@@ -48,6 +49,7 @@ export function DropdownInput({
   allowEmptyOption = false,
   placeholder = 'Wybierz',
   defaultValue = '',
+  'aria-label': ariaLabel,
 }: Props) {
   const aria = useInputAria(errors, helper);
   const allPossibleOptions = React.useMemo(() => {
@@ -91,6 +93,7 @@ export function DropdownInput({
       >
         <Select.Trigger
           {...aria.inputProps}
+          aria-label={ariaLabel}
           className={cn(
             'relative inline-flex w-full items-center justify-between',
             'rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900',
