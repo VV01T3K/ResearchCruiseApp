@@ -27,7 +27,7 @@ export function DesktopTable<T extends object>({
 
   return (
     <div
-      className={cn('mt-2 w-full overflow-x-auto pt-2', className)}
+      className={cn('-mx-1 mt-2 w-[calc(100%+0.5rem)] overflow-x-auto px-1 pt-2', className)}
       data-toolbarless-table={allButtons.length === 0 || undefined}
     >
       <table

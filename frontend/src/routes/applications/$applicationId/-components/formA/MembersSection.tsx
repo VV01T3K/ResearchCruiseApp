@@ -160,7 +160,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
           {(field) => (
             <div className="mt-auto">
               <Table
-                className="mt-0 pt-0"
+                className="-mt-1 pt-1"
                 columns={getUgTeamsColumns((index) => {
                   field.removeValue(index);
                   field.handleBlur();
@@ -201,7 +201,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
           {(field) => (
             <div>
               <Table
-                className="mt-0 pt-0"
+                className="-mt-1 pt-1"
                 columns={getGuestTeams((index) => {
                   field.removeValue(index);
                   field.handleBlur();

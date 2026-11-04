@@ -38,7 +38,7 @@ export function FloatingLabelInput({
         name={name}
         {...aria.inputProps}
         className={cn(
-          'focus:border-primary peer block w-full appearance-none border-0 border-b-2 border-gray-600 bg-transparent px-0 py-2.5 focus:ring-0 focus:outline-none',
+          'focus:border-primary peer block w-full appearance-none border-0 border-b-2 border-gray-600 bg-transparent px-0 py-2.5 focus:ring-0 focus:outline-none forced-colors:focus:border-b-4 forced-colors:focus:border-b-[Highlight] forced-colors:focus:pb-2',
           hasErrors(errors) &&
             'border-danger text-danger focus:border-danger focus:shadow-[0_1px_0_var(--color-danger)]'
         )}

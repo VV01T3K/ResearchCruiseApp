@@ -30,7 +30,7 @@ export function TableActiveFilters<T extends object>({ table }: { table: Table<T
                     aria-label={`Usuń filtr: ${title}`}
                     title={`Usuń filtr: ${title}`}
                     onClick={() => column.setFilterValue(undefined)}
-                    className="cursor-pointer rounded-full p-1 outline-none hover:bg-primary-200 focus-visible:ring-2 focus-visible:ring-primary"
+                    className="cursor-pointer rounded-full p-1 hover:bg-primary-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
                   >
                     <XIcon className="size-3.5" />
                   </button>

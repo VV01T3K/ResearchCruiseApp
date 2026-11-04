@@ -36,7 +36,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
           <button
             type="button"
             className={cn(
-              'text-white outline-none hover:cursor-pointer disabled:cursor-default',
+              'text-white hover:cursor-pointer disabled:cursor-default focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
               variants[variant],
               'flex items-center gap-4 px-5 py-2.5'
             )}
@@ -96,7 +96,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
                             : undefined
                         }
                         className={cn(
-                          'block w-full rounded-md px-3 py-2.5 text-left text-base transition-colors duration-150 outline-none disabled:cursor-default disabled:opacity-50',
+                          'block w-full rounded-md px-3 py-2.5 text-left text-base transition-colors duration-150 focus-visible:outline-hidden disabled:cursor-default disabled:opacity-50',
                           option.onClick &&
                             'data-[highlighted]:bg-primary-50 hover:bg-primary-50 active:bg-primary-100 hover:cursor-pointer data-[highlighted]:text-gray-900'
                         )}
