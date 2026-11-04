@@ -87,7 +87,7 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
-    public async Task UpdateCruise_WhenNewManagerIsNotActive_RejectsButKeepsExistingManager()
+    public async Task WriteCruise_WhenNewManagerIsNotActive_RejectsButKeepsExistingManager()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -122,6 +122,13 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
         );
 
         Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
+        await AssertUnchanged(app, id);
+        using var rejectedCreate = await client.PostAsJsonAsync(
+            "/v2/cruises",
+            new CreateRequest("2030-08-01", "2030-08-02", inactiveId, Guid.Empty, [], "New", false),
+            ct
+        );
+        Assert.Equal(HttpStatusCode.BadRequest, rejectedCreate.StatusCode);
         await AssertUnchanged(app, id);
         Assert.Empty(app.Transport.Messages);
 
