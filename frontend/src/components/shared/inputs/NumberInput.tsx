@@ -156,7 +156,7 @@ export function NumberInput({
             className={cn(
               'block h-11 w-full border border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900',
               'transition duration-300 ease-in-out',
-              'focus:ring-primary focus:border-primary focus:shadow focus:outline-hidden',
+              'focus:ring-primary focus:border-primary focus:shadow focus:outline-hidden forced-colors:focus:-outline-offset-4',
               disabled ? 'rounded-lg bg-gray-200' : '',
               hasErrors(errors) && invalidInputClassName
             )}
@@ -202,7 +202,8 @@ function NumberInputButton({ side, inputToFocus, onClick, disabled }: ButtonProp
         'flex h-11 w-11 items-center justify-center',
         'text-gray-500',
         'transition duration-300 ease-in-out',
-        'focus:ring-primary focus:border-primary focus:shadow focus:outline-hidden',
+        'focus:ring-primary focus:border-primary focus:shadow focus:outline-hidden forced-colors:focus:-outline-offset-4',
+        'focus-visible:ring-inset focus-visible:ring-offset-0',
         'disabled:cursor-not-allowed disabled:opacity-50',
         'border-collapse border border-gray-300 px-2',
         side === 'left' ? 'rounded-l' : 'rounded-r',
