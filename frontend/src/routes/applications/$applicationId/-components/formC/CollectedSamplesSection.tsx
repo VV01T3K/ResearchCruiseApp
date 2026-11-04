@@ -19,7 +19,11 @@ const collectedSamplesColumns = (
     cell: ({ row }) => (
       <form.AppField name={`collectedSamples[${row.index}].type`}>
         {(field) => (
-          <field.TextField placeholder="Wpisz rodzaj materiału badawczego/próbek/danych" disabled={isReadonly} />
+          <field.TextField
+            aria-label={`Rodzaj materiału, wiersz ${row.index + 1}`}
+            placeholder="Wpisz rodzaj materiału badawczego/próbek/danych"
+            disabled={isReadonly}
+          />
         )}
       </form.AppField>
     ),
@@ -38,7 +42,13 @@ const collectedSamplesColumns = (
     header: 'Analizy na zebranym materiale badawczym, przeprowadzone podczas rejsu lub do przeprowadzenia po rejsie',
     cell: ({ row }) => (
       <form.AppField name={`collectedSamples[${row.index}].analysis`}>
-        {(field) => <field.TextField placeholder="Wpisz zakres analiz" disabled={isReadonly} />}
+        {(field) => (
+          <field.TextField
+            aria-label={`Zakres analiz, wiersz ${row.index + 1}`}
+            placeholder="Wpisz zakres analiz"
+            disabled={isReadonly}
+          />
+        )}
       </form.AppField>
     ),
     size: 30,
@@ -47,7 +57,13 @@ const collectedSamplesColumns = (
     header: 'Czy dane upubliczniono? (jeśli tak, to w jaki sposób, czy przesłano je np. do BHMW)',
     cell: ({ row }) => (
       <form.AppField name={`collectedSamples[${row.index}].publishing`}>
-        {(field) => <field.TextField placeholder="Wpisz informacje o upublicznieniu danych" disabled={isReadonly} />}
+        {(field) => (
+          <field.TextField
+            aria-label={`Upublicznienie danych, wiersz ${row.index + 1}`}
+            placeholder="Wpisz informacje o upublicznieniu danych"
+            disabled={isReadonly}
+          />
+        )}
       </form.AppField>
     ),
     size: 30,

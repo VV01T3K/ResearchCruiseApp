@@ -54,7 +54,13 @@ export function SPUBTasksSection() {
       enableColumnFilter: false,
       enableSorting: false,
       cell: ({ row }) => (
-        <Input name={`spubTasks[${row.index}].name`} value={row.original.spubTask.name} showRequiredAsterisk disabled />
+        <Input
+          aria-label={`Nazwa zadania SPUB, wiersz ${row.index + 1}`}
+          name={`spubTasks[${row.index}].name`}
+          value={row.original.spubTask.name}
+          showRequiredAsterisk
+          disabled
+        />
       ),
       size: 50,
     },

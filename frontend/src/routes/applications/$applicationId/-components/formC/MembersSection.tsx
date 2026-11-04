@@ -180,14 +180,21 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
       accessorFn: (row) => `${row.title} ${row.firstName} ${row.lastName}`,
       cell: ({ row }) => (
         <div className="grid grid-cols-5 gap-2">
-          <Input value={formB.crewMembers[row.index].title} label="Tytuł" disabled />
           <Input
+            aria-label={`Tytuł, wiersz ${row.index + 1}`}
+            value={formB.crewMembers[row.index].title}
+            label="Tytuł"
+            disabled
+          />
+          <Input
+            aria-label={`Imiona, wiersz ${row.index + 1}`}
             value={formB.crewMembers[row.index].firstName}
             label="Imiona"
             containerClassName="col-span-2"
             disabled
           />
           <Input
+            aria-label={`Nazwisko, wiersz ${row.index + 1}`}
             value={formB.crewMembers[row.index].lastName}
             label="Nazwisko"
             containerClassName="col-span-2"
@@ -203,14 +210,24 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
       enableSorting: false,
       cell: ({ row }) => (
         <div className="grid grid-cols-2 gap-2">
-          <Input value={formB.crewMembers[row.index].birthPlace} label="Miejsce urodzenia" disabled />
+          <Input
+            aria-label={`Miejsce urodzenia, wiersz ${row.index + 1}`}
+            value={formB.crewMembers[row.index].birthPlace}
+            label="Miejsce urodzenia"
+            disabled
+          />
           <DatePickerInput
             name="birthPlace"
             value={formB.crewMembers[row.index].birthDate}
             label="Data urodzenia"
             disabled
           />
-          <Input value={formB.crewMembers[row.index].documentNumber} label="Numer ID dokumentu" disabled />
+          <Input
+            aria-label={`Numer ID dokumentu, wiersz ${row.index + 1}`}
+            value={formB.crewMembers[row.index].documentNumber}
+            label="Numer ID dokumentu"
+            disabled
+          />
 
           <DatePickerInput
             name="documentExpiryDate"
@@ -228,7 +245,12 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
       enableSorting: false,
       accessorFn: (row) => row.institution,
       cell: ({ row }) => (
-        <Input value={formB.crewMembers[row.index].institution} placeholder="Wprowadź nazwę jednostki" disabled />
+        <Input
+          aria-label={`Nazwa jednostki, wiersz ${row.index + 1}`}
+          value={formB.crewMembers[row.index].institution}
+          placeholder="Wprowadź nazwę jednostki"
+          disabled
+        />
       ),
       size: 20,
     },

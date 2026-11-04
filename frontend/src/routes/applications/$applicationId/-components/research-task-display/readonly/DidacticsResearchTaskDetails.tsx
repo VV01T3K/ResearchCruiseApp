@@ -8,6 +8,7 @@ export function DidacticsResearchTaskDetails({ data }: Props) {
   return (
     <div>
       <Input
+        aria-label={`Opis zajęcia dydaktycznego, ${data.description}`}
         name="researchTasks[].description"
         value={data.description}
         label="Opis zajęcia dydaktycznego"

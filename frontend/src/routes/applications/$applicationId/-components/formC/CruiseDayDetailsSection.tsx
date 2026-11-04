@@ -59,7 +59,13 @@ const cruiseDayDetailsColumns = (
     accessorFn: (row) => row.taskName,
     cell: ({ row }) => (
       <form.AppField name={`cruiseDaysDetails[${row.index}].taskName`}>
-        {(field) => <field.TextField disabled={isReadonly} placeholder="Nazwa zadania" />}
+        {(field) => (
+          <field.TextField
+            aria-label={`Nazwa zadania, wiersz ${row.index + 1}`}
+            disabled={isReadonly}
+            placeholder="Nazwa zadania"
+          />
+        )}
       </form.AppField>
     ),
     size: 20,
@@ -71,7 +77,13 @@ const cruiseDayDetailsColumns = (
     accessorFn: (row) => row.region,
     cell: ({ row }) => (
       <form.AppField name={`cruiseDaysDetails[${row.index}].region`}>
-        {(field) => <field.TextField disabled={isReadonly} placeholder="Rejon zadania" />}
+        {(field) => (
+          <field.TextField
+            aria-label={`Rejon zadania, wiersz ${row.index + 1}`}
+            disabled={isReadonly}
+            placeholder="Rejon zadania"
+          />
+        )}
       </form.AppField>
     ),
     size: 20,
@@ -83,7 +95,13 @@ const cruiseDayDetailsColumns = (
     accessorFn: (row) => row.position,
     cell: ({ row }) => (
       <form.AppField name={`cruiseDaysDetails[${row.index}].position`}>
-        {(field) => <field.TextField disabled={isReadonly} placeholder="Pozycja" />}
+        {(field) => (
+          <field.TextField
+            aria-label={`Pozycja, wiersz ${row.index + 1}`}
+            disabled={isReadonly}
+            placeholder="Pozycja"
+          />
+        )}
       </form.AppField>
     ),
     size: 20,
@@ -95,7 +113,9 @@ const cruiseDayDetailsColumns = (
     accessorFn: (row) => row.comment,
     cell: ({ row }) => (
       <form.AppField name={`cruiseDaysDetails[${row.index}].comment`}>
-        {(field) => <field.TextField disabled={isReadonly} placeholder="Uwagi" />}
+        {(field) => (
+          <field.TextField aria-label={`Uwagi, wiersz ${row.index + 1}`} disabled={isReadonly} placeholder="Uwagi" />
+        )}
       </form.AppField>
     ),
     size: 20,
