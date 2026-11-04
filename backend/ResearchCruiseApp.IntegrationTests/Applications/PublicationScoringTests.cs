@@ -152,6 +152,37 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Import_WhenComposedAndDecomposedRowsExist_KeepsUsersLinkedRow()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var owner = await TestUsers.Create(app, "owner@example.invalid", RoleName.CruiseManager);
+        using var client = await TestApplications.Login(app, owner.Email!);
+        await app.InDatabase(async db =>
+        {
+            var unlinked = ImportedPublication("Gda\u0144sk").ToEntity();
+            unlinked.Id = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var linked = ImportedPublication("Gdan\u0301sk").ToEntity();
+            linked.Id = Guid.Parse("00000000-0000-0000-0000-000000000002");
+            linked.UserPublications.Add(new UserPublication { UserId = Guid.Parse(owner.Id) });
+            db.Publications.AddRange(unlinked, linked);
+            await db.SaveChangesAsync(ct);
+        });
+
+        using var imported = await client.PostAsJsonAsync(
+            ImportRoute,
+            new[] { ImportedPublication("Gdan\u0301sk") },
+            ct
+        );
+
+        Assert.Equal(
+            new ImportPublicationsResponse(0, 1),
+            await imported.Content.ReadFromJsonAsync<ImportPublicationsResponse>(ct)
+        );
+        await app.InDatabase(async db => Assert.Equal(1, await db.UserPublications.CountAsync(ct)));
+    }
+
+    [Fact]
     public async Task Import_WhenPointsAreZero_KeepsRowSelectableInFormAWithZeroScore()
     {
         var ct = TestContext.Current.CancellationToken;

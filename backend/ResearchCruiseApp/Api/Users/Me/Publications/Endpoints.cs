@@ -107,17 +107,18 @@ public static class PublicationsEndpoints
 
         var titles = requests.Select(request => request.Title).Distinct().ToList();
 
+        var linkedPublicationIds = await dbContext
+            .UserPublications.Where(userPublication => userPublication.UserId == currentUserId)
+            .Select(userPublication => userPublication.Publication.Id)
+            .ToHashSetAsync(cancellationToken);
         var existingPublications = (
             await dbContext
                 .Publications.Where(publication => titles.Contains(publication.Title))
                 .ToListAsync(cancellationToken)
         )
+            .OrderByDescending(publication => linkedPublicationIds.Contains(publication.Id))
             .DistinctBy(DatabaseEqualityKey)
             .ToDictionary(DatabaseEqualityKey);
-        var linkedPublicationIds = await dbContext
-            .UserPublications.Where(userPublication => userPublication.UserId == currentUserId)
-            .Select(userPublication => userPublication.Publication.Id)
-            .ToHashSetAsync(cancellationToken);
 
         var alreadyAddedPublications = new HashSet<Publication>();
         var imported = 0;
