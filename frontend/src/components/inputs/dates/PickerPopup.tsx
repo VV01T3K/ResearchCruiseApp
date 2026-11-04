@@ -17,10 +17,10 @@ export function pickerTriggerClassName({
 }) {
   return cn(
     'relative inline-flex w-full items-center justify-between gap-4 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-left text-sm text-gray-900',
-    'transition duration-300 ease-in-out outline-none',
+    'transition duration-300 ease-in-out focus-visible:outline-hidden',
     disabled
       ? 'cursor-default bg-gray-200'
-      : 'cursor-pointer focus:border-blue-500 focus:shadow focus:ring-blue-500 focus:outline-none',
+      : 'cursor-pointer focus:border-blue-500 focus:shadow focus:ring-blue-500 focus:outline-hidden',
     className,
     hasErrors(errors) && invalidInputClassName
   );
@@ -42,7 +42,7 @@ export function PickerPopup({ 'aria-label': ariaLabel, children }: Props) {
         <Popover.Popup
           aria-label={ariaLabel}
           className={cn(
-            'max-h-[var(--available-height)] origin-[var(--transform-origin)] overflow-y-auto rounded-lg bg-white shadow-xl ring-1 ring-black/10 outline-none',
+            'max-h-[var(--available-height)] origin-[var(--transform-origin)] overflow-y-auto rounded-lg bg-white shadow-xl ring-1 ring-black/10 focus-visible:outline-hidden',
             'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
             'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
             'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0',
@@ -74,7 +74,7 @@ export function PickerClearButton({
       aria-label={ariaLabel}
       onClick={onClick}
       onMouseDown={onMouseDown}
-      className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded outline-none hover:text-red-500 focus-visible:ring-2 focus-visible:ring-blue-500"
+      className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded hover:text-red-500 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-hidden"
     >
       <XIcon className="h-4 w-4" />
     </button>

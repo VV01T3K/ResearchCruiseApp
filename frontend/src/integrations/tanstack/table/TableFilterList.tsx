@@ -10,7 +10,7 @@ import { Button } from '@/components/shared/Button';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
 
 const fieldClassName =
-  'block w-full rounded-lg border border-gray-300 bg-gray-50 text-sm font-normal text-gray-900 transition duration-300 ease-in-out placeholder:text-gray-500 focus:border-primary focus:shadow focus:outline-none';
+  'block w-full rounded-lg border border-gray-300 bg-gray-50 text-sm font-normal text-gray-900 transition duration-300 ease-in-out placeholder:text-gray-500 focus:border-primary focus:shadow focus:outline-hidden';
 
 type Props<TData extends object, TValue> = {
   header: Header<TData, TValue>;
@@ -158,7 +158,7 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
             <Combobox.Empty className="px-5 pb-3 text-sm font-normal text-gray-600 empty:hidden">
               Brak pasujących opcji
             </Combobox.Empty>
-            <Combobox.List ref={listRef} className="max-h-64 overflow-y-auto px-3 pb-2 outline-none">
+            <Combobox.List ref={listRef} className="max-h-64 overflow-y-auto px-3 pb-2 focus-visible:outline-hidden">
               <div role="presentation" className="relative" style={{ height: virtualizer.getTotalSize() }}>
                 {virtualizer.getVirtualItems().map(({ index, key, start }) => {
                   const option = visibleOptions[index];
