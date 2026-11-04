@@ -32,6 +32,7 @@ type Props = {
   allowEmptyOption?: boolean;
   placeholder?: string;
   defaultValue?: string;
+  'aria-label'?: string;
 };
 
 export function DropdownInput({
@@ -48,6 +49,7 @@ export function DropdownInput({
   allowEmptyOption = false,
   placeholder = 'Wybierz',
   defaultValue = '',
+  'aria-label': ariaLabel,
 }: Props) {
   const aria = useInputAria(errors, helper);
   const allPossibleOptions = React.useMemo(() => {
@@ -91,13 +93,14 @@ export function DropdownInput({
       >
         <Select.Trigger
           {...aria.inputProps}
+          aria-label={ariaLabel}
           className={cn(
             'relative inline-flex w-full items-center justify-between',
             'rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900',
             'p-2.5',
             'transition duration-300 ease-in-out',
             !disabled && 'cursor-pointer hover:border-gray-400',
-            !disabled && 'focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring-inset',
+            !disabled && 'focus:border-blue-500 focus:ring-blue-500 focus:outline-hidden focus:ring-inset',
             disabled && 'cursor-not-allowed bg-gray-200',
             hasErrors(errors) && invalidInputClassName
           )}
@@ -137,7 +140,7 @@ export function DropdownInput({
                       value={opt.value}
                       className={cn(
                         'flex items-center justify-between gap-2 border-b border-gray-200 px-3 py-2 text-sm text-gray-700 last:border-b-0',
-                        'cursor-pointer outline-none select-none',
+                        'cursor-pointer focus-visible:outline-hidden select-none',
                         'transition-all duration-150 ease-out',
                         'data-[highlighted]:bg-primary-50 data-[highlighted]:text-gray-900',
                         'data-[selected]:bg-primary-50 data-[selected]:text-primary-800 data-[selected]:font-medium'

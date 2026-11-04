@@ -22,7 +22,7 @@ export function MonthPickerPopover({ value, onChange, renderDate }: Props) {
   return (
     <Popover.Root open={expanded} onOpenChange={setExpanded} modal={false}>
       <div>
-        <Popover.Trigger className="relative inline-flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg px-5 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+        <Popover.Trigger className="relative inline-flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg px-5 py-2.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-hidden">
           {renderDate
             ? renderDate(value)
             : new Date(value.year, value.month).toLocaleDateString('pl-PL', { month: '2-digit', year: 'numeric' })}

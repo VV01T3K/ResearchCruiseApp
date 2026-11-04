@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -78,6 +79,13 @@ public sealed class AccountLifecycleTests(SqlFixture fixture) : IAsyncLifetime
         using var deactivated = await office.DeleteAsync($"/v2/users/{userId}/acceptance", ct);
         Assert.Equal(HttpStatusCode.NoContent, deactivated.StatusCode);
         await AssertAccount(app, userId, true, false, false);
+        using var staleAccessRequest = new HttpRequestMessage(HttpMethod.Get, "/v2/users/me");
+        staleAccessRequest.Headers.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            session.Access
+        );
+        using var staleAccess = await client.SendAsync(staleAccessRequest, ct);
+        Assert.Equal(HttpStatusCode.Unauthorized, staleAccess.StatusCode);
         using var login = await client.PostAsJsonAsync(
             "/v2/auth/login",
             new { Email = email, Password = TestUsers.Password },

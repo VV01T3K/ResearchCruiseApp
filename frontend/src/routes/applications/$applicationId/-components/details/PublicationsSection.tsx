@@ -94,6 +94,7 @@ export function PublicationsSection() {
         return (
           <NumberInput
             name={name}
+            aria-label={`Punkty ministerialne, wiersz ${row.index + 1}`}
             value={ministerialPoints}
             errors={errors}
             minimum={0}

@@ -50,14 +50,29 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
                   }}
                 >
                   {(field) => (
-                    <field.CheckboxField size="md" label="Zrealizowane" labelPosition="top" disabled={isReadonly} />
+                    <field.CheckboxField
+                      size="md"
+                      label={
+                        <>
+                          Zrealizowane
+                          <span className="sr-only">{`, wiersz ${row.index + 1}`}</span>
+                        </>
+                      }
+                      labelPosition="top"
+                      disabled={isReadonly}
+                    />
                   )}
                 </form.AppField>
                 <form.AppField name={`researchTasksEffects[${row.index}].managerConditionMet`}>
                   {(field) => (
                     <field.CheckboxField
                       size="md"
-                      label="Czy naliczyć punkty kierownikowi?"
+                      label={
+                        <>
+                          Czy naliczyć punkty kierownikowi?
+                          <span className="sr-only">{` Wiersz ${row.index + 1}`}</span>
+                        </>
+                      }
                       labelPosition="top"
                       disabled={isReadonly || taskDone !== true}
                     />
@@ -67,7 +82,12 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
                   {(field) => (
                     <field.CheckboxField
                       size="md"
-                      label="Czy naliczyć punkty zastępcy?"
+                      label={
+                        <>
+                          Czy naliczyć punkty zastępcy?
+                          <span className="sr-only">{` Wiersz ${row.index + 1}`}</span>
+                        </>
+                      }
                       labelPosition="top"
                       disabled={isReadonly || taskDone !== true}
                     />

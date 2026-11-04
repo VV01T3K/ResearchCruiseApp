@@ -66,6 +66,7 @@ function UserManagementPage() {
       ),
       cell: ({ row }) => (
         <Checkbox
+          aria-label={`Zaznacz użytkownika ${row.original.firstName} ${row.original.lastName}`}
           name={`selectUser-${row.id}`}
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}

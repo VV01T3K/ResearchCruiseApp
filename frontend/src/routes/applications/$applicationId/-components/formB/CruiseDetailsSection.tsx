@@ -119,6 +119,7 @@ const longResearchEquipmentColumns = (
       <form.AppField name={`longResearchEquipments[${row.index}].action`}>
         {(field) => (
           <field.SelectField
+            aria-label={`Czynność, wiersz ${row.index + 1}`}
             disabled={isReadonly}
             allOptions={[
               { value: 'Put', inlineLabel: 'Pozostawienie' },
