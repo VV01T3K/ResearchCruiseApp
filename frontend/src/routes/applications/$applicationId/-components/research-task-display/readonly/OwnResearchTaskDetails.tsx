@@ -37,6 +37,7 @@ export function OwnResearchTaskDetails({ data }: Props) {
       <NumberInput
         nullable
         name="researchTasks[].ministerialPoints"
+        aria-label={`Przewidywane punkty ministerialne, ${data.title}`}
         value={data.ministerialPoints}
         errors={pointsErrors}
         minimum={0}

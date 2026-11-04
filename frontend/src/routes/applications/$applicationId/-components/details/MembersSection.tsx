@@ -29,6 +29,7 @@ export function MembersSection() {
       cell: ({ row }) => (
         <NumberInput
           name={`ugTeams[${row.index}].noOfEmployees`}
+          aria-label={`Liczba pracowników, wiersz ${row.index + 1}`}
           value={parseInt(row.original.noOfEmployees)}
           minimum={0}
           className="mx-4"
@@ -52,6 +53,7 @@ export function MembersSection() {
       cell: ({ row }) => (
         <NumberInput
           name={`ugTeams[${row.index}].noOfStudents`}
+          aria-label={`Liczba studentów, wiersz ${row.index + 1}`}
           value={parseInt(row.original.noOfStudents)}
           minimum={0}
           className="mx-4"
@@ -85,6 +87,7 @@ export function MembersSection() {
       cell: ({ row }) => (
         <NumberInput
           name={`guestTeams[${row.index}].noOfPersons`}
+          aria-label={`Liczba osób, wiersz ${row.index + 1}`}
           value={Number(row.original.noOfPersons)}
           minimum={0}
           className="mx-4"

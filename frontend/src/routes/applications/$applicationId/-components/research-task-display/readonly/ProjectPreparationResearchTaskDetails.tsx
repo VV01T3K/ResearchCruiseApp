@@ -29,6 +29,7 @@ export function ProjectPreparationResearchTaskDetails({ data }: Props) {
 
       <DropdownInput
         name="researchTasks[].financingApproved"
+        aria-label={`Otrzymano decyzję o finansowaniu? ${data.title}`}
         value={String(data.financingApproved)}
         errors={approvedErrors}
         allOptions={[

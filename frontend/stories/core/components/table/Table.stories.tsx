@@ -110,6 +110,19 @@ export const Filtered: Story = {
   },
 };
 
+export const FilterOpen: Story = {
+  args: { columnFiltersState: [{ id: 'Name', value: ['Jane Doe'] }] },
+  play: async ({ canvas, canvasElement, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: /Sortuj i filtruj: Name/ }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Sortuj i filtruj: Name',
+    });
+    await expect(within(dialog).getByRole('option', { name: 'Jane Doe' })).toHaveAttribute('aria-selected', 'true');
+    // axe skips Base UI's focus guards only once the dialog is fully visible.
+    await waitFor(() => expect(getComputedStyle(dialog).opacity).toBe('1'));
+  },
+};
+
 export const HeaderStates: Story = {
   args: {
     columns: [

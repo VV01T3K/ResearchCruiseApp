@@ -77,6 +77,7 @@ function MyPublicationsPage() {
       ),
       cell: ({ row }) => (
         <Checkbox
+          aria-label={`Zaznacz publikację ${row.original.title}`}
           name={`selectPublication-${row.id}`}
           checked={row.getIsSelected()}
           disabled={!row.getCanSelect()}
