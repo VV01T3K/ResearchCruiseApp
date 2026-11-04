@@ -21,7 +21,6 @@ import {
   useImportCurrentUserPublications,
 } from '@/api/generated/endpoints/users.gen';
 import type { PublicationResponse } from '@/api/generated/schemas';
-import { classifyError } from '@/integrations/sentry/mutations';
 
 export const Route = createFileRoute('/my-publications/')({
   component: MyPublicationsPage,
@@ -59,10 +58,7 @@ function MyPublicationsPage() {
     setSelectedPublications((selected) =>
       Object.fromEntries(Object.entries(selected).filter(([id]) => !deletedIds.has(id)))
     );
-    if (
-      deletedIds.size < ids.length &&
-      !results.some((result) => result.status === 'rejected' && classifyError(result.reason) === 'session')
-    ) {
+    if (deletedIds.size < ids.length) {
       toast.error(`Nie udało się usunąć ${ids.length - deletedIds.size} z ${ids.length} zaznaczonych publikacji`);
     }
   }

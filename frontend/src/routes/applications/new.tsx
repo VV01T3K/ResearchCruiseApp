@@ -30,7 +30,6 @@ import { useSaveTracking } from '@/integrations/tanstack/router/useSaveTracking'
 import { useLeaveAfterSave } from '@/integrations/tanstack/router/useLeaveAfterSave';
 import { setServerFormErrors } from '@/integrations/tanstack/form/errors';
 import { getErrorMessage } from '@/api/errors';
-import { classifyError } from '@/integrations/sentry/mutations';
 
 export const Route = createFileRoute('/applications/new')({
   component: NewCruiseApplicationPage,
@@ -120,7 +119,7 @@ function NewCruiseApplicationPage() {
     } catch (error) {
       saving.finish();
       setServerFormErrors(form, error);
-      if (classifyError(error) !== 'session') toast.error(getErrorMessage(error, saveFailedMessage(values.draft)));
+      toast.error(getErrorMessage(error, saveFailedMessage(values.draft)));
       navigateToFirstError();
       throw error;
     } finally {

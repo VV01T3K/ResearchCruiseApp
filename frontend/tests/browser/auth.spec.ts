@@ -16,6 +16,7 @@ import {
   getGetUsersMockHandler,
 } from '@/api/generated/mocks/users/users.msw.gen';
 import { getGetApplicationFormAMockHandler } from '@/api/generated/mocks/applications/applications.msw.gen';
+import { responseErrorMessage } from '@/api/errors';
 import { test, expect, fail, applicationForms } from './fixtures';
 import { admin, outsider, session } from '../data/accounts';
 import { applicationId } from '../data/forms';
@@ -134,9 +135,10 @@ test.describe('authenticated session', () => {
   });
 
   for (const action of ['a background refresh', 'a password change'] as const) {
-    test(`after a session ended on another device, ${action} returns to login without an error message`, async ({
+    test(`after a session ended on another device, ${action} returns to login once`, async ({
       page,
       network,
+      requests,
     }) => {
       if (action === 'a background refresh') await page.clock.install();
       await page.goto(action === 'a background refresh' ? '/user-management' : '/account-settings');
@@ -164,7 +166,11 @@ test.describe('authenticated session', () => {
       await expect(page.getByLabel('E-mail')).toBeVisible();
       // Read once: a retrying check would pass after the toast closes itself.
       await page.waitForTimeout(500);
-      expect(await page.getByRole('region', { name: 'Notifications' }).textContent()).toBe('');
+      const toasts = await page.getByRole('region', { name: 'Notifications' }).getByRole('dialog').allTextContents();
+      expect(toasts).toEqual(
+        action === 'a background refresh' ? [] : [expect.stringContaining(responseErrorMessage(401))]
+      );
+      expect(requests.bodies('POST /v2/auth/refresh')).toHaveLength(1);
     });
   }
 

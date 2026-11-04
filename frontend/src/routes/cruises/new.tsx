@@ -21,7 +21,6 @@ import { FormView } from '@/features/cruises/components/FormView';
 import { CruiseFormSchema, cruiseFormDefaultValues } from '@/features/cruises/schemas/form.schema';
 import { useCreateCruise } from '@/api/generated/endpoints/cruises.gen';
 import { useGetApplicationsForCruisePlanningSuspense } from '@/api/generated/endpoints/applications.gen';
-import { classifyError } from '@/integrations/sentry/mutations';
 
 const searchSchema = z.object({
   blockade: z.boolean().optional(),
@@ -67,7 +66,7 @@ function NewCruisePage() {
         saving.finish();
         console.error(error);
         setServerFormErrors(form, error);
-        if (classifyError(error) !== 'session') toast.error(getErrorMessage(error, 'Nie udało się utworzyć rejsu'));
+        toast.error(getErrorMessage(error, 'Nie udało się utworzyć rejsu'));
         navigateToFirstError();
       }
     },
