@@ -215,15 +215,13 @@ internal class IdentityService(
             {
                 return alreadyTaken;
             }
+            if (identityResult.Succeeded)
+                identityResult = await userManager.AddToRoleAsync(user, roleName);
         }
         else
         {
-            identityResult = await ResetUnconfirmedUser(user, registerForm);
+            identityResult = await userManager.UpdateSecurityStampAsync(user);
         }
-        if (!identityResult.Succeeded)
-            return identityResult.ToApplicationResult();
-
-        identityResult = await userManager.AddToRoleAsync(user, roleName);
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
@@ -247,23 +245,6 @@ internal class IdentityService(
         )
         || await dbContext.UserPublications.AnyAsync(publication => publication.UserId == userId)
         || await dbContext.UserEffects.AnyAsync(effect => effect.UserId == userId);
-
-    private async Task<IdentityResult> ResetUnconfirmedUser(User user, RegisterFormDto registerForm)
-    {
-        user.FirstName = registerForm.FirstName;
-        user.LastName = registerForm.LastName;
-
-        var identityResult = await userManager.RemoveFromRolesAsync(
-            user,
-            await userManager.GetRolesAsync(user)
-        );
-        if (identityResult.Succeeded)
-            identityResult = await userManager.RemovePasswordAsync(user);
-
-        return identityResult.Succeeded
-            ? await userManager.AddPasswordAsync(user, registerForm.Password)
-            : identityResult;
-    }
 
     public async Task<bool> CanUserLogin(string email, string password)
     {

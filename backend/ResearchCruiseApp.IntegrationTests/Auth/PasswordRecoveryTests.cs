@@ -115,6 +115,52 @@ public sealed class PasswordRecoveryTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Single(app.Transport.Messages);
     }
 
+    [Fact]
+    public async Task ResetPassword_WhenAccountIsConfirmedButNotAccepted_SetsPasswordUsedAfterAcceptance()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        var user = await TestUsers.Create(app, "pending@example.invalid");
+        await app.InDatabase(db =>
+            db.Users.ExecuteUpdateAsync(set => set.SetProperty(row => row.Accepted, false), ct)
+        );
+        using var client = app.CreateApiClient();
+        const string replacement = "ReplacementPassword2!";
+
+        using var requested = await client.PostAsJsonAsync(
+            "/v2/auth/password-reset-request",
+            new { Email = user.Email },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NoContent, requested.StatusCode);
+        await app.Dispatch(ct);
+        var query = QueryHelpers.ParseQuery(
+            Link(Assert.Single(app.Transport.Messages).Payload.Body, "reset-password").Query
+        );
+        using var changed = await client.PostAsJsonAsync(
+            "/v2/auth/password-reset",
+            new
+            {
+                EmailBase64 = query["emailBase64"].ToString(),
+                ResetCode = query["resetCode"].ToString(),
+                Password = replacement,
+                PasswordConfirm = replacement,
+            },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
+
+        await app.InDatabase(db =>
+            db.Users.ExecuteUpdateAsync(set => set.SetProperty(row => row.Accepted, true), ct)
+        );
+        using var login = await client.PostAsJsonAsync(
+            "/v2/auth/login",
+            new { Email = user.Email, Password = replacement },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.OK, login.StatusCode);
+    }
+
     internal static Uri Link(string html, string route)
     {
         var match = Regex.Match(

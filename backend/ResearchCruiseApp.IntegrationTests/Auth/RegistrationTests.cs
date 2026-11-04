@@ -151,7 +151,7 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Register_WhenEmailBelongsToUnconfirmedAccount_ReplacesItAndItsOldLink()
+    public async Task Register_WhenEmailBelongsToUnconfirmedAccount_KeepsItAndSendsNewLink()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -166,6 +166,10 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         var oldLink = PasswordRecoveryTests.Link(
             app.Transport.Messages[^1].Payload.Body,
             "confirm-email"
+        );
+        string? passwordHash = null;
+        await app.InDatabase(async db =>
+            passwordHash = (await db.Users.SingleAsync(ct)).PasswordHash
         );
 
         using var second = await Register(client, email, newPassword, "Replaced", ct);
@@ -186,7 +190,9 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         );
         await app.InDatabase(async db =>
         {
-            Assert.Equal("Replaced", (await db.Users.SingleAsync(ct)).FirstName);
+            var stored = await db.Users.SingleAsync(ct);
+            Assert.Equal(passwordHash, stored.PasswordHash);
+            Assert.Equal("Original", stored.FirstName);
             Assert.Single(await db.UserRoles.ToListAsync(ct));
         });
         using var oldConfirm = await client.GetAsync("/v2/auth/confirm-email" + oldLink.Query, ct);
@@ -197,9 +203,15 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         await app.InDatabase(db =>
             db.Users.ExecuteUpdateAsync(set => set.SetProperty(user => user.Accepted, true), ct)
         );
-        using var login = await client.PostAsJsonAsync(
+        using var rejected = await client.PostAsJsonAsync(
             "/v2/auth/login",
             new { Email = email, Password = newPassword },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.Unauthorized, rejected.StatusCode);
+        using var login = await client.PostAsJsonAsync(
+            "/v2/auth/login",
+            new { Email = email, Password = TestUsers.Password },
             ct
         );
         Assert.Equal(HttpStatusCode.OK, login.StatusCode);
