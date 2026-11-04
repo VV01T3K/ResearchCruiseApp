@@ -3,6 +3,13 @@ import { Button as BaseButton } from '@base-ui/react/button';
 import { Link, Props as LinkProps } from '@/components/shared/Link';
 import { cn } from '@/lib/utils';
 
+type ButtonAttributes = {
+  role?: React.HTMLAttributes<HTMLButtonElement>['role'];
+  name?: string;
+  id?: string;
+  'aria-describedby'?: string;
+  'aria-invalid'?: boolean;
+};
 type Props = {
   children: React.ReactNode;
 
@@ -10,15 +17,13 @@ type Props = {
   size?: keyof typeof sizes;
   className?: string;
   disabled?: boolean;
-  role?: React.HTMLAttributes<HTMLButtonElement>['role'];
-  name?: string;
-  id?: string;
   title?: string;
-  'aria-describedby'?: string;
-  'aria-invalid'?: boolean;
 } & (
-  | { type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type']; onClick?: (evt: React.MouseEvent) => void }
-  | ({ type: 'link' } & Omit<LinkProps, 'variant'>)
+  | ({
+      type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
+      onClick?: (evt: React.MouseEvent) => void;
+    } & ButtonAttributes)
+  | ({ type: 'link' } & Omit<LinkProps, 'variant'> & Partial<Record<keyof ButtonAttributes, never>>)
 );
 export type ButtonVariant = keyof typeof variants;
 export function Button(props: Props) {
