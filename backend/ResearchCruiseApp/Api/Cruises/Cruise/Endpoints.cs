@@ -65,6 +65,7 @@ public static class CruiseEndpoints
     private static async Task<Results<Created, ProblemHttpResult>> Create(
         CreateRequest request,
         YearBasedKeyGenerator yearBasedKeyGenerator,
+        IdentityService identityService,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
@@ -79,8 +80,6 @@ public static class CruiseEndpoints
         {
             StartDate = request.StartDate,
             EndDate = request.EndDate,
-            MainCruiseManagerId = request.MainManagerId,
-            MainDeputyManagerId = request.DeputyManagerId,
             CruiseApplications = cruiseApplications,
             Title = request.Title,
             ShipUnavailable = request.ShipUnavailable,
@@ -98,6 +97,15 @@ public static class CruiseEndpoints
                 )
                 .ToProblemHttpResult();
         }
+
+        var managerResult = await UpdateManagers(
+            newCruise,
+            request.MainManagerId,
+            request.DeputyManagerId,
+            identityService
+        );
+        if (!managerResult.IsSuccess)
+            return managerResult.Error!.ToProblemHttpResult();
 
         var affectedCruises = await dbContext
             .Cruises.IncludeCruiseApplications()
@@ -181,7 +189,12 @@ public static class CruiseEndpoints
         cruise.Title = request.Title;
         cruise.ShipUnavailable = request.ShipUnavailable;
 
-        var managerResult = await UpdateManagers(cruise, request, identityService);
+        var managerResult = await UpdateManagers(
+            cruise,
+            request.MainManagerId,
+            request.DeputyManagerId,
+            identityService
+        );
         if (!managerResult.IsSuccess)
         {
             return managerResult.Error!.ToProblemHttpResult();
@@ -262,28 +275,41 @@ public static class CruiseEndpoints
 
     private static async Task<Result> UpdateManagers(
         DomainCruise cruise,
-        UpdateRequest request,
+        Guid mainManagerId,
+        Guid deputyManagerId,
         IdentityService identityService
     )
     {
         if (
-            request.MainManagerId != Guid.Empty
-            && await identityService.GetUserDtoById(request.MainManagerId) is null
+            mainManagerId != Guid.Empty
+            && mainManagerId != cruise.MainCruiseManagerId
+            && !await identityService.IsActiveWithAnyRole(
+                mainManagerId,
+                IdentityService.CruiseManagerRoleNames
+            )
         )
         {
-            return Error.ResourceNotFound("Podany kierownik nie istnieje");
+            return Error.InvalidArgument(
+                "Podany kierownik nie istnieje lub nie ma aktywnego konta z uprawnieniami kierownika."
+            );
         }
 
         if (
-            request.DeputyManagerId != Guid.Empty
-            && await identityService.GetUserDtoById(request.DeputyManagerId) is null
+            deputyManagerId != Guid.Empty
+            && deputyManagerId != cruise.MainDeputyManagerId
+            && !await identityService.IsActiveWithAnyRole(
+                deputyManagerId,
+                IdentityService.CruiseManagerRoleNames
+            )
         )
         {
-            return Error.ResourceNotFound("Podany zastępca nie istnieje");
+            return Error.InvalidArgument(
+                "Podany zastępca kierownika nie istnieje lub nie ma aktywnego konta z uprawnieniami kierownika."
+            );
         }
 
-        cruise.MainCruiseManagerId = request.MainManagerId;
-        cruise.MainDeputyManagerId = request.DeputyManagerId;
+        cruise.MainCruiseManagerId = mainManagerId;
+        cruise.MainDeputyManagerId = deputyManagerId;
         return Result.Empty;
     }
 

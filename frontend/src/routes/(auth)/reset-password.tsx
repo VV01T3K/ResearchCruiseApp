@@ -96,7 +96,12 @@ function ResetPasswordPage() {
             )}
           </div>
           <div className="text-center text-gray-600">
-            {result === 'success' && <>Hasło zostało pomyślnie zmienione. Możesz teraz się zalogować</>}
+            {result === 'success' && (
+              <>
+                Hasło zostało pomyślnie zmienione. Możesz teraz się zalogować, chyba że Twoje konto czeka jeszcze na
+                akceptację Biura Armatora.
+              </>
+            )}
             {result !== 'success' && (
               <>
                 {errorMessage} W razie problemów napisz na{' '}

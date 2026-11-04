@@ -87,7 +87,7 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
-    public async Task UpdateCruise_WhenManagerDoesNotExist_PreservesDatesTitleAndAssignments()
+    public async Task WriteCruise_WhenNewManagerIsNotActive_RejectsButKeepsExistingManager()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -95,13 +95,23 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
         var office = await TestUsers.Create(app, "office@example.invalid", RoleName.Administrator);
         using var client = await TestApplications.Login(app, office.Email!);
         var route = $"/v2/cruises/{id}";
+        var inactive = await TestUsers.Create(
+            app,
+            "inactive@example.invalid",
+            RoleName.CruiseManager
+        );
+        var inactiveId = Guid.Parse(inactive.Id);
+        await app.InDatabase(db =>
+            db.Users.Where(user => user.Id == inactive.Id)
+                .ExecuteUpdateAsync(set => set.SetProperty(user => user.Accepted, false), ct)
+        );
 
         using var rejected = await client.PatchAsJsonAsync(
             route,
             new UpdateRequest(
                 "2030-07-01",
                 "2030-07-02",
-                Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                inactiveId,
                 Guid.Empty,
                 [],
                 "Changed",
@@ -111,16 +121,29 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
             ct
         );
 
-        Assert.Equal(HttpStatusCode.NotFound, rejected.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
+        await AssertUnchanged(app, id);
+        using var rejectedCreate = await client.PostAsJsonAsync(
+            "/v2/cruises",
+            new CreateRequest("2030-08-01", "2030-08-02", inactiveId, Guid.Empty, [], "New", false),
+            ct
+        );
+        Assert.Equal(HttpStatusCode.BadRequest, rejectedCreate.StatusCode);
         await AssertUnchanged(app, id);
         Assert.Empty(app.Transport.Messages);
 
+        await app.InDatabase(db =>
+            db.Cruises.ExecuteUpdateAsync(
+                set => set.SetProperty(cruise => cruise.MainCruiseManagerId, inactiveId),
+                ct
+            )
+        );
         using var accepted = await client.PatchAsJsonAsync(
             route,
             new UpdateRequest(
                 "2030-07-01",
                 "2030-07-02",
-                Guid.Empty,
+                inactiveId,
                 Guid.Empty,
                 [],
                 "Changed",
@@ -139,6 +162,7 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Equal("Changed", cruise.Title);
             Assert.Equal("2030-07-01", cruise.StartDate);
             Assert.Equal("2030-07-02", cruise.EndDate);
+            Assert.Equal(inactiveId, cruise.MainCruiseManagerId);
             Assert.Empty(cruise.CruiseApplications);
             var application = await db
                 .CruiseApplications.Include(row => row.Cruise)

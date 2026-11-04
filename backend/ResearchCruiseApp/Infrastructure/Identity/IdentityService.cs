@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -183,25 +184,79 @@ internal class IdentityService(
         if (!userManager.SupportsUserEmail)
             return Error.ServiceUnavailable();
 
-        var user = CreateUser(registerForm);
-        var identityResult = await userManager.CreateAsync(user, registerForm.Password);
+        var alreadyTaken = IdentityResult
+            .Failed(userManager.ErrorDescriber.DuplicateEmail(registerForm.Email))
+            .ToApplicationResult();
+        var normalizedEmail = userManager.NormalizeEmail(registerForm.Email);
+        var users = await userManager
+            .Users.Where(candidate => candidate.NormalizedEmail == normalizedEmail)
+            .Take(2)
+            .ToListAsync();
+        var user = users.FirstOrDefault();
+        if (
+            users.Count > 1
+            || user is { EmailConfirmed: true } or { Accepted: true }
+            || user is not null && await IsReferenced(Guid.Parse(user.Id))
+        )
+            return alreadyTaken;
+
+        var renewing = user is not null;
+        IdentityResult identityResult;
+        if (user is null)
+        {
+            user = CreateUser(registerForm);
+            try
+            {
+                identityResult = await userManager.CreateAsync(user, registerForm.Password);
+            }
+            catch (DbUpdateException exception)
+                when (exception.InnerException is SqlException { Number: 2601 } sqlException
+                    && sqlException.Message.Contains("UserNameIndex")
+                )
+            {
+                return alreadyTaken;
+            }
+            if (identityResult.Succeeded)
+                identityResult = await userManager.AddToRoleAsync(user, roleName);
+        }
+        else
+        {
+            identityResult = await userManager.RemovePasswordAsync(user);
+        }
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
-        identityResult = await userManager.AddToRoleAsync(user, roleName);
-        if (!identityResult.Succeeded)
-            return identityResult.ToApplicationResult();
-
-        var emailConfirmationCode = await CreateEmailConfirmationCode(user);
-        await emailSender.SendEmailConfirmationEmail(
-            await CreateUserDto(user),
-            roleName,
-            emailConfirmationCode
-        );
+        if (renewing)
+        {
+            var resetCode = await userManager.GeneratePasswordResetTokenAsync(user);
+            await emailSender.SendPasswordResetMessage(
+                await CreateUserDto(user),
+                WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetCode)),
+                registrationRenewed: true
+            );
+        }
+        else
+        {
+            await emailSender.SendEmailConfirmationEmail(
+                await CreateUserDto(user),
+                roleName,
+                await CreateEmailConfirmationCode(user)
+            );
+        }
 
         await transaction.CommitAsync();
         return identityResult.ToApplicationResult();
     }
+
+    private async Task<bool> IsReferenced(Guid userId) =>
+        await dbContext.FormsA.AnyAsync(form =>
+            form.CruiseManagerId == userId || form.DeputyManagerId == userId
+        )
+        || await dbContext.Cruises.AnyAsync(cruise =>
+            cruise.MainCruiseManagerId == userId || cruise.MainDeputyManagerId == userId
+        )
+        || await dbContext.UserPublications.AnyAsync(publication => publication.UserId == userId)
+        || await dbContext.UserEffects.AnyAsync(effect => effect.UserId == userId);
 
     public async Task<bool> CanUserLogin(string email, string password)
     {
@@ -355,8 +410,11 @@ internal class IdentityService(
 
         var refreshToken = user.RefreshToken;
         var refreshTokenExpiry = user.RefreshTokenExpiry;
+        var emailConfirmed = user.EmailConfirmed;
         user.RefreshToken = null;
         user.RefreshTokenExpiry = null;
+        if (user.PasswordHash is null)
+            user.EmailConfirmed = true;
         var result = await userManager.ResetPasswordAsync(
             user,
             resetCode,
@@ -368,6 +426,7 @@ internal class IdentityService(
 
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiry = refreshTokenExpiry;
+        user.EmailConfirmed = emailConfirmed;
         return invalidLink;
     }
 
@@ -647,15 +706,18 @@ internal class IdentityService(
         if (user is null)
             return Error.ResourceNotFound();
 
-        if (email is not null && email != user.Email && await UserWithEmailExists(email))
+        var emailChanged = email is not null && email != user.Email;
+        if (emailChanged && await UserWithEmailExists(email!))
             return Error.Conflict("Użytkownik o tym adresie e-mail już istnieje");
 
-        user.EmailConfirmed = (email == user.Email || email is null) && user.EmailConfirmed;
+        user.EmailConfirmed = !emailChanged && user.EmailConfirmed;
         user.Email = email ?? user.Email;
         user.FirstName = firstName ?? user.FirstName;
         user.LastName = lastName ?? user.LastName;
 
-        var identityResult = await userManager.UpdateAsync(user);
+        var identityResult = emailChanged
+            ? await userManager.UpdateSecurityStampAsync(user)
+            : await userManager.UpdateAsync(user);
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
