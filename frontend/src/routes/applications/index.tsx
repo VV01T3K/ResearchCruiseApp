@@ -91,7 +91,7 @@ function ApplicationsPage() {
       cell: ({ row }) => <span className="whitespace-nowrap">{row.original.date}</span>,
       sortDescFirst: true,
       meta: { filterInputType: 'date', getFilterOptionLabel: (value) => formatDate(value, 'date') },
-      size: 98,
+      size: 92,
     },
     {
       id: 'year',
@@ -148,12 +148,12 @@ function ApplicationsPage() {
       header: 'Kierownik',
       accessorFn: (row) => getPersonName(row.mainManager),
       cell: ({ row }) => (
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
           <Avatar
             fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
             variant="small"
           />
-          <span>{getPersonName(row.original.mainManager)}</span>
+          <span className="text-center">{getPersonName(row.original.mainManager)}</span>
         </div>
       ),
       enableSorting: false,
@@ -184,7 +184,7 @@ function ApplicationsPage() {
           </div>
         );
       },
-      size: 106,
+      size: 105,
     },
     {
       header: 'Punkty',
@@ -261,13 +261,18 @@ function ApplicationsPage() {
           )}
         </>
       ),
-      size: 129,
+      size: 136,
     },
     {
       header: 'Akcje',
       cell: ({ row }) => (
         <>
-          <Button type="link" size="sm" href={`/applications/${row.original.id}/details`} className="flex gap-2">
+          <Button
+            type="link"
+            size="sm"
+            href={`/applications/${row.original.id}/details`}
+            className="mx-auto flex gap-2"
+          >
             Szczegóły
             <MagnifyingGlassPlusIcon className="h-4 w-4" />
           </Button>

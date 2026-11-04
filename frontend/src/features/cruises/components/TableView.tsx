@@ -6,6 +6,7 @@ import { Badge } from '@/components/shared/Badge';
 import { Button } from '@/components/shared/Button';
 import { Guard } from '@/components/shared/Guard';
 import { Table } from '@/components/shared/table/Table';
+import { useWindowSize } from '@/hooks/shared/WindowSizeHook';
 import { Role } from '@/integrations/auth/types';
 import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { formatDate } from '@/lib/dateUtils';
@@ -24,6 +25,7 @@ type Props = {
 };
 export function TableView({ cruises, deleteCruise, buttons }: Props) {
   const currentUser = useCurrentUser();
+  const { width } = useWindowSize();
   const columns: ColumnDef<CruiseResponse>[] = [
     {
       header: 'Numer',
@@ -31,7 +33,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       accessorFn: (row) => row.number,
       sortFn: (a, b) => compareCruiseNumber(a.original.number, b.original.number),
       cell: (cell) => <span className="font-bold">{cell.getValue() as string}</span>,
-      size: 110,
+      size: 102,
     },
     {
       header: 'Tytuł',
@@ -40,27 +42,27 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       cell: ({ row }) => (
         <TitleBadge title={row.original.title ?? undefined} shipUnavailable={row.original.shipUnavailable} />
       ),
-      size: 110,
+      size: 106,
     },
     {
       header: 'Data rozpoczęcia',
       accessorFn: (row) => row.startDate,
       cell: (cell) => formatDate(cell.getValue() as string, 'dateTime'),
       enableColumnFilter: false,
-      size: 150,
+      size: 141,
     },
     {
       header: 'Data zakończenia',
       accessorFn: (row) => row.endDate,
       cell: (cell) => formatDate(cell.getValue() as string, 'dateTime'),
       enableColumnFilter: false,
-      size: 155,
+      size: 142,
     },
     {
       header: 'Status',
       accessorFn: (row) => row.status,
       cell: ({ row }) => <StatusBadge status={row.original.status} />,
-      size: 115,
+      size: 109,
     },
     {
       id: 'mainCruiseManagerAvatar',
@@ -72,19 +74,20 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
             variant="small"
           />
         ) : null,
-      size: 60,
+      size: 56,
     },
     {
       header: 'Kierownik główny',
       accessorFn: (row) => getPersonName(row.mainManager) || 'Nie przypisano',
-      size: 165,
+      size: 166,
     },
     ...(isInRole(currentUser, [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew])
       ? [
           {
             header: 'Zgłoszenia',
             cell: ({ row }) => <ApplicationsCell applications={row.original.applications} />,
-            size: 245,
+            // Narrow enough to fit 1280px; from 1400px the spare width keeps the application link on one line.
+            size: width >= 1400 ? 240 : 190,
           } satisfies ColumnDef<CruiseResponse>,
         ]
       : []),
@@ -92,7 +95,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       id: 'actions',
       header: () => <span className="sr-only">Akcje</span>,
       cell: ({ row }) => <ActionsCell cruise={row.original} deleteCruise={deleteCruise} />,
-      size: 135,
+      size: 136,
     },
   ];
   return (
