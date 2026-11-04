@@ -36,6 +36,8 @@ internal class IdentityService(
     ILogger<IdentityService> logger
 )
 {
+    private const string SecurityStampHashClaim = "security_stamp_hash";
+
     internal static readonly ImmutableArray<string> CruiseManagerRoleNames =
     [
         RoleName.Administrator,
@@ -147,7 +149,7 @@ internal class IdentityService(
         user.RefreshToken = null;
         user.RefreshTokenExpiry = null;
 
-        var identityResult = await userManager.UpdateAsync(user);
+        var identityResult = await userManager.UpdateSecurityStampAsync(user);
 
         return identityResult.Succeeded ? Result.Empty : identityResult.ToApplicationResult();
     }
@@ -296,7 +298,7 @@ internal class IdentityService(
         if (string.IsNullOrWhiteSpace(refreshToken))
             return Error.UnknownIdentity();
 
-        var refreshTokenHash = HashRefreshToken(refreshToken);
+        var refreshTokenHash = HashToken(refreshToken);
         var user = await userManager.Users.SingleOrDefaultAsync(candidate =>
             candidate.RefreshToken == refreshTokenHash
         );
@@ -314,7 +316,7 @@ internal class IdentityService(
 
     public async Task RevokeRefreshToken(string refreshToken)
     {
-        var refreshTokenHash = HashRefreshToken(refreshToken);
+        var refreshTokenHash = HashToken(refreshToken);
         await RevokeRefreshToken(user => user.RefreshToken == refreshTokenHash);
     }
 
@@ -332,7 +334,20 @@ internal class IdentityService(
                     .SetProperty(user => user.RefreshToken, (string?)null)
                     .SetProperty(user => user.RefreshTokenExpiry, (DateTime?)null)
                     .SetProperty(user => user.ConcurrencyStamp, Guid.NewGuid().ToString())
+                    .SetProperty(user => user.SecurityStamp, Guid.NewGuid().ToString())
             );
+    }
+
+    public async Task<bool> IsAccessTokenCurrent(ClaimsPrincipal principal)
+    {
+        var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        var securityStamp = await userManager
+            .Users.Where(user => user.Id == userId)
+            .Select(user => user.SecurityStamp)
+            .SingleOrDefaultAsync();
+
+        return securityStamp is not null
+            && HashToken(securityStamp) == principal.FindFirstValue(SecurityStampHashClaim);
     }
 
     public async Task<Result> ChangePassword(ChangePasswordFormDto changePasswordFormDto)
@@ -770,7 +785,7 @@ internal class IdentityService(
 
         var (refreshToken, refreshTokenExpiry) = CreateRefreshToken();
 
-        user.RefreshToken = HashRefreshToken(refreshToken);
+        user.RefreshToken = HashToken(refreshToken);
         user.RefreshTokenExpiry = refreshTokenExpiry;
 
         var identityResult = await userManager.UpdateAsync(user);
@@ -808,6 +823,7 @@ internal class IdentityService(
         {
             new(ClaimTypes.NameIdentifier, user.Id),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(SecurityStampHashClaim, HashToken(user.SecurityStamp!)),
         };
 
         var roles = await userManager.GetRolesAsync(user);
@@ -835,8 +851,8 @@ internal class IdentityService(
         return (token, expiry);
     }
 
-    private static string HashRefreshToken(string refreshToken)
+    private static string HashToken(string token)
     {
-        return Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken)));
+        return Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
     }
 }
