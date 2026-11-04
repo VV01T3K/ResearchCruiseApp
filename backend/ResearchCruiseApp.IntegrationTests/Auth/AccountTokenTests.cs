@@ -243,6 +243,51 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(3, app.Transport.Messages.Count);
     }
 
+    [Fact]
+    public async Task SetPassword_WhenRegistrationLinkIsExpired_LeavesAccountWithoutPassword()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        await RegistrationTests.EnsureRegistrationRole(app);
+        using var client = app.CreateApiClient();
+        using var registered = await client.PostAsJsonAsync(
+            "/v2/auth/register",
+            new
+            {
+                Email = "target@example.invalid",
+                FirstName = "New",
+                LastName = "Researcher",
+            },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.Created, registered.StatusCode);
+        await app.Dispatch(ct);
+        var query = QueryHelpers.ParseQuery(
+            PasswordRecoveryTests
+                .Link(Assert.Single(app.Transport.Messages).Payload.Body, "reset-password")
+                .Query
+        );
+        var expired = WithCreationTime(
+            app,
+            query["resetCode"].ToString(),
+            new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        );
+
+        using var rejected = await UseToken(
+            client,
+            false,
+            (expired, query["emailBase64"].ToString())
+        );
+
+        Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
+        await app.InDatabase(async db =>
+        {
+            var stored = await db.Users.AsNoTracking().SingleAsync(ct);
+            Assert.Null(stored.PasswordHash);
+            Assert.False(stored.EmailConfirmed);
+        });
+    }
+
     private static async Task<User> CreateAccount(
         TestApplication app,
         HttpClient client,

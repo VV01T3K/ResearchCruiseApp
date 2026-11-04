@@ -333,6 +333,20 @@ test('password reset carries the emailed token and the new password', async ({ p
   ]);
 });
 
+test('an expired set-password link shows why the password was not set', async ({ page, network }) => {
+  network.use(
+    getResetPasswordMockHandler(fail(400, { detail: 'Link do ustawienia hasła jest nieprawidłowy lub wygasł.' }))
+  );
+  await page.goto('/reset-password?emailBase64=email-token&resetCode=expired-token');
+  await page.getByLabel('Hasło', { exact: true }).fill('StrongPass1!');
+  await page.getByLabel('Potwierdź hasło').fill('StrongPass1!');
+  await page.getByRole('button', { name: 'Ustaw hasło' }).click();
+  await expect(page.getByRole('heading', { name: 'Błąd podczas ustawiania hasła' })).toBeVisible();
+  await expect(
+    page.getByText('Link do ustawienia hasła jest nieprawidłowy lub wygasł.', { exact: false })
+  ).toBeVisible();
+});
+
 test('a reset link without parameters shows the error page instead of redirecting', async ({ page }) => {
   await page.goto('/reset-password');
   await expect(page.getByRole('heading', { name: 'Błąd podczas ustawiania hasła' })).toBeVisible();
