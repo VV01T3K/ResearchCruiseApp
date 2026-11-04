@@ -41,6 +41,7 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
             <form.AppField name={`contracts[${row.index}].institutionName`}>
               {(field) => (
                 <field.TextField
+                  aria-label={`Nazwa instytucji, wiersz ${row.index + 1}`}
                   label="Nazwa instytucji"
                   placeholder='np. "Uniwersytet Gdański"'
                   disabled={isReadonly}
@@ -49,12 +50,22 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
             </form.AppField>
             <form.AppField name={`contracts[${row.index}].institutionUnit`}>
               {(field) => (
-                <field.TextField label="Jednostka" placeholder='np. "Wydział Biologii"' disabled={isReadonly} />
+                <field.TextField
+                  aria-label={`Jednostka, wiersz ${row.index + 1}`}
+                  label="Jednostka"
+                  placeholder='np. "Wydział Biologii"'
+                  disabled={isReadonly}
+                />
               )}
             </form.AppField>
             <form.AppField name={`contracts[${row.index}].institutionLocalization`}>
               {(field) => (
-                <field.TextField label="Lokalizacja instytucji" placeholder='np. "Gdańsk"' disabled={isReadonly} />
+                <field.TextField
+                  aria-label={`Lokalizacja instytucji, wiersz ${row.index + 1}`}
+                  label="Lokalizacja instytucji"
+                  placeholder='np. "Gdańsk"'
+                  disabled={isReadonly}
+                />
               )}
             </form.AppField>
           </>
@@ -66,7 +77,14 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
         accessorFn: (row) => row.description,
         cell: ({ row }) => (
           <form.AppField name={`contracts[${row.index}].description`}>
-            {(field) => <field.TextField label="Opis" placeholder='np. "Umowa o współpracy"' disabled={isReadonly} />}
+            {(field) => (
+              <field.TextField
+                aria-label={`Opis, wiersz ${row.index + 1}`}
+                label="Opis"
+                placeholder='np. "Umowa o współpracy"'
+                disabled={isReadonly}
+              />
+            )}
           </form.AppField>
         ),
         size: 30,

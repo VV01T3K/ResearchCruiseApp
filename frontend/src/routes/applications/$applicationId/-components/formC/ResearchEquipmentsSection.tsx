@@ -25,7 +25,13 @@ const researchEquipmentsColumns = (
     header: 'Nazwa sprzętu / aparatury',
     cell: ({ row }) => (
       <form.AppField name={`researchEquipments[${row.index}].name`}>
-        {(field) => <field.TextField placeholder="Wpisz nazwę sprzętu / aparatury" disabled={isReadonly} />}
+        {(field) => (
+          <field.TextField
+            aria-label={`Nazwa sprzętu / aparatury, wiersz ${row.index + 1}`}
+            placeholder="Wpisz nazwę sprzętu / aparatury"
+            disabled={isReadonly}
+          />
+        )}
       </form.AppField>
     ),
     size: 30,

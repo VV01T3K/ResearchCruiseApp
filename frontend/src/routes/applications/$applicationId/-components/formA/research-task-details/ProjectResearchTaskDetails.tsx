@@ -15,6 +15,7 @@ export function ProjectResearchTaskDetails({ row, disabled }: Props) {
       <form.AppField name={`researchTasks[${row.index}].title`}>
         {(field) => (
           <field.TextField
+            aria-label={`Tytuł, wiersz ${row.index + 1}`}
             label="Tytuł"
             placeholder="Wprowadź tytuł"
             containerClassName="lg:col-span-2"

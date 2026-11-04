@@ -26,18 +26,21 @@ export function ContractsSection({ context }: { context: FormBViewModel }) {
       cell: ({ row }) => (
         <>
           <Input
+            aria-label={`Nazwa instytucji, wiersz ${row.index + 1}`}
             name={`contracts[${row.index}].institutionName`}
             value={row.original.institutionName}
             label="Nazwa instytucji"
             disabled
           />
           <Input
+            aria-label={`Jednostka, wiersz ${row.index + 1}`}
             name={`contracts[${row.index}].institutionUnit`}
             value={row.original.institutionUnit}
             label="Jednostka"
             disabled
           />
           <Input
+            aria-label={`Lokalizacja instytucji, wiersz ${row.index + 1}`}
             name={`contracts[${row.index}].institutionLocalization`}
             value={row.original.institutionLocalization}
             label="Lokalizacja instytucji"
@@ -50,7 +53,13 @@ export function ContractsSection({ context }: { context: FormBViewModel }) {
     {
       header: 'Opis',
       cell: ({ row }) => (
-        <Input name={`contracts[${row.index}].description`} value={row.original.description} label="Opis" disabled />
+        <Input
+          aria-label={`Opis, wiersz ${row.index + 1}`}
+          name={`contracts[${row.index}].description`}
+          value={row.original.description}
+          label="Opis"
+          disabled
+        />
       ),
       size: 20,
     },

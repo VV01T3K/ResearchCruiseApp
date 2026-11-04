@@ -59,19 +59,30 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <form.AppField name={`publications[${row.index}].doi`}>
               {(field) => (
-                <field.TextField label="DOI" placeholder='np. "10.1016/j.jmarsys.2019.03.007"' disabled={isReadonly} />
+                <field.TextField
+                  aria-label={`DOI, wiersz ${row.index + 1}`}
+                  label="DOI"
+                  placeholder='np. "10.1016/j.jmarsys.2019.03.007"'
+                  disabled={isReadonly}
+                />
               )}
             </form.AppField>
 
             <form.AppField name={`publications[${row.index}].authors`}>
               {(field) => (
-                <field.TextField label="Autorzy" placeholder='np. "Kowalski J., Nowak A."' disabled={isReadonly} />
+                <field.TextField
+                  aria-label={`Autorzy, wiersz ${row.index + 1}`}
+                  label="Autorzy"
+                  placeholder='np. "Kowalski J., Nowak A."'
+                  disabled={isReadonly}
+                />
               )}
             </form.AppField>
 
             <form.AppField name={`publications[${row.index}].title`}>
               {(field) => (
                 <field.TextField
+                  aria-label={`Tytuł publikacji, wiersz ${row.index + 1}`}
                   label="Tytuł"
                   placeholder='np. "The impact of sea level rise on the coastal zone"'
                   disabled={isReadonly}
@@ -82,6 +93,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
             <form.AppField name={`publications[${row.index}].magazine`}>
               {(field) => (
                 <field.TextField
+                  aria-label={`Czasopismo publikacji, wiersz ${row.index + 1}`}
                   label="Czasopismo"
                   placeholder='np. "Journal of Marine Systems"'
                   disabled={isReadonly}
