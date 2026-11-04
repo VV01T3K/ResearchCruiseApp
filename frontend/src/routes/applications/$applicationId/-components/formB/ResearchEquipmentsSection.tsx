@@ -70,7 +70,14 @@ const researchEquipmentsColumns = (
     header: 'Czy uzyskano zgodę opiekuna?',
     cell: ({ row }) => (
       <form.AppField name={`researchEquipments[${row.index}].permission`}>
-        {(field) => <field.CheckboxField size="md" className="grid place-items-center" disabled={isReadonly} />}
+        {(field) => (
+          <field.CheckboxField
+            aria-label={`Zgoda opiekuna, wiersz ${row.index + 1}`}
+            size="md"
+            className="grid place-items-center"
+            disabled={isReadonly}
+          />
+        )}
       </form.AppField>
     ),
     size: 5,

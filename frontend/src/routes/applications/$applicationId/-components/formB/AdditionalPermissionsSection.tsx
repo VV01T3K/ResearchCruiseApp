@@ -30,7 +30,11 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
         cell: ({ row }) => (
           <form.AppField name={`permissions[${row.index}].description`}>
             {(field) => (
-              <field.TextField aria-label="Treść pozwolenia" containerClassName="mx-4" disabled={isReadonly} />
+              <field.TextField
+                aria-label={`Treść pozwolenia, wiersz ${row.index + 1}`}
+                containerClassName="mx-4"
+                disabled={isReadonly}
+              />
             )}
           </form.AppField>
         ),
@@ -43,7 +47,13 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
         enableSorting: false,
         cell: ({ row }) => (
           <form.AppField name={`permissions[${row.index}].executive`}>
-            {(field) => <field.TextField aria-label="Organ wydający" className="mx-4" disabled={isReadonly} />}
+            {(field) => (
+              <field.TextField
+                aria-label={`Organ wydający, wiersz ${row.index + 1}`}
+                className="mx-4"
+                disabled={isReadonly}
+              />
+            )}
           </form.AppField>
         ),
         size: 20,

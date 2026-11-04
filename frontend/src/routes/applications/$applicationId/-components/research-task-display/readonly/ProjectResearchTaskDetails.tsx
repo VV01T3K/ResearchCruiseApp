@@ -33,6 +33,7 @@ export function ProjectResearchTaskDetails({ data }: Props) {
       <NumberInput
         nullable
         name="researchTasks[].financingAmount"
+        aria-label={`Kwota finansowania [zł], ${data.title}`}
         value={data.financingAmount}
         errors={financingErrors}
         type="float"
@@ -44,6 +45,7 @@ export function ProjectResearchTaskDetails({ data }: Props) {
       <NumberInput
         nullable
         name="researchTasks[].securedAmount"
+        aria-label={`Środki zabezpieczone na realizację rejsu [zł], ${data.title}`}
         value={data.securedAmount}
         errors={securedErrors}
         type="float"

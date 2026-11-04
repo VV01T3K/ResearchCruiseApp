@@ -20,6 +20,7 @@ const shipEquipmentColumns = (form: FormBFormApi, isReadonly: boolean): ColumnDe
         {(field) => (
           <field.ArrayCheckboxField
             item={row.original.id}
+            aria-label={`W użyciu: ${row.original.name}`}
             size="md"
             className="grid place-items-center"
             disabled={isReadonly}

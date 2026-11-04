@@ -33,13 +33,20 @@ export function ProjectResearchTaskDetails({ row, disabled }: Props) {
 
       <form.AppField name={`researchTasks[${row.index}].financingAmount`}>
         {(field) => (
-          <field.NullableNumberField type="float" minimum={0} label="Kwota finansowania [zł]" disabled={disabled} />
+          <field.NullableNumberField
+            aria-label={`Kwota finansowania [zł], wiersz ${row.index + 1}`}
+            type="float"
+            minimum={0}
+            label="Kwota finansowania [zł]"
+            disabled={disabled}
+          />
         )}
       </form.AppField>
 
       <form.AppField name={`researchTasks[${row.index}].securedAmount`}>
         {(field) => (
           <field.NullableNumberField
+            aria-label={`Środki zabezpieczone na realizację rejsu [zł], wiersz ${row.index + 1}`}
             type="float"
             minimum={0}
             label="Środki zabezpieczone na realizację rejsu [zł]"

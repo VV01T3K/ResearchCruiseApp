@@ -29,7 +29,7 @@ const collectedSamplesColumns = (
     header: 'Ilość',
     cell: ({ row }) => (
       <form.AppField name={`collectedSamples[${row.index}].amount`}>
-        {(field) => <field.NumberField disabled={isReadonly} />}
+        {(field) => <field.NumberField aria-label={`Ilość, wiersz ${row.index + 1}`} disabled={isReadonly} />}
       </form.AppField>
     ),
     size: 5,

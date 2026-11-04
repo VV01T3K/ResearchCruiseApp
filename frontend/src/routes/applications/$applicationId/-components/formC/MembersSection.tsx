@@ -45,6 +45,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
           <form.AppField name={`ugTeams[${row.index}].noOfEmployees`}>
             {(field) => (
               <field.NumberField
+                aria-label={`Liczba pracowników, wiersz ${row.index + 1}`}
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
@@ -66,6 +67,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
           <form.AppField name={`ugTeams[${row.index}].noOfStudents`}>
             {(field) => (
               <field.NumberField
+                aria-label={`Liczba studentów, wiersz ${row.index + 1}`}
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
@@ -112,7 +114,13 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
         accessorFn: (row) => row.name,
         cell: ({ row }) => (
           <form.AppField name={`guestTeams[${row.index}].name`}>
-            {(field) => <field.TextField containerClassName="mx-4" disabled={isReadonly} />}
+            {(field) => (
+              <field.TextField
+                aria-label={`Instytucja, wiersz ${row.index + 1}`}
+                containerClassName="mx-4"
+                disabled={isReadonly}
+              />
+            )}
           </form.AppField>
         ),
         size: 60,
@@ -126,6 +134,7 @@ export function MembersSection({ context }: { context: FormCViewModel }) {
           <form.AppField name={`guestTeams[${row.index}].noOfPersons`}>
             {(field) => (
               <field.NumberField
+                aria-label={`Liczba osób, wiersz ${row.index + 1}`}
                 minimum={0}
                 onChange={(x: number) => {
                   field.handleChange(x);
