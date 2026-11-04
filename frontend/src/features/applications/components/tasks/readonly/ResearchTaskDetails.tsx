@@ -1,9 +1,9 @@
-import { DidacticsResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/DidacticsResearchTaskDetails';
-import { OtherResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/OtherResearchTaskDetails';
-import { OwnResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/OwnResearchTaskDetails';
-import { ProjectPreparationResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ProjectPreparationResearchTaskDetails';
-import { ProjectResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ProjectResearchTaskDetails';
-import { ThesisResearchTaskDetails } from '@/routes/applications/$applicationId/-components/research-task-display/readonly/ThesisResearchTaskDetails';
+import { DidacticsResearchTaskDetails } from '@/features/applications/components/tasks/readonly/DidacticsResearchTaskDetails';
+import { OtherResearchTaskDetails } from '@/features/applications/components/tasks/readonly/OtherResearchTaskDetails';
+import { OwnResearchTaskDetails } from '@/features/applications/components/tasks/readonly/OwnResearchTaskDetails';
+import { ProjectPreparationResearchTaskDetails } from '@/features/applications/components/tasks/readonly/ProjectPreparationResearchTaskDetails';
+import { ProjectResearchTaskDetails } from '@/features/applications/components/tasks/readonly/ProjectResearchTaskDetails';
+import { ThesisResearchTaskDetails } from '@/features/applications/components/tasks/readonly/ThesisResearchTaskDetails';
 import { ResearchTaskType, type ResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {

@@ -6,7 +6,7 @@ import {
   getGetApplicationEvaluationSuspenseQueryOptions,
   getGetApplicationSuspenseQueryOptions,
 } from '@/api/generated/endpoints/applications.gen';
-import { DetailsView } from './-components/details/DetailsView';
+import { DetailsView } from '@/features/applications/components/details/DetailsView';
 
 export const Route = createFileRoute('/applications/$applicationId/details')({
   component: DetailsPage,
