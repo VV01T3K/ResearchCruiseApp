@@ -15,6 +15,7 @@ export function DidacticsResearchTaskDetails({ row, disabled }: Props) {
       <form.AppField name={`researchTasks[${row.index}].description`}>
         {(field) => (
           <field.TextField
+            aria-label={`Opis zajęcia dydaktycznego, wiersz ${row.index + 1}`}
             label="Opis zajęcia dydaktycznego"
             placeholder="Wprowadź opis zajęcia dydaktycznego"
             disabled={disabled}

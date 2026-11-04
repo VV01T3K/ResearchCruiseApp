@@ -13,7 +13,14 @@ export function OwnResearchTaskDetails({ row, disabled }: Props) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <form.AppField name={`researchTasks[${row.index}].title`}>
-        {(field) => <field.TextField label="Roboczy tytuł projektu" placeholder="Wprowadź tytuł" disabled={disabled} />}
+        {(field) => (
+          <field.TextField
+            aria-label={`Roboczy tytuł projektu, wiersz ${row.index + 1}`}
+            label="Roboczy tytuł projektu"
+            placeholder="Wprowadź tytuł"
+            disabled={disabled}
+          />
+        )}
       </form.AppField>
 
       <form.AppField name={`researchTasks[${row.index}].date`}>
@@ -21,7 +28,14 @@ export function OwnResearchTaskDetails({ row, disabled }: Props) {
       </form.AppField>
 
       <form.AppField name={`researchTasks[${row.index}].magazine`}>
-        {(field) => <field.TextField label="Czasopismo" placeholder="Wprowadź czasopismo" disabled={disabled} />}
+        {(field) => (
+          <field.TextField
+            aria-label={`Czasopismo, wiersz ${row.index + 1}`}
+            label="Czasopismo"
+            placeholder="Wprowadź czasopismo"
+            disabled={disabled}
+          />
+        )}
       </form.AppField>
 
       <form.AppField name={`researchTasks[${row.index}].ministerialPoints`}>

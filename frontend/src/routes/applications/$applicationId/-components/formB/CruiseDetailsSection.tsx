@@ -84,7 +84,13 @@ const shortResearchEquipmentColumns = (
     enableSorting: false,
     cell: ({ row }) => (
       <form.AppField name={`shortResearchEquipments[${row.index}].name`}>
-        {(field) => <field.TextField placeholder="Nazwa sprzętu" disabled={isReadonly} />}
+        {(field) => (
+          <field.TextField
+            aria-label={`Nazwa wystawianego sprzętu, wiersz ${row.index + 1}`}
+            placeholder="Nazwa sprzętu"
+            disabled={isReadonly}
+          />
+        )}
       </form.AppField>
     ),
   },
@@ -138,7 +144,9 @@ const longResearchEquipmentColumns = (
     enableSorting: false,
     cell: ({ row }) => (
       <form.AppField name={`longResearchEquipments[${row.index}].duration`}>
-        {(field) => <field.TextField placeholder="Czas" disabled={isReadonly} />}
+        {(field) => (
+          <field.TextField aria-label={`Czas, wiersz ${row.index + 1}`} placeholder="Czas" disabled={isReadonly} />
+        )}
       </form.AppField>
     ),
     size: 20,
@@ -150,7 +158,13 @@ const longResearchEquipmentColumns = (
     enableSorting: false,
     cell: ({ row }) => (
       <form.AppField name={`longResearchEquipments[${row.index}].name`}>
-        {(field) => <field.TextField placeholder="Nazwa sprzętu" disabled={isReadonly} />}
+        {(field) => (
+          <field.TextField
+            aria-label={`Nazwa pozostawianego lub zabieranego sprzętu, wiersz ${row.index + 1}`}
+            placeholder="Nazwa sprzętu"
+            disabled={isReadonly}
+          />
+        )}
       </form.AppField>
     ),
   },
@@ -237,7 +251,13 @@ const portColumns = (
     enableSorting: false,
     cell: ({ row }) => (
       <form.AppField name={`ports[${row.index}].name`}>
-        {(field) => <field.TextField placeholder="Nazwa portu" disabled={isReadonly} />}
+        {(field) => (
+          <field.TextField
+            aria-label={`Nazwa portu, wiersz ${row.index + 1}`}
+            placeholder="Nazwa portu"
+            disabled={isReadonly}
+          />
+        )}
       </form.AppField>
     ),
   },

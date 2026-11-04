@@ -12,6 +12,7 @@ export function ProjectPreparationResearchTaskDetails({ data }: Props) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <Input
+        aria-label={`Roboczy tytuł projektu, ${data.title}`}
         name="researchTasks[].title"
         value={data.title}
         label="Roboczy tytuł projektu"

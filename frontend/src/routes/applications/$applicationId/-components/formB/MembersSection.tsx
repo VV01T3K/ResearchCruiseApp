@@ -181,15 +181,31 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         cell: ({ row }) => (
           <div className="grid grid-cols-5 gap-2">
             <form.AppField name={`crewMembers[${row.index}].title`}>
-              {(field) => <field.TextField label="Tytuł" disabled={isReadonly} />}
+              {(field) => (
+                <field.TextField aria-label={`Tytuł, wiersz ${row.index + 1}`} label="Tytuł" disabled={isReadonly} />
+              )}
             </form.AppField>
 
             <form.AppField name={`crewMembers[${row.index}].firstName`}>
-              {(field) => <field.TextField label="Imiona" containerClassName="col-span-2" disabled={isReadonly} />}
+              {(field) => (
+                <field.TextField
+                  aria-label={`Imiona, wiersz ${row.index + 1}`}
+                  label="Imiona"
+                  containerClassName="col-span-2"
+                  disabled={isReadonly}
+                />
+              )}
             </form.AppField>
 
             <form.AppField name={`crewMembers[${row.index}].lastName`}>
-              {(field) => <field.TextField label="Nazwisko" containerClassName="col-span-2" disabled={isReadonly} />}
+              {(field) => (
+                <field.TextField
+                  aria-label={`Nazwisko, wiersz ${row.index + 1}`}
+                  label="Nazwisko"
+                  containerClassName="col-span-2"
+                  disabled={isReadonly}
+                />
+              )}
             </form.AppField>
           </div>
         ),
@@ -202,7 +218,13 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         cell: ({ row }) => (
           <div className="grid grid-cols-2 gap-2">
             <form.AppField name={`crewMembers[${row.index}].birthPlace`}>
-              {(field) => <field.TextField label="Miejsce urodzenia" disabled={isReadonly} />}
+              {(field) => (
+                <field.TextField
+                  aria-label={`Miejsce urodzenia, wiersz ${row.index + 1}`}
+                  label="Miejsce urodzenia"
+                  disabled={isReadonly}
+                />
+              )}
             </form.AppField>
 
             <form.AppField name={`crewMembers[${row.index}].birthDate`}>
@@ -216,7 +238,13 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
             </form.AppField>
 
             <form.AppField name={`crewMembers[${row.index}].documentNumber`}>
-              {(field) => <field.TextField label="Numer ID dokumentu" disabled={isReadonly} />}
+              {(field) => (
+                <field.TextField
+                  aria-label={`Numer ID dokumentu, wiersz ${row.index + 1}`}
+                  label="Numer ID dokumentu"
+                  disabled={isReadonly}
+                />
+              )}
             </form.AppField>
 
             <form.AppField name={`crewMembers[${row.index}].documentExpiryDate`}>
@@ -239,7 +267,13 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
         accessorFn: (row) => row.institution,
         cell: ({ row }) => (
           <form.AppField name={`crewMembers[${row.index}].institution`}>
-            {(field) => <field.TextField placeholder="Wprowadź nazwę jednostki" disabled={isReadonly} />}
+            {(field) => (
+              <field.TextField
+                aria-label={`Nazwa jednostki, wiersz ${row.index + 1}`}
+                placeholder="Wprowadź nazwę jednostki"
+                disabled={isReadonly}
+              />
+            )}
           </form.AppField>
         ),
         size: 20,
