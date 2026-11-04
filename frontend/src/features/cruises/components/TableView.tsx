@@ -31,7 +31,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       accessorFn: (row) => row.number,
       sortFn: (a, b) => compareCruiseNumber(a.original.number, b.original.number),
       cell: (cell) => <span className="font-bold">{cell.getValue() as string}</span>,
-      size: 110,
+      size: 106,
     },
     {
       header: 'Tytuł',
@@ -54,7 +54,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       accessorFn: (row) => row.endDate,
       cell: (cell) => formatDate(cell.getValue() as string, 'dateTime'),
       enableColumnFilter: false,
-      size: 155,
+      size: 148,
     },
     {
       header: 'Status',
@@ -77,7 +77,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     {
       header: 'Kierownik główny',
       accessorFn: (row) => getPersonName(row.mainManager) || 'Nie przypisano',
-      size: 165,
+      size: 176,
     },
     ...(isInRole(currentUser, [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew])
       ? [

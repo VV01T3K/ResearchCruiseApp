@@ -41,7 +41,6 @@ export function DesktopTableHeader<TData extends object, TValue>({ header, child
           className="border-b border-gray-200 px-1 py-2 text-sm font-semibold text-gray-700"
         >
           <div className="flex items-center justify-center gap-1">
-            {(canSort || canFilter) && <span aria-hidden className="w-9" />}
             <span className={cn('p-1 text-center', isSorted && 'text-primary')}>{children}</span>
             {(canSort || canFilter) && <ColumnMenu header={header} isSorted={isSorted} />}
           </div>
