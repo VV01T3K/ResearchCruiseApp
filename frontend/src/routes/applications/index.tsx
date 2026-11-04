@@ -91,7 +91,7 @@ function ApplicationsPage() {
       cell: ({ row }) => <span className="whitespace-nowrap">{row.original.date}</span>,
       sortDescFirst: true,
       meta: { filterInputType: 'date', getFilterOptionLabel: (value) => formatDate(value, 'date') },
-      size: 98,
+      size: 92,
     },
     {
       id: 'year',
@@ -184,7 +184,7 @@ function ApplicationsPage() {
           </div>
         );
       },
-      size: 106,
+      size: 105,
     },
     {
       header: 'Punkty',
@@ -261,7 +261,7 @@ function ApplicationsPage() {
           )}
         </>
       ),
-      size: 129,
+      size: 136,
     },
     {
       header: 'Akcje',
