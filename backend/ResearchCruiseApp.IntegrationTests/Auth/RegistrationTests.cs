@@ -164,10 +164,7 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         using var first = await Register(client, email, TestUsers.Password, "Original", ct);
         Assert.Equal(HttpStatusCode.Created, first.StatusCode);
         await app.Dispatch(ct);
-        var oldLink = PasswordRecoveryTests.Link(
-            app.Transport.Messages[^1].Payload.Body,
-            "confirm-email"
-        );
+        var oldLink = SentLink(app, email, "confirm-email");
 
         using var second = await Register(client, email, ignoredPassword, "Replaced", ct);
         Assert.Equal(first.StatusCode, second.StatusCode);
@@ -176,11 +173,7 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             await second.Content.ReadAsStringAsync(ct)
         );
         await app.Dispatch(ct);
-        var mail = app.Transport.Messages[^1].Payload;
-        Assert.Equal(email, mail.Recipient);
-        var setPassword = QueryHelpers.ParseQuery(
-            PasswordRecoveryTests.Link(mail.Body, "reset-password").Query
-        );
+        var setPassword = QueryHelpers.ParseQuery(SentLink(app, email, "reset-password").Query);
         await app.InDatabase(async db =>
         {
             var stored = await db.Users.SingleAsync(ct);
@@ -239,11 +232,7 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         using var first = await Register(client, oldEmail, TestUsers.Password, "Original", ct);
         using var second = await Register(client, oldEmail, password, "Original", ct);
         await app.Dispatch(ct);
-        var oldLink = QueryHelpers.ParseQuery(
-            PasswordRecoveryTests
-                .Link(app.Transport.Messages[^1].Payload.Body, "reset-password")
-                .Query
-        );
+        var oldLink = QueryHelpers.ParseQuery(SentLink(app, oldEmail, "reset-password").Query);
         var userId = "";
         await app.InDatabase(async db =>
             userId = (await db.Users.SingleAsync(user => user.Email == oldEmail, ct)).Id
@@ -261,11 +250,7 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             ct
         );
         await app.Dispatch(ct);
-        var newLink = QueryHelpers.ParseQuery(
-            PasswordRecoveryTests
-                .Link(app.Transport.Messages[^1].Payload.Body, "reset-password")
-                .Query
-        );
+        var newLink = QueryHelpers.ParseQuery(SentLink(app, newEmail, "reset-password").Query);
 
         using var rejected = await SetPassword(
             client,
@@ -294,6 +279,19 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             Assert.True((await db.Users.SingleAsync(user => user.Id == userId, ct)).EmailConfirmed)
         );
     }
+
+    private static Uri SentLink(TestApplication app, string recipient, string route) =>
+        PasswordRecoveryTests.Link(
+            Assert
+                .Single(
+                    app.Transport.Messages,
+                    message =>
+                        message.Payload.Recipient == recipient
+                        && message.Payload.Body.Contains($"/{route}?")
+                )
+                .Payload.Body,
+            route
+        );
 
     private static Task<HttpResponseMessage> SetPassword(
         HttpClient client,
