@@ -192,15 +192,11 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         using var oldConfirm = await client.GetAsync("/v2/auth/confirm-email" + oldLink.Query, ct);
         Assert.Equal(HttpStatusCode.BadRequest, oldConfirm.StatusCode);
 
-        using var passwordSet = await client.PostAsJsonAsync(
-            "/v2/auth/password-reset",
-            new
-            {
-                EmailBase64 = setPassword["emailBase64"].ToString(),
-                ResetCode = setPassword["resetCode"].ToString(),
-                Password = chosenPassword,
-                PasswordConfirm = chosenPassword,
-            },
+        using var passwordSet = await SetPassword(
+            client,
+            setPassword["emailBase64"]!,
+            setPassword["resetCode"]!,
+            chosenPassword,
             ct
         );
         Assert.Equal(HttpStatusCode.NoContent, passwordSet.StatusCode);
@@ -227,6 +223,96 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         );
         Assert.Equal(HttpStatusCode.OK, login.StatusCode);
     }
+
+    [Fact]
+    public async Task SetPassword_WhenOfficeChangedEmailAfterLinkWasSent_RejectsOldLinkForNewEmail()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var app = new TestApplication(fixture.ConnectionString);
+        await EnsureRegistrationRole(app);
+        var office = await TestUsers.Create(app, "office@example.invalid", RoleName.Administrator);
+        using var client = app.CreateApiClient();
+        const string oldEmail = "old-address@example.invalid";
+        const string newEmail = "new-address@example.invalid";
+        const string password = "OwnerPassword3!";
+
+        using var first = await Register(client, oldEmail, TestUsers.Password, "Original", ct);
+        using var second = await Register(client, oldEmail, password, "Original", ct);
+        await app.Dispatch(ct);
+        var oldLink = QueryHelpers.ParseQuery(
+            PasswordRecoveryTests
+                .Link(app.Transport.Messages[^1].Payload.Body, "reset-password")
+                .Query
+        );
+        var userId = "";
+        await app.InDatabase(async db =>
+            userId = (await db.Users.SingleAsync(user => user.Email == oldEmail, ct)).Id
+        );
+        using var officeClient = await TestApplications.Login(app, office.Email!);
+        using var changed = await officeClient.PatchAsJsonAsync(
+            $"/v2/users/{userId}",
+            new { Email = newEmail },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
+        using var requested = await client.PostAsJsonAsync(
+            "/v2/auth/password-reset-request",
+            new { Email = newEmail },
+            ct
+        );
+        await app.Dispatch(ct);
+        var newLink = QueryHelpers.ParseQuery(
+            PasswordRecoveryTests
+                .Link(app.Transport.Messages[^1].Payload.Body, "reset-password")
+                .Query
+        );
+
+        using var rejected = await SetPassword(
+            client,
+            newLink["emailBase64"]!,
+            oldLink["resetCode"]!,
+            password,
+            ct
+        );
+        Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
+        await app.InDatabase(async db =>
+        {
+            var stored = await db.Users.SingleAsync(user => user.Id == userId, ct);
+            Assert.Null(stored.PasswordHash);
+            Assert.False(stored.EmailConfirmed);
+        });
+
+        using var accepted = await SetPassword(
+            client,
+            newLink["emailBase64"]!,
+            newLink["resetCode"]!,
+            password,
+            ct
+        );
+        Assert.Equal(HttpStatusCode.NoContent, accepted.StatusCode);
+        await app.InDatabase(async db =>
+            Assert.True((await db.Users.SingleAsync(user => user.Id == userId, ct)).EmailConfirmed)
+        );
+    }
+
+    private static Task<HttpResponseMessage> SetPassword(
+        HttpClient client,
+        string emailBase64,
+        string resetCode,
+        string password,
+        CancellationToken ct
+    ) =>
+        client.PostAsJsonAsync(
+            "/v2/auth/password-reset",
+            new
+            {
+                EmailBase64 = emailBase64,
+                ResetCode = resetCode,
+                Password = password,
+                PasswordConfirm = password,
+            },
+            ct
+        );
 
     [Theory]
     [InlineData(true, false, false)]
