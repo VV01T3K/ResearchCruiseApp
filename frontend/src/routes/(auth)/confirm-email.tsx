@@ -58,13 +58,7 @@ function ConfirmEmailPage() {
         </div>
         <div className="text-center text-gray-600">
           {result === 'success' && (
-            <>
-              <p>Aby umożliwić Ci zalogowanie się, Biuro Armatora musi jeszcze zaakceptować Twoje konto</p>
-              <p className="mt-4">
-                Przy ponownej rejestracji nadal obowiązuje hasło z pierwszej rejestracji. Jeśli go nie pamiętasz, użyj
-                opcji „Zapomniałeś hasła?” na stronie logowania.
-              </p>
-            </>
+            <>Aby umożliwić Ci zalogowanie się, Biuro Armatora musi jeszcze zaakceptować Twoje konto</>
           )}
           {result !== 'success' && (
             <>

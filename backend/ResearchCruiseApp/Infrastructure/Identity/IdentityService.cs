@@ -200,6 +200,7 @@ internal class IdentityService(
         )
             return alreadyTaken;
 
+        var renewing = user is not null;
         IdentityResult identityResult;
         if (user is null)
         {
@@ -220,17 +221,28 @@ internal class IdentityService(
         }
         else
         {
-            identityResult = await userManager.UpdateSecurityStampAsync(user);
+            identityResult = await userManager.RemovePasswordAsync(user);
         }
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
-        var emailConfirmationCode = await CreateEmailConfirmationCode(user);
-        await emailSender.SendEmailConfirmationEmail(
-            await CreateUserDto(user),
-            roleName,
-            emailConfirmationCode
-        );
+        if (renewing)
+        {
+            var resetCode = await userManager.GeneratePasswordResetTokenAsync(user);
+            await emailSender.SendPasswordResetMessage(
+                await CreateUserDto(user),
+                WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetCode)),
+                registrationRenewed: true
+            );
+        }
+        else
+        {
+            await emailSender.SendEmailConfirmationEmail(
+                await CreateUserDto(user),
+                roleName,
+                await CreateEmailConfirmationCode(user)
+            );
+        }
 
         await transaction.CommitAsync();
         return identityResult.ToApplicationResult();
@@ -398,8 +410,11 @@ internal class IdentityService(
 
         var refreshToken = user.RefreshToken;
         var refreshTokenExpiry = user.RefreshTokenExpiry;
+        var emailConfirmed = user.EmailConfirmed;
         user.RefreshToken = null;
         user.RefreshTokenExpiry = null;
+        if (user.PasswordHash is null)
+            user.EmailConfirmed = true;
         var result = await userManager.ResetPasswordAsync(
             user,
             resetCode,
@@ -411,6 +426,7 @@ internal class IdentityService(
 
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiry = refreshTokenExpiry;
+        user.EmailConfirmed = emailConfirmed;
         return invalidLink;
     }
 
