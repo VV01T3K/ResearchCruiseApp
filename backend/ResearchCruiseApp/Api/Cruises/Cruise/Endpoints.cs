@@ -268,18 +268,30 @@ public static class CruiseEndpoints
     {
         if (
             request.MainManagerId != Guid.Empty
-            && await identityService.GetUserDtoById(request.MainManagerId) is null
+            && request.MainManagerId != cruise.MainCruiseManagerId
+            && !await identityService.IsActiveWithAnyRole(
+                request.MainManagerId,
+                IdentityService.CruiseManagerRoleNames
+            )
         )
         {
-            return Error.ResourceNotFound("Podany kierownik nie istnieje");
+            return Error.InvalidArgument(
+                "Podany kierownik nie istnieje lub nie ma aktywnego konta z uprawnieniami kierownika."
+            );
         }
 
         if (
             request.DeputyManagerId != Guid.Empty
-            && await identityService.GetUserDtoById(request.DeputyManagerId) is null
+            && request.DeputyManagerId != cruise.MainDeputyManagerId
+            && !await identityService.IsActiveWithAnyRole(
+                request.DeputyManagerId,
+                IdentityService.CruiseManagerRoleNames
+            )
         )
         {
-            return Error.ResourceNotFound("Podany zastępca nie istnieje");
+            return Error.InvalidArgument(
+                "Podany zastępca kierownika nie istnieje lub nie ma aktywnego konta z uprawnieniami kierownika."
+            );
         }
 
         cruise.MainCruiseManagerId = request.MainManagerId;
