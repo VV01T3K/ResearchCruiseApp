@@ -6,7 +6,7 @@ import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsLis
 import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
-import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
 import { formADefaultValues } from '@/features/applications/schemas/formA.schema';

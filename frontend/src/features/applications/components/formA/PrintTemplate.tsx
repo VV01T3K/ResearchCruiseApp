@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import {
   formatLocalDateStringFromUtcString,
   getExplanationForPeriod,
-} from '@/routes/applications/$applicationId/-components/formA/cruisePeriodExplanation';
+} from '@/features/applications/components/formA/cruisePeriodExplanation';
 import { PrintableResearchTaskDetails } from '@/components/print/research-task-details/PrintableResearchTaskDetails';
 import { PrintingPage } from '@/components/print/layout/PrintingPage';
 import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';

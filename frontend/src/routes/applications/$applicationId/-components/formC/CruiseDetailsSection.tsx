@@ -6,7 +6,7 @@ import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
-import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
 import type { FormCFormApi, FormCViewModel } from '@/features/applications/models/formC-view-model';
 import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
 import { LongResearchEquipmentValues } from '@/features/applications/schemas/types/LongResearchEquipmentValues';

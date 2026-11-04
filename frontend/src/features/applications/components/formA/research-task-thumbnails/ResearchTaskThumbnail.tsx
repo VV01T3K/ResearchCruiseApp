@@ -1,9 +1,9 @@
-import { DidacticsResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/DidacticsResearchTaskThumbnail';
-import { OtherResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/OtherResearchTaskThumbnail';
-import { OwnResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/OwnResearchTaskThumbnail';
-import { ProjectPreparationResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ProjectPreparationResearchTaskThumbnail';
-import { ProjectResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ProjectResearchTaskThumbnail';
-import { ThesisResearchTaskThumbnail } from '@/routes/applications/$applicationId/-components/formA/research-task-thumbnails/ThesisResearchTaskThumbnail';
+import { DidacticsResearchTaskThumbnail } from '@/features/applications/components/formA/research-task-thumbnails/DidacticsResearchTaskThumbnail';
+import { OtherResearchTaskThumbnail } from '@/features/applications/components/formA/research-task-thumbnails/OtherResearchTaskThumbnail';
+import { OwnResearchTaskThumbnail } from '@/features/applications/components/formA/research-task-thumbnails/OwnResearchTaskThumbnail';
+import { ProjectPreparationResearchTaskThumbnail } from '@/features/applications/components/formA/research-task-thumbnails/ProjectPreparationResearchTaskThumbnail';
+import { ProjectResearchTaskThumbnail } from '@/features/applications/components/formA/research-task-thumbnails/ProjectResearchTaskThumbnail';
+import { ThesisResearchTaskThumbnail } from '@/features/applications/components/formA/research-task-thumbnails/ThesisResearchTaskThumbnail';
 import type { ResearchTaskFields } from '@/api/generated/schemas';
 import { ResearchTaskType } from '@/features/applications/schemas/types/ResearchTaskValues';
 
