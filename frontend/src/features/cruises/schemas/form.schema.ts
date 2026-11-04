@@ -80,6 +80,7 @@ export function findOverlappingCruises(cruises: CruiseResponse[], startDate: str
   return cruises.filter(
     (cruise) =>
       cruise.id !== ownId &&
+      cruise.startDate !== cruise.endDate &&
       (!cruise.shipUnavailable || cruise.status !== 'ended') &&
       new Date(cruise.startDate) < end &&
       start < new Date(cruise.endDate)
