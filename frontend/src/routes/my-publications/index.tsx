@@ -92,7 +92,7 @@ function MyPublicationsPage() {
     {
       accessorFn: (row) => row.title,
       header: 'Tytuł',
-      cell: (cell) => <p className="pr-4 font-bold">{cell.getValue() as string}</p>,
+      cell: (cell) => <p className="font-bold">{cell.getValue() as string}</p>,
       size: 25,
     },
     {

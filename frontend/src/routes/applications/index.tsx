@@ -148,7 +148,7 @@ function ApplicationsPage() {
       header: 'Kierownik',
       accessorFn: (row) => getPersonName(row.mainManager),
       cell: ({ row }) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <Avatar
             fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
             variant="small"
