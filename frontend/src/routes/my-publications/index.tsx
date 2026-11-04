@@ -68,6 +68,7 @@ function MyPublicationsPage() {
       id: 'selector',
       header: ({ table }) => (
         <Checkbox
+          aria-label="Zaznacz wszystkie publikacje"
           name="selectAllPublications"
           onChange={(x) => table.toggleAllRowsSelected(x)}
           checked={table.getIsAllRowsSelected()}
@@ -121,7 +122,7 @@ function MyPublicationsPage() {
     },
     {
       id: 'actions',
-      header: undefined,
+      header: () => <span className="sr-only">Akcje</span>,
       cell: (cell) => (
         <Button
           variant="dangerOutline"

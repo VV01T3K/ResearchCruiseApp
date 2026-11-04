@@ -70,6 +70,7 @@ export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
       },
       {
         id: 'actions',
+        header: () => <span className="sr-only">Akcje</span>,
         cell: ({ row }) => (
           <div className="flex justify-end">
             <TableDeleteRowButton

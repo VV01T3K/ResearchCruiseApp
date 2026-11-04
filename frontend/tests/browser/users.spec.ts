@@ -299,7 +299,7 @@ test('a group deactivation names the affected user and sends requests only for a
   expect(requests.bodies(`DELETE /v2/users/${outsider.id}/acceptance`)).toHaveLength(0);
 });
 
-test('a focused filter option keeps focus and keyboard position while the list scrolls', async ({ page, network }) => {
+test('a long filter list keeps its keyboard position while the list scrolls', async ({ page, network }) => {
   network.use(
     getGetUsersMockHandler(
       Array.from({ length: 100 }, (_, i) =>
@@ -308,16 +308,45 @@ test('a focused filter option keeps focus and keyboard position while the list s
     )
   );
   await page.goto('/user-management');
-  await page.getByRole('button', { name: 'Email', exact: true }).click();
-  const first = page.getByRole('menuitem', { name: 'user000@example.com' });
-  await first.focus();
-  await first.hover();
+  const filter = page.getByRole('button', { name: 'Sortuj i filtruj: Email' });
+  await filter.click();
+  const search = page.getByRole('combobox');
+  const active = page.locator('[role="option"][data-highlighted]');
+  await search.press('ArrowDown');
+  await search.press('ArrowDown');
+  await expect(active).toHaveAttribute('aria-posinset', '2');
+  const second = page.getByRole('option', { name: 'user001@example.com' });
+  await second.hover();
   await page.mouse.wheel(0, 1800);
-  await expect(page.getByRole('menuitem', { name: 'user051@example.com' })).toBeVisible();
-  await expect(first).toBeFocused();
-  await page.keyboard.press('Tab');
-  await page.keyboard.press('Tab');
-  await expect(page.getByRole('menuitem', { name: 'user001@example.com' })).toBeFocused();
+  await expect(page.getByRole('option', { name: 'user056@example.com' })).toBeVisible();
+  await search.press('ArrowUp');
+  await expect(page.locator(`[id="${await search.getAttribute('aria-activedescendant')}"]`)).toBeInViewport();
+  await search.press('Enter');
+  await expect(page.getByRole('option', { selected: true })).toHaveCount(1);
+  await search.press('Escape');
+  await expect(filter).toBeFocused();
+});
+
+test('select-all under a search changes only the found options', async ({ page, network }) => {
+  network.use(
+    getGetUsersMockHandler([
+      cruiseManager({ id: 'alpha', email: 'alpha@example.com' }),
+      cruiseManager({ id: 'beta', email: 'beta@example.com' }),
+    ])
+  );
+  await page.goto('/user-management');
+  await page.getByRole('button', { name: 'Sortuj i filtruj: Email' }).click();
+  const alpha = page.getByRole('option', { name: 'alpha@example.com' });
+  await alpha.click();
+  const search = page.getByRole('combobox');
+  await search.fill('beta');
+  const selectFound = page.getByRole('checkbox', { name: 'Zaznacz znalezione' });
+  await selectFound.click();
+  await expect(page.getByRole('option', { name: 'beta@example.com' })).toHaveAttribute('aria-selected', 'true');
+  await selectFound.click();
+  await search.fill('');
+  await expect(alpha).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('option', { name: 'beta@example.com' })).toHaveAttribute('aria-selected', 'false');
 });
 
 for (const mobile of [false, true]) {
@@ -349,23 +378,33 @@ for (const mobile of [false, true]) {
       await email.getByText('Pokaż filtry', { exact: true }).click();
       await email.getByText('zebra@example.com', { exact: true }).click();
     } else {
-      const emailHeader = page.getByRole('button', { name: 'Email', exact: true });
-      const unsortedIcons = await emailHeader.innerHTML();
-      await emailHeader.click();
-      await page.getByRole('menuitem', { name: 'Sortuj rosnąco' }).click();
+      const emailColumn = page.getByRole('columnheader', { name: /^Email/ });
+      await expect(emailColumn).toHaveAttribute('aria-sort', 'none');
+      const emailMenu = page.getByRole('button', { name: 'Sortuj i filtruj: Email' });
+      await emailMenu.click();
+      await page.getByRole('button', { name: 'Sortuj rosnąco' }).click();
       await expect(rows.first()).toContainText('alpha@example.com');
-      await expect(page.getByRole('menuitem', { name: 'Sortuj rosnąco' })).toBeDisabled();
-      expect(await emailHeader.innerHTML()).not.toBe(unsortedIcons);
+      await expect(emailColumn).toHaveAttribute('aria-sort', 'ascending');
+      await expect(emailMenu).toBeFocused();
+      await emailMenu.click();
+      await expect(page.getByRole('button', { name: 'Sortuj rosnąco' })).toHaveAttribute('aria-pressed', 'true');
       // A second option adds to the first; a stale list would replace it.
-      await page.getByRole('menuitem', { name: 'zebra@example.com', exact: true }).click();
-      await expect(page.getByRole('menuitem', { name: 'zebra@example.com' }).locator('[aria-checked]')).toHaveAttribute(
-        'aria-checked',
-        'true'
-      );
-      await page.getByRole('menuitem', { name: 'alpha@example.com', exact: true }).click();
+      await page.getByRole('option', { name: 'zebra@example.com', exact: true }).click();
+      await expect(page.getByRole('option', { name: 'zebra@example.com' })).toHaveAttribute('aria-selected', 'true');
+      await page.getByRole('option', { name: 'alpha@example.com', exact: true }).click();
       await expect(rows).toHaveCount(2);
-      await page.getByRole('menuitem', { name: 'alpha@example.com', exact: true }).click();
+      await page.getByRole('option', { name: 'alpha@example.com', exact: true }).click();
       await page.keyboard.press('Escape');
+      // Sorting another column replaces the current sort.
+      const roleMenu = page.getByRole('dialog', { name: 'Sortuj i filtruj: Rola' });
+      await page.getByRole('button', { name: /^Sortuj i filtruj: Rola/ }).click();
+      await roleMenu.getByRole('button', { name: 'Sortuj malejąco' }).click();
+      const roleColumn = page.getByRole('columnheader', { name: /^Rola/ });
+      await expect(roleColumn).toHaveAttribute('aria-sort', 'descending');
+      await expect(emailColumn).toHaveAttribute('aria-sort', 'none');
+      await page.getByRole('button', { name: /^Sortuj i filtruj: Rola/ }).click();
+      await roleMenu.getByRole('button', { name: 'Wyłącz sortowanie' }).click();
+      await expect(roleColumn).toHaveAttribute('aria-sort', 'none');
     }
     await expect(rows).toHaveCount(1);
     await expect(rows).toContainText('zebra@example.com');
