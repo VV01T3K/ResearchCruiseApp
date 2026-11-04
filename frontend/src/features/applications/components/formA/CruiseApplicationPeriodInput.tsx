@@ -6,7 +6,7 @@ import { InputHelper } from '@/components/shared/inputs/parts/InputHelper';
 import { InputLabel } from '@/components/shared/inputs/parts/InputLabel';
 import { months } from '@/lib/calendarUtils';
 import { cn } from '@/lib/utils';
-import { getExplanationForPeriod } from '@/routes/applications/$applicationId/-components/formA/cruisePeriodExplanation';
+import { getExplanationForPeriod } from '@/features/applications/components/formA/cruisePeriodExplanation';
 import { CruisePeriodType } from '@/features/applications/schemas/types/FormAValues';
 
 type Props = {

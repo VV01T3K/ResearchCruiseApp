@@ -1,11 +1,11 @@
 import { Row } from '@/integrations/tanstack/table/features';
 
-import { DidacticsResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/DidacticsResearchTaskDetails';
-import { OtherResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/OtherResearchTaskDetails';
-import { OwnResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/OwnResearchTaskDetails';
-import { ProjectPreparationResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ProjectPreparationResearchTaskDetails';
-import { ProjectResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ProjectResearchTaskDetails';
-import { ThesisResearchTaskDetails } from '@/routes/applications/$applicationId/-components/formA/research-task-details/ThesisResearchTaskDetails';
+import { DidacticsResearchTaskDetails } from '@/features/applications/components/formA/research-task-details/DidacticsResearchTaskDetails';
+import { OtherResearchTaskDetails } from '@/features/applications/components/formA/research-task-details/OtherResearchTaskDetails';
+import { OwnResearchTaskDetails } from '@/features/applications/components/formA/research-task-details/OwnResearchTaskDetails';
+import { ProjectPreparationResearchTaskDetails } from '@/features/applications/components/formA/research-task-details/ProjectPreparationResearchTaskDetails';
+import { ProjectResearchTaskDetails } from '@/features/applications/components/formA/research-task-details/ProjectResearchTaskDetails';
+import { ThesisResearchTaskDetails } from '@/features/applications/components/formA/research-task-details/ThesisResearchTaskDetails';
 import {
   DidacticsResearchTaskValues,
   OtherResearchTaskValues,

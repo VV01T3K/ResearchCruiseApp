@@ -20,6 +20,10 @@ Organize new code by its feature or integration. Put TanStack-specific adapters,
 configuration, hooks, and rendering helpers in `frontend/src/integrations/tanstack/`
 under the relevant library directory.
 
+Follow TanStack Router's colocation convention: code used by one route stays next
+to it in a `-` prefixed folder (for example `-components`). Code used by several
+routes, or by code outside `routes/`, goes in `frontend/src/features/<feature>/`.
+
 Do not add new code to generic `shared` or `common` directories, or introduce
 another generic directory with the same purpose. These are legacy locations, not
 patterns to extend. Do not prefix new components with `App`.

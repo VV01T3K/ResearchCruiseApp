@@ -10,7 +10,7 @@ import { getErrorMessage } from '@/api/errors';
 import { Button } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
 import { Modal } from '@/components/shared/Modal';
-import { SupervisorView } from '@/routes/applications/$applicationId/-components/formA/SupervisorView';
+import { SupervisorView } from '@/features/applications/components/formA/SupervisorView';
 import { mapFormAToValues } from '@/features/applications/schemas/formA.schema';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 

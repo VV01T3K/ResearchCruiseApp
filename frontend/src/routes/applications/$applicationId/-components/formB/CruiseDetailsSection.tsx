@@ -6,7 +6,7 @@ import { Button } from '@/components/shared/Button';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
-import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
 import type { FormBFormApi, FormBViewModel } from '@/features/applications/models/formB-view-model';

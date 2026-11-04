@@ -12,7 +12,7 @@ import { Modal } from '@/components/shared/Modal';
 import { toast } from '@/components/shared/layout/toast';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError, saveFailedMessage } from '@/integrations/tanstack/form/errors';
-import { FormView } from '@/routes/applications/$applicationId/-components/formA/FormView';
+import { FormView } from '@/features/applications/components/formA/FormView';
 import {
   type FormAValues,
   formADefaultValues,

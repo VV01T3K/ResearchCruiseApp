@@ -11,7 +11,7 @@ import { formADefaultValues } from '@/features/applications/schemas/formA.schema
 import { ResearchAreaValues } from '@/features/applications/schemas/types/ResearchAreaValues';
 import { getResearchAreaName } from '@/lib/applications/researchArea';
 
-import { DropdownElementSelectorButton } from '@/routes/applications/$applicationId/-components/form-controls/DropdownElementSelectorButton';
+import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
 
 export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
