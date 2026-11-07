@@ -18,10 +18,10 @@ export function InputLabel({ name, value, className, showRequiredAsterisk }: Pro
   }
 
   return (
-    <label htmlFor={name} className={cn('mb-2 block text-sm font-medium text-gray-900', className)}>
+    <label htmlFor={name} className={cn('mb-2 block text-sm font-medium text-foreground', className)}>
       <span title={showAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>{labelContent}</span>
       {showAsterisk && (
-        <span className="ml-1 font-bold text-red-600" title="Pole jest obowiązkowe do wypełnienia">
+        <span className="ml-1 font-bold text-danger" title="Pole jest obowiązkowe do wypełnienia">
           *
         </span>
       )}

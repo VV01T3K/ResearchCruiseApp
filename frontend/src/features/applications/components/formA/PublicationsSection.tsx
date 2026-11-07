@@ -235,7 +235,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                       {
                         value: category ?? '',
                         content: (
-                          <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
+                          <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-muted-foreground">
                             {getPublicationCategoryLabel(category as PublicationCategory)}
                           </div>
                         ),
@@ -243,7 +243,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                       ...publications.map((publication) => ({
                         value: JSON.stringify(publication),
                         content: (
-                          <div className="w-full cursor-pointer rounded-lg px-2 inset-ring-blue-500 hover:bg-gray-100 focus:inset-ring-2">
+                          <div className="w-full cursor-pointer rounded-lg px-2 inset-ring-primary-500 hover:bg-surface-subtle focus:inset-ring-2">
                             <div>
                               <strong>DOI:</strong> {publication.doi}
                             </div>

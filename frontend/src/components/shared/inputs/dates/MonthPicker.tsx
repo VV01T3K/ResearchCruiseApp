@@ -23,7 +23,7 @@ export function MonthPicker({ selectedDate, onSelectMonth }: Props) {
         <Button
           variant="plain"
           onClick={() => setVisibleYear((prev) => prev - 1)}
-          className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+          className="grid w-full place-items-center rounded-lg hover:bg-surface-subtle"
         >
           <CaretLeftIcon className="h-5 w-5" />
         </Button>
@@ -31,7 +31,7 @@ export function MonthPicker({ selectedDate, onSelectMonth }: Props) {
         <Button
           variant="plain"
           onClick={() => setVisibleYear((prev) => prev + 1)}
-          className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+          className="grid w-full place-items-center rounded-lg hover:bg-surface-subtle"
         >
           <CaretRightIcon className="h-5 w-5" />
         </Button>
@@ -46,7 +46,7 @@ export function MonthPicker({ selectedDate, onSelectMonth }: Props) {
               selectedDate?.getFullYear() === visibleYear && selectedDate?.getMonth() === index
                 ? 'text-primary-500 font-bold'
                 : '',
-              'grid place-items-center rounded-lg hover:bg-gray-100'
+              'grid place-items-center rounded-lg hover:bg-surface-subtle'
             )}
           >
             {month}

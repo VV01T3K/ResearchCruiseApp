@@ -88,7 +88,7 @@ export function TimePickerInput({
       <PickerPopup aria-label="Wybierz godzinę">
         <div className="flex flex-col gap-2 p-2">
           <div className="flex gap-2 pb-2">
-            <div className="mx-2 flex h-40 flex-col overflow-y-auto rounded-4xl bg-gray-100 pt-1 pb-1">
+            <div className="mx-2 flex h-40 flex-col overflow-y-auto rounded-4xl bg-surface-subtle pt-1 pb-1">
               {Array.from({ length: 24 }).map((_, i) => {
                 const isAllowed = i >= (minimalTime?.hours ?? 0) && i <= (maximalTime?.hours ?? 23);
                 if (!isAllowed) {
@@ -105,7 +105,7 @@ export function TimePickerInput({
                       });
                     }}
                     className={cn(
-                      i === time?.hours ? 'bg-blue-500 text-white' : 'hover:bg-gray-200',
+                      i === time?.hours ? 'bg-primary-500 text-inverse-foreground' : 'hover:bg-neutral-200',
                       'rounded-4xl transition'
                     )}
                   >
@@ -114,7 +114,7 @@ export function TimePickerInput({
                 );
               })}
             </div>
-            <div className="mx-2 flex h-40 flex-col overflow-y-auto rounded-4xl bg-gray-100 pt-1 pb-1">
+            <div className="mx-2 flex h-40 flex-col overflow-y-auto rounded-4xl bg-surface-subtle pt-1 pb-1">
               {Array.from({ length: 60 / minuteStep }).map((_, i) => {
                 const minutes = i * minuteStep;
                 const totalMinutes = timeToMinutes({ hours: (time?.hours || minimalTime?.hours) ?? 0, minutes });
@@ -133,7 +133,7 @@ export function TimePickerInput({
                       onChange({ hours: time?.hours || 0, minutes });
                     }}
                     className={cn(
-                      minutes === time?.minutes ? 'bg-blue-500 text-white' : 'hover:bg-gray-200',
+                      minutes === time?.minutes ? 'bg-primary-500 text-inverse-foreground' : 'hover:bg-neutral-200',
                       'rounded-4xl transition'
                     )}
                   >

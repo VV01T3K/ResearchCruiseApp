@@ -31,7 +31,7 @@ export function Avatar({ fullName, className, variant = 'default' }: Props) {
       )}
       style={{ '--color': color } as React.CSSProperties}
     >
-      <span className="font-bold text-gray-50">{parts.map((name) => name.charAt(0).toUpperCase()).join('')}</span>
+      <span className="font-bold text-neutral-50">{parts.map((name) => name.charAt(0).toUpperCase()).join('')}</span>
     </div>
   );
 }

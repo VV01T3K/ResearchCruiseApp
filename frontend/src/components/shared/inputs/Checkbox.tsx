@@ -59,10 +59,10 @@ export function Checkbox({
           {...aria.inputProps}
           aria-label={ariaLabel}
           className={cn(
-            'flex items-center justify-center rounded-md border border-gray-300 transition-all duration-300',
+            'flex items-center justify-center rounded-md border border-border transition-all duration-300',
             sizes[size],
             (checked || indeterminate) && variants[variant][disabled ? 'disabled' : 'enabled'],
-            !checked && !indeterminate && (disabled ? 'bg-gray-100' : 'bg-white hover:border-gray-400'),
+            !checked && !indeterminate && (disabled ? 'bg-surface-subtle' : 'bg-surface hover:border-neutral-400'),
             disabled ? 'cursor-default' : 'cursor-pointer',
             hasErrors(errors) && 'border-danger hover:border-danger focus:ring-danger focus:ring-1 focus:outline-hidden'
           )}
@@ -90,27 +90,27 @@ const sizes = {
 
 const variants = {
   primary: {
-    enabled: 'bg-primary border-primary text-white',
+    enabled: 'bg-primary border-primary text-inverse-foreground',
     disabled: 'bg-primary-500 border-primary-500 text-primary-200',
   },
   success: {
-    enabled: 'bg-success border-success text-white',
+    enabled: 'bg-success border-success text-inverse-foreground',
     disabled: 'bg-success-400 border-success-400 text-success-200',
   },
   danger: {
-    enabled: 'bg-danger border-danger text-white',
+    enabled: 'bg-danger border-danger text-inverse-foreground',
     disabled: 'bg-danger-400 border-danger-400 text-danger-200',
   },
   warning: {
-    enabled: 'bg-warning border-warning text-black',
+    enabled: 'bg-warning border-warning text-neutral-950',
     disabled: 'bg-warning-100 border-warning-100 text-warning-800',
   },
   info: {
-    enabled: 'bg-info border-info text-white',
+    enabled: 'bg-info border-info text-inverse-foreground',
     disabled: 'bg-info-200 border-info-200 text-info-100',
   },
   plain: {
-    enabled: 'text-black',
-    disabled: 'text-gray-400 bg-gray-100',
+    enabled: 'text-neutral-950',
+    disabled: 'text-neutral-400 bg-surface-subtle',
   },
 };

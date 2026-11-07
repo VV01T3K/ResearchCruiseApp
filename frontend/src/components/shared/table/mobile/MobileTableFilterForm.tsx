@@ -42,7 +42,7 @@ function FormElement<T extends object>({ header }: FormElementProps<T>) {
   }
 
   return (
-    <div className="flex w-full justify-between border-b border-gray-300 pb-4">
+    <div className="flex w-full justify-between border-b border-border pb-4">
       <div>{flexRender(header.column.columnDef.header, header.getContext())}</div>
       <div className="flex w-120 flex-col gap-2">
         {supportsSort && <SortFormElement header={header} />}

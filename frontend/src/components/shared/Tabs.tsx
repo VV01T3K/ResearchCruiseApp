@@ -24,7 +24,9 @@ export function Tabs({ children, tabNames }: Props) {
         {tabNames.map((tabName, index) => (
           <Button
             className={cn(
-              index === activeTab ? 'bg-primary font-bold text-white' : 'hover:bg-primary-200 bg-gray-200',
+              index === activeTab
+                ? 'bg-primary font-bold text-inverse-foreground'
+                : 'hover:bg-primary-200 bg-neutral-200',
               'w-full rounded-full transition'
             )}
             variant="plain"

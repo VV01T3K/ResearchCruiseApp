@@ -94,8 +94,8 @@ function UploadedFileListElement<File extends FileContent>({
   return (
     <div
       className={cn(
-        'mx-4 my-2 flex flex-row items-center justify-between rounded-lg border border-gray-200 p-2',
-        disabled ? 'bg-gray-100' : 'bg-white'
+        'mx-4 my-2 flex flex-row items-center justify-between rounded-lg border border-border-muted p-2',
+        disabled ? 'bg-surface-subtle' : 'bg-surface'
       )}
     >
       <button

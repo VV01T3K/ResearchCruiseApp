@@ -50,7 +50,7 @@ export function SessionStatusBadge({ refreshTokenExpirationDate, onRefresh }: Pr
     <div
       title="Pozostały czas sesji"
       className={`flex items-center gap-2 rounded-lg px-3 py-1 text-sm font-medium ${
-        isWarning ? 'bg-red-100 text-red-700' : 'bg-white/20 text-white'
+        isWarning ? 'bg-danger-100 text-danger-700' : 'bg-inverse-foreground/20 text-inverse-foreground'
       }`}
     >
       <ClockIcon className="h-4 w-4" />

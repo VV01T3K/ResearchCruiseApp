@@ -53,7 +53,7 @@ function CalendarEventTiles({
         start ? 'rounded-l-lg ml-3' : '',
         end ? 'rounded-r-lg mr-3' : '',
         event.color ? 'bg-[var(--color)]' : 'bg-primary',
-        'h-8 truncate text-white text-sm p-2 '
+        'h-8 truncate text-inverse-foreground text-sm p-2 '
       );
 
       const daysInWeek = 8 - (date.getDay() === 0 ? 7 : date.getDay());
@@ -166,17 +166,17 @@ export function CalendarTile({
       data-calendar-day-tile
       ref={setNodeRef}
       className={cn(
-        !isCurrentMonth ? 'bg-gray-100' : '',
+        !isCurrentMonth ? 'bg-surface-subtle' : '',
         isToday ? 'bg-primary-100! border-primary-500!' : '',
         enableDragAndDrop && isOver ? 'ring-2 ring-primary-500' : '',
         enableDragAndDrop && isDropPreview ? 'ring-2 ring-primary-300 bg-primary-50' : '',
-        'mb-3 h-full min-h-30 rounded-xl border border-gray-300 transition hover:bg-gray-100'
+        'mb-3 h-full min-h-30 rounded-xl border border-border transition hover:bg-surface-subtle'
       )}
     >
       <div className="gap-1 p-2">
         <div
           className={cn(
-            !isCurrentMonth ? 'text-gray-500' : '',
+            !isCurrentMonth ? 'text-muted-foreground' : '',
             isSunday ? (isToday ? 'text-danger-700' : 'text-danger') : '',
             'text-end'
           )}

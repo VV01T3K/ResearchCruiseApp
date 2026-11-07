@@ -98,7 +98,7 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                         {
                           value: type,
                           content: (
-                            <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-gray-500">
+                            <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-muted-foreground">
                               {getTaskName(type)}
                             </div>
                           ),

@@ -198,7 +198,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
         </Button>
       </div>
       {includesOwnAccount && (
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-neutral-600">
           {allowToRemoveUsers
             ? 'Nie możesz usunąć własnego konta ani cofnąć jego akceptacji. Odznacz je, aby zmienić pozostałych.'
             : 'Nie możesz cofnąć akceptacji własnego konta. Odznacz je, aby zmienić pozostałych.'}

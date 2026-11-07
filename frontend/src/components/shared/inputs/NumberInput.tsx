@@ -154,10 +154,10 @@ export function NumberInput({
             {...aria.inputProps}
             aria-label={ariaLabel}
             className={cn(
-              'block h-11 w-full border border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900',
+              'block h-11 w-full border border-border bg-surface-muted py-2.5 text-center text-sm text-foreground',
               'transition duration-300 ease-in-out',
               'focus:ring-primary focus:border-primary focus:shadow focus:outline-hidden forced-colors:focus:-outline-offset-4',
-              disabled ? 'rounded-lg bg-gray-200' : '',
+              disabled ? 'rounded-lg bg-neutral-200' : '',
               hasErrors(errors) && invalidInputClassName
             )}
             ref={inputRef}
@@ -200,14 +200,14 @@ function NumberInputButton({ side, inputToFocus, onClick, disabled }: ButtonProp
       disabled={disabled}
       className={cn(
         'flex h-11 w-11 items-center justify-center',
-        'text-gray-500',
+        'text-muted-foreground',
         'transition duration-300 ease-in-out',
         'focus:ring-primary focus:border-primary focus:shadow focus:outline-hidden forced-colors:focus:-outline-offset-4',
         'focus-visible:ring-inset focus-visible:ring-offset-0',
         'disabled:cursor-not-allowed disabled:opacity-50',
-        'border-collapse border border-gray-300 px-2',
+        'border-collapse border border-border px-2',
         side === 'left' ? 'rounded-l' : 'rounded-r',
-        disabled ? 'bg-gray-300' : 'bg-gray-100 hover:text-gray-900'
+        disabled ? 'bg-neutral-300' : 'bg-surface-subtle hover:text-foreground'
       )}
       variant="plain"
       size="plain"
