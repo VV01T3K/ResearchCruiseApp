@@ -1,5 +1,25 @@
 @theme {
-  --color-gray-500: #666e7e;
+  --color-neutral-*: initial;
+  --color-neutral-50: oklch(98.5% 0.002 247.839);
+  --color-neutral-100: oklch(96.7% 0.003 264.542);
+  --color-neutral-200: oklch(92.8% 0.006 264.531);
+  --color-neutral-300: oklch(87.2% 0.01 258.338);
+  --color-neutral-400: oklch(70.7% 0.022 261.325);
+  --color-neutral-500: #666e7e;
+  --color-neutral-600: oklch(44.6% 0.03 256.802);
+  --color-neutral-700: oklch(37.3% 0.034 259.733);
+  --color-neutral-800: oklch(27.8% 0.033 256.848);
+  --color-neutral-900: oklch(21% 0.034 264.665);
+  --color-neutral-950: #000;
+
+  --color-surface: #fff;
+  --color-surface-muted: var(--color-neutral-50);
+  --color-surface-subtle: var(--color-neutral-100);
+  --color-border: var(--color-neutral-300);
+  --color-border-muted: var(--color-neutral-200);
+  --color-foreground: var(--color-neutral-900);
+  --color-muted-foreground: var(--color-neutral-500);
+  --color-inverse-foreground: #fff;
 
   --color-primary: #0041d2;
   --color-primary-light: #f3f2ff;
