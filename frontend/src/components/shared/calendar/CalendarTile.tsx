@@ -1,5 +1,6 @@
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
+import { DotsSixVerticalIcon, LockIcon } from '@phosphor-icons/react';
 import React, { Fragment } from 'react';
 
 import { Link } from '@/components/shared/Link';
@@ -59,9 +60,13 @@ function CalendarEventTiles({
       const daysInWeek = 8 - (date.getDay() === 0 ? 7 : date.getDay());
       const daysLeft = (dateToUtcDay(event.end) - dateToUtcDay(date)) / (24 * 60 * 60 * 1000) + 1;
       const width = Math.min(daysInWeek, daysLeft) * tileWidth - 20;
+      const isDraggable = enableDragAndDrop && !event.dragLockedReason;
+      const isLocked = enableDragAndDrop && !!event.dragLockedReason;
       const textComponent = (
-        <div className="absolute z-20 truncate" style={{ maxWidth: width }}>
-          {start ? event.title : ''}
+        <div className="absolute z-20 flex items-center gap-1 truncate" style={{ maxWidth: width }}>
+          {start && isDraggable && <DotsSixVerticalIcon aria-hidden size={14} weight="bold" className="shrink-0" />}
+          {start && isLocked && <LockIcon aria-hidden size={14} weight="bold" className="shrink-0" />}
+          <span className="truncate">{start ? event.title : ''}</span>
         </div>
       );
 
@@ -71,7 +76,6 @@ function CalendarEventTiles({
         </div>
       );
 
-      const isDraggable = enableDragAndDrop && event.draggable !== false;
       const renderedComponent =
         isDraggable && event.id ? (
           <DraggableCalendarEvent
@@ -87,9 +91,11 @@ function CalendarEventTiles({
 
       eventTiles.push(
         event.link && !isDraggable ? (
-          <Link href={event.link} variant="plain" key={`${event.title}-${i}`}>
-            {renderedComponent}
-          </Link>
+          <div key={`${event.title}-${i}`} onDragStart={(e) => e.preventDefault()}>
+            <Link href={event.link} variant="plain" title={isLocked ? event.dragLockedReason : undefined}>
+              {renderedComponent}
+            </Link>
+          </div>
         ) : (
           <Fragment key={`${event.title}-${i}`}>{renderedComponent}</Fragment>
         )

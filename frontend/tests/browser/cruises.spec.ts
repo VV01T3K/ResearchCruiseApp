@@ -667,6 +667,7 @@ test('calendar edit mode lets a confirmed cruise be dragged, but not an ended on
     'href',
     `/cruises/${ended.id}`
   );
+  await expect(page.getByRole('link', { name: 'Rejs Zakończony' }).first()).toHaveAttribute('title', /.+/);
 });
 
 test.describe(() => {
