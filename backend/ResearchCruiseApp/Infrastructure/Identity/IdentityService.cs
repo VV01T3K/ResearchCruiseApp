@@ -184,68 +184,56 @@ internal class IdentityService(
         if (!userManager.SupportsUserEmail)
             return Error.ServiceUnavailable();
 
-        var alreadyTaken = IdentityResult
-            .Failed(userManager.ErrorDescriber.DuplicateEmail(registerForm.Email))
-            .ToApplicationResult();
         var normalizedEmail = userManager.NormalizeEmail(registerForm.Email);
-        var users = await userManager
-            .Users.Where(candidate => candidate.NormalizedEmail == normalizedEmail)
-            .Take(2)
-            .ToListAsync();
-        var user = users.FirstOrDefault();
-        if (
-            users.Count > 1
-            || user is { EmailConfirmed: true } or { Accepted: true }
-            || user is not null && await IsReferenced(Guid.Parse(user.Id))
-        )
-            return alreadyTaken;
+        var existing = await userManager.Users.FirstOrDefaultAsync(candidate =>
+            candidate.NormalizedEmail == normalizedEmail
+        );
+        if (existing is not null)
+        {
+            await emailSender.SendRegistrationAttemptMessage(existing.Email!);
+            await transaction.CommitAsync();
+            return Result.Empty;
+        }
 
-        var renewing = user is not null;
+        var user = CreateUser(registerForm);
         IdentityResult identityResult;
-        if (user is null)
+        try
         {
-            user = CreateUser(registerForm);
-            try
-            {
-                identityResult = await userManager.CreateAsync(user, registerForm.Password);
-            }
-            catch (DbUpdateException exception)
-                when (exception.InnerException is SqlException { Number: 2601 } sqlException
-                    && sqlException.Message.Contains("UserNameIndex")
-                )
-            {
-                return alreadyTaken;
-            }
-            if (identityResult.Succeeded)
-                identityResult = await userManager.AddToRoleAsync(user, roleName);
+            identityResult = await userManager.CreateAsync(user, registerForm.Password);
         }
-        else
+        catch (DbUpdateException exception)
+            when (exception.InnerException is SqlException { Number: 2601 } sqlException
+                && sqlException.Message.Contains("UserNameIndex")
+            )
         {
-            identityResult = await userManager.RemovePasswordAsync(user);
+            return IdentityResult
+                .Failed(userManager.ErrorDescriber.DuplicateEmail(registerForm.Email))
+                .ToApplicationResult();
         }
+        if (identityResult.Succeeded)
+            identityResult = await userManager.AddToRoleAsync(user, roleName);
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
-        if (renewing)
-        {
-            var resetCode = await userManager.GeneratePasswordResetTokenAsync(user);
-            await emailSender.SendPasswordResetMessage(
-                await CreateUserDto(user),
-                WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetCode)),
-                registrationRenewed: true
-            );
-        }
-        else
-        {
-            await emailSender.SendEmailConfirmationEmail(
-                await CreateUserDto(user),
-                roleName,
-                await CreateEmailConfirmationCode(user)
-            );
-        }
+        await emailSender.SendEmailConfirmationEmail(
+            await CreateUserDto(user),
+            roleName,
+            await CreateEmailConfirmationCode(user)
+        );
 
         await transaction.CommitAsync();
         return identityResult.ToApplicationResult();
+    }
+
+    public async Task DeleteStaleRegistrations()
+    {
+        var cutoff = clock.GetUtcNow().UtcDateTime.AddDays(-7);
+        var users = await userManager
+            .Users.Where(user => !user.EmailConfirmed && !user.Accepted && user.CreatedAt < cutoff)
+            .ToListAsync();
+        foreach (var user in users)
+            if (!await IsReferenced(Guid.Parse(user.Id)))
+                await userManager.DeleteAsync(user);
     }
 
     private async Task<bool> IsReferenced(Guid userId) =>
@@ -413,8 +401,7 @@ internal class IdentityService(
         var emailConfirmed = user.EmailConfirmed;
         user.RefreshToken = null;
         user.RefreshTokenExpiry = null;
-        if (user.PasswordHash is null)
-            user.EmailConfirmed = true;
+        user.EmailConfirmed = true;
         var result = await userManager.ResetPasswordAsync(
             user,
             resetCode,

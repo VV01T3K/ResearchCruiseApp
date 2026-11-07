@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using ResearchCruiseApp.Infrastructure.Email;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.IntegrationTests.Infrastructure;
@@ -50,10 +51,16 @@ internal sealed class TestApplication(
             {
                 foreach (var (key, value) in settings)
                     context.Configuration[key] = value;
-                var worker = services.Single(descriptor =>
-                    descriptor.ImplementationType == typeof(EmailOutboxWorker)
-                );
-                services.Remove(worker);
+                foreach (
+                    var workerType in new[]
+                    {
+                        typeof(EmailOutboxWorker),
+                        typeof(StaleRegistrationWorker),
+                    }
+                )
+                    services.Remove(
+                        services.Single(descriptor => descriptor.ImplementationType == workerType)
+                    );
                 services.RemoveAll<IEmailTransport>();
                 services.AddSingleton<IEmailTransport>(Transport);
                 services.RemoveAll<TimeProvider>();
