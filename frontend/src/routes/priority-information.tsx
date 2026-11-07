@@ -31,7 +31,7 @@ function PriorityInformationPage() {
           </thead>
           <tbody>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
+              <PriorityInformationCell colSpan={2} heading>
                 1. Prace naukowe:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -58,7 +58,7 @@ function PriorityInformationPage() {
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
+              <PriorityInformationCell colSpan={2} heading>
                 2. Realizacja projektu w ramach:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -89,7 +89,7 @@ function PriorityInformationPage() {
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
+              <PriorityInformationCell colSpan={2} heading>
                 3. Realizacja innych projektów:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -126,7 +126,7 @@ function PriorityInformationPage() {
               <PriorityInformationCell>Do indywidualnego rozpatrzenia</PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
+              <PriorityInformationCell colSpan={2} heading>
                 4. Współpraca zewnętrzna na podstawie umowy:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -150,7 +150,7 @@ function PriorityInformationPage() {
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
+              <PriorityInformationCell colSpan={2} heading>
                 5. Zespoły badawcze:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -173,7 +173,7 @@ function PriorityInformationPage() {
               <PriorityInformationCell>-</PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
+              <PriorityInformationCell colSpan={2} heading>
                 6. Historia publikacji:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -201,7 +201,7 @@ function PriorityInformationPage() {
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
+              <PriorityInformationCell colSpan={2} heading>
                 7. Efekty rejsu:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -274,7 +274,7 @@ function PriorityInformationPage() {
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
+              <PriorityInformationCell colSpan={2} heading>
                 8. Zadania badawcze z wniosku SPUB:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -285,7 +285,7 @@ function PriorityInformationPage() {
               <PriorityInformationCell>Dodatkowo 100 punktów.</PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
+              <PriorityInformationCell colSpan={2} heading>
                 9. Uwagi końcowe:
               </PriorityInformationCell>
             </PriorityInformationRow>
