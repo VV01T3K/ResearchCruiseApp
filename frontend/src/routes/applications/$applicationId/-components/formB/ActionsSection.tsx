@@ -21,7 +21,7 @@ export function ActionsSection({ onSaveDraft, onRevertToEdit, onPrint, disabled,
       <Guard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
         {isReadonly && !!onRevertToEdit && (
           <Button
-            className="w-64 !justify-center gap-4"
+            className="w-64 !justify-center"
             variant="primaryOutline"
             onClick={onRevertToEdit}
             disabled={disabled}
@@ -31,24 +31,19 @@ export function ActionsSection({ onSaveDraft, onRevertToEdit, onPrint, disabled,
         )}
       </Guard>
       {!isReadonly && (
-        <Button
-          className="w-64 !justify-center gap-4"
-          variant="primaryOutline"
-          onClick={onSaveDraft}
-          disabled={disabled}
-        >
+        <Button className="w-64 !justify-center" variant="primaryOutline" onClick={onSaveDraft} disabled={disabled}>
           <FloppyDiskIcon weight="fill" className="h-4 w-4" />
           Zapisz wersję roboczą
         </Button>
       )}
       {!isReadonly && (
-        <Button type="submit" className="w-64 !justify-center gap-4" disabled={disabled}>
+        <Button type="submit" className="w-64 !justify-center" disabled={disabled}>
           <PaperPlaneTiltIcon weight="fill" className="h-4 w-4" />
           Wyślij
         </Button>
       )}
       {isReadonly && (
-        <Button className="w-64 !justify-center gap-4" onClick={onPrint} disabled={disabled}>
+        <Button className="w-64 !justify-center" onClick={onPrint} disabled={disabled}>
           <PrinterIcon weight="fill" className="h-4 w-4" />
           Wydrukuj
         </Button>

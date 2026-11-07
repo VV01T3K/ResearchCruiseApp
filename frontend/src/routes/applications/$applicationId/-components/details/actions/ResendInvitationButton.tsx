@@ -14,7 +14,7 @@ export function ResendInvitationButton({ applicationId }: Props) {
 
   return (
     <Button
-      className="!justify-center gap-4 px-6"
+      className="!justify-center"
       variant="primaryOutline"
       disabled={isSending}
       onClick={() => {

@@ -143,13 +143,7 @@ type ActionsCellProps = {
 function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
   return (
     <div className="grid min-w-30 grid-cols-1 gap-2">
-      <Button
-        variant="primary"
-        type="link"
-        size="sm"
-        href={`/cruises/${cruise.id}`}
-        className="w-full !justify-center gap-2"
-      >
+      <Button variant="primary" type="link" size="sm" href={`/cruises/${cruise.id}`} className="w-full !justify-center">
         Szczegóły
         <MagnifyingGlassPlusIcon className="h-4 w-4" />
       </Button>
@@ -158,7 +152,7 @@ function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
           <Button
             variant="dangerOutline"
             size="sm"
-            className="w-full !justify-center gap-2"
+            className="w-full !justify-center"
             onClick={() => deleteCruise(cruise)}
           >
             Usuń

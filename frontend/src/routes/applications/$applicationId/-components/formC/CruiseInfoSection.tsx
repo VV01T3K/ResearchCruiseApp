@@ -25,7 +25,7 @@ export function CruiseInfoSection({ context }: { context: FormCViewModel }) {
           </span>
         </div>
         <div className="grid place-items-center">
-          <Button type="link" href={`/cruises/${cruise.id}`} variant="primaryOutline" className="grid gap-4 py-3">
+          <Button type="link" href={`/cruises/${cruise.id}`} variant="primaryOutline">
             <MagnifyingGlassIcon className="w-4" /> Pokaż szczegóły rejsu
           </Button>
         </div>

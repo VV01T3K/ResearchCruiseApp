@@ -131,7 +131,7 @@ function MyPublicationsPage() {
           disabled={deleteOwnPublicationMutation.isPending}
           onClick={() => deleteOwnPublicationMutation.mutate({ publicationId: cell.row.original.id })}
         >
-          <TrashIcon className="mr-2 h-3 w-3" />
+          <TrashIcon className="h-3 w-3" />
           Usuń
         </Button>
       ),
@@ -163,7 +163,7 @@ function MyPublicationsPage() {
               target="_blank"
             >
               Przejdź do repozytorium BG
-              <ArrowSquareOutIcon className="ml-2 h-4 w-4" />
+              <ArrowSquareOutIcon className="h-4 w-4" />
             </Button>,
             <Button
               key="removeAllPublications"
@@ -171,7 +171,7 @@ function MyPublicationsPage() {
               onClick={() => setIsDeleteAllModalOpen(true)}
               disabled={!ownPublicationsQuery.data?.length || deleteAllOwnPublicationsMutation.isPending}
             >
-              <TrashIcon className="mr-2 h-4 w-4" />
+              <TrashIcon className="h-4 w-4" />
               Usuń wszystkie publikacje
             </Button>,
             <Button
@@ -180,7 +180,7 @@ function MyPublicationsPage() {
               onClick={() => void deleteSelectedPublications()}
               disabled={!Object.keys(selectedPublications).length || isDeletingSelected}
             >
-              <TrashIcon className="mr-2 h-4 w-4" />
+              <TrashIcon className="h-4 w-4" />
               Usuń zaznaczone publikacje
             </Button>,
             ...defaultButtons,

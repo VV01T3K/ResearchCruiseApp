@@ -10,11 +10,11 @@ type Props = {
 export function SupervisorActionsSection({ onAccept, onDeny }: Props) {
   return (
     <FloatingActionsSection>
-      <Button className="w-36 !justify-center gap-4 lg:w-48" variant="danger" onClick={onDeny}>
+      <Button className="w-36 !justify-center lg:w-48" variant="danger" onClick={onDeny}>
         <XSquareIcon weight="fill" className="h-4 w-4" />
         Odrzuć
       </Button>
-      <Button className="w-36 !justify-center gap-4 lg:w-48" onClick={onAccept}>
+      <Button className="w-36 !justify-center lg:w-48" onClick={onAccept}>
         <CheckSquareIcon weight="fill" className="h-4 w-4" />
         Zaakceptuj
       </Button>
