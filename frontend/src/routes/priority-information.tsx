@@ -16,22 +16,22 @@ function PriorityInformationPage() {
         role="region"
         aria-label="Tabela punktacji priorytetyzacji"
         tabIndex={0}
-        className="relative flex h-full w-full flex-col overflow-x-auto bg-clip-border px-5 text-gray-700"
+        className="relative flex h-full w-full flex-col overflow-x-auto bg-clip-border px-5 text-neutral-700"
       >
         <table className="w-full table-auto text-left">
           <thead>
             <tr>
-              <th className="border border-slate-600 bg-slate-300 p-4 text-center text-lg">
+              <th className="border border-neutral-600 bg-neutral-300 p-4 text-center text-lg">
                 <p className="block">Rodzaj zadania z formularza</p>
               </th>
-              <th className="border border-slate-600 bg-slate-300 p-4 text-center text-lg">
+              <th className="border border-neutral-600 bg-neutral-300 p-4 text-center text-lg">
                 <p className="block">Przyznawane punkty</p>
               </th>
             </tr>
           </thead>
           <tbody>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-slate-300 font-semibold">
+              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
                 1. Prace naukowe:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -58,7 +58,7 @@ function PriorityInformationPage() {
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-slate-300 font-semibold">
+              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
                 2. Realizacja projektu w ramach:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -89,7 +89,7 @@ function PriorityInformationPage() {
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-slate-300 font-semibold">
+              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
                 3. Realizacja innych projektów:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -126,7 +126,7 @@ function PriorityInformationPage() {
               <PriorityInformationCell>Do indywidualnego rozpatrzenia</PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-slate-300 font-semibold">
+              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
                 4. Współpraca zewnętrzna na podstawie umowy:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -150,7 +150,7 @@ function PriorityInformationPage() {
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-slate-300 font-semibold">
+              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
                 5. Zespoły badawcze:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -173,7 +173,7 @@ function PriorityInformationPage() {
               <PriorityInformationCell>-</PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-slate-300 font-semibold">
+              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
                 6. Historia publikacji:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -201,7 +201,7 @@ function PriorityInformationPage() {
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-slate-300 font-semibold">
+              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
                 7. Efekty rejsu:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -274,7 +274,7 @@ function PriorityInformationPage() {
               </PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-slate-300 font-semibold">
+              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
                 8. Zadania badawcze z wniosku SPUB:
               </PriorityInformationCell>
             </PriorityInformationRow>
@@ -285,7 +285,7 @@ function PriorityInformationPage() {
               <PriorityInformationCell>Dodatkowo 100 punktów.</PriorityInformationCell>
             </PriorityInformationRow>
             <PriorityInformationRow>
-              <PriorityInformationCell colSpan={2} className="bg-slate-300 font-semibold">
+              <PriorityInformationCell colSpan={2} className="bg-neutral-300 font-semibold">
                 9. Uwagi końcowe:
               </PriorityInformationCell>
             </PriorityInformationRow>

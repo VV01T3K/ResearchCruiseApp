@@ -6,7 +6,7 @@ import Background from '@/components/shared/layout/Background';
 const meta = {
   component: Layout,
   args: {
-    children: <div className="min-h-80 rounded-2xl bg-gray-100" />,
+    children: <div className="min-h-80 rounded-2xl bg-surface-subtle" />,
   },
   decorators: [
     (Story) => (

@@ -65,7 +65,7 @@ export function AdditionalPermissionsSection({ context }: { context: FormBViewMo
           return (
             <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
               Skan
-              {showRequiredAsterisk && <span className="ml-1 font-bold text-red-600">*</span>}
+              {showRequiredAsterisk && <span className="ml-1 font-bold text-danger">*</span>}
             </span>
           );
         },

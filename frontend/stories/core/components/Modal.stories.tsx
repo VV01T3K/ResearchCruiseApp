@@ -14,7 +14,7 @@ const meta = {
     },
   },
   args: {
-    children: <div className="min-h-80 rounded-2xl bg-gray-100" />,
+    children: <div className="min-h-80 rounded-2xl bg-surface-subtle" />,
     onClose: fn(),
   },
   render: (args) => <ModalExample {...args} key={String(args.isOpen)} />,

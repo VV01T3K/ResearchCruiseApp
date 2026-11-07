@@ -111,11 +111,11 @@ function HelpPage() {
             <Link href="mailto:office.oceanograf@ug.edu.pl">office.oceanograf@ug.edu.pl</Link>
           </CompanyInfoCard>
           <CompanyInfoCard icon={<BrowsersIcon />} title="Wersja aplikacji">
-            <div className="grid grid-cols-2 gap-1 text-sm text-gray-500">
+            <div className="grid grid-cols-2 gap-1 text-sm text-muted-foreground">
               <div>Wersja frontendu:</div>
-              <div className="font-bold text-black">{config.version}</div>
+              <div className="font-bold text-neutral-950">{config.version}</div>
               <div>Wersja backendu:</div>
-              <div className="font-bold text-black">{backendVersion.data}</div>
+              <div className="font-bold text-neutral-950">{backendVersion.data}</div>
             </div>
           </CompanyInfoCard>
         </div>
