@@ -146,10 +146,10 @@ export function FileInput({
       >
         <div
           className={cn(
-            'relative flex w-full flex-col items-center justify-center border-2 border-gray-300 text-gray-500',
-            'cursor-pointer overflow-x-auto rounded-lg border-dashed bg-gray-50 hover:bg-gray-100',
+            'relative flex w-full flex-col items-center justify-center border-2 border-border text-muted-foreground',
+            'cursor-pointer overflow-x-auto rounded-lg border-dashed bg-surface-muted hover:bg-surface-subtle',
             'min-h-10 transition-all duration-200 ease-in-out',
-            disabled ? 'cursor-pointer bg-gray-200 hover:bg-gray-200' : '',
+            disabled ? 'cursor-pointer bg-neutral-200 hover:bg-neutral-200' : '',
             hasErrors(errors) && 'border-danger text-danger',
             className
           )}

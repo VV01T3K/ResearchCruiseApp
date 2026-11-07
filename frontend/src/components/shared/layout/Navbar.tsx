@@ -38,7 +38,7 @@ export function Navbar() {
           <Link
             href="/"
             title="Portal rejsów badawczych R/V Oceanograf – strona główna"
-            className="pr-4 text-white hover:no-underline sm:truncate sm:text-2xl"
+            className="pr-4 text-inverse-foreground hover:no-underline sm:truncate sm:text-2xl"
           >
             Portal rejsów badawczych R/V Oceanograf
           </Link>
@@ -49,12 +49,22 @@ export function Navbar() {
       </div>
       <div className="flex shrink-0 gap-6">
         <motion.div className="w-4" whileHover={{ scale: 1.3 }}>
-          <Link href="https://ug.edu.pl" target="_blank" title="Uniwersytet Gdański" className="text-white">
+          <Link
+            href="https://ug.edu.pl"
+            target="_blank"
+            title="Uniwersytet Gdański"
+            className="text-inverse-foreground"
+          >
             <img src={ugLogoUrl} alt="" className="h-full w-full object-contain" />
           </Link>
         </motion.div>
         <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
-          <Button onClick={() => openUGRadio()} title="Radio MORS" variant="plain" className="p-0 text-white">
+          <Button
+            onClick={() => openUGRadio()}
+            title="Radio MORS"
+            variant="plain"
+            className="p-0 text-inverse-foreground"
+          >
             <BroadcastIcon />
           </Button>
         </motion.div>
@@ -63,7 +73,7 @@ export function Navbar() {
             href="https://outlook.com/ug.edu.pl"
             target="_blank"
             title="Poczta Uniwersytecka"
-            className="text-white"
+            className="text-inverse-foreground"
           >
             <EnvelopeSimpleIcon />
           </Link>
@@ -87,7 +97,7 @@ export function Navbar() {
                   onClick={() => void onSignOutButtonClicked()}
                   title="Wyloguj"
                   variant="plain"
-                  className="p-0 text-white"
+                  className="p-0 text-inverse-foreground"
                 >
                   <SignOutIcon />
                 </Button>

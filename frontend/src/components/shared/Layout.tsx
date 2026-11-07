@@ -26,7 +26,7 @@ export function Layout({ title, children, description, variant = 'default', disa
     >
       <div
         className={cn(
-          'mx-auto rounded-xl bg-gray-50 has-data-actions-section:pb-0',
+          'mx-auto rounded-xl bg-surface-muted has-data-actions-section:pb-0',
           useWidePadding ? innerPaddingVariants[variant] : 'pb-4 md:p-8',
           variants[variant]
         )}
@@ -38,7 +38,7 @@ export function Layout({ title, children, description, variant = 'default', disa
             </div>
           )}
           <h1 className="mb-2 pt-8 text-center text-3xl font-bold md:pt-0">{title}</h1>
-          {description ? <p className="text-center font-semibold text-gray-600">{description}</p> : null}
+          {description ? <p className="text-center font-semibold text-neutral-600">{description}</p> : null}
         </header>
         {children}
       </div>

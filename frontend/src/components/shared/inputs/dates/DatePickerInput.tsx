@@ -171,7 +171,7 @@ export function DatePickerInput({
           <Button
             variant="plain"
             onClick={() => handleMonthChange(-1)}
-            className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+            className="grid w-full place-items-center rounded-lg hover:bg-surface-subtle"
           >
             <CaretLeftIcon className="h-5 w-5" />
           </Button>
@@ -183,7 +183,7 @@ export function DatePickerInput({
           <Button
             variant="plain"
             onClick={() => handleMonthChange(1)}
-            className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+            className="grid w-full place-items-center rounded-lg hover:bg-surface-subtle"
           >
             <CaretRightIcon className="h-5 w-5" />
           </Button>
@@ -315,7 +315,7 @@ function CalendarDateTile({
       className={cn(
         isFirstDayOfSelection ? 'rounded-l-full' : '',
         (isHovered && !selectedDate) || isSelected ? 'rounded-r-full' : '',
-        (!selectedDate && isHoveredBetweenSelection) || isInSelectedRange ? 'bg-gray-100' : '',
+        (!selectedDate && isHoveredBetweenSelection) || isInSelectedRange ? 'bg-surface-subtle' : '',
         'mt-1'
       )}
       onMouseEnter={() => setHoveredDate(date)}
@@ -324,11 +324,11 @@ function CalendarDateTile({
       <Button
         variant="plain"
         className={cn(
-          isSelected ? 'bg-primary-500 !text-white' : 'hover:bg-gray-300',
+          isSelected ? 'bg-primary-500 !text-inverse-foreground' : 'hover:bg-neutral-300',
           isFirstDayOfSelection ? '!bg-primary-200 !text-inherit' : '',
           'w-full rounded-full py-2 text-center',
-          !isVisibleMonth || !isAllowed ? 'text-gray-400' : '',
-          !isAllowed ? 'hover:bg-gray-100' : ''
+          !isVisibleMonth || !isAllowed ? 'text-neutral-400' : '',
+          !isAllowed ? 'hover:bg-surface-subtle' : ''
         )}
         disabled={!isAllowed}
       >

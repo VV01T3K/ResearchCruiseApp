@@ -92,15 +92,15 @@ export function DesktopTable<T extends object>({
             <tr>
               <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
                 <div
-                  className={`rounded-lg border bg-gray-100 p-2.5 ${
-                    hasErrors(errors) ? 'border-danger bg-gray-50 text-danger ring-danger' : 'border-gray-300'
+                  className={`rounded-lg border bg-surface-subtle p-2.5 ${
+                    hasErrors(errors) ? 'border-danger bg-surface-muted text-danger ring-danger' : 'border-border'
                   }`}
                 >
                   <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
                     {emptyTableMessage}
                   </span>
                   {showRequiredAsterisk && (
-                    <span className="ml-1 font-bold text-red-600" title="Pole jest obowiązkowe do wypełnienia">
+                    <span className="ml-1 font-bold text-danger" title="Pole jest obowiązkowe do wypełnienia">
                       *
                     </span>
                   )}
