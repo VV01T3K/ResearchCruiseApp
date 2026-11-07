@@ -129,7 +129,6 @@ internal class IdentityService(
             return Error.ResourceNotFound();
 
         user.Accepted = true;
-        user.RegistrationPendingSince = null;
 
         var identityResult = await userManager.UpdateAsync(user);
         if (!identityResult.Succeeded)
@@ -205,7 +204,6 @@ internal class IdentityService(
             return Result.Empty;
         }
 
-        user.RegistrationPendingSince = clock.GetUtcNow().UtcDateTime;
         IdentityResult identityResult;
         try
         {
@@ -234,40 +232,6 @@ internal class IdentityService(
         await transaction.CommitAsync();
         return identityResult.ToApplicationResult();
     }
-
-    public async Task DeleteStaleRegistrations(CancellationToken cancellationToken)
-    {
-        var cutoff = clock.GetUtcNow().UtcDateTime.AddDays(-7);
-        var users = await userManager
-            .Users.Where(user =>
-                !user.EmailConfirmed && !user.Accepted && user.RegistrationPendingSince < cutoff
-            )
-            .ToListAsync(cancellationToken);
-        foreach (var user in users)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (!await IsReferenced(Guid.Parse(user.Id), cancellationToken))
-                await userManager.DeleteAsync(user);
-        }
-    }
-
-    private async Task<bool> IsReferenced(Guid userId, CancellationToken cancellationToken) =>
-        await dbContext.FormsA.AnyAsync(
-            form => form.CruiseManagerId == userId || form.DeputyManagerId == userId,
-            cancellationToken
-        )
-        || await dbContext.Cruises.AnyAsync(
-            cruise => cruise.MainCruiseManagerId == userId || cruise.MainDeputyManagerId == userId,
-            cancellationToken
-        )
-        || await dbContext.UserPublications.AnyAsync(
-            publication => publication.UserId == userId,
-            cancellationToken
-        )
-        || await dbContext.UserEffects.AnyAsync(
-            effect => effect.UserId == userId,
-            cancellationToken
-        );
 
     public async Task<bool> CanUserLogin(string email, string password)
     {

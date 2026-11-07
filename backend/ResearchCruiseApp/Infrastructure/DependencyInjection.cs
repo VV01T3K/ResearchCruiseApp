@@ -36,7 +36,6 @@ public static class DependencyInjection
                 .SetApplicationName("ResearchCruiseApp")
                 .PersistKeysToDbContext<ApplicationDbContext>();
             services.AddHostedService<EmailOutboxWorker>();
-            services.AddHostedService<StaleRegistrationWorker>();
         }
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<EmailOutbox>();

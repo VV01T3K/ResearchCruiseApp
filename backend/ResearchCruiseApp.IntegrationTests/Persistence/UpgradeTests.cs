@@ -38,7 +38,9 @@ public sealed class UpgradeTests(SqlFixture fixture)
 
             var services = new ServiceCollection();
             services.AddLogging();
-            services.AddScoped<ApplicationDbContext>(_ => new V251DbContext(options));
+            services.AddDbContext<ApplicationDbContext>(builder =>
+                builder.UseSqlServer(connection.ConnectionString)
+            );
             services.AddIdentityCore<User>().AddEntityFrameworkStores<ApplicationDbContext>();
             await using var provider = services.BuildServiceProvider();
             await using var scope = provider.CreateAsyncScope();
@@ -132,12 +134,15 @@ public sealed class UpgradeTests(SqlFixture fixture)
             var file = Assert.Single(storedContract.Files);
             Assert.Equal("umowa.txt", file.FileName);
             Assert.Equal(new byte[] { 0, 1, 127, 255 }, file.FileContent);
-            var storedUser = await verification.Users.SingleAsync(
-                row => row.Id == user.Id,
-                cancellationToken
+            Assert.Equal(
+                "Łącka",
+                (
+                    await verification.Users.SingleAsync(
+                        row => row.Id == user.Id,
+                        cancellationToken
+                    )
+                ).LastName
             );
-            Assert.Equal("Łącka", storedUser.LastName);
-            Assert.Null(storedUser.RegistrationPendingSince);
             Assert.Empty(await verification.Database.GetPendingMigrationsAsync(cancellationToken));
             Assert.Empty(await verification.EmailOutboxMessages.ToListAsync(cancellationToken));
         }
@@ -147,7 +152,7 @@ public sealed class UpgradeTests(SqlFixture fixture)
         }
     }
 
-    // Rows written before the migrations that add the RowVersion and RegistrationPendingSince columns.
+    // Rows written before the migration that adds the RowVersion columns.
     private sealed class V251DbContext(DbContextOptions<ApplicationDbContext> options)
         : ApplicationDbContext(options)
     {
@@ -156,7 +161,6 @@ public sealed class UpgradeTests(SqlFixture fixture)
             base.OnModelCreating(builder);
             builder.Entity<CruiseApplication>().Ignore(row => row.RowVersion);
             builder.Entity<Cruise>().Ignore(row => row.RowVersion);
-            builder.Entity<User>().Ignore(row => row.RegistrationPendingSince);
         }
     }
 }

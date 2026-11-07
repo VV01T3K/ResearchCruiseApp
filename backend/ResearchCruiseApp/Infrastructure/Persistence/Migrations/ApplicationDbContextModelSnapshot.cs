@@ -1781,9 +1781,6 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("RefreshTokenExpiry")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("RegistrationPendingSince")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
