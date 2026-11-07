@@ -7,7 +7,7 @@ type Props = {
 
 export function Badge({ children, variant = 'primary', className = '' }: Props) {
   return (
-    <span className={`inline-block rounded px-2.5 py-1 text-xs whitespace-nowrap ${variants[variant]} ${className}`}>
+    <span className={`inline-block rounded-sm px-2.5 py-1 text-xs whitespace-nowrap ${variants[variant]} ${className}`}>
       {children}
     </span>
   );

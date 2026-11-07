@@ -20,7 +20,7 @@ export function pickerTriggerClassName({
     'transition duration-300 ease-in-out focus-visible:outline-hidden',
     disabled
       ? 'cursor-default bg-neutral-200'
-      : 'cursor-pointer focus:border-primary-500 focus:shadow focus:ring-primary-500 focus:outline-hidden',
+      : 'cursor-pointer focus:border-primary-500 focus:shadow-sm focus:ring-primary-500 focus:outline-hidden',
     className,
     hasErrors(errors) && invalidInputClassName
   );
@@ -74,7 +74,7 @@ export function PickerClearButton({
       aria-label={ariaLabel}
       onClick={onClick}
       onMouseDown={onMouseDown}
-      className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded hover:text-danger-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden"
+      className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded-sm hover:text-danger-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden"
     >
       <XIcon className="h-4 w-4" />
     </button>

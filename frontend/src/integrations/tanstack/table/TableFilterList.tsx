@@ -10,7 +10,7 @@ import { Button } from '@/components/shared/Button';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
 
 const fieldClassName =
-  'block w-full rounded-lg border border-border bg-surface-muted text-sm font-normal text-foreground transition duration-300 ease-in-out placeholder:text-muted-foreground focus:border-primary focus:shadow focus:outline-hidden';
+  'block w-full rounded-lg border border-border bg-surface-muted text-sm font-normal text-foreground transition duration-300 ease-in-out placeholder:text-muted-foreground focus:border-primary focus:shadow-sm focus:outline-hidden';
 
 type Props<TData extends object, TValue> = {
   header: Header<TData, TValue>;
