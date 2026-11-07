@@ -170,7 +170,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
           {(field) => (
             <div className="mt-auto">
               <Table
-                className="-mt-1 pt-1"
+                className="md:-mt-2"
                 columns={getUgTeamsColumns((index) => {
                   field.removeValue(index);
                   field.handleBlur();
@@ -211,7 +211,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
           {(field) => (
             <div>
               <Table
-                className="-mt-1 pt-1"
+                className="md:-mt-2"
                 columns={getGuestTeams((index) => {
                   field.removeValue(index);
                   field.handleBlur();
@@ -225,7 +225,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                       field.pushValue({ name: '', noOfPersons: 0 });
                       field.handleBlur();
                     }}
-                    className="flex items-center gap-4"
+                    className="flex items-center"
                     disabled={isReadonly}
                   >
                     Dodaj nowy zespół

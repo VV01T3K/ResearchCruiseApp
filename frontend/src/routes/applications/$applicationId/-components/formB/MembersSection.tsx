@@ -351,7 +351,7 @@ export function MembersSection({ context }: { context: FormBViewModel }) {
                       field.pushValue({ name: '', noOfPersons: 0 });
                       field.handleBlur();
                     }}
-                    className="flex items-center gap-4"
+                    className="flex items-center"
                     disabled={isReadonly}
                   >
                     Dodaj nowy zespół

@@ -162,7 +162,7 @@ function CruiseDetailsPage() {
       return (
         <>
           <Button
-            className="w-36 !justify-center gap-4 lg:w-48"
+            className="w-36 !justify-center lg:w-48"
             variant="primaryOutline"
             onClick={() => (form.state.isDirty ? setPendingDiscard('cancel') : discard('cancel'))}
           >
@@ -170,14 +170,14 @@ function CruiseDetailsPage() {
             Anuluj
           </Button>
           <Button
-            className="w-36 !justify-center gap-4 lg:w-48"
+            className="w-36 !justify-center lg:w-48"
             variant="primaryOutline"
             onClick={() => (form.state.isDirty ? setPendingDiscard('revert') : discard('revert'))}
           >
             <ArrowClockwiseIcon className="h-4 w-4" />
             Cofnij zmiany
           </Button>
-          <Button className="w-36 !justify-center gap-4 lg:w-48" onClick={() => void form.handleSubmit()}>
+          <Button className="w-36 !justify-center lg:w-48" onClick={() => void form.handleSubmit()}>
             <FloppyDiskIcon weight="fill" className="h-4 w-4" />
             Zapisz rejs
           </Button>
@@ -190,7 +190,7 @@ function CruiseDetailsPage() {
         return (
           <>
             <Button
-              className="w-36 !justify-center gap-4 lg:w-48"
+              className="w-36 !justify-center lg:w-48"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
               disabled={isEditBlocked}
@@ -199,17 +199,14 @@ function CruiseDetailsPage() {
               Edytuj
             </Button>
             <Button
-              className="w-36 !justify-center gap-4 lg:w-48"
+              className="w-36 !justify-center lg:w-48"
               variant="dangerOutline"
               onClick={() => setIsConfirmDeletionModalOpen(true)}
             >
               <TrashIcon className="h-4 w-4" />
               Usuń rejs
             </Button>
-            <Button
-              className="w-36 !justify-center gap-4 lg:w-48"
-              onClick={() => setIsConfirmAcceptanceModalOpen(true)}
-            >
+            <Button className="w-36 !justify-center lg:w-48" onClick={() => setIsConfirmAcceptanceModalOpen(true)}>
               <CheckIcon className="h-4 w-4" />
               Zatwierdź rejs
             </Button>
@@ -219,7 +216,7 @@ function CruiseDetailsPage() {
         return (
           <>
             <Button
-              className="w-32 !justify-center gap-4 lg:w-40"
+              className="w-32 !justify-center lg:w-40"
               variant="primaryOutline"
               onClick={() => setEditMode(true)}
               disabled={isEditBlocked}
@@ -228,7 +225,7 @@ function CruiseDetailsPage() {
               Edytuj
             </Button>
             <Button
-              className="w-32 !justify-center gap-4 lg:w-40"
+              className="w-32 !justify-center lg:w-40"
               variant="primaryOutline"
               onClick={() => setIsConfirmRevertModalOpen(true)}
             >
@@ -236,14 +233,14 @@ function CruiseDetailsPage() {
               Cofnij status
             </Button>
             <Button
-              className="w-32 !justify-center gap-4 lg:w-40"
+              className="w-32 !justify-center lg:w-40"
               variant="dangerOutline"
               onClick={() => setIsConfirmDeletionModalOpen(true)}
             >
               <TrashIcon className="h-4 w-4" />
               Usuń rejs
             </Button>
-            <Button className="w-32 !justify-center gap-4 lg:w-40" onClick={() => setIsConfirmEndModalOpen(true)}>
+            <Button className="w-32 !justify-center lg:w-40" onClick={() => setIsConfirmEndModalOpen(true)}>
               <CheckIcon className="h-4 w-4" />
               Zakończ rejs
             </Button>
@@ -252,7 +249,7 @@ function CruiseDetailsPage() {
       case 'ended':
         return (
           <Button
-            className="w-36 !justify-center gap-4 lg:w-48"
+            className="w-36 !justify-center lg:w-48"
             variant="dangerOutline"
             onClick={() => setIsConfirmRevertModalOpen(true)}
           >

@@ -76,14 +76,14 @@ function NewCruisePage() {
   const buttons = (
     <>
       <Button
-        className="w-36 !justify-center gap-4 lg:w-64"
+        className="w-36 !justify-center lg:w-64"
         variant="primaryOutline"
         onClick={() => (form.state.isDirty ? setIsDiscardModalOpen(true) : form.reset())}
       >
         <ArrowClockwiseIcon className="h-4 w-4" />
         Wyczyść formularz
       </Button>
-      <Button className="w-36 !justify-center gap-4 lg:w-64" type="submit">
+      <Button className="w-36 !justify-center lg:w-64" type="submit">
         <FloppyDiskIcon weight="fill" className="h-4 w-4" />
         Zapisz
       </Button>

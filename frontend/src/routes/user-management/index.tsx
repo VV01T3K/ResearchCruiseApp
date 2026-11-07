@@ -11,7 +11,6 @@ import { Layout } from '@/components/shared/Layout';
 import { Modal } from '@/components/shared/Modal';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { Table } from '@/components/shared/table/Table';
-import { cn } from '@/lib/utils';
 import type { UserResponse } from '@/api/generated/schemas';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { GroupActionsSection } from './-components/GroupActionsSection';
@@ -157,7 +156,6 @@ function UserManagementPage() {
               key="groupActions"
               variant="warning"
               disabled={!Object.keys(selectedUsers).length}
-              className={cn(!Object.keys(selectedUsers).length && 'opacity-50')}
               onClick={() => setModalState({ state: 'groupActionsModal' })}
             >
               Akcje Grupowe

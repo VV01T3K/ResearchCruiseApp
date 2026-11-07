@@ -267,12 +267,7 @@ function ApplicationsPage() {
       header: 'Akcje',
       cell: ({ row }) => (
         <>
-          <Button
-            type="link"
-            size="sm"
-            href={`/applications/${row.original.id}/details`}
-            className="mx-auto flex gap-2"
-          >
+          <Button type="link" size="sm" href={`/applications/${row.original.id}/details`} className="mx-auto flex">
             Szczegóły
             <MagnifyingGlassPlusIcon className="h-4 w-4" />
           </Button>

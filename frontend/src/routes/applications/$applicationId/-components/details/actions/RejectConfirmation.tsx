@@ -16,14 +16,14 @@ export function RejectConfirmation({ onReject, setConfirmationMode, disabled }: 
         </div>
         <Button
           type="submit"
-          className="w-36 !justify-center gap-4 lg:w-48"
+          className="w-36 !justify-center lg:w-48"
           variant="primary"
           onClick={() => setConfirmationMode(false)}
         >
           Anuluj
         </Button>
         <Button
-          className="w-36 !justify-center gap-4 lg:w-48"
+          className="w-36 !justify-center lg:w-48"
           variant="danger"
           disabled={disabled}
           onClick={() => {

@@ -52,19 +52,19 @@ function CruisesPage() {
     <Guard key="newCruise" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <Button type="link" href="/cruises/new">
         Nowy rejs
-        <PlusIcon className="ml-2 h-6 w-6" />
+        <PlusIcon className="h-6 w-6" />
       </Button>
     </Guard>,
     <Guard key="newBlockade" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <Button type="link" href="/cruises/new?blockade=true" variant="primaryOutline">
         Nowa blokada
-        <PlusIcon className="ml-2 h-6 w-6" />
+        <PlusIcon className="h-6 w-6" />
       </Button>
     </Guard>,
     <Guard key="exportCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <Button onClick={() => setIsExportModalOpen(true)} variant="primaryOutline">
         Eksport
-        <ArrowSquareOutIcon className="ml-2 h-4 w-4" />
+        <ArrowSquareOutIcon className="h-4 w-4" />
       </Button>
     </Guard>,
   ];

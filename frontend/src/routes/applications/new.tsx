@@ -154,11 +154,7 @@ function NewCruiseApplicationPage() {
           </form.AppField>
 
           <div className="flex justify-center gap-4">
-            <Button
-              className="gap-4"
-              disabled={saveMutation.isPending}
-              onClick={() => void submitApplicationForm(form, true)}
-            >
+            <Button disabled={saveMutation.isPending} onClick={() => void submitApplicationForm(form, true)}>
               <FloppyDiskIcon weight="fill" className="h-4 w-4" />
               Zapisz wersję roboczą
             </Button>

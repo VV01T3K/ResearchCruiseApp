@@ -109,7 +109,7 @@ export function MembersSection() {
           data={evaluation.ugTeams}
           emptyTableMessage="Nie dodano żadnego zespołu."
           disabled
-          className="mt-0 pt-0"
+          className="md:-mt-2"
         />
 
         <Table
@@ -117,7 +117,7 @@ export function MembersSection() {
           data={evaluation.guestTeams}
           emptyTableMessage="Nie dodano żadnego zespołu."
           disabled
-          className="mt-0 pt-0"
+          className="md:-mt-2"
         />
 
         <div className="col-span-2">

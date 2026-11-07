@@ -79,11 +79,11 @@ export function Button(props: Props) {
 
 const sizes = {
   plain: '',
-  xs: 'px-3 py-2 text-xs',
-  sm: 'px-3 py-2 text-sm',
-  md: 'px-5 py-2.5',
-  lg: 'px-5 py-3 text-lg',
-  xl: 'px-6 py-3.5 text-xl',
+  xs: 'gap-2 px-3 py-2 text-xs',
+  sm: 'gap-2 px-3 py-2 text-sm',
+  md: 'gap-4 px-5 py-2.5',
+  lg: 'gap-4 px-5 py-3 text-lg',
+  xl: 'gap-4 px-6 py-3.5 text-xl',
   square: 'p-2.5',
 };
 
@@ -94,7 +94,7 @@ const variants = {
   success: 'rounded-lg bg-success hover:bg-success-900 active:bg-success disabled:bg-success-400',
   danger: 'rounded-lg bg-danger hover:bg-danger-700 active:bg-danger disabled:bg-danger-400',
   warning:
-    'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning disabled:bg-warning-100 text-neutral-950 disabled:text-warning-800',
+    'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning disabled:bg-warning-100 text-neutral-950 disabled:text-warning-800 disabled:opacity-50',
   info: 'rounded-lg bg-info hover:bg-info-700 active:bg-info disabled:bg-info-200',
 
   primaryOutline:
