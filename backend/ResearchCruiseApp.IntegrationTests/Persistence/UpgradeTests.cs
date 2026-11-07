@@ -137,7 +137,7 @@ public sealed class UpgradeTests(SqlFixture fixture)
                 cancellationToken
             );
             Assert.Equal("Łącka", storedUser.LastName);
-            Assert.True(storedUser.CreatedAt > DateTime.UtcNow.AddDays(-1));
+            Assert.Null(storedUser.RegistrationPendingSince);
             Assert.Empty(await verification.Database.GetPendingMigrationsAsync(cancellationToken));
             Assert.Empty(await verification.EmailOutboxMessages.ToListAsync(cancellationToken));
         }
@@ -147,7 +147,7 @@ public sealed class UpgradeTests(SqlFixture fixture)
         }
     }
 
-    // Rows written before the migrations that add the RowVersion and CreatedAt columns.
+    // Rows written before the migrations that add the RowVersion and RegistrationPendingSince columns.
     private sealed class V251DbContext(DbContextOptions<ApplicationDbContext> options)
         : ApplicationDbContext(options)
     {
@@ -156,7 +156,7 @@ public sealed class UpgradeTests(SqlFixture fixture)
             base.OnModelCreating(builder);
             builder.Entity<CruiseApplication>().Ignore(row => row.RowVersion);
             builder.Entity<Cruise>().Ignore(row => row.RowVersion);
-            builder.Entity<User>().Ignore(row => row.CreatedAt);
+            builder.Entity<User>().Ignore(row => row.RegistrationPendingSince);
         }
     }
 }

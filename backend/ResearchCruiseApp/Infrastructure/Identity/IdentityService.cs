@@ -129,6 +129,7 @@ internal class IdentityService(
             return Error.ResourceNotFound();
 
         user.Accepted = true;
+        user.RegistrationPendingSince = null;
 
         var identityResult = await userManager.UpdateAsync(user);
         if (!identityResult.Succeeded)
@@ -184,6 +185,15 @@ internal class IdentityService(
         if (!userManager.SupportsUserEmail)
             return Error.ServiceUnavailable();
 
+        var user = CreateUser(registerForm);
+        var passwordErrors = new List<IdentityError>();
+        foreach (var validator in userManager.PasswordValidators)
+            passwordErrors.AddRange(
+                (await validator.ValidateAsync(userManager, user, registerForm.Password)).Errors
+            );
+        if (passwordErrors.Count > 0)
+            return IdentityResult.Failed([.. passwordErrors]).ToApplicationResult();
+
         var normalizedEmail = userManager.NormalizeEmail(registerForm.Email);
         var existing = await userManager.Users.FirstOrDefaultAsync(candidate =>
             candidate.NormalizedEmail == normalizedEmail
@@ -195,7 +205,7 @@ internal class IdentityService(
             return Result.Empty;
         }
 
-        var user = CreateUser(registerForm);
+        user.RegistrationPendingSince = clock.GetUtcNow().UtcDateTime;
         IdentityResult identityResult;
         try
         {
@@ -225,26 +235,39 @@ internal class IdentityService(
         return identityResult.ToApplicationResult();
     }
 
-    public async Task DeleteStaleRegistrations()
+    public async Task DeleteStaleRegistrations(CancellationToken cancellationToken)
     {
         var cutoff = clock.GetUtcNow().UtcDateTime.AddDays(-7);
         var users = await userManager
-            .Users.Where(user => !user.EmailConfirmed && !user.Accepted && user.CreatedAt < cutoff)
-            .ToListAsync();
+            .Users.Where(user =>
+                !user.EmailConfirmed && !user.Accepted && user.RegistrationPendingSince < cutoff
+            )
+            .ToListAsync(cancellationToken);
         foreach (var user in users)
-            if (!await IsReferenced(Guid.Parse(user.Id)))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!await IsReferenced(Guid.Parse(user.Id), cancellationToken))
                 await userManager.DeleteAsync(user);
+        }
     }
 
-    private async Task<bool> IsReferenced(Guid userId) =>
-        await dbContext.FormsA.AnyAsync(form =>
-            form.CruiseManagerId == userId || form.DeputyManagerId == userId
+    private async Task<bool> IsReferenced(Guid userId, CancellationToken cancellationToken) =>
+        await dbContext.FormsA.AnyAsync(
+            form => form.CruiseManagerId == userId || form.DeputyManagerId == userId,
+            cancellationToken
         )
-        || await dbContext.Cruises.AnyAsync(cruise =>
-            cruise.MainCruiseManagerId == userId || cruise.MainDeputyManagerId == userId
+        || await dbContext.Cruises.AnyAsync(
+            cruise => cruise.MainCruiseManagerId == userId || cruise.MainDeputyManagerId == userId,
+            cancellationToken
         )
-        || await dbContext.UserPublications.AnyAsync(publication => publication.UserId == userId)
-        || await dbContext.UserEffects.AnyAsync(effect => effect.UserId == userId);
+        || await dbContext.UserPublications.AnyAsync(
+            publication => publication.UserId == userId,
+            cancellationToken
+        )
+        || await dbContext.UserEffects.AnyAsync(
+            effect => effect.UserId == userId,
+            cancellationToken
+        );
 
     public async Task<bool> CanUserLogin(string email, string password)
     {

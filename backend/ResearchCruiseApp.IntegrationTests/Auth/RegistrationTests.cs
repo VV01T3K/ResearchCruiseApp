@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,7 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             Assert.False(user.Accepted);
             Assert.False(user.EmailConfirmed);
             Assert.Null(user.RefreshToken);
+            Assert.Equal(app.Clock.GetUtcNow().UtcDateTime, user.RegistrationPendingSince);
             var membership = Assert.Single(await db.UserRoles.ToListAsync(ct));
             Assert.Equal(user.Id, membership.UserId);
             var role = await db.Roles.SingleAsync(ct);
@@ -219,6 +221,19 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             ct
         );
         Assert.Equal(HttpStatusCode.Unauthorized, login.StatusCode);
+
+        using var weakFresh = await Register(client, "weak@example.invalid", "x", "Fresh", ct);
+        using var weakExisting = await Register(client, email, "x", "Replaced", ct);
+        Assert.Equal(HttpStatusCode.BadRequest, weakFresh.StatusCode);
+        Assert.Equal(weakFresh.StatusCode, weakExisting.StatusCode);
+        Assert.Equal(
+            (await weakFresh.Content.ReadFromJsonAsync<JsonElement>(ct))
+                .GetProperty("detail")
+                .GetString(),
+            (await weakExisting.Content.ReadFromJsonAsync<JsonElement>(ct))
+                .GetProperty("detail")
+                .GetString()
+        );
     }
 
     [Fact]
@@ -292,6 +307,7 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             ("confirmed@example.invalid", 8, true, false, true),
             ("accepted@example.invalid", 8, false, true, true),
             ("referenced@example.invalid", 8, false, false, true),
+            ("deactivated@example.invalid", 8, false, false, true),
         };
         foreach (var account in accounts)
         {
@@ -300,7 +316,10 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
                 db.Users.Where(row => row.Id == user.Id)
                     .ExecuteUpdateAsync(
                         set =>
-                            set.SetProperty(row => row.CreatedAt, now.AddDays(-account.Days))
+                            set.SetProperty(
+                                    row => row.RegistrationPendingSince,
+                                    now.AddDays(-account.Days)
+                                )
                                 .SetProperty(row => row.EmailConfirmed, account.Confirmed)
                                 .SetProperty(row => row.Accepted, account.Accepted),
                         ct
@@ -308,12 +327,27 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             );
             if (account.Email.StartsWith("referenced", StringComparison.Ordinal))
                 await AddPublication(app, user.Id);
+            if (account.Email.StartsWith("deactivated", StringComparison.Ordinal))
+            {
+                await using (var scope = app.Services.CreateAsyncScope())
+                    Assert.True(
+                        (
+                            await scope
+                                .ServiceProvider.GetRequiredService<IdentityService>()
+                                .AcceptUser(Guid.Parse(user.Id))
+                        ).IsSuccess
+                    );
+                await app.InDatabase(db =>
+                    db.Users.Where(row => row.Id == user.Id)
+                        .ExecuteUpdateAsync(set => set.SetProperty(row => row.Accepted, false), ct)
+                );
+            }
         }
 
         await using (var scope = app.Services.CreateAsyncScope())
             await scope
                 .ServiceProvider.GetRequiredService<IdentityService>()
-                .DeleteStaleRegistrations();
+                .DeleteStaleRegistrations(ct);
 
         await app.InDatabase(async db =>
         {

@@ -12,8 +12,8 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261107170346_AddUserCreatedAt")]
-    partial class AddUserCreatedAt
+    [Migration("20261107172618_AddUserRegistrationPendingSince")]
+    partial class AddUserRegistrationPendingSince
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1737,11 +1737,6 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("SYSUTCDATETIME()");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -1787,6 +1782,9 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(1024)");
 
                     b.Property<DateTime?>("RefreshTokenExpiry")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RegistrationPendingSince")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("SecurityStamp")

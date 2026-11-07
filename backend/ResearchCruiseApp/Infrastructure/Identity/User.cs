@@ -20,5 +20,5 @@ public class User : IdentityUser
 
     public DateTime? RefreshTokenExpiry { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? RegistrationPendingSince { get; set; }
 }

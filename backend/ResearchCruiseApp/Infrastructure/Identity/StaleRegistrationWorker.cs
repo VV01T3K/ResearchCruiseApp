@@ -15,7 +15,7 @@ internal sealed class StaleRegistrationWorker(
                 await using var scope = scopeFactory.CreateAsyncScope();
                 await scope
                     .ServiceProvider.GetRequiredService<IdentityService>()
-                    .DeleteStaleRegistrations();
+                    .DeleteStaleRegistrations(stoppingToken);
             }
             catch (Exception exception) when (!stoppingToken.IsCancellationRequested)
             {

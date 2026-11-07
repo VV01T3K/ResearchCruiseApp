@@ -68,9 +68,5 @@ internal class ApplicationDbContext(DbContextOptions<ApplicationDbContext> optio
         EntityConfiguration.Apply(builder);
         StringLengthConfiguration.Apply(builder);
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-        builder
-            .Entity<User>()
-            .Property(user => user.CreatedAt)
-            .HasDefaultValueSql("SYSUTCDATETIME()");
     }
 }
