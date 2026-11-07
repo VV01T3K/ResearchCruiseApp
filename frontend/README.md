@@ -54,10 +54,26 @@ Tailwind's default values. Any other step, such as `rounded-3xl`, `shadow-2xl`, 
 `shadcn/no-arbitrary-values` stays off: its remaining findings are functional (Base UI and toast CSS variables,
 header-height calculations, print sizes in `cm`, forced-colors system colors), not repeated design values.
 
-`vp run lint:design` is an optional audit that also reports the arbitrary value, inline style, restyle and static
-class rules as warnings. Those findings are policy questions, not bugs: Base UI CSS variables and calendar drag
-positions are functional, and shared components intentionally accept a `className`. `no-restyle` allows layout
-classes.
+`shadcn/no-restyle` is also an error: outside `src/components/shared`, a shared component's `className` may only
+place it (margin, width, flex and grid placement, position). Everything else belongs to the component, so use a
+variant, size or prop instead, or add one when a style recurs. Components inside `src/components/shared` compose and
+style each other freely, like shadcn's own `ui` files.
+
+| Component                 | Callers may pass                     | The component owns                                                                                                                     |
+| ------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `Button`                  | Layout                               | Color, shape, padding, motion and the gap between icon and label (`gap-2` up to `sm`, `gap-4` from `md`), through `variant` and `size` |
+| `Link`                    | Layout                               | Color and underline, through `variant` (`plain` for links that wrap a card)                                                            |
+| `Badge`                   | Layout and `truncate`                | Color, shape, padding and text size, through `variant`                                                                                 |
+| `Input`                   | Layout and `pl-*` (room for an icon) | Color, border, radius, padding and text                                                                                                |
+| `Table`                   | Layout                               | Padding, borders and text, through `variant`                                                                                           |
+| `PriorityInformationCell` | Nothing                              | Borders, padding and text; `heading` marks a section heading row                                                                       |
+
+Every other shared component accepts layout classes only. The narrow exceptions are configured as `contracts` in
+`vite.tool.config.ts`.
+
+`vp run lint:design` is an optional audit that also reports the arbitrary value, inline style and static class
+rules as warnings. Those findings are policy questions, not bugs: Base UI CSS variables and calendar drag positions
+are functional.
 
 Component discovery uses the `@/components/shared` setting, and the plugin reads `src/styles/index.css` and
 its `theme.css` import. Update that setting when shared components move or are renamed, then compare the

@@ -51,11 +51,20 @@ export const lintConfig = {
 
     'shadcn/no-unknown-classes': 'error',
     'shadcn/no-raw-colors': 'error',
+    'shadcn/no-restyle': [
+      'error',
+      {
+        allow: ['layout'],
+        contracts: [
+          { pattern: '^Badge$', allow: ['layout', 'truncate'] },
+          { pattern: '^Input$', allow: ['layout', 'pl-*'] },
+        ],
+      },
+    ],
     ...(process.env.LINT_DESIGN && {
       'shadcn/no-unknown-classes': 'warn',
       'shadcn/no-arbitrary-values': 'warn',
       'shadcn/no-inline-styles': 'warn',
-      'shadcn/no-restyle': ['warn', { allow: ['layout'] }],
       'shadcn/require-static-classes': 'warn',
     }),
   },
@@ -65,6 +74,12 @@ export const lintConfig = {
       files: ['**/*.{ts,tsx}'],
       env: {
         browser: true,
+      },
+    },
+    {
+      files: ['src/components/shared/**'],
+      rules: {
+        'shadcn/no-restyle': 'off',
       },
     },
     {
