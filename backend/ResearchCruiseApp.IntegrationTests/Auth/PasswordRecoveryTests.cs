@@ -116,13 +116,18 @@ public sealed class PasswordRecoveryTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
-    public async Task ResetPassword_WhenAccountIsConfirmedButNotAccepted_SetsPasswordUsedAfterAcceptance()
+    public async Task ResetPassword_WhenAccountIsUnconfirmed_ConfirmsEmailAndReplacesPasswordAfterAcceptance()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
         var user = await TestUsers.Create(app, "pending@example.invalid");
         await app.InDatabase(db =>
-            db.Users.ExecuteUpdateAsync(set => set.SetProperty(row => row.Accepted, false), ct)
+            db.Users.ExecuteUpdateAsync(
+                set =>
+                    set.SetProperty(row => row.Accepted, false)
+                        .SetProperty(row => row.EmailConfirmed, false),
+                ct
+            )
         );
         using var client = app.CreateApiClient();
         const string replacement = "ReplacementPassword2!";
@@ -149,10 +154,19 @@ public sealed class PasswordRecoveryTests(SqlFixture fixture) : IAsyncLifetime
             ct
         );
         Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
+        await app.InDatabase(async db =>
+            Assert.True((await db.Users.SingleAsync(ct)).EmailConfirmed)
+        );
 
         await app.InDatabase(db =>
             db.Users.ExecuteUpdateAsync(set => set.SetProperty(row => row.Accepted, true), ct)
         );
+        using var oldLogin = await client.PostAsJsonAsync(
+            "/v2/auth/login",
+            new { Email = user.Email, Password = TestUsers.Password },
+            ct
+        );
+        Assert.Equal(HttpStatusCode.Unauthorized, oldLogin.StatusCode);
         using var login = await client.PostAsJsonAsync(
             "/v2/auth/login",
             new { Email = user.Email, Password = replacement },

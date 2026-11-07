@@ -1,11 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ResearchCruiseApp.Domain;
-using ResearchCruiseApp.Domain.Entities;
+using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
 namespace ResearchCruiseApp.IntegrationTests.Auth;
@@ -150,75 +151,91 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         });
     }
 
-    [Fact]
-    public async Task Register_WhenEmailBelongsToUnconfirmedAccount_RemovesPasswordAndEmailsSetPasswordLink()
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task Register_WhenEmailExists_RespondsAsForNewAccountKeepsItAndEmailsOwner(
+        bool emailConfirmed,
+        bool accepted
+    )
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
         await EnsureRegistrationRole(app);
         using var client = app.CreateApiClient();
-        const string email = "again@example.invalid";
-        const string ignoredPassword = "ReplacementPassword2!";
-        const string chosenPassword = "OwnerPassword3!";
-
-        using var first = await Register(client, email, TestUsers.Password, "Original", ct);
-        Assert.Equal(HttpStatusCode.Created, first.StatusCode);
-        await app.Dispatch(ct);
-        var oldLink = SentLink(app, email, "confirm-email");
-
-        using var second = await Register(client, email, ignoredPassword, "Replaced", ct);
-        Assert.Equal(first.StatusCode, second.StatusCode);
-        Assert.Equal(
-            await first.Content.ReadAsStringAsync(ct),
-            await second.Content.ReadAsStringAsync(ct)
-        );
-        await app.Dispatch(ct);
-        var setPassword = QueryHelpers.ParseQuery(SentLink(app, email, "reset-password").Query);
-        await app.InDatabase(async db =>
-        {
-            var stored = await db.Users.SingleAsync(ct);
-            Assert.Null(stored.PasswordHash);
-            Assert.False(stored.EmailConfirmed);
-            Assert.Equal("Original", stored.FirstName);
-            Assert.Single(await db.UserRoles.ToListAsync(ct));
-        });
-        using var oldConfirm = await client.GetAsync("/v2/auth/confirm-email" + oldLink.Query, ct);
-        Assert.Equal(HttpStatusCode.BadRequest, oldConfirm.StatusCode);
-
-        using var passwordSet = await SetPassword(
+        const string email = "taken@example.invalid";
+        const string submittedPassword = "SubmittedPassword2!";
+        using var fresh = await Register(
             client,
-            setPassword["emailBase64"]!,
-            setPassword["resetCode"]!,
-            chosenPassword,
+            "fresh@example.invalid",
+            TestUsers.Password,
+            "Fresh",
             ct
         );
-        Assert.Equal(HttpStatusCode.NoContent, passwordSet.StatusCode);
+        await app.Dispatch(ct);
+        await TestUsers.Create(app, email, RoleName.CruiseManager);
+        await app.InDatabase(db =>
+            db.Users.Where(user => user.Email == email)
+                .ExecuteUpdateAsync(
+                    set =>
+                        set.SetProperty(user => user.EmailConfirmed, emailConfirmed)
+                            .SetProperty(user => user.Accepted, accepted),
+                    ct
+                )
+        );
+        User? original = null;
         await app.InDatabase(async db =>
-            Assert.True((await db.Users.SingleAsync(ct)).EmailConfirmed)
+            original = await db.Users.AsNoTracking().SingleAsync(user => user.Email == email, ct)
         );
 
-        await app.InDatabase(db =>
-            db.Users.ExecuteUpdateAsync(set => set.SetProperty(user => user.Accepted, true), ct)
+        using var response = await Register(client, email, submittedPassword, "Replaced", ct);
+
+        Assert.Equal(fresh.StatusCode, response.StatusCode);
+        Assert.Equal(
+            await fresh.Content.ReadAsStringAsync(ct),
+            await response.Content.ReadAsStringAsync(ct)
         );
-        foreach (var password in new[] { TestUsers.Password, ignoredPassword })
+        await app.InDatabase(async db =>
         {
-            using var rejected = await client.PostAsJsonAsync(
-                "/v2/auth/login",
-                new { Email = email, Password = password },
-                ct
-            );
-            Assert.Equal(HttpStatusCode.Unauthorized, rejected.StatusCode);
-        }
+            var stored = await db.Users.SingleAsync(user => user.Email == email, ct);
+            Assert.Equal(original!.PasswordHash, stored.PasswordHash);
+            Assert.Equal(original.SecurityStamp, stored.SecurityStamp);
+            Assert.Equal(original.FirstName, stored.FirstName);
+            Assert.Equal(emailConfirmed, stored.EmailConfirmed);
+            Assert.Equal(accepted, stored.Accepted);
+        });
+        await app.Dispatch(ct);
+        var notice = Assert.Single(
+            app.Transport.Messages,
+            message => message.Payload.Recipient == email
+        );
+        Assert.Contains("https://tests.invalid/forgot-password", notice.Payload.Body);
+        Assert.DoesNotContain("/confirm-email?", notice.Payload.Body, StringComparison.Ordinal);
+        Assert.DoesNotContain("/reset-password?", notice.Payload.Body, StringComparison.Ordinal);
         using var login = await client.PostAsJsonAsync(
             "/v2/auth/login",
-            new { Email = email, Password = chosenPassword },
+            new { Email = email, Password = submittedPassword },
             ct
         );
-        Assert.Equal(HttpStatusCode.OK, login.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, login.StatusCode);
+
+        using var weakFresh = await Register(client, "weak@example.invalid", "x", "Fresh", ct);
+        using var weakExisting = await Register(client, email, "x", "Replaced", ct);
+        Assert.Equal(HttpStatusCode.BadRequest, weakFresh.StatusCode);
+        Assert.Equal(weakFresh.StatusCode, weakExisting.StatusCode);
+        Assert.Equal(
+            (await weakFresh.Content.ReadFromJsonAsync<JsonElement>(ct))
+                .GetProperty("detail")
+                .GetString(),
+            (await weakExisting.Content.ReadFromJsonAsync<JsonElement>(ct))
+                .GetProperty("detail")
+                .GetString()
+        );
     }
 
     [Fact]
-    public async Task SetPassword_WhenOfficeChangedEmailAfterLinkWasSent_RejectsOldLinkForNewEmail()
+    public async Task ResetPassword_WhenOfficeChangedEmailAfterLinkWasSent_RejectsOldLinkForNewEmail()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -229,8 +246,8 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         const string newEmail = "new-address@example.invalid";
         const string password = "OwnerPassword3!";
 
-        using var first = await Register(client, oldEmail, TestUsers.Password, "Original", ct);
-        using var second = await Register(client, oldEmail, password, "Original", ct);
+        using var registered = await Register(client, oldEmail, TestUsers.Password, "Original", ct);
+        using var oldRequest = await RequestReset(client, oldEmail, ct);
         await app.Dispatch(ct);
         var oldLink = QueryHelpers.ParseQuery(SentLink(app, oldEmail, "reset-password").Query);
         var userId = "";
@@ -244,11 +261,7 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             ct
         );
         Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
-        using var requested = await client.PostAsJsonAsync(
-            "/v2/auth/password-reset-request",
-            new { Email = newEmail },
-            ct
-        );
+        using var newRequest = await RequestReset(client, newEmail, ct);
         await app.Dispatch(ct);
         var newLink = QueryHelpers.ParseQuery(SentLink(app, newEmail, "reset-password").Query);
 
@@ -263,7 +276,6 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         await app.InDatabase(async db =>
         {
             var stored = await db.Users.SingleAsync(user => user.Id == userId, ct);
-            Assert.Null(stored.PasswordHash);
             Assert.False(stored.EmailConfirmed);
         });
 
@@ -279,6 +291,12 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             Assert.True((await db.Users.SingleAsync(user => user.Id == userId, ct)).EmailConfirmed)
         );
     }
+
+    private static Task<HttpResponseMessage> RequestReset(
+        HttpClient client,
+        string email,
+        CancellationToken ct
+    ) => client.PostAsJsonAsync("/v2/auth/password-reset-request", new { Email = email }, ct);
 
     private static Uri SentLink(TestApplication app, string recipient, string route) =>
         PasswordRecoveryTests.Link(
@@ -311,61 +329,6 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
             },
             ct
         );
-
-    [Theory]
-    [InlineData(true, false, false)]
-    [InlineData(false, true, false)]
-    [InlineData(false, false, true)]
-    public async Task Register_WhenEmailBelongsToConfirmedAcceptedOrReferencedAccount_IsRefused(
-        bool emailConfirmed,
-        bool accepted,
-        bool referenced
-    )
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
-        await EnsureRegistrationRole(app);
-        var existing = await TestUsers.Create(app, "old@example.invalid", RoleName.CruiseManager);
-        const string email = "changed@example.invalid";
-        await app.InDatabase(db =>
-            db.Users.ExecuteUpdateAsync(
-                set =>
-                    set.SetProperty(user => user.Email, email)
-                        .SetProperty(user => user.NormalizedEmail, email.ToUpperInvariant())
-                        .SetProperty(user => user.EmailConfirmed, emailConfirmed)
-                        .SetProperty(user => user.Accepted, accepted),
-                ct
-            )
-        );
-        if (referenced)
-            await app.InDatabase(db =>
-            {
-                db.UserPublications.Add(
-                    new UserPublication
-                    {
-                        UserId = Guid.Parse(existing.Id),
-                        Publication = new Publication
-                        {
-                            Category = "subject",
-                            MinisterialPoints = "0",
-                        },
-                    }
-                );
-                return db.SaveChangesAsync(ct);
-            });
-        using var client = app.CreateApiClient();
-
-        using var response = await Register(client, email, "ReplacementPassword2!", "Replaced", ct);
-
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        await app.InDatabase(async db =>
-        {
-            var stored = Assert.Single(await db.Users.ToListAsync(ct));
-            Assert.Equal(existing.PasswordHash, stored.PasswordHash);
-            Assert.Equal(existing.FirstName, stored.FirstName);
-            Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
-        });
-    }
 
     private static Task<HttpResponseMessage> Register(
         HttpClient client,
