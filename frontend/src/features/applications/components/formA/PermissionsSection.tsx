@@ -79,6 +79,7 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
   return (
     <Accordion title="3. Dodatkowe pozwolenia do planowanych podczas rejsu badań" expandedByDefault>
       <div>
+        <p className="mb-4 text-center text-sm">Skan pozwolenia dodasz później, w formularzu B.</p>
         <form.AppField name="permissions" mode="array">
           {(field) => (
             <>

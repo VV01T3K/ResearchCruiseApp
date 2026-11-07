@@ -16,7 +16,7 @@ import { Layout } from '@/components/shared/Layout';
 import { Link } from '@/components/shared/Link';
 import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
 import config from '@/config';
-import { openFeedback, useCanSendFeedback } from '@/integrations/sentry/feedback';
+import { useCanSendFeedback } from '@/integrations/sentry/feedback';
 
 export const Route = createFileRoute('/help')({
   component: HelpPage,
@@ -62,24 +62,19 @@ function HelpPage() {
   }
 
   return (
-    <Layout
-      title="Pomoc"
-      description="W razie problemów z aplikacją prosimy o kontakt przez maile lub formularz po lewej stronie."
-    >
+    <Layout title="Pomoc" description="Masz pytanie o rejs albo formularz? Napisz do Biura Armatora.">
       <div className="mt-8 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <h2 className="text-center text-2xl font-semibold">Obsługa problemów związanych z aplikacją</h2>
-          <p className="mt-4 text-center">
-            W razie problemów związanych z aplikacją prosimy o maila na adres{' '}
-            <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>.
+          <h2 className="text-center text-2xl font-semibold">Kontakt z Biurem Armatora</h2>
+          <p className="mt-4 px-4 text-center">
+            Z pytaniami o rejsy i formularze prosimy pisać do Biura Armatora na adres{' '}
+            <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>. Możesz też wpisać tytuł i wiadomość
+            poniżej, a otworzymy gotowego maila w Twoim programie pocztowym.
           </p>
           {canSendFeedback && (
-            <div className="mt-4 mb-4 flex flex-col items-center gap-2 px-4 text-center">
-              <p>Możesz też zgłosić problem bezpośrednio z aplikacji, bez otwierania programu pocztowego.</p>
-              <Button variant="primaryOutline" onClick={() => openFeedback({ origin: 'help' })}>
-                Zgłoś problem
-              </Button>
-            </div>
+            <p className="mt-4 px-4 text-center text-sm text-muted-foreground">
+              Jeśli coś w aplikacji nie działa, użyj przycisku „Zgłoś problem” w prawym dolnym rogu ekranu.
+            </p>
           )}
           <form className="flex flex-col space-y-4 p-4" onSubmit={handleSubmit}>
             <form.AppField name="title">{(field) => <field.TextField type="text" label="Tytuł" />}</form.AppField>
