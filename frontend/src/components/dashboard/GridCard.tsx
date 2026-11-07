@@ -22,11 +22,11 @@ export function GridCard({ name, className, Icon, iconWeight, description, href 
   if (isMobile) {
     return (
       <div key={name} className={className}>
-        <Link href={href} className="hover:no-underline">
+        <Link href={href} variant="plain">
           <motion.div
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            className="relative flex h-full w-full flex-col items-center justify-around overflow-hidden rounded-xl bg-surface p-4 shadow-card"
+            className="relative flex h-full w-full flex-col items-center justify-around overflow-hidden rounded-xl bg-surface p-4 text-primary shadow-card"
           >
             <Icon weight={iconWeight} className="h-1/2" />
             <h3 className="font-semibold text-primary md:text-lg xl:text-xl">{name}</h3>
@@ -39,9 +39,9 @@ export function GridCard({ name, className, Icon, iconWeight, description, href 
 
   return (
     <div key={name} className={className}>
-      <Link href={href} className="hover:no-underline">
+      <Link href={href} variant="plain">
         <motion.div
-          className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 shadow-card"
+          className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 text-primary shadow-card"
           onHoverStart={() => setIsHovered(true)}
           onHoverEnd={() => setIsHovered(false)}
         >

@@ -68,13 +68,13 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
           >
             <div className="shrink-0 border-b border-border-muted bg-surface p-2">
               <div className="relative">
-                <MagnifyingGlassIcon className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                <MagnifyingGlassIcon className="absolute top-1/2 left-3 z-10 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                 <Input
                   value={searchValue}
                   onChange={setSearchValue}
                   placeholder="Wyszukaj..."
                   autoFocus
-                  className="border-border-muted bg-surface-muted pl-9"
+                  className="pl-9"
                 />
               </div>
             </div>
