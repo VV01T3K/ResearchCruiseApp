@@ -10,7 +10,7 @@ import { Button } from '@/components/shared/Button';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
 
 const fieldClassName =
-  'block w-full rounded-lg border border-gray-300 bg-gray-50 text-sm font-normal text-gray-900 transition duration-300 ease-in-out placeholder:text-gray-500 focus:border-primary focus:shadow focus:outline-hidden';
+  'block w-full rounded-lg border border-border bg-surface-muted text-sm font-normal text-foreground transition duration-300 ease-in-out placeholder:text-muted-foreground focus:border-primary focus:shadow focus:outline-hidden';
 
 type Props<TData extends object, TValue> = {
   header: Header<TData, TValue>;
@@ -76,8 +76,8 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
     >
       {(filterValue) => {
         const footer = (
-          <div className="flex items-center justify-between gap-2 border-t border-gray-200 px-3 py-2">
-            <span role="status" className="text-xs font-normal text-gray-600 tabular-nums">
+          <div className="flex items-center justify-between gap-2 border-t border-border-muted px-3 py-2">
+            <span role="status" className="text-xs font-normal text-neutral-600 tabular-nums">
               {!inputType && `Wybrano: ${filterValue.length} z ${options.length}`}
             </span>
             <Button variant="primaryOutline" size="xs" disabled={!filterValue.length} onClick={clearFilter}>
@@ -89,7 +89,7 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
         if (inputType) {
           return (
             <>
-              <label className="block p-3 text-sm font-normal text-gray-900">
+              <label className="block p-3 text-sm font-normal text-foreground">
                 {inputType === 'number' ? 'Numer zgłoszenia' : 'Data zgłoszenia'}
                 <input
                   ref={inputRef}
@@ -131,7 +131,7 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
           >
             <div className="flex flex-col gap-2 p-3 pb-2">
               <div className="relative">
-                <MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-gray-500" />
+                <MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Combobox.Input
                   ref={inputRef}
                   aria-label="Szukaj na liście"
@@ -139,7 +139,7 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
                   className={`${fieldClassName} py-2 pr-2 pl-8`}
                 />
               </div>
-              <label className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100">
+              <label className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium text-foreground hover:bg-surface-subtle">
                 <Checkbox
                   name="toggleAll"
                   checked={visibleOptions.length > 0 && selectedVisible === visibleOptions.length}
@@ -155,7 +155,7 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
                 {search ? 'Zaznacz znalezione' : 'Zaznacz wszystkie'}
               </label>
             </div>
-            <Combobox.Empty className="px-5 pb-3 text-sm font-normal text-gray-600 empty:hidden">
+            <Combobox.Empty className="px-5 pb-3 text-sm font-normal text-neutral-600 empty:hidden">
               Brak pasujących opcji
             </Combobox.Empty>
             <Combobox.List ref={listRef} className="max-h-64 overflow-y-auto px-3 pb-2 focus-visible:outline-hidden">
@@ -170,16 +170,16 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
                       aria-setsize={visibleOptions.length}
                       aria-posinset={index + 1}
                       style={{ top: start }}
-                      className="group absolute inset-x-0 flex h-8 cursor-pointer items-center gap-2.5 rounded-md px-2 text-sm font-normal text-gray-800 data-highlighted:bg-gray-100"
+                      className="group absolute inset-x-0 flex h-8 cursor-pointer items-center gap-2.5 rounded-md px-2 text-sm font-normal text-neutral-800 data-highlighted:bg-surface-subtle"
                     >
-                      <span className="flex size-4 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-white text-white group-data-selected:border-primary group-data-selected:bg-primary">
+                      <span className="flex size-4 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-inverse-foreground group-data-selected:border-primary group-data-selected:bg-primary">
                         <Combobox.ItemIndicator render={<CheckIcon />} />
                       </span>
                       <span className="min-w-0 flex-1 truncate" title={option.label}>
                         {option.label}
                       </span>
                       {option.count > 0 && (
-                        <span aria-hidden className="text-xs text-gray-600 tabular-nums">
+                        <span aria-hidden className="text-xs text-neutral-600 tabular-nums">
                           {option.count}
                         </span>
                       )}
