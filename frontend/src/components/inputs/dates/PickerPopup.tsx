@@ -20,7 +20,7 @@ export function pickerTriggerClassName({
     'transition duration-300 ease-in-out focus-visible:outline-hidden',
     disabled
       ? 'cursor-default bg-neutral-200'
-      : 'cursor-pointer focus:border-primary-500 focus:shadow focus:ring-primary-500 focus:outline-hidden',
+      : 'cursor-pointer focus:border-primary-500 focus:shadow-sm focus:ring-primary-500 focus:outline-hidden',
     className,
     hasErrors(errors) && invalidInputClassName
   );
@@ -43,7 +43,7 @@ export function PickerPopup({ 'aria-label': ariaLabel, children }: Props) {
           aria-label={ariaLabel}
           className={cn(
             'max-h-[var(--available-height)] origin-[var(--transform-origin)] overflow-y-auto rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10 focus-visible:outline-hidden',
-            'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
+            'transition-all duration-300 ease-popup',
             'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
             'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0',
             '[&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-primary-500'
@@ -74,7 +74,7 @@ export function PickerClearButton({
       aria-label={ariaLabel}
       onClick={onClick}
       onMouseDown={onMouseDown}
-      className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded hover:text-danger-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden"
+      className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded-sm hover:text-danger-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden"
     >
       <XIcon className="h-4 w-4" />
     </button>

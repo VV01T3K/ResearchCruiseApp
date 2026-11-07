@@ -74,7 +74,7 @@ export function Input({
             className,
             'block w-full rounded-lg border border-border bg-surface-muted p-2.5 text-sm text-foreground',
             'resize-none transition duration-300 ease-in-out',
-            'focus:border-primary-500 focus:shadow focus:ring-primary-500 focus:outline-hidden',
+            'focus:border-primary-500 focus:shadow-sm focus:ring-primary-500 focus:outline-hidden',
             disabled ? 'bg-neutral-200' : '',
             hasErrors(errors) && invalidInputClassName
           )}

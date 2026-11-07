@@ -184,7 +184,7 @@ export function FileInput({
                     <CloudArrowUpIcon className="mb-4 h-8 w-8" />
                     {uploadMessage}
                     {notifications && notifications.length > 0 && (
-                      <div className="mx-2 mt-1 rounded bg-danger-100 p-1 text-danger-900">
+                      <div className="mx-2 mt-1 rounded-sm bg-danger-100 p-1 text-danger-900">
                         <ul className="list-inside list-disc">
                           {notifications.map((notification) => (
                             <li key={notification}>{notification}</li>
