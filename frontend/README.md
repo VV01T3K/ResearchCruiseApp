@@ -37,6 +37,23 @@ Colors in `src/styles/theme.css`:
 
 Prefer a role token over a `neutral` shade when one fits. Focus rings use `primary-500`.
 
+`src/styles/theme.css` also limits the radius, shadow and font size scales to the steps the app uses, with
+Tailwind's default values. Any other step, such as `rounded-3xl`, `shadow-2xl`, `text-4xl` or bare `rounded` and
+`shadow`, generates no CSS, so `no-unknown-classes` rejects it.
+
+| Token                                                                           | Use                                                                               |
+| ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `rounded-lg`                                                                    | Default for buttons, inputs, popups, tables and alerts                            |
+| `rounded-sm`, `rounded-md`, `rounded-xl`, `rounded-2xl`, `rounded-4xl`          | Badges, menu items, cards and sections, the floating actions bar, the time picker |
+| `shadow-sm`                                                                     | Focused inputs                                                                    |
+| `shadow-md`, `shadow-lg`, `shadow-xl`                                           | Feedback tab, modals and toasts, popups and dropdowns                             |
+| `shadow-card`                                                                   | Dashboard cards                                                                   |
+| `text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl`, `text-2xl`, `text-3xl` | Font sizes, each with Tailwind's line height                                      |
+| `ease-popup`                                                                    | Opening and closing popups, dropdowns and modals                                  |
+
+`shadcn/no-arbitrary-values` stays off: its remaining findings are functional (Base UI and toast CSS variables,
+header-height calculations, print sizes in `cm`, forced-colors system colors), not repeated design values.
+
 `vp run lint:design` is an optional audit that also reports the arbitrary value, inline style, restyle and static
 class rules as warnings. Those findings are policy questions, not bugs: Base UI CSS variables and calendar drag
 positions are functional, and shared components intentionally accept a `className`. `no-restyle` allows layout
