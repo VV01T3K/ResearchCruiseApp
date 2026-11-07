@@ -15,15 +15,32 @@ TanStack Query hooks, and Zod schemas under `src/api/generated`; commit both out
 ## Design system lint
 
 `@shadcn/lint` runs inside `vp check` as an Oxlint JS plugin configured in `vite.tool.config.ts`.
-Only `shadcn/no-unknown-classes` is enforced: it rejects classes that generate no Tailwind CSS.
-It does not check class strings inside lookup objects such as the `sizes` and `variants` maps,
-so review those by hand.
+Two rules are enforced: `shadcn/no-unknown-classes` rejects classes that generate no Tailwind CSS, and
+`shadcn/no-raw-colors` rejects Tailwind's built-in palette (`gray`, `slate`, `blue`, `red` and so on), so every
+color comes from `src/styles/theme.css`. Neither checks class strings inside lookup objects such as the `sizes`
+and `variants` maps, so review those by hand.
 
-`vp run lint:design` is an optional audit that reports all six
-[rules](https://github.com/shadcn-ui/lint/blob/main/docs/rules.md) as warnings. Its color, arbitrary
-value, inline style and restyle findings are policy questions, not bugs: neutral surface, border and muted
-text colors have no theme tokens yet, Base UI CSS variables and calendar drag positions are functional, and
-shared components intentionally accept a `className`. `no-restyle` allows layout classes.
+Colors in `src/styles/theme.css`:
+
+| Token                                             | Use                                                                                                     |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `surface`                                         | Cards, popups, outline buttons (white)                                                                  |
+| `surface-muted`                                   | Page background, inputs, table bodies (`neutral-50`)                                                    |
+| `surface-subtle`                                  | Hovered and highlighted rows, table headers, disabled controls (`neutral-100`)                          |
+| `border`                                          | Input, table and card borders (`neutral-300`)                                                           |
+| `border-muted`                                    | Dividers inside popups and toasts (`neutral-200`)                                                       |
+| `foreground`                                      | Input values, labels and table text (`neutral-900`)                                                     |
+| `muted-foreground`                                | Hints, placeholders and secondary text (`neutral-500`)                                                  |
+| `inverse-foreground`                              | Text on filled `primary`, `danger`, `success` and `info` backgrounds (white)                            |
+| `neutral-50` to `neutral-950`                     | Other greys; `neutral-950` is black, used for strong text and translucent tints like `bg-neutral-950/5` |
+| `primary`, `success`, `danger`, `warning`, `info` | Brand and status colors, each with `-light`, `-dark` and `50` to `950` shades                           |
+
+Prefer a role token over a `neutral` shade when one fits. Focus rings use `primary-500`.
+
+`vp run lint:design` is an optional audit that also reports the arbitrary value, inline style, restyle and static
+class rules as warnings. Those findings are policy questions, not bugs: Base UI CSS variables and calendar drag
+positions are functional, and shared components intentionally accept a `className`. `no-restyle` allows layout
+classes.
 
 Component discovery uses the `@/components/shared` setting, and the plugin reads `src/styles/index.css` and
 its `theme.css` import. Update that setting when shared components move or are renamed, then compare the
