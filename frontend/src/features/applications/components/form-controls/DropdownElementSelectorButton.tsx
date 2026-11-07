@@ -36,7 +36,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
           <button
             type="button"
             className={cn(
-              'text-white hover:cursor-pointer disabled:cursor-default focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+              'text-inverse-foreground hover:cursor-pointer disabled:cursor-default focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
               variants[variant],
               'flex items-center gap-4 px-5 py-2.5'
             )}
@@ -59,28 +59,28 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
         >
           <Popover.Popup
             className={cn(
-              'w-max max-w-sm min-w-64 origin-[var(--transform-origin)] rounded-lg bg-white shadow-xl ring-1 ring-black/10',
+              'w-max max-w-sm min-w-64 origin-[var(--transform-origin)] rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10',
               'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
               'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
               'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0',
               'flex max-h-96 flex-col overflow-hidden'
             )}
           >
-            <div className="shrink-0 border-b border-gray-200 bg-white p-2">
+            <div className="shrink-0 border-b border-border-muted bg-surface p-2">
               <div className="relative">
-                <MagnifyingGlassIcon className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <MagnifyingGlassIcon className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                 <Input
                   value={searchValue}
                   onChange={setSearchValue}
                   placeholder="Wyszukaj..."
                   autoFocus
-                  className="border-gray-200 bg-gray-50 pl-9"
+                  className="border-border-muted bg-surface-muted pl-9"
                 />
               </div>
             </div>
             <div className="overflow-x-hidden overflow-y-auto">
               {filteredOptions.length === 0 && (
-                <div className="py-6 text-center text-base text-gray-500">Brak wyników</div>
+                <div className="py-6 text-center text-base text-muted-foreground">Brak wyników</div>
               )}
               {filteredOptions.length > 0 && (
                 <ul className="p-1">
@@ -98,7 +98,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
                         className={cn(
                           'block w-full rounded-md px-3 py-2.5 text-left text-base transition-colors duration-150 focus-visible:outline-hidden disabled:cursor-default disabled:opacity-50',
                           option.onClick &&
-                            'data-[highlighted]:bg-primary-50 hover:bg-primary-50 active:bg-primary-100 hover:cursor-pointer data-[highlighted]:text-gray-900'
+                            'data-[highlighted]:bg-primary-50 hover:bg-primary-50 active:bg-primary-100 hover:cursor-pointer data-[highlighted]:text-foreground'
                         )}
                         disabled={!option.onClick}
                       >
@@ -122,16 +122,16 @@ const variants = {
   success: 'rounded-lg bg-success hover:bg-success-900 active:bg-success disabled:bg-success-400',
   danger: 'rounded-lg bg-danger hover:bg-danger-700 active:bg-danger disabled:bg-danger-400',
   warning:
-    'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning disabled:bg-warning-100 text-black disabled:text-warning-800',
+    'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning disabled:bg-warning-100 text-neutral-950 disabled:text-warning-800',
   info: 'rounded-lg bg-info hover:bg-info-700 active:bg-info disabled:bg-info-200',
   primaryOutline:
-    'rounded-lg bg-white hover:bg-primary active:bg-primary text-primary hover:text-white border border-primary transition-all duration-300 disabled:border-primary-300 disabled:text-primary-400 disabled:hover:bg-white',
+    'rounded-lg bg-surface hover:bg-primary active:bg-primary text-primary hover:text-inverse-foreground border border-primary transition-all duration-300 disabled:border-primary-300 disabled:text-primary-400 disabled:hover:bg-surface',
   successOutline:
-    'rounded-lg bg-white hover:bg-success active:bg-success text-success hover:text-white border border-success transition-all duration-300 disabled:border-success-300 disabled:text-success-400 disabled:hover:bg-white',
+    'rounded-lg bg-surface hover:bg-success active:bg-success text-success hover:text-inverse-foreground border border-success transition-all duration-300 disabled:border-success-300 disabled:text-success-400 disabled:hover:bg-surface',
   dangerOutline:
-    'rounded-lg bg-white hover:bg-danger active:bg-danger text-danger hover:text-white border border-danger transition-all duration-300 disabled:border-danger-300 disabled:text-danger-400 disabled:hover:bg-white',
+    'rounded-lg bg-surface hover:bg-danger active:bg-danger text-danger hover:text-inverse-foreground border border-danger transition-all duration-300 disabled:border-danger-300 disabled:text-danger-400 disabled:hover:bg-surface',
   warningOutline:
-    'rounded-lg bg-white hover:bg-warning active:bg-warning text-warning-600 hover:text-black border border-warning transition-all duration-300 disabled:border-warning-300 disabled:text-warning-500 disabled:hover:bg-white',
+    'rounded-lg bg-surface hover:bg-warning active:bg-warning text-warning-600 hover:text-neutral-950 border border-warning transition-all duration-300 disabled:border-warning-300 disabled:text-warning-500 disabled:hover:bg-surface',
   infoOutline:
-    'rounded-lg bg-white hover:bg-info active:bg-info text-info hover:text-white border border-info transition-all duration-300 disabled:border-info-200 disabled:text-info-300 disabled:hover:bg-white',
+    'rounded-lg bg-surface hover:bg-info active:bg-info text-info hover:text-inverse-foreground border border-info transition-all duration-300 disabled:border-info-200 disabled:text-info-300 disabled:hover:bg-surface',
 };

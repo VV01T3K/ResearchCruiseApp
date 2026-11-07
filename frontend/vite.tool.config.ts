@@ -50,9 +50,9 @@ export const lintConfig = {
     'promise/catch-or-return': 'error',
 
     'shadcn/no-unknown-classes': 'error',
+    'shadcn/no-raw-colors': 'error',
     ...(process.env.LINT_DESIGN && {
       'shadcn/no-unknown-classes': 'warn',
-      'shadcn/no-raw-colors': 'warn',
       'shadcn/no-arbitrary-values': 'warn',
       'shadcn/no-inline-styles': 'warn',
       'shadcn/no-restyle': ['warn', { allow: ['layout'] }],

@@ -111,7 +111,7 @@ export function YearPickerInput({
           <Button
             variant="plain"
             onClick={() => setVisibleDecade((prev) => ({ from: prev.from - 11, to: prev.to - 11 }))}
-            className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+            className="grid w-full place-items-center rounded-lg hover:bg-surface-subtle"
           >
             <CaretLeftIcon className="h-5 w-5" />
           </Button>
@@ -119,7 +119,7 @@ export function YearPickerInput({
           <Button
             variant="plain"
             onClick={() => setVisibleDecade((prev) => ({ from: prev.from + 11, to: prev.to + 11 }))}
-            className="grid w-full place-items-center rounded-lg hover:bg-gray-100"
+            className="grid w-full place-items-center rounded-lg hover:bg-surface-subtle"
           >
             <CaretRightIcon className="h-5 w-5" />
           </Button>
@@ -133,7 +133,7 @@ export function YearPickerInput({
                 variant="plain"
                 onClick={() => handleSelectYear(year)}
                 className={cn(
-                  'grid place-items-center rounded-lg hover:bg-gray-100',
+                  'grid place-items-center rounded-lg hover:bg-surface-subtle',
                   year === selectedYear ? 'text-primary-500 font-bold' : ''
                 )}
               >

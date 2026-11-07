@@ -6,7 +6,7 @@ export function InputHelper({ id, helper }: Props) {
   if (!helper) return null;
 
   return (
-    <div id={id} className="text-gray-500">
+    <div id={id} className="text-muted-foreground">
       {helper}
     </div>
   );

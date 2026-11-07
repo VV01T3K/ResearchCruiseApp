@@ -72,10 +72,10 @@ export function Input({
           aria-label={ariaLabel}
           className={cn(
             className,
-            'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900',
+            'block w-full rounded-lg border border-border bg-surface-muted p-2.5 text-sm text-foreground',
             'resize-none transition duration-300 ease-in-out',
-            'focus:border-blue-500 focus:shadow focus:ring-blue-500 focus:outline-hidden',
-            disabled ? 'bg-gray-200' : '',
+            'focus:border-primary-500 focus:shadow focus:ring-primary-500 focus:outline-hidden',
+            disabled ? 'bg-neutral-200' : '',
             hasErrors(errors) && invalidInputClassName
           )}
           ref={elementRef}

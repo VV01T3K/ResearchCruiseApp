@@ -58,7 +58,7 @@ export function DropdownInput({
         {
           value: defaultValue,
           inlineLabel: placeholder,
-          richLabel: value !== defaultValue ? <span className="text-red-500">Usuń aktualny wybór</span> : undefined,
+          richLabel: value !== defaultValue ? <span className="text-danger-500">Usuń aktualny wybór</span> : undefined,
         },
         ...allOptions,
       ];
@@ -96,12 +96,12 @@ export function DropdownInput({
           aria-label={ariaLabel}
           className={cn(
             'relative inline-flex w-full items-center justify-between',
-            'rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900',
+            'rounded-lg border border-border bg-surface-muted text-sm text-foreground',
             'p-2.5',
             'transition duration-300 ease-in-out',
-            !disabled && 'cursor-pointer hover:border-gray-400',
-            !disabled && 'focus:border-blue-500 focus:ring-blue-500 focus:outline-hidden focus:ring-inset',
-            disabled && 'cursor-not-allowed bg-gray-200',
+            !disabled && 'cursor-pointer hover:border-neutral-400',
+            !disabled && 'focus:border-primary-500 focus:ring-primary-500 focus:outline-hidden focus:ring-inset',
+            disabled && 'cursor-not-allowed bg-neutral-200',
             hasErrors(errors) && invalidInputClassName
           )}
         >
@@ -125,7 +125,7 @@ export function DropdownInput({
           >
             <Select.Popup
               className={cn(
-                'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg bg-white shadow-xl ring-1 ring-black/10',
+                'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10',
                 'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
                 'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
                 'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0'
@@ -139,10 +139,10 @@ export function DropdownInput({
                       key={`dropdown-option-${opt.value}`}
                       value={opt.value}
                       className={cn(
-                        'flex items-center justify-between gap-2 border-b border-gray-200 px-3 py-2 text-sm text-gray-700 last:border-b-0',
+                        'flex items-center justify-between gap-2 border-b border-border-muted px-3 py-2 text-sm text-neutral-700 last:border-b-0',
                         'cursor-pointer focus-visible:outline-hidden select-none',
                         'transition-all duration-150 ease-out',
-                        'data-[highlighted]:bg-primary-50 data-[highlighted]:text-gray-900',
+                        'data-[highlighted]:bg-primary-50 data-[highlighted]:text-foreground',
                         'data-[selected]:bg-primary-50 data-[selected]:text-primary-800 data-[selected]:font-medium'
                       )}
                     >

@@ -95,7 +95,7 @@ function ResetPasswordPage() {
               <WarningCircleIcon className="text-danger" />
             )}
           </div>
-          <div className="text-center text-gray-600">
+          <div className="text-center text-neutral-600">
             {result === 'success' && (
               <>
                 Hasło zostało pomyślnie zmienione. Możesz teraz się zalogować, chyba że Twoje konto czeka jeszcze na

@@ -53,7 +53,7 @@ export function Link({ children, href, className, title, rel, variant, target = 
 
 const variants = {
   default: 'text-primary hover:underline',
-  white: 'text-gray-200 hover:underline',
-  disabled: 'text-gray-400',
+  white: 'text-neutral-200 hover:underline',
+  disabled: 'text-neutral-400',
   plain: '',
 };

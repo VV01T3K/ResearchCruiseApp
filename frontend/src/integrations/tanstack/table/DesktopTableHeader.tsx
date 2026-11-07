@@ -38,7 +38,7 @@ export function DesktopTableHeader<TData extends object, TValue>({ header, child
           aria-sort={
             !canSort ? undefined : isSorted === 'asc' ? 'ascending' : isSorted === 'desc' ? 'descending' : 'none'
           }
-          className="border-b border-gray-200 px-1 py-2 text-sm font-semibold text-gray-700"
+          className="border-b border-border-muted px-1 py-2 text-sm font-semibold text-neutral-700"
         >
           <div className="flex items-center justify-center gap-1">
             <span className={cn('p-1 text-center', isSorted && 'text-primary')}>{children}</span>
@@ -101,7 +101,7 @@ function ColumnMenu<TData extends object, TValue>({
                 'group relative inline-flex h-6 w-9 shrink-0 cursor-pointer items-center justify-center gap-0.5 rounded-md border outline-none focus-visible:ring-2 focus-visible:ring-primary',
                 count
                   ? 'border-primary bg-primary-100 text-primary hover:bg-primary-200'
-                  : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-100 hover:text-gray-900 data-[popup-open]:bg-gray-100'
+                  : 'border-border bg-surface text-neutral-600 hover:bg-surface-subtle hover:text-foreground data-[popup-open]:bg-surface-subtle'
               )}
             >
               {count ? (
@@ -117,7 +117,7 @@ function ColumnMenu<TData extends object, TValue>({
               {isSorted === 'asc' && <ArrowUpIcon weight="bold" className="size-3.5" />}
               {isSorted === 'desc' && <ArrowDownIcon weight="bold" className="size-3.5" />}
               {count > 1 && (
-                <span className="absolute -top-2 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-semibold text-white tabular-nums">
+                <span className="absolute -top-2 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-semibold text-inverse-foreground tabular-nums">
                   <span className="[text-box:trim-both_cap_alphabetic]">{count}</span>
                 </span>
               )}
@@ -135,7 +135,7 @@ function ColumnMenu<TData extends object, TValue>({
                   aria-pressed={active}
                   onClick={apply}
                   className={cn(
-                    'flex h-8 cursor-pointer items-center gap-2.5 rounded-md px-2 text-left text-sm font-normal text-gray-800 outline-none hover:bg-gray-100',
+                    'flex h-8 cursor-pointer items-center gap-2.5 rounded-md px-2 text-left text-sm font-normal text-neutral-800 outline-none hover:bg-surface-subtle',
                     active && 'font-medium text-primary'
                   )}
                 >
@@ -147,7 +147,7 @@ function ColumnMenu<TData extends object, TValue>({
             </div>
           )}
           {canFilter && (
-            <div className={cn(canSort && 'border-t border-gray-200')}>
+            <div className={cn(canSort && 'border-t border-border-muted')}>
               <TableFilterList header={header} />
             </div>
           )}

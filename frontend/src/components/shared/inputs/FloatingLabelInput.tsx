@@ -38,7 +38,7 @@ export function FloatingLabelInput({
         name={name}
         {...aria.inputProps}
         className={cn(
-          'focus:border-primary peer block w-full appearance-none border-0 border-b-2 border-gray-600 bg-transparent px-0 py-2.5 focus:ring-0 focus:outline-none forced-colors:focus:border-b-4 forced-colors:focus:border-b-[Highlight] forced-colors:focus:pb-2',
+          'focus:border-primary peer block w-full appearance-none border-0 border-b-2 border-neutral-600 bg-transparent px-0 py-2.5 focus:ring-0 focus:outline-none forced-colors:focus:border-b-4 forced-colors:focus:border-b-[Highlight] forced-colors:focus:pb-2',
           hasErrors(errors) &&
             'border-danger text-danger focus:border-danger focus:shadow-[0_1px_0_var(--color-danger)]'
         )}
@@ -52,7 +52,7 @@ export function FloatingLabelInput({
       <label
         htmlFor={aria.id}
         className={cn(
-          'peer-focus:text-primary absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-gray-800 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-medium rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4',
+          'peer-focus:text-primary absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-neutral-800 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-medium rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4',
           hasErrors(errors) && 'text-danger peer-focus:text-danger'
         )}
       >

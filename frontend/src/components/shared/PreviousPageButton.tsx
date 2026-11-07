@@ -10,7 +10,7 @@ export function PreviousPageButton() {
   return (
     <motion.div onHoverStart={() => setIsHovered(true)} onHoverEnd={() => setIsHovered(false)} className="w-8" layout>
       <a className="hover:cursor-pointer" title="Cofnij się" onClick={() => router.history.back()}>
-        <span className="relative block aspect-square rounded-full bg-white text-primary">
+        <span className="relative block aspect-square rounded-full bg-surface text-primary">
           <motion.span
             className="absolute inset-0"
             animate={{ opacity: isHovered ? 0 : 1 }}

@@ -35,7 +35,7 @@ export function ApplicationsSection({
                 <>
                   {row.original.number}
                   {row.original.cruiseId && row.original.cruiseId !== cruiseId && (
-                    <div className="text-xs whitespace-nowrap text-gray-500">
+                    <div className="text-xs whitespace-nowrap text-muted-foreground">
                       obecnie w rejsie{' '}
                       <Link href={`/cruises/${row.original.cruiseId}`} target="_blank">
                         {row.original.cruiseNumber}

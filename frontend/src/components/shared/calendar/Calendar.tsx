@@ -507,7 +507,7 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
                     {overlaySegments.map((segment, index) => (
                       <div
                         key={`${activeDragOverlay.title}-${index}`}
-                        className="h-8 rounded-lg bg-gray-500/90 p-2 text-sm text-white shadow-lg"
+                        className="h-8 rounded-lg bg-neutral-500/90 p-2 text-sm text-inverse-foreground shadow-lg"
                         style={{
                           width: Math.max(40, segment.length * tileWidth - 20),
                           marginLeft: segment.startColumn * tileWidth,

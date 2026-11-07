@@ -109,29 +109,31 @@ export function CruiseApplicationPeriodInput({
         className="relative mx-8 mt-4 mb-20 touch-none select-none"
       >
         <Slider.Control className="relative flex w-full items-center">
-          <Slider.Track className="relative h-1 w-full rounded-sm bg-black/5">
+          <Slider.Track className="relative h-1 w-full rounded-sm bg-neutral-950/5">
             {!disabled && minBound > 0 && (
               <span
                 data-testid="period-unavailable-before"
-                className="absolute h-1 rounded-l-sm bg-gray-300"
+                className="absolute h-1 rounded-l-sm bg-neutral-300"
                 style={{ width: `${(minBound / 24) * 100}%` }}
               />
             )}
             {!disabled && maxBound < 24 && (
               <span
-                className="absolute right-0 h-1 rounded-r-sm bg-gray-300"
+                className="absolute right-0 h-1 rounded-r-sm bg-neutral-300"
                 style={{ width: `${((24 - maxBound) / 24) * 100}%` }}
               />
             )}
-            <Slider.Indicator className={cn('absolute h-1 rounded-sm', !disabled ? 'bg-primary-800' : 'bg-gray-400')} />
+            <Slider.Indicator
+              className={cn('absolute h-1 rounded-sm', !disabled ? 'bg-primary-800' : 'bg-neutral-400')}
+            />
             {stepPositions
               .filter((_, i) => i % 2 === 0)
               .map((position, idx) => (
                 <span
                   key={`step-${position}`}
                   className={cn(
-                    'absolute top-1/2 z-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full border bg-white focus-visible:outline-hidden',
-                    disabled ? 'border-gray-500' : isUnavailable(idx * 2) ? 'border-gray-300' : 'border-primary-800'
+                    'absolute top-1/2 z-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full border bg-surface focus-visible:outline-hidden',
+                    disabled ? 'border-neutral-500' : isUnavailable(idx * 2) ? 'border-border' : 'border-primary-800'
                   )}
                   style={{ left: `${position}%` }}
                 />
@@ -143,7 +145,7 @@ export function CruiseApplicationPeriodInput({
                   key={`step-${position}-text`}
                   className={cn(
                     'absolute top-1/2 z-0 -translate-x-1/2 translate-y-8 rotate-60 transform text-sm',
-                    isUnavailable(idx * 2 + 1) ? 'text-gray-500' : 'text-gray-800'
+                    isUnavailable(idx * 2 + 1) ? 'text-muted-foreground' : 'text-neutral-800'
                   )}
                   style={{ left: `${position}%` }}
                 >
@@ -156,10 +158,10 @@ export function CruiseApplicationPeriodInput({
             aria-label="Początek okresu"
             aria-describedby={helper ? helperId : undefined}
             className={cn(
-              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-500',
+              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary-500',
               !disabled
                 ? 'bg-primary-800 cursor-pointer forced-colors:bg-[CanvasText]'
-                : 'bg-gray-400 forced-colors:bg-[GrayText]',
+                : 'bg-neutral-400 forced-colors:bg-[GrayText]',
               'data-[dragging]:scale-125'
             )}
           />
@@ -168,10 +170,10 @@ export function CruiseApplicationPeriodInput({
             aria-label="Koniec okresu"
             aria-describedby={helper ? helperId : undefined}
             className={cn(
-              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-blue-500',
+              'absolute top-1/2 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 transform rounded-full duration-75 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary-500',
               !disabled
                 ? 'bg-primary-800 cursor-pointer forced-colors:bg-[CanvasText]'
-                : 'bg-gray-400 forced-colors:bg-[GrayText]',
+                : 'bg-neutral-400 forced-colors:bg-[GrayText]',
               'data-[dragging]:scale-125'
             )}
           />
