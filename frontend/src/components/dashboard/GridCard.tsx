@@ -26,7 +26,7 @@ export function GridCard({ name, className, Icon, iconWeight, description, href 
           <motion.div
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            className="relative flex h-full w-full flex-col items-center justify-around overflow-hidden rounded-xl bg-surface p-4 [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]"
+            className="relative flex h-full w-full flex-col items-center justify-around overflow-hidden rounded-xl bg-surface p-4 shadow-card"
           >
             <Icon weight={iconWeight} className="h-1/2" />
             <h3 className="font-semibold text-primary md:text-lg xl:text-xl">{name}</h3>
@@ -41,7 +41,7 @@ export function GridCard({ name, className, Icon, iconWeight, description, href 
     <div key={name} className={className}>
       <Link href={href} className="hover:no-underline">
         <motion.div
-          className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]"
+          className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 shadow-card"
           onHoverStart={() => setIsHovered(true)}
           onHoverEnd={() => setIsHovered(false)}
         >

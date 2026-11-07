@@ -43,7 +43,7 @@ export function PickerPopup({ 'aria-label': ariaLabel, children }: Props) {
           aria-label={ariaLabel}
           className={cn(
             'max-h-[var(--available-height)] origin-[var(--transform-origin)] overflow-y-auto rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10 focus-visible:outline-hidden',
-            'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
+            'transition-all duration-300 ease-popup',
             'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
             'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0',
             '[&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-primary-500'

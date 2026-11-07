@@ -37,7 +37,7 @@ export function Modal({ title, children, isOpen, onClose, className, dismissible
         <Dialog.Popup
           className={cn(
             'fixed top-[calc(50%+var(--header-height)/2)] left-1/2 z-50 max-h-[calc(100dvh-var(--header-height)-2rem)] w-[calc(100%-2rem)] max-w-screen-sm -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg bg-surface p-4 shadow-lg',
-            'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
+            'transition-all duration-300 ease-popup',
             'data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
             'data-[ending-style]:scale-90 data-[ending-style]:opacity-0',
             className

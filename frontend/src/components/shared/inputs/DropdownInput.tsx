@@ -126,7 +126,7 @@ export function DropdownInput({
             <Select.Popup
               className={cn(
                 'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10',
-                'transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
+                'transition-all duration-300 ease-popup',
                 'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
                 'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0'
               )}
