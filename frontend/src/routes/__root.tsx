@@ -56,7 +56,7 @@ function RootLayout() {
       <Background />
       <FeedbackTab />
       <main className="flex-1" id="modal-root">
-        <div key={pathname} className="transition-opacity duration-150 ease-out starting:opacity-0">
+        <div key={pathname}>
           <Outlet />
         </div>
       </main>

@@ -462,10 +462,7 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
         </Button>
       </div>
       <div className="my-4 flex flex-wrap justify-end gap-4">{buttons?.(defaultButtons) ?? defaultButtons}</div>
-      <div
-        key={currentMonth.month + currentMonth.year * 12}
-        className="transition-opacity duration-150 ease-out starting:opacity-0"
-      >
+      <div key={currentMonth.month + currentMonth.year * 12}>
         <DndContext
           collisionDetection={pointerWithinDayOrGap}
           sensors={sensors}
