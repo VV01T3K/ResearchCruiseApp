@@ -2,6 +2,7 @@ import { useSelector } from '@tanstack/react-form';
 import { useFieldContext } from './context';
 import { FloatingLabelInput } from '@/components/shared/inputs/FloatingLabelInput';
 
+import { ComboboxInput } from '@/components/inputs/ComboboxInput';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
 import { FileInput } from '@/components/shared/inputs/FileInput';
@@ -99,6 +100,25 @@ function SelectField({ onChange, ...props }: SelectProps) {
       value={field.state.value}
       onBlur={field.handleBlur}
       onChange={onChange ?? field.handleChange}
+      errors={useErrors()}
+    />
+  );
+}
+
+type ComboboxProps = Omit<
+  React.ComponentProps<typeof ComboboxInput>,
+  'name' | 'value' | 'onBlur' | 'onChange' | 'errors'
+>;
+
+function ComboboxField(props: ComboboxProps) {
+  const field = useFieldContext<string>();
+  return (
+    <ComboboxInput
+      {...props}
+      name={field.name}
+      value={field.state.value}
+      onBlur={field.handleBlur}
+      onChange={field.handleChange}
       errors={useErrors()}
     />
   );
@@ -262,6 +282,7 @@ export const fieldComponents = {
   NumberField,
   NullableNumberField,
   SelectField,
+  ComboboxField,
   BooleanSelectField,
   CheckboxField,
   ArrayCheckboxField,

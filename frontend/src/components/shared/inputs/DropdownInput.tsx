@@ -17,6 +17,21 @@ export type DropdownInputOption = {
   richLabel?: React.ReactNode;
 };
 
+export const dropdownPopupClassName = cn(
+  'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10',
+  'transition-all duration-300 ease-popup',
+  'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
+  'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0'
+);
+
+export const dropdownItemClassName = cn(
+  'flex items-center justify-between gap-2 border-b border-border-muted px-3 py-2 text-sm text-neutral-700 last:border-b-0',
+  'cursor-pointer focus-visible:outline-hidden select-none',
+  'transition-all duration-150 ease-out',
+  'data-[highlighted]:bg-primary-50 data-[highlighted]:text-foreground',
+  'data-[selected]:bg-primary-50 data-[selected]:text-primary-800 data-[selected]:font-medium'
+);
+
 type Props = {
   name: string;
   value: string;
@@ -123,14 +138,7 @@ export function DropdownInput({
             collisionPadding={stickyBarsCollisionPadding}
             alignItemWithTrigger={false}
           >
-            <Select.Popup
-              className={cn(
-                'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10',
-                'transition-all duration-300 ease-popup',
-                'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
-                'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0'
-              )}
-            >
+            <Select.Popup className={dropdownPopupClassName}>
               <Select.List className="flex max-h-64 flex-col overflow-y-auto">
                 {allPossibleOptions
                   .filter((opt) => Boolean(opt.inlineLabel || opt.richLabel))
@@ -138,13 +146,7 @@ export function DropdownInput({
                     <Select.Item
                       key={`dropdown-option-${opt.value}`}
                       value={opt.value}
-                      className={cn(
-                        'flex items-center justify-between gap-2 border-b border-border-muted px-3 py-2 text-sm text-neutral-700 last:border-b-0',
-                        'cursor-pointer focus-visible:outline-hidden select-none',
-                        'transition-all duration-150 ease-out',
-                        'data-[highlighted]:bg-primary-50 data-[highlighted]:text-foreground',
-                        'data-[selected]:bg-primary-50 data-[selected]:text-primary-800 data-[selected]:font-medium'
-                      )}
+                      className={dropdownItemClassName}
                     >
                       <Select.ItemText>{opt.richLabel ?? opt.inlineLabel}</Select.ItemText>
                       <Select.ItemIndicator className="text-primary transition-transform duration-200 data-[ending-style]:scale-0">

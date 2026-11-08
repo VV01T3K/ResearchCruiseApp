@@ -15,3 +15,7 @@ export function getPersonName(person: Person | undefined): string {
   }
   return `${person.firstName} ${person.lastName}`.trim() || UNKNOWN_PERSON;
 }
+
+export function comparePeople(a: Person, b: Person): number {
+  return a.lastName.localeCompare(b.lastName, 'pl') || a.firstName.localeCompare(b.firstName, 'pl');
+}
