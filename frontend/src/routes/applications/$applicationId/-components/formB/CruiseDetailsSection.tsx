@@ -315,7 +315,6 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
                   Dodaj sprzęt
                 </Button>,
               ]}
-              variant="form"
               disabled={isReadonly}
             />
           )}
@@ -373,7 +372,6 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
                   Dodaj nowe
                 </DropdownElementSelectorButton>,
               ]}
-              variant="form"
               disabled={isReadonly}
             />
           )}
@@ -411,7 +409,6 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
                   Dodaj port
                 </Button>,
               ]}
-              variant="form"
               disabled={isReadonly}
             />
           )}

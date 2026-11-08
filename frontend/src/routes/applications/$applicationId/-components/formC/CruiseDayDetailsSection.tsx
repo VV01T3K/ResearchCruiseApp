@@ -175,7 +175,6 @@ export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }
                 Dodaj
               </Button>,
             ]}
-            variant="form"
             disabled={isReadonly}
           />
         )}

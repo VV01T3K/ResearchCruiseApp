@@ -161,7 +161,6 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
                   </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Brak zadań SPUB"
-                variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
