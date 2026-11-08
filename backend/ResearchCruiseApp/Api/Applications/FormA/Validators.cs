@@ -21,6 +21,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
         AddDraftValidation();
         AddNonDraftValidation();
         AddResearchTasksCommonValidation();
+        AddResearchAreaFilesValidation();
         AddPublicationPointsValidation();
     }
 
@@ -313,6 +314,26 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             )
             .WithMessage(
                 "Wybranie obszaru badawczego albo podanie alternatywnej nazwy jest wymagane."
+            );
+    }
+
+    private void AddResearchAreaFilesValidation()
+    {
+        RuleFor(request => request.Form.ResearchAreaFiles)
+            .Must(files => files.Count <= FormAValuesConstants.MaxResearchAreaFiles)
+            .WithMessage(
+                $"Do rejonów prowadzenia badań można dołączyć maksymalnie {FormAValuesConstants.MaxResearchAreaFiles} plików."
+            );
+
+        RuleForEach(request => request.Form.ResearchAreaFiles)
+            .Must(file =>
+                !string.IsNullOrWhiteSpace(file?.Name)
+                && file.Content is not null
+                && _fileInspector.IsFilePdf(file.Content)
+                && _fileInspector.IsFileSizeValid(file.Content, PermissionScanLimits.MaxFileSize)
+            )
+            .WithMessage(
+                (_, file) => $"Plik {file?.Name} musi być plikiem PDF o rozmiarze do 2 MiB."
             );
     }
 

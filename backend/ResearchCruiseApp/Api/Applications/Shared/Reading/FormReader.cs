@@ -17,6 +17,11 @@ internal class FormReader(PermissionReader permissions, ContractReader contracts
             dto.Contracts.Add(await contracts.Create(contract.Contract));
         }
 
+        foreach (var file in form.ResearchAreaFiles)
+        {
+            dto.ResearchAreaFiles.Add(await files.FromCompressed(file.FileName, file.FileContent));
+        }
+
         return dto;
     }
 

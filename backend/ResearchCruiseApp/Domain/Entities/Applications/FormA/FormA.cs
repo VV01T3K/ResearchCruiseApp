@@ -24,6 +24,8 @@ public class FormA : Entity
     public List<Permission> Permissions { get; init; } = [];
 
     public List<ResearchAreaDescription> ResearchAreaDescriptions { get; init; } = [];
+
+    public List<FormAResearchAreaFile> ResearchAreaFiles { get; init; } = [];
     public string? CruiseGoal { get; init; }
     public string CruiseGoalDescription { get; init; } = null!;
 

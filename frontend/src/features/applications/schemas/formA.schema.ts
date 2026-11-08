@@ -6,6 +6,7 @@ import { parsePolishDateTime, parsePolishDayStart } from '@/lib/dateUtils';
 import { getPeriodEdgeDatePoint, getPeriodEdgeDateString, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
 import { ContractValuesInputSchema, ContractValuesSchema } from '@/features/applications/schemas/types/ContractValues';
 import { CruiseGoal, CruisePeriodValidationSchema } from '@/features/applications/schemas/types/FormAValues';
+import { FormFileValuesSchema } from '@/features/applications/schemas/types/FormFileValues';
 import {
   GuestTeamValuesInputSchema,
   GuestTeamValuesSchema,
@@ -42,6 +43,13 @@ import { ResearchTaskType } from '@/features/applications/schemas/types/Research
 import { PublicationCategory } from '@/features/applications/schemas/types/PublicationValues';
 import { storedBoolean, storedNullableNumber, storedNumber } from '@/features/applications/schemas/storedValues';
 
+export const MAX_RESEARCH_AREA_FILES = 5;
+
+const ResearchAreaFilesSchema = FormFileValuesSchema.array().max(
+  MAX_RESEARCH_AREA_FILES,
+  `Można dołączyć maksymalnie ${MAX_RESEARCH_AREA_FILES} plików`
+);
+
 const FormAInputSchema = z.object({
   draft: z.boolean().optional(),
   revision: z.string().optional(),
@@ -63,6 +71,7 @@ const FormAInputSchema = z.object({
   differentUsage: z.string(),
   permissions: PermissionValuesInputSchema.array(),
   researchAreaDescriptions: ResearchAreaValuesInputSchema.array(),
+  researchAreaFiles: ResearchAreaFilesSchema,
   cruiseGoal: z.union([z.enum([CruiseGoal.Research, CruiseGoal.Commercial, CruiseGoal.Educational]), z.literal('')]),
   cruiseGoalDescription: z.string(),
   researchTasks: ResearchTaskValuesInputSchema.array(),
@@ -97,6 +106,7 @@ export const formADefaultValues: FormAValues = {
   differentUsage: '',
   permissions: [],
   researchAreaDescriptions: [],
+  researchAreaFiles: [],
   cruiseGoal: '',
   cruiseGoalDescription: '',
   researchTasks: [],
@@ -386,6 +396,7 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
       researchAreaDescriptions: getResearchAreaValuesSchema(initValues)
         .array()
         .min(1, 'Co najmniej jeden rejon badań jest wymagany'),
+      researchAreaFiles: ResearchAreaFilesSchema,
       cruiseGoal: z.enum([CruiseGoal.Research, CruiseGoal.Commercial, CruiseGoal.Educational], {
         error: 'Cel rejsu musi być jednym z dostępnych celów rejsu',
       }),
@@ -606,6 +617,7 @@ function mapFormAFields(form: FormAValues, applicationId?: string) {
       scan: permission.scan ?? null,
     })),
     researchAreaDescriptions: form.researchAreaDescriptions,
+    researchAreaFiles: form.researchAreaFiles,
     cruiseGoal: form.cruiseGoal || null,
     cruiseGoalDescription: form.cruiseGoalDescription,
     researchTasks: form.researchTasks.map((task) => ({
@@ -694,6 +706,10 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
       areaId: area.areaId ?? null,
       differentName: area.differentName ?? null,
       info: area.info ?? '',
+    })),
+    researchAreaFiles: (form.researchAreaFiles ?? []).map((file) => ({
+      name: file.name ?? '',
+      content: file.content ?? '',
     })),
     cruiseGoal:
       form.cruiseGoal === CruiseGoal.Research ||

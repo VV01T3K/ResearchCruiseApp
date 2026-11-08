@@ -1,5 +1,6 @@
 import * as zod from 'zod';
 import { ContractFields } from './contractFields.gen.ts';
+import { FileContent } from './fileContent.gen.ts';
 import { GuestTeamFields } from './guestTeamFields.gen.ts';
 import { PermissionFields } from './permissionFields.gen.ts';
 import { PublicationFields } from './publicationFields.gen.ts';
@@ -59,6 +60,7 @@ export const FormAFields = zod.object({
   "differentUsage": zod.string().min(formAFieldsDifferentUsageMin).max(formAFieldsDifferentUsageMax).optional(),
   "permissions": zod.array(PermissionFields).optional(),
   "researchAreaDescriptions": zod.array(ResearchAreaSelection).optional(),
+  "researchAreaFiles": zod.array(FileContent).optional(),
   "cruiseGoal": zod.string().nullish(),
   "cruiseGoalDescription": zod.string().min(formAFieldsCruiseGoalDescriptionMin).max(formAFieldsCruiseGoalDescriptionMax).optional(),
   "researchTasks": zod.array(ResearchTaskFields).optional(),

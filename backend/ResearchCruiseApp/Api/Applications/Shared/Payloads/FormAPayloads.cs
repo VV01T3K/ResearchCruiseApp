@@ -44,6 +44,8 @@ public class FormAFields
 
     public List<ResearchAreaSelection> ResearchAreaDescriptions { get; init; } = [];
 
+    public List<FileContent> ResearchAreaFiles { get; init; } = [];
+
     public string? CruiseGoal { get; init; }
 
     [StringLength(10240)]

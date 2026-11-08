@@ -97,7 +97,10 @@ public static class FormAEndpoints
         CancellationToken cancellationToken
     )
     {
-        var query = dbContext.CruiseApplications.IncludeFormA().IncludeFormAContent();
+        var query = dbContext
+            .CruiseApplications.IncludeFormA()
+            .IncludeFormAContent()
+            .IncludeFormAResearchAreaFiles();
         var read = await dbContext.ReadOneRevision(
             () =>
                 query.SingleOrDefaultAsync(
@@ -146,6 +149,7 @@ public static class FormAEndpoints
         var application = await dbContext
             .CruiseApplications.IncludeFormA()
             .IncludeFormAContent()
+            .IncludeFormAResearchAreaFiles()
             .SingleOrDefaultAsync(candidate => candidate.Id == applicationId, cancellationToken);
         if (application is null || !await userPermissionVerifier.CanCurrentUserAddForm(application))
             return Error.ResourceNotFound().ToProblemHttpResult();
