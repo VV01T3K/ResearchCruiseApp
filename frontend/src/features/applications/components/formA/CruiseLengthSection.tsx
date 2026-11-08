@@ -234,67 +234,94 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
           )}
           {periodSelectionType === 'precise' && (
             <>
-              <form.AppField name="precisePeriodStart">
-                {(field) => (
-                  <field.DateField
-                    label="Dokładny termin rozpoczęcia rejsu"
-                    type="date"
-                    showRequiredAsterisk
-                    disabled={isReadonly}
-                    minimalDate={allowPastDates ? undefined : new Date(nowMs)}
-                  />
-                )}
-              </form.AppField>
+              <fieldset className="min-w-0">
+                <legend className="mb-2 text-sm font-medium text-foreground">
+                  Rozpoczęcie rejsu
+                  <span className="ml-1 font-bold text-danger" title="Pole jest obowiązkowe do wypełnienia">
+                    *
+                  </span>
+                </legend>
+                <div className="flex gap-2">
+                  <div className="min-w-0 flex-1">
+                    <form.AppField name="precisePeriodStart">
+                      {(field) => (
+                        <field.DateField
+                          aria-label="Dokładny termin rozpoczęcia rejsu"
+                          type="date"
+                          disabled={isReadonly}
+                          minimalDate={allowPastDates ? undefined : new Date(nowMs)}
+                        />
+                      )}
+                    </form.AppField>
+                  </div>
+                  {(!isReadonly || precisePeriodStartTime || precisePeriodEndTime) && (
+                    <div className="w-40 shrink-0">
+                      <form.AppField name="precisePeriodStartTime">
+                        {(field) => (
+                          <field.TimeField
+                            aria-label="Godzina rozpoczęcia rejsu"
+                            placeholder={isReadonly ? 'Nie podano' : 'Godzina (opcjonalnie)'}
+                            minuteStep={30}
+                            clearable
+                            disabled={isReadonly}
+                          />
+                        )}
+                      </form.AppField>
+                    </div>
+                  )}
+                </div>
+              </fieldset>
 
-              <form.Subscribe selector={(state) => state.values.precisePeriodStart}>
-                {(precisePeriodStart) => (
-                  <form.AppField name="precisePeriodEnd">
-                    {(field) => (
-                      <field.DateField
-                        label="Dokładny termin zakończenia rejsu"
-                        type="date"
-                        showRequiredAsterisk
-                        disabled={isReadonly}
-                        selectionStartDate={precisePeriodStart ? parseCalendarDate(precisePeriodStart) : undefined}
-                        minimalDate={
-                          precisePeriodStart && !allowPastDates
-                            ? parseCalendarDate(precisePeriodStart)
-                            : allowPastDates
-                              ? undefined
-                              : new Date(nowMs)
-                        }
-                      />
-                    )}
-                  </form.AppField>
-                )}
-              </form.Subscribe>
-
-              {(!isReadonly || precisePeriodStartTime || precisePeriodEndTime) && (
-                <>
-                  <form.AppField name="precisePeriodStartTime">
-                    {(field) => (
-                      <field.TimeField
-                        label="Godzina rozpoczęcia rejsu (opcjonalnie)"
-                        placeholder={isReadonly ? 'Nie podano' : 'Wybierz godzinę'}
-                        minuteStep={30}
-                        clearable
-                        disabled={isReadonly}
-                      />
-                    )}
-                  </form.AppField>
-                  <form.AppField name="precisePeriodEndTime">
-                    {(field) => (
-                      <field.TimeField
-                        label="Godzina zakończenia rejsu (opcjonalnie)"
-                        placeholder={isReadonly ? 'Nie podano' : 'Wybierz godzinę'}
-                        minuteStep={30}
-                        clearable
-                        disabled={isReadonly}
-                      />
-                    )}
-                  </form.AppField>
-                </>
-              )}
+              <fieldset className="min-w-0">
+                <legend className="mb-2 text-sm font-medium text-foreground">
+                  Zakończenie rejsu
+                  <span className="ml-1 font-bold text-danger" title="Pole jest obowiązkowe do wypełnienia">
+                    *
+                  </span>
+                </legend>
+                <div className="flex gap-2">
+                  <div className="min-w-0 flex-1">
+                    <form.Subscribe selector={(state) => state.values.precisePeriodStart}>
+                      {(precisePeriodStart) => (
+                        <form.AppField name="precisePeriodEnd">
+                          {(field) => (
+                            <field.DateField
+                              aria-label="Dokładny termin zakończenia rejsu"
+                              type="date"
+                              disabled={isReadonly}
+                              selectionStartDate={
+                                precisePeriodStart ? parseCalendarDate(precisePeriodStart) : undefined
+                              }
+                              minimalDate={
+                                precisePeriodStart && !allowPastDates
+                                  ? parseCalendarDate(precisePeriodStart)
+                                  : allowPastDates
+                                    ? undefined
+                                    : new Date(nowMs)
+                              }
+                            />
+                          )}
+                        </form.AppField>
+                      )}
+                    </form.Subscribe>
+                  </div>
+                  {(!isReadonly || precisePeriodStartTime || precisePeriodEndTime) && (
+                    <div className="w-40 shrink-0">
+                      <form.AppField name="precisePeriodEndTime">
+                        {(field) => (
+                          <field.TimeField
+                            aria-label="Godzina zakończenia rejsu"
+                            placeholder={isReadonly ? 'Nie podano' : 'Godzina (opcjonalnie)'}
+                            minuteStep={30}
+                            clearable
+                            disabled={isReadonly}
+                          />
+                        )}
+                      </form.AppField>
+                    </div>
+                  )}
+                </div>
+              </fieldset>
             </>
           )}
 

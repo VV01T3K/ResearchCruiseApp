@@ -39,6 +39,7 @@ type Props = {
   maximalTime?: Time;
   minuteStep?: number;
   clearable?: boolean;
+  'aria-label'?: string;
 };
 export function TimePickerInput({
   name,
@@ -54,6 +55,7 @@ export function TimePickerInput({
   maximalTime,
   minuteStep = 1,
   clearable,
+  'aria-label': ariaLabel,
 }: Props) {
   const aria = useInputAria(errors, helper);
   const [expanded, setExpanded] = React.useState(false);
@@ -76,9 +78,10 @@ export function TimePickerInput({
           <Popover.Trigger
             disabled={disabled}
             {...aria.inputProps}
-            className={pickerTriggerClassName({ disabled, errors, className: 'px-5 text-center' })}
+            aria-label={ariaLabel}
+            className={pickerTriggerClassName({ disabled, errors })}
           >
-            <span className="w-full">{time ? formatTime(time) : placeholder}</span>
+            <span className="w-full truncate">{time ? formatTime(time) : placeholder}</span>
             <InputErrorTriangle errors={errors} />
           </Popover.Trigger>
           {clearable && time && !disabled && (
