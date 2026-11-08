@@ -1,6 +1,5 @@
 import { Tooltip } from '@base-ui/react/tooltip';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
 import { DotsSixVerticalIcon, LockIcon } from '@phosphor-icons/react';
 import React, { Fragment } from 'react';
 
@@ -104,7 +103,7 @@ function CalendarEventTiles({
         );
 
       eventTiles.push(
-        event.link && !isDraggable ? (
+        isLocked || (event.link && !isDraggable) ? (
           <Tooltip.Root key={`${event.title}-${i}`} disabled={!isLocked}>
             <Tooltip.Trigger
               render={<div />}
@@ -113,17 +112,31 @@ function CalendarEventTiles({
                 if (isLocked) toast.error(event.dragLockedReason!);
               }}
             >
-              <Link
-                href={event.link}
-                variant="plain"
-                className="group relative block focus-visible:outline-hidden"
-                tabIndex={start ? undefined : -1}
-                aria-hidden={!start || undefined}
-              >
-                {renderedComponent}
-                {focusRing}
-                {isLocked && <span className="sr-only">{event.dragLockedReason}</span>}
-              </Link>
+              {isLocked ? (
+                <div
+                  role="button"
+                  aria-disabled
+                  draggable
+                  className="group relative focus-visible:outline-hidden"
+                  tabIndex={start ? 0 : -1}
+                  aria-hidden={!start || undefined}
+                >
+                  {renderedComponent}
+                  {focusRing}
+                  <span className="sr-only">{event.dragLockedReason}</span>
+                </div>
+              ) : (
+                <Link
+                  href={event.link}
+                  variant="plain"
+                  className="group relative block focus-visible:outline-hidden"
+                  tabIndex={start ? undefined : -1}
+                  aria-hidden={!start || undefined}
+                >
+                  {renderedComponent}
+                  {focusRing}
+                </Link>
+              )}
             </Tooltip.Trigger>
             <Tooltip.Portal>
               <Tooltip.Positioner className="z-50" sideOffset={4} collisionPadding={8}>
@@ -160,14 +173,13 @@ function DraggableCalendarEvent({
   activeDragEventId,
   focusable,
 }: DraggableCalendarEventProps) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `calendar-event-${eventId}-${sourceDayUtc}`,
     data: { eventId, sourceDayUtc },
   });
   const isActiveDraggedEvent = activeDragEventId === eventId;
 
   const style = {
-    transform: CSS.Translate.toString(transform),
     opacity: isActiveDraggedEvent ? 0 : 1,
     cursor: isDragging ? 'grabbing' : 'grab',
   };
@@ -218,22 +230,29 @@ export function CalendarTile({
       data-calendar-day-tile
       ref={setNodeRef}
       className={cn(
-        !isCurrentMonth ? 'bg-surface-subtle' : '',
-        isToday ? 'bg-primary-100! border-primary-500!' : '',
         enableDragAndDrop && isOver ? 'ring-2 ring-primary-500' : '',
-        enableDragAndDrop && isDropPreview ? 'ring-2 ring-primary-300 bg-primary-50' : '',
-        'mb-3 h-full min-h-30 rounded-xl border border-border transition hover:bg-surface-subtle'
+        enableDragAndDrop && isDropPreview
+          ? 'ring-2 ring-primary-300 bg-primary-50'
+          : [
+              !isCurrentMonth ? 'bg-surface-subtle' : '',
+              isToday ? 'bg-primary-100! border-primary-500!' : '',
+              'hover:bg-surface-subtle',
+            ],
+        'mb-3 h-full min-h-30 rounded-xl border border-border transition'
       )}
     >
       <div className="gap-1 p-2">
-        <div
-          className={cn(
-            !isCurrentMonth ? 'text-muted-foreground' : '',
-            isSunday ? (isToday ? 'text-danger-700' : 'text-danger') : '',
-            'text-end'
-          )}
-        >
-          {date.getDate()}
+        <div className="text-end">
+          <span
+            className={cn(
+              !isCurrentMonth ? 'text-muted-foreground' : '',
+              isSunday ? 'text-danger' : '',
+              isToday ? 'rounded-full bg-primary-600 px-2 text-inverse-foreground' : '',
+              isToday && isSunday ? 'bg-danger' : ''
+            )}
+          >
+            {date.getDate()}
+          </span>
         </div>
       </div>
       <div data-calendar-event-rows className="-m-2 mt-2 grid grid-cols-1 gap-1">

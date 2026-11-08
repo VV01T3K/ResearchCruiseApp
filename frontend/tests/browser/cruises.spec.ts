@@ -646,7 +646,10 @@ test('the export downloads the CSV file of the chosen year', async ({ page, netw
   expect(requests.queries('GET /v2/cruises/export')).toEqual([{ year: '2025' }]);
 });
 
-test('calendar edit mode lets a confirmed cruise be dragged, but not an ended one', async ({ page, network }) => {
+test('calendar edit mode lets a confirmed cruise be dragged, but not an ended one, and opens neither', async ({
+  page,
+  network,
+}) => {
   const ended: CruiseResponse = {
     ...cruise(),
     id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
@@ -663,19 +666,18 @@ test('calendar edit mode lets a confirmed cruise be dragged, but not an ended on
     'aria-roledescription',
     'draggable'
   );
-  await expect(page.getByRole('link', { name: 'Rejs Zakończony' }).first()).toHaveAttribute(
-    'href',
-    `/cruises/${ended.id}`
-  );
-  await expect(page.locator(`a[href="/cruises/${ended.id}"]`)).toHaveCount(2);
-  await expect(page.getByRole('link', { name: /Zakończon/ })).toHaveCount(1);
-  const locked = page.getByRole('link', { name: 'Rejs Zakończony' }).first();
-  await expect(locked).toHaveAccessibleName(/^Rejs Zakończony.+/);
+  await expect(page.locator('[data-calendar-day-tile] a')).toHaveCount(0);
+  const locked = page.getByRole('button', { name: /^Rejs Zakończony.+/ });
+  await expect(locked).toHaveCount(1);
+  await expect(locked).toHaveAttribute('aria-disabled', 'true');
   expect(
     await locked.evaluate(
-      (link) => !link.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true }))
+      (button) => !button.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true }))
     )
   ).toBe(true);
+
+  await page.getByRole('button', { name: 'Wyłącz tryb edycji kalendarza' }).click();
+  await expect(page.getByRole('link', { name: 'Rejs Zakończony' })).toHaveAttribute('href', `/cruises/${ended.id}`);
 });
 
 test.describe(() => {

@@ -3,6 +3,7 @@ import {
   DndContext,
   DragOverlay,
   pointerWithin,
+  type CollisionDetection,
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
@@ -19,6 +20,7 @@ import { CalendarTile } from '@/components/shared/calendar/CalendarTile';
 import { MonthPickerPopover } from '@/components/shared/inputs/dates/MonthPickerPopover';
 import { dateToUtcDay, getDaysInMonth, months, weekDays } from '@/lib/calendarUtils';
 import { useNow } from '@/lib/dateUtils';
+import { cn } from '@/lib/utils';
 import type { CalendarEvent, CalendarEventWithRow, CalendarEventDropPayload } from './calendarTypes';
 
 function assignEventsToRows(events: CalendarEvent[]): CalendarEventWithRow[] {
@@ -38,6 +40,18 @@ function assignEventsToRows(events: CalendarEvent[]): CalendarEventWithRow[] {
 function isOverlapping(a: CalendarEvent, b: CalendarEvent): boolean {
   return dateToUtcDay(a.start) <= dateToUtcDay(b.end) && dateToUtcDay(a.end) >= dateToUtcDay(b.start);
 }
+
+const pointerWithinDayOrGap: CollisionDetection = (args) => {
+  const collisions = pointerWithin(args);
+  if (collisions.length > 0 || !args.pointerCoordinates) return collisions;
+  const { x, y } = args.pointerCoordinates;
+  const gap = 8;
+  const container = args.droppableContainers.find(({ id }) => {
+    const rect = args.droppableRects.get(id);
+    return rect && x >= rect.left - gap && x <= rect.right + gap && y >= rect.top - gap && y <= rect.bottom + gap;
+  });
+  return container ? [{ id: container.id }] : [];
+};
 
 type Props = {
   events: CalendarEvent[];
@@ -59,7 +73,7 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
     { eventId: string; nextStartMs: number; nextEndMs: number } | undefined
   >(undefined);
   const [activeDragOverlay, setActiveDragOverlay] = React.useState<
-    { title: string; spanDays: number; anchorOffset: number } | undefined
+    { title: string; color?: string; spanDays: number; anchorOffset: number } | undefined
   >(undefined);
   const [activeDragPointerOffsetY, setActiveDragPointerOffsetY] = React.useState(0);
   const calendarRef = React.useRef<HTMLDivElement>(null);
@@ -111,7 +125,7 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
   }, [updateTileWidth]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { delay: 0, tolerance: 0 } }),
+    useSensor(PointerSensor),
     useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 0 } })
   );
 
@@ -219,6 +233,7 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
     setPendingDrop(undefined);
     setActiveDragOverlay({
       title: draggedEvent.title,
+      color: draggedEvent.color,
       spanDays: getVisibleSpanDays(draggedEvent),
       anchorOffset,
     });
@@ -459,7 +474,7 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
           transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
           <DndContext
-            collisionDetection={pointerWithin}
+            collisionDetection={pointerWithinDayOrGap}
             sensors={sensors}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
@@ -503,11 +518,17 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
                     {overlaySegments.map((segment, index) => (
                       <div
                         key={`${activeDragOverlay.title}-${index}`}
-                        className="h-8 rounded-lg bg-neutral-500/90 p-2 text-sm text-inverse-foreground shadow-lg"
-                        style={{
-                          width: Math.max(40, segment.length * tileWidth - 20),
-                          marginLeft: segment.startColumn * tileWidth,
-                        }}
+                        className={cn(
+                          activeDragOverlay.color ? 'bg-[var(--color)]' : 'bg-primary',
+                          'h-8 rounded-lg p-2 text-sm text-inverse-foreground opacity-80 shadow-md'
+                        )}
+                        style={
+                          {
+                            '--color': activeDragOverlay.color,
+                            width: Math.max(40, segment.length * tileWidth - 20),
+                            marginLeft: segment.startColumn * tileWidth,
+                          } as React.CSSProperties
+                        }
                       >
                         <div className="truncate">{index === 0 ? activeDragOverlay.title : ''}</div>
                       </div>
