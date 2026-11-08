@@ -90,7 +90,7 @@ function UserManagementPage() {
     {
       accessorFn: (row) => `${row.firstName} ${row.lastName}`,
       header: 'Imię i nazwisko',
-      size: 200,
+      size: 194,
     },
     {
       accessorFn: (row) => row.email,
@@ -105,7 +105,7 @@ function UserManagementPage() {
         const value = cell.getValue() as 'Zaakceptowane' | 'Niezaakceptowane';
         return <Badge variant={value === 'Zaakceptowane' ? 'success' : 'danger'}>{value}</Badge>;
       },
-      size: 136,
+      size: 134,
     },
     {
       id: 'emailStatus',
@@ -115,14 +115,14 @@ function UserManagementPage() {
         const value = cell.getValue() as 'Zweryfikowany' | 'Niezweryfikowany';
         return <Badge variant={value === 'Zweryfikowany' ? 'success' : 'danger'}>{value}</Badge>;
       },
-      size: 132,
+      size: 130,
     },
     {
       id: 'role',
       accessorFn: (row) => getRoleLabel(row.roles[0]),
       header: 'Rola',
       cell: ({ row }) => <RoleBadge role={row.original.roles[0]} />,
-      size: 88,
+      size: 106,
     },
     {
       id: 'actions',
@@ -134,7 +134,7 @@ function UserManagementPage() {
           </Button>
         </div>
       ),
-      size: 108,
+      size: 100,
     },
   ];
 
