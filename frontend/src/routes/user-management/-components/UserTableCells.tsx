@@ -8,15 +8,19 @@ import { RoleBadge } from './RoleBadge';
 
 export function SelectAllUsersHeader({ table }: { table: Table<UserResponse> }) {
   return (
-    <Subscribe source={table.atoms.rowSelection} selector={() => table.getIsAllRowsSelected()}>
-      {(allSelected) => (
-        <Checkbox
-          aria-label="Zaznacz wszystkich użytkowników"
-          name="selectAllUsers"
-          onChange={(x) => table.toggleAllRowsSelected(x)}
-          checked={allSelected}
-          size="lg"
-        />
+    <Subscribe source={table.atoms.columnFilters} selector={(filters) => filters}>
+      {() => (
+        <Subscribe source={table.atoms.rowSelection} selector={() => table.getIsAllRowsSelected()}>
+          {(allSelected) => (
+            <Checkbox
+              aria-label="Zaznacz wszystkich użytkowników"
+              name="selectAllUsers"
+              onChange={(x) => table.toggleAllRowsSelected(x)}
+              checked={allSelected}
+              size="lg"
+            />
+          )}
+        </Subscribe>
       )}
     </Subscribe>
   );

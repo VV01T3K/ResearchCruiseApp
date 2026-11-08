@@ -404,6 +404,9 @@ test('table sorting, filtering and selection work', async ({ page, network }) =>
   await expect(roleColumn).toHaveAttribute('aria-sort', 'none');
   await expect(rows).toHaveCount(1);
   await expect(rows).toContainText('zebra@example.com');
+  await header.check();
   await page.getByRole('button', { name: 'Wyczyść filtry', exact: true }).click();
   await expect(rows).toHaveCount(2);
+  // Select-all follows the visible rows, so clearing the filter unchecks it.
+  await expect(header).not.toBeChecked();
 });
