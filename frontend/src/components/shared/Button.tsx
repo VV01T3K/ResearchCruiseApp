@@ -92,9 +92,10 @@ const variants = {
 
   primary: 'rounded-lg bg-primary hover:bg-primary-900 active:bg-primary disabled:bg-primary-500',
   success: 'rounded-lg bg-success hover:bg-success-900 active:bg-success disabled:bg-success-400',
-  danger: 'rounded-lg bg-danger hover:bg-danger-700 active:bg-danger disabled:bg-danger-400',
+  danger:
+    'rounded-lg bg-danger hover:bg-danger-700 active:bg-danger disabled:hover:bg-surface disabled:bg-surface disabled:text-muted-foreground disabled:inset-ring disabled:inset-ring-border',
   warning:
-    'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning disabled:bg-warning-100 text-neutral-950 disabled:text-warning-800 disabled:opacity-50',
+    'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning text-neutral-950 disabled:hover:bg-surface disabled:bg-surface disabled:text-muted-foreground disabled:inset-ring disabled:inset-ring-border',
   info: 'rounded-lg bg-info hover:bg-info-700 active:bg-info disabled:bg-info-200',
 
   primaryOutline:
@@ -102,9 +103,9 @@ const variants = {
   successOutline:
     'rounded-lg bg-surface hover:bg-success active:bg-success text-success hover:text-inverse-foreground border border-success transition-all duration-300 disabled:border-success-300 disabled:text-success-400 disabled:hover:bg-surface',
   dangerOutline:
-    'rounded-lg bg-surface hover:bg-danger active:bg-danger text-danger hover:text-inverse-foreground border border-danger transition-all duration-300 disabled:border-danger-300 disabled:text-danger-400 disabled:hover:bg-surface',
+    'rounded-lg bg-surface hover:bg-danger active:bg-danger text-danger hover:text-inverse-foreground border border-danger transition-all duration-300 disabled:border-border disabled:text-muted-foreground disabled:hover:bg-surface',
   warningOutline:
-    'rounded-lg bg-surface hover:bg-warning active:bg-warning text-warning-600 hover:text-neutral-950 border border-warning transition-all duration-300 disabled:border-warning-300 disabled:text-warning-500 disabled:hover:bg-surface',
+    'rounded-lg bg-surface hover:bg-warning active:bg-warning text-warning-600 hover:text-neutral-950 border border-warning transition-all duration-300 disabled:border-border disabled:text-muted-foreground disabled:hover:bg-surface',
   infoOutline:
     'rounded-lg bg-surface hover:bg-info active:bg-info text-info hover:text-inverse-foreground border border-info transition-all duration-300 disabled:border-info-200 disabled:text-info-300 disabled:hover:bg-surface',
 };

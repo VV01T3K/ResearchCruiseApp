@@ -361,100 +361,108 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         <form.Subscribe selector={(state) => [selectCanSubmit(state), state.isSubmitting]}>
           {([canSubmit, isSubmitting]) => (
             <>
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {assignmentWarning?.action === 'role' ? (
-                  <div className="flex items-center gap-4">
-                    <WarningIcon weight="fill" className="h-4 w-4" />
-                    <span>Zmień rolę mimo to</span>
-                  </div>
-                ) : editMode ? (
-                  <div className="flex items-center gap-4">
-                    <FloppyDiskIcon weight="fill" className="h-4 w-4" />
-                    <span>Zapisz</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-4">
-                    <UserPlusIcon className="h-4 w-4" />
-                    <span>Dodaj</span>
-                  </div>
-                )}
-              </Button>
-
-              {editMode && allowToRemoveUsers && (
-                <Button
-                  variant={deletionConfirmed ? 'danger' : 'warning'}
-                  disabled={!canSubmit || isSubmitting || isOwnAccount}
-                  onClick={() => void handleUserDeletion()}
-                  className="w-full"
-                >
-                  {deletionConfirmed ? (
-                    <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <WarningIcon weight="fill" className="h-4 w-4" />
-                      <span>Czy na pewno?</span>
-                    </motion.div>
-                  ) : (
-                    <div className="flex items-center gap-4">
-                      <TrashIcon weight="fill" className="h-4 w-4" />
-                      <span>Usuń</span>
-                    </div>
-                  )}
-                </Button>
-              )}
-
-              {assignmentWarning?.action === 'deactivate' && (
-                <AssignmentsWarning items={assignmentWarning.items} action="deactivate" />
-              )}
-
-              {editMode && (
-                <Button
-                  variant={!user.accepted ? 'success' : 'danger'}
-                  disabled={
-                    !!submitError ||
-                    acceptUserMutation.isPending ||
-                    unAcceptUserMutation.isPending ||
-                    (isOwnAccount && user.accepted)
-                  }
-                  onClick={() => void handleAccountAcceptanceToggle()}
-                  className="w-full"
-                >
-                  {!user.accepted ? (
-                    <div className="flex items-center gap-4">
-                      <UserCheckIcon weight="fill" className="h-4 w-4" />
-                      <span>Zaakceptuj konto użytkownika</span>
-                    </div>
-                  ) : assignmentWarning?.action === 'deactivate' ? (
+              <div className="flex justify-end">
+                <Button type="submit" disabled={isSubmitting}>
+                  {assignmentWarning?.action === 'role' ? (
                     <div className="flex items-center gap-4">
                       <WarningIcon weight="fill" className="h-4 w-4" />
-                      <span>Cofnij akceptację mimo to</span>
+                      <span>Zmień rolę mimo to</span>
+                    </div>
+                  ) : editMode ? (
+                    <div className="flex items-center gap-4">
+                      <FloppyDiskIcon weight="fill" className="h-4 w-4" />
+                      <span>Zapisz</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-4">
-                      <UserMinusIcon weight="fill" className="h-4 w-4" />
-                      <span>Cofnij akceptację konta</span>
+                      <UserPlusIcon className="h-4 w-4" />
+                      <span>Dodaj</span>
                     </div>
                   )}
                 </Button>
-              )}
+              </div>
 
               {editMode && (
-                <Button
-                  variant={passwordResetSent ? 'success' : 'primaryOutline'}
-                  disabled={!!submitError || initiatePasswordResetMutation.isPending || passwordResetSent}
-                  onClick={() => void handleInitiatePasswordReset()}
-                  className="w-full"
-                >
-                  {passwordResetSent ? (
-                    <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <EnvelopeSimpleIcon className="h-4 w-4" />
-                      <span>Link do zmiany hasła wysłany</span>
-                    </motion.div>
-                  ) : (
-                    <div className="flex items-center gap-4">
-                      <EnvelopeSimpleIcon className="h-4 w-4" />
-                      <span>Wyślij link do zmiany hasła</span>
+                <div className="space-y-4 border-t border-border pt-6">
+                  {assignmentWarning?.action === 'deactivate' && (
+                    <AssignmentsWarning items={assignmentWarning.items} action="deactivate" />
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant={passwordResetSent ? 'success' : 'primaryOutline'}
+                      disabled={!!submitError || initiatePasswordResetMutation.isPending || passwordResetSent}
+                      onClick={() => void handleInitiatePasswordReset()}
+                    >
+                      {passwordResetSent ? (
+                        <motion.div
+                          className="flex items-center gap-4"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                        >
+                          <EnvelopeSimpleIcon className="h-4 w-4" />
+                          <span>Link do zmiany hasła wysłany</span>
+                        </motion.div>
+                      ) : (
+                        <div className="flex items-center gap-4">
+                          <EnvelopeSimpleIcon className="h-4 w-4" />
+                          <span>Wyślij link do zmiany hasła</span>
+                        </div>
+                      )}
+                    </Button>
+                    <Button
+                      variant={!user.accepted ? 'successOutline' : 'dangerOutline'}
+                      disabled={
+                        !!submitError ||
+                        acceptUserMutation.isPending ||
+                        unAcceptUserMutation.isPending ||
+                        (isOwnAccount && user.accepted)
+                      }
+                      onClick={() => void handleAccountAcceptanceToggle()}
+                    >
+                      {!user.accepted ? (
+                        <div className="flex items-center gap-4">
+                          <UserCheckIcon weight="fill" className="h-4 w-4" />
+                          <span>Zaakceptuj konto użytkownika</span>
+                        </div>
+                      ) : assignmentWarning?.action === 'deactivate' ? (
+                        <div className="flex items-center gap-4">
+                          <WarningIcon weight="fill" className="h-4 w-4" />
+                          <span>Cofnij akceptację mimo to</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-4">
+                          <UserMinusIcon weight="fill" className="h-4 w-4" />
+                          <span>Cofnij akceptację konta</span>
+                        </div>
+                      )}
+                    </Button>
+                  </div>
+                  {allowToRemoveUsers && (
+                    <div className="pt-6">
+                      <Button
+                        variant={deletionConfirmed ? 'danger' : 'dangerOutline'}
+                        disabled={!canSubmit || isSubmitting || isOwnAccount}
+                        onClick={() => void handleUserDeletion()}
+                      >
+                        {deletionConfirmed ? (
+                          <motion.div
+                            className="flex items-center gap-4"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                          >
+                            <WarningIcon weight="fill" className="h-4 w-4" />
+                            <span>Czy na pewno?</span>
+                          </motion.div>
+                        ) : (
+                          <div className="flex items-center gap-4">
+                            <TrashIcon weight="fill" className="h-4 w-4" />
+                            <span>Usuń</span>
+                          </div>
+                        )}
+                      </Button>
                     </div>
                   )}
-                </Button>
+                </div>
               )}
             </>
           )}

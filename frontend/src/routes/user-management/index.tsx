@@ -154,7 +154,7 @@ function UserManagementPage() {
             </Button>,
             <Button
               key="groupActions"
-              variant="warning"
+              variant="primaryOutline"
               disabled={!Object.keys(selectedUsers).length}
               onClick={() => setModalState({ state: 'groupActionsModal' })}
             >
