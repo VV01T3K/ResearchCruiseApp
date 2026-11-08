@@ -257,7 +257,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     </form.AppField>
                   </div>
                   {(!isReadonly || precisePeriodStartTime || precisePeriodEndTime) && (
-                    <div className="w-40 shrink-0">
+                    <div className="w-48 shrink-0">
                       <form.AppField name="precisePeriodStartTime">
                         {(field) => (
                           <field.TimeField
@@ -308,7 +308,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     </form.Subscribe>
                   </div>
                   {(!isReadonly || precisePeriodStartTime || precisePeriodEndTime) && (
-                    <div className="w-40 shrink-0">
+                    <div className="w-48 shrink-0">
                       <form.AppField name="precisePeriodEndTime">
                         {(field) => (
                           <field.TimeField

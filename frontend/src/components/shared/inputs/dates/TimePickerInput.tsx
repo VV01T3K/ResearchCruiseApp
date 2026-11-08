@@ -1,10 +1,12 @@
-import { Popover } from '@base-ui/react/popover';
+import { Autocomplete } from '@base-ui/react/autocomplete';
+import { ClockIcon } from '@phosphor-icons/react';
 import React from 'react';
 
-import { PickerClearButton, PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
+import { PickerClearButton, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
 import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
-import { Button } from '@/components/shared/Button';
+import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
+import { dropdownItemClassName, dropdownPopupClassName } from '@/components/shared/inputs/DropdownInput';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { InputErrorTriangle } from '@/components/shared/inputs/parts/InputErrorTriangle';
 import { InputHelper } from '@/components/shared/inputs/parts/InputHelper';
@@ -22,6 +24,13 @@ function timeToMinutes(time: Time) {
 
 export function formatTime(time: Time) {
   return `${time.hours.toString().padStart(2, '0')}:${time.minutes.toString().padStart(2, '0')}`;
+}
+
+export function parseTime(text: string): Time | undefined {
+  const match = /^(\d{1,2})(?:[:.]?(\d{2}))?$/.exec(text.trim());
+  const hours = Number(match?.[1]);
+  const minutes = Number(match?.[2] ?? 0);
+  return match && hours < 24 && minutes < 60 ? { hours, minutes } : undefined;
 }
 
 type Props = {
@@ -50,118 +59,148 @@ export function TimePickerInput({
   label,
   disabled,
   helper,
-  placeholder,
+  placeholder = 'gg:mm',
   minimalTime,
   maximalTime,
-  minuteStep = 1,
+  minuteStep = 30,
   clearable,
   'aria-label': ariaLabel,
 }: Props) {
   const aria = useInputAria(errors, helper);
-  const [expanded, setExpanded] = React.useState(false);
+  const [draft, setDraft] = React.useState<string>();
 
   if (60 % minuteStep !== 0) {
     throw new Error('minuteStep must be a divisor of 60');
   }
 
-  function handleOpenChange(open: boolean) {
-    setExpanded(open);
-    if (!open) onBlur?.();
+  const min = Math.ceil((minimalTime ? timeToMinutes(minimalTime) : 0) / minuteStep) * minuteStep;
+  const max = Math.floor((maximalTime ? timeToMinutes(maximalTime) : 24 * 60 - 1) / minuteStep) * minuteStep;
+  const times = Array.from({ length: (max - min) / minuteStep + 1 }, (_, i) => {
+    const minutes = min + i * minuteStep;
+    return formatTime({ hours: Math.floor(minutes / 60), minutes: minutes % 60 });
+  });
+  const shown = time ? formatTime(time) : '';
+  const typedDigits = draft?.replace(/\D/g, '');
+  const shownTimes = typedDigits
+    ? times.filter((item) =>
+        [typedDigits, `0${typedDigits}`].some((digits) => item.replace(':', '').startsWith(digits))
+      )
+    : times;
+
+  function commit(text: string) {
+    setDraft(undefined);
+    const parsed = parseTime(text);
+    if (!text.trim()) {
+      if (clearable) onChange(undefined);
+      return;
+    }
+    if (!parsed) return;
+    const minutes = Math.min(Math.max(Math.round(timeToMinutes(parsed) / minuteStep) * minuteStep, min), max);
+    onChange({ hours: Math.floor(minutes / 60), minutes: minutes % 60 });
   }
 
   return (
-    <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
-      <div className="flex flex-col">
-        <InputLabel name={aria.id} value={label} />
+    <div className="flex flex-col">
+      <InputLabel name={aria.id} value={label} />
+      <Autocomplete.Root
+        items={times}
+        filteredItems={shownTimes}
+        value={draft ?? shown}
+        onValueChange={(text, details) => {
+          if (details.reason === 'item-press') commit(text);
+          else if (details.reason === 'escape-key') setDraft(undefined);
+          else setDraft(text.replace(/[^\d:.]/g, '').slice(0, 5));
+        }}
+        disabled={disabled}
+        openOnInputClick
+        autoHighlight
+      >
         <div className="relative">
-          <input type="hidden" name={name} value={time ? formatTime(time) : ''} disabled={disabled} />
-          <Popover.Trigger
-            disabled={disabled}
+          <input type="hidden" name={name} value={shown} disabled={disabled} />
+          <Autocomplete.Input
             {...aria.inputProps}
             aria-label={ariaLabel}
-            className={pickerTriggerClassName({ disabled, errors })}
-          >
-            <span className="w-full truncate">{time ? formatTime(time) : placeholder}</span>
+            placeholder={placeholder}
+            inputMode="numeric"
+            autoComplete="off"
+            className={pickerTriggerClassName({
+              disabled,
+              errors,
+              className: cn(hasErrors(errors) ? 'pr-16' : 'pr-9', 'placeholder:text-neutral-500'),
+            })}
+            onBlur={() => {
+              if (draft !== undefined) commit(draft);
+              onBlur?.();
+            }}
+            onKeyDown={(evt) => {
+              if (
+                evt.key === 'Enter' &&
+                draft !== undefined &&
+                !evt.currentTarget.hasAttribute('aria-activedescendant')
+              ) {
+                evt.preventDefault();
+                commit(draft);
+              }
+            }}
+          />
+          <span className="absolute top-1/2 right-8 -translate-y-1/2">
             <InputErrorTriangle errors={errors} />
-          </Popover.Trigger>
-          {clearable && time && !disabled && (
+          </span>
+          {clearable && time && !disabled ? (
             <PickerClearButton
               aria-label="Wyczyść godzinę"
+              onMouseDown={(evt) => evt.preventDefault()}
               onClick={() => {
+                setDraft(undefined);
                 onChange(undefined);
                 onBlur?.();
               }}
             />
+          ) : (
+            <Autocomplete.Trigger
+              aria-label="Pokaż listę godzin"
+              className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded-sm focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden disabled:cursor-default"
+            >
+              <ClockIcon className="h-4 w-4" />
+            </Autocomplete.Trigger>
           )}
         </div>
-        <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
-          <InputHelper id={aria.helperId} helper={helper} />
-          <InputErrorsList id={aria.errorId} errors={errors} />
-        </div>
+        <Autocomplete.Portal>
+          <Autocomplete.Positioner
+            className="z-50 w-[var(--anchor-width)]"
+            sideOffset={4}
+            collisionPadding={stickyBarsCollisionPadding}
+          >
+            <Autocomplete.Popup aria-label="Wybierz godzinę" className={dropdownPopupClassName}>
+              <Autocomplete.List className="relative flex max-h-60 flex-col overflow-y-auto empty:hidden">
+                {(item: string) => (
+                  <Autocomplete.Item
+                    key={item}
+                    value={item}
+                    ref={
+                      item === shown
+                        ? (el: HTMLElement | null) => {
+                            if (el?.parentElement) el.parentElement.scrollTop = el.offsetTop - 96;
+                          }
+                        : undefined
+                    }
+                    className={cn(
+                      dropdownItemClassName,
+                      item === shown && 'bg-primary-50 font-medium text-primary-800'
+                    )}
+                  >
+                    {item}
+                  </Autocomplete.Item>
+                )}
+              </Autocomplete.List>
+            </Autocomplete.Popup>
+          </Autocomplete.Positioner>
+        </Autocomplete.Portal>
+      </Autocomplete.Root>
+      <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
+        <InputHelper id={aria.helperId} helper={helper} />
+        <InputErrorsList id={aria.errorId} errors={errors} />
       </div>
-      <PickerPopup aria-label="Wybierz godzinę">
-        <div className="flex flex-col gap-2 p-2">
-          <div className="flex gap-2 pb-2">
-            <div className="mx-2 flex h-40 flex-col overflow-y-auto rounded-4xl bg-surface-subtle pt-1 pb-1">
-              {Array.from({ length: 24 }).map((_, i) => {
-                const isAllowed = i >= (minimalTime?.hours ?? 0) && i <= (maximalTime?.hours ?? 23);
-                if (!isAllowed) {
-                  return null;
-                }
-                return (
-                  <Button
-                    key={i}
-                    variant="plain"
-                    onClick={() => {
-                      onChange({
-                        hours: i,
-                        minutes: i === minimalTime?.hours ? (minimalTime?.minutes ?? 0) : 0,
-                      });
-                    }}
-                    className={cn(
-                      i === time?.hours ? 'bg-primary-500 text-inverse-foreground' : 'hover:bg-neutral-200',
-                      'rounded-4xl transition'
-                    )}
-                  >
-                    {i.toString().padStart(2, '0')}
-                  </Button>
-                );
-              })}
-            </div>
-            <div className="mx-2 flex h-40 flex-col overflow-y-auto rounded-4xl bg-surface-subtle pt-1 pb-1">
-              {Array.from({ length: 60 / minuteStep }).map((_, i) => {
-                const minutes = i * minuteStep;
-                const totalMinutes = timeToMinutes({ hours: (time?.hours || minimalTime?.hours) ?? 0, minutes });
-                const isAllowed =
-                  totalMinutes >= timeToMinutes(minimalTime ?? { hours: 0, minutes: 0 }) &&
-                  totalMinutes <= timeToMinutes(maximalTime ?? { hours: 23, minutes: 59 });
-                if (!isAllowed) {
-                  return null;
-                }
-
-                return (
-                  <Button
-                    key={i}
-                    variant="plain"
-                    onClick={() => {
-                      onChange({ hours: time?.hours || 0, minutes });
-                    }}
-                    className={cn(
-                      minutes === time?.minutes ? 'bg-primary-500 text-inverse-foreground' : 'hover:bg-neutral-200',
-                      'rounded-4xl transition'
-                    )}
-                  >
-                    {minutes.toString().padStart(2, '0')}
-                  </Button>
-                );
-              })}
-            </div>
-          </div>
-          <Button onClick={() => handleOpenChange(false)} className="w-full" size="sm">
-            Zatwierdź
-          </Button>
-        </div>
-      </PickerPopup>
-    </Popover.Root>
+    </div>
   );
 }

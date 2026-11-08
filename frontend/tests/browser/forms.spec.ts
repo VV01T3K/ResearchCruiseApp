@@ -198,16 +198,13 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
   await page.getByText('17', { exact: true }).click();
   await page.getByRole('button', { name: 'Dokładny termin zakończenia rejsu' }).click();
   await page.getByText('19', { exact: true }).last().click();
-  for (const [name, hour] of [
-    ['Godzina rozpoczęcia rejsu', '08'],
-    ['Godzina zakończenia rejsu', '18'],
-  ]) {
-    await page.getByRole('button', { name }).click();
-    const picker = page.getByRole('dialog', { name: 'Wybierz godzinę' });
-    await picker.getByRole('button', { name: hour, exact: true }).click();
-    await picker.getByRole('button', { name: 'Zatwierdź' }).click();
-    await expect(picker).toBeHidden();
-  }
+  const startTime = page.getByRole('combobox', { name: 'Godzina rozpoczęcia rejsu' });
+  await startTime.fill('8');
+  await startTime.press('Tab');
+  await expect(startTime).toHaveValue('08:00');
+  await page.getByRole('combobox', { name: 'Godzina zakończenia rejsu' }).click();
+  await page.getByRole('option', { name: '18:00' }).click();
+  await expect(page.getByRole('listbox')).toHaveCount(0);
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
   await expect(page).toHaveURL('/');
   expect(requests.bodies(savedForm('form-a'))).toEqual([

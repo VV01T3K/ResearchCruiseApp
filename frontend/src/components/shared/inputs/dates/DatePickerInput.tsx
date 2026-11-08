@@ -219,6 +219,7 @@ export function DatePickerInput({
                   minutes: selectedDate?.getMinutes(),
                 }
               }
+              aria-label="Godzina"
               placeholder="Wybierz godzinę"
               onChange={(x) => {
                 const newDate = new Date(selectedDate ?? new Date());

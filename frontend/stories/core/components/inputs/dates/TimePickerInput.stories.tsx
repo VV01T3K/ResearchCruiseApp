@@ -13,6 +13,7 @@ const meta = {
     onChange: fn(),
     onBlur: fn(),
     errors: undefined,
+    'aria-label': 'Godzina',
   },
 } satisfies Meta<typeof TimePickerInput>;
 
@@ -46,7 +47,7 @@ export const Disabled: Story = {
   },
   play: async ({ canvas, userEvent }) => {
     await userEvent.tab();
-    await expect(canvas.getByRole('button')).not.toHaveFocus();
+    await expect(canvas.getByRole('combobox')).not.toHaveFocus();
   },
 };
 
