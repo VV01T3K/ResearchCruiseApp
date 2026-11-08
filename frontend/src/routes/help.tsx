@@ -16,7 +16,6 @@ import { Layout } from '@/components/shared/Layout';
 import { Link } from '@/components/shared/Link';
 import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
 import config from '@/config';
-import { useCanSendFeedback } from '@/integrations/sentry/feedback';
 
 export const Route = createFileRoute('/help')({
   component: HelpPage,
@@ -29,7 +28,6 @@ const validationSchema = z.object({
 });
 
 function HelpPage() {
-  const canSendFeedback = useCanSendFeedback();
   const form = useAppForm({
     defaultValues: {
       title: '',
@@ -62,20 +60,17 @@ function HelpPage() {
   }
 
   return (
-    <Layout title="Pomoc" description="Masz pytanie o rejs albo formularz? Napisz do Biura Armatora.">
+    <Layout
+      title="Pomoc"
+      description="W razie problemów z aplikacją prosimy o kontakt przez maile lub formularz po lewej stronie."
+    >
       <div className="mt-8 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <h2 className="text-center text-2xl font-semibold">Kontakt z Biurem Armatora</h2>
-          <p className="mt-4 px-4 text-center">
-            Z pytaniami o rejsy i formularze prosimy pisać do Biura Armatora na adres{' '}
-            <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>. Możesz też wpisać tytuł i wiadomość
-            poniżej, a otworzymy gotowego maila w Twoim programie pocztowym.
+          <h2 className="text-center text-2xl font-semibold">Obsługa problemów związanych z aplikacją</h2>
+          <p className="mt-4 text-center">
+            W razie problemów związanych z aplikacją prosimy o maila na adres{' '}
+            <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>.
           </p>
-          {canSendFeedback && (
-            <p className="mt-4 px-4 text-center text-sm text-muted-foreground">
-              Jeśli coś w aplikacji nie działa, użyj przycisku „Zgłoś problem” w prawym dolnym rogu ekranu.
-            </p>
-          )}
           <form className="flex flex-col space-y-4 p-4" onSubmit={handleSubmit}>
             <form.AppField name="title">{(field) => <field.TextField type="text" label="Tytuł" />}</form.AppField>
 

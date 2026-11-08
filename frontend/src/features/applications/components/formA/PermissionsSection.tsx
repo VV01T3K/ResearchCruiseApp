@@ -1,6 +1,7 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
+import { Alert } from '@/components/shared/Alert';
 import { Button } from '@/components/shared/Button';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { Table } from '@/components/shared/table/Table';
@@ -79,7 +80,16 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
   return (
     <Accordion title="3. Dodatkowe pozwolenia do planowanych podczas rejsu badań" expandedByDefault>
       <div>
-        <p className="mb-4 text-center text-sm">Skan pozwolenia dodasz później, w formularzu B.</p>
+        {!isReadonly && (
+          <div className="mb-4">
+            <Alert variant="info">
+              <span>
+                <span className="font-semibold">Skan pozwolenia dodasz później, w formularzu B,</span> gdy rejs zostanie
+                przyjęty. Tutaj wpisz tylko treść pozwolenia i organ, który je wydaje.
+              </span>
+            </Alert>
+          </div>
+        )}
         <form.AppField name="permissions" mode="array">
           {(field) => (
             <>
