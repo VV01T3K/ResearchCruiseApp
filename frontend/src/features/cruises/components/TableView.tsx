@@ -1,7 +1,6 @@
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { MagnifyingGlassPlusIcon, TrashIcon } from '@phosphor-icons/react';
 
-import { Avatar } from '@/components/shared/Avatar';
 import { Badge } from '@/components/shared/Badge';
 import { Button, ButtonLink } from '@/components/shared/Button';
 import { Guard } from '@/components/shared/Guard';
@@ -11,6 +10,7 @@ import { Role } from '@/integrations/auth/types';
 import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { formatDate } from '@/lib/dateUtils';
 import { getPersonName, isUnassignedPerson } from '@/lib/applications/person';
+import { ManagerCell } from './ManagerCell';
 import { StatusBadge } from './StatusBadge';
 import { TitleBadge } from './TitleBadge';
 import type {
@@ -67,16 +67,15 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     {
       header: 'Kierownik główny',
       accessorFn: (row) => getPersonName(row.mainManager) || 'Nie przypisano',
-      cell: ({ row, getValue }) => (
-        <div className="flex flex-col items-center gap-1">
-          {!isUnassignedPerson(row.original.mainManager) && (
-            <Avatar
-              fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
-              variant="small"
-            />
-          )}
-          <span className="text-center">{getValue() as string}</span>
-        </div>
+      cell: (context) => (
+        <ManagerCell
+          context={context}
+          avatarName={
+            isUnassignedPerson(context.row.original.mainManager)
+              ? ''
+              : `${context.row.original.mainManager.firstName} ${context.row.original.mainManager.lastName}`
+          }
+        />
       ),
       size: 128,
     },

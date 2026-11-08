@@ -6,7 +6,7 @@ import { ColumnFiltersState, SortingState, functionalUpdate } from '@tanstack/re
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { MagnifyingGlassPlusIcon } from '@phosphor-icons/react';
 import { useMemo, useState } from 'react';
-import { Avatar } from '@/components/shared/Avatar';
+import { ManagerCell } from '@/features/cruises/components/ManagerCell';
 import { Badge } from '@/components/shared/Badge';
 import { ButtonLink } from '@/components/shared/Button';
 import { Guard } from '@/components/shared/Guard';
@@ -148,14 +148,11 @@ function ApplicationsPage() {
       id: 'cruiseManager',
       header: 'Kierownik',
       accessorFn: (row) => getPersonName(row.mainManager),
-      cell: ({ row }) => (
-        <div className="flex flex-col items-center gap-1">
-          <Avatar
-            fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
-            variant="small"
-          />
-          <span className="text-center">{getPersonName(row.original.mainManager)}</span>
-        </div>
+      cell: (context) => (
+        <ManagerCell
+          context={context}
+          avatarName={`${context.row.original.mainManager.firstName} ${context.row.original.mainManager.lastName}`}
+        />
       ),
       enableSorting: false,
       meta: {
