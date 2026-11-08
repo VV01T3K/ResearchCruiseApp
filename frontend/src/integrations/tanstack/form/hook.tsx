@@ -3,7 +3,7 @@ import { fieldContext, formContext } from './context';
 import { fieldComponents } from './fields';
 import { FormErrors } from './FormErrors';
 
-export const { useAppForm, useTypedAppFormContext } = createFormHook({
+export const { useAppForm, useTypedAppFormContext, withForm } = createFormHook({
   fieldContext,
   formContext,
   fieldComponents,
