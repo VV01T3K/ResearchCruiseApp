@@ -67,6 +67,11 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
     const now = new Date();
     return { month: now.getMonth(), year: now.getFullYear() };
   });
+  const monthIndex = currentMonth.year * 12 + currentMonth.month;
+  const [shownMonth, setShownMonth] = React.useState({ index: monthIndex, forward: true });
+  if (shownMonth.index !== monthIndex) {
+    setShownMonth({ index: monthIndex, forward: monthIndex > shownMonth.index });
+  }
   const todayUtc = useNow(dateToUtcDay);
   const [dropPreviewDays, setDropPreviewDays] = React.useState<number[]>([]);
   const [activeDragEventId, setActiveDragEventId] = React.useState<string | undefined>(undefined);
@@ -462,7 +467,13 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
         </Button>
       </div>
       <div className="my-4 flex flex-wrap justify-end gap-4">{buttons?.(defaultButtons) ?? defaultButtons}</div>
-      <div key={currentMonth.month + currentMonth.year * 12}>
+      <div
+        key={monthIndex}
+        className={cn(
+          'transition-[opacity,translate] duration-200 ease-out starting:opacity-60',
+          shownMonth.forward ? 'starting:translate-x-2.5' : 'starting:-translate-x-2.5'
+        )}
+      >
         <DndContext
           collisionDetection={pointerWithinDayOrGap}
           sensors={sensors}
