@@ -68,7 +68,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       header: 'Kierownik główny',
       accessorFn: (row) => getPersonName(row.mainManager) || 'Nie przypisano',
       cell: ({ row, getValue }) => (
-        <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+        <div className="flex flex-col items-center gap-1">
           {!isUnassignedPerson(row.original.mainManager) && (
             <Avatar
               fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
