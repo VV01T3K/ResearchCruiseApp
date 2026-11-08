@@ -46,7 +46,7 @@ export function ManagerCell<T extends RowData>({ context, avatarName }: Props<T>
         <div className="size-10 shrink-0">
           <Avatar fullName={avatarName} variant="small" />
         </div>
-        <span className={inline ? 'whitespace-nowrap' : 'line-clamp-2 min-h-[2lh]'} title={inline ? undefined : name}>
+        <span className={inline ? 'whitespace-nowrap' : 'line-clamp-2 text-center'} title={inline ? undefined : name}>
           {name}
         </span>
       </div>
