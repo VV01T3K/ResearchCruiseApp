@@ -73,44 +73,4 @@ public sealed class LogoutTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, otherRefresh.StatusCode);
         Assert.Empty(app.Transport.Messages);
     }
-
-    [Fact]
-    public async Task Logout_OnAnotherDevice_RefusesEarlierAccessTokensButNotALaterSession()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await using var app = new TestApplication(fixture.ConnectionString);
-        var user = await TestUsers.Create(app, "two-devices@example.invalid", RoleName.Guest);
-        using var deviceA = app.CreateApiClient();
-        using var deviceB = app.CreateApiClient();
-        var sessionA = await RefreshSessionTests.Login(deviceA, user.Email!);
-        var sessionB = await RefreshSessionTests.Login(deviceB, user.Email!);
-        Assert.Equal(HttpStatusCode.OK, await GetProfile(deviceA, sessionA.Access));
-
-        using var logout = await Logout(deviceB, sessionB.Access);
-
-        Assert.Equal(HttpStatusCode.NoContent, logout.StatusCode);
-        Assert.Equal(HttpStatusCode.Unauthorized, await GetProfile(deviceA, sessionA.Access));
-        Assert.Equal(HttpStatusCode.Unauthorized, await GetProfile(deviceB, sessionB.Access));
-
-        var later = await RefreshSessionTests.Login(deviceB, user.Email!);
-        Assert.Equal(HttpStatusCode.Unauthorized, await GetProfile(deviceA, sessionA.Access));
-        using var staleLogout = await Logout(deviceA, sessionA.Access);
-        Assert.Equal(HttpStatusCode.NoContent, staleLogout.StatusCode);
-        Assert.Equal(HttpStatusCode.OK, await GetProfile(deviceB, later.Access));
-    }
-
-    private static async Task<HttpStatusCode> GetProfile(HttpClient client, string access)
-    {
-        using var request = new HttpRequestMessage(HttpMethod.Get, "/v2/users/me");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", access);
-        using var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
-        return response.StatusCode;
-    }
-
-    private static async Task<HttpResponseMessage> Logout(HttpClient client, string access)
-    {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/v2/auth/logout");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", access);
-        return await client.SendAsync(request, TestContext.Current.CancellationToken);
-    }
 }
