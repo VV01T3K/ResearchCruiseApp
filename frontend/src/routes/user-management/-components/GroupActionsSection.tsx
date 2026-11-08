@@ -1,5 +1,4 @@
 import { TrashIcon, UserCheckIcon, UserMinusIcon, WarningIcon } from '@phosphor-icons/react';
-import { motion } from 'motion/react';
 import React from 'react';
 
 import { Alert } from '@/components/shared/Alert';
@@ -148,10 +147,13 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           onClick={() => void handleDeleteSelectedUsers()}
         >
           {deletionConfirmed ? (
-            <motion.div className="flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <div
+              key="confirm"
+              className="flex items-center gap-4 transition-opacity duration-200 ease-out starting:opacity-0"
+            >
               <WarningIcon weight="fill" className="h-4 w-4" />
               <span>Na pewno?</span>
-            </motion.div>
+            </div>
           ) : (
             <div className="flex items-center gap-4">
               <TrashIcon weight="fill" className="h-4 w-4" />
