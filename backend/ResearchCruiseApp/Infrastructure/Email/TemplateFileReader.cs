@@ -43,11 +43,6 @@ internal class TemplateFileReader
             _emailTemplatesPath + Path.DirectorySeparatorChar + "passwordResetMessage.html"
         );
 
-    public Task<string> ReadRegistrationRenewedMessageTemplate() =>
-        ReadFileText(
-            _emailTemplatesPath + Path.DirectorySeparatorChar + "registrationRenewedMessage.html"
-        );
-
     public Task<string> ReadEmailConfirmationEmailSubject() =>
         ReadFileText(
             _emailTemplatesPath + Path.DirectorySeparatorChar + "emailConfirmationEmailSubject.html"
@@ -78,13 +73,6 @@ internal class TemplateFileReader
     public Task<string> ReadPasswordResetEmailSubject() =>
         ReadFileText(
             _emailTemplatesPath + Path.DirectorySeparatorChar + "passwordResetEmailSubject.html"
-        );
-
-    public Task<string> ReadRegistrationRenewedEmailSubject() =>
-        ReadFileText(
-            _emailTemplatesPath
-                + Path.DirectorySeparatorChar
-                + "registrationRenewedEmailSubject.html"
         );
 
     private static Task<string> ReadFileText(string filePath) => File.ReadAllTextAsync(filePath);
