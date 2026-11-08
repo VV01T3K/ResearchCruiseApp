@@ -132,9 +132,18 @@ function ApplicationsPage() {
       cell: ({ row }) => {
         if (row.original.startDate && row.original.endDate) {
           return (
-            <div className="text-sm whitespace-nowrap">
-              <div>od: {formatDate(row.original.startDate, 'date')}</div>
-              <div>do: {formatDate(row.original.endDate, 'date')}</div>
+            <div className="text-sm">
+              {[
+                ['od', row.original.startDate],
+                ['do', row.original.endDate],
+              ].map(([label, value]) => (
+                <div key={label} className="flex flex-wrap justify-center gap-x-1 whitespace-nowrap">
+                  <span>
+                    {label}: {formatDate(value, 'date')}
+                  </span>
+                  <span>{formatDate(value, 'dateTime').split(' ')[1]}</span>
+                </div>
+              ))}
             </div>
           );
         }
