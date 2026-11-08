@@ -193,6 +193,7 @@ function UserManagementPage() {
         isOpen={modalState.state === 'editUserModal' && 'user' in modalState}
         onClose={() => void handleModalClose()}
         title="Edytuj użytkownika"
+        className="max-w-2xl"
       >
         <EditForm
           user={(modalState as { state: 'editUserModal'; user: UserResponse }).user}

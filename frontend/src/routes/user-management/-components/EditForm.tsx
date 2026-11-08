@@ -288,7 +288,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
 
   return (
     <form noValidate onSubmit={handleSubmit}>
-      <div className="flex h-14 justify-around">
+      <div className="mb-4 flex min-h-14 flex-wrap items-center gap-x-8 gap-y-2">
         <form.Subscribe selector={(state) => [state.values.firstName, state.values.lastName]}>
           {([firstName, lastName]) => (
             <AnimatePresence>
@@ -302,15 +302,15 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         </form.Subscribe>
 
         {editMode && (
-          <div className="grid max-w-48 grid-cols-2 gap-1">
-            <span>Stan Emaila:</span>
-            <span className="flex">
+          <div className="flex flex-wrap gap-x-6 gap-y-1">
+            <span className="flex items-center gap-2">
+              Stan Emaila:
               <Badge variant={user.emailConfirmed ? 'success' : 'danger'}>
                 {user.emailConfirmed ? 'Zweryfikowany' : 'Niezweryfikowany'}
               </Badge>
             </span>
-            <span>Stan Konta:</span>
-            <span className="flex">
+            <span className="flex items-center gap-2">
+              Stan Konta:
               <Badge variant={user.accepted ? 'success' : 'danger'}>
                 {user.accepted ? 'Zaakceptowane' : 'Niezaakceptowane'}
               </Badge>
@@ -319,7 +319,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         )}
       </div>
 
-      <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         <form.AppField name="firstName">{(field) => <field.TextField label="Imię" placeholder="Jan" />}</form.AppField>
 
         <form.AppField name="lastName">
@@ -349,7 +349,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
         </form.AppField>
       </div>
 
-      <div className="mt-8 space-y-4">
+      <div className="mt-6 space-y-4">
         {submitError && (
           <Alert variant="danger" onClose={() => setSubmitError(undefined)}>
             {submitError}
@@ -383,7 +383,7 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
               </div>
 
               {editMode && (
-                <div className="space-y-4 border-t border-border pt-6">
+                <div className="space-y-4 border-t border-border pt-4">
                   {assignmentWarning?.action === 'deactivate' && (
                     <AssignmentsWarning items={assignmentWarning.items} action="deactivate" />
                   )}
@@ -436,32 +436,32 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                         </div>
                       )}
                     </Button>
+                    {allowToRemoveUsers && (
+                      <div className="ml-auto">
+                        <Button
+                          variant={deletionConfirmed ? 'danger' : 'dangerOutline'}
+                          disabled={!canSubmit || isSubmitting || isOwnAccount}
+                          onClick={() => void handleUserDeletion()}
+                        >
+                          {deletionConfirmed ? (
+                            <motion.div
+                              className="flex items-center gap-4"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                            >
+                              <WarningIcon weight="fill" className="h-4 w-4" />
+                              <span>Czy na pewno?</span>
+                            </motion.div>
+                          ) : (
+                            <div className="flex items-center gap-4">
+                              <TrashIcon weight="fill" className="h-4 w-4" />
+                              <span>Usuń</span>
+                            </div>
+                          )}
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                  {allowToRemoveUsers && (
-                    <div className="pt-6">
-                      <Button
-                        variant={deletionConfirmed ? 'danger' : 'dangerOutline'}
-                        disabled={!canSubmit || isSubmitting || isOwnAccount}
-                        onClick={() => void handleUserDeletion()}
-                      >
-                        {deletionConfirmed ? (
-                          <motion.div
-                            className="flex items-center gap-4"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                          >
-                            <WarningIcon weight="fill" className="h-4 w-4" />
-                            <span>Czy na pewno?</span>
-                          </motion.div>
-                        ) : (
-                          <div className="flex items-center gap-4">
-                            <TrashIcon weight="fill" className="h-4 w-4" />
-                            <span>Usuń</span>
-                          </div>
-                        )}
-                      </Button>
-                    </div>
-                  )}
                 </div>
               )}
             </>
