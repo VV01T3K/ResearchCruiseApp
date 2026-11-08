@@ -16,7 +16,7 @@ it.each([
   ['an unassigned person', { id: emptyGuid, firstName: '', lastName: '', email: '' }, ''],
 ])('labels %s', (_, person, expected) => {
   expect(mapPersonToText(person)).toBe(expected);
-  expect(mapPersonToLabel(person).inlineLabel).toBe(expected);
+  expect(mapPersonToLabel(person).label).toBe(expected);
 });
 
 it('labels a missing person as unassigned', () => {

@@ -3,6 +3,7 @@ import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
 import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
 import { mapPersonToLabel } from '@/lib/applications/PersonMappers';
+import { comparePeople } from '@/lib/applications/person';
 
 export function CruiseManagerInfoSection({ context }: { context: FormAViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
@@ -13,11 +14,11 @@ export function CruiseManagerInfoSection({ context }: { context: FormAViewModel 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <form.AppField name="cruiseManagerId">
           {(field) => (
-            <field.SelectField
+            <field.ComboboxField
               label="Kierownik rejsu"
               showRequiredAsterisk
               placeholder="Wybierz kierownika rejsu"
-              allOptions={initValues.cruiseManagers.map(mapPersonToLabel)}
+              allOptions={initValues.cruiseManagers.toSorted(comparePeople).map(mapPersonToLabel)}
               disabled={isReadonly}
             />
           )}
@@ -25,11 +26,11 @@ export function CruiseManagerInfoSection({ context }: { context: FormAViewModel 
 
         <form.AppField name="deputyManagerId">
           {(field) => (
-            <field.SelectField
+            <field.ComboboxField
               label="Zastępca kierownika rejsu"
               showRequiredAsterisk
               placeholder="Wybierz zastępcę kierownika rejsu"
-              allOptions={initValues.deputyManagers.map(mapPersonToLabel)}
+              allOptions={initValues.deputyManagers.toSorted(comparePeople).map(mapPersonToLabel)}
               disabled={isReadonly}
             />
           )}

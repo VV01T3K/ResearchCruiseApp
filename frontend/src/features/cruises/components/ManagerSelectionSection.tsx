@@ -5,9 +5,9 @@ import React from 'react';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Alert } from '@/components/shared/Alert';
-import { DropdownInputOption } from '@/components/shared/inputs/DropdownInput';
+import type { ComboboxInputOption } from '@/components/inputs/ComboboxInput';
 import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMappers';
-import { isUnassignedPerson } from '@/lib/applications/person';
+import { comparePeople, isUnassignedPerson } from '@/lib/applications/person';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
 import { UserOption } from '@/api/generated/schemas';
@@ -83,7 +83,7 @@ export function ManagerSelectionSection({
       <div className="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <form.AppField name="mainManagerId">
           {(field) => (
-            <field.SelectField
+            <field.ComboboxField
               allOptions={users}
               label="Kierownik główny"
               placeholder="Wybierz kierownika głównego"
@@ -94,7 +94,7 @@ export function ManagerSelectionSection({
 
         <form.AppField name="deputyManagerId">
           {(field) => (
-            <field.SelectField
+            <field.ComboboxField
               allOptions={users}
               label="Zastępca kierownika głównego"
               placeholder="Wybierz zastępcę kierownika głównego"
@@ -152,7 +152,7 @@ function getAllUsersForDropdown(
   users: UserOption[],
   cruiseApplications: CruiseApplicationCandidateResponse[],
   selectedCruiseApplicationsIds: string[]
-): DropdownInputOption[] {
+): ComboboxInputOption[] {
   const assignedUserIds = new Set<string>();
   cruiseApplications.forEach((application) => {
     if (selectedCruiseApplicationsIds.includes(application.id)) {
@@ -165,8 +165,9 @@ function getAllUsersForDropdown(
     }
   });
 
-  const assignedUsers = users.filter((user) => assignedUserIds.has(user.id));
-  const unassignedUsers = users.filter((user) => !assignedUserIds.has(user.id));
+  const sortedByName = users.toSorted(comparePeople);
+  const assignedUsers = sortedByName.filter((user) => assignedUserIds.has(user.id));
+  const unassignedUsers = sortedByName.filter((user) => !assignedUserIds.has(user.id));
 
   const sortedUsers = [...assignedUsers, ...unassignedUsers];
 
