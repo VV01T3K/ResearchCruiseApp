@@ -62,16 +62,7 @@ function CruiseEffectsPage() {
 
   return (
     <>
-      <Layout
-        title="Efekty rejsów"
-        description="Tu widać efekty rejsów zgłoszone w formularzu C i punkty, które za nie dostajesz. Punkty liczą się przy ocenie Twoich kolejnych zgłoszeń, w których jesteś kierownikiem rejsu."
-      >
-        <p className="mb-4 text-center">
-          Suma przyznanych punktów:{' '}
-          <span className="font-bold">
-            {effectsQuery.data.items.reduce((sum, { points }) => sum + (Number(points) || 0), 0)} pkt.
-          </span>
-        </p>
+      <Layout title="Efekty rejsów">
         {effectsQuery.data.skippedCount > 0 && (
           <div className="mb-4">
             <Alert variant="warning">
