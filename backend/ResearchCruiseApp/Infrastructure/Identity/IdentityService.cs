@@ -681,17 +681,27 @@ internal class IdentityService(
             return Error.ResourceNotFound();
 
         var emailChanged = email is not null && email != user.Email;
+        var duplicateEmail = Error.Conflict("Użytkownik o tym adresie e-mail już istnieje");
         if (emailChanged && await UserWithEmailExists(email!))
-            return Error.Conflict("Użytkownik o tym adresie e-mail już istnieje");
+            return duplicateEmail;
 
         user.EmailConfirmed = !emailChanged && user.EmailConfirmed;
         user.Email = email ?? user.Email;
+        user.UserName = emailChanged ? email : user.UserName;
         user.FirstName = firstName ?? user.FirstName;
         user.LastName = lastName ?? user.LastName;
 
         var identityResult = emailChanged
             ? await userManager.UpdateSecurityStampAsync(user)
             : await userManager.UpdateAsync(user);
+        if (
+            identityResult.Errors.Any(error =>
+                error.Code
+                    is nameof(IdentityErrorDescriber.DuplicateUserName)
+                        or nameof(IdentityErrorDescriber.DuplicateEmail)
+            )
+        )
+            return duplicateEmail;
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
