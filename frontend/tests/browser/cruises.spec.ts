@@ -667,6 +667,8 @@ test('calendar edit mode lets a confirmed cruise be dragged, but not an ended on
     'href',
     `/cruises/${ended.id}`
   );
+  await expect(page.locator(`a[href="/cruises/${ended.id}"]`)).toHaveCount(2);
+  await expect(page.getByRole('link', { name: /Zakończon/ })).toHaveCount(1);
   const locked = page.getByRole('link', { name: 'Rejs Zakończony' }).first();
   await expect(locked).toHaveAccessibleName(/^Rejs Zakończony.+/);
   expect(

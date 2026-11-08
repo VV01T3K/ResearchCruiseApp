@@ -75,9 +75,9 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
     }
 
     const dayTiles = calendarElement.querySelectorAll<HTMLElement>('[data-calendar-day-tile]');
-    const calendarWidth = calendarElement.offsetWidth;
-    if (Number.isFinite(calendarWidth) && calendarWidth > 0) {
-      setTileWidth(calendarWidth / 7);
+    const dayPitch = dayTiles.length > 1 ? dayTiles[1].offsetLeft - dayTiles[0].offsetLeft : 0;
+    if (dayPitch > 0) {
+      setTileWidth(dayPitch);
     }
 
     const eventBlock = calendarElement.querySelector<HTMLElement>('[data-calendar-event-block]');

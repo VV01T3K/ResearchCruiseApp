@@ -65,13 +65,21 @@ function CalendarEventTiles({
 
       const daysInWeek = 8 - (date.getDay() === 0 ? 7 : date.getDay());
       const daysLeft = (dateToUtcDay(event.end) - dateToUtcDay(date)) / (24 * 60 * 60 * 1000) + 1;
-      const width = Math.min(daysInWeek, daysLeft) * tileWidth - 20;
+      const visibleDays = Math.min(daysInWeek, daysLeft);
+      const width = visibleDays * tileWidth - 20;
       const textComponent = (
         <div className="absolute z-20 flex items-center gap-1 truncate" style={{ maxWidth: width }}>
           {start && isDraggable && <DotsSixVerticalIcon aria-hidden size={14} weight="bold" className="shrink-0" />}
           {start && isLocked && <LockIcon aria-hidden size={14} weight="bold" className="shrink-0" />}
           <span className="truncate">{start ? event.title : ''}</span>
         </div>
+      );
+
+      const focusRing = (
+        <div
+          className="pointer-events-none absolute top-0 left-3 z-30 hidden h-8 rounded-lg ring-2 ring-primary-500 ring-offset-2 group-focus-visible:block"
+          style={{ width: visibleDays * tileWidth - 14 }}
+        />
       );
 
       const innerComponent = (
@@ -86,8 +94,10 @@ function CalendarEventTiles({
             eventId={event.id}
             sourceDayUtc={dateToUtcDay(date)}
             activeDragEventId={activeDragEventId}
+            focusable={start}
           >
             {innerComponent}
+            {focusRing}
           </DraggableCalendarEvent>
         ) : (
           innerComponent
@@ -103,8 +113,15 @@ function CalendarEventTiles({
                 if (isLocked) toast.error(event.dragLockedReason!);
               }}
             >
-              <Link href={event.link} variant="plain">
+              <Link
+                href={event.link}
+                variant="plain"
+                className="group relative block focus-visible:outline-hidden"
+                tabIndex={start ? undefined : -1}
+                aria-hidden={!start || undefined}
+              >
                 {renderedComponent}
+                {focusRing}
                 {isLocked && <span className="sr-only">{event.dragLockedReason}</span>}
               </Link>
             </Tooltip.Trigger>
@@ -134,8 +151,15 @@ type DraggableCalendarEventProps = {
   eventId: string;
   sourceDayUtc: number;
   activeDragEventId?: string;
+  focusable: boolean;
 };
-function DraggableCalendarEvent({ children, eventId, sourceDayUtc, activeDragEventId }: DraggableCalendarEventProps) {
+function DraggableCalendarEvent({
+  children,
+  eventId,
+  sourceDayUtc,
+  activeDragEventId,
+  focusable,
+}: DraggableCalendarEventProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `calendar-event-${eventId}-${sourceDayUtc}`,
     data: { eventId, sourceDayUtc },
@@ -152,9 +176,11 @@ function DraggableCalendarEvent({ children, eventId, sourceDayUtc, activeDragEve
     <div
       ref={setNodeRef}
       style={style}
-      className={cn('touch-none', isDragging ? 'relative z-30' : '')}
+      className={cn('group relative touch-none focus-visible:outline-hidden', isDragging ? 'z-30' : '')}
       {...attributes}
       {...listeners}
+      tabIndex={focusable ? 0 : -1}
+      aria-hidden={!focusable || undefined}
     >
       {children}
     </div>
