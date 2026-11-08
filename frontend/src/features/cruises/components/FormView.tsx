@@ -28,8 +28,8 @@ export function FormView({ cruise, cruiseApplications, isReadonly, buttons }: Pr
         void form.handleSubmit();
       }}
     >
-      <BasicInformationSection cruise={cruise} isReadonly={isReadonly} />
-      <DateSelectionSection cruiseId={cruise?.id} isReadonly={isReadonly} />
+      <BasicInformationSection form={form} cruise={cruise} isReadonly={isReadonly} />
+      <DateSelectionSection form={form} cruiseId={cruise?.id} isReadonly={isReadonly} />
       <ManagerSelectionSection cruise={cruise} cruiseApplications={cruiseApplications} isReadonly={isReadonly} />
       <Guard allowedRoles={[Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew]}>
         <ApplicationsSection cruiseId={cruise?.id} cruiseApplications={cruiseApplications} isReadonly={isReadonly} />
