@@ -84,8 +84,8 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
           <div className="mb-4">
             <Alert variant="info">
               <span>
-                <span className="font-semibold">Skan pozwolenia dodasz później, w formularzu B,</span> gdy rejs zostanie
-                przyjęty. Tutaj wpisz tylko treść pozwolenia i organ, który je wydaje.
+                <span className="font-semibold">Skany pozwoleń dodasz później, w formularzu B,</span> gdy rejs zostanie
+                przyjęty. Tutaj wpisz tylko treść każdego pozwolenia i organ, który je wydaje.
               </span>
             </Alert>
           </div>
