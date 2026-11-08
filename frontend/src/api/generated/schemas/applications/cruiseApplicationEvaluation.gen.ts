@@ -1,5 +1,4 @@
 import * as zod from 'zod';
-import { FileContent } from './fileContent.gen.ts';
 import { GuestTeamFields } from './guestTeamFields.gen.ts';
 import { NamedUgTeam } from './namedUgTeam.gen.ts';
 import { ScoredContract } from './scoredContract.gen.ts';
@@ -10,7 +9,6 @@ import { ScoredSpubTask } from './scoredSpubTask.gen.ts';
 export const CruiseApplicationEvaluation = zod.object({
   "formAResearchTasks": zod.array(ScoredResearchTask),
   "formAContracts": zod.array(ScoredContract),
-  "researchAreaFiles": zod.array(FileContent),
   "ugTeams": zod.array(NamedUgTeam),
   "guestTeams": zod.array(GuestTeamFields),
   "ugUnitsPoints": zod.string(),

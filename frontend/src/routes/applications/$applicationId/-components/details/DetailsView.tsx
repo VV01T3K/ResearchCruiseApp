@@ -11,7 +11,6 @@ import { EffectPointsSection } from './EffectPointsSection';
 import { InformationSection } from './InformationSection';
 import { MembersSection } from './MembersSection';
 import { PublicationsSection } from './PublicationsSection';
-import { ResearchAreaFilesSection } from './ResearchAreaFilesSection';
 import { ResearchTasksSection } from './ResearchTasksSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
 
@@ -60,7 +59,6 @@ export function DetailsView() {
       <MembersSection />
       <PublicationsSection />
       <SPUBTasksSection />
-      <ResearchAreaFilesSection />
       <ActionsSection onAccept={acceptApplication} onReject={rejectApplication} disabled={decisionMutation.isPending} />
     </>
   );

@@ -250,8 +250,6 @@ public class CruiseApplicationEvaluation
 
     public required List<ScoredContract> FormAContracts { get; init; }
 
-    public required List<FileContent> ResearchAreaFiles { get; init; }
-
     public required List<NamedUgTeam> UgTeams { get; init; }
 
     public required List<GuestTeamFields> GuestTeams { get; init; }

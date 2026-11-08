@@ -31,11 +31,6 @@ public sealed class ResearchAreaFileHttpTests(SqlFixture fixture) : IAsyncLifeti
         var id = await CreateDraft(app, client, form);
         var route = $"/v2/applications/{id}/form-a";
         await AssertFiles(app, client, id, initial);
-        var evaluation = await client.GetFromJsonAsync<CruiseApplicationEvaluation>(
-            $"/v2/applications/{id}/evaluation",
-            ct
-        );
-        Assert.Equal(Pairs(initial), Pairs(evaluation!.ResearchAreaFiles));
 
         FileContent[] replaced =
         [

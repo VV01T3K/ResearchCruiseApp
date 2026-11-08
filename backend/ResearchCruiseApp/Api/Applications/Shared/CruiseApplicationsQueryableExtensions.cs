@@ -43,6 +43,13 @@ internal static class CruiseApplicationsQueryableExtensions
         return query.Include(cruiseApplication => cruiseApplication.FormC);
     }
 
+    public static IQueryable<CruiseApplication> IncludeFormAResearchAreaFiles(
+        this IQueryable<CruiseApplication> query
+    )
+    {
+        return query.Include(cruiseApplication => cruiseApplication.FormA!.ResearchAreaFiles);
+    }
+
     public static IQueryable<CruiseApplication> IncludeFormAContent(
         this IQueryable<CruiseApplication> query
     )
@@ -51,7 +58,6 @@ internal static class CruiseApplicationsQueryableExtensions
             .AsSplitQuery()
             .Include(cruiseApplication => cruiseApplication.FormA!.Permissions)
             .Include(cruiseApplication => cruiseApplication.FormA!.ResearchAreaDescriptions)
-            .Include(cruiseApplication => cruiseApplication.FormA!.ResearchAreaFiles)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
                 .ThenInclude(formAResearchTask => formAResearchTask.ResearchTask)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAContracts)
