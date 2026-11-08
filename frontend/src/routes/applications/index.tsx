@@ -1,11 +1,12 @@
 import { useGetApplicationManagersSuspense } from '@/api/generated/endpoints/applications.gen';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, stripSearchParams } from '@tanstack/react-router';
+import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { Role } from '@/integrations/auth/types';
-import { ColumnFiltersState, SortingState, functionalUpdate } from '@tanstack/react-table';
+import { ColumnFiltersState, functionalUpdate } from '@tanstack/react-table';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { MagnifyingGlassPlusIcon } from '@phosphor-icons/react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { ManagerCell } from '@/features/cruises/components/ManagerCell';
 import { Badge } from '@/components/shared/Badge';
 import { ButtonLink } from '@/components/shared/Button';
@@ -17,19 +18,29 @@ import { Table } from '@/components/shared/table/Table';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
 import { formatCruiseLength } from '@/features/applications/components/formA/cruisePeriodExplanation';
 import { formatDate, useNow } from '@/lib/dateUtils';
-import {
-  CruiseApplicationsFilter,
-  CruiseApplicationsSort,
-  useCruiseApplicationsInfiniteQuery,
-} from '@/features/applications/hooks/useApplications';
+import { useCruiseApplicationsInfiniteQuery } from '@/features/applications/hooks/useApplications';
 import { ApplicationResponse, CruiseApplicationStatus } from '@/api/generated/schemas';
 import { mapPersonToText } from '@/lib/applications/PersonMappers';
 import { getPersonName } from '@/lib/applications/person';
 import { canRevertFormB, getApplicationStatusLabel } from '@/lib/applications/status';
 
+const defaultSort = { sortBy: 'number', descending: true } as const;
+
+const searchSchema = z.object({
+  number: z.int32().optional().catch(undefined),
+  date: z.iso.date().optional().catch(undefined),
+  year: z.array(z.int32()).optional().catch(undefined),
+  status: z.array(CruiseApplicationStatus).optional().catch(undefined),
+  cruiseManager: z.array(z.guid()).optional().catch(undefined),
+  sortBy: z.enum(['number', 'date', 'year']).default(defaultSort.sortBy).catch(defaultSort.sortBy),
+  descending: z.boolean().default(defaultSort.descending).catch(defaultSort.descending),
+});
+
 export const Route = createFileRoute('/applications/')({
   component: ApplicationsPage,
   beforeLoad: allowOnly.withRoles(Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew),
+  validateSearch: searchSchema,
+  search: { middlewares: [stripSearchParams(defaultSort)] },
 });
 
 const statusFilterOptions = CruiseApplicationStatus.options;
@@ -37,31 +48,25 @@ const statusFilterOptions = CruiseApplicationStatus.options;
 const EARLIEST_APPLICATION_YEAR = 2024;
 const YEAR_FILTER_OPTIONS_AHEAD = 3;
 
-function columnFiltersToApiFilter(columnFilters: ColumnFiltersState): CruiseApplicationsFilter {
-  const getValues = (id: string) => columnFilters.find((filter) => filter.id === id)?.value as string[] | undefined;
-
-  return {
-    number: getValues('number')?.map(Number),
-    date: getValues('date'),
-    status: getValues('status'),
-    year: getValues('year')?.map(Number),
-    cruiseManager: getValues('cruiseManager'),
-  };
-}
-
-const DEFAULT_SORTING_STATE: SortingState = [{ id: 'number', desc: true }];
-
-function sortingStateToApiSort(sorting: SortingState): CruiseApplicationsSort {
-  const [sort] = sorting;
-  return sort ? { sortBy: sort.id, descending: sort.desc } : { sortBy: 'number', descending: true };
-}
-
 function ApplicationsPage() {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const filter = useMemo(() => columnFiltersToApiFilter(columnFilters), [columnFilters]);
-  const [sorting, setSorting] = useState<SortingState>(DEFAULT_SORTING_STATE);
-  const sort = useMemo(() => sortingStateToApiSort(sorting), [sorting]);
-  const applicationsQuery = useCruiseApplicationsInfiniteQuery(filter, sort);
+  const { sortBy, descending, ...filters } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const filter = {
+    number: filters.number === undefined ? undefined : [filters.number],
+    date: filters.date === undefined ? undefined : [filters.date],
+    status: filters.status,
+    year: filters.year,
+    cruiseManager: filters.cruiseManager,
+  };
+  const columnFilters: ColumnFiltersState = Object.entries({
+    ...filter,
+    number: filter.number?.map(String),
+    year: filter.year?.map(String),
+  })
+    .filter(([, value]) => value)
+    .map(([id, value]) => ({ id, value }));
+  const sorting = [{ id: sortBy, desc: descending }];
+  const applicationsQuery = useCruiseApplicationsInfiniteQuery(filter, { sortBy, descending });
   const applications = useMemo(
     () => applicationsQuery.data?.pages.flatMap((page) => page.items) ?? [],
     [applicationsQuery.data]
@@ -311,17 +316,36 @@ function ApplicationsPage() {
           columns={columns}
           buttons={(defaultButtons) => [...defaultButtons]}
           sortingState={sorting}
-          setSortingState={(updater) =>
-            setSorting((previous) => {
-              const next = functionalUpdate(updater, previous);
-              return next.length ? next : DEFAULT_SORTING_STATE;
-            })
-          }
+          setSortingState={(updater) => {
+            const [next] = functionalUpdate(updater, sorting);
+            void navigate({
+              search: (previous) => ({
+                ...previous,
+                sortBy: (next?.id ?? defaultSort.sortBy) as typeof sortBy,
+                descending: next?.desc ?? defaultSort.descending,
+              }),
+              replace: true,
+            });
+          }}
           enableSortingRemoval={false}
           manualSorting
           manualFiltering
           columnFiltersState={columnFilters}
-          setColumnFiltersState={setColumnFilters}
+          setColumnFiltersState={(updater) => {
+            const next = functionalUpdate(updater, columnFilters);
+            const getValues = (id: string) => next.find((filter) => filter.id === id)?.value as string[] | undefined;
+            void navigate({
+              search: (previous) => ({
+                ...previous,
+                number: getValues('number')?.map(Number)[0],
+                date: getValues('date')?.[0],
+                year: getValues('year')?.map(Number),
+                status: getValues('status') as CruiseApplicationStatus[] | undefined,
+                cruiseManager: getValues('cruiseManager'),
+              }),
+              replace: true,
+            });
+          }}
           infiniteScroll={{
             hasNextPage: applicationsQuery.hasNextPage,
             isFetchingNextPage: applicationsQuery.isFetchingNextPage,
