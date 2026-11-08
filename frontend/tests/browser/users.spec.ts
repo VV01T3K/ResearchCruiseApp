@@ -362,10 +362,18 @@ test('table sorting, filtering and selection work', async ({ page, network }) =>
   await expect(actions).toBeDisabled();
   // The selection checkbox is the row's last editable checkbox.
   const selection = rows.first().getByRole('checkbox', { disabled: false }).last();
+  const header = page.locator('thead').getByRole('checkbox');
+  // A remounted header renderer would drop this marker.
+  await header.evaluate((el) => el.setAttribute('data-probe', ''));
   await selection.check();
   await expect(actions).toBeEnabled();
+  await expect(page.locator('thead [data-probe]')).toHaveCount(1);
   await selection.uncheck();
   await expect(actions).toBeDisabled();
+  await header.check();
+  await expect(selection).toBeChecked();
+  await header.uncheck();
+  await expect(selection).not.toBeChecked();
 
   const emailColumn = page.getByRole('columnheader', { name: /^Email/ });
   await expect(emailColumn).toHaveAttribute('aria-sort', 'none');
@@ -396,6 +404,9 @@ test('table sorting, filtering and selection work', async ({ page, network }) =>
   await expect(roleColumn).toHaveAttribute('aria-sort', 'none');
   await expect(rows).toHaveCount(1);
   await expect(rows).toContainText('zebra@example.com');
+  await header.check();
   await page.getByRole('button', { name: 'Wyczyść filtry', exact: true }).click();
   await expect(rows).toHaveCount(2);
+  // Select-all follows the visible rows, so clearing the filter unchecks it.
+  await expect(header).not.toBeChecked();
 });
