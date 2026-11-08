@@ -76,37 +76,35 @@ export function ChangePasswordForm() {
   }
 
   return (
-    <form className="grid grid-cols-2" onSubmit={handleSubmit}>
+    <form className="space-y-4" onSubmit={handleSubmit}>
       <h2 className="text-xl font-semibold">Zmiana Hasła</h2>
-      <div className="space-y-4">
-        <form.AppField name="password">
-          {(field) => <field.TextField type="password" label="Aktualne hasło" />}
-        </form.AppField>
+      <form.AppField name="password">
+        {(field) => <field.TextField type="password" label="Aktualne hasło" />}
+      </form.AppField>
 
-        <form.AppField name="newPassword">
-          {(field) => <field.TextField type="password" label="Nowe hasło" />}
-        </form.AppField>
+      <form.AppField name="newPassword">
+        {(field) => <field.TextField type="password" label="Nowe hasło" />}
+      </form.AppField>
 
-        <form.AppField name="repeatedNewPassword">
-          {(field) => <field.TextField type="password" label="Powtórz nowe hasło" />}
-        </form.AppField>
+      <form.AppField name="repeatedNewPassword">
+        {(field) => <field.TextField type="password" label="Powtórz nowe hasło" />}
+      </form.AppField>
 
-        <div className="mt-8">
-          <form.Subscribe selector={(state) => state.isSubmitting} key={result}>
-            {(isSubmitting) => (
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                Zmień hasło
-              </Button>
-            )}
-          </form.Subscribe>
-        </div>
-
-        {result === 'error' && (
-          <Alert variant="danger" onClose={() => setResult(undefined)}>
-            Wystąpił błąd podczas zmiany hasła (sprawdź, czy podałeś poprawne hasło).
-          </Alert>
-        )}
+      <div className="flex justify-end pt-4">
+        <form.Subscribe selector={(state) => state.isSubmitting} key={result}>
+          {(isSubmitting) => (
+            <Button type="submit" disabled={isSubmitting}>
+              Zmień hasło
+            </Button>
+          )}
+        </form.Subscribe>
       </div>
+
+      {result === 'error' && (
+        <Alert variant="danger" onClose={() => setResult(undefined)}>
+          Wystąpił błąd podczas zmiany hasła (sprawdź, czy podałeś poprawne hasło).
+        </Alert>
+      )}
     </form>
   );
 }
