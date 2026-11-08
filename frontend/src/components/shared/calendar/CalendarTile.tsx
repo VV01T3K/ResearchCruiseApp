@@ -4,6 +4,7 @@ import { DotsSixVerticalIcon, LockIcon } from '@phosphor-icons/react';
 import React, { Fragment } from 'react';
 
 import { Link } from '@/components/shared/Link';
+import { toast } from '@/components/shared/layout/toast';
 import { dateToUtcDay } from '@/lib/calendarUtils';
 import { cn } from '@/lib/utils';
 import type { CalendarEventWithRow } from './calendarTypes';
@@ -50,18 +51,20 @@ function CalendarEventTiles({
           event.end.getHours() === 0 &&
           event.end.getMinutes() === 0);
 
+      const isDraggable = enableDragAndDrop && !event.dragLockedReason;
+      const isLocked = enableDragAndDrop && !!event.dragLockedReason;
       const className = cn(
         start ? 'rounded-l-lg ml-3' : '',
         end ? 'rounded-r-lg mr-3' : '',
         event.color ? 'bg-[var(--color)]' : 'bg-primary',
+        isLocked &&
+          'cursor-not-allowed bg-[image:repeating-linear-gradient(135deg,transparent_0_6px,rgb(0_0_0/0.25)_6px_12px)]',
         'h-8 truncate text-inverse-foreground text-sm p-2 '
       );
 
       const daysInWeek = 8 - (date.getDay() === 0 ? 7 : date.getDay());
       const daysLeft = (dateToUtcDay(event.end) - dateToUtcDay(date)) / (24 * 60 * 60 * 1000) + 1;
       const width = Math.min(daysInWeek, daysLeft) * tileWidth - 20;
-      const isDraggable = enableDragAndDrop && !event.dragLockedReason;
-      const isLocked = enableDragAndDrop && !!event.dragLockedReason;
       const textComponent = (
         <div className="absolute z-20 flex items-center gap-1 truncate" style={{ maxWidth: width }}>
           {start && isDraggable && <DotsSixVerticalIcon aria-hidden size={14} weight="bold" className="shrink-0" />}
@@ -91,9 +94,21 @@ function CalendarEventTiles({
 
       eventTiles.push(
         event.link && !isDraggable ? (
-          <div key={`${event.title}-${i}`} onDragStart={(e) => e.preventDefault()}>
-            <Link href={event.link} variant="plain" title={isLocked ? event.dragLockedReason : undefined}>
+          <div
+            key={`${event.title}-${i}`}
+            className="group relative"
+            onDragStart={(e) => {
+              e.preventDefault();
+              if (isLocked) toast.error(event.dragLockedReason!);
+            }}
+          >
+            <Link href={event.link} variant="plain">
               {renderedComponent}
+              {isLocked && (
+                <span className="pointer-events-none absolute top-full left-3 z-40 mt-1 w-max max-w-64 rounded-md bg-surface px-2 py-1 text-xs text-foreground opacity-0 shadow-md ring-1 ring-border group-hover:opacity-100 group-has-focus-visible:opacity-100">
+                  {event.dragLockedReason}
+                </span>
+              )}
             </Link>
           </div>
         ) : (
