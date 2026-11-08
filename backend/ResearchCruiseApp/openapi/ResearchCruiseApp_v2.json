@@ -4218,6 +4218,7 @@
         "required": [
           "formAResearchTasks",
           "formAContracts",
+          "researchAreaFiles",
           "ugTeams",
           "guestTeams",
           "ugUnitsPoints",
@@ -4237,6 +4238,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ScoredContract"
+            }
+          },
+          "researchAreaFiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileContent"
             }
           },
           "ugTeams": {
@@ -4757,6 +4764,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ResearchAreaSelection"
+            }
+          },
+          "researchAreaFiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileContent"
             }
           },
           "cruiseGoal": {

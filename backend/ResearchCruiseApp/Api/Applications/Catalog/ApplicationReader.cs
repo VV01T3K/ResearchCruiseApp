@@ -13,6 +13,7 @@ internal class ApplicationReader(
     ApplicationScoringService evaluator,
     IdentityService identityService,
     ContractReader contracts,
+    FileReader files,
     ILogger<ApplicationReader> logger
 )
 {
@@ -152,6 +153,7 @@ internal class ApplicationReader(
                 form?.FormAResearchTasks.Select(ApplicationMappings.ToScoredResearchTask).ToList()
                 ?? [],
             FormAContracts = await CreateContracts(form),
+            ResearchAreaFiles = await CreateResearchAreaFiles(form),
             UgTeams = form?.FormAUgUnits.Select(ApplicationMappings.ToNamedUgTeam).ToList() ?? [],
             GuestTeams =
                 form?.FormAGuestUnits.Select(ApplicationMappings.ToGuestTeamFields).ToList() ?? [],
@@ -265,6 +267,17 @@ internal class ApplicationReader(
             var days = hours / 24f;
             dto.CruiseDays = days > 0 ? days : null;
         }
+    }
+
+    private async Task<List<FileContent>> CreateResearchAreaFiles(FormA? form)
+    {
+        var result = new List<FileContent>();
+        foreach (var file in form?.ResearchAreaFiles ?? [])
+        {
+            result.Add(await files.FromCompressed(file.FileName, file.FileContent));
+        }
+
+        return result;
     }
 
     private async Task<List<ScoredContract>> CreateContracts(FormA? form)

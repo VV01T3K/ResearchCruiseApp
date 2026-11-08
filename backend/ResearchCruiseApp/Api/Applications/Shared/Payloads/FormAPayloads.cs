@@ -44,6 +44,8 @@ public class FormAFields
 
     public List<ResearchAreaSelection> ResearchAreaDescriptions { get; init; } = [];
 
+    public List<FileContent> ResearchAreaFiles { get; init; } = [];
+
     public string? CruiseGoal { get; init; }
 
     [StringLength(10240)]
@@ -247,6 +249,8 @@ public class CruiseApplicationEvaluation
     public required List<ScoredResearchTask> FormAResearchTasks { get; init; }
 
     public required List<ScoredContract> FormAContracts { get; init; }
+
+    public required List<FileContent> ResearchAreaFiles { get; init; }
 
     public required List<NamedUgTeam> UgTeams { get; init; }
 

@@ -51,6 +51,7 @@ internal static class CruiseApplicationsQueryableExtensions
             .AsSplitQuery()
             .Include(cruiseApplication => cruiseApplication.FormA!.Permissions)
             .Include(cruiseApplication => cruiseApplication.FormA!.ResearchAreaDescriptions)
+            .Include(cruiseApplication => cruiseApplication.FormA!.ResearchAreaFiles)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAResearchTasks)
                 .ThenInclude(formAResearchTask => formAResearchTask.ResearchTask)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAContracts)

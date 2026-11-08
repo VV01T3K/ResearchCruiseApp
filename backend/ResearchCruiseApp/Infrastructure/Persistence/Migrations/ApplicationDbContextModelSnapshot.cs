@@ -816,6 +816,31 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                     b.ToTable("FormAPublications");
                 });
 
+            modelBuilder.Entity("ResearchCruiseApp.Domain.Entities.FormAResearchAreaFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("FileContent")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<Guid>("FormAId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormAId");
+
+                    b.ToTable("FormAResearchAreaFiles");
+                });
+
             modelBuilder.Entity("ResearchCruiseApp.Domain.Entities.FormAResearchTask", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2143,6 +2168,17 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                     b.Navigation("Publication");
                 });
 
+            modelBuilder.Entity("ResearchCruiseApp.Domain.Entities.FormAResearchAreaFile", b =>
+                {
+                    b.HasOne("ResearchCruiseApp.Domain.Entities.FormA", "FormA")
+                        .WithMany("ResearchAreaFiles")
+                        .HasForeignKey("FormAId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormA");
+                });
+
             modelBuilder.Entity("ResearchCruiseApp.Domain.Entities.FormAResearchTask", b =>
                 {
                     b.HasOne("ResearchCruiseApp.Domain.Entities.FormA", "FormA")
@@ -2501,6 +2537,8 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                     b.Navigation("FormASpubTasks");
 
                     b.Navigation("FormAUgUnits");
+
+                    b.Navigation("ResearchAreaFiles");
                 });
 
             modelBuilder.Entity("ResearchCruiseApp.Domain.Entities.FormB", b =>

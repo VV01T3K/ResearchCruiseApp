@@ -52,6 +52,7 @@ export function evaluation(): CruiseApplicationEvaluation {
   return {
     formAResearchTasks: [],
     formAContracts: [],
+    researchAreaFiles: [],
     ugTeams: [],
     guestTeams: [],
     ugUnitsPoints: '0',

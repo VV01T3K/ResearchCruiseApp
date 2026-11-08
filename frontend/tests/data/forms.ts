@@ -43,6 +43,7 @@ export function formA(): FormAFields {
     differentUsage: '',
     permissions: [],
     researchAreaDescriptions: [{ areaId, differentName: null, info: '' }],
+    researchAreaFiles: [],
     cruiseGoal: '0',
     cruiseGoalDescription: 'Pomiary zasolenia',
     researchTasks: [{ type: '0', author: 'Ada Lovelace', title: 'Zasolenie Bałtyku' }],
@@ -143,6 +144,7 @@ export function filledFormA(): FormAFields {
       { areaId, differentName: null, info: 'Stacja P1' },
       { areaId: null, differentName: 'Rynna Słupska', info: '' },
     ],
+    researchAreaFiles: [pdf],
     researchTasks: [
       task({ type: '0', author: 'Ada Lovelace', title: 'Zasolenie Bałtyku' }),
       task({ type: '3', title: 'Wniosek NCN', date: '2026-03-01', financingApproved: 'true' }),

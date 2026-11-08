@@ -10,6 +10,7 @@ internal class FormAFactory(
     CurrentUserService currentUserService,
     IdentityService identityService,
     UniqueFormFieldResolver formsFieldsService,
+    Compressor compressor,
     ApplicationDbContext dbContext
 )
 {
@@ -31,6 +32,7 @@ internal class FormAFactory(
 
         await AddPermissions(formA, formAFields, cancellationToken);
         await AddResearchAreaDescriptions(formA, formAFields, cancellationToken);
+        await AddResearchAreaFiles(formA, formAFields);
         await AddFormAResearchTasks(formA, formAFields, cancellationToken);
         await AddFormAContracts(formA, formAFields, cancellationToken);
         await AddFormAGuestUnits(formA, formAFields, cancellationToken);
@@ -128,6 +130,20 @@ internal class FormAFactory(
             alreadyAddedResearchAreaDescriptions.Add(researchAreaDescription);
 
             formA.ResearchAreaDescriptions.Add(researchAreaDescription);
+        }
+    }
+
+    private async Task AddResearchAreaFiles(FormA formA, FormAFields formAFields)
+    {
+        foreach (var file in formAFields.ResearchAreaFiles)
+        {
+            formA.ResearchAreaFiles.Add(
+                new FormAResearchAreaFile
+                {
+                    FileName = file.Name,
+                    FileContent = await compressor.Compress(file.Content),
+                }
+            );
         }
     }
 
