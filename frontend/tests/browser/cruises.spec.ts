@@ -602,6 +602,40 @@ test('a stale status undo refetches the cruise so the retry sends the current re
   ]);
 });
 
+for (const lastName of ['Ly', 'Brzęczyszczykiewicz']) {
+  test(`manager cells share one layout with aligned avatars when one name is ${lastName}`, async ({
+    page,
+    network,
+  }) => {
+    await page.setViewportSize({ width: 1380, height: 900 });
+    const names = [
+      ['Jan', 'Kowalski'],
+      ['Ewa', 'Nowak'],
+      ['Bartosz', lastName],
+    ];
+    network.use(
+      getGetCruisesMockHandler(
+        names.map(([firstName, last], i) => ({
+          ...cruise(),
+          id: `00000000-0000-4000-8000-00000000000${i}`,
+          mainManager: { ...manager, id: `00000000-0000-4000-9000-00000000000${i}`, firstName, lastName: last },
+        }))
+      )
+    );
+    await page.goto('/cruises');
+    const cells = await Promise.all(
+      names.map(async ([firstName, last]) => {
+        const row = page.getByRole('row').filter({ hasText: `${firstName} ${last}` });
+        const avatar = (await row.getByText(`${firstName[0]}${last[0]}`, { exact: true }).locator('..').boundingBox())!;
+        const name = (await row.getByText(`${firstName} ${last}`, { exact: true }).boundingBox())!;
+        return { x: avatar.x, inline: name.y < avatar.y + avatar.height };
+      })
+    );
+    expect(cells.map((cell) => cell.inline)).toEqual(names.map(() => lastName === 'Ly'));
+    for (const cell of cells) expect(Math.abs(cell.x - cells[0].x)).toBeLessThanOrEqual(1);
+  });
+}
+
 test('auto-planning lists the skipped applications', async ({ page, network, requests }) => {
   const planned = { ...cruise(), id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', number: '2026/2', title: 'Zaplanowany' };
   const skipped = {
