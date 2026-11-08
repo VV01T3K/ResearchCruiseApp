@@ -1,5 +1,6 @@
 import { ParsedLocation, redirect } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
 
 import { Role } from '@/integrations/auth/types';
 import { currentUserQueryOptions } from '@/integrations/tanstack/query/auth';
@@ -17,6 +18,14 @@ type GlobalGuardType = {
   unauthenticated: () => (context: GuardContextType) => Promise<void>;
 };
 
+export const redirectSearchSchema = z.object({
+  redirect: z
+    .string()
+    .regex(/^\/(?![/\\])\S+$/)
+    .optional()
+    .catch(undefined),
+});
+
 export const allowOnly: GlobalGuardType = {
   withRoles: (...roles: Role[]): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context, location }) => {
@@ -25,9 +34,7 @@ export const allowOnly: GlobalGuardType = {
       if (!currentUser) {
         throw redirect({
           to: '/login',
-          search: {
-            redirect: location.href,
-          },
+          search: location.href === '/' ? {} : { redirect: location.href },
         });
       }
 
@@ -45,9 +52,7 @@ export const allowOnly: GlobalGuardType = {
       if (!currentUser) {
         throw redirect({
           to: '/login',
-          search: {
-            redirect: location.href,
-          },
+          search: location.href === '/' ? {} : { redirect: location.href },
         });
       }
     };

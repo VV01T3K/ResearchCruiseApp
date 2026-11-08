@@ -3,7 +3,7 @@ import { toast } from '@/components/shared/layout/toast';
 import { RequestPasswordResetRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute } from '@tanstack/react-router';
-import { allowOnly } from '@/lib/guards';
+import { allowOnly, redirectSearchSchema } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
@@ -18,6 +18,7 @@ import { Result } from '@/integrations/auth/types';
 export const Route = createFileRoute('/(auth)/forgot-password')({
   component: ForgotPasswordPage,
   beforeLoad: allowOnly.unauthenticated(),
+  validateSearch: redirectSearchSchema,
 });
 
 const validationSchema = z
@@ -27,6 +28,7 @@ const validationSchema = z
   .pipe(RequestPasswordResetRequest);
 
 function ForgotPasswordPage() {
+  const { redirect } = Route.useSearch();
   const [result, setResult] = React.useState<Result | undefined>(undefined);
   const [email, setEmail] = React.useState<string | undefined>(undefined);
   const { mutateAsync } = useRequestPasswordReset({ mutation: { meta: { handlesError: true } } });
@@ -68,7 +70,7 @@ function ForgotPasswordPage() {
       <Layout title="Przywracanie hasła" variant="narrow">
         <p className="text-lg">
           Link do resetowania hasła został wysłany na adres: <span className="font-bold text-primary">{email}</span>
-          <Button type="link" href="/login" className="mt-8 w-full">
+          <Button type="link" href="/login" search={{ redirect }} className="mt-8 w-full">
             Wróć do logowania
           </Button>
         </p>
@@ -96,7 +98,9 @@ function ForgotPasswordPage() {
         </div>
 
         <div className="!mt-8 flex flex-wrap items-center justify-end">
-          <Link href="/login">Powrót do logowania</Link>
+          <Link href="/login" search={{ redirect }}>
+            Powrót do logowania
+          </Link>
         </div>
       </form>
     </Layout>
