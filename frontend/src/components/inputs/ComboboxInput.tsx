@@ -13,19 +13,6 @@ import { cn } from '@/lib/utils';
 
 export type ComboboxInputOption = { value: string; label: string; richLabel: React.ReactNode };
 
-// The 'pl' collation treats ł, ż etc. as separate letters, so typing without them would miss.
-const collator = new Intl.Collator('en', { sensitivity: 'base' });
-
-const wordSeparators = /[\s().@_-]+/;
-
-export function matchesWordStart(label: string, query: string): boolean {
-  const words = label.split(wordSeparators).filter(Boolean);
-  return query
-    .split(wordSeparators)
-    .filter(Boolean)
-    .every((part) => words.some((word) => collator.compare(word.slice(0, part.length), part) === 0));
-}
-
 type Props = {
   name: string;
   value: string;
@@ -71,7 +58,6 @@ export function ComboboxInput({
         }}
         disabled={disabled}
         locale="pl"
-        filter={(option, query) => matchesWordStart(option.label, query)}
         autoHighlight
       >
         <Combobox.Trigger
