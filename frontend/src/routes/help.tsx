@@ -13,7 +13,7 @@ import {
 import { z } from 'zod';
 import { Button } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
-import { Link } from '@/components/shared/Link';
+import { Anchor } from '@/components/shared/Link';
 import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
 import config from '@/config';
 
@@ -69,7 +69,7 @@ function HelpPage() {
           <h2 className="text-center text-2xl font-semibold">Obsługa problemów związanych z aplikacją</h2>
           <p className="mt-4 text-center">
             W razie problemów związanych z aplikacją prosimy o maila na adres{' '}
-            <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>.
+            <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>.
           </p>
           <form className="flex flex-col space-y-4 p-4" onSubmit={handleSubmit}>
             <form.AppField name="title">{(field) => <field.TextField type="text" label="Tytuł" />}</form.AppField>
@@ -92,13 +92,13 @@ function HelpPage() {
             <p>81-378 Gdynia</p>
           </CompanyInfoCard>
           <CompanyInfoCard icon={<PhoneIcon weight="fill" />} title="Telefon">
-            <Link href="tel:+48585236631">+48 58 523 66 31</Link>
+            <Anchor href="tel:+48585236631">+48 58 523 66 31</Anchor>
           </CompanyInfoCard>
           <CompanyInfoCard icon={<GlobeHemisphereWestIcon />} title="Strona WWW">
-            <Link href="https://oceanograf.ug.edu.pl">https://oceanograf.ug.edu.pl</Link>
+            <Anchor href="https://oceanograf.ug.edu.pl">https://oceanograf.ug.edu.pl</Anchor>
           </CompanyInfoCard>
           <CompanyInfoCard icon={<EnvelopeSimpleIcon />} title="Email">
-            <Link href="mailto:office.oceanograf@ug.edu.pl">office.oceanograf@ug.edu.pl</Link>
+            <Anchor href="mailto:office.oceanograf@ug.edu.pl">office.oceanograf@ug.edu.pl</Anchor>
           </CompanyInfoCard>
           <CompanyInfoCard icon={<BrowsersIcon />} title="Wersja aplikacji">
             <div className="grid grid-cols-2 gap-1 text-sm text-muted-foreground">

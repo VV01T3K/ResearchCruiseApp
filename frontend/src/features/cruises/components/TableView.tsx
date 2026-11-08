@@ -3,7 +3,7 @@ import { MagnifyingGlassPlusIcon, TrashIcon } from '@phosphor-icons/react';
 
 import { Avatar } from '@/components/shared/Avatar';
 import { Badge } from '@/components/shared/Badge';
-import { Button } from '@/components/shared/Button';
+import { Button, ButtonLink } from '@/components/shared/Button';
 import { Guard } from '@/components/shared/Guard';
 import { Table } from '@/components/shared/table/Table';
 import { useWindowSize } from '@/hooks/shared/WindowSizeHook';
@@ -124,11 +124,16 @@ function ApplicationsCell({ applications }: ApplicationsCellProps) {
     <div className="flex flex-col items-center gap-4 text-balance">
       {applications.map((application) => (
         <div className="flex flex-col gap-2" key={application.id}>
-          <Button type="link" href={`/applications/${application.id}/details`} variant="primaryOutline" size="sm">
+          <ButtonLink
+            to="/applications/$applicationId/details"
+            params={{ applicationId: application.id }}
+            variant="primaryOutline"
+            size="sm"
+          >
             <div className="flex w-full flex-wrap items-center justify-around gap-2">
               <div>Zgłoszenie nr.{application.number}</div> <Badge>{application.points} pkt.</Badge>
             </div>
-          </Button>
+          </ButtonLink>
         </div>
       ))}
     </div>
@@ -142,10 +147,16 @@ type ActionsCellProps = {
 function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
   return (
     <div className="grid min-w-30 grid-cols-1 gap-2">
-      <Button variant="primary" type="link" size="sm" href={`/cruises/${cruise.id}`} className="w-full !justify-center">
+      <ButtonLink
+        variant="primary"
+        size="sm"
+        to="/cruises/$cruiseId"
+        params={{ cruiseId: cruise.id }}
+        className="w-full !justify-center"
+      >
         Szczegóły
         <MagnifyingGlassPlusIcon className="h-4 w-4" />
-      </Button>
+      </ButtonLink>
       <Guard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
         {(cruise.status === 'new' || cruise.status === 'confirmed') && (
           <Button

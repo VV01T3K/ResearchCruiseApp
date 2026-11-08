@@ -1,4 +1,5 @@
 import type { IconWeight } from '@phosphor-icons/react';
+import type { LinkProps } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
@@ -11,13 +12,13 @@ type Props = {
   Icon: React.ElementType;
   iconWeight?: IconWeight;
   description: string;
-  href: string;
+  to: LinkProps['to'];
 };
-export function GridCard({ name, className, Icon, iconWeight, description, href }: Props) {
+export function GridCard({ name, className, Icon, iconWeight, description, to }: Props) {
   const [isHovered, setIsHovered] = React.useState(false);
   return (
     <div key={name} className={cn('phone:col-span-1 phone:row-span-1', className)}>
-      <Link href={href} variant="plain">
+      <Link to={to} variant="plain">
         <motion.div
           className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 text-primary shadow-card phone:p-3"
           onHoverStart={() => setIsHovered(true)}

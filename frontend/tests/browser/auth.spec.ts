@@ -60,7 +60,7 @@ test('rejected login explains the error and permits another attempt', async ({ p
   await page.goto('/login');
   await logIn(page, 'wrong-password');
   await expect(page.getByText('Nieprawidłowe dane logowania')).toBeVisible();
-  const notifications = page.getByRole('region', { name: 'Notifications' });
+  const notifications = page.getByRole('region', { name: 'Powiadomienia' });
   await expect(notifications).toBeAttached();
   await expect(notifications.getByRole('dialog')).toHaveCount(0);
   await expect(page).toHaveURL('/login');
@@ -166,7 +166,7 @@ test.describe('authenticated session', () => {
       await expect(page.getByLabel('E-mail')).toBeVisible();
       // Read once: a retrying check would pass after the toast closes itself.
       await page.waitForTimeout(500);
-      const toasts = await page.getByRole('region', { name: 'Notifications' }).getByRole('dialog').allTextContents();
+      const toasts = await page.getByRole('region', { name: 'Powiadomienia' }).getByRole('dialog').allTextContents();
       expect(toasts).toEqual(
         action === 'a background refresh' ? [] : [expect.stringContaining(responseErrorMessage(401))]
       );
@@ -285,7 +285,7 @@ test('a rejected registration explains why and can be resubmitted', async ({ pag
   const register = page.getByRole('button', { name: 'Zarejestruj się' });
   await register.click();
   await expect(page.getByText("Adres e-mail 'person@example.com' jest już zajęty.")).toBeVisible();
-  const notifications = page.getByRole('region', { name: 'Notifications' });
+  const notifications = page.getByRole('region', { name: 'Powiadomienia' });
   await expect(notifications).toBeAttached();
   await expect(notifications.getByRole('dialog')).toHaveCount(0);
 

@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { allowOnly } from '@/lib/guards';
 import { ArrowSquareOutIcon, PlusIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
-import { Button } from '@/components/shared/Button';
+import { Button, ButtonLink } from '@/components/shared/Button';
 import { Guard } from '@/components/shared/Guard';
 import { Layout } from '@/components/shared/Layout';
 import { Modal } from '@/components/shared/Modal';
@@ -50,16 +50,16 @@ function CruisesPage() {
       </Button>
     </Guard>,
     <Guard key="newCruise" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
-      <Button type="link" href="/cruises/new">
+      <ButtonLink to="/cruises/new">
         Nowy rejs
         <PlusIcon className="h-6 w-6" />
-      </Button>
+      </ButtonLink>
     </Guard>,
     <Guard key="newBlockade" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
-      <Button type="link" href="/cruises/new?blockade=true" variant="primaryOutline">
+      <ButtonLink to="/cruises/new" search={{ blockade: true }} variant="primaryOutline">
         Nowa blokada
         <PlusIcon className="h-6 w-6" />
-      </Button>
+      </ButtonLink>
     </Guard>,
     <Guard key="exportCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <Button onClick={() => setIsExportModalOpen(true)} variant="primaryOutline">

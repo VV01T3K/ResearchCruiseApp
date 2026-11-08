@@ -33,7 +33,7 @@ function ToastList() {
           {t.type !== 'loading' && (
             <Toast.Close
               className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:cursor-pointer hover:bg-neutral-950/5 hover:text-neutral-700"
-              aria-label="Close"
+              aria-label="Zamknij"
             >
               <XIcon className="h-4 w-4" />
             </Toast.Close>
@@ -48,7 +48,10 @@ export function Toaster() {
   return (
     <Toast.Provider toastManager={toastManager} limit={5}>
       <Toast.Portal>
-        <Toast.Viewport className="fixed top-4 right-4 z-[1000] flex w-[350px] flex-col items-end">
+        <Toast.Viewport
+          aria-label="Powiadomienia"
+          className="fixed top-4 right-4 z-[1000] flex w-[350px] flex-col items-end"
+        >
           <ToastList />
         </Toast.Viewport>
       </Toast.Portal>
