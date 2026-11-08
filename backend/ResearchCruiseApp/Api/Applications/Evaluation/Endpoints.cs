@@ -30,6 +30,7 @@ public static class EvaluationEndpoints
         var application = await dbContext
             .CruiseApplications.IncludeForms()
             .IncludeFormAContent()
+            .IncludeFormAContractFiles()
             .SingleOrDefaultAsync(
                 application => application.Id == applicationId,
                 cancellationToken

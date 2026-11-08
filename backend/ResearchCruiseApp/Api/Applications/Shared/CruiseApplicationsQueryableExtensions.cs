@@ -50,6 +50,16 @@ internal static class CruiseApplicationsQueryableExtensions
         return query.Include(cruiseApplication => cruiseApplication.FormA!.ResearchAreaFiles);
     }
 
+    public static IQueryable<CruiseApplication> IncludeFormAContractFiles(
+        this IQueryable<CruiseApplication> query
+    )
+    {
+        return query
+            .Include(cruiseApplication => cruiseApplication.FormA!.FormAContracts)
+                .ThenInclude(formAContract => formAContract.Contract)
+                    .ThenInclude(contract => contract.Files);
+    }
+
     public static IQueryable<CruiseApplication> IncludeFormAContent(
         this IQueryable<CruiseApplication> query
     )
@@ -62,7 +72,6 @@ internal static class CruiseApplicationsQueryableExtensions
                 .ThenInclude(formAResearchTask => formAResearchTask.ResearchTask)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAContracts)
                 .ThenInclude(formAContract => formAContract.Contract)
-                    .ThenInclude(contract => contract.Files)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAUgUnits)
                 .ThenInclude(formAUgUnit => formAUgUnit.UgUnit)
             .Include(cruiseApplication => cruiseApplication.FormA!.FormAGuestUnits)

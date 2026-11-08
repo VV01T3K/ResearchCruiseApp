@@ -100,7 +100,8 @@ public static class FormAEndpoints
         var query = dbContext
             .CruiseApplications.IncludeFormA()
             .IncludeFormAContent()
-            .IncludeFormAResearchAreaFiles();
+            .IncludeFormAResearchAreaFiles()
+            .IncludeFormAContractFiles();
         var read = await dbContext.ReadOneRevision(
             () =>
                 query.SingleOrDefaultAsync(
@@ -150,6 +151,7 @@ public static class FormAEndpoints
             .CruiseApplications.IncludeFormA()
             .IncludeFormAContent()
             .IncludeFormAResearchAreaFiles()
+            .IncludeFormAContractFiles()
             .SingleOrDefaultAsync(candidate => candidate.Id == applicationId, cancellationToken);
         if (application is null || !await userPermissionVerifier.CanCurrentUserAddForm(application))
             return Error.ResourceNotFound().ToProblemHttpResult();

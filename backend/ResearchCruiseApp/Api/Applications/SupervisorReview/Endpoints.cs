@@ -54,6 +54,7 @@ public static class SupervisorReviewEndpoints
             .CruiseApplications.IncludeFormA()
             .IncludeFormAContent()
             .IncludeFormAResearchAreaFiles()
+            .IncludeFormAContractFiles()
             .SingleOrDefaultAsync(
                 application => application.Id == applicationId,
                 cancellationToken
