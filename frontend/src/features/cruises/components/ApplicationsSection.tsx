@@ -193,7 +193,7 @@ export function ApplicationsSection({
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    transition={{ ease: 'easeOut' }}
+                    transition={{ ease: 'easeOut', duration: 0.2 }}
                     className="mt-4"
                   >
                     <div className="text-lg font-semibold">Zgłoszenia możliwe do załączenia</div>

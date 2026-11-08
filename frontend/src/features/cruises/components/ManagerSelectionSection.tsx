@@ -69,7 +69,7 @@ export function ManagerSelectionSection({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ ease: 'easeOut' }}
+              transition={{ ease: 'easeOut', duration: 0.2 }}
             >
               <Alert variant="warning">
                 Nie przypisano {cruiseManagersNotAssignedToApplication.map(mapPersonToText).join(' i ')} do żadnego

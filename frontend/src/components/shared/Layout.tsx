@@ -1,5 +1,3 @@
-import { motion } from 'motion/react';
-
 import { PreviousPageButton } from '@/components/shared/PreviousPageButton';
 import { cn } from '@/lib/utils';
 
@@ -15,14 +13,11 @@ type Props = {
 export function Layout({ title, children, description, variant = 'default', disableBackButton = false }: Props) {
   const useWidePadding = variant === 'wide';
   return (
-    <motion.div
+    <div
       className={cn(
         'relative min-h-[calc(100vh-var(--header-height))] w-full will-change-transform has-data-actions-section:pb-0',
         useWidePadding ? outerPaddingVariants[variant] : 'md:p-8'
       )}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
     >
       <div
         className={cn(
@@ -42,7 +37,7 @@ export function Layout({ title, children, description, variant = 'default', disa
         </header>
         {children}
       </div>
-    </motion.div>
+    </div>
   );
 }
 

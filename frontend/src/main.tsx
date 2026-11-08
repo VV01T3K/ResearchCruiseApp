@@ -2,6 +2,7 @@ import './styles/index.css';
 
 import { IconContext } from '@phosphor-icons/react';
 import { reactErrorHandler } from '@sentry/react';
+import { MotionConfig, MotionGlobalConfig } from 'motion/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { z } from 'zod';
@@ -15,6 +16,7 @@ import { RouterView, router } from '@/router';
 
 z.config(z.locales.pl());
 initializeSentry(router);
+MotionGlobalConfig.instantAnimations = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const sentryErrorHandlers = config.sentryDsn
   ? {
@@ -29,7 +31,9 @@ createRoot(document.getElementById('root')!, sentryErrorHandlers).render(
     <FatalErrorBoundary>
       <IconContext.Provider value={iconDefaults}>
         <TanStackQueryProvider>
-          <RouterView />
+          <MotionConfig transition={{ duration: 0.2, ease: 'easeOut' }}>
+            <RouterView />
+          </MotionConfig>
         </TanStackQueryProvider>
       </IconContext.Provider>
     </FatalErrorBoundary>
