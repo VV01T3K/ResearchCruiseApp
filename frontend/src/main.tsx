@@ -16,7 +16,9 @@ import { RouterView, router } from '@/router';
 
 z.config(z.locales.pl());
 initializeSentry(router);
-MotionGlobalConfig.instantAnimations = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+MotionGlobalConfig.instantAnimations = reducedMotion.matches;
+reducedMotion.addEventListener('change', (event) => (MotionGlobalConfig.instantAnimations = event.matches));
 
 const sentryErrorHandlers = config.sentryDsn
   ? {
