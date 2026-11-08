@@ -1,7 +1,7 @@
 import type { TokenResponse } from '@/api/generated/schemas';
 import { getCurrentSession, refreshTokens } from '@/api/generated/endpoints/auth.gen';
 
-type AuthEvent = 'manual-logout' | 'remote-login';
+type AuthEvent = 'manual-logout';
 
 type AuthSubscriber = (
   details: TokenResponse | undefined,
@@ -19,7 +19,7 @@ let authGeneration = 0;
 let logoutInProgress = false;
 let acceptBroadcastSessions = true;
 
-type AuthChannelMessage = { type: 'session' | 'login'; session: TokenResponse } | { type: 'logout' };
+type AuthChannelMessage = { type: 'session'; session: TokenResponse } | { type: 'logout' };
 
 const authChannel =
   typeof window === 'undefined' || typeof window.BroadcastChannel === 'undefined'
@@ -33,10 +33,7 @@ authChannel?.addEventListener('message', (event: MessageEvent<AuthChannelMessage
     updateSession(undefined, false);
     return;
   }
-  const login = event.data.type === 'login';
-  if (login) acceptBroadcastSessions = true;
-  if (!logoutInProgress && acceptBroadcastSessions)
-    updateSession(event.data.session, false, login ? 'remote-login' : undefined);
+  if (!logoutInProgress && acceptBroadcastSessions) updateSession(event.data.session, false);
 });
 
 export class SessionRefreshError extends Error {
@@ -76,12 +73,6 @@ function updateSession(details: TokenResponse | undefined, broadcast: boolean, a
 export function setSession(details: TokenResponse | undefined) {
   if (details) acceptBroadcastSessions = true;
   updateSession(details, true);
-}
-
-export function completeLogin(details: TokenResponse) {
-  acceptBroadcastSessions = true;
-  updateSession(details, false);
-  authChannel?.postMessage({ type: 'login', session: details } satisfies AuthChannelMessage);
 }
 
 export function getSession() {
