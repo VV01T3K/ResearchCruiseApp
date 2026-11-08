@@ -13,6 +13,8 @@ import { cn } from '@/lib/utils';
 
 export type ComboboxInputOption = { value: string; label: string; richLabel: React.ReactNode };
 
+const wordSeparators = /[\s().@_-]+/;
+
 type Props = {
   name: string;
   value: string;
@@ -39,6 +41,11 @@ export function ComboboxInput({
   disabled,
 }: Props) {
   const aria = useInputAria(errors, undefined);
+  const { startsWith } = Combobox.useFilter({ locale: 'pl' });
+  const matchesWordStart = (option: ComboboxInputOption, query: string) => {
+    const words = option.label.split(wordSeparators);
+    return query.split(wordSeparators).every((part) => words.some((word) => startsWith(word, part)));
+  };
   const items = React.useMemo(
     () => Combobox.createItems(allOptions, { getValue: (option) => option.value, getLabel: (option) => option.label }),
     [allOptions]
@@ -58,6 +65,7 @@ export function ComboboxInput({
         }}
         disabled={disabled}
         locale="pl"
+        filter={matchesWordStart}
         autoHighlight
       >
         <Combobox.Trigger
