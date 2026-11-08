@@ -151,6 +151,7 @@ internal class FormInitValuesReader(
             : await dbContext
                 .CruiseApplications.IncludeFormA()
                 .IncludeFormAContent()
+                .IncludeFormAContractFiles()
                 .Where(application =>
                     application.FormA!.CruiseManagerId == userId.Value
                     || application.FormA.DeputyManagerId == userId.Value

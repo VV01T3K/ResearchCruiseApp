@@ -1,9 +1,11 @@
+using System.Data.Common;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
@@ -207,6 +209,39 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Empty(app.Transport.Messages);
     }
 
+    [Fact]
+    public async Task ScanContent_IsLoadedOnlyWhereScansAreReturned()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var scans = new ScanQueryCounter();
+        await using var app = new TestApplication(fixture.ConnectionString, interceptor: scans);
+        var form = await CompleteForm(app);
+        using var client = await TestApplications.Login(app, "owner@example.invalid");
+        form.Contracts.Add(
+            Contract(new FileContent { Name = "scan.txt", Content = Content(20, false) })
+        );
+        var id = await CreateDraft(app, client, form);
+
+        scans.Reset();
+        var page = await client.GetFromJsonAsync<JsonElement>("/v2/applications", ct);
+        Assert.Single(page.GetProperty("items").EnumerateArray());
+        Assert.Equal(0, scans.Count);
+        foreach (
+            var (route, loaded) in new[]
+            {
+                ($"/v2/applications/{id}", false),
+                ($"/v2/applications/{id}/form-a", true),
+                ($"/v2/applications/{id}/evaluation", true),
+            }
+        )
+        {
+            scans.Reset();
+            using var response = await client.GetAsync(route, ct);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(loaded, scans.Count > 0);
+        }
+    }
+
     private static ContractFields Contract(params FileContent[] scans) =>
         new()
         {
@@ -328,5 +363,26 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         });
         Assert.Empty(app.Transport.Messages);
         return (contractId, fileIds);
+    }
+
+    private sealed class ScanQueryCounter : DbCommandInterceptor
+    {
+        private int _count;
+
+        internal int Count => Volatile.Read(ref _count);
+
+        internal void Reset() => Interlocked.Exchange(ref _count, 0);
+
+        public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(
+            DbCommand command,
+            CommandEventData eventData,
+            InterceptionResult<DbDataReader> result,
+            CancellationToken cancellationToken = default
+        )
+        {
+            if (command.CommandText.Contains("[ContractFiles]"))
+                Interlocked.Increment(ref _count);
+            return base.ReaderExecutingAsync(command, eventData, result, cancellationToken);
+        }
     }
 }
