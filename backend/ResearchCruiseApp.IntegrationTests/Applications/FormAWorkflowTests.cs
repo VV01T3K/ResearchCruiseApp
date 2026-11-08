@@ -220,10 +220,12 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
     [Theory]
     [InlineData("2030-05-17T00:00:00Z", "2030-05-17T22:00:00Z", 24, HttpStatusCode.Created)]
     [InlineData("2030-05-16T22:00:00Z", "2030-05-18T00:00:00Z", 24, HttpStatusCode.Created)]
-    [InlineData("2030-05-17T00:00:00Z", "2030-05-16T22:00:00Z", 24, HttpStatusCode.BadRequest)]
+    [InlineData("2030-05-17T00:00:00Z", "2030-05-16T22:00:00Z", 25, HttpStatusCode.BadRequest)]
     [InlineData("2030-05-18T00:00:00Z", "2030-05-16T22:00:00Z", 24, HttpStatusCode.BadRequest)]
-    [InlineData("2030-03-31T00:00:00Z", "2030-04-01T00:00:00Z", 24, HttpStatusCode.BadRequest)]
-    [InlineData("2030-10-27T00:00:00Z", "2030-10-28T00:00:00Z", 25, HttpStatusCode.Created)]
+    [InlineData("2030-03-31T00:00:00Z", "2030-03-31T00:00:00Z", 24, HttpStatusCode.BadRequest)]
+    [InlineData("2030-10-27T00:00:00Z", "2030-10-27T00:00:00Z", 25, HttpStatusCode.Created)]
+    [InlineData("2030-12-02T23:00:00Z", "2030-12-04T23:00:00Z", 72, HttpStatusCode.Created)]
+    [InlineData("2030-12-02T23:00:00Z", "2030-12-04T23:00:00Z", 73, HttpStatusCode.BadRequest)]
     [InlineData(
         "2030-05-16T22:00:00Z",
         "2030-05-17T22:00:00Z",
@@ -234,11 +236,19 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
     )]
     [InlineData(
         "2030-03-30T23:00:00Z",
-        "2030-03-31T22:00:00Z",
+        "2030-03-30T23:00:00Z",
         1,
         HttpStatusCode.Conflict,
         "2030-03-30T23:00:00.000Z",
         "2030-03-31T22:00:00.000Z"
+    )]
+    [InlineData(
+        "2030-12-02T23:00:00Z",
+        "2030-12-04T23:00:00Z",
+        49,
+        HttpStatusCode.Conflict,
+        "2030-12-04T23:00:00.000Z",
+        "2030-12-05T23:00:00.000Z"
     )]
     public async Task Submit_ComparesPrecisePeriodAsPolishDays(
         string start,

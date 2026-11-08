@@ -166,7 +166,7 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             return false;
 
         var periodDays = (
-            _globalizationService.GetPolishDayStartUtc(dto.PrecisePeriodEnd.Value)
+            _globalizationService.GetPolishDayStartUtc(dto.PrecisePeriodEnd.Value, 1)
             - _globalizationService.GetPolishDayStartUtc(dto.PrecisePeriodStart.Value)
         ).TotalDays;
         return periodDays >= cruiseDurationDays;

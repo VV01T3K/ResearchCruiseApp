@@ -31,14 +31,15 @@ type OverlappingBlockade = {
 function getOverlappingBlockadesForRange(
   blockades: BlockadePeriod[] | undefined,
   rangeStart: string,
-  rangeEnd: string
+  rangeEnd: string,
+  endDays = 0
 ): OverlappingBlockade[] {
   if (!blockades || blockades.length === 0 || !rangeStart || !rangeEnd) {
     return [];
   }
 
   const start = parsePolishDayStart(rangeStart);
-  const end = parsePolishDayStart(rangeEnd);
+  const end = parsePolishDayStart(rangeEnd, endDays);
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
     return [];
   }
@@ -124,7 +125,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   const minPeriodValue = allowPastDates || isReadonly ? 0 : getCurrentFortnight(year, new Date(nowMs));
 
   const overlappingPreciseBlockades = useMemo(
-    () => getOverlappingBlockadesForRange(blockades, precisePeriodStart, precisePeriodEnd),
+    () => getOverlappingBlockadesForRange(blockades, precisePeriodStart, precisePeriodEnd, 1),
     [blockades, precisePeriodStart, precisePeriodEnd]
   );
   const overlappingAcceptablePeriodBlockades = useMemo(

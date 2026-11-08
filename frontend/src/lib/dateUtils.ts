@@ -41,13 +41,14 @@ export function parseBackendDateTime(value: string): Date {
   return new Date(/(?:Z|[+-]\d{2}:\d{2}|^\d{4}-\d{2}-\d{2})$/i.test(value) ? value : `${value}Z`);
 }
 
-export function parsePolishDayStart(value: string): Date {
+export function parsePolishDayStart(value: string, addDays = 0): Date {
   const date = parseBackendDateTime(value);
   if (Number.isNaN(date.getTime())) {
     return date;
   }
 
   const utcMidnight = new Date(calendarDateFormatter.format(date));
+  utcMidnight.setUTCDate(utcMidnight.getUTCDate() + addDays);
   return new Date(utcMidnight.getTime() - Number(hourFormatter.format(utcMidnight)) * 3_600_000);
 }
 
