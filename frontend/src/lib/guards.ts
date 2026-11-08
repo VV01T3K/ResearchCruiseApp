@@ -22,6 +22,14 @@ export const redirectSearchSchema = z.object({
   redirect: z
     .string()
     .regex(/^\/(?![/\\])\S+$/)
+    .refine((href) => {
+      const path = href.split(/[?#]/)[0];
+      try {
+        return !/%2f|%5c/i.test(path) && !/\/\/|\\|\/\.{1,2}(\/|$)/.test(decodeURIComponent(path));
+      } catch {
+        return false;
+      }
+    })
     .optional()
     .catch(undefined),
 });
