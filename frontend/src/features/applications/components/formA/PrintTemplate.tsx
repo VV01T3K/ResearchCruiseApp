@@ -120,6 +120,12 @@ export function PrintTemplate({ ref, context, values }: Props) {
             </Fragment>
           ))}
         </div>
+        <div className="mt-4 font-semibold">Załączniki</div>
+        <div>
+          {values.researchAreaFiles.length === 0
+            ? 'Brak załączników'
+            : values.researchAreaFiles.map((file, fileIndex) => <div key={fileIndex}>{file.name}</div>)}
+        </div>
       </PrintingPageSection>
 
       <PrintingPageSection title="5. Cel rejsu">

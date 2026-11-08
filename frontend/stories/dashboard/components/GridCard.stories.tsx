@@ -11,7 +11,7 @@ const meta = {
     name: 'Grid card',
     Icon: GlobeHemisphereWestIcon,
     description: 'Grid card description',
-    href: '#',
+    to: '/',
   },
   decorators: [
     (Story) => (
@@ -39,7 +39,7 @@ export const Default: Story = {};
 export const WithLink: Story = {
   args: {
     name: 'Grid card with link',
-    href: '/link',
+    to: '/help',
   },
 };
 

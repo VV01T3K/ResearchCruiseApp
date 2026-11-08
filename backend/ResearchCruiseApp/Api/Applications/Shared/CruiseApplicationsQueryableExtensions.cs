@@ -43,6 +43,13 @@ internal static class CruiseApplicationsQueryableExtensions
         return query.Include(cruiseApplication => cruiseApplication.FormC);
     }
 
+    public static IQueryable<CruiseApplication> IncludeFormAResearchAreaFiles(
+        this IQueryable<CruiseApplication> query
+    )
+    {
+        return query.Include(cruiseApplication => cruiseApplication.FormA!.ResearchAreaFiles);
+    }
+
     public static IQueryable<CruiseApplication> IncludeFormAContent(
         this IQueryable<CruiseApplication> query
     )

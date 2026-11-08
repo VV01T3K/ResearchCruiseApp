@@ -4759,6 +4759,12 @@
               "$ref": "#/components/schemas/ResearchAreaSelection"
             }
           },
+          "researchAreaFiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileContent"
+            }
+          },
           "cruiseGoal": {
             "type": [
               "null",

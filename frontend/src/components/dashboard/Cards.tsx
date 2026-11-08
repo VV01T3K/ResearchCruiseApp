@@ -10,6 +10,8 @@ import {
   UsersIcon,
 } from '@phosphor-icons/react';
 
+import { cn } from '@/lib/utils';
+
 import { GridCard } from './GridCard';
 
 export function NewCruiseApplicationCard({ className }: { className?: string }) {
@@ -18,9 +20,9 @@ export function NewCruiseApplicationCard({ className }: { className?: string }) 
       key="new_form"
       name="Nowe zgłoszenie"
       description="Zgłoś nowy rejs"
-      href="/applications/new"
+      to="/applications/new"
       Icon={PlusCircleIcon}
-      className={className}
+      className={cn(className, 'phone:col-span-2')}
     />
   );
 }
@@ -31,7 +33,7 @@ export function PriorityInformationCard({ className }: { className?: string }) {
       key="prioritization_info"
       name="Informacje o priorytetyzacji"
       description="Dowiedz się więcej o zasadach priorytetyzacji"
-      href="/priority-information"
+      to="/priority-information"
       Icon={RankingIcon}
       className={className}
     />
@@ -44,7 +46,7 @@ export function UserManagementCard({ className }: { className?: string }) {
       key="user_management"
       name="Zarządzanie użytkownikami"
       description="Dodaj, edytuj lub usuń użytkowników"
-      href="/user-management"
+      to="/user-management"
       Icon={UsersIcon}
       iconWeight="fill"
       className={className}
@@ -58,7 +60,7 @@ export function AccountSettingsCard({ className }: { className?: string }) {
       key="settings"
       name="Ustawienia konta"
       description="Zmień ustawienia swojego konta"
-      href="/account-settings"
+      to="/account-settings"
       Icon={GearIcon}
       iconWeight="fill"
       className={className}
@@ -72,7 +74,7 @@ export function ApplicationsCard({ className }: { className?: string }) {
       key="applications"
       name="Zgłoszenia"
       description="Przeglądaj aktualne i historyczne zgłoszenia"
-      href="/applications"
+      to="/applications"
       Icon={ListBulletsIcon}
       className={className}
     />
@@ -85,7 +87,7 @@ export function HelpCard({ className }: { className?: string }) {
       key="help"
       name="Pomoc"
       description="Uzyskaj pomoc"
-      href="/help"
+      to="/help"
       Icon={LifebuoyIcon}
       className={className}
     />
@@ -98,7 +100,7 @@ export function CruisesCard({ className }: { className?: string }) {
       key="cruises"
       name="Harmonogram rejsów"
       description="Przeglądaj oraz planuj rejsy"
-      href="/cruises"
+      to="/cruises"
       Icon={CalendarCheckIcon}
       className={className}
     />
@@ -111,7 +113,7 @@ export function PublicationsCard({ className }: { className?: string }) {
       key="publications"
       name="Moje publikacje"
       description="Zarządzaj moimi publikacjami"
-      href="/my-publications"
+      to="/my-publications"
       Icon={BookOpenIcon}
       className={className}
     />
@@ -124,7 +126,7 @@ export function CruiseEffectsCard({ className }: { className?: string }) {
       key="cruise_effects"
       name="Efekty rejsów"
       description="Przeglądaj efekty rejsów"
-      href="/cruise-effects"
+      to="/cruise-effects"
       Icon={MedalIcon}
       iconWeight="fill"
       className={className}

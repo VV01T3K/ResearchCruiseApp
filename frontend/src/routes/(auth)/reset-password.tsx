@@ -8,9 +8,9 @@ import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { CheckIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import React from 'react';
-import { Button } from '@/components/shared/Button';
+import { Button, ButtonLink } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
-import { Link } from '@/components/shared/Link';
+import { Anchor } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { useResetPassword } from '@/api/generated/endpoints/auth.gen';
 import { Result } from '@/integrations/auth/types';
@@ -96,23 +96,18 @@ function ResetPasswordPage() {
             )}
           </div>
           <div className="text-center text-neutral-600">
-            {result === 'success' && (
-              <>
-                Hasło zostało pomyślnie zmienione. Możesz teraz się zalogować, chyba że Twoje konto czeka jeszcze na
-                akceptację Biura Armatora.
-              </>
-            )}
+            {result === 'success' && <>Hasło zostało pomyślnie zmienione. Możesz teraz się zalogować</>}
             {result !== 'success' && (
               <>
                 {errorMessage} W razie problemów napisz na{' '}
-                <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>
+                <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>
               </>
             )}
           </div>
         </div>
-        <Button type="link" href="/login" className="mt-6 w-full">
+        <ButtonLink to="/login" className="mt-6 w-full">
           Przejdź do logowania
-        </Button>
+        </ButtonLink>
       </Layout>
     );
   }

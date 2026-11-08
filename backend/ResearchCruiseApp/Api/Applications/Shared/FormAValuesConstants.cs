@@ -43,4 +43,6 @@ public static class FormAValuesConstants
     public const uint MaxPeriodEdgeValue = 24;
 
     public const int MaxCruiseHours = 60 * 24;
+
+    public const int MaxResearchAreaFiles = 5;
 }

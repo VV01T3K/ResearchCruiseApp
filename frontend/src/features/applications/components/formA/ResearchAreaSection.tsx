@@ -7,7 +7,7 @@ import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowBu
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
-import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
+import { formADefaultValues, MAX_RESEARCH_AREA_FILES } from '@/features/applications/schemas/formA.schema';
 import { ResearchAreaValues } from '@/features/applications/schemas/types/ResearchAreaValues';
 import { getResearchAreaName } from '@/lib/applications/researchArea';
 
@@ -120,7 +120,6 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
                 </DropdownElementSelectorButton>,
               ]}
               emptyTableMessage="Nie dodano żadnego rejonu."
-              variant="form"
               disabled={isReadonly}
               errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />
@@ -128,6 +127,24 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
           </>
         )}
       </form.AppField>
+      <div className="mt-4">
+        <form.AppField name="researchAreaFiles">
+          {(field) => (
+            <field.FilesField
+              allowMultiple
+              label="Załączniki, np. mapy"
+              helper={
+                isReadonly ? undefined : `Tylko pliki PDF, maksymalnie ${MAX_RESEARCH_AREA_FILES} plików po 2 MB.`
+              }
+              uploadMessage="Kliknij lub przeciągnij pliki PDF"
+              emptyMessage="Nie dodano załączników."
+              maxSizeInMb={2}
+              acceptedMimeTypes={['application/pdf']}
+              disabled={isReadonly}
+            />
+          )}
+        </form.AppField>
+      </div>
     </Accordion>
   );
 }

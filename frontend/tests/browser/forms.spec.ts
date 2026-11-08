@@ -250,6 +250,49 @@ test('past fortnights are greyed out up to where the acceptable period is clampe
   await expect(pastDatesHelp).toHaveCount(0);
 });
 
+test('form A research areas keep only PDF attachments and link them after saving', async ({
+  page,
+  network,
+  requests,
+}) => {
+  network.use(getUpdateApplicationFormAMockHandler());
+  await page.goto(formA);
+  const areas = page.getByRole('group', { name: '4. Rejony prowadzenia badań' });
+  await dropFile(areas.getByRole('button', { name: 'Załączniki, np. mapy' }), {
+    name: 'notatka.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('tekst'),
+  });
+  await expect(areas.getByText(/notatka\.txt/)).toBeVisible();
+
+  const maps = ['mapa-polnoc.pdf', 'mapa-poludnie.pdf'].map((name) => ({
+    name,
+    mimeType: 'application/pdf',
+    buffer: Buffer.from(`%PDF-1.4\n${name}\n%%EOF`),
+  }));
+  await areas.locator('input[type="file"]').setInputFiles(maps);
+  for (const map of maps) await expect(areas.getByRole('button', { name: map.name, exact: true })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Zapisz wersję roboczą', exact: true }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Zapisz wersję roboczą', exact: true }).click();
+  const files = maps.map(({ name, buffer }) => ({
+    name,
+    content: `data:application/pdf;base64,${buffer.toString('base64')}`,
+  }));
+  await expect
+    .poll(() => requests.bodies(savedForm('form-a')))
+    .toEqual([expect.objectContaining({ draft: true, form: expect.objectContaining({ researchAreaFiles: files }) })]);
+
+  network.use(getGetApplicationFormAMockHandler({ ...formAFields(), researchAreaFiles: files }));
+  await page.goto(`/applications/${applicationId}/formA`);
+  for (const file of files) {
+    const link = areas.getByRole('link', { name: `Pobierz plik ${file.name}` });
+    await expect(link).toHaveAttribute('href', file.content);
+    await expect(link).toHaveAttribute('download', file.name);
+  }
+  await expect(areas.getByRole('button', { name: /^Usuń plik/ })).toHaveCount(0);
+});
+
 test('a new application can be created as an incomplete draft with a note', async ({ page, network, requests }) => {
   network.use(getCreateApplicationMockHandler());
   await page.goto('/applications/new');
@@ -319,7 +362,7 @@ test('an invalid form B names the section and reason of the first error in an em
 
   await expect(
     page
-      .getByRole('region', { name: 'Notifications' })
+      .getByRole('region', { name: 'Powiadomienia' })
       .getByText('Formularz błędny w sekcji nr 12: Data rozpoczęcia jest wymagana')
   ).toBeVisible();
   await expect(
@@ -360,7 +403,7 @@ test('form B offers going back to editing only while eligible, explains a stale 
   await revert.click();
   await expect(
     page
-      .getByRole('region', { name: 'Notifications' })
+      .getByRole('region', { name: 'Powiadomienia' })
       .getByText(`Nie udało się cofnąć formularza B do edycji: ${refusal}`)
   ).toBeVisible();
   await expect(revert).toHaveCount(0);

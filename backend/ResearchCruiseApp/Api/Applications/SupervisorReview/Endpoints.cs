@@ -53,6 +53,7 @@ public static class SupervisorReviewEndpoints
         var application = await dbContext
             .CruiseApplications.IncludeFormA()
             .IncludeFormAContent()
+            .IncludeFormAResearchAreaFiles()
             .SingleOrDefaultAsync(
                 application => application.Id == applicationId,
                 cancellationToken

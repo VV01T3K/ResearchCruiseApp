@@ -7,7 +7,6 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -36,8 +35,6 @@ internal class IdentityService(
     ILogger<IdentityService> logger
 )
 {
-    private const string SecurityStampHashClaim = "security_stamp_hash";
-
     internal static readonly ImmutableArray<string> CruiseManagerRoleNames =
     [
         RoleName.Administrator,
@@ -149,7 +146,7 @@ internal class IdentityService(
         user.RefreshToken = null;
         user.RefreshTokenExpiry = null;
 
-        var identityResult = await userManager.UpdateSecurityStampAsync(user);
+        var identityResult = await userManager.UpdateAsync(user);
 
         return identityResult.Succeeded ? Result.Empty : identityResult.ToApplicationResult();
     }
@@ -185,48 +182,19 @@ internal class IdentityService(
             return Error.ServiceUnavailable();
 
         var user = CreateUser(registerForm);
-        var passwordErrors = new List<IdentityError>();
-        foreach (var validator in userManager.PasswordValidators)
-            passwordErrors.AddRange(
-                (await validator.ValidateAsync(userManager, user, registerForm.Password)).Errors
-            );
-        if (passwordErrors.Count > 0)
-            return IdentityResult.Failed([.. passwordErrors]).ToApplicationResult();
-
-        var normalizedEmail = userManager.NormalizeEmail(registerForm.Email);
-        var existing = await userManager.Users.FirstOrDefaultAsync(candidate =>
-            candidate.NormalizedEmail == normalizedEmail
-        );
-        if (existing is not null)
-        {
-            await emailSender.SendRegistrationAttemptMessage(existing.Email!);
-            await transaction.CommitAsync();
-            return Result.Empty;
-        }
-
-        IdentityResult identityResult;
-        try
-        {
-            identityResult = await userManager.CreateAsync(user, registerForm.Password);
-        }
-        catch (DbUpdateException exception)
-            when (exception.InnerException is SqlException { Number: 2601 } sqlException
-                && sqlException.Message.Contains("UserNameIndex")
-            )
-        {
-            return IdentityResult
-                .Failed(userManager.ErrorDescriber.DuplicateEmail(registerForm.Email))
-                .ToApplicationResult();
-        }
-        if (identityResult.Succeeded)
-            identityResult = await userManager.AddToRoleAsync(user, roleName);
+        var identityResult = await userManager.CreateAsync(user, registerForm.Password);
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
+        identityResult = await userManager.AddToRoleAsync(user, roleName);
+        if (!identityResult.Succeeded)
+            return identityResult.ToApplicationResult();
+
+        var emailConfirmationCode = await CreateEmailConfirmationCode(user);
         await emailSender.SendEmailConfirmationEmail(
             await CreateUserDto(user),
             roleName,
-            await CreateEmailConfirmationCode(user)
+            emailConfirmationCode
         );
 
         await transaction.CommitAsync();
@@ -266,7 +234,7 @@ internal class IdentityService(
         if (string.IsNullOrWhiteSpace(refreshToken))
             return Error.UnknownIdentity();
 
-        var refreshTokenHash = HashToken(refreshToken);
+        var refreshTokenHash = HashRefreshToken(refreshToken);
         var user = await userManager.Users.SingleOrDefaultAsync(candidate =>
             candidate.RefreshToken == refreshTokenHash
         );
@@ -284,7 +252,7 @@ internal class IdentityService(
 
     public async Task RevokeRefreshToken(string refreshToken)
     {
-        var refreshTokenHash = HashToken(refreshToken);
+        var refreshTokenHash = HashRefreshToken(refreshToken);
         await RevokeRefreshToken(user => user.RefreshToken == refreshTokenHash);
     }
 
@@ -302,20 +270,7 @@ internal class IdentityService(
                     .SetProperty(user => user.RefreshToken, (string?)null)
                     .SetProperty(user => user.RefreshTokenExpiry, (DateTime?)null)
                     .SetProperty(user => user.ConcurrencyStamp, Guid.NewGuid().ToString())
-                    .SetProperty(user => user.SecurityStamp, Guid.NewGuid().ToString())
             );
-    }
-
-    public async Task<bool> IsAccessTokenCurrent(ClaimsPrincipal principal)
-    {
-        var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        var securityStamp = await userManager
-            .Users.Where(user => user.Id == userId)
-            .Select(user => user.SecurityStamp)
-            .SingleOrDefaultAsync();
-
-        return securityStamp is not null
-            && HashToken(securityStamp) == principal.FindFirstValue(SecurityStampHashClaim);
     }
 
     public async Task<Result> ChangePassword(ChangePasswordFormDto changePasswordFormDto)
@@ -385,10 +340,8 @@ internal class IdentityService(
 
         var refreshToken = user.RefreshToken;
         var refreshTokenExpiry = user.RefreshTokenExpiry;
-        var emailConfirmed = user.EmailConfirmed;
         user.RefreshToken = null;
         user.RefreshTokenExpiry = null;
-        user.EmailConfirmed = true;
         var result = await userManager.ResetPasswordAsync(
             user,
             resetCode,
@@ -400,7 +353,6 @@ internal class IdentityService(
 
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiry = refreshTokenExpiry;
-        user.EmailConfirmed = emailConfirmed;
         return invalidLink;
     }
 
@@ -680,18 +632,15 @@ internal class IdentityService(
         if (user is null)
             return Error.ResourceNotFound();
 
-        var emailChanged = email is not null && email != user.Email;
-        if (emailChanged && await UserWithEmailExists(email!))
+        if (email is not null && email != user.Email && await UserWithEmailExists(email))
             return Error.Conflict("Użytkownik o tym adresie e-mail już istnieje");
 
-        user.EmailConfirmed = !emailChanged && user.EmailConfirmed;
+        user.EmailConfirmed = (email == user.Email || email is null) && user.EmailConfirmed;
         user.Email = email ?? user.Email;
         user.FirstName = firstName ?? user.FirstName;
         user.LastName = lastName ?? user.LastName;
 
-        var identityResult = emailChanged
-            ? await userManager.UpdateSecurityStampAsync(user)
-            : await userManager.UpdateAsync(user);
+        var identityResult = await userManager.UpdateAsync(user);
         if (!identityResult.Succeeded)
             return identityResult.ToApplicationResult();
 
@@ -759,7 +708,7 @@ internal class IdentityService(
 
         var (refreshToken, refreshTokenExpiry) = CreateRefreshToken();
 
-        user.RefreshToken = HashToken(refreshToken);
+        user.RefreshToken = HashRefreshToken(refreshToken);
         user.RefreshTokenExpiry = refreshTokenExpiry;
 
         var identityResult = await userManager.UpdateAsync(user);
@@ -797,7 +746,6 @@ internal class IdentityService(
         {
             new(ClaimTypes.NameIdentifier, user.Id),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(SecurityStampHashClaim, HashToken(user.SecurityStamp!)),
         };
 
         var roles = await userManager.GetRolesAsync(user);
@@ -825,8 +773,8 @@ internal class IdentityService(
         return (token, expiry);
     }
 
-    private static string HashToken(string token)
+    private static string HashRefreshToken(string refreshToken)
     {
-        return Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
+        return Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken)));
     }
 }

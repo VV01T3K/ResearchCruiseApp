@@ -116,7 +116,7 @@ export function FileInput({
 
         if (acceptedMimeTypes && !acceptedMimeTypes.includes(file.type)) {
           newNotifications.push(
-            `Plik ${file.name} ma nieprawidłowy format. Dozwolone są pliki typu: ${acceptedMimeTypes.join(', ')}`
+            `Plik ${file.name} ma nieprawidłowy format. Dozwolone są pliki typu: ${acceptedMimeTypes.map((type) => type.split('/')[1].toUpperCase()).join(', ')}`
           );
           return false;
         }

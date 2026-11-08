@@ -50,7 +50,7 @@ export const Info: Story = {
 
 export const Closeable: Story = {
   play: async ({ args, canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole('button', { name: 'Close' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Zamknij' }));
     await expect(args.onClose).toHaveBeenCalledTimes(1);
   },
   args: {

@@ -75,19 +75,6 @@ internal class EmailSender(
         await SendEmail(userDto.Email, emailSubject, emailMessage);
     }
 
-    public async Task SendRegistrationAttemptMessage(string email)
-    {
-        var messageTemplate = await templateFileReader.ReadRegistrationAttemptMessageTemplate();
-        var emailSubject = await templateFileReader.ReadRegistrationAttemptEmailSubject();
-
-        var emailMessage = messageTemplate.Replace(
-            "{{link}}",
-            GetFrontEndUrl() + "/forgot-password"
-        );
-
-        await SendEmail(email, emailSubject, emailMessage);
-    }
-
     public async Task SendPasswordResetMessage(UserDto userDto, string resetCode)
     {
         var messageTemplate = await templateFileReader.ReadPasswordResetMessageTemplate();

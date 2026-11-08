@@ -17,6 +17,12 @@ type GlobalGuardType = {
   unauthenticated: () => (context: GuardContextType) => Promise<void>;
 };
 
+export function safeRedirect(href: string | undefined): string | undefined {
+  if (!href) return undefined;
+  const url = new URL(href, window.location.origin);
+  return url.origin === window.location.origin ? url.pathname + url.search + url.hash : undefined;
+}
+
 export const allowOnly: GlobalGuardType = {
   withRoles: (...roles: Role[]): ((context: GuardContextType) => Promise<void>) => {
     return async ({ context, location }) => {
@@ -25,9 +31,7 @@ export const allowOnly: GlobalGuardType = {
       if (!currentUser) {
         throw redirect({
           to: '/login',
-          search: {
-            redirect: location.href,
-          },
+          search: location.href === '/' ? {} : { redirect: location.href },
         });
       }
 
@@ -45,9 +49,7 @@ export const allowOnly: GlobalGuardType = {
       if (!currentUser) {
         throw redirect({
           to: '/login',
-          search: {
-            redirect: location.href,
-          },
+          search: location.href === '/' ? {} : { redirect: location.href },
         });
       }
     };

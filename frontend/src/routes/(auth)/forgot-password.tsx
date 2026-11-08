@@ -7,7 +7,7 @@ import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
-import { Button } from '@/components/shared/Button';
+import { Button, ButtonLink } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
 import { Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
@@ -68,9 +68,9 @@ function ForgotPasswordPage() {
       <Layout title="Przywracanie hasła" variant="narrow">
         <p className="text-lg">
           Link do resetowania hasła został wysłany na adres: <span className="font-bold text-primary">{email}</span>
-          <Button type="link" href="/login" className="mt-8 w-full">
+          <ButtonLink to="/login" className="mt-8 w-full">
             Wróć do logowania
-          </Button>
+          </ButtonLink>
         </p>
       </Layout>
     );
@@ -96,7 +96,7 @@ function ForgotPasswordPage() {
         </div>
 
         <div className="!mt-8 flex flex-wrap items-center justify-end">
-          <Link href="/login">Powrót do logowania</Link>
+          <Link to="/login">Powrót do logowania</Link>
         </div>
       </form>
     </Layout>

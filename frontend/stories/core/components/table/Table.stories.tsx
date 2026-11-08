@@ -80,12 +80,6 @@ export const WithButtons: Story = {
   },
 };
 
-export const FormVariant: Story = {
-  args: {
-    variant: 'form',
-  },
-};
-
 export const Sorted: Story = {
   args: { initialSortingState: [{ id: 'Name', desc: false }] },
   play: async ({ canvas, canvasElement, userEvent }) => {
@@ -148,7 +142,6 @@ export const HeaderStates: Story = {
 export const Disabled: Story = { args: { disabled: true } };
 export const EmptyWithErrors: Story = {
   args: {
-    variant: 'form',
     data: [],
     emptyTableMessage: 'Add at least one participant',
     errors: ['Participants are required'],
