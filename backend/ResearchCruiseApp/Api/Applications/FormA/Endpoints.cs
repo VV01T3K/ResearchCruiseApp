@@ -232,7 +232,7 @@ public static class FormAEndpoints
 
         return CruiseWindowAvailability.HasNoFreeWindow(
             globalizationService.GetPolishDayStartUtc(request.PrecisePeriodStart.Value),
-            globalizationService.GetPolishDayStartUtc(request.PrecisePeriodEnd.Value),
+            globalizationService.GetPolishDayStartUtc(request.PrecisePeriodEnd.Value, 1),
             cruiseDurationDays,
             blockades
         )

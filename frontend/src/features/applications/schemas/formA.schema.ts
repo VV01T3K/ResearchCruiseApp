@@ -225,7 +225,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
     if (cruiseHours <= 0) return { canFitCruise: true, overlappingBlockades: [] };
 
     const start = parsePolishDayStart(precisePeriodStart);
-    const end = parsePolishDayStart(precisePeriodEnd);
+    const end = parsePolishDayStart(precisePeriodEnd, 1);
     const cruiseDurationDays = cruiseHours / 24;
 
     return analyzeCruiseSlot(start, end, cruiseDurationDays);
@@ -309,7 +309,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
     if (!precisePeriodStart || !precisePeriodEnd) return;
 
     const start = parsePolishDayStart(precisePeriodStart);
-    const end = parsePolishDayStart(precisePeriodEnd);
+    const end = parsePolishDayStart(precisePeriodEnd, 1);
     const cruiseDurationDays = totalCruiseHours / 24;
 
     if ((end.getTime() - start.getTime()) / DAY_IN_MILLISECONDS < cruiseDurationDays) {

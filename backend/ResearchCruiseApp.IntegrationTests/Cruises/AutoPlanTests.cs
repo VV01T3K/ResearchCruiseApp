@@ -59,7 +59,7 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
 
     [Theory]
     [InlineData(5, 31, 22, 6, 29, 22)]
-    [InlineData(6, 1, 0, 6, 30, 0)]
+    [InlineData(6, 1, 0, 6, 2, 0)]
     public async Task AutoPlan_ReadsPrecisePeriodAsPolishDays(
         int startMonth,
         int startDay,
