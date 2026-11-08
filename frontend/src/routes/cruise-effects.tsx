@@ -64,7 +64,7 @@ function CruiseEffectsPage() {
     <>
       <Layout
         title="Efekty rejsów"
-        description="Tu widać efekty zgłoszone po rejsach w formularzu C i punkty, które za nie otrzymujesz."
+        description="Tu widać efekty rejsów zgłoszone w formularzu C i punkty, które za nie dostajesz. Punkty liczą się przy ocenie Twoich kolejnych zgłoszeń, w których jesteś kierownikiem rejsu."
       >
         <p className="mb-4 text-center">
           Suma przyznanych punktów:{' '}

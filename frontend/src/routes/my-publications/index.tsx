@@ -175,6 +175,15 @@ function MyPublicationsPage() {
               <ArrowSquareOutIcon className="h-4 w-4" />
             </Button>,
             <Button
+              key="removeAllPublications"
+              variant="dangerOutline"
+              onClick={() => setIsDeleteAllModalOpen(true)}
+              disabled={!ownPublicationsQuery.data.length || deleteAllOwnPublicationsMutation.isPending}
+            >
+              <TrashIcon className="h-4 w-4" />
+              Usuń wszystkie publikacje
+            </Button>,
+            <Button
               key="removeSelectedPublications"
               variant="dangerOutline"
               onClick={() => void deleteSelectedPublications()}
@@ -186,17 +195,6 @@ function MyPublicationsPage() {
             ...defaultButtons,
           ]}
         ></Table>
-        <div className="mt-6 flex justify-end">
-          <Button
-            variant="dangerOutline"
-            size="sm"
-            onClick={() => setIsDeleteAllModalOpen(true)}
-            disabled={!ownPublicationsQuery.data.length || deleteAllOwnPublicationsMutation.isPending}
-          >
-            <TrashIcon className="h-4 w-4" />
-            Usuń wszystkie publikacje
-          </Button>
-        </div>
       </Layout>
       <Modal
         isOpen={isDeleteAllModalOpen}
