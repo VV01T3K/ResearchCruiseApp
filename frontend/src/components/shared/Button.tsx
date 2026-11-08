@@ -1,79 +1,47 @@
 import { Button as BaseButton } from '@base-ui/react/button';
+import { createLink } from '@tanstack/react-router';
 
-import { Link, Props as LinkProps } from '@/components/shared/Link';
 import { cn } from '@/lib/utils';
 
-type ButtonAttributes = {
+type StyleProps = {
+  variant?: ButtonVariant;
+  size?: keyof typeof sizes;
+  className?: string;
+};
+type Props = StyleProps & {
+  children: React.ReactNode;
+  type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
+  onClick?: (evt: React.MouseEvent) => void;
+  disabled?: boolean;
+  title?: string;
   role?: React.HTMLAttributes<HTMLButtonElement>['role'];
   name?: string;
   id?: string;
   'aria-describedby'?: string;
   'aria-invalid'?: boolean;
 };
-type Props = {
-  children: React.ReactNode;
-
-  variant?: ButtonVariant;
-  size?: keyof typeof sizes;
-  className?: string;
-  disabled?: boolean;
-  title?: string;
-} & (
-  | ({
-      type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
-      onClick?: (evt: React.MouseEvent) => void;
-    } & ButtonAttributes)
-  | ({ type: 'link' } & Omit<LinkProps, 'variant'> & Partial<Record<keyof ButtonAttributes, never>>)
-);
 export type ButtonVariant = keyof typeof variants;
-export function Button(props: Props) {
-  const {
-    children,
-    className,
-    disabled,
-    role,
-    name,
-    id,
-    title,
-    'aria-describedby': ariaDescribedBy,
-    variant = 'primary',
-    size = 'md',
-    'aria-invalid': ariaInvalid,
-  } = props;
+export function Button({ variant, size, className, type = 'button', children, ...props }: Props) {
+  return (
+    <BaseButton type={type} className={buttonClassName({ variant, size, className })} {...props}>
+      {children}
+    </BaseButton>
+  );
+}
 
-  const classes = cn(
+export function ButtonAnchor({ variant, size, className, ...props }: StyleProps & React.ComponentPropsWithRef<'a'>) {
+  return <a {...props} className={cn('h-fit w-fit', buttonClassName({ variant, size, className }))} />;
+}
+
+export const ButtonLink = createLink(ButtonAnchor);
+
+function buttonClassName({ variant = 'primary', size = 'md', className }: StyleProps) {
+  return cn(
     'text-inverse-foreground focus-visible:outline-hidden hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-default',
     variants[variant],
     sizes[size],
     className,
     variant != 'plain' ? 'flex items-center justify-around' : ''
-  );
-
-  if (props.type === 'link' && !disabled) {
-    const { variant: _, ...other } = props;
-
-    return (
-      <Link {...other} variant="plain" className={cn('h-fit w-fit', classes)}>
-        {children}
-      </Link>
-    );
-  }
-
-  return (
-    <BaseButton
-      type={props.type === 'link' ? 'button' : (props.type ?? 'button')}
-      className={classes}
-      onClick={props.type === 'link' ? undefined : props.onClick}
-      disabled={disabled}
-      role={role}
-      name={name}
-      id={id}
-      title={title}
-      aria-describedby={ariaDescribedBy}
-      aria-invalid={ariaInvalid}
-    >
-      {children}
-    </BaseButton>
   );
 }
 

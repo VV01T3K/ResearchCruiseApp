@@ -656,7 +656,7 @@ test('calendar edit mode lets a confirmed cruise be dragged, but not an ended on
   network.use(getGetCruisesMockHandler([confirmed(), ended]));
   await page.clock.setFixedTime('2026-06-10T12:00:00Z');
   await page.goto('/cruises');
-  await page.getByRole('button', { name: 'Kalendarz', exact: true }).click();
+  await page.getByRole('tab', { name: 'Kalendarz' }).click();
   await page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' }).click();
 
   await expect(page.getByRole('button', { name: `Rejs ${confirmed().title}` }).first()).toHaveAttribute(
@@ -701,7 +701,7 @@ test.describe(() => {
     await page.goto('/cruises');
     await expect(page.getByRole('cell', { name: cruise().number, exact: true })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Zgłoszenia' })).toHaveCount(0);
-    await page.getByRole('button', { name: 'Kalendarz', exact: true }).click();
+    await page.getByRole('tab', { name: 'Kalendarz' }).click();
     await expect(page.getByRole('button', { name: 'Wróć do obecnego miesiąca' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' })).toHaveCount(0);
 

@@ -92,7 +92,7 @@ for (const { action, accepted, button, route, handler } of [
     await expect(page.getByRole('alert')).toContainText('Spróbuj ponownie później');
     // A failed action stays blocked until its error is dismissed.
     await expect(toggle).toBeDisabled();
-    await page.getByRole('alert').getByRole('button', { name: 'Close' }).click();
+    await page.getByRole('alert').getByRole('button', { name: 'Zamknij' }).click();
 
     await toggle.click();
     await expect(toggle).toHaveCount(0);

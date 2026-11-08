@@ -4,9 +4,9 @@ import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { CheckIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import React from 'react';
-import { Button } from '@/components/shared/Button';
+import { ButtonLink } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
-import { Link } from '@/components/shared/Link';
+import { Anchor } from '@/components/shared/Link';
 import { Loader } from '@/components/shared/layout/Loader';
 import { useMutation } from '@tanstack/react-query';
 import { confirmEmail } from '@/api/generated/endpoints/auth.gen';
@@ -63,14 +63,14 @@ function ConfirmEmailPage() {
           {result !== 'success' && (
             <>
               {errorMessage} W razie problemów napisz na{' '}
-              <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>
+              <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>
             </>
           )}
         </div>
       </div>
-      <Button type="link" href="/login" className="mt-6 w-full">
+      <ButtonLink to="/login" className="mt-6 w-full">
         Wróć do logowania
-      </Button>
+      </ButtonLink>
     </Layout>
   );
 }

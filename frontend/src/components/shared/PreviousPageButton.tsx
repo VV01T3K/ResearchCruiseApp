@@ -1,33 +1,19 @@
 import { ArrowCircleLeftIcon } from '@phosphor-icons/react';
 import { useRouter } from '@tanstack/react-router';
-import { motion } from 'motion/react';
-import React from 'react';
 
 export function PreviousPageButton() {
   const router = useRouter();
-  const [isHovered, setIsHovered] = React.useState(false);
 
   return (
-    <motion.div onHoverStart={() => setIsHovered(true)} onHoverEnd={() => setIsHovered(false)} className="w-8" layout>
-      <a className="hover:cursor-pointer" title="Cofnij się" onClick={() => router.history.back()}>
-        <span className="relative block aspect-square rounded-full bg-surface text-primary">
-          <motion.span
-            className="absolute inset-0"
-            animate={{ opacity: isHovered ? 0 : 1 }}
-            transition={{ duration: 0.2 }}
-          >
-            <ArrowCircleLeftIcon />
-          </motion.span>
-          <motion.span
-            className="absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <ArrowCircleLeftIcon weight="fill" />
-          </motion.span>
-        </span>
-      </a>
-    </motion.div>
+    <button
+      type="button"
+      className="group block w-8 rounded-full bg-surface text-primary hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:outline-hidden"
+      aria-label="Wróć do poprzedniej strony"
+      title="Wróć do poprzedniej strony"
+      onClick={() => router.history.back()}
+    >
+      <ArrowCircleLeftIcon className="block group-hover:hidden" />
+      <ArrowCircleLeftIcon weight="fill" className="hidden group-hover:block" />
+    </button>
   );
 }

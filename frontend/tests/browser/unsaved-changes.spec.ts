@@ -195,7 +195,7 @@ test.describe('pending saves', () => {
     await notes(page).fill(UNSAVED);
     release();
     await expect(
-      page.getByRole('region', { name: 'Notifications' }).getByText('Formularz został zapisany')
+      page.getByRole('region', { name: 'Powiadomienia' }).getByText('Formularz został zapisany')
     ).toBeVisible();
     await expect(page).toHaveURL(/\/applications\/new\?draft=/);
     await expect(notes(page)).toHaveValue(UNSAVED);

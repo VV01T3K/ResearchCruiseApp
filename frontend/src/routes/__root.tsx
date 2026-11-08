@@ -13,9 +13,9 @@ import { SmileyMehIcon, SmileyMeltingIcon } from '@phosphor-icons/react';
 import config from '@/config';
 import { motion } from 'motion/react';
 import { lazy, Suspense } from 'react';
-import { Button } from '@/components/shared/Button';
+import { Button, ButtonLink } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
-import { Link } from '@/components/shared/Link';
+import { Anchor } from '@/components/shared/Link';
 import Background from '@/components/shared/layout/Background';
 import { Navbar } from '@/components/shared/layout/Navbar';
 import { NetworkDisconnectAlert } from '@/components/shared/layout/NetworkDisconnectAlert';
@@ -112,9 +112,9 @@ function RouteError({ error }: ErrorComponentProps) {
               <SmileyMehIcon />
             </div>
             <div className="text-center">Ta strona nie istnieje albo nie masz do niej dostępu.</div>
-            <Button type="link" href="/" className="w-full">
+            <ButtonLink to="/" className="w-full">
               Przejdź do strony głównej
-            </Button>
+            </ButtonLink>
           </div>
         </Layout>
       ) : (
@@ -141,15 +141,15 @@ function RouteError({ error }: ErrorComponentProps) {
               </div>
             )}
             <div className="text-center">
-              Prosimy o maila na adres <Link href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Link>.
+              Prosimy o maila na adres <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>.
             </div>
             <div className="flex gap-4">
               <Button variant="primaryOutline" className="w-full" onClick={() => void retry()}>
                 Spróbuj ponownie
               </Button>
-              <Button type="link" href="/" className="w-full">
+              <ButtonLink to="/" className="w-full">
                 Przejdź do strony głównej
-              </Button>
+              </ButtonLink>
             </div>
           </div>
         </Layout>
@@ -170,9 +170,9 @@ function NotFoundPage() {
           Strona o adresie <span className="font-semibold">{router.state.location.pathname}</span> nie została
           znaleziona.
         </div>
-        <Button type="link" href="/" className="w-full">
+        <ButtonLink to="/" className="w-full">
           Przejdź do strony głównej
-        </Button>
+        </ButtonLink>
       </div>
     </Layout>
   );

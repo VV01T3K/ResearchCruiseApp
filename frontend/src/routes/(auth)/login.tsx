@@ -72,7 +72,7 @@ function LoginPage() {
           </form.AppField>
 
           <div className="!mt-8 flex flex-wrap items-center justify-end">
-            <Link href="/forgot-password">Zapomniałeś hasła?</Link>
+            <Link to="/forgot-password">Zapomniałeś hasła?</Link>
           </div>
 
           <div className="mt-8">
@@ -88,7 +88,7 @@ function LoginPage() {
           </div>
 
           <p className="!mt-8">
-            Brak konta? <Link href="/register">Zarejestruj się</Link>
+            Brak konta? <Link to="/register">Zarejestruj się</Link>
           </p>
         </div>
       </form>

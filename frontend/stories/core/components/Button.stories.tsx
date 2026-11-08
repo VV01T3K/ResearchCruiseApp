@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { Button } from '@/components/shared/Button';
+import { Button, ButtonAnchor, ButtonLink } from '@/components/shared/Button';
 
 const meta = {
   component: Button,
@@ -134,18 +134,15 @@ export const Plain: Story = {
 };
 
 export const RouterLink: Story = {
-  args: {
-    type: 'link',
-    children: 'Router Link',
-    href: '/link',
-  },
+  args: { children: 'Router Link' },
+  render: ({ children }) => <ButtonLink to="/">{children}</ButtonLink>,
 };
 
 export const ExternalLink: Story = {
-  args: {
-    type: 'link',
-    href: 'https://google.com',
-    target: '_blank',
-    children: 'External Link',
-  },
+  args: { children: 'External Link' },
+  render: ({ children }) => (
+    <ButtonAnchor href="https://google.com" target="_blank">
+      {children}
+    </ButtonAnchor>
+  ),
 };
