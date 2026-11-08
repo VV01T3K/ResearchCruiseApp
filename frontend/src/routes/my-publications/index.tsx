@@ -15,23 +15,28 @@ import { toast } from '@/components/shared/layout/toast';
 import { UploadButton } from './-components/UploadButton';
 import {
   getGetCurrentUserPublicationsQueryKey,
+  getGetCurrentUserPublicationsSuspenseQueryOptions,
   useDeleteAllCurrentUserPublications,
   useDeleteCurrentUserPublication,
   useGetCurrentUserPublicationsSuspense,
   useImportCurrentUserPublications,
 } from '@/api/generated/endpoints/users.gen';
 import type { PublicationResponse } from '@/api/generated/schemas';
+import { groupedQueryStaleTime } from '@/integrations/tanstack/query/root-provider';
 
 export const Route = createFileRoute('/my-publications/')({
   component: MyPublicationsPage,
   beforeLoad: allowOnly.withRoles(Role.Administrator, Role.CruiseManager, Role.ShipOwner),
+  loader: ({ context }) =>
+    context.queryClient.query({ ...getGetCurrentUserPublicationsSuspenseQueryOptions(), staleTime: 'static' }),
+  preloadStaleTime: 0,
 });
 
 function MyPublicationsPage() {
   const [selectedPublications, setSelectedPublications] = React.useState<RowSelectionState>({});
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = React.useState(false);
   const [isDeletingSelected, setIsDeletingSelected] = React.useState(false);
-  const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense();
+  const ownPublicationsQuery = useGetCurrentUserPublicationsSuspense({ query: { staleTime: groupedQueryStaleTime } });
   const queryClient = useQueryClient();
   const deleteOwnPublicationMutation = useDeleteCurrentUserPublication();
   const deleteSelectedPublicationsMutation = useDeleteCurrentUserPublication({
