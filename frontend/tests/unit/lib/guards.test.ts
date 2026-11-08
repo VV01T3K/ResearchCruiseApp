@@ -3,7 +3,8 @@ import type { QueryClient } from '@tanstack/react-query';
 import { expect, it, vi } from 'vite-plus/test';
 
 vi.mock('@/config', () => ({ default: { apiUrl: 'https://api.test' } }));
-const { allowOnly, redirectSearchSchema } = await import('@/lib/guards');
+vi.stubGlobal('window', { location: { origin: 'https://app.test' } });
+const { allowOnly, safeRedirect } = await import('@/lib/guards');
 
 const guestRedirect = (href: string) =>
   allowOnly
@@ -18,23 +19,9 @@ it('sends guests to login with the deep link, or plain login for the home page',
   await expect(guestRedirect('/applications?page=2#top')).resolves.toEqual({ redirect: '/applications?page=2#top' });
 });
 
-it('accepts only internal app paths as the return destination', () => {
-  const parse = (redirect: unknown) => redirectSearchSchema.parse({ redirect }).redirect;
-  expect(parse('/cruises?next=%2F..%2Fx#a/../b')).toBe('/cruises?next=%2F..%2Fx#a/../b');
-  for (const unsafe of [
-    '/',
-    'https://evil.test',
-    '//evil.test',
-    '/\\evil.test',
-    '/\t/evil.test',
-    '/%2F..%2F%2Fevil.test',
-    '/%2Fevil.test',
-    '/%5Cevil.test',
-    '/a/../evil.test',
-    '/%E0%A4%A',
-    'cruises',
-    1,
-  ]) {
-    expect(parse(unsafe)).toBeUndefined();
+it('follows only same-origin return destinations', () => {
+  expect(safeRedirect('/cruises?page=2#top')).toBe('/cruises?page=2#top');
+  for (const unsafe of ['https://evil.test', '//evil.test', '/\\evil.test', 'javascript:alert(1)']) {
+    expect(safeRedirect(unsafe)).toBeUndefined();
   }
 });

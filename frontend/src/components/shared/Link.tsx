@@ -11,7 +11,6 @@ export type Props = {
   children: React.ReactNode;
 
   href?: Url;
-  search?: LinkProps['search'];
   target?: HTMLAttributeAnchorTarget;
   variant?: keyof typeof variants;
   className?: string;
@@ -24,7 +23,6 @@ export type Props = {
 export function Link({
   children,
   href,
-  search,
   className,
   title,
   rel,
@@ -41,7 +39,6 @@ export function Link({
     return (
       <RouterLink
         to={href as RouterUrl}
-        search={search}
         target={target}
         className={cn(variants[variant], className)}
         title={title}

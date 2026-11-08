@@ -1,7 +1,8 @@
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { z } from 'zod';
 import { loginValidationSchema } from '@/validation/auth';
-import { allowOnly, redirectSearchSchema } from '@/lib/guards';
+import { allowOnly, safeRedirect } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { Button } from '@/components/shared/Button';
@@ -14,7 +15,7 @@ import { useSignIn } from '@/integrations/tanstack/query/auth';
 export const Route = createFileRoute('/(auth)/login')({
   component: LoginPage,
   beforeLoad: allowOnly.unauthenticated(),
-  validateSearch: redirectSearchSchema,
+  validateSearch: z.object({ redirect: z.string().optional() }),
 });
 
 function LoginPage() {
@@ -44,7 +45,7 @@ function LoginPage() {
       }
 
       await router.invalidate();
-      await router.navigate({ href: redirect ?? '/' });
+      await router.navigate({ href: safeRedirect(redirect) ?? '/' });
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('login', 'invalid', formApi.state);
@@ -71,9 +72,7 @@ function LoginPage() {
           </form.AppField>
 
           <div className="!mt-8 flex flex-wrap items-center justify-end">
-            <Link href="/forgot-password" search={{ redirect }}>
-              Zapomniałeś hasła?
-            </Link>
+            <Link href="/forgot-password">Zapomniałeś hasła?</Link>
           </div>
 
           <div className="mt-8">
