@@ -1,7 +1,7 @@
 import { expect, it } from 'vite-plus/test';
 
 import { mapPersonToLabel, mapPersonToText } from '@/lib/applications/PersonMappers';
-import { emptyGuid } from '@/lib/applications/person';
+import { comparePeople, emptyGuid } from '@/lib/applications/person';
 
 const id = '11111111-1111-4111-8111-111111111111';
 
@@ -21,4 +21,24 @@ it.each([
 
 it('labels a missing person as unassigned', () => {
   expect(mapPersonToText(undefined)).toBe('');
+});
+
+it('sorts people by surname, then first name, in Polish order', () => {
+  const names = [
+    ['Anna', 'Śliwa'],
+    ['Jan', 'Szymański'],
+    ['Ewa', 'Łukasiewicz'],
+    ['Piotr', 'Lis'],
+    ['Adam', 'Lis'],
+    ['', ''],
+  ];
+  const people = names.map(([firstName, lastName]) => ({ id, firstName, lastName, email: '' }));
+  expect(people.toSorted(comparePeople).map(mapPersonToText)).toEqual([
+    'Nieznany użytkownik',
+    'Adam Lis',
+    'Piotr Lis',
+    'Ewa Łukasiewicz',
+    'Jan Szymański',
+    'Anna Śliwa',
+  ]);
 });

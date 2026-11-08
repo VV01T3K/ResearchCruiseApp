@@ -5,6 +5,7 @@ import React from 'react';
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
+import { dropdownItemClassName, dropdownPopupClassName } from '@/components/shared/inputs/DropdownInput';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { InputErrorTriangle } from '@/components/shared/inputs/parts/InputErrorTriangle';
 import { InputLabel } from '@/components/shared/inputs/parts/InputLabel';
@@ -90,14 +91,7 @@ export function ComboboxInput({
             sideOffset={4}
             collisionPadding={stickyBarsCollisionPadding}
           >
-            <Combobox.Popup
-              className={cn(
-                'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10',
-                'transition-all duration-300 ease-popup',
-                'data-[starting-style]:translate-y-1 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
-                'data-[ending-style]:translate-y-1 data-[ending-style]:scale-90 data-[ending-style]:opacity-0'
-              )}
-            >
+            <Combobox.Popup className={dropdownPopupClassName}>
               <div className="relative border-b border-border-muted p-2">
                 <MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-4.5 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Combobox.Input
@@ -111,17 +105,7 @@ export function ComboboxInput({
               </Combobox.Empty>
               <Combobox.List className="flex max-h-64 flex-col overflow-y-auto empty:hidden">
                 {(option: ComboboxInputOption) => (
-                  <Combobox.Item
-                    key={option.value}
-                    value={option.value}
-                    className={cn(
-                      'flex items-center justify-between gap-2 border-b border-border-muted px-3 py-2 text-sm text-neutral-700 last:border-b-0',
-                      'cursor-pointer select-none',
-                      'transition-all duration-150 ease-out',
-                      'data-[highlighted]:bg-primary-50 data-[highlighted]:text-foreground',
-                      'data-[selected]:bg-primary-50 data-[selected]:font-medium data-[selected]:text-primary-800'
-                    )}
-                  >
+                  <Combobox.Item key={option.value} value={option.value} className={dropdownItemClassName}>
                     {option.richLabel}
                     <Combobox.ItemIndicator className="text-primary">
                       <CheckIcon className="h-4 w-4 scale-75" />
