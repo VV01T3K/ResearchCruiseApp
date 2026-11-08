@@ -30,7 +30,9 @@ export function ProjectPreparationResearchTaskDetails({ row, disabled }: Props) 
 
       <form.AppField name={`researchTasks[${row.index}].financingApproved`}>
         {(field) => (
-          <field.BooleanSelectField
+          <field.SelectField
+            value={String(field.state.value)}
+            onChange={(value) => field.handleChange(value === 'true')}
             aria-label={`Otrzymano decyzję o finansowaniu? Wiersz ${row.index + 1}`}
             allOptions={[
               { value: 'true', inlineLabel: 'Tak' },

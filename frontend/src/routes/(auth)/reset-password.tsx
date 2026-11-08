@@ -123,11 +123,11 @@ function ResetPasswordPage() {
         }}
       >
         <form.AppField name="password">
-          {(field) => <field.FloatingTextField type="password" label="Hasło" />}
+          {(field) => <field.TextField variant="floating" type="password" label="Hasło" />}
         </form.AppField>
 
         <form.AppField name="passwordConfirm">
-          {(field) => <field.FloatingTextField type="password" label="Potwierdź hasło" />}
+          {(field) => <field.TextField variant="floating" type="password" label="Potwierdź hasło" />}
         </form.AppField>
 
         <form.Subscribe selector={(state) => state.isSubmitting}>
