@@ -16,15 +16,15 @@ type Props = {
 export function GridCard({ name, className, Icon, iconWeight, description, href }: Props) {
   const [isHovered, setIsHovered] = React.useState(false);
   return (
-    <div key={name} className={className}>
+    <div key={name} className={cn('phone:col-span-1 phone:row-span-1', className)}>
       <Link href={href} variant="plain">
         <motion.div
-          className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 text-primary shadow-card"
+          className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 text-primary shadow-card phone:p-3"
           onHoverStart={() => setIsHovered(true)}
           onHoverEnd={() => setIsHovered(false)}
         >
           <motion.div
-            className="flex flex-col"
+            className="flex flex-col phone:h-full!"
             layout
             style={{
               height: 'calc(100% - 24px)',
@@ -33,6 +33,7 @@ export function GridCard({ name, className, Icon, iconWeight, description, href 
             }}
           >
             <motion.div
+              className="phone:size-11!"
               layout
               style={{
                 width: isHovered ? 24 : 64,
