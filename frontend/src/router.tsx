@@ -7,6 +7,7 @@ import { accountId, subscribeAuthDetails } from '@/integrations/auth/session';
 import { reloadForAccountChange } from '@/integrations/tanstack/query/AuthSession';
 import { clearAccountQueries } from '@/integrations/tanstack/query/auth';
 import { queryClient } from '@/integrations/tanstack/query/root-provider';
+import { safeRedirect } from '@/lib/guards';
 
 export const router = createRouter({
   routeTree,
@@ -29,7 +30,7 @@ subscribeAuthDetails((details, previous, event) => {
   } else if (event === 'remote-login') {
     void queryClient.invalidateQueries({ queryKey: getGetCurrentUserQueryKey() }).then(() => {
       const { pathname, search } = router.state.location;
-      if (pathname === '/login') void router.navigate({ to: search.redirect ?? '/' });
+      if (pathname === '/login') void router.navigate({ href: safeRedirect(search.redirect) ?? '/' });
     });
   }
 });

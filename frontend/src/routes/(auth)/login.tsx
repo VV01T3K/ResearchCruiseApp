@@ -2,7 +2,7 @@ import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { z } from 'zod';
 import { loginValidationSchema } from '@/validation/auth';
-import { allowOnly } from '@/lib/guards';
+import { allowOnly, safeRedirect } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { Button } from '@/components/shared/Button';
@@ -45,7 +45,7 @@ function LoginPage() {
       }
 
       await router.invalidate();
-      await router.navigate({ to: redirect ?? '/' });
+      await router.navigate({ href: safeRedirect(redirect) ?? '/' });
     },
     onSubmitInvalid: ({ formApi }) => {
       trackFormSubmit('login', 'invalid', formApi.state);
