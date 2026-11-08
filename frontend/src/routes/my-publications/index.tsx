@@ -142,6 +142,15 @@ function MyPublicationsPage() {
   return (
     <>
       <Layout title="Moje publikacje">
+        <p className="text-center">
+          Suma punktów ministerialnych ze wszystkich Twoich publikacji:{' '}
+          <span className="font-bold">
+            {ownPublicationsQuery.data.reduce(
+              (sum, { ministerialPoints }) => sum + (Number(ministerialPoints) || 0),
+              0
+            )}
+          </span>
+        </p>
         <Table
           data={ownPublicationsQuery.data}
           columns={columns}
@@ -166,15 +175,6 @@ function MyPublicationsPage() {
               <ArrowSquareOutIcon className="h-4 w-4" />
             </Button>,
             <Button
-              key="removeAllPublications"
-              variant="dangerOutline"
-              onClick={() => setIsDeleteAllModalOpen(true)}
-              disabled={!ownPublicationsQuery.data?.length || deleteAllOwnPublicationsMutation.isPending}
-            >
-              <TrashIcon className="h-4 w-4" />
-              Usuń wszystkie publikacje
-            </Button>,
-            <Button
               key="removeSelectedPublications"
               variant="dangerOutline"
               onClick={() => void deleteSelectedPublications()}
@@ -186,6 +186,17 @@ function MyPublicationsPage() {
             ...defaultButtons,
           ]}
         ></Table>
+        <div className="mt-6 flex justify-end">
+          <Button
+            variant="dangerOutline"
+            size="sm"
+            onClick={() => setIsDeleteAllModalOpen(true)}
+            disabled={!ownPublicationsQuery.data.length || deleteAllOwnPublicationsMutation.isPending}
+          >
+            <TrashIcon className="h-4 w-4" />
+            Usuń wszystkie publikacje
+          </Button>
+        </div>
       </Layout>
       <Modal
         isOpen={isDeleteAllModalOpen}
