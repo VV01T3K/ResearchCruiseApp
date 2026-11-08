@@ -1,3 +1,4 @@
+import { Tooltip } from '@base-ui/react/tooltip';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { DotsSixVerticalIcon, LockIcon } from '@phosphor-icons/react';
@@ -94,23 +95,27 @@ function CalendarEventTiles({
 
       eventTiles.push(
         event.link && !isDraggable ? (
-          <div
-            key={`${event.title}-${i}`}
-            className="group relative"
-            onDragStart={(e) => {
-              e.preventDefault();
-              if (isLocked) toast.error(event.dragLockedReason!);
-            }}
-          >
-            <Link href={event.link} variant="plain">
-              {renderedComponent}
-              {isLocked && (
-                <span className="pointer-events-none absolute top-full left-3 z-40 mt-1 w-max max-w-64 rounded-md bg-surface px-2 py-1 text-xs text-foreground opacity-0 shadow-md ring-1 ring-border group-hover:opacity-100 group-has-focus-visible:opacity-100">
+          <Tooltip.Root key={`${event.title}-${i}`} disabled={!isLocked}>
+            <Tooltip.Trigger
+              render={<div />}
+              onDragStart={(e) => {
+                e.preventDefault();
+                if (isLocked) toast.error(event.dragLockedReason!);
+              }}
+            >
+              <Link href={event.link} variant="plain">
+                {renderedComponent}
+                {isLocked && <span className="sr-only">{event.dragLockedReason}</span>}
+              </Link>
+            </Tooltip.Trigger>
+            <Tooltip.Portal>
+              <Tooltip.Positioner className="z-50" sideOffset={4} collisionPadding={8}>
+                <Tooltip.Popup className="max-w-64 rounded-md bg-surface px-2 py-1 text-xs text-foreground shadow-md ring-1 ring-border">
                   {event.dragLockedReason}
-                </span>
-              )}
-            </Link>
-          </div>
+                </Tooltip.Popup>
+              </Tooltip.Positioner>
+            </Tooltip.Portal>
+          </Tooltip.Root>
         ) : (
           <Fragment key={`${event.title}-${i}`}>{renderedComponent}</Fragment>
         )
