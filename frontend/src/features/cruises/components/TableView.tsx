@@ -47,16 +47,32 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
     {
       header: 'Data rozpoczęcia',
       accessorFn: (row) => row.startDate,
-      cell: (cell) => formatDate(cell.getValue() as string, 'dateTime'),
+      cell: (cell) => (
+        <span className="inline-flex flex-wrap justify-center gap-x-1">
+          {formatDate(cell.getValue() as string, 'dateTime')
+            .split(' ')
+            .map((part) => (
+              <span key={part}>{part}</span>
+            ))}
+        </span>
+      ),
       enableColumnFilter: false,
-      size: 140,
+      size: 112,
     },
     {
       header: 'Data zakończenia',
       accessorFn: (row) => row.endDate,
-      cell: (cell) => formatDate(cell.getValue() as string, 'dateTime'),
+      cell: (cell) => (
+        <span className="inline-flex flex-wrap justify-center gap-x-1">
+          {formatDate(cell.getValue() as string, 'dateTime')
+            .split(' ')
+            .map((part) => (
+              <span key={part}>{part}</span>
+            ))}
+        </span>
+      ),
       enableColumnFilter: false,
-      size: 140,
+      size: 112,
     },
     {
       header: 'Status',
