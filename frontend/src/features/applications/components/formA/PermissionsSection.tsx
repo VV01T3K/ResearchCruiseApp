@@ -85,7 +85,7 @@ export function PermissionsSection({ context }: { context: FormAViewModel }) {
             <Alert variant="info">
               <span>
                 <span className="font-semibold">Skany pozwoleń dodasz później, w formularzu B,</span> gdy rejs zostanie
-                przyjęty. Tutaj wpisz tylko treść każdego pozwolenia i organ, który je wydaje.
+                zatwierdzony w harmonogramie. Tutaj wpisz tylko treść każdego pozwolenia i organ, który je wydaje.
               </span>
             </Alert>
           </div>
