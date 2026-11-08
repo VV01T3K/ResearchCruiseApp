@@ -7,6 +7,7 @@ import {
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
+  type UniqueIdentifier,
   PointerSensor,
   TouchSensor,
   useSensor,
@@ -45,12 +46,14 @@ const pointerWithinDayOrGap: CollisionDetection = (args) => {
   const collisions = pointerWithin(args);
   if (collisions.length > 0 || !args.pointerCoordinates) return collisions;
   const { x, y } = args.pointerCoordinates;
-  const gap = 8;
-  const container = args.droppableContainers.find(({ id }) => {
+  let nearest: { id: UniqueIdentifier; distance: number } | undefined;
+  for (const { id } of args.droppableContainers) {
     const rect = args.droppableRects.get(id);
-    return rect && x >= rect.left - gap && x <= rect.right + gap && y >= rect.top - gap && y <= rect.bottom + gap;
-  });
-  return container ? [{ id: container.id }] : [];
+    if (!rect) continue;
+    const distance = Math.max(rect.left - x, x - rect.right, rect.top - y, y - rect.bottom);
+    if (distance <= 8 && (!nearest || distance < nearest.distance)) nearest = { id, distance };
+  }
+  return nearest ? [{ id: nearest.id }] : [];
 };
 
 type Props = {
@@ -125,8 +128,8 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
   }, [updateTileWidth]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(TouchSensor, { activationConstraint: { delay: 0, tolerance: 0 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(TouchSensor, { activationConstraint: { distance: 4 } })
   );
 
   function getDayNumberFromDropId(dropId: string): number | undefined {

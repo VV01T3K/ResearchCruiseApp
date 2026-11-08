@@ -649,6 +649,7 @@ test('the export downloads the CSV file of the chosen year', async ({ page, netw
 test('calendar edit mode lets a confirmed cruise be dragged, but not an ended one, and opens neither', async ({
   page,
   network,
+  requests,
 }) => {
   const ended: CruiseResponse = {
     ...cruise(),
@@ -675,6 +676,22 @@ test('calendar edit mode lets a confirmed cruise be dragged, but not an ended on
       (button) => !button.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true }))
     )
   ).toBe(true);
+
+  network.use(getUpdateCruiseMockHandler());
+  const bar = (await page
+    .getByRole('button', { name: `Rejs ${confirmed().title}` })
+    .first()
+    .boundingBox())!;
+  const june4 = (await page.locator('[data-calendar-day-tile]').nth(3).boundingBox())!;
+  await page.mouse.move(bar.x + 20, bar.y + bar.height / 2);
+  await page.mouse.down();
+  // Half a pixel before June 4's border: the gap is nearer June 4 than June 3.
+  await page.mouse.move(june4.x - 0.5, bar.y + bar.height / 2, { steps: 20 });
+  await page.mouse.up();
+  await expect.poll(() => requests.bodies(`PATCH /v2/cruises/${confirmed().id}`)).toHaveLength(1);
+  expect(requests.bodies(`PATCH /v2/cruises/${confirmed().id}`)[0]).toMatchObject({
+    startDate: '2026-06-04T08:00:00.000Z',
+  });
 
   await page.getByRole('button', { name: 'Wyłącz tryb edycji kalendarza' }).click();
   await expect(page.getByRole('link', { name: 'Rejs Zakończony' })).toHaveAttribute('href', `/cruises/${ended.id}`);
