@@ -57,6 +57,19 @@ test('cruise deletion requires confirmation and removes the row after saving', a
   expect(requests.bodies(`DELETE /v2/cruises/${item.id}`)).toHaveLength(1);
 });
 
+test('hovering the cruises link loads the list once for the navigation that follows', async ({ page, requests }) => {
+  await page.clock.install();
+  await page.goto('/');
+  const link = page.getByRole('link', { name: /Harmonogram rejsów/ });
+  await link.hover();
+  await expect.poll(() => requests.bodies('GET /v2/cruises')).toHaveLength(1);
+  // Past the 1 s minimum stale time that suspense queries get anyway.
+  await page.clock.fastForward(2_000);
+  await link.click();
+  await expect(page.getByRole('tab', { name: 'Kalendarz' })).toBeVisible();
+  expect(requests.bodies('GET /v2/cruises')).toHaveLength(1);
+});
+
 async function fillNewCruise(page: Page) {
   await page.goto('/cruises/new');
   await page.getByText('Wybierz datę rozpoczęcia rejsu').click();
