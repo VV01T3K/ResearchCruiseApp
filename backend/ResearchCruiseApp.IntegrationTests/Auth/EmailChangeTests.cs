@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Data.SqlClient;
@@ -20,7 +21,7 @@ public sealed class EmailChangeTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     [Fact]
-    public async Task UpdateUser_WhenOfficeChangesEmail_ReleasesOldAddressAndKeepsNewOneUsable()
+    public async Task UpdateUser_WhenOfficeChangesEmail_ReleasesOldAddressAndRevokesOldSession()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var app = new TestApplication(fixture.ConnectionString);
@@ -29,6 +30,7 @@ public sealed class EmailChangeTests(SqlFixture fixture) : IAsyncLifetime
         var user = await TestUsers.Create(app, "old@example.invalid", RoleName.CruiseManager);
         using var office = await TestApplications.Login(app, admin.Email!);
         using var client = app.CreateApiClient();
+        var session = await RefreshSessionTests.Login(client, user.Email!);
 
         using var updated = await office.PatchAsJsonAsync(
             $"/v2/users/{user.Id}",
@@ -74,6 +76,19 @@ public sealed class EmailChangeTests(SqlFixture fixture) : IAsyncLifetime
             ct
         );
         Assert.Equal(HttpStatusCode.NoContent, confirmed.StatusCode);
+        using var refreshed = await RefreshSessionTests.SendCookie(
+            client,
+            "/v2/auth/refresh",
+            session.Cookie
+        );
+        Assert.Equal(HttpStatusCode.Unauthorized, refreshed.StatusCode);
+        using var profileRequest = new HttpRequestMessage(HttpMethod.Get, "/v2/users/me");
+        profileRequest.Headers.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            session.Access
+        );
+        using var profile = await client.SendAsync(profileRequest, ct);
+        Assert.Equal(HttpStatusCode.Unauthorized, profile.StatusCode);
         await RefreshSessionTests.Login(client, "new@example.invalid");
         using var resetRequested = await client.PostAsJsonAsync(
             "/v2/auth/password-reset-request",

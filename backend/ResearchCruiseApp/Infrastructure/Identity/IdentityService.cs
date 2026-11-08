@@ -688,6 +688,8 @@ internal class IdentityService(
         user.EmailConfirmed = !emailChanged && user.EmailConfirmed;
         user.Email = email ?? user.Email;
         user.UserName = emailChanged ? email : user.UserName;
+        user.RefreshToken = emailChanged ? null : user.RefreshToken;
+        user.RefreshTokenExpiry = emailChanged ? null : user.RefreshTokenExpiry;
         user.FirstName = firstName ?? user.FirstName;
         user.LastName = lastName ?? user.LastName;
 
