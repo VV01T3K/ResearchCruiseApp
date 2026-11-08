@@ -101,7 +101,9 @@ function ColumnMenu<TData extends object, TValue>({
                 'group relative inline-flex h-6 w-9 shrink-0 cursor-pointer items-center justify-center gap-0.5 rounded-md border outline-none focus-visible:ring-2 focus-visible:ring-primary',
                 count
                   ? 'border-primary bg-primary-100 text-primary hover:bg-primary-200'
-                  : 'border-border bg-surface text-neutral-600 hover:bg-surface-subtle hover:text-foreground data-[popup-open]:bg-surface-subtle'
+                  : isSorted
+                    ? 'border-primary bg-surface text-primary hover:bg-primary-100 data-[popup-open]:bg-primary-100'
+                    : 'border-border bg-surface text-neutral-600 hover:bg-surface-subtle hover:text-foreground data-[popup-open]:bg-surface-subtle'
               )}
             >
               {count ? (
@@ -136,7 +138,7 @@ function ColumnMenu<TData extends object, TValue>({
                   onClick={apply}
                   className={cn(
                     'flex h-8 cursor-pointer items-center gap-2.5 rounded-md px-2 text-left text-sm font-normal text-neutral-800 outline-none hover:bg-surface-subtle',
-                    active && 'font-medium text-primary'
+                    active && 'bg-primary-100 font-medium text-primary hover:bg-primary-200'
                   )}
                 >
                   <Icon className="size-4 shrink-0" />
