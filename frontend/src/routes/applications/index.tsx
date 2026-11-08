@@ -99,32 +99,33 @@ function ApplicationsPage() {
       accessorFn: (row) => row.year?.toString() ?? '-',
       sortDescFirst: true,
       meta: { filterOptions: yearFilterOptions },
-      size: 118,
-    },
-    {
-      header: 'Liczba dni',
-      accessorFn: (row) => (row.cruiseDays !== null ? `${parseFloat(row.cruiseDays.toFixed(2))}` : '-'),
-      enableSorting: false,
-      enableColumnFilter: false,
-      size: 66,
+      size: 90,
     },
     {
       header: 'Okres optymalny / dopuszczalny',
       cell: ({ row }) => {
         const { start, end } = getDisplayPeriod(row.original);
-        if (start && end) {
-          return (
-            <div className="text-sm whitespace-nowrap">
-              <div>od: {formatDate(start, 'date')}</div>
-              <div>do: {formatDate(end, 'date')}</div>
-            </div>
-          );
-        }
-        return '-';
+        return (
+          <div className="text-sm whitespace-nowrap">
+            {start && end ? (
+              <>
+                <div>od: {formatDate(start, 'date')}</div>
+                <div>do: {formatDate(end, 'date')}</div>
+              </>
+            ) : (
+              <div>-</div>
+            )}
+            {row.original.cruiseDays !== null && (
+              <div className="mt-1 text-muted-foreground">
+                Liczba dni: {parseFloat(row.original.cruiseDays.toFixed(2))}
+              </div>
+            )}
+          </div>
+        );
       },
       enableColumnFilter: false,
       enableSorting: false,
-      size: 123,
+      size: 106,
     },
     {
       header: 'Data rejsu',
@@ -141,7 +142,7 @@ function ApplicationsPage() {
       },
       enableColumnFilter: false,
       enableSorting: false,
-      size: 110,
+      size: 106,
     },
     {
       id: 'cruiseManager',
@@ -161,7 +162,7 @@ function ApplicationsPage() {
         filterOptions: cruiseManagerFilterOptions,
         getFilterOptionLabel: (value) => managerLabels.get(value) ?? value,
       },
-      size: 155,
+      size: 120,
     },
     {
       header: 'Formularze',
@@ -184,7 +185,7 @@ function ApplicationsPage() {
           </div>
         );
       },
-      size: 105,
+      size: 102,
     },
     {
       header: 'Punkty',
@@ -192,7 +193,7 @@ function ApplicationsPage() {
       cell: ({ row }) => <Badge>{row.original.points} pkt.</Badge>,
       enableSorting: false,
       enableColumnFilter: false,
-      size: 80,
+      size: 72,
     },
     {
       id: 'status',
@@ -252,7 +253,9 @@ function ApplicationsPage() {
               </Guard>
               <div>
                 {row.original.effectsDoneRate === '0' ? (
-                  <Badge variant="info">Brak zapisanych efektów</Badge>
+                  <Badge variant="info" className="whitespace-normal!">
+                    Brak zapisanych efektów
+                  </Badge>
                 ) : (
                   <Badge variant="success">{row.original.effectsDoneRate} efektów</Badge>
                 )}
@@ -261,7 +264,7 @@ function ApplicationsPage() {
           )}
         </>
       ),
-      size: 136,
+      size: 112,
     },
     {
       header: 'Akcje',
@@ -273,7 +276,7 @@ function ApplicationsPage() {
           </Button>
         </>
       ),
-      size: 128,
+      size: 124,
     },
   ];
 

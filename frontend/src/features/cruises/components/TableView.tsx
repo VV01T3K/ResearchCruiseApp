@@ -33,7 +33,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       accessorFn: (row) => row.number,
       sortFn: (a, b) => compareCruiseNumber(a.original.number, b.original.number),
       cell: (cell) => <span className="font-bold">{cell.getValue() as string}</span>,
-      size: 102,
+      size: 100,
     },
     {
       header: 'Tytuł',
@@ -42,52 +42,51 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       cell: ({ row }) => (
         <TitleBadge title={row.original.title ?? undefined} shipUnavailable={row.original.shipUnavailable} />
       ),
-      size: 106,
+      size: 88,
     },
     {
       header: 'Data rozpoczęcia',
       accessorFn: (row) => row.startDate,
       cell: (cell) => formatDate(cell.getValue() as string, 'dateTime'),
       enableColumnFilter: false,
-      size: 141,
+      size: 140,
     },
     {
       header: 'Data zakończenia',
       accessorFn: (row) => row.endDate,
       cell: (cell) => formatDate(cell.getValue() as string, 'dateTime'),
       enableColumnFilter: false,
-      size: 142,
+      size: 140,
     },
     {
       header: 'Status',
       accessorFn: (row) => row.status,
       cell: ({ row }) => <StatusBadge status={row.original.status} />,
-      size: 109,
-    },
-    {
-      id: 'mainCruiseManagerAvatar',
-      header: () => <span className="sr-only">Zdjęcie</span>,
-      cell: ({ row }) =>
-        !isUnassignedPerson(row.original.mainManager) ? (
-          <Avatar
-            fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
-            variant="small"
-          />
-        ) : null,
-      size: 56,
+      size: 104,
     },
     {
       header: 'Kierownik główny',
       accessorFn: (row) => getPersonName(row.mainManager) || 'Nie przypisano',
-      size: 166,
+      cell: ({ row, getValue }) => (
+        <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+          {!isUnassignedPerson(row.original.mainManager) && (
+            <Avatar
+              fullName={`${row.original.mainManager.firstName} ${row.original.mainManager.lastName}`}
+              variant="small"
+            />
+          )}
+          <span className="text-center">{getValue() as string}</span>
+        </div>
+      ),
+      size: 128,
     },
     ...(isInRole(currentUser, [Role.Administrator, Role.ShipOwner, Role.CruiseManager, Role.ShipCrew])
       ? [
           {
             header: 'Zgłoszenia',
             cell: ({ row }) => <ApplicationsCell applications={row.original.applications} />,
-            // Narrow enough to fit 1280px; from 1400px the spare width keeps the application link on one line.
-            size: width >= 1400 ? 240 : 190,
+            // Narrow enough to fit 1100px; from 1400px the spare width keeps the application link on one line.
+            size: width >= 1400 ? 240 : 108,
           } satisfies ColumnDef<CruiseResponse>,
         ]
       : []),
@@ -126,7 +125,7 @@ function ApplicationsCell({ applications }: ApplicationsCellProps) {
       {applications.map((application) => (
         <div className="flex flex-col gap-2" key={application.id}>
           <Button type="link" href={`/applications/${application.id}/details`} variant="primaryOutline" size="sm">
-            <div className="flex w-full items-center justify-around gap-2">
+            <div className="flex w-full flex-wrap items-center justify-around gap-2">
               <div>Zgłoszenie nr.{application.number}</div> <Badge>{application.points} pkt.</Badge>
             </div>
           </Button>
