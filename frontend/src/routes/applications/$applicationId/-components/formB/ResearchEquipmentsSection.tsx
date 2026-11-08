@@ -134,7 +134,6 @@ export function ResearchEquipmentsSection({ context }: { context: FormBViewModel
                 Dodaj sprzęt / aparaturę
               </Button>,
             ]}
-            variant="form"
             disabled={isReadonly}
           />
         )}

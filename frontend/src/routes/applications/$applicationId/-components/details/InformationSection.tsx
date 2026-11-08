@@ -32,16 +32,26 @@ export function InformationSection() {
         <Input name="year" value={application.year?.toString() ?? 'Błędne dane'} label="Rok rejsu:" disabled />
         <div className="grid grid-cols-1 gap-1">
           <strong>Formularze:</strong>
-          <Link href={`/applications/${application.id}/formA`} disabled={!application.hasFormA}>
+          <Link
+            to="/applications/$applicationId/formA"
+            params={{ applicationId: application.id }}
+            disabled={!application.hasFormA}
+          >
             Formularz A
           </Link>
           <Link
             disabled={!application.hasFormB}
-            href={`/applications/${application.id}/formB?mode=${isFormBReadOnly ? 'view' : 'preview'}`}
+            to="/applications/$applicationId/formB"
+            params={{ applicationId: application.id }}
+            search={{ mode: isFormBReadOnly ? 'view' : 'preview' }}
           >
             Formularz B
           </Link>
-          <Link href={`/applications/${application.id}/formC`} disabled={!application.hasFormC}>
+          <Link
+            to="/applications/$applicationId/formC"
+            params={{ applicationId: application.id }}
+            disabled={!application.hasFormC}
+          >
             Formularz C
           </Link>
         </div>

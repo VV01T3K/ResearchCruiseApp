@@ -38,7 +38,7 @@ export function ApplicationsSection({
                   {row.original.cruiseId && row.original.cruiseId !== cruiseId && (
                     <div className="text-xs whitespace-nowrap text-muted-foreground">
                       obecnie w rejsie{' '}
-                      <Link href={`/cruises/${row.original.cruiseId}`} target="_blank">
+                      <Link to="/cruises/$cruiseId" params={{ cruiseId: row.original.cruiseId }} target="_blank">
                         {row.original.cruiseNumber}
                       </Link>
                     </div>
@@ -78,21 +78,24 @@ export function ApplicationsSection({
               cell: ({ row }) => (
                 <div className="grid grid-cols-1 gap-1">
                   <Link
-                    href={`/applications/${row.original.id}/formA`}
+                    to="/applications/$applicationId/formA"
+                    params={{ applicationId: row.original.id }}
                     disabled={!row.original.hasFormA}
                     target="_blank"
                   >
                     Formularz A
                   </Link>
                   <Link
-                    href={`/applications/${row.original.id}/formB`}
+                    to="/applications/$applicationId/formB"
+                    params={{ applicationId: row.original.id }}
                     disabled={!row.original.hasFormB}
                     target="_blank"
                   >
                     Formularz B
                   </Link>
                   <Link
-                    href={`/applications/${row.original.id}/formC`}
+                    to="/applications/$applicationId/formC"
+                    params={{ applicationId: row.original.id }}
                     disabled={!row.original.hasFormC}
                     target="_blank"
                   >

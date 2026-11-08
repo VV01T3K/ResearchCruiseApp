@@ -120,7 +120,7 @@ function RegisterPage() {
           </div>
 
           <p className="!mt-8">
-            Masz już konto? <Link href="/login">Zaloguj się</Link>
+            Masz już konto? <Link to="/login">Zaloguj się</Link>
           </p>
         </div>
       </form>

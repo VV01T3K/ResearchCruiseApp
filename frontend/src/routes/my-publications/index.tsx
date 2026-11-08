@@ -6,7 +6,7 @@ import { RowSelectionState } from '@tanstack/react-table';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { ArrowSquareOutIcon, TrashIcon } from '@phosphor-icons/react';
 import React from 'react';
-import { Button } from '@/components/shared/Button';
+import { Button, ButtonAnchor } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
 import { Modal } from '@/components/shared/Modal';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
@@ -155,16 +155,15 @@ function MyPublicationsPage() {
               isImporting={uploadPublicationsMutation.isPending}
               onUpload={(publications) => uploadPublicationsMutation.mutate({ data: publications })}
             />,
-            <Button
+            <ButtonAnchor
               key="goToRepository"
-              type="link"
               variant="primaryOutline"
               href="https://repozytorium.bg.ug.edu.pl/search.seam"
               target="_blank"
             >
               Przejdź do repozytorium BG
               <ArrowSquareOutIcon className="h-4 w-4" />
-            </Button>,
+            </ButtonAnchor>,
             <Button
               key="removeAllPublications"
               variant="dangerOutline"

@@ -92,7 +92,6 @@ export function ContractsSection({ context }: { context: FormBViewModel }) {
         buttons={() => []}
         columns={columns}
         emptyTableMessage="Nie dodano żadnej umowy."
-        variant="form"
         disabled={isReadonly}
       />
     </Accordion>

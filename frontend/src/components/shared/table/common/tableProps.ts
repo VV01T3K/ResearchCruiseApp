@@ -15,7 +15,6 @@ export type TableProps<T extends object> = {
   table: Table<T>;
   buttons?: (predefinedButtons: React.ReactNode[]) => React.ReactNode[];
   emptyTableMessage?: string;
-  variant?: 'form' | 'table';
   errors?: string[];
   showRequiredAsterisk?: boolean;
   infiniteScroll?: InfiniteScrollProps;

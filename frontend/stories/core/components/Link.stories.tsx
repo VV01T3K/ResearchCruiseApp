@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { Link } from '@/components/shared/Link';
+import { Anchor, Link } from '@/components/shared/Link';
 
 const meta = {
   component: Link,
   args: {
-    href: '/link',
+    to: '/',
   },
 } satisfies Meta<typeof Link>;
 
@@ -20,11 +20,11 @@ export const RouterLink: Story = {
 };
 
 export const ExternalLink: Story = {
-  args: {
-    children: 'External link',
-    href: 'https://google.com',
-    target: '_blank',
-  },
+  render: () => (
+    <Anchor href="https://google.com" target="_blank">
+      External link
+    </Anchor>
+  ),
 };
 
 export const Plain: Story = {

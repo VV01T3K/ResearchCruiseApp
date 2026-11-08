@@ -112,7 +112,6 @@ export function AdditionalPermissionsSection({ context }: { context: FormCViewMo
                 </Button>,
               ]}
               emptyTableMessage="Nie dodano żadnego pozwolenia."
-              variant="form"
               disabled={isReadonly}
               errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />

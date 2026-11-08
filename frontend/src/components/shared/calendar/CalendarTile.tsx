@@ -134,7 +134,7 @@ function CalendarEventTiles({
                 </div>
               ) : (
                 <Link
-                  href={event.link}
+                  to={event.link}
                   variant="plain"
                   className="group relative block focus-visible:outline-hidden"
                   tabIndex={start ? undefined : -1}

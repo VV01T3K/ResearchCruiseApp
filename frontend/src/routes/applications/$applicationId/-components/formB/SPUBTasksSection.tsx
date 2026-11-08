@@ -46,7 +46,6 @@ export function SPUBTasksSection({ context }: { context: FormBViewModel }) {
         columns={columns}
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego zadania."
-        variant="table"
         disabled={isReadonly}
       />
     </Accordion>
