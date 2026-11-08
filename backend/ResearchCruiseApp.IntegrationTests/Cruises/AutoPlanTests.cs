@@ -60,13 +60,18 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
     [Theory]
     [InlineData(5, 31, 22, 6, 29, 22)]
     [InlineData(6, 1, 0, 6, 2, 0)]
+    [InlineData(6, 1, 0, 6, 2, 0, "10:00", "13:00", "2030-06-01T08:00:00.000Z")]
+    [InlineData(6, 1, 0, 6, 2, 0, "10:00", "12:30", null)]
     public async Task AutoPlan_ReadsPrecisePeriodAsPolishDays(
         int startMonth,
         int startDay,
         int startHour,
         int endMonth,
         int endDay,
-        int endHour
+        int endHour,
+        string? startTime = null,
+        string? endTime = null,
+        string? expectedStart = "2030-06-01T06:00:00.000Z"
     )
     {
         var ct = TestContext.Current.CancellationToken;
@@ -84,7 +89,11 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
                 Precise(
                     Guid.Parse(manager.Id),
                     new DateTime(2030, startMonth, startDay, startHour, 0, 0),
-                    new DateTime(2030, endMonth, endDay, endHour, 0, 0)
+                    new DateTime(2030, endMonth, endDay, endHour, 0, 0),
+                    startTime is null
+                        ? null
+                        : TimeOnly.Parse(startTime, CultureInfo.InvariantCulture),
+                    endTime is null ? null : TimeOnly.Parse(endTime, CultureInfo.InvariantCulture)
                 )
             );
             await db.SaveChangesAsync(ct);
@@ -94,7 +103,7 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         await app.InDatabase(async db =>
-            Assert.Equal("2030-06-01T06:00:00.000Z", (await db.Cruises.SingleAsync(ct)).StartDate)
+            Assert.Equal(expectedStart, (await db.Cruises.SingleOrDefaultAsync(ct))?.StartDate)
         );
     }
 
@@ -254,14 +263,29 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
             CruiseApplications = [],
         };
 
-    private static CruiseApplication Precise(Guid managerId, DateTime start, DateTime end) =>
-        Application(managerId, CruiseApplicationStatus.Accepted, null, (start, end));
+    private static CruiseApplication Precise(
+        Guid managerId,
+        DateTime start,
+        DateTime end,
+        TimeOnly? startTime = null,
+        TimeOnly? endTime = null
+    ) =>
+        Application(
+            managerId,
+            CruiseApplicationStatus.Accepted,
+            null,
+            (start, end),
+            startTime,
+            endTime
+        );
 
     internal static CruiseApplication Application(
         Guid managerId,
         CruiseApplicationStatus status,
         string? optimalPeriodBeg,
-        (DateTime Start, DateTime End)? precisePeriod = null
+        (DateTime Start, DateTime End)? precisePeriod = null,
+        TimeOnly? startTime = null,
+        TimeOnly? endTime = null
     ) =>
         new()
         {
@@ -277,6 +301,8 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
                     : $"{int.Parse(optimalPeriodBeg, CultureInfo.InvariantCulture) + 1}",
                 PrecisePeriodStart = precisePeriod?.Start,
                 PrecisePeriodEnd = precisePeriod?.End,
+                PrecisePeriodStartTime = startTime,
+                PrecisePeriodEndTime = endTime,
                 CruiseHours = precisePeriod is null ? "24" : "27",
                 PeriodNotes = "",
                 DifferentUsage = "",

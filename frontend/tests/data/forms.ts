@@ -35,6 +35,8 @@ export function formA(): FormAFields {
     periodSelectionType: 'period',
     precisePeriodStart: null,
     precisePeriodEnd: null,
+    precisePeriodStartTime: null,
+    precisePeriodEndTime: null,
     cruiseHours: '27',
     periodNotes: '',
     shipUsage: '0',

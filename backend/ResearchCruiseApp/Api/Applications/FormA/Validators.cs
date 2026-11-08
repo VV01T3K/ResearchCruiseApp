@@ -103,14 +103,17 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
                     .Must(dto =>
                         dto.PrecisePeriodStart is not null
                         && dto.PrecisePeriodEnd is not null
-                        && _globalizationService.GetPolishDayStartUtc(dto.PrecisePeriodEnd.Value)
-                            >= _globalizationService.GetPolishDayStartUtc(
-                                dto.PrecisePeriodStart.Value
+                        && _globalizationService.GetPolishTimeUtc(
+                            dto.PrecisePeriodEnd.Value,
+                            dto.PrecisePeriodEndTime,
+                            1
+                        )
+                            > _globalizationService.GetPolishTimeUtc(
+                                dto.PrecisePeriodStart.Value,
+                                dto.PrecisePeriodStartTime
                             )
                     )
-                    .WithMessage(
-                        "Data zakończenia dokładnego terminu nie może być wcześniejsza niż data rozpoczęcia."
-                    );
+                    .WithMessage("Zakończenie rejsu musi być później niż jego rozpoczęcie.");
 
                 RuleFor(request => request.Form)
                     .Must(HasEnoughPrecisePeriodForCruise)
@@ -166,8 +169,15 @@ public sealed class FormAWriteRequestValidator : AbstractValidator<FormAWriteReq
             return false;
 
         var periodDays = (
-            _globalizationService.GetPolishDayStartUtc(dto.PrecisePeriodEnd.Value, 1)
-            - _globalizationService.GetPolishDayStartUtc(dto.PrecisePeriodStart.Value)
+            _globalizationService.GetPolishTimeUtc(
+                dto.PrecisePeriodEnd.Value,
+                dto.PrecisePeriodEndTime,
+                1
+            )
+            - _globalizationService.GetPolishTimeUtc(
+                dto.PrecisePeriodStart.Value,
+                dto.PrecisePeriodStartTime
+            )
         ).TotalDays;
         return periodDays >= cruiseDurationDays;
     }

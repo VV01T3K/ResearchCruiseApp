@@ -198,6 +198,16 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
   await page.getByText('17', { exact: true }).click();
   await page.getByRole('button', { name: 'Dokładny termin zakończenia rejsu' }).click();
   await page.getByText('19', { exact: true }).last().click();
+  for (const [name, hour] of [
+    ['Godzina rozpoczęcia rejsu', '08'],
+    ['Godzina zakończenia rejsu', '18'],
+  ]) {
+    await page.getByRole('button', { name }).click();
+    const picker = page.getByRole('dialog', { name: 'Wybierz godzinę' });
+    await picker.getByRole('button', { name: hour, exact: true }).click();
+    await picker.getByRole('button', { name: 'Zatwierdź' }).click();
+    await expect(picker).toBeHidden();
+  }
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
   await expect(page).toHaveURL('/');
   expect(requests.bodies(savedForm('form-a'))).toEqual([
@@ -206,6 +216,8 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
         periodSelectionType: 'precise',
         precisePeriodStart: '2026-05-17T00:00:00Z',
         precisePeriodEnd: '2026-05-19T00:00:00Z',
+        precisePeriodStartTime: '08:00',
+        precisePeriodEndTime: '18:00',
         acceptablePeriod: null,
         optimalPeriod: null,
       }),

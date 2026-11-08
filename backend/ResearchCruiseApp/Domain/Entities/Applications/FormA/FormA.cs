@@ -14,6 +14,8 @@ public class FormA : Entity
 
     public DateTime? PrecisePeriodStart { get; init; }
     public DateTime? PrecisePeriodEnd { get; init; }
+    public TimeOnly? PrecisePeriodStartTime { get; init; }
+    public TimeOnly? PrecisePeriodEndTime { get; init; }
     public string CruiseHours { get; init; } = null!;
     public string PeriodNotes { get; init; } = null!;
     public string? ShipUsage { get; init; }

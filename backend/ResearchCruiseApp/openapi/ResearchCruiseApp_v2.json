@@ -4183,6 +4183,34 @@
               "null",
               "string"
             ]
+          },
+          "precisePeriodStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "precisePeriodEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "precisePeriodStartTime": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "time"
+          },
+          "precisePeriodEndTime": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "time"
           }
         }
       },
@@ -4681,6 +4709,20 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "precisePeriodStartTime": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "time"
+          },
+          "precisePeriodEndTime": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "time"
           },
           "cruiseHours": {
             "maxLength": 8,

@@ -51,6 +51,8 @@ export const FormAFields = zod.object({
   "periodSelectionType": zod.string().min(formAFieldsPeriodSelectionTypeMin).max(formAFieldsPeriodSelectionTypeMax).nullish(),
   "precisePeriodStart": zod.iso.datetime({"offset":true}).nullish(),
   "precisePeriodEnd": zod.iso.datetime({"offset":true}).nullish(),
+  "precisePeriodStartTime": zod.iso.time({}).nullish(),
+  "precisePeriodEndTime": zod.iso.time({}).nullish(),
   "cruiseHours": zod.string().min(formAFieldsCruiseHoursMin).max(formAFieldsCruiseHoursMax).optional(),
   "periodNotes": zod.string().min(formAFieldsPeriodNotesMin).max(formAFieldsPeriodNotesMax).optional(),
   "shipUsage": zod.string().min(formAFieldsShipUsageMin).max(formAFieldsShipUsageMax).nullish(),

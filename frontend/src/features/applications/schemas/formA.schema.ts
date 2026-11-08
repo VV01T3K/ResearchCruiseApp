@@ -2,7 +2,7 @@ import { submissionSchema } from '@/integrations/tanstack/form/schema';
 import { literal, z } from 'zod';
 
 import { groupBy } from '@/lib/utils';
-import { parsePolishDayStart } from '@/lib/dateUtils';
+import { parsePolishDateTime, parsePolishDayStart } from '@/lib/dateUtils';
 import { getPeriodEdgeDatePoint, getPeriodEdgeDateString, MAX_PERIOD_EDGE_VALUE } from '@/lib/applications/periodUtils';
 import { ContractValuesInputSchema, ContractValuesSchema } from '@/features/applications/schemas/types/ContractValues';
 import { CruiseGoal, CruisePeriodValidationSchema } from '@/features/applications/schemas/types/FormAValues';
@@ -54,6 +54,8 @@ const FormAInputSchema = z.object({
   optimalPeriod: CruisePeriodValidationSchema,
   precisePeriodStart: z.string(),
   precisePeriodEnd: z.string(),
+  precisePeriodStartTime: z.string(),
+  precisePeriodEndTime: z.string(),
   cruiseDays: z.number(),
   cruiseHours: z.number(),
   periodNotes: z.string(),
@@ -85,6 +87,8 @@ export const formADefaultValues: FormAValues = {
   optimalPeriod: '',
   precisePeriodStart: '',
   precisePeriodEnd: '',
+  precisePeriodStartTime: '',
+  precisePeriodEndTime: '',
   periodSelectionType: 'period',
   cruiseDays: 0,
   cruiseHours: 0,
@@ -216,19 +220,13 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
   }
 
   function hasEnoughFreeSlotInPrecisePeriod(
-    precisePeriodStart: string,
-    precisePeriodEnd: string,
+    start: Date,
+    end: Date,
     cruiseHours: number
   ): { canFitCruise: boolean; overlappingBlockades: OverlappingBlockade[] } {
-    if (!precisePeriodStart || !precisePeriodEnd) return { canFitCruise: true, overlappingBlockades: [] };
-
     if (cruiseHours <= 0) return { canFitCruise: true, overlappingBlockades: [] };
 
-    const start = parsePolishDayStart(precisePeriodStart);
-    const end = parsePolishDayStart(precisePeriodEnd, 1);
-    const cruiseDurationDays = cruiseHours / 24;
-
-    return analyzeCruiseSlot(start, end, cruiseDurationDays);
+    return analyzeCruiseSlot(start, end, cruiseHours / 24);
   }
 
   function hasEnoughFreeSlotInPeriod(
@@ -272,6 +270,8 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
       optimalPeriod,
       precisePeriodStart,
       precisePeriodEnd,
+      precisePeriodStartTime,
+      precisePeriodEndTime,
       cruiseDays,
       cruiseHours,
     }: FormAValues,
@@ -308,8 +308,8 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
     }
     if (!precisePeriodStart || !precisePeriodEnd) return;
 
-    const start = parsePolishDayStart(precisePeriodStart);
-    const end = parsePolishDayStart(precisePeriodEnd, 1);
+    const start = parsePolishDateTime(precisePeriodStart, precisePeriodStartTime);
+    const end = parsePolishDateTime(precisePeriodEnd, precisePeriodEndTime, 1);
     const cruiseDurationDays = totalCruiseHours / 24;
 
     if ((end.getTime() - start.getTime()) / DAY_IN_MILLISECONDS < cruiseDurationDays) {
@@ -321,7 +321,7 @@ const BlockadeCollisionValidationSchema = (blockades?: BlockadePeriod[]) => {
       return;
     }
 
-    const slotAnalysis = hasEnoughFreeSlotInPrecisePeriod(precisePeriodStart, precisePeriodEnd, totalCruiseHours);
+    const slotAnalysis = hasEnoughFreeSlotInPrecisePeriod(start, end, totalCruiseHours);
 
     if (!slotAnalysis.canFitCruise) {
       ctx.addIssue({
@@ -370,6 +370,8 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
       optimalPeriod: CruisePeriodValidationSchema.or(literal('')),
       precisePeriodStart: z.string().or(literal('')),
       precisePeriodEnd: z.string().or(literal('')),
+      precisePeriodStartTime: z.string(),
+      precisePeriodEndTime: z.string(),
       cruiseDays: z.number().int().min(0).max(60),
       cruiseHours: z.number().int().min(0).max(23),
       periodNotes: z.string(),
@@ -485,12 +487,13 @@ export const getFormAValidationSchema = (initValues: FormAOptions, blockades?: B
         if (
           precisePeriodStart &&
           precisePeriodEnd &&
-          parsePolishDayStart(precisePeriodStart) > parsePolishDayStart(precisePeriodEnd)
+          parsePolishDateTime(precisePeriodStart, val.precisePeriodStartTime) >=
+            parsePolishDateTime(precisePeriodEnd, val.precisePeriodEndTime, 1)
         ) {
           ctx.addIssue({
             code: 'custom',
             path: ['precisePeriodEnd'],
-            message: 'Data zakończenia musi być późniejsza niż data rozpoczęcia',
+            message: 'Zakończenie rejsu musi być później niż jego rozpoczęcie',
           });
         }
       } else if (effectiveMode === 'period') {
@@ -591,6 +594,8 @@ function mapFormAFields(form: FormAValues, applicationId?: string) {
     periodSelectionType: form.periodSelectionType ?? null,
     precisePeriodStart: toApiDateTime(form.precisePeriodStart),
     precisePeriodEnd: toApiDateTime(form.precisePeriodEnd),
+    precisePeriodStartTime: form.precisePeriodStartTime || null,
+    precisePeriodEndTime: form.precisePeriodEndTime || null,
     cruiseHours: String(form.cruiseDays * 24 + form.cruiseHours),
     periodNotes: form.periodNotes,
     shipUsage: form.shipUsage || null,
@@ -673,6 +678,8 @@ export function mapFormAToValues(form: FormAFields): FormAValues {
           : 'period',
     precisePeriodStart: form.precisePeriodStart ?? '',
     precisePeriodEnd: form.precisePeriodEnd ?? '',
+    precisePeriodStartTime: form.precisePeriodStartTime?.slice(0, 5) ?? '',
+    precisePeriodEndTime: form.precisePeriodEndTime?.slice(0, 5) ?? '',
     cruiseDays: Number.isFinite(storedHours) ? Math.floor(storedHours / 24) : 0,
     cruiseHours: Number.isFinite(storedHours) ? storedHours % 24 : storedHours,
     periodNotes: form.periodNotes ?? '',

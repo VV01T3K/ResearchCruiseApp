@@ -58,13 +58,17 @@ export function PrintTemplate({ ref, context, values }: Props) {
           {values.precisePeriodStart && (
             <>
               <span>Dokładny termin rozpoczęcia rejsu: </span>
-              <span>{formatLocalDateStringFromUtcString(values.precisePeriodStart)}</span>
+              <span>
+                {formatLocalDateStringFromUtcString(values.precisePeriodStart)} {values.precisePeriodStartTime}
+              </span>
             </>
           )}
           {values.precisePeriodStart && (
             <>
               <span>Dokładny termin zakończenia rejsu: </span>
-              <span>{formatLocalDateStringFromUtcString(values.precisePeriodEnd)}</span>
+              <span>
+                {formatLocalDateStringFromUtcString(values.precisePeriodEnd)} {values.precisePeriodEndTime}
+              </span>
             </>
           )}
 

@@ -152,7 +152,7 @@ public sealed class UpgradeTests(SqlFixture fixture)
         }
     }
 
-    // Rows written before the migration that adds the RowVersion columns.
+    // Rows written before the migrations that add the RowVersion and Form A time columns.
     private sealed class V251DbContext(DbContextOptions<ApplicationDbContext> options)
         : ApplicationDbContext(options)
     {
@@ -161,6 +161,8 @@ public sealed class UpgradeTests(SqlFixture fixture)
             base.OnModelCreating(builder);
             builder.Entity<CruiseApplication>().Ignore(row => row.RowVersion);
             builder.Entity<Cruise>().Ignore(row => row.RowVersion);
+            builder.Entity<FormA>().Ignore(row => row.PrecisePeriodStartTime);
+            builder.Entity<FormA>().Ignore(row => row.PrecisePeriodEndTime);
         }
     }
 }

@@ -292,11 +292,14 @@ describe('application submission', () => {
       optimalPeriod: '',
       precisePeriodStart: '2026-06-01',
       precisePeriodEnd: '2026-06-03T00:00:00',
+      precisePeriodStartTime: '08:00',
     };
     const request = getFormAFieldsSchema(options).parse(precise);
     expect(request).toMatchObject({
       precisePeriodStart: '2026-06-01T00:00:00Z',
       precisePeriodEnd: '2026-06-03T00:00:00Z',
+      precisePeriodStartTime: '08:00',
+      precisePeriodEndTime: null,
       cruiseHours: '27',
     });
     expect(request).not.toHaveProperty('cruiseDays');
@@ -477,17 +480,28 @@ describe('ship availability', () => {
     ['2026-12-03', '2026-12-05', 72, '2026-12-05T23:00:00Z', '2026-12-06T23:00:00Z', true],
     ['2026-12-03', '2026-12-05', 73, '2026-12-05T23:00:00Z', '2026-12-06T23:00:00Z', false],
     ['2026-12-03', '2026-12-05', 49, '2026-12-04T23:00:00Z', '2026-12-05T23:00:00Z', false],
-  ])('compares the period %s to %s with blockades as real times', (start, end, hours, from, to, valid) => {
-    const blocked = getFormAValidationSchema(options, [{ title: 'Remont', startDate: from, endDate: to }]);
-    const result = blocked.safeParse({
-      ...precise(),
-      cruiseDays: Math.floor(hours / 24),
-      cruiseHours: hours % 24,
-      precisePeriodStart: start,
-      precisePeriodEnd: end,
-    });
-    expect(result.success).toBe(valid);
-  });
+    ['2026-12-03', '2026-12-05', 58, '2026-01-01T00:00:00Z', '2026-01-02T00:00:00Z', true, '08:00', '18:00'],
+    ['2026-12-03', '2026-12-05', 59, '2026-01-01T00:00:00Z', '2026-01-02T00:00:00Z', false, '08:00', '18:00'],
+    ['2026-12-03', '2026-12-05', 29, '2026-12-04T12:00:00Z', '2026-12-04T13:00:00Z', true, '08:00', '18:00'],
+    ['2026-12-03', '2026-12-05', 30, '2026-12-04T12:00:00Z', '2026-12-04T13:00:00Z', false, '08:00', '18:00'],
+    ['2026-10-25', '2026-10-25', 24, '2026-01-01T00:00:00Z', '2026-01-02T00:00:00Z', true, '00:00', '23:00'],
+    ['2026-12-03', '2026-12-03', 1, '2026-01-01T00:00:00Z', '2026-01-02T00:00:00Z', false, '18:00', '08:00'],
+  ])(
+    'compares the period %s to %s with blockades as real times',
+    (start, end, hours, from, to, valid, startTime = '', endTime = '') => {
+      const blocked = getFormAValidationSchema(options, [{ title: 'Remont', startDate: from, endDate: to }]);
+      const result = blocked.safeParse({
+        ...precise(),
+        cruiseDays: Math.floor(hours / 24),
+        cruiseHours: hours % 24,
+        precisePeriodStart: start,
+        precisePeriodEnd: end,
+        precisePeriodStartTime: startTime,
+        precisePeriodEndTime: endTime,
+      });
+      expect(result.success).toBe(valid);
+    }
+  );
 
   it('does not reject a slot that only touches the end of a blockade', () => {
     const blocked = getFormAValidationSchema(options, [

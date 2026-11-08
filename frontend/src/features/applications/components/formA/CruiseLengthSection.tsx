@@ -11,7 +11,7 @@ import { getErrors } from '@/integrations/tanstack/form/errors';
 import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
 import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
 import { getPeriodEdgeDateString, parsePeriodRangeInput } from '@/lib/applications/periodUtils';
-import { formatDate, parseCalendarDate, parsePolishDayStart, useNow } from '@/lib/dateUtils';
+import { formatDate, parseCalendarDate, parsePolishDateTime, useNow } from '@/lib/dateUtils';
 import { CruisePeriodType } from '@/features/applications/schemas/types/FormAValues';
 import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas';
 
@@ -32,14 +32,16 @@ function getOverlappingBlockadesForRange(
   blockades: BlockadePeriod[] | undefined,
   rangeStart: string,
   rangeEnd: string,
-  endDays = 0
+  endDays = 0,
+  startTime = '',
+  endTime = ''
 ): OverlappingBlockade[] {
   if (!blockades || blockades.length === 0 || !rangeStart || !rangeEnd) {
     return [];
   }
 
-  const start = parsePolishDayStart(rangeStart);
-  const end = parsePolishDayStart(rangeEnd, endDays);
+  const start = parsePolishDateTime(rangeStart, startTime);
+  const end = parsePolishDateTime(rangeEnd, endTime, endDays);
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
     return [];
   }
@@ -97,6 +99,8 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   const optimalPeriod = useSelector(form.store, (state) => state.values.optimalPeriod);
   const precisePeriodStart = useSelector(form.store, (state) => state.values.precisePeriodStart);
   const precisePeriodEnd = useSelector(form.store, (state) => state.values.precisePeriodEnd);
+  const precisePeriodStartTime = useSelector(form.store, (state) => state.values.precisePeriodStartTime);
+  const precisePeriodEndTime = useSelector(form.store, (state) => state.values.precisePeriodEndTime);
 
   const nowMs = useNow((now) => now.setSeconds(0, 0));
 
@@ -125,8 +129,16 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   const minPeriodValue = allowPastDates || isReadonly ? 0 : getCurrentFortnight(year, new Date(nowMs));
 
   const overlappingPreciseBlockades = useMemo(
-    () => getOverlappingBlockadesForRange(blockades, precisePeriodStart, precisePeriodEnd, 1),
-    [blockades, precisePeriodStart, precisePeriodEnd]
+    () =>
+      getOverlappingBlockadesForRange(
+        blockades,
+        precisePeriodStart,
+        precisePeriodEnd,
+        1,
+        precisePeriodStartTime,
+        precisePeriodEndTime
+      ),
+    [blockades, precisePeriodStart, precisePeriodEnd, precisePeriodStartTime, precisePeriodEndTime]
   );
   const overlappingAcceptablePeriodBlockades = useMemo(
     () => getOverlappingBlockadesForPeriod(blockades, year, acceptablePeriod),
@@ -142,7 +154,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
     acceptable: CruisePeriodType;
     optimal: CruisePeriodType;
   } | null>(null);
-  const savedPreciseValuesRef = useRef<{ start: string; end: string } | null>(null);
+  const savedPreciseValuesRef = useRef<{ start: string; end: string; startTime: string; endTime: string } | null>(null);
 
   useEffect(() => {
     if (periodSelectionType !== 'period' || isReadonly) return;
@@ -159,7 +171,12 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
     if (periodSelectionType === 'period' && isValidPeriod(acceptablePeriod) && isValidPeriod(optimalPeriod)) {
       savedPeriodValuesRef.current = { acceptable: acceptablePeriod, optimal: optimalPeriod };
     } else if (periodSelectionType === 'precise' && (precisePeriodStart || precisePeriodEnd)) {
-      savedPreciseValuesRef.current = { start: precisePeriodStart, end: precisePeriodEnd };
+      savedPreciseValuesRef.current = {
+        start: precisePeriodStart,
+        end: precisePeriodEnd,
+        startTime: precisePeriodStartTime,
+        endTime: precisePeriodEndTime,
+      };
     }
 
     if (value === 'period') {
@@ -168,12 +185,16 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
       form.setFieldValue('optimalPeriod', restored?.optimal ?? (['0', '24'] as CruisePeriodType));
       form.setFieldValue('precisePeriodStart', '');
       form.setFieldValue('precisePeriodEnd', '');
+      form.setFieldValue('precisePeriodStartTime', '');
+      form.setFieldValue('precisePeriodEndTime', '');
     } else {
       const restored = savedPreciseValuesRef.current;
       form.setFieldValue('acceptablePeriod', '');
       form.setFieldValue('optimalPeriod', '');
       form.setFieldValue('precisePeriodStart', restored?.start ?? '');
       form.setFieldValue('precisePeriodEnd', restored?.end ?? '');
+      form.setFieldValue('precisePeriodStartTime', restored?.startTime ?? '');
+      form.setFieldValue('precisePeriodEndTime', restored?.endTime ?? '');
     }
   }
 
@@ -244,6 +265,33 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                   </form.AppField>
                 )}
               </form.Subscribe>
+
+              {(!isReadonly || precisePeriodStartTime || precisePeriodEndTime) && (
+                <>
+                  <form.AppField name="precisePeriodStartTime">
+                    {(field) => (
+                      <field.TimeField
+                        label="Godzina rozpoczęcia rejsu (opcjonalnie)"
+                        placeholder={isReadonly ? 'Nie podano' : 'Wybierz godzinę'}
+                        minuteStep={30}
+                        clearable
+                        disabled={isReadonly}
+                      />
+                    )}
+                  </form.AppField>
+                  <form.AppField name="precisePeriodEndTime">
+                    {(field) => (
+                      <field.TimeField
+                        label="Godzina zakończenia rejsu (opcjonalnie)"
+                        placeholder={isReadonly ? 'Nie podano' : 'Wybierz godzinę'}
+                        minuteStep={30}
+                        clearable
+                        disabled={isReadonly}
+                      />
+                    )}
+                  </form.AppField>
+                </>
+              )}
             </>
           )}
 

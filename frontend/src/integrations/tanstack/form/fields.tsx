@@ -8,6 +8,7 @@ import { FileInput } from '@/components/shared/inputs/FileInput';
 import { Input } from '@/components/shared/inputs/Input';
 import { NumberInput } from '@/components/shared/inputs/NumberInput';
 import { DatePickerInput } from '@/components/shared/inputs/dates/DatePickerInput';
+import { formatTime, TimePickerInput } from '@/components/shared/inputs/dates/TimePickerInput';
 import { MonthPickerInput } from '@/components/shared/inputs/dates/MonthPickerInput';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import type { FileValue } from '@/components/shared/inputs/FileInput';
@@ -184,6 +185,23 @@ function DateField({ onChange, ...props }: DateProps) {
   );
 }
 
+type TimeProps = WithoutFieldProps<React.ComponentProps<typeof TimePickerInput>>;
+
+function TimeField(props: TimeProps) {
+  const field = useFieldContext<string>();
+  const [hours, minutes] = field.state.value.split(':').map(Number);
+  return (
+    <TimePickerInput
+      {...props}
+      name={field.name}
+      value={field.state.value ? { hours, minutes } : undefined}
+      onBlur={field.handleBlur}
+      onChange={(time) => field.handleChange(time ? formatTime(time) : '')}
+      errors={useErrors()}
+    />
+  );
+}
+
 type MonthProps = WithoutFieldProps<React.ComponentProps<typeof MonthPickerInput>>;
 
 function MonthField(props: MonthProps) {
@@ -266,6 +284,7 @@ export const fieldComponents = {
   CheckboxField,
   ArrayCheckboxField,
   DateField,
+  TimeField,
   YearField,
   MonthField,
   FileField,
