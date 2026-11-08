@@ -4,18 +4,24 @@ import { Role, getRoleLabel } from '@/integrations/auth/types';
 import { RowSelectionState } from '@tanstack/react-table';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import React from 'react';
-import { Avatar } from '@/components/shared/Avatar';
-import { Badge } from '@/components/shared/Badge';
 import { Button } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
 import { Modal } from '@/components/shared/Modal';
-import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { Table } from '@/components/shared/table/Table';
 import type { UserResponse } from '@/api/generated/schemas';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { GroupActionsSection } from './-components/GroupActionsSection';
-import { RoleBadge } from './-components/RoleBadge';
 import { EditForm } from './-components/EditForm';
+import {
+  AccountStatusCell,
+  ActionsHeader,
+  AvatarHeader,
+  EmailStatusCell,
+  SelectAllUsersHeader,
+  SelectUserCell,
+  UserAvatarCell,
+  UserRoleCell,
+} from './-components/UserTableCells';
 import { useGetUsersSuspense } from '@/api/generated/endpoints/users.gen';
 
 export const Route = createFileRoute('/user-management/')({
@@ -37,6 +43,57 @@ const allowedRoles: Record<Role, Role[]> = {
   [Role.ShipCrew]: [],
 };
 
+const userColumns: ColumnDef<UserResponse>[] = [
+  {
+    id: 'selector',
+    header: SelectAllUsersHeader,
+    cell: SelectUserCell,
+    enableSorting: false,
+    enableColumnFilter: false,
+    size: 40,
+  },
+  {
+    id: 'avatar',
+    header: AvatarHeader,
+    accessorFn: (row) => `${row.firstName} ${row.lastName}`,
+    cell: UserAvatarCell,
+    enableColumnFilter: false,
+    enableSorting: false,
+    size: 56,
+  },
+  {
+    accessorFn: (row) => `${row.firstName} ${row.lastName}`,
+    header: 'Imię i nazwisko',
+    size: 194,
+  },
+  {
+    accessorFn: (row) => row.email,
+    header: 'Email',
+    size: 184,
+  },
+  {
+    id: 'accountStatus',
+    accessorFn: (row) => (row.accepted ? 'Zaakceptowane' : 'Niezaakceptowane'),
+    header: 'Stan Konta',
+    cell: AccountStatusCell,
+    size: 134,
+  },
+  {
+    id: 'emailStatus',
+    accessorFn: (row) => (row.emailConfirmed ? 'Zweryfikowany' : 'Niezweryfikowany'),
+    header: 'Stan Emaila',
+    cell: EmailStatusCell,
+    size: 130,
+  },
+  {
+    id: 'role',
+    accessorFn: (row) => getRoleLabel(row.roles[0]),
+    header: 'Rola',
+    cell: UserRoleCell,
+    size: 106,
+  },
+];
+
 function UserManagementPage() {
   const currentUser = useCurrentUser();
   const [selectedUsers, setSelectedUsers] = React.useState<RowSelectionState>({});
@@ -52,84 +109,13 @@ function UserManagementPage() {
   }
 
   const columns: ColumnDef<UserResponse>[] = [
-    {
-      id: 'selector',
-      header: ({ table }) => (
-        <Checkbox
-          aria-label="Zaznacz wszystkich użytkowników"
-          name="selectAllUsers"
-          onChange={(x) => table.toggleAllRowsSelected(x)}
-          checked={table.getIsAllRowsSelected()}
-          size="lg"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          aria-label={`Zaznacz użytkownika ${row.original.firstName} ${row.original.lastName}`}
-          name={`selectUser-${row.id}`}
-          checked={row.getIsSelected()}
-          disabled={!row.getCanSelect()}
-          onChange={(checked) => row.toggleSelected(checked)}
-          className="inline-block"
-          size="md"
-        />
-      ),
-      enableSorting: false,
-      enableColumnFilter: false,
-      size: 40,
-    },
-    {
-      id: 'avatar',
-      header: () => <span className="sr-only">Zdjęcie</span>,
-      accessorFn: (row) => `${row.firstName} ${row.lastName}`,
-      cell: (cell) => <Avatar fullName={cell.getValue() as string} variant="small" />,
-      enableColumnFilter: false,
-      enableSorting: false,
-      size: 56,
-    },
-    {
-      accessorFn: (row) => `${row.firstName} ${row.lastName}`,
-      header: 'Imię i nazwisko',
-      size: 194,
-    },
-    {
-      accessorFn: (row) => row.email,
-      header: 'Email',
-      size: 184,
-    },
-    {
-      id: 'accountStatus',
-      accessorFn: (row) => (row.accepted ? 'Zaakceptowane' : 'Niezaakceptowane'),
-      header: 'Stan Konta',
-      cell: (cell) => {
-        const value = cell.getValue() as 'Zaakceptowane' | 'Niezaakceptowane';
-        return <Badge variant={value === 'Zaakceptowane' ? 'success' : 'danger'}>{value}</Badge>;
-      },
-      size: 134,
-    },
-    {
-      id: 'emailStatus',
-      accessorFn: (row) => (row.emailConfirmed ? 'Zweryfikowany' : 'Niezweryfikowany'),
-      header: 'Stan Emaila',
-      cell: (cell) => {
-        const value = cell.getValue() as 'Zweryfikowany' | 'Niezweryfikowany';
-        return <Badge variant={value === 'Zweryfikowany' ? 'success' : 'danger'}>{value}</Badge>;
-      },
-      size: 130,
-    },
-    {
-      id: 'role',
-      accessorFn: (row) => getRoleLabel(row.roles[0]),
-      header: 'Rola',
-      cell: ({ row }) => <RoleBadge role={row.original.roles[0]} />,
-      size: 106,
-    },
+    ...userColumns,
     {
       id: 'actions',
-      header: () => <span className="sr-only">Akcje</span>,
-      cell: (cell) => (
+      header: ActionsHeader,
+      cell: ({ row }) => (
         <div className="flex items-center justify-around">
-          <Button variant="primary" onClick={() => setModalState({ state: 'editUserModal', user: cell.row.original })}>
+          <Button variant="primary" onClick={() => setModalState({ state: 'editUserModal', user: row.original })}>
             Edytuj
           </Button>
         </div>
