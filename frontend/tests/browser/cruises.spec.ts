@@ -646,7 +646,7 @@ test('the export downloads the CSV file of the chosen year', async ({ page, netw
   expect(requests.queries('GET /v2/cruises/export')).toEqual([{ year: '2025' }]);
 });
 
-test('calendar edit mode lets a confirmed cruise be dragged, but not an ended one, and opens neither', async ({
+test('calendar edit mode lets a confirmed cruise be dragged, but not an ended one, and opens them only on double click', async ({
   page,
   network,
   requests,
@@ -695,6 +695,12 @@ test('calendar edit mode lets a confirmed cruise be dragged, but not an ended on
 
   await page.getByRole('button', { name: 'Wyłącz tryb edycji kalendarza' }).click();
   await expect(page.getByRole('link', { name: 'Rejs Zakończony' })).toHaveAttribute('href', `/cruises/${ended.id}`);
+
+  await page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' }).click();
+  await locked.click({ force: true });
+  await expect(page.getByRole('button', { name: 'Wyłącz tryb edycji kalendarza' })).toBeVisible();
+  await locked.dblclick({ force: true });
+  await expect(page).toHaveURL(`/cruises/${ended.id}`);
 });
 
 test.describe(() => {

@@ -1,6 +1,7 @@
 import { Tooltip } from '@base-ui/react/tooltip';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { DotsSixVerticalIcon, LockIcon } from '@phosphor-icons/react';
+import { useNavigate } from '@tanstack/react-router';
 import React, { Fragment } from 'react';
 
 import { Link } from '@/components/shared/Link';
@@ -33,6 +34,7 @@ function CalendarEventTiles({
   enableDragAndDrop,
   activeDragEventId,
 }: CalendarEventTilesProps) {
+  const navigate = useNavigate();
   const todaysEvents = getEventsForDate(date, eventsWithRows);
   const rowCount = Math.max(0, ...todaysEvents.map((event) => event.row + 1));
 
@@ -82,7 +84,12 @@ function CalendarEventTiles({
       );
 
       const innerComponent = (
-        <div data-calendar-event-block style={{ '--color': event.color } as React.CSSProperties} className={className}>
+        <div
+          data-calendar-event-block
+          style={{ '--color': event.color } as React.CSSProperties}
+          className={className}
+          onDoubleClick={enableDragAndDrop && event.link ? () => void navigate({ href: event.link }) : undefined}
+        >
           {textComponent}
         </div>
       );
