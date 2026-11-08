@@ -5,7 +5,7 @@ export type CalendarEvent = {
   end: Date;
   link?: string;
   color?: string;
-  draggable?: boolean;
+  dragLockedReason?: string;
 };
 
 export type CalendarEventWithRow = CalendarEvent & { row: number };

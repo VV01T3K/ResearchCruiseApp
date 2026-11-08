@@ -75,9 +75,9 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
     }
 
     const dayTiles = calendarElement.querySelectorAll<HTMLElement>('[data-calendar-day-tile]');
-    const calendarWidth = calendarElement.getBoundingClientRect().width;
-    if (Number.isFinite(calendarWidth) && calendarWidth > 0) {
-      setTileWidth(calendarWidth / 7);
+    const dayPitch = dayTiles.length > 1 ? dayTiles[1].offsetLeft - dayTiles[0].offsetLeft : 0;
+    if (dayPitch > 0) {
+      setTileWidth(dayPitch);
     }
 
     const eventBlock = calendarElement.querySelector<HTMLElement>('[data-calendar-event-block]');
@@ -104,14 +104,10 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
   }, []);
 
   React.useEffect(() => {
-    const viewport = window.visualViewport;
-    if (!viewport) return;
-    updateTileWidth();
-    const handleViewportResize = () => updateTileWidth();
-    viewport.addEventListener('resize', handleViewportResize);
-    return () => {
-      viewport.removeEventListener('resize', handleViewportResize);
-    };
+    if (!calendarRef.current) return;
+    const observer = new ResizeObserver(updateTileWidth);
+    observer.observe(calendarRef.current);
+    return () => observer.disconnect();
   }, [updateTileWidth]);
 
   const sensors = useSensors(

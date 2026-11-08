@@ -17,8 +17,21 @@ export type Props = {
   title?: string;
   rel?: string;
   disabled?: boolean;
+  tabIndex?: number;
+  'aria-hidden'?: boolean;
 };
-export function Link({ children, href, className, title, rel, variant, target = '_self', disabled = false }: Props) {
+export function Link({
+  children,
+  href,
+  className,
+  title,
+  rel,
+  variant,
+  target = '_self',
+  disabled = false,
+  tabIndex,
+  'aria-hidden': ariaHidden,
+}: Props) {
   variant = variant ?? (disabled ? 'disabled' : 'default');
   const isInternalLink = (href as string).startsWith('/') || (href as string).startsWith('.');
 
@@ -31,6 +44,8 @@ export function Link({ children, href, className, title, rel, variant, target = 
         title={title}
         rel={rel}
         disabled={disabled}
+        tabIndex={tabIndex}
+        aria-hidden={ariaHidden}
       >
         {children}
       </RouterLink>
@@ -45,6 +60,8 @@ export function Link({ children, href, className, title, rel, variant, target = 
       title={title}
       rel={rel}
       aria-disabled={disabled}
+      tabIndex={tabIndex}
+      aria-hidden={ariaHidden}
     >
       {children}
     </a>
