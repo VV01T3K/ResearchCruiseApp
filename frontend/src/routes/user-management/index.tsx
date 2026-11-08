@@ -154,7 +154,7 @@ function UserManagementPage() {
             </Button>,
             <Button
               key="groupActions"
-              variant="warning"
+              variant="primaryOutline"
               disabled={!Object.keys(selectedUsers).length}
               onClick={() => setModalState({ state: 'groupActionsModal' })}
             >
@@ -193,6 +193,7 @@ function UserManagementPage() {
         isOpen={modalState.state === 'editUserModal' && 'user' in modalState}
         onClose={() => void handleModalClose()}
         title="Edytuj użytkownika"
+        className="max-w-2xl"
       >
         <EditForm
           user={(modalState as { state: 'editUserModal'; user: UserResponse }).user}

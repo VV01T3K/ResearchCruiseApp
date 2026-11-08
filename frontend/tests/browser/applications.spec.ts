@@ -132,7 +132,7 @@ test.describe('application table', () => {
       const rows = page.getByRole('row');
       await expect(first).toBeVisible();
       await expect(page.getByRole('cell').filter({ hasText: note }).first()).toBeVisible();
-      await expect(page.getByRole('table')).toHaveAttribute('aria-rowcount', String(500 + (width >= 768 ? 1 : 0)));
+      await expect(page.getByRole('table')).toHaveAttribute('aria-rowcount', '501');
       expect(await rows.count()).toBeLessThan(35);
 
       await expect(async () => {

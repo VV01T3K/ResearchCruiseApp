@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @import './theme.css';
 
+@custom-variant phone (@media (pointer: coarse) and (max-width: 767px));
+
 @layer base {
   html,
   body,
@@ -9,7 +11,7 @@
   }
 
   #root {
-    @apply relative flex flex-col;
+    @apply relative flex min-w-[1024px] flex-col phone:min-w-0;
   }
 
   :root {

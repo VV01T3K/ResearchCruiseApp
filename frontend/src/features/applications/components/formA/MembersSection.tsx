@@ -199,7 +199,6 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                   </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zespołu."
-                variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />
@@ -246,7 +245,6 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                   </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zespołu."
-                variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />

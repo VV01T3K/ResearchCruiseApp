@@ -273,7 +273,6 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                     Dodaj historyczną publikację
                   </DropdownElementSelectorButton>,
                 ]}
-                variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />

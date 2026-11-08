@@ -349,66 +349,53 @@ test('select-all under a search changes only the found options', async ({ page, 
   await expect(page.getByRole('option', { name: 'beta@example.com' })).toHaveAttribute('aria-selected', 'false');
 });
 
-for (const mobile of [false, true]) {
-  test(`table sorting, filtering and selection work on ${mobile ? 'mobile' : 'desktop'}`, async ({ page, network }) => {
-    if (mobile) await page.setViewportSize({ width: 390, height: 844 });
-    network.use(
-      getGetUsersMockHandler([
-        cruiseManager({ id: admin.id, email: 'zebra@example.com' }),
-        cruiseManager({ email: 'alpha@example.com' }),
-      ])
-    );
-    await page.goto('/user-management');
-    const rows = page.locator('tbody tr');
-    const actions = page.getByRole('button', { name: 'Akcje Grupowe' });
-    await expect(actions).toBeDisabled();
-    // The selection checkbox is the row's last editable checkbox.
-    const selection = rows.first().getByRole('checkbox', { disabled: false }).last();
-    await selection.check();
-    await expect(actions).toBeEnabled();
-    await selection.uncheck();
-    await expect(actions).toBeDisabled();
+test('table sorting, filtering and selection work', async ({ page, network }) => {
+  network.use(
+    getGetUsersMockHandler([
+      cruiseManager({ id: admin.id, email: 'zebra@example.com' }),
+      cruiseManager({ email: 'alpha@example.com' }),
+    ])
+  );
+  await page.goto('/user-management');
+  const rows = page.locator('tbody tr');
+  const actions = page.getByRole('button', { name: 'Akcje Grupowe' });
+  await expect(actions).toBeDisabled();
+  // The selection checkbox is the row's last editable checkbox.
+  const selection = rows.first().getByRole('checkbox', { disabled: false }).last();
+  await selection.check();
+  await expect(actions).toBeEnabled();
+  await selection.uncheck();
+  await expect(actions).toBeDisabled();
 
-    if (mobile) {
-      await page.getByRole('button', { name: 'Filtrowanie i sortowanie' }).click();
-      const email = page.getByRole('dialog').getByText('Email', { exact: true }).locator('..');
-      await email.getByText('Rosnąco', { exact: true }).click();
-      await expect(rows.first()).toContainText('alpha@example.com');
-      await expect(email.getByText('Rosnąco', { exact: true })).toHaveClass(/font-bold/);
-      await email.getByText('Pokaż filtry', { exact: true }).click();
-      await email.getByText('zebra@example.com', { exact: true }).click();
-    } else {
-      const emailColumn = page.getByRole('columnheader', { name: /^Email/ });
-      await expect(emailColumn).toHaveAttribute('aria-sort', 'none');
-      const emailMenu = page.getByRole('button', { name: 'Sortuj i filtruj: Email' });
-      await emailMenu.click();
-      await page.getByRole('button', { name: 'Sortuj rosnąco' }).click();
-      await expect(rows.first()).toContainText('alpha@example.com');
-      await expect(emailColumn).toHaveAttribute('aria-sort', 'ascending');
-      await expect(emailMenu).toBeFocused();
-      await emailMenu.click();
-      await expect(page.getByRole('button', { name: 'Sortuj rosnąco' })).toHaveAttribute('aria-pressed', 'true');
-      // A second option adds to the first; a stale list would replace it.
-      await page.getByRole('option', { name: 'zebra@example.com', exact: true }).click();
-      await expect(page.getByRole('option', { name: 'zebra@example.com' })).toHaveAttribute('aria-selected', 'true');
-      await page.getByRole('option', { name: 'alpha@example.com', exact: true }).click();
-      await expect(rows).toHaveCount(2);
-      await page.getByRole('option', { name: 'alpha@example.com', exact: true }).click();
-      await page.keyboard.press('Escape');
-      // Sorting another column replaces the current sort.
-      const roleMenu = page.getByRole('dialog', { name: 'Sortuj i filtruj: Rola' });
-      await page.getByRole('button', { name: /^Sortuj i filtruj: Rola/ }).click();
-      await roleMenu.getByRole('button', { name: 'Sortuj malejąco' }).click();
-      const roleColumn = page.getByRole('columnheader', { name: /^Rola/ });
-      await expect(roleColumn).toHaveAttribute('aria-sort', 'descending');
-      await expect(emailColumn).toHaveAttribute('aria-sort', 'none');
-      await page.getByRole('button', { name: /^Sortuj i filtruj: Rola/ }).click();
-      await roleMenu.getByRole('button', { name: 'Wyłącz sortowanie' }).click();
-      await expect(roleColumn).toHaveAttribute('aria-sort', 'none');
-    }
-    await expect(rows).toHaveCount(1);
-    await expect(rows).toContainText('zebra@example.com');
-    await page.getByRole('button', { name: 'Wyczyść filtry', exact: true }).click();
-    await expect(rows).toHaveCount(2);
-  });
-}
+  const emailColumn = page.getByRole('columnheader', { name: /^Email/ });
+  await expect(emailColumn).toHaveAttribute('aria-sort', 'none');
+  const emailMenu = page.getByRole('button', { name: 'Sortuj i filtruj: Email' });
+  await emailMenu.click();
+  await page.getByRole('button', { name: 'Sortuj rosnąco' }).click();
+  await expect(rows.first()).toContainText('alpha@example.com');
+  await expect(emailColumn).toHaveAttribute('aria-sort', 'ascending');
+  await expect(emailMenu).toBeFocused();
+  await emailMenu.click();
+  await expect(page.getByRole('button', { name: 'Sortuj rosnąco' })).toHaveAttribute('aria-pressed', 'true');
+  // A second option adds to the first; a stale list would replace it.
+  await page.getByRole('option', { name: 'zebra@example.com', exact: true }).click();
+  await expect(page.getByRole('option', { name: 'zebra@example.com' })).toHaveAttribute('aria-selected', 'true');
+  await page.getByRole('option', { name: 'alpha@example.com', exact: true }).click();
+  await expect(rows).toHaveCount(2);
+  await page.getByRole('option', { name: 'alpha@example.com', exact: true }).click();
+  await page.keyboard.press('Escape');
+  // Sorting another column replaces the current sort.
+  const roleMenu = page.getByRole('dialog', { name: 'Sortuj i filtruj: Rola' });
+  await page.getByRole('button', { name: /^Sortuj i filtruj: Rola/ }).click();
+  await roleMenu.getByRole('button', { name: 'Sortuj malejąco' }).click();
+  const roleColumn = page.getByRole('columnheader', { name: /^Rola/ });
+  await expect(roleColumn).toHaveAttribute('aria-sort', 'descending');
+  await expect(emailColumn).toHaveAttribute('aria-sort', 'none');
+  await page.getByRole('button', { name: /^Sortuj i filtruj: Rola/ }).click();
+  await roleMenu.getByRole('button', { name: 'Wyłącz sortowanie' }).click();
+  await expect(roleColumn).toHaveAttribute('aria-sort', 'none');
+  await expect(rows).toHaveCount(1);
+  await expect(rows).toContainText('zebra@example.com');
+  await page.getByRole('button', { name: 'Wyczyść filtry', exact: true }).click();
+  await expect(rows).toHaveCount(2);
+});

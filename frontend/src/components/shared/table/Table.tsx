@@ -3,8 +3,6 @@ import { appTableFeatures, ColumnDef, Row } from '@/integrations/tanstack/table/
 
 import { DesktopTable } from '@/components/shared/table/desktop/DesktopTable';
 import { InfiniteScrollProps } from '@/components/shared/table/common/TableInfiniteScrollTrigger';
-import { MobileTable } from '@/components/shared/table/mobile/MobileTable';
-import { useWindowSize } from '@/hooks/shared/WindowSizeHook';
 
 type Props<T extends object> = {
   data: T[];
@@ -23,7 +21,6 @@ type Props<T extends object> = {
   manualSorting?: boolean;
   manualFiltering?: boolean;
   getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string;
-  variant?: 'form' | 'table';
   disabled?: boolean;
   errors?: string[];
   infiniteScroll?: InfiniteScrollProps;
@@ -48,14 +45,12 @@ export function Table<T extends object>({
   manualSorting = false,
   manualFiltering = false,
   getRowId,
-  variant = 'table',
   disabled = false,
   errors,
   infiniteScroll,
   virtualized = false,
   className,
 }: Props<T>) {
-  const { width } = useWindowSize();
   const table = useTable({
     features: appTableFeatures,
     columns,
@@ -84,16 +79,12 @@ export function Table<T extends object>({
     getRowId: getRowId,
   });
 
-  const isMobile = width < 768;
-  const TableComponent = isMobile ? MobileTable : DesktopTable;
-
   return (
-    <TableComponent
+    <DesktopTable
       table={table}
       buttons={!disabled ? buttons : () => []}
       emptyTableMessage={emptyTableMessage}
       showRequiredAsterisk={showRequiredAsterisk}
-      variant={variant}
       errors={errors}
       infiniteScroll={infiniteScroll}
       virtualized={virtualized}

@@ -10,6 +10,8 @@ import {
   UsersIcon,
 } from '@phosphor-icons/react';
 
+import { cn } from '@/lib/utils';
+
 import { GridCard } from './GridCard';
 
 export function NewCruiseApplicationCard({ className }: { className?: string }) {
@@ -20,7 +22,7 @@ export function NewCruiseApplicationCard({ className }: { className?: string }) 
       description="Zgłoś nowy rejs"
       to="/applications/new"
       Icon={PlusCircleIcon}
-      className={className}
+      className={cn(className, 'phone:col-span-2')}
     />
   );
 }

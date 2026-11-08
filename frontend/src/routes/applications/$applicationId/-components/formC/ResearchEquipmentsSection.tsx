@@ -149,7 +149,6 @@ export function ResearchEquipmentsSection({ context }: { context: FormCViewModel
                 Dodaj sprzęt / aparaturę
               </Button>,
             ]}
-            variant="form"
             disabled={isReadonly}
           />
         )}

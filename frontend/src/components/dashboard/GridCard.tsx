@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { Link } from '@/components/shared/Link';
-import { useWindowSize } from '@/hooks/shared/WindowSizeHook';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -16,38 +15,17 @@ type Props = {
   to: LinkProps['to'];
 };
 export function GridCard({ name, className, Icon, iconWeight, description, to }: Props) {
-  const { width } = useWindowSize();
   const [isHovered, setIsHovered] = React.useState(false);
-  const isMobile = React.useMemo(() => width < 768, [width]);
-
-  if (isMobile) {
-    return (
-      <div key={name} className={className}>
-        <Link to={to} variant="plain">
-          <motion.div
-            onHoverStart={() => setIsHovered(true)}
-            onHoverEnd={() => setIsHovered(false)}
-            className="relative flex h-full w-full flex-col items-center justify-around overflow-hidden rounded-xl bg-surface p-4 text-primary shadow-card"
-          >
-            <Icon weight={iconWeight} className="h-1/2" />
-            <h3 className="font-semibold text-primary md:text-lg xl:text-xl">{name}</h3>
-            <div className={cn('absolute inset-0', isHovered ? 'bg-neutral-950/[.03]' : 'bg-transparent')} />
-          </motion.div>
-        </Link>
-      </div>
-    );
-  }
-
   return (
-    <div key={name} className={className}>
+    <div key={name} className={cn('phone:col-span-1 phone:row-span-1', className)}>
       <Link to={to} variant="plain">
         <motion.div
-          className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 text-primary shadow-card"
+          className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 text-primary shadow-card phone:p-3"
           onHoverStart={() => setIsHovered(true)}
           onHoverEnd={() => setIsHovered(false)}
         >
           <motion.div
-            className="flex flex-col"
+            className="flex flex-col phone:h-full!"
             layout
             style={{
               height: 'calc(100% - 24px)',
@@ -56,6 +34,7 @@ export function GridCard({ name, className, Icon, iconWeight, description, to }:
             }}
           >
             <motion.div
+              className="phone:size-11!"
               layout
               style={{
                 width: isHovered ? 24 : 64,
