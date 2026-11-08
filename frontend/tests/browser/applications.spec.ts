@@ -360,7 +360,7 @@ test.describe('application review', () => {
     test('the cruise manager sees the application but cannot decide on it', async ({ page, network }) => {
       network.use(getGetApplicationEvaluationMockHandler(evaluation()), getGetApplicationMockHandler(application()));
       await page.goto(`/applications/${applicationId}/details`);
-      await expect(page.getByLabel('Numer zgłoszenia:')).toHaveValue('2026/17');
+      await expect(page.getByRole('definition').filter({ hasText: '2026/17' })).toBeVisible();
       await expect(page.getByRole('button', { name: /zgłoszenie$/ })).toHaveCount(0);
     });
   });

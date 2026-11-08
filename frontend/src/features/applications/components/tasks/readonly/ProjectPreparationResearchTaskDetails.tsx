@@ -1,8 +1,7 @@
-import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
-import { Input } from '@/components/shared/inputs/Input';
-import { DatePickerInput } from '@/components/shared/inputs/dates/DatePickerInput';
+import { ReadonlyField } from '@/features/applications/components/ReadonlyField';
 import { useUnreadableErrors } from '@/integrations/tanstack/form/unreadableValues';
 import type { ProjectPreparationResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
+import { formatDate } from '@/lib/dateUtils';
 
 type Props = {
   data: ProjectPreparationResearchTaskValues;
@@ -10,36 +9,14 @@ type Props = {
 export function ProjectPreparationResearchTaskDetails({ data }: Props) {
   const approvedErrors = useUnreadableErrors('researchTasks[].financingApproved', data.financingApproved, true);
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <Input
-        aria-label={`Roboczy tytuł projektu, ${data.title}`}
-        name="researchTasks[].title"
-        value={data.title}
-        label="Roboczy tytuł projektu"
-        placeholder="Wprowadź tytuł"
-        containerClassName="lg:col-span-2"
-        disabled={true}
-      />
-
-      <DatePickerInput
-        name="researchTasks[].date"
-        value={data.date}
-        label="Przewidywany termin składania"
-        disabled={true}
-      />
-
-      <DropdownInput
-        name="researchTasks[].financingApproved"
-        aria-label={`Otrzymano decyzję o finansowaniu? ${data.title}`}
-        value={String(data.financingApproved)}
-        errors={approvedErrors}
-        allOptions={[
-          { value: 'true', inlineLabel: 'Tak' },
-          { value: 'false', inlineLabel: 'Nie' },
-        ]}
-        label="Otrzymano decyzję o finansowaniu?"
-        disabled={true}
-      />
-    </div>
+    <dl className="grid grid-cols-1 gap-4 text-left lg:grid-cols-2">
+      <ReadonlyField label="Roboczy tytuł projektu" className="lg:col-span-2">
+        {data.title}
+      </ReadonlyField>
+      <ReadonlyField label="Przewidywany termin składania">{data.date && formatDate(data.date, 'date')}</ReadonlyField>
+      <ReadonlyField label="Otrzymano decyzję o finansowaniu?" errors={approvedErrors}>
+        {data.financingApproved === true ? 'Tak' : data.financingApproved === false ? 'Nie' : null}
+      </ReadonlyField>
+    </dl>
   );
 }

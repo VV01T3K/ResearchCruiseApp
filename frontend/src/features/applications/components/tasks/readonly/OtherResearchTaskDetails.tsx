@@ -1,4 +1,4 @@
-import { Input } from '@/components/shared/inputs/Input';
+import { ReadonlyField } from '@/features/applications/components/ReadonlyField';
 import type { OtherResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
@@ -6,15 +6,8 @@ type Props = {
 };
 export function OtherResearchTaskDetails({ data }: Props) {
   return (
-    <div>
-      <Input
-        aria-label={`Opis zadania, ${data.description}`}
-        name="researchTasks[].description"
-        value={data.description}
-        label="Opis zadania"
-        placeholder="Wprowadź opis zadania"
-        disabled={true}
-      />
-    </div>
+    <dl className="text-left">
+      <ReadonlyField label="Opis zadania">{data.description}</ReadonlyField>
+    </dl>
   );
 }

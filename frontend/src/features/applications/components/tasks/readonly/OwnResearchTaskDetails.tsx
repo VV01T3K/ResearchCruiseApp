@@ -1,8 +1,7 @@
-import { Input } from '@/components/shared/inputs/Input';
-import { NumberInput } from '@/components/shared/inputs/NumberInput';
-import { DatePickerInput } from '@/components/shared/inputs/dates/DatePickerInput';
+import { ReadonlyField } from '@/features/applications/components/ReadonlyField';
 import { useUnreadableErrors } from '@/integrations/tanstack/form/unreadableValues';
 import type { OwnResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
+import { formatDate } from '@/lib/dateUtils';
 
 type Props = {
   data: OwnResearchTaskValues;
@@ -10,43 +9,13 @@ type Props = {
 export function OwnResearchTaskDetails({ data }: Props) {
   const pointsErrors = useUnreadableErrors('researchTasks[].ministerialPoints', data.ministerialPoints, true);
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <Input
-        aria-label={`Roboczy tytuł projektu, ${data.title}`}
-        name="researchTasks[].title"
-        value={data.title}
-        label="Roboczy tytuł projektu"
-        placeholder="Wprowadź tytuł"
-        disabled={true}
-      />
-
-      <DatePickerInput
-        name="researchTasks[].date"
-        value={data.date}
-        label="Przewidywany termin składania"
-        disabled={true}
-      />
-
-      <Input
-        aria-label={`Czasopismo, ${data.title}`}
-        name="researchTasks[].magazine"
-        value={data.magazine}
-        label="Czasopismo"
-        placeholder="Wprowadź czasopismo"
-        disabled={true}
-      />
-
-      <NumberInput
-        nullable
-        name="researchTasks[].ministerialPoints"
-        aria-label={`Przewidywane punkty ministerialne, ${data.title}`}
-        value={data.ministerialPoints}
-        errors={pointsErrors}
-        minimum={0}
-        step={10}
-        label="Przewidywane punkty ministerialne"
-        disabled={true}
-      />
-    </div>
+    <dl className="grid grid-cols-1 gap-4 text-left lg:grid-cols-2">
+      <ReadonlyField label="Roboczy tytuł projektu">{data.title}</ReadonlyField>
+      <ReadonlyField label="Przewidywany termin składania">{data.date && formatDate(data.date, 'date')}</ReadonlyField>
+      <ReadonlyField label="Czasopismo">{data.magazine}</ReadonlyField>
+      <ReadonlyField label="Przewidywane punkty ministerialne" errors={pointsErrors}>
+        {data.ministerialPoints}
+      </ReadonlyField>
+    </dl>
   );
 }

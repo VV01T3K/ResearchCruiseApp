@@ -1,8 +1,7 @@
-import { Input } from '@/components/shared/inputs/Input';
-import { NumberInput } from '@/components/shared/inputs/NumberInput';
-import { MonthPickerInput } from '@/components/shared/inputs/dates/MonthPickerInput';
+import { ReadonlyField } from '@/features/applications/components/ReadonlyField';
 import { useUnreadableErrors } from '@/integrations/tanstack/form/unreadableValues';
 import type { ProjectResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
+import { formatDate } from '@/lib/dateUtils';
 
 type Props = {
   data: ProjectResearchTaskValues;
@@ -11,49 +10,20 @@ export function ProjectResearchTaskDetails({ data }: Props) {
   const financingErrors = useUnreadableErrors('researchTasks[].financingAmount', data.financingAmount, true);
   const securedErrors = useUnreadableErrors('researchTasks[].securedAmount', data.securedAmount, true);
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <Input
-        aria-label={`Tytuł, ${data.title}`}
-        name="researchTasks[].title"
-        value={data.title}
-        label="Tytuł"
-        placeholder="Wprowadź tytuł"
-        containerClassName="lg:col-span-2"
-        disabled={true}
-      />
-
-      <MonthPickerInput
-        name="researchTasks[].startDate"
-        value={data.startDate}
-        label="Data rozpoczęcia"
-        disabled={true}
-      />
-
-      <MonthPickerInput name="researchTasks[].endDate" value={data.endDate} label="Data zakończenia" disabled={true} />
-
-      <NumberInput
-        nullable
-        name="researchTasks[].financingAmount"
-        aria-label={`Kwota finansowania [zł], ${data.title}`}
-        value={data.financingAmount}
-        errors={financingErrors}
-        type="float"
-        minimum={0}
-        label="Kwota finansowania [zł]"
-        disabled={true}
-      />
-
-      <NumberInput
-        nullable
-        name="researchTasks[].securedAmount"
-        aria-label={`Środki zabezpieczone na realizację rejsu [zł], ${data.title}`}
-        value={data.securedAmount}
-        errors={securedErrors}
-        type="float"
-        minimum={0}
-        label="Środki zabezpieczone na realizację rejsu [zł]"
-        disabled={true}
-      />
-    </div>
+    <dl className="grid grid-cols-1 gap-4 text-left lg:grid-cols-2">
+      <ReadonlyField label="Tytuł" className="lg:col-span-2">
+        {data.title}
+      </ReadonlyField>
+      <ReadonlyField label="Data rozpoczęcia">
+        {data.startDate && formatDate(data.startDate, 'monthYear')}
+      </ReadonlyField>
+      <ReadonlyField label="Data zakończenia">{data.endDate && formatDate(data.endDate, 'monthYear')}</ReadonlyField>
+      <ReadonlyField label="Kwota finansowania [zł]" errors={financingErrors}>
+        {data.financingAmount}
+      </ReadonlyField>
+      <ReadonlyField label="Środki zabezpieczone na realizację rejsu [zł]" errors={securedErrors}>
+        {data.securedAmount}
+      </ReadonlyField>
+    </dl>
   );
 }
