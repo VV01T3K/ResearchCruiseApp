@@ -51,7 +51,7 @@ test.describe('signed in', () => {
   test('one click closes the feedback form while its description is empty', async ({ page }) => {
     await captureEnvelopes(page);
     await page.goto('/help');
-    await page.getByRole('main').getByRole('button', { name: 'Zgłoś problem' }).click();
+    await page.getByRole('button', { name: 'Zgłoś problem' }).click();
     const dialog = page.getByRole('dialog', { name: 'Zgłoś problem' });
     await expect(dialog.getByRole('textbox')).toBeFocused();
 
@@ -70,7 +70,7 @@ test.describe('signed in', () => {
     test(`replay sample rate '${replayRate}' ${replayed ? 'sends' : 'never sends'} replays`, async ({ page }) => {
       const sent = await captureEnvelopes(page, replayRate);
       await page.goto('/help');
-      await page.getByRole('main').getByRole('button', { name: 'Zgłoś problem' }).click();
+      await page.getByRole('button', { name: 'Zgłoś problem' }).click();
       const dialog = page.getByRole('dialog', { name: 'Zgłoś problem' });
       await dialog.getByRole('textbox').fill('Replay check');
       await dialog.getByRole('button', { name: 'Wyślij zgłoszenie' }).click();
