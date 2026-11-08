@@ -20,7 +20,7 @@ function AccountSettingsPage() {
 
   return (
     <Layout title="Ustawienia konta">
-      <div className="space-y-8">
+      <div className="mx-auto max-w-2xl space-y-8">
         <header className="flex items-center gap-4">
           <Avatar fullName={`${currentUser.firstName} ${currentUser.lastName}`} />
           <div>
@@ -33,7 +33,7 @@ function AccountSettingsPage() {
             </p>
           </div>
         </header>
-        <hr />
+        <hr className="border-border" />
         <ChangePasswordForm />
       </div>
     </Layout>
