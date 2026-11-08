@@ -26,7 +26,7 @@ export function useVirtualTableRows<T extends { id: string }>(rows: T[], enabled
     const updateScrollMargin = () => setScrollMargin(body.getBoundingClientRect().top + window.scrollY);
     updateScrollMargin();
     const observer = new ResizeObserver(updateScrollMargin);
-    observer.observe(body.parentElement ?? body);
+    observer.observe(document.body);
     window.addEventListener('resize', updateScrollMargin);
     return () => {
       observer.disconnect();

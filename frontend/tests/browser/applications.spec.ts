@@ -132,7 +132,7 @@ test.describe('application table', () => {
       const rows = page.getByRole('row');
       await expect(first).toBeVisible();
       await expect(page.getByRole('cell').filter({ hasText: note }).first()).toBeVisible();
-      await expect(page.getByRole('table')).toHaveAttribute('aria-rowcount', String(500 + (width >= 768 ? 2 : 0)));
+      await expect(page.getByRole('table')).toHaveAttribute('aria-rowcount', String(500 + (width >= 768 ? 1 : 0)));
       expect(await rows.count()).toBeLessThan(35);
 
       await expect(async () => {
@@ -163,7 +163,8 @@ test.describe('application table', () => {
     page,
     network,
   }) => {
-    await page.setViewportSize({ width: 1263, height: 800 });
+    // 1366 px at 125% scaling, minus a Windows scrollbar.
+    await page.setViewportSize({ width: 1076, height: 800 });
     const kinds = ['draft', 'formBRequired', 'undertaken', 'denied'] as const;
     const items = Array.from({ length: 60 }, (_, i) => ({
       ...application(),
