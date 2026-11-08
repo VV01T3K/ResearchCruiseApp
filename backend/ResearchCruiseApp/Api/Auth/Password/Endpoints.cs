@@ -1,6 +1,9 @@
+using System.Text;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using NeoSmart.Utils;
 using ResearchCruiseApp.Domain;
-using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
 namespace ResearchCruiseApp.Api.Auth;
 
@@ -36,30 +39,57 @@ public static class PasswordEndpoints
 
     private static async Task<NoContent> RequestReset(
         RequestPasswordResetRequest request,
-        IdentityService identityService
+        UserManager<User> userManager,
+        EmailSender emailSender
     )
     {
-        await identityService.EnablePasswordReset(
-            new ForgotPasswordFormDto { Email = request.Email }
-        );
+        var user = await userManager.FindByEmailAsync(request.Email);
+        if (user is null)
+            return TypedResults.NoContent();
+
+        var code = await userManager.GeneratePasswordResetTokenAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+        await emailSender.SendPasswordResetMessage(await userManager.CreateUserDto(user), code);
         return TypedResults.NoContent();
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Reset(
         ResetPasswordRequest request,
-        IdentityService identityService
+        UserManager<User> userManager
     )
     {
-        var result = await identityService.ResetPassword(
-            new ResetPasswordFormDto
-            {
-                EmailBase64 = request.EmailBase64,
-                ResetCode = request.ResetCode,
-                Password = request.Password,
-                PasswordConfirm = request.PasswordConfirm,
-            }
-        );
+        var invalidLink = Error
+            .InvalidArgument("Link do resetowania hasła jest nieprawidłowy lub wygasł.")
+            .ToProblemHttpResult();
 
-        return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
+        string email;
+        string resetCode;
+        try
+        {
+            email = Encoding.UTF8.GetString(UrlBase64.Decode(request.EmailBase64));
+            resetCode = Encoding.UTF8.GetString(UrlBase64.Decode(request.ResetCode));
+        }
+        catch (FormatException)
+        {
+            return invalidLink;
+        }
+
+        var user = await userManager.FindByEmailAsync(email);
+        if (user is null)
+            return invalidLink;
+
+        var refreshToken = user.RefreshToken;
+        var refreshTokenExpiry = user.RefreshTokenExpiry;
+        user.RefreshToken = null;
+        user.RefreshTokenExpiry = null;
+        var result = await userManager.ResetPasswordAsync(user, resetCode, request.Password);
+
+        if (result.Succeeded)
+            return TypedResults.NoContent();
+
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiry = refreshTokenExpiry;
+        return invalidLink;
     }
 }

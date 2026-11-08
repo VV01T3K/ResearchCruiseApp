@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
@@ -61,7 +63,9 @@ public static class AccountsEndpoints
         CreateUserRequest request,
         RandomGenerator randomGenerator,
         UserPermissionVerifier userPermissionVerifier,
-        IdentityService identityService,
+        UserManager<User> userManager,
+        RoleManager<IdentityRole> roleManager,
+        EmailSender emailSender,
         CancellationToken cancellationToken
     )
     {
@@ -73,39 +77,50 @@ public static class AccountsEndpoints
             }
         }
 
-        if (await identityService.UserWithEmailExists(request.Email))
+        if (await userManager.FindByEmailAsync(request.Email) is not null)
         {
             return Error
                 .Conflict("Użytkownik o tym adresie e-mail już istnieje")
                 .ToProblemHttpResult();
         }
 
-        var roles = await identityService.GetAllRoleNames(cancellationToken);
+        var roles = await roleManager
+            .Roles.Select(role => role.Name)
+            .ToListAsync(cancellationToken);
         if (request.Roles.Any(role => !roles.Contains(role)))
         {
             return Error.InvalidArgument("Rola nie istnieje").ToProblemHttpResult();
         }
 
-        var result = await identityService.AddUserWithRoles(
+        var password = randomGenerator.CreateSecurePassword();
+        var result = await userManager.CreateUserWithRoles(
             request.Email,
             request.FirstName,
             request.LastName,
-            randomGenerator.CreateSecurePassword(),
+            password,
             request.Roles
         );
+        if (!result.IsSuccess)
+            return result.Error!.ToProblemHttpResult();
 
-        return result.IsSuccess ? TypedResults.Created() : result.Error!.ToProblemHttpResult();
+        await emailSender.SendAccountCreatedMessage(
+            await userManager.CreateUserDto(result.Data!),
+            request.Roles[0],
+            password
+        );
+
+        return TypedResults.Created();
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Update(
         Guid userId,
         UpdateUserRequest request,
         UserPermissionVerifier userPermissionVerifier,
-        IdentityService identityService,
-        CancellationToken cancellationToken
+        UserManager<User> userManager,
+        EmailSender emailSender
     )
     {
-        if (await identityService.GetUserDtoById(userId) is null)
+        if (await userManager.GetUserDtoById(userId) is null)
         {
             return Error.ResourceNotFound().ToProblemHttpResult();
         }
@@ -117,22 +132,49 @@ public static class AccountsEndpoints
                 .ToProblemHttpResult();
         }
 
-        var result = await identityService.UpdateUser(
-            userId,
-            request.Email,
-            request.FirstName,
-            request.LastName,
-            cancellationToken
-        );
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+            return Error.ResourceNotFound().ToProblemHttpResult();
 
-        return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
+        var email = request.Email;
+        if (
+            email is not null
+            && email != user.Email
+            && await userManager.FindByEmailAsync(email) is not null
+        )
+            return Error
+                .Conflict("Użytkownik o tym adresie e-mail już istnieje")
+                .ToProblemHttpResult();
+
+        user.EmailConfirmed = (email == user.Email || email is null) && user.EmailConfirmed;
+        user.Email = email ?? user.Email;
+        user.FirstName = request.FirstName ?? user.FirstName;
+        user.LastName = request.LastName ?? user.LastName;
+
+        var identityResult = await userManager.UpdateAsync(user);
+        if (!identityResult.Succeeded)
+            return identityResult.ToApplicationResult().Error!.ToProblemHttpResult();
+
+        var userRoles = await userManager.GetRolesAsync(user);
+
+        if (user is { EmailConfirmed: false, Email: not null })
+        {
+            var emailConfirmationCode = await userManager.CreateEmailConfirmationCode(user);
+            await emailSender.SendEmailConfirmationEmail(
+                await userManager.CreateUserDto(user),
+                userRoles.First(),
+                emailConfirmationCode
+            );
+        }
+
+        return TypedResults.NoContent();
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Delete(
         Guid userId,
         UserPermissionVerifier userPermissionVerifier,
         CurrentUserService currentUserService,
-        IdentityService identityService,
+        UserAdministrationService userAdministrationService,
         CancellationToken cancellationToken
     )
     {
@@ -148,7 +190,7 @@ public static class AccountsEndpoints
             return Error.ForbiddenOperation().ToProblemHttpResult();
         }
 
-        var result = await identityService.DeleteUser(userId, cancellationToken);
+        var result = await userAdministrationService.DeleteUser(userId, cancellationToken);
         return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
     }
 }

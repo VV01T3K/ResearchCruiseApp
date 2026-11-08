@@ -31,6 +31,8 @@ public static class ApiComposition
             .AddScoped<CruiseEffectService>()
             .AddScoped<UniqueFormFieldResolver>()
             .AddScoped<UserPermissionVerifier>()
+            .AddScoped<SessionTokenService>()
+            .AddScoped<UserAdministrationService>()
             .AddScoped<FormDeletionService>();
     }
 

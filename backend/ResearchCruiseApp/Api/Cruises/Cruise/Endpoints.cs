@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Cruises.Shared;
 using ResearchCruiseApp.Domain;
@@ -123,7 +124,7 @@ public static class CruiseEndpoints
     private static async Task<Results<Ok<RevisionResponse>, ProblemHttpResult>> Update(
         Guid cruiseId,
         UpdateRequest request,
-        IdentityService identityService,
+        UserManager<User> userManager,
         EmailSender emailSender,
         ApplicationDbContext dbContext,
         CancellationToken cancellationToken
@@ -181,7 +182,7 @@ public static class CruiseEndpoints
         cruise.Title = request.Title;
         cruise.ShipUnavailable = request.ShipUnavailable;
 
-        var managerResult = await UpdateManagers(cruise, request, identityService);
+        var managerResult = await UpdateManagers(cruise, request, userManager);
         if (!managerResult.IsSuccess)
         {
             return managerResult.Error!.ToProblemHttpResult();
@@ -219,7 +220,7 @@ public static class CruiseEndpoints
             cruise,
             formBRequested.Where(application => newApplicationIds.Contains(application.Id)),
             emailSender,
-            identityService
+            userManager
         );
         await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.Ok(new RevisionResponse(cruise.RowVersion.ToRevision()));
@@ -263,12 +264,12 @@ public static class CruiseEndpoints
     private static async Task<Result> UpdateManagers(
         DomainCruise cruise,
         UpdateRequest request,
-        IdentityService identityService
+        UserManager<User> userManager
     )
     {
         if (
             request.MainManagerId != Guid.Empty
-            && await identityService.GetUserDtoById(request.MainManagerId) is null
+            && await userManager.GetUserDtoById(request.MainManagerId) is null
         )
         {
             return Error.ResourceNotFound("Podany kierownik nie istnieje");
@@ -276,7 +277,7 @@ public static class CruiseEndpoints
 
         if (
             request.DeputyManagerId != Guid.Empty
-            && await identityService.GetUserDtoById(request.DeputyManagerId) is null
+            && await userManager.GetUserDtoById(request.DeputyManagerId) is null
         )
         {
             return Error.ResourceNotFound("Podany zastępca nie istnieje");

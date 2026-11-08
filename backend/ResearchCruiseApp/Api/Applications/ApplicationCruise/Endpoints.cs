@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
@@ -23,7 +24,7 @@ public static class ApplicationCruiseEndpoints
         Guid applicationId,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
-        IdentityService identityService,
+        UserManager<User> userManager,
         ApplicationScoringService evaluator,
         CancellationToken cancellationToken
     )
@@ -53,7 +54,7 @@ public static class ApplicationCruiseEndpoints
             .LoadAsync(cancellationToken);
 
         return TypedResults.Ok(
-            await ApplicationCruiseResponse.From(application.Cruise, identityService, evaluator)
+            await ApplicationCruiseResponse.From(application.Cruise, userManager, evaluator)
         );
     }
 }

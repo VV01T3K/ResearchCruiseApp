@@ -1,9 +1,10 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Applications.Shared;
 
-internal class SupervisorInvitationService(IdentityService identityService, EmailSender emailSender)
+internal class SupervisorInvitationService(UserManager<User> userManager, EmailSender emailSender)
 {
     public async Task SendRequestToSupervisor(
         CruiseApplication cruiseApplication,
@@ -11,7 +12,7 @@ internal class SupervisorInvitationService(IdentityService identityService, Emai
     )
     {
         var cruiseManagerId = cruiseApplication.FormA?.CruiseManagerId ?? Guid.Empty;
-        var cruiseManager = (await identityService.GetUserDtoById(cruiseManagerId))!;
+        var cruiseManager = (await userManager.GetUserDtoById(cruiseManagerId))!;
 
         await emailSender.SendRequestToSupervisorMessage(
             cruiseApplication.Id,

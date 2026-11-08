@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp.Domain;
-using ResearchCruiseApp.Infrastructure.Identity.Contracts;
 
 namespace ResearchCruiseApp.Api.Users;
 
@@ -22,17 +22,30 @@ public static class PasswordEndpoints
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Handle(
         ChangePasswordRequest request,
-        IdentityService identityService
+        CurrentUserService currentUserService,
+        UserManager<User> userManager
     )
     {
-        var result = await identityService.ChangePassword(
-            new ChangePasswordFormDto
-            {
-                Password = request.Password,
-                NewPassword = request.NewPassword,
-            }
+        var userId = currentUserService.GetId();
+        if (userId is null)
+            return Error.ResourceNotFound().ToProblemHttpResult();
+
+        var user = await userManager.FindByIdAsync(userId.ToString()!);
+        if (user is null)
+            return Error.ResourceNotFound().ToProblemHttpResult();
+
+        var identityResult = await userManager.ChangePasswordAsync(
+            user,
+            request.Password,
+            request.NewPassword
         );
 
-        return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
+        if (!identityResult.Succeeded)
+            return Error.InvalidArgument().ToProblemHttpResult();
+
+        user.RefreshToken = null;
+        user.RefreshTokenExpiry = null;
+        await userManager.UpdateAsync(user);
+        return TypedResults.NoContent();
     }
 }

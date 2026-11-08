@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
@@ -21,12 +22,12 @@ public sealed record ApplicationCruiseResponse(
 {
     internal static async Task<ApplicationCruiseResponse> From(
         Cruise cruise,
-        IdentityService identityService,
+        UserManager<User> userManager,
         ApplicationScoringService evaluator
     )
     {
-        var manager = await identityService.GetUserDtoById(cruise.MainCruiseManagerId);
-        var deputy = await identityService.GetUserDtoById(cruise.MainDeputyManagerId);
+        var manager = await userManager.GetUserDtoById(cruise.MainCruiseManagerId);
+        var deputy = await userManager.GetUserDtoById(cruise.MainDeputyManagerId);
 
         return new ApplicationCruiseResponse(
             cruise.Id,

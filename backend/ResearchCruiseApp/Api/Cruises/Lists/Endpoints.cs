@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Api.Cruises.Shared;
@@ -40,7 +41,7 @@ public static class ListsEndpoints
     }
 
     private static async Task<Results<Ok<List<CruiseResponse>>, ProblemHttpResult>> GetAll(
-        IdentityService identityService,
+        UserManager<User> userManager,
         ApplicationScoringService evaluator,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
@@ -87,11 +88,7 @@ public static class ListsEndpoints
                 cruises.Add(cruise);
         }
 
-        var managers = await CruiseResponse.LoadManagers(
-            cruises,
-            identityService,
-            cancellationToken
-        );
+        var managers = await CruiseResponse.LoadManagers(cruises, userManager, cancellationToken);
         var visibleCruises = new List<CruiseResponse>();
         foreach (var cruise in cruises)
         {
@@ -105,7 +102,7 @@ public static class ListsEndpoints
 
     private static async Task<Results<Ok<CruiseResponse>, NotFound, ProblemHttpResult>> GetById(
         Guid cruiseId,
-        IdentityService identityService,
+        UserManager<User> userManager,
         ApplicationScoringService evaluator,
         ApplicationDbContext dbContext,
         UserPermissionVerifier userPermissionVerifier,
@@ -150,11 +147,7 @@ public static class ListsEndpoints
             return TypedResults.NotFound();
         }
 
-        var managers = await CruiseResponse.LoadManagers(
-            [cruise],
-            identityService,
-            cancellationToken
-        );
+        var managers = await CruiseResponse.LoadManagers([cruise], userManager, cancellationToken);
         return TypedResults.Ok(
             await CruiseResponse.From(cruise, managers, evaluator, userPermissionVerifier)
         );

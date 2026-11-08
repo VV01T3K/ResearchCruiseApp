@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Api.Users;
 
@@ -35,21 +37,34 @@ public static class ListsEndpoints
 
     private static async Task<Ok<List<UserResponse>>> GetAll(
         UserPermissionVerifier userPermissionVerifier,
-        IdentityService identityService,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken
     )
     {
-        var users = await identityService.GetAllUsersDtos(cancellationToken);
+        var users = await dbContext.GetAllUsersDtos(cancellationToken);
         var permittedUsers = await userPermissionVerifier.FilterAccessibleUsers(users);
         return TypedResults.Ok(permittedUsers.Select(UserResponse.From).ToList());
     }
 
     private static async Task<Ok<List<CruiseManagerResponse>>> GetAvailableCruiseManagers(
-        IdentityService identityService,
-        CancellationToken cancellationToken
+        UserManager<User> userManager
     )
     {
-        var users = await identityService.GetAllCruiseManagersDtos(cancellationToken);
-        return TypedResults.Ok(users.Select(CruiseManagerResponse.From).ToList());
+        var users = new List<User>();
+
+        foreach (var roleName in IdentityUserExtensions.CruiseManagerRoleNames)
+        {
+            var roleUsers = await userManager.GetUsersInRoleAsync(roleName);
+            users.AddRange(roleUsers);
+        }
+
+        var distinctUsers = users.DistinctBy(u => u.Id).Where(u => u.Accepted).ToList();
+
+        return TypedResults.Ok(
+            distinctUsers
+                .Select(UserMappings.ToCruiseManagerOptionDto)
+                .Select(CruiseManagerResponse.From)
+                .ToList()
+        );
     }
 }

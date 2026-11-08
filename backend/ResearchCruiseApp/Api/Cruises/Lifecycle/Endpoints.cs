@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Cruises.Shared;
 using ResearchCruiseApp.Domain;
@@ -61,7 +62,7 @@ public static class LifecycleEndpoints
         string? revision,
         ApplicationDbContext dbContext,
         EmailSender emailSender,
-        IdentityService identityService,
+        UserManager<User> userManager,
         CancellationToken cancellationToken
     )
     {
@@ -100,7 +101,7 @@ public static class LifecycleEndpoints
 
         cruise.Status = CruiseStatus.Confirmed;
         var formBRequested = CruiseLifecycleService.RequestFormB(cruise.CruiseApplications);
-        await CruiseConfirmationEmails.Send(cruise, formBRequested, emailSender, identityService);
+        await CruiseConfirmationEmails.Send(cruise, formBRequested, emailSender, userManager);
 
         await dbContext.SaveChangesAsync(cancellationToken);
         return TypedResults.NoContent();

@@ -5,6 +5,7 @@ using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.Infrastructure.Persistence;
+using ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 using ResearchCruiseApp.IntegrationTests.Auth;
 using ResearchCruiseApp.IntegrationTests.Infrastructure;
 
@@ -28,7 +29,7 @@ public sealed class SeedAccountTests(SqlFixture fixture) : IAsyncLifetime
         await using (var scope = app.Services.CreateAsyncScope())
         {
             var result = await scope
-                .ServiceProvider.GetRequiredService<IdentityService>()
+                .ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>()
                 .EnsureSeedUserWithRole(
                     Email,
                     "Seed",
@@ -57,7 +58,7 @@ public sealed class SeedAccountTests(SqlFixture fixture) : IAsyncLifetime
         await using (var scope = app.Services.CreateAsyncScope())
         {
             var result = await scope
-                .ServiceProvider.GetRequiredService<IdentityService>()
+                .ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>()
                 .EnsureSeedUserWithRole(
                     Email,
                     "Changed",
@@ -105,7 +106,7 @@ public sealed class SeedAccountTests(SqlFixture fixture) : IAsyncLifetime
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             await using var transaction = await db.Database.BeginTransactionAsync(ct);
             var result = await scope
-                .ServiceProvider.GetRequiredService<IdentityService>()
+                .ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>()
                 .EnsureSeedUserWithRole(
                     Email,
                     "Seed",
@@ -161,7 +162,8 @@ public sealed class SeedAccountTests(SqlFixture fixture) : IAsyncLifetime
             await using var transaction = await db.Database.BeginTransactionAsync(ct);
             db.UgUnits.Add(callerRow);
             await db.SaveChangesAsync(ct);
-            var identity = scope.ServiceProvider.GetRequiredService<IdentityService>();
+            var identity =
+                scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
             if (queueFailure)
                 await Assert.ThrowsAsync<DbUpdateException>(() =>
                     identity.EnsureSeedUserWithRole(

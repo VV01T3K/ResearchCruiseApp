@@ -1,12 +1,15 @@
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
 internal class UserPermissionVerifier(
-    IdentityService identityService,
+    UserManager<User> userManager,
+    ApplicationDbContext dbContext,
     CurrentUserService currentUserService
 )
 {
@@ -16,21 +19,21 @@ internal class UserPermissionVerifier(
 
     public async Task<bool> CanCurrentUserAssignRole(string roleName)
     {
-        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        var currentUserRoles = await GetCurrentUserRoleNames();
         return RolePermissionPolicy.CanAssignRole(currentUserRoles, roleName);
     }
 
     public async Task<bool> CanCurrentUserAccess(Guid otherUserId)
     {
-        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        var currentUserRoles = await GetCurrentUserRoleNames();
 
-        var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
+        var otherUserRoles = await userManager.GetUserRolesNames(otherUserId);
         return RolePermissionPolicy.CanAccessUser(currentUserRoles, otherUserRoles);
     }
 
     public async Task<List<UserDto>> FilterAccessibleUsers(IEnumerable<UserDto> users)
     {
-        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        var currentUserRoles = await GetCurrentUserRoleNames();
         return users
             .Where(user => RolePermissionPolicy.CanAccessUser(currentUserRoles, user.Roles))
             .ToList();
@@ -47,7 +50,7 @@ internal class UserPermissionVerifier(
         if (_applicationVisibility is not null)
             return _applicationVisibility;
 
-        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        var currentUserRoles = await GetCurrentUserRoleNames();
         var currentUserId = currentUserService.GetId();
 
         if (currentUserId is null || currentUserRoles.All(role => role == RoleName.Guest))
@@ -72,8 +75,7 @@ internal class UserPermissionVerifier(
 
     public async Task<bool> CanCurrentUserViewCruise(Cruise cruise)
     {
-        var currentUserRoles = _currentUserRoles ??=
-            await identityService.GetCurrentUserRoleNames();
+        var currentUserRoles = _currentUserRoles ??= await GetCurrentUserRoleNames();
         var currentUserId = currentUserService.GetId();
 
         if (currentUserId is null)
@@ -105,7 +107,7 @@ internal class UserPermissionVerifier(
 
     public async Task<bool> CanCurrentUserAddForm(CruiseApplication cruiseApplication)
     {
-        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        var currentUserRoles = await GetCurrentUserRoleNames();
 
         if (cruiseApplication.FormA is null)
             return false;
@@ -113,9 +115,9 @@ internal class UserPermissionVerifier(
         var currentUserId = currentUserService.GetId();
         if (
             currentUserId is null
-            || !await identityService.IsActiveWithAnyRole(
+            || !await dbContext.IsActiveWithAnyRole(
                 currentUserId.Value,
-                IdentityService.CruiseManagerRoleNames
+                IdentityUserExtensions.CruiseManagerRoleNames
             )
         )
             return false;
@@ -135,7 +137,7 @@ internal class UserPermissionVerifier(
     public async Task<bool> CanCurrentUserViewForm(CruiseApplication cruiseApplication)
     {
         var currentUserId = currentUserService.GetId();
-        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        var currentUserRoles = await GetCurrentUserRoleNames();
         var cruiseManagerId = cruiseApplication.FormA?.CruiseManagerId;
         var deputyManagerId = cruiseApplication.FormA?.DeputyManagerId;
 
@@ -162,7 +164,7 @@ internal class UserPermissionVerifier(
 
     public async Task<bool> CanUserDeactivate(Guid otherUserId)
     {
-        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        var currentUserRoles = await GetCurrentUserRoleNames();
         var currentUserId = currentUserService.GetId();
 
         if (currentUserRoles.Contains(RoleName.Administrator))
@@ -170,7 +172,7 @@ internal class UserPermissionVerifier(
 
         if (currentUserRoles.Contains(RoleName.Shipowner))
         {
-            var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
+            var otherUserRoles = await userManager.GetUserRolesNames(otherUserId);
 
             return !otherUserRoles.Contains(RoleName.Administrator)
                 && !otherUserRoles.Contains(RoleName.Shipowner);
@@ -181,9 +183,22 @@ internal class UserPermissionVerifier(
 
     public async Task<bool> CanUserDeleteOtherUsers(Guid otherUserId)
     {
-        var currentUserRoles = await identityService.GetCurrentUserRoleNames();
+        var currentUserRoles = await GetCurrentUserRoleNames();
 
-        var otherUserRoles = await identityService.GetUserRolesNames(otherUserId);
+        var otherUserRoles = await userManager.GetUserRolesNames(otherUserId);
         return RolePermissionPolicy.CanDeleteUser(currentUserRoles, otherUserRoles);
+    }
+
+    private async Task<IList<string>> GetCurrentUserRoleNames()
+    {
+        var currentUserId = currentUserService.GetId();
+        if (currentUserId is null)
+            return [];
+
+        var currentUser = await userManager.FindByIdAsync(currentUserId.ToString()!);
+        if (currentUser is null)
+            return [];
+
+        return await userManager.GetRolesAsync(currentUser);
     }
 }

@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
@@ -11,7 +12,7 @@ using ResearchCruiseApp.Infrastructure.Persistence;
 namespace ResearchCruiseApp.Api.Applications.Shared;
 
 internal class FormInitValuesReader(
-    IdentityService identityService,
+    UserManager<User> userManager,
     ContractReader contracts,
     ApplicationDbContext dbContext,
     CurrentUserService currentUserService,
@@ -24,7 +25,7 @@ internal class FormInitValuesReader(
         CancellationToken cancellationToken
     )
     {
-        var users = await identityService.GetAllUsersDtos(cancellationToken);
+        var users = await dbContext.GetAllUsersDtos(cancellationToken);
         var applications = await GetApplicationsForCurrentUser(cancellationToken);
         var assigned = applicationId is null
             ? null
@@ -43,7 +44,10 @@ internal class FormInitValuesReader(
         var result = await CreatePublicFormA(cancellationToken);
         result.CruiseManagers = users
             .Where(user =>
-                (user.Accepted && user.Roles.Any(IdentityService.CruiseManagerRoleNames.Contains))
+                (
+                    user.Accepted
+                    && user.Roles.Any(IdentityUserExtensions.CruiseManagerRoleNames.Contains)
+                )
                 || user.Id == assigned?.CruiseManagerId
             )
             .Select(ToUserOption)
@@ -88,8 +92,8 @@ internal class FormInitValuesReader(
         if (application.FormA is null)
             return result;
 
-        var manager = await identityService.GetUserDtoById(application.FormA.CruiseManagerId);
-        var deputy = await identityService.GetUserDtoById(application.FormA.DeputyManagerId);
+        var manager = await userManager.GetUserDtoById(application.FormA.CruiseManagerId);
+        var deputy = await userManager.GetUserDtoById(application.FormA.DeputyManagerId);
         result.CruiseManagers = manager is not null ? [ToUserOption(manager)] : [];
         result.DeputyManagers = deputy is not null ? [ToUserOption(deputy)] : [];
         return result;

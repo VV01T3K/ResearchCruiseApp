@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity.Contracts;
@@ -72,10 +73,10 @@ public sealed record CruiseResponse(
 
     internal static Task<Dictionary<Guid, CruiseManagerOptionDto>> LoadManagers(
         IEnumerable<DomainCruise> cruises,
-        IdentityService identityService,
+        UserManager<User> userManager,
         CancellationToken cancellationToken
     ) =>
-        identityService.GetCruiseManagerOptionsByIds(
+        userManager.GetCruiseManagerOptionsByIds(
             cruises.SelectMany(cruise =>
                 new[] { cruise.MainCruiseManagerId, cruise.MainDeputyManagerId }
             ),

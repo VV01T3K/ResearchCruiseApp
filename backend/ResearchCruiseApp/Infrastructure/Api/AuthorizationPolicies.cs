@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
+using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Infrastructure.Api;
 
@@ -49,7 +50,7 @@ public static class AuthorizationPolicies
                             out var userId
                         )
                         && await httpContext
-                            .RequestServices.GetRequiredService<IdentityService>()
+                            .RequestServices.GetRequiredService<ApplicationDbContext>()
                             .IsActiveWithAnyRole(
                                 userId,
                                 [
@@ -80,7 +81,7 @@ public static class AuthorizationPolicies
                             out var userId
                         )
                         && await httpContext
-                            .RequestServices.GetRequiredService<IdentityService>()
+                            .RequestServices.GetRequiredService<ApplicationDbContext>()
                             .IsActiveWithAnyRole(
                                 userId,
                                 [RoleName.Administrator, RoleName.Shipowner]

@@ -181,7 +181,7 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
 
         // Endpoints stop every sequential path first, so the backstop is called directly.
         await using var scope = app.Services.CreateAsyncScope();
-        var identity = scope.ServiceProvider.GetRequiredService<IdentityService>();
+        var identity = scope.ServiceProvider.GetRequiredService<UserAdministrationService>();
         var id = Guid.Parse(last.Id);
         Assert.Equal(
             ErrorType.Conflict,

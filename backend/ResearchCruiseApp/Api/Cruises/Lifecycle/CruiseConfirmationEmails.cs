@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Api.Cruises;
@@ -8,7 +9,7 @@ internal static class CruiseConfirmationEmails
         Cruise cruise,
         IEnumerable<CruiseApplication> applications,
         EmailSender emailSender,
-        IdentityService identityService
+        UserManager<User> userManager
     )
     {
         var recipientIds = applications
@@ -18,7 +19,7 @@ internal static class CruiseConfirmationEmails
             .Distinct();
         foreach (var recipientId in recipientIds)
         {
-            var recipient = await identityService.GetUserDtoById(recipientId);
+            var recipient = await userManager.GetUserDtoById(recipientId);
             if (recipient is not null)
             {
                 await emailSender.SendCruiseConfirmMessage(cruise, recipient, recipient.Email);

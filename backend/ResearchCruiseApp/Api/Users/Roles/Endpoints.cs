@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Api;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
@@ -62,7 +64,8 @@ public static class RolesEndpoints
         Guid userId,
         string roleName,
         UserPermissionVerifier userPermissionVerifier,
-        IdentityService identityService,
+        UserManager<User> userManager,
+        RoleManager<IdentityRole> roleManager,
         CancellationToken cancellationToken
     )
     {
@@ -78,14 +81,22 @@ public static class RolesEndpoints
             return Error.ForbiddenOperation("Nie można nadać tej roli").ToProblemHttpResult();
         }
 
-        var roles = await identityService.GetAllRoleNames(cancellationToken);
+        var roles = await roleManager
+            .Roles.Select(role => role.Name)
+            .ToListAsync(cancellationToken);
         if (!roles.Contains(roleName))
         {
             return Error.InvalidArgument("Rola nie istnieje").ToProblemHttpResult();
         }
 
-        var result = await identityService.AddUserRole(userId, roleName, cancellationToken);
-        return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+            return Error.ResourceNotFound().ToProblemHttpResult();
+
+        var identityResult = await userManager.AddToRoleAsync(user, roleName);
+        return identityResult.Succeeded
+            ? TypedResults.NoContent()
+            : identityResult.ToApplicationResult().Error!.ToProblemHttpResult();
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Remove(
@@ -93,7 +104,7 @@ public static class RolesEndpoints
         string roleName,
         UserPermissionVerifier userPermissionVerifier,
         CurrentUserService currentUserService,
-        IdentityService identityService,
+        UserAdministrationService userAdministrationService,
         CancellationToken cancellationToken
     )
     {
@@ -114,7 +125,11 @@ public static class RolesEndpoints
             return Error.ForbiddenOperation("Nie można odebrać tej roli").ToProblemHttpResult();
         }
 
-        var result = await identityService.RemoveUserRole(userId, roleName, cancellationToken);
+        var result = await userAdministrationService.RemoveUserRole(
+            userId,
+            roleName,
+            cancellationToken
+        );
         return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
     }
 
@@ -123,7 +138,9 @@ public static class RolesEndpoints
         ReplaceUserRoleRequest request,
         UserPermissionVerifier userPermissionVerifier,
         CurrentUserService currentUserService,
-        IdentityService identityService,
+        UserManager<User> userManager,
+        RoleManager<IdentityRole> roleManager,
+        UserAdministrationService userAdministrationService,
         CancellationToken cancellationToken
     )
     {
@@ -144,7 +161,7 @@ public static class RolesEndpoints
             return Error.ForbiddenOperation("Nie można nadać tej roli").ToProblemHttpResult();
         }
 
-        foreach (var currentRole in await identityService.GetUserRolesNames(userId))
+        foreach (var currentRole in await userManager.GetUserRolesNames(userId))
         {
             if (!await userPermissionVerifier.CanCurrentUserAssignRole(currentRole))
             {
@@ -152,13 +169,15 @@ public static class RolesEndpoints
             }
         }
 
-        var roles = await identityService.GetAllRoleNames(cancellationToken);
+        var roles = await roleManager
+            .Roles.Select(role => role.Name)
+            .ToListAsync(cancellationToken);
         if (!roles.Contains(request.RoleName))
         {
             return Error.InvalidArgument("Rola nie istnieje").ToProblemHttpResult();
         }
 
-        var result = await identityService.ReplaceUserRoles(userId, request.RoleName);
+        var result = await userAdministrationService.ReplaceUserRoles(userId, request.RoleName);
         return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
     }
 }

@@ -1,14 +1,12 @@
 ﻿using System.Text;
+using Microsoft.AspNetCore.Identity;
 using NeoSmart.Utils;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain.Entities;
 
 namespace ResearchCruiseApp.Infrastructure.Exports;
 
-internal class CsvExporter(
-    GlobalizationService globalizationService,
-    IdentityService identityService
-)
+internal class CsvExporter(GlobalizationService globalizationService, UserManager<User> userManager)
 {
     private const string GoogleCalendarCruisesHeader =
         "Subject,Start Date,Start Time,End Date,End Time,Description";
@@ -53,8 +51,8 @@ internal class CsvExporter(
         var endHour = localEndTime[12..17];
 
         var subject = "Rejs r/v Oceanograf";
-        var cruiseManager = await identityService.GetUserDtoById(cruise.MainCruiseManagerId);
-        var deputyManager = await identityService.GetUserDtoById(cruise.MainDeputyManagerId);
+        var cruiseManager = await userManager.GetUserDtoById(cruise.MainCruiseManagerId);
+        var deputyManager = await userManager.GetUserDtoById(cruise.MainDeputyManagerId);
         var description =
             $"Kierownik główny: {cruiseManager?.FirstName ?? "-"} {cruiseManager?.LastName ?? ""}. "
             + $"Zastępca kierownika głównego: {deputyManager?.FirstName ?? "-"} {deputyManager?.LastName ?? ""}.";

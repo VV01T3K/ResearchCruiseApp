@@ -1,14 +1,22 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
 using ResearchCruiseApp.Infrastructure.Persistence.Initialization.InitialData;
 
 namespace ResearchCruiseApp.Infrastructure.Persistence.Initialization;
 
+internal enum SeedUserStatus
+{
+    AlreadyComplete,
+    Created,
+}
+
 internal class ApplicationDbContextInitializer(
     ApplicationDbContext applicationDbContext,
     RoleManager<IdentityRole> roleManager,
-    IdentityService identityService,
+    UserManager<User> userManager,
+    EmailSender emailSender,
     RandomGenerator randomGenerator,
     IConfiguration configuration,
     ILogger<ApplicationDbContextInitializer> logger
@@ -55,7 +63,7 @@ internal class ApplicationDbContextInitializer(
         foreach (var user in users)
         {
             var password = randomGenerator.CreateSecurePassword();
-            var result = await identityService.EnsureSeedUserWithRole(
+            var result = await EnsureSeedUserWithRole(
                 user.Email,
                 user.FirstName,
                 user.LastName,
@@ -79,6 +87,92 @@ internal class ApplicationDbContextInitializer(
             )
                 logger.LogWarning("Seed User Created: {Email} - {Password}", user.Email, password);
         }
+    }
+
+    public async Task<Result<SeedUserStatus>> EnsureSeedUserWithRole(
+        string email,
+        string firstName,
+        string lastName,
+        string password,
+        string roleName
+    )
+    {
+        var existingTransaction = applicationDbContext.Database.CurrentTransaction;
+        await using var transaction = existingTransaction is null
+            ? await applicationDbContext.Database.BeginTransactionAsync()
+            : null;
+        var savepoint = Guid.NewGuid().ToString("N");
+        if (existingTransaction is not null)
+            await existingTransaction.CreateSavepointAsync(savepoint);
+
+        try
+        {
+            var result = await EnsureSeedUserCore(email, firstName, lastName, password, roleName);
+            if (!result.IsSuccess)
+            {
+                if (existingTransaction is not null)
+                    await existingTransaction.RollbackToSavepointAsync(savepoint);
+                return result;
+            }
+
+            if (transaction is not null)
+                await transaction.CommitAsync();
+            else
+                await existingTransaction!.ReleaseSavepointAsync(savepoint);
+            return result;
+        }
+        catch
+        {
+            if (existingTransaction is not null)
+                await existingTransaction.RollbackToSavepointAsync(savepoint);
+            throw;
+        }
+    }
+
+    private async Task<Result<SeedUserStatus>> EnsureSeedUserCore(
+        string email,
+        string firstName,
+        string lastName,
+        string password,
+        string roleName
+    )
+    {
+        var existingUser = await userManager.FindByEmailAsync(email);
+        if (existingUser is not null)
+        {
+            if (await userManager.IsInRoleAsync(existingUser, roleName))
+                return SeedUserStatus.AlreadyComplete;
+
+            var deleteResult = await userManager.DeleteAsync(existingUser);
+            if (!deleteResult.Succeeded)
+                return deleteResult.ToApplicationResult().Error!;
+        }
+
+        var result = await userManager.CreateUserWithRoles(
+            email,
+            firstName,
+            lastName,
+            password,
+            [roleName]
+        );
+        if (!result.IsSuccess)
+            return result.Error!;
+
+        try
+        {
+            await emailSender.SendAccountCreatedMessage(
+                await userManager.CreateUserDto(result.Data!),
+                roleName,
+                password
+            );
+        }
+        catch (Exception exception)
+        {
+            logger.LogWarning(exception, "Seed user notification could not be queued");
+            throw;
+        }
+
+        return SeedUserStatus.Created;
     }
 
     private async Task SeedRoleData()

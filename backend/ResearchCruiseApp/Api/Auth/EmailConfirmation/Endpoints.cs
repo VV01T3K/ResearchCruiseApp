@@ -1,4 +1,7 @@
+using System.Text;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using ResearchCruiseApp.Domain;
 
 namespace ResearchCruiseApp.Api.Auth;
@@ -35,7 +38,7 @@ public static class EmailConfirmationEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Confirm(
         [AsParameters] ConfirmEmailRequest request,
         HttpContext httpContext,
-        IdentityService identityService
+        UserManager<User> userManager
     )
     {
         if (httpContext.Request.Query.ContainsKey("changedEmail"))
@@ -44,16 +47,46 @@ public static class EmailConfirmationEndpoints
                 statusCode: StatusCodes.Status400BadRequest
             );
 
-        var result = await identityService.ConfirmEmail(request.UserId, request.Code);
-        return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
+        var invalidLink = Error
+            .InvalidArgument("Link potwierdzający jest nieprawidłowy lub wygasł.")
+            .ToProblemHttpResult();
+
+        if (await userManager.FindByIdAsync(request.UserId.ToString()) is not { } user)
+            return invalidLink;
+
+        string code;
+        try
+        {
+            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Code));
+        }
+        catch (FormatException)
+        {
+            return invalidLink;
+        }
+
+        var result = await userManager.ConfirmEmailAsync(user, code);
+
+        return result.Succeeded ? TypedResults.NoContent() : invalidLink;
     }
 
     private static async Task<NoContent> Resend(
         ResendConfirmationEmailRequest request,
-        IdentityService identityService
+        UserManager<User> userManager,
+        EmailSender emailSender
     )
     {
-        await identityService.ResendEmailConfirmationEmail(request.Email, RoleName.CruiseManager);
+        var user = await userManager.FindByEmailAsync(request.Email);
+        if (user is null)
+            return TypedResults.NoContent(); // According to Microsoft, responding with an error would give too much information
+
+        var emailConfirmationCode = await userManager.CreateEmailConfirmationCode(user);
+        var userDto = await userManager.CreateUserDto(user);
+
+        await emailSender.SendEmailConfirmationEmail(
+            userDto,
+            RoleName.CruiseManager,
+            emailConfirmationCode
+        );
         return TypedResults.NoContent();
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp.Api;
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Api.Cruises;
@@ -11,7 +12,7 @@ namespace ResearchCruiseApp.Api.Applications;
 
 internal class ApplicationReader(
     ApplicationScoringService evaluator,
-    IdentityService identityService,
+    UserManager<User> userManager,
     ContractReader contracts,
     ILogger<ApplicationReader> logger
 )
@@ -29,7 +30,7 @@ internal class ApplicationReader(
         IEnumerable<CruiseApplication> applications,
         CancellationToken cancellationToken
     ) =>
-        identityService.GetCruiseManagerOptionsByIds(
+        userManager.GetCruiseManagerOptionsByIds(
             applications
                 .Where(application => application.FormA is not null)
                 .SelectMany(application =>

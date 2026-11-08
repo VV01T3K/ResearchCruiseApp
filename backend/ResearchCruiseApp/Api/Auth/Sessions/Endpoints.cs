@@ -75,19 +75,19 @@ public static class SessionsEndpoints
 
     private static async Task<Results<Ok<TokenResponse>, ProblemHttpResult>> Login(
         LoginRequest request,
-        IdentityService identityService,
+        SessionTokenService sessionTokenService,
         HttpContext context,
         IWebHostEnvironment environment
     )
     {
-        if (!await identityService.CanUserLogin(request.Email, request.Password))
+        if (!await sessionTokenService.CanUserLogin(request.Email, request.Password))
         {
             return Error
                 .UnknownIdentity("Podano błędne hasło lub użytkownik nie istnieje.")
                 .ToProblemHttpResult();
         }
 
-        var result = await identityService.LoginUser(request.Email);
+        var result = await sessionTokenService.LoginUser(request.Email);
         if (!result.IsSuccess)
             return result.Error!.ToProblemHttpResult();
 
@@ -96,7 +96,7 @@ public static class SessionsEndpoints
     }
 
     private static async Task<Results<Ok<TokenResponse>, ProblemHttpResult>> Refresh(
-        IdentityService identityService,
+        SessionTokenService sessionTokenService,
         HttpContext context,
         IWebHostEnvironment environment
     )
@@ -104,7 +104,7 @@ public static class SessionsEndpoints
         if (!context.Request.Cookies.TryGetValue(RefreshTokenCookie, out var refreshToken))
             return Error.UnknownIdentity().ToProblemHttpResult();
 
-        var result = await identityService.RefreshUserTokens(refreshToken);
+        var result = await sessionTokenService.RefreshUserTokens(refreshToken);
 
         if (!result.IsSuccess)
             return result.Error!.ToProblemHttpResult();
@@ -116,13 +116,13 @@ public static class SessionsEndpoints
     private static async Task<
         Results<Ok<TokenResponse>, ContentHttpResult, ProblemHttpResult>
     > GetSession(
-        IdentityService identityService,
+        SessionTokenService sessionTokenService,
         HttpContext context,
         IWebHostEnvironment environment
     )
     {
         context.Response.Headers.CacheControl = "no-store";
-        var result = await identityService.RefreshUserTokens(
+        var result = await sessionTokenService.RefreshUserTokens(
             context.Request.Cookies[RefreshTokenCookie] ?? ""
         );
         if (result.Error?.Type == ErrorType.UnknownIdentity)
@@ -135,7 +135,7 @@ public static class SessionsEndpoints
     }
 
     private static async Task<NoContent> Logout(
-        IdentityService identityService,
+        SessionTokenService sessionTokenService,
         CurrentUserService currentUserService,
         HttpContext context,
         IWebHostEnvironment environment
@@ -144,14 +144,14 @@ public static class SessionsEndpoints
         var currentUserId = currentUserService.GetId();
         if (currentUserId is not null)
         {
-            await identityService.RevokeRefreshToken(currentUserId.Value);
+            await sessionTokenService.RevokeRefreshToken(currentUserId.Value);
         }
         else if (
             context.Request.Cookies.TryGetValue(RefreshTokenCookie, out var refreshToken)
             && !string.IsNullOrWhiteSpace(refreshToken)
         )
         {
-            await identityService.RevokeRefreshToken(refreshToken);
+            await sessionTokenService.RevokeRefreshToken(refreshToken);
         }
 
         context.Response.Cookies.Delete(

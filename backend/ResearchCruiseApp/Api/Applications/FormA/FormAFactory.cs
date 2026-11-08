@@ -8,7 +8,6 @@ namespace ResearchCruiseApp.Api.Applications;
 
 internal class FormAFactory(
     CurrentUserService currentUserService,
-    IdentityService identityService,
     UniqueFormFieldResolver formsFieldsService,
     Compressor compressor,
     ApplicationDbContext dbContext
@@ -62,9 +61,9 @@ internal class FormAFactory(
 
         if (
             formAFields.CruiseManagerId != existingFormA?.CruiseManagerId
-            && !await identityService.IsActiveWithAnyRole(
+            && !await dbContext.IsActiveWithAnyRole(
                 formAFields.CruiseManagerId,
-                IdentityService.CruiseManagerRoleNames
+                IdentityUserExtensions.CruiseManagerRoleNames
             )
         )
             return Error.InvalidArgument(
@@ -74,9 +73,9 @@ internal class FormAFactory(
         if (
             formAFields.DeputyManagerId is not null
             && formAFields.DeputyManagerId != existingFormA?.DeputyManagerId
-            && !await identityService.IsActiveWithAnyRole(
+            && !await dbContext.IsActiveWithAnyRole(
                 (Guid)formAFields.DeputyManagerId,
-                IdentityService.CruiseManagerRoleNames
+                IdentityUserExtensions.CruiseManagerRoleNames
             )
         )
         {

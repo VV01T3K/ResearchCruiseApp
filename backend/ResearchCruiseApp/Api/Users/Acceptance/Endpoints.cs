@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Infrastructure.Identity.Permissions;
 
@@ -40,7 +41,8 @@ public static class AcceptanceEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Accept(
         Guid userId,
         UserPermissionVerifier userPermissionVerifier,
-        IdentityService identityService
+        UserManager<User> userManager,
+        EmailSender emailSender
     )
     {
         if (!await userPermissionVerifier.CanCurrentUserAccess(userId))
@@ -50,15 +52,26 @@ public static class AcceptanceEndpoints
                 .ToProblemHttpResult();
         }
 
-        var result = await identityService.AcceptUser(userId);
-        return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+            return Error.ResourceNotFound().ToProblemHttpResult();
+
+        user.Accepted = true;
+
+        var identityResult = await userManager.UpdateAsync(user);
+        if (!identityResult.Succeeded)
+            return identityResult.ToApplicationResult().Error!.ToProblemHttpResult();
+
+        await emailSender.SendAccountAcceptedMessage(await userManager.CreateUserDto(user));
+
+        return TypedResults.NoContent();
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> Deactivate(
         Guid userId,
         UserPermissionVerifier userPermissionVerifier,
         CurrentUserService currentUserService,
-        IdentityService identityService
+        UserManager<User> userManager
     )
     {
         if (currentUserService.GetId() == userId)
@@ -73,7 +86,18 @@ public static class AcceptanceEndpoints
             return Error.ForbiddenOperation().ToProblemHttpResult();
         }
 
-        var result = await identityService.DeactivateUser(userId);
-        return result.IsSuccess ? TypedResults.NoContent() : result.Error!.ToProblemHttpResult();
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+            return Error.ForbiddenOperation().ToProblemHttpResult();
+
+        user.Accepted = false;
+        user.RefreshToken = null;
+        user.RefreshTokenExpiry = null;
+
+        var identityResult = await userManager.UpdateAsync(user);
+
+        return identityResult.Succeeded
+            ? TypedResults.NoContent()
+            : identityResult.ToApplicationResult().Error!.ToProblemHttpResult();
     }
 }
