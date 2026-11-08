@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { Collapsible } from '@base-ui/react/collapsible';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
@@ -29,26 +29,19 @@ export function ShipUsageSection({ context }: { context: FormCViewModel }) {
       <form.Subscribe selector={(state) => state.values.shipUsage}>
         {(shipUsage) => (
           <div className="lg:col-span-2">
-            <AnimatePresence>
-              {shipUsage === '4' && (
-                <motion.div
-                  initial={{ opacity: 0, translateY: '-10%' }}
-                  animate={{ opacity: 1, translateY: '0' }}
-                  exit={{ opacity: 0, translateY: '-10%' }}
-                  transition={{ ease: 'easeOut', duration: 0.2 }}
-                >
-                  <form.AppField name="differentUsage">
-                    {(field) => (
-                      <field.TextField
-                        label="Inny sposób użycia"
-                        placeholder="np. statek badawczy"
-                        disabled={isReadonly}
-                      />
-                    )}
-                  </form.AppField>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <Collapsible.Root open={shipUsage === '4'}>
+              <Collapsible.Panel className="h-(--collapsible-panel-height) overflow-hidden transition-[height,opacity] duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0">
+                <form.AppField name="differentUsage">
+                  {(field) => (
+                    <field.TextField
+                      label="Inny sposób użycia"
+                      placeholder="np. statek badawczy"
+                      disabled={isReadonly}
+                    />
+                  )}
+                </form.AppField>
+              </Collapsible.Panel>
+            </Collapsible.Root>
           </div>
         )}
       </form.Subscribe>

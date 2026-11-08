@@ -1,5 +1,4 @@
 import { DownloadSimpleIcon, XIcon } from '@phosphor-icons/react';
-import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { Modal } from '@/components/shared/Modal';
@@ -37,23 +36,16 @@ export function UploadedFileList<File extends FileContent>({
   return (
     <>
       <ul className={cn('w-full', className)} onClick={(e) => e.stopPropagation()}>
-        <AnimatePresence>
-          {files.map((file) => (
-            <motion.li
-              key={getFileKey(file)}
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-            >
-              <UploadedFileListElement
-                file={file}
-                setFileInPreview={setFileInPreview}
-                onRemove={onRemove}
-                disabled={disabled}
-              />
-            </motion.li>
-          ))}
-        </AnimatePresence>
+        {files.map((file) => (
+          <li key={getFileKey(file)} className="transition-opacity duration-200 ease-out starting:opacity-0">
+            <UploadedFileListElement
+              file={file}
+              setFileInPreview={setFileInPreview}
+              onRemove={onRemove}
+              disabled={disabled}
+            />
+          </li>
+        ))}
       </ul>
       {createModalPortal(
         <Modal

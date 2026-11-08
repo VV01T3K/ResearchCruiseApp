@@ -1,19 +1,11 @@
 import BackgroundImageUrl from '@/assets/background.avif';
 import BackgroundFallbackUrl from '@/assets/background.webp';
 import { useRouterState } from '@tanstack/react-router';
-import { motion } from 'motion/react';
+
+import { cn } from '@/lib/utils';
 
 export default function Background() {
   const isHomepage = useRouterState({ select: (state) => state.location.pathname === '/' });
-
-  const variants = {
-    transparent: {
-      '--blur': '0px',
-    },
-    blur: {
-      '--blur': '12px',
-    },
-  };
 
   return (
     <>
@@ -28,14 +20,11 @@ export default function Background() {
           />
         </picture>
       </div>
-      <motion.div
-        className={'fixed -z-50 h-screen w-full'}
-        variants={variants}
-        initial="transparent"
-        animate={isHomepage ? 'transparent' : 'blur'}
-        exit={!isHomepage ? 'transparent' : 'blur'}
-        transition={{ duration: 0.3 }}
-        style={{ backdropFilter: 'blur(var(--blur))' } as React.CSSProperties}
+      <div
+        className={cn(
+          'fixed -z-50 h-screen w-full transition-[backdrop-filter] duration-150 ease-out',
+          isHomepage ? 'backdrop-blur-none' : 'backdrop-blur-md'
+        )}
       />
     </>
   );

@@ -11,7 +11,6 @@ import { useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { SmileyMehIcon, SmileyMeltingIcon } from '@phosphor-icons/react';
 
 import config from '@/config';
-import { motion } from 'motion/react';
 import { lazy, Suspense } from 'react';
 import { Button, ButtonLink } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
@@ -57,9 +56,9 @@ function RootLayout() {
       <Background />
       <FeedbackTab />
       <main className="flex-1" id="modal-root">
-        <motion.div key={pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+        <div key={pathname} className="transition-opacity duration-150 ease-out starting:opacity-0">
           <Outlet />
-        </motion.div>
+        </div>
       </main>
       <div id="fab-root">
         <Suspense>

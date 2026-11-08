@@ -13,7 +13,6 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { motion } from 'motion/react';
 import React from 'react';
 
 import { Button } from '@/components/shared/Button';
@@ -463,11 +462,9 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
         </Button>
       </div>
       <div className="my-4 flex flex-wrap justify-end gap-4">{buttons?.(defaultButtons) ?? defaultButtons}</div>
-      <motion.div
+      <div
         key={currentMonth.month + currentMonth.year * 12}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.15 }}
+        className="transition-opacity duration-150 ease-out starting:opacity-0"
       >
         <DndContext
           collisionDetection={pointerWithinDayOrGap}
@@ -534,7 +531,7 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
             ) : null}
           </DragOverlay>
         </DndContext>
-      </motion.div>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import ugLogoUrl from '@/assets/uglogo.svg';
 import { BroadcastIcon, EnvelopeSimpleIcon, SignOutIcon } from '@phosphor-icons/react';
-import { AnimatePresence, motion } from 'motion/react';
 
 import { Button } from '@/components/shared/Button';
 import { Anchor, Link } from '@/components/shared/Link';
@@ -75,33 +74,26 @@ export function Navbar() {
             <EnvelopeSimpleIcon />
           </Anchor>
         </div>
-        <AnimatePresence>
-          {currentUser && (
-            <motion.div
-              className="flex items-center gap-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {authDetails?.refreshTokenExpirationDate && (
-                <SessionStatusBadge
-                  refreshTokenExpirationDate={new Date(authDetails.refreshTokenExpirationDate)}
-                  onRefresh={refresh}
-                />
-              )}
-              <div className="inline-grid w-6 place-items-center transition-opacity hover:opacity-75">
-                <Button
-                  onClick={() => void onSignOutButtonClicked()}
-                  title="Wyloguj"
-                  variant="plain"
-                  className="p-0 text-inverse-foreground"
-                >
-                  <SignOutIcon />
-                </Button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {currentUser && (
+          <div className="flex items-center gap-4 transition-opacity duration-200 ease-out starting:opacity-0">
+            {authDetails?.refreshTokenExpirationDate && (
+              <SessionStatusBadge
+                refreshTokenExpirationDate={new Date(authDetails.refreshTokenExpirationDate)}
+                onRefresh={refresh}
+              />
+            )}
+            <div className="inline-grid w-6 place-items-center transition-opacity hover:opacity-75">
+              <Button
+                onClick={() => void onSignOutButtonClicked()}
+                title="Wyloguj"
+                variant="plain"
+                className="p-0 text-inverse-foreground"
+              >
+                <SignOutIcon />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
