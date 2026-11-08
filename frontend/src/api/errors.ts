@@ -16,7 +16,6 @@ export function responseErrorMessage(status: number, problem?: HttpValidationPro
     .map((message) => message?.trim())
     .filter((message): message is string => !!message);
   if (messages.length) return [...new Set(messages)].join('\n');
-  if (status === 401) return 'Sesja zakończyła się. Zaloguj się ponownie.';
   // The API explains every failure in `detail`; this covers proxies and other non-API responses.
   return status >= 500
     ? `Błąd serwera (${status}). Spróbuj ponownie później.`

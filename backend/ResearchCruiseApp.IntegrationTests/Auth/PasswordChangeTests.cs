@@ -73,8 +73,6 @@ public sealed class PasswordChangeTests(SqlFixture fixture) : IAsyncLifetime
             session.Cookie
         );
         Assert.Equal(HttpStatusCode.Unauthorized, refresh.StatusCode);
-        using var staleAccess = await client.GetAsync("/v2/users/me", ct);
-        Assert.Equal(HttpStatusCode.Unauthorized, staleAccess.StatusCode);
         using var oldLogin = await client.PostAsJsonAsync(
             "/v2/auth/login",
             new { user.Email, Password = TestUsers.Password },

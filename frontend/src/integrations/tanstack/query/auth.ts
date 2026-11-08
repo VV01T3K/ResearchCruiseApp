@@ -3,7 +3,6 @@ import type { QueryClient } from '@tanstack/react-query';
 import { useCallback, useSyncExternalStore } from 'react';
 
 import {
-  completeLogin,
   getAuthGeneration,
   getValidAccessToken,
   refreshSession,
@@ -92,7 +91,7 @@ export function useSignIn() {
       return { error: 'Wylogowano w innej karcie. Zaloguj się ponownie.' };
     }
 
-    completeLogin(response);
+    setSession(response);
     try {
       // Fetched outside the query cache: sign-in reports this failure itself.
       const user = await fetchCurrentUser();

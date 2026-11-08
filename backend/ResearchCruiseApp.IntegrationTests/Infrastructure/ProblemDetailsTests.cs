@@ -40,6 +40,15 @@ public sealed class ProblemDetailsTests(SqlFixture fixture) : IAsyncLifetime
             HttpStatusCode.NotFound,
             "Nie znaleziono żądanego zasobu. Mógł zostać usunięty."
         );
+        await AssertProblem(
+            await client.PostAsJsonAsync(
+                "/v2/auth/register",
+                new RegisterAccountRequest(user.Email!, TestUsers.Password, "Anna", "Nowak"),
+                ct
+            ),
+            HttpStatusCode.BadRequest,
+            $"Adres e-mail '{user.Email}' jest już zajęty."
+        );
         await app.InDatabase(async db =>
         {
             var stored = Assert.Single(await db.Users.ToListAsync(ct));
