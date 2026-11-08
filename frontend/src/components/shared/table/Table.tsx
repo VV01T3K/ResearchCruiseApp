@@ -3,8 +3,6 @@ import { appTableFeatures, ColumnDef, Row } from '@/integrations/tanstack/table/
 
 import { DesktopTable } from '@/components/shared/table/desktop/DesktopTable';
 import { InfiniteScrollProps } from '@/components/shared/table/common/TableInfiniteScrollTrigger';
-import { MobileTable } from '@/components/shared/table/mobile/MobileTable';
-import { useWindowSize } from '@/hooks/shared/WindowSizeHook';
 
 type Props<T extends object> = {
   data: T[];
@@ -55,7 +53,6 @@ export function Table<T extends object>({
   virtualized = false,
   className,
 }: Props<T>) {
-  const { width } = useWindowSize();
   const table = useTable({
     features: appTableFeatures,
     columns,
@@ -84,11 +81,8 @@ export function Table<T extends object>({
     getRowId: getRowId,
   });
 
-  const isMobile = width < 768;
-  const TableComponent = isMobile ? MobileTable : DesktopTable;
-
   return (
-    <TableComponent
+    <DesktopTable
       table={table}
       buttons={!disabled ? buttons : () => []}
       emptyTableMessage={emptyTableMessage}

@@ -9,7 +9,7 @@
   }
 
   #root {
-    @apply relative flex flex-col;
+    @apply relative flex min-w-[1024px] flex-col;
   }
 
   :root {
