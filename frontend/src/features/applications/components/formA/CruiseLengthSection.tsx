@@ -170,7 +170,10 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
   function handlePeriodSelectionChange(value: 'precise' | 'period') {
     if (periodSelectionType === 'period' && isValidPeriod(acceptablePeriod) && isValidPeriod(optimalPeriod)) {
       savedPeriodValuesRef.current = { acceptable: acceptablePeriod, optimal: optimalPeriod };
-    } else if (periodSelectionType === 'precise' && (precisePeriodStart || precisePeriodEnd)) {
+    } else if (
+      periodSelectionType === 'precise' &&
+      (precisePeriodStart || precisePeriodEnd || precisePeriodStartTime || precisePeriodEndTime)
+    ) {
       savedPreciseValuesRef.current = {
         start: precisePeriodStart,
         end: precisePeriodEnd,

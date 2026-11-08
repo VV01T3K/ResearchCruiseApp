@@ -1,6 +1,6 @@
 import { Fragment, RefObject } from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn, roundNumber } from '@/lib/utils';
 import {
   formatLocalDateStringFromUtcString,
   getExplanationForPeriod,
@@ -73,9 +73,9 @@ export function PrintTemplate({ ref, context, values }: Props) {
           )}
 
           <span>Liczba planowanych dób rejsowych: </span>
-          <span>{values.cruiseDays}</span>
+          <span>{roundNumber((values.cruiseDays * 24 + values.cruiseHours) / 24, 2)}</span>
           <span>Liczba planowanych godzin rejsowych:</span>
-          <span>{values.cruiseHours} h</span>
+          <span>{values.cruiseDays * 24 + values.cruiseHours} h</span>
           <span>Uwagi dotyczące terminu:</span>
           <span>{values.periodNotes}</span>
           <span>Sposób wykorzystania statku:</span>
