@@ -4,7 +4,7 @@ import { useSyncExternalStore } from 'react';
 import type { FeedbackAttachment } from '@/integrations/sentry/attachments';
 import { useCurrentUser } from '@/integrations/tanstack/query/auth';
 
-export type FeedbackContext = { origin: 'layout' | 'help' | 'form' };
+export type FeedbackContext = { origin: 'layout' | 'form' };
 
 const CONFIRMATION_TIMEOUT = 30_000;
 

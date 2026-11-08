@@ -23,100 +23,91 @@ export function DesktopTable<T extends object>({
   const defaultButtons: React.ReactNode[] = [<TableClearFiltersButton key="clearFiltersBtn" table={table} />];
   const allButtons = buttons ? buttons(defaultButtons) : defaultButtons;
   const rows = table.getRowModel().rows;
-  const headerRowCount = table.getHeaderGroups().length + (allButtons.length > 0 ? 1 : 0);
+  const headerRowCount = table.getHeaderGroups().length;
 
   return (
-    <div
-      className={cn('-mx-1 mt-2 w-[calc(100%+0.5rem)] overflow-x-auto px-1 pt-2', className)}
-      data-toolbarless-table={allButtons.length === 0 || undefined}
-    >
-      <table
-        className={cn('min-w-full table-fixed border-collapse', virtualized && 'w-full')}
-        aria-rowcount={virtualized ? (infiniteScroll?.hasNextPage ? -1 : rows.length + headerRowCount) : undefined}
-      >
-        <colgroup>
-          {table.getAllColumns().map((column) => (
-            <col
-              key={column.id}
-              style={{ width: virtualized ? `${column.getSize()}px` : `${column.columnDef.size}%` }}
-            />
-          ))}
-        </colgroup>
-        <thead>
-          {allButtons.length > 0 && (
-            <tr key="header-buttons">
-              <th
-                colSpan={Math.max(
-                  table
-                    .getHeaderGroups()
-                    .flatMap((x) => x.headers.map((y) => y.colSpan))
-                    .reduce((a, b) => a + b, 0)
-                )}
-              >
-                <div className="mb-4 flex flex-wrap items-center justify-end gap-4">
-                  <TableActiveFilters table={table} />
-                  {allButtons}
-                </div>
-              </th>
-            </tr>
-          )}
-          {table.getHeaderGroups().map((headerGroup) => {
-            return (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <DesktopTableHeader key={header.id} header={header}>
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </DesktopTableHeader>
-                ))}
-              </tr>
-            );
-          })}
-        </thead>
-        <TableBody
-          table={table}
-          columnCount={table.getVisibleLeafColumns().length}
-          headerRowCount={headerRowCount}
-          virtualized={virtualized}
-          estimateRowHeight={120}
-          renderCells={(row) =>
-            row.getVisibleCells().map((cell) => {
-              return (
-                <td key={cell.id} className={cn('px-2 py-3 text-center', virtualized && '[overflow-wrap:anywhere]')}>
-                  <TableCell cell={cell} />
-                </td>
-              );
-            })
-          }
+    <div className={cn('mt-2 pt-2', className)} data-toolbarless-table={allButtons.length === 0 || undefined}>
+      {allButtons.length > 0 && (
+        <div className="mb-4 flex flex-wrap items-center justify-end gap-4">
+          <TableActiveFilters table={table} />
+          {allButtons}
+        </div>
+      )}
+      <div className="-mx-1 overflow-x-auto px-1">
+        <table
+          className={cn('min-w-full table-fixed border-collapse', virtualized && 'w-full')}
+          aria-rowcount={virtualized ? (infiniteScroll?.hasNextPage ? -1 : rows.length + headerRowCount) : undefined}
         >
-          {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
-            <tr>
-              <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
-                <div
-                  className={`rounded-lg border bg-surface-subtle p-2.5 ${
-                    hasErrors(errors) ? 'border-danger bg-surface-muted text-danger ring-danger' : 'border-border'
-                  }`}
-                >
-                  <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
-                    {emptyTableMessage}
-                  </span>
-                  {showRequiredAsterisk && (
-                    <span className="ml-1 font-bold text-danger" title="Pole jest obowiązkowe do wypełnienia">
-                      *
+          <colgroup>
+            {table.getAllColumns().map((column) => (
+              <col
+                key={column.id}
+                style={{ width: virtualized ? `${column.getSize()}px` : `${column.columnDef.size}%` }}
+              />
+            ))}
+          </colgroup>
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => {
+              return (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <DesktopTableHeader key={header.id} header={header}>
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </DesktopTableHeader>
+                  ))}
+                </tr>
+              );
+            })}
+          </thead>
+          <TableBody
+            table={table}
+            columnCount={table.getVisibleLeafColumns().length}
+            headerRowCount={headerRowCount}
+            virtualized={virtualized}
+            estimateRowHeight={120}
+            renderCells={(row) =>
+              row.getVisibleCells().map((cell) => {
+                return (
+                  <td
+                    key={cell.id}
+                    className={cn('px-1.5 py-3 text-center', virtualized && '[overflow-wrap:anywhere]')}
+                  >
+                    <TableCell cell={cell} />
+                  </td>
+                );
+              })
+            }
+          >
+            {!!emptyTableMessage && table.getRowModel().rows.length === 0 && (
+              <tr>
+                <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
+                  <div
+                    className={`rounded-lg border bg-surface-subtle p-2.5 ${
+                      hasErrors(errors) ? 'border-danger bg-surface-muted text-danger ring-danger' : 'border-border'
+                    }`}
+                  >
+                    <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
+                      {emptyTableMessage}
                     </span>
-                  )}
-                </div>
-              </td>
-            </tr>
-          )}
-          {infiniteScroll && (
-            <tr role="presentation">
-              <td role="presentation" colSpan={table.getAllColumns().length} className="p-0">
-                <TableInfiniteScrollTrigger {...infiniteScroll} />
-              </td>
-            </tr>
-          )}
-        </TableBody>
-      </table>
+                    {showRequiredAsterisk && (
+                      <span className="ml-1 font-bold text-danger" title="Pole jest obowiązkowe do wypełnienia">
+                        *
+                      </span>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            )}
+            {infiniteScroll && (
+              <tr role="presentation">
+                <td role="presentation" colSpan={table.getAllColumns().length} className="p-0">
+                  <TableInfiniteScrollTrigger {...infiniteScroll} />
+                </td>
+              </tr>
+            )}
+          </TableBody>
+        </table>
+      </div>
     </div>
   );
 }
