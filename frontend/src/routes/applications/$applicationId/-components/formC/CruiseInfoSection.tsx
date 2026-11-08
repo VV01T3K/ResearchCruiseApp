@@ -1,7 +1,7 @@
 import { MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { Accordion } from '@/components/shared/Accordion';
 import { Badge } from '@/components/shared/Badge';
-import { Button } from '@/components/shared/Button';
+import { ButtonLink } from '@/components/shared/Button';
 import { formatDate } from '@/lib/dateUtils';
 import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
 import type { CruiseResponse } from '@/api/generated/schemas';
@@ -25,9 +25,9 @@ export function CruiseInfoSection({ context }: { context: FormCViewModel }) {
           </span>
         </div>
         <div className="grid place-items-center">
-          <Button type="link" href={`/cruises/${cruise.id}`} variant="primaryOutline">
+          <ButtonLink to="/cruises/$cruiseId" params={{ cruiseId: cruise.id }} variant="primaryOutline">
             <MagnifyingGlassIcon className="w-4" /> Pokaż szczegóły rejsu
-          </Button>
+          </ButtonLink>
         </div>
       </div>
     </Accordion>

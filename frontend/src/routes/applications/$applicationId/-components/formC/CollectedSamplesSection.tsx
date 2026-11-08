@@ -107,7 +107,6 @@ export function CollectedSamplesSection({ context }: { context: FormCViewModel }
                 Dodaj próbkę
               </Button>,
             ]}
-            variant="form"
             emptyTableMessage="Nie dodano żadnej próbki"
             disabled={isReadonly}
           />

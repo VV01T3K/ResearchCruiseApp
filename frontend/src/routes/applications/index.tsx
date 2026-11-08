@@ -8,7 +8,7 @@ import { MagnifyingGlassPlusIcon } from '@phosphor-icons/react';
 import { useMemo, useState } from 'react';
 import { Avatar } from '@/components/shared/Avatar';
 import { Badge } from '@/components/shared/Badge';
-import { Button } from '@/components/shared/Button';
+import { ButtonLink } from '@/components/shared/Button';
 import { Guard } from '@/components/shared/Guard';
 import { Layout } from '@/components/shared/Layout';
 import { Link } from '@/components/shared/Link';
@@ -170,16 +170,26 @@ function ApplicationsPage() {
         const isFormBReadOnly = !canRevertFormB(row.original.status);
         return (
           <div className="flex flex-col gap-1">
-            <Link disabled={!row.original.hasFormA} href={`/applications/${row.original.id}/formA`}>
+            <Link
+              disabled={!row.original.hasFormA}
+              to="/applications/$applicationId/formA"
+              params={{ applicationId: row.original.id }}
+            >
               Formularz A
             </Link>
             <Link
               disabled={!row.original.hasFormB}
-              href={`/applications/${row.original.id}/formB?mode=${isFormBReadOnly ? 'view' : 'preview'}`}
+              to="/applications/$applicationId/formB"
+              params={{ applicationId: row.original.id }}
+              search={{ mode: isFormBReadOnly ? 'view' : 'preview' }}
             >
               Formularz B
             </Link>
-            <Link disabled={!row.original.hasFormC} href={`/applications/${row.original.id}/formC`}>
+            <Link
+              disabled={!row.original.hasFormC}
+              to="/applications/$applicationId/formC"
+              params={{ applicationId: row.original.id }}
+            >
               Formularz C
             </Link>
           </div>
@@ -218,38 +228,41 @@ function ApplicationsPage() {
             </p>
           )}
           {row.original.status === CruiseApplicationStatus.enum.draft && (
-            <Button
+            <ButtonLink
               className="ml-auto sm:mx-auto"
               size="sm"
-              type="link"
-              href={`/applications/${row.original.id}/formA?mode=edit`}
+              to="/applications/$applicationId/formA"
+              params={{ applicationId: row.original.id }}
+              search={{ mode: 'edit' }}
             >
               Kontynuuj wypełnianie
-            </Button>
+            </ButtonLink>
           )}
           {row.original.status === CruiseApplicationStatus.enum.formBRequired && (
             <Guard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
-              <Button
+              <ButtonLink
                 className="ml-auto sm:mx-auto"
                 size="sm"
-                type="link"
-                href={`/applications/${row.original.id}/formB?mode=edit`}
+                to="/applications/$applicationId/formB"
+                params={{ applicationId: row.original.id }}
+                search={{ mode: 'edit' }}
               >
                 Wypełnij
-              </Button>
+              </ButtonLink>
             </Guard>
           )}
           {row.original.status === CruiseApplicationStatus.enum.undertaken && (
             <div className="flex flex-col items-center gap-2">
               <Guard allowedUserIds={[row.original.mainManager.id, row.original.deputyManager.id]}>
-                <Button
+                <ButtonLink
                   className="ml-auto sm:mx-auto"
                   size="sm"
-                  type="link"
-                  href={`/applications/${row.original.id}/formC?mode=edit`}
+                  to="/applications/$applicationId/formC"
+                  params={{ applicationId: row.original.id }}
+                  search={{ mode: 'edit' }}
                 >
                   Wypełnij formularz C
-                </Button>
+                </ButtonLink>
               </Guard>
               <div>
                 {row.original.effectsDoneRate === '0' ? (
@@ -270,10 +283,15 @@ function ApplicationsPage() {
       header: 'Akcje',
       cell: ({ row }) => (
         <>
-          <Button type="link" size="sm" href={`/applications/${row.original.id}/details`} className="mx-auto flex">
+          <ButtonLink
+            size="sm"
+            to="/applications/$applicationId/details"
+            params={{ applicationId: row.original.id }}
+            className="mx-auto flex"
+          >
             Szczegóły
             <MagnifyingGlassPlusIcon className="h-4 w-4" />
-          </Button>
+          </ButtonLink>
         </>
       ),
       size: 124,

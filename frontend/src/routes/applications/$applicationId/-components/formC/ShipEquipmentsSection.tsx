@@ -43,7 +43,6 @@ export function ShipEquipmentsSection({ context }: { context: FormCViewModel }) 
             data={formBInitValues.shipEquipments}
             columns={shipEquipmentColumns(form, isReadonly)}
             buttons={() => []}
-            variant="form"
             disabled={isReadonly}
           />
         )}

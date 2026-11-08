@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { useLayoutEffect } from 'react';
 import { allowOnly } from '@/lib/guards';
 import { Alert } from '@/components/shared/Alert';
 import { Role } from '@/integrations/auth/types';
@@ -23,6 +24,13 @@ export const Route = createFileRoute('/')({
 
 function DashboardPage() {
   const currentUser = useCurrentUser();
+
+  useLayoutEffect(() => {
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (!viewport || !matchMedia('(pointer: coarse) and (max-device-width: 767px)').matches) return;
+    viewport.setAttribute('content', 'width=device-width, initial-scale=1');
+    return () => viewport.setAttribute('content', 'width=1024');
+  }, []);
 
   if (isInRole(currentUser, Role.Administrator)) {
     return (

@@ -362,7 +362,7 @@ test('an invalid form B names the section and reason of the first error in an em
 
   await expect(
     page
-      .getByRole('region', { name: 'Notifications' })
+      .getByRole('region', { name: 'Powiadomienia' })
       .getByText('Formularz błędny w sekcji nr 12: Data rozpoczęcia jest wymagana')
   ).toBeVisible();
   await expect(
@@ -403,7 +403,7 @@ test('form B offers going back to editing only while eligible, explains a stale 
   await revert.click();
   await expect(
     page
-      .getByRole('region', { name: 'Notifications' })
+      .getByRole('region', { name: 'Powiadomienia' })
       .getByText(`Nie udało się cofnąć formularza B do edycji: ${refusal}`)
   ).toBeVisible();
   await expect(revert).toHaveCount(0);

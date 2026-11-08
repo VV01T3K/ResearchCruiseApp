@@ -53,7 +53,9 @@ function CruiseEffectsPage() {
       header: 'Formularz',
       cell: ({ row }) => (
         <div className="flex flex-col gap-1">
-          <Link href={`/applications/${row.original.cruiseApplicationId}/formC`}>Formularz C</Link>
+          <Link to="/applications/$applicationId/formC" params={{ applicationId: row.original.cruiseApplicationId }}>
+            Formularz C
+          </Link>
         </div>
       ),
       size: 10,

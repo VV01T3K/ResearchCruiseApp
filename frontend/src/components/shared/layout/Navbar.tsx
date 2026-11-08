@@ -3,7 +3,7 @@ import { BroadcastIcon, EnvelopeSimpleIcon, SignOutIcon } from '@phosphor-icons/
 import { AnimatePresence, motion } from 'motion/react';
 
 import { Button } from '@/components/shared/Button';
-import { Link } from '@/components/shared/Link';
+import { Anchor, Link } from '@/components/shared/Link';
 import { SessionStatusBadge } from '@/components/shared/SessionStatusBadge';
 import config from '@/config';
 import { useAuthDetails, useCurrentUser, useSessionActions } from '@/integrations/tanstack/query/auth';
@@ -28,35 +28,35 @@ export function Navbar() {
   return (
     <motion.header
       id="header"
-      className="z-50 flex h-[var(--header-height)] items-center justify-between gap-4 bg-primary px-2 py-4 sm:px-4 md:px-6 lg:px-8"
+      className="z-50 flex h-[var(--header-height)] items-center justify-between gap-4 bg-primary px-2 py-4 sm:px-4 md:px-6 lg:px-8 phone:flex-wrap phone:content-center phone:gap-y-1 phone:px-4 phone:py-2"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="min-w-0">
-        <div className="flex-col items-end transition-transform duration-300 sm:flex sm:flex-row sm:gap-1 sm:font-thin lg:hover:translate-x-[5%] lg:hover:scale-110">
+      <div className="min-w-0 phone:basis-full">
+        <div className="flex-col items-end transition-transform duration-300 sm:flex sm:flex-row sm:gap-1 sm:font-thin lg:hover:translate-x-[5%] lg:hover:scale-110 phone:flex phone:flex-row phone:gap-1">
           <Link
-            href="/"
+            to="/"
             title="Portal rejsów badawczych R/V Oceanograf – strona główna"
-            className="pr-4 text-inverse-foreground hover:no-underline sm:truncate sm:text-2xl"
+            className="pr-4 text-inverse-foreground hover:no-underline sm:truncate sm:text-2xl phone:truncate"
           >
             Portal rejsów badawczych R/V Oceanograf
           </Link>
-          <Link href={`${config.repositoryUrl}/releases/latest`} variant="white" className="shrink-0 text-xs">
+          <Anchor href={`${config.repositoryUrl}/releases/latest`} variant="white" className="shrink-0 text-xs">
             {config.version}
-          </Link>
+          </Anchor>
         </div>
       </div>
-      <div className="flex shrink-0 gap-6">
+      <div className="flex shrink-0 gap-6 phone:ml-auto">
         <motion.div className="w-4" whileHover={{ scale: 1.3 }}>
-          <Link
+          <Anchor
             href="https://ug.edu.pl"
             target="_blank"
             title="Uniwersytet Gdański"
             className="text-inverse-foreground"
           >
             <img src={ugLogoUrl} alt="" className="h-full w-full object-contain" />
-          </Link>
+          </Anchor>
         </motion.div>
         <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
           <Button
@@ -69,14 +69,14 @@ export function Navbar() {
           </Button>
         </motion.div>
         <motion.div className="inline-grid w-6 place-items-center" whileHover={{ scale: 1.3 }}>
-          <Link
+          <Anchor
             href="https://outlook.com/ug.edu.pl"
             target="_blank"
             title="Poczta Uniwersytecka"
             className="text-inverse-foreground"
           >
             <EnvelopeSimpleIcon />
-          </Link>
+          </Anchor>
         </motion.div>
         <AnimatePresence>
           {currentUser && (

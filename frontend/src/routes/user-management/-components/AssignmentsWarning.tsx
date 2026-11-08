@@ -50,7 +50,11 @@ export function AssignmentsWarning({ items, action, group }: Props) {
             <ul className="list-disc ps-5">
               {assignments.applications.map((application) => (
                 <li key={application.id}>
-                  <Link href={`/applications/${application.id}`} target="_blank">
+                  <Link
+                    to="/applications/$applicationId/details"
+                    params={{ applicationId: application.id }}
+                    target="_blank"
+                  >
                     Zgłoszenie nr {application.number}
                   </Link>{' '}
                   ({application.isDeputy ? 'zastępca' : 'kierownik'}): {getApplicationStatusLabel(application.status)}
@@ -58,7 +62,7 @@ export function AssignmentsWarning({ items, action, group }: Props) {
               ))}
               {assignments.cruises.map((cruise) => (
                 <li key={cruise.id}>
-                  <Link href={`/cruises/${cruise.id}`} target="_blank">
+                  <Link to="/cruises/$cruiseId" params={{ cruiseId: cruise.id }} target="_blank">
                     Rejs nr {cruise.number}
                   </Link>{' '}
                   ({cruise.isDeputy ? 'zastępca' : 'kierownik'}): {cruise.status === 'new' ? 'Nowy' : 'Potwierdzony'}

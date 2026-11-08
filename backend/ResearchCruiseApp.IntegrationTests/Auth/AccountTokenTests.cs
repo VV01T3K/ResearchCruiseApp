@@ -424,7 +424,7 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
     {
         var stored = await ReadAccount(app, original.Id);
         Assert.Equal(original.Email, stored.Email);
-        Assert.True(stored.EmailConfirmed);
+        Assert.Equal(confirmation || original.EmailConfirmed, stored.EmailConfirmed);
         Assert.Equal(original.Accepted, stored.Accepted);
         if (confirmation)
         {

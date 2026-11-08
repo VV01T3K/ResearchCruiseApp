@@ -183,7 +183,6 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
                   </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnej umowy."
-                variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />

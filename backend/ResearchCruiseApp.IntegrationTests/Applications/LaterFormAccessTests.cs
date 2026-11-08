@@ -176,10 +176,7 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
         };
         Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
         using var denied = await Write(manager, route, "b", unit.Id, "2", true, ct);
-        Assert.Equal(
-            change == "deactivate" ? HttpStatusCode.Unauthorized : HttpStatusCode.NotFound,
-            denied.StatusCode
-        );
+        Assert.Equal(HttpStatusCode.NotFound, denied.StatusCode);
         using var refresh = await RefreshSessionTests.SendCookie(
             manager,
             "/v2/auth/refresh",
@@ -231,10 +228,7 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
             null,
             ct
         );
-        Assert.Equal(
-            role == RoleName.Shipowner ? HttpStatusCode.Unauthorized : HttpStatusCode.Forbidden,
-            denied.StatusCode
-        );
+        Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
         await app.InDatabase(async db =>
             Assert.Equal(
                 CruiseApplicationStatus.FormBFilled,

@@ -120,7 +120,6 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
                 </DropdownElementSelectorButton>,
               ]}
               emptyTableMessage="Nie dodano żadnego rejonu."
-              variant="form"
               disabled={isReadonly}
               errors={getErrors(field.state.meta, form.state.submissionAttempts)}
             />

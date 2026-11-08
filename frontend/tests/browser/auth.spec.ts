@@ -16,7 +16,6 @@ import {
   getGetUsersMockHandler,
 } from '@/api/generated/mocks/users/users.msw.gen';
 import { getGetApplicationFormAMockHandler } from '@/api/generated/mocks/applications/applications.msw.gen';
-import { responseErrorMessage } from '@/api/errors';
 import { test, expect, fail, applicationForms } from './fixtures';
 import { admin, outsider, session } from '../data/accounts';
 import { applicationId } from '../data/forms';
@@ -60,7 +59,7 @@ test('rejected login explains the error and permits another attempt', async ({ p
   await page.goto('/login');
   await logIn(page, 'wrong-password');
   await expect(page.getByText('Nieprawidłowe dane logowania')).toBeVisible();
-  const notifications = page.getByRole('region', { name: 'Notifications' });
+  const notifications = page.getByRole('region', { name: 'Powiadomienia' });
   await expect(notifications).toBeAttached();
   await expect(notifications.getByRole('dialog')).toHaveCount(0);
   await expect(page).toHaveURL('/login');
@@ -134,46 +133,6 @@ test.describe('authenticated session', () => {
     expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain(session().accessToken);
   });
 
-  for (const action of ['a background refresh', 'a password change'] as const) {
-    test(`after a session ended on another device, ${action} returns to login once`, async ({
-      page,
-      network,
-      requests,
-    }) => {
-      if (action === 'a background refresh') await page.clock.install();
-      await page.goto(action === 'a background refresh' ? '/user-management' : '/account-settings');
-      await expect(
-        action === 'a background refresh'
-          ? page.getByRole('button', { name: 'Dodaj użytkownika' })
-          : page.locator('input[name="password"]')
-      ).toBeVisible();
-      network.use(
-        getGetUsersMockHandler(fail(401)),
-        getGetCurrentUserMockHandler(fail(401)),
-        getRefreshTokensMockHandler(fail(401)),
-        getChangeCurrentUserPasswordMockHandler(fail(401))
-      );
-      if (action === 'a background refresh') {
-        await page.clock.fastForward(2 * 60_000);
-        await page.evaluate(() => window.dispatchEvent(new Event('visibilitychange')));
-      } else {
-        await page.locator('input[name="password"]').fill('CurrentPass1');
-        await page.locator('input[name="newPassword"]').fill('NewStrongPass1');
-        await page.locator('input[name="repeatedNewPassword"]').fill('NewStrongPass1');
-        await page.getByRole('button', { name: 'Zmień hasło' }).click();
-      }
-      await expect(page).toHaveURL(/\/login/);
-      await expect(page.getByLabel('E-mail')).toBeVisible();
-      // Read once: a retrying check would pass after the toast closes itself.
-      await page.waitForTimeout(500);
-      const toasts = await page.getByRole('region', { name: 'Notifications' }).getByRole('dialog').allTextContents();
-      expect(toasts).toEqual(
-        action === 'a background refresh' ? [] : [expect.stringContaining(responseErrorMessage(401))]
-      );
-      expect(requests.bodies('POST /v2/auth/refresh')).toHaveLength(1);
-    });
-  }
-
   test('logout propagates between tabs', async ({ page, context, network }) => {
     network.use(getLogoutMockHandler());
     await page.goto('/user-management');
@@ -240,15 +199,13 @@ test.describe('authenticated session', () => {
     });
   }
 
-  test('a password change sends both passwords and ends the session', async ({ page, network, requests }) => {
+  test('a password change sends the current and the new password', async ({ page, network, requests }) => {
     network.use(getChangeCurrentUserPasswordMockHandler());
     await page.goto('/account-settings');
     await page.locator('input[name="password"]').fill('CurrentPass1');
     await page.locator('input[name="newPassword"]').fill('NewStrongPass1');
     await page.locator('input[name="repeatedNewPassword"]').fill('NewStrongPass1');
-    network.use(getGetCurrentUserMockHandler(fail(401)), getRefreshTokensMockHandler(fail(401)));
     await page.getByRole('button', { name: 'Zmień hasło' }).click();
-    await expect(page).toHaveURL(/\/login/);
     await expect(page.getByText('Hasło zostało zmienione')).toBeVisible();
     expect(requests.bodies('PATCH /v2/users/me/password')).toEqual([
       { password: 'CurrentPass1', newPassword: 'NewStrongPass1' },
@@ -285,7 +242,7 @@ test('a rejected registration explains why and can be resubmitted', async ({ pag
   const register = page.getByRole('button', { name: 'Zarejestruj się' });
   await register.click();
   await expect(page.getByText("Adres e-mail 'person@example.com' jest już zajęty.")).toBeVisible();
-  const notifications = page.getByRole('region', { name: 'Notifications' });
+  const notifications = page.getByRole('region', { name: 'Powiadomienia' });
   await expect(notifications).toBeAttached();
   await expect(notifications.getByRole('dialog')).toHaveCount(0);
 

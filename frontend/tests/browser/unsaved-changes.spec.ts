@@ -195,7 +195,7 @@ test.describe('pending saves', () => {
     await notes(page).fill(UNSAVED);
     release();
     await expect(
-      page.getByRole('region', { name: 'Notifications' }).getByText('Formularz został zapisany')
+      page.getByRole('region', { name: 'Powiadomienia' }).getByText('Formularz został zapisany')
     ).toBeVisible();
     await expect(page).toHaveURL(/\/applications\/new\?draft=/);
     await expect(notes(page)).toHaveValue(UNSAVED);
@@ -395,7 +395,7 @@ test.describe('edits lost when the session ends', () => {
     await expect(recovery(page)).toHaveCount(0);
   });
 
-  async function signOutAndInFromAnotherTab(page: Page, network: NetworkFixture, account: CurrentUserResponse) {
+  async function signOutInAnotherTabAndBackIn(page: Page, network: NetworkFixture, account: CurrentUserResponse) {
     network.use(
       getGetCurrentSessionMockHandler(tokens(admin.id)),
       getLogoutMockHandler(() =>
@@ -411,20 +411,27 @@ test.describe('edits lost when the session ends', () => {
     await expect(dialog(page)).toHaveCount(0);
 
     network.use(getLoginMockHandler(tokens(account.id)), getGetCurrentUserMockHandler(account));
-    await other.getByLabel('E-mail').fill(account.email);
-    await other.getByLabel('Hasło', { exact: true }).fill('Password1!');
-    await other.getByRole('button', { name: 'Zaloguj', exact: true }).click();
+    for (const tab of [other, page]) {
+      await tab.getByLabel('E-mail').fill(account.email);
+      await tab.getByLabel('Hasło', { exact: true }).fill('Password1!');
+      await tab.getByRole('button', { name: 'Zaloguj', exact: true }).click();
+      await expect(tab).not.toHaveURL(/\/login/);
+      if (tab === other) await expect(page).toHaveURL(/\/login/);
+    }
     await expect(page).toHaveURL(formA);
   }
 
-  test('a sign-out in another tab keeps them, and this tab follows the sign-in there', async ({ page, network }) => {
-    await signOutAndInFromAnotherTab(page, network, admin);
+  test('a sign-out in another tab keeps them, and a sign-in there leaves this tab signed out', async ({
+    page,
+    network,
+  }) => {
+    await signOutInAnotherTabAndBackIn(page, network, admin);
     await recovery(page).getByRole('button', { name: 'Przywróć zmiany' }).click();
     await expect(notes(page)).toHaveValue(UNSAVED);
   });
 
-  test('another account signing in from another tab does not get them', async ({ page, network }) => {
-    await signOutAndInFromAnotherTab(page, network, outsider);
+  test('another account signing in does not get them', async ({ page, network }) => {
+    await signOutInAnotherTabAndBackIn(page, network, outsider);
     await expect(notes(page)).toBeVisible();
     await expect(notes(page)).not.toHaveValue(UNSAVED);
     await expect(recovery(page)).toHaveCount(0);

@@ -646,7 +646,11 @@ test('the export downloads the CSV file of the chosen year', async ({ page, netw
   expect(requests.queries('GET /v2/cruises/export')).toEqual([{ year: '2025' }]);
 });
 
-test('calendar edit mode lets a confirmed cruise be dragged, but not an ended one', async ({ page, network }) => {
+test('calendar edit mode lets a confirmed cruise be dragged, but not an ended one, and opens them only on double click', async ({
+  page,
+  network,
+  requests,
+}) => {
   const ended: CruiseResponse = {
     ...cruise(),
     id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
@@ -656,26 +660,47 @@ test('calendar edit mode lets a confirmed cruise be dragged, but not an ended on
   network.use(getGetCruisesMockHandler([confirmed(), ended]));
   await page.clock.setFixedTime('2026-06-10T12:00:00Z');
   await page.goto('/cruises');
-  await page.getByRole('button', { name: 'Kalendarz', exact: true }).click();
+  await page.getByRole('tab', { name: 'Kalendarz' }).click();
   await page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' }).click();
 
   await expect(page.getByRole('button', { name: `Rejs ${confirmed().title}` }).first()).toHaveAttribute(
     'aria-roledescription',
     'draggable'
   );
-  await expect(page.getByRole('link', { name: 'Rejs Zakończony' }).first()).toHaveAttribute(
-    'href',
-    `/cruises/${ended.id}`
-  );
-  await expect(page.locator(`a[href="/cruises/${ended.id}"]`)).toHaveCount(2);
-  await expect(page.getByRole('link', { name: /Zakończon/ })).toHaveCount(1);
-  const locked = page.getByRole('link', { name: 'Rejs Zakończony' }).first();
-  await expect(locked).toHaveAccessibleName(/^Rejs Zakończony.+/);
+  await expect(page.locator('[data-calendar-day-tile] a')).toHaveCount(0);
+  const locked = page.getByRole('button', { name: /^Rejs Zakończony.+/ });
+  await expect(locked).toHaveCount(1);
+  await expect(locked).toHaveAttribute('aria-disabled', 'true');
   expect(
     await locked.evaluate(
-      (link) => !link.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true }))
+      (button) => !button.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true }))
     )
   ).toBe(true);
+
+  network.use(getUpdateCruiseMockHandler());
+  const bar = (await page
+    .getByRole('button', { name: `Rejs ${confirmed().title}` })
+    .first()
+    .boundingBox())!;
+  const june4 = (await page.locator('[data-calendar-day-tile]').nth(3).boundingBox())!;
+  await page.mouse.move(bar.x + 20, bar.y + bar.height / 2);
+  await page.mouse.down();
+  // Half a pixel before June 4's border: the gap is nearer June 4 than June 3.
+  await page.mouse.move(june4.x - 0.5, bar.y + bar.height / 2, { steps: 20 });
+  await page.mouse.up();
+  await expect.poll(() => requests.bodies(`PATCH /v2/cruises/${confirmed().id}`)).toHaveLength(1);
+  expect(requests.bodies(`PATCH /v2/cruises/${confirmed().id}`)[0]).toMatchObject({
+    startDate: '2026-06-04T08:00:00.000Z',
+  });
+
+  await page.getByRole('button', { name: 'Wyłącz tryb edycji kalendarza' }).click();
+  await expect(page.getByRole('link', { name: 'Rejs Zakończony' })).toHaveAttribute('href', `/cruises/${ended.id}`);
+
+  await page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' }).click();
+  await locked.click({ force: true });
+  await expect(page.getByRole('button', { name: 'Wyłącz tryb edycji kalendarza' })).toBeVisible();
+  await locked.dblclick({ force: true });
+  await expect(page).toHaveURL(`/cruises/${ended.id}`);
 });
 
 test.describe(() => {
@@ -701,7 +726,7 @@ test.describe(() => {
     await page.goto('/cruises');
     await expect(page.getByRole('cell', { name: cruise().number, exact: true })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Zgłoszenia' })).toHaveCount(0);
-    await page.getByRole('button', { name: 'Kalendarz', exact: true }).click();
+    await page.getByRole('tab', { name: 'Kalendarz' }).click();
     await expect(page.getByRole('button', { name: 'Wróć do obecnego miesiąca' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' })).toHaveCount(0);
 

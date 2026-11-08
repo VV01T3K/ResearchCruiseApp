@@ -28,10 +28,9 @@ export function Alert({ children, onClose, variant = 'primary', iconAlign = 'cen
             '-mx-1.5 -my-1.5 ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg hover:cursor-pointer focus:ring-2',
             variants[variant].closeButtonClassName
           )}
-          aria-label="Close"
+          aria-label="Zamknij"
           onClick={onClose}
         >
-          <span className="sr-only">Close</span>
           <XIcon className="scale-55" />
         </button>
       )}
@@ -42,35 +41,35 @@ export function Alert({ children, onClose, variant = 'primary', iconAlign = 'cen
 const variants = {
   primary: {
     weight: 'fill',
-    screenReaderMessage: 'Notification',
+    screenReaderMessage: 'Powiadomienie',
     icon: InfoIcon,
     containerClassName: 'text-primary-dark bg-primary-light',
     closeButtonClassName: 'bg-primary-light text-primary focus:ring-primary-400 p-1.5 hover:bg-primary-200',
   },
   success: {
     weight: 'regular',
-    screenReaderMessage: 'Success',
+    screenReaderMessage: 'Sukces',
     icon: CheckIcon,
     containerClassName: 'text-success-dark bg-success-light',
     closeButtonClassName: 'bg-success-light text-success focus:ring-success-300 p-1.5 hover:bg-success-200',
   },
   danger: {
     weight: 'regular',
-    screenReaderMessage: 'Error',
+    screenReaderMessage: 'Błąd',
     icon: WarningCircleIcon,
     containerClassName: 'text-danger-dark bg-danger-light',
     closeButtonClassName: 'bg-danger-light text-danger focus:ring-danger-400 p-1.5 hover:bg-danger-200',
   },
   warning: {
     weight: 'regular',
-    screenReaderMessage: 'Warning',
+    screenReaderMessage: 'Ostrzeżenie',
     icon: WarningIcon,
     containerClassName: 'text-warning-dark bg-warning-light',
     closeButtonClassName: 'bg-warning-light text-warning-dark focus:ring-warning-300 p-1.5 hover:bg-warning-100',
   },
   info: {
     weight: 'fill',
-    screenReaderMessage: 'Info',
+    screenReaderMessage: 'Informacja',
     icon: InfoIcon,
     containerClassName: 'text-info-dark bg-info-light',
     closeButtonClassName: 'bg-info-light text-info focus:ring-info-300 p-1.5 hover:bg-info-100',

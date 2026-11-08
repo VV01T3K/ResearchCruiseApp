@@ -8,7 +8,7 @@ export function Grid({ children, className }: Props) {
   return (
     <div
       className={cn(
-        'mx-auto grid max-w-screen-xl auto-rows-[10rem] grid-cols-2 gap-4 p-8 md:grid-cols-4 lg:grid-cols-6',
+        'mx-auto grid max-w-screen-xl auto-rows-[10rem] grid-cols-6 gap-4 p-8 phone:auto-rows-[7.5rem] phone:grid-cols-2 phone:gap-3 phone:p-4',
         className
       )}
     >
