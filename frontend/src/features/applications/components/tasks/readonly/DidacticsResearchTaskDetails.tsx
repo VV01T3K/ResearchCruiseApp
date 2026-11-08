@@ -1,4 +1,4 @@
-import { ReadonlyField } from '@/features/applications/components/ReadonlyField';
+import { Input } from '@/components/shared/inputs/Input';
 import type { DidacticsResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
@@ -6,8 +6,15 @@ type Props = {
 };
 export function DidacticsResearchTaskDetails({ data }: Props) {
   return (
-    <dl className="text-left">
-      <ReadonlyField label="Opis zajęcia dydaktycznego">{data.description}</ReadonlyField>
-    </dl>
+    <div>
+      <Input
+        aria-label={`Opis zajęcia dydaktycznego, ${data.description}`}
+        name="researchTasks[].description"
+        value={data.description}
+        label="Opis zajęcia dydaktycznego"
+        placeholder="Wprowadź opis zajęcia dydaktycznego"
+        disabled={true}
+      />
+    </div>
   );
 }

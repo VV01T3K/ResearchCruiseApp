@@ -1,4 +1,4 @@
-import { ReadonlyField } from '@/features/applications/components/ReadonlyField';
+import { Input } from '@/components/shared/inputs/Input';
 import type { ThesisResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
 type Props = {
@@ -6,9 +6,24 @@ type Props = {
 };
 export function ThesisResearchTaskDetails({ data }: Props) {
   return (
-    <dl className="grid grid-cols-1 gap-4 text-left lg:grid-cols-2">
-      <ReadonlyField label="Autor">{data.author}</ReadonlyField>
-      <ReadonlyField label="Tytuł">{data.title}</ReadonlyField>
-    </dl>
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <Input
+        aria-label={`Autor, ${data.title}`}
+        name="researchTasks[].author"
+        value={data.author}
+        label="Autor"
+        placeholder="Wprowadź autora"
+        disabled={true}
+      />
+
+      <Input
+        aria-label={`Tytuł, ${data.title}`}
+        name="researchTasks[].title"
+        value={data.title}
+        label="Tytuł"
+        placeholder="Wprowadź tytuł"
+        disabled={true}
+      />
+    </div>
   );
 }
