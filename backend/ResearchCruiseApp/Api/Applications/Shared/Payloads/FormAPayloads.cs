@@ -25,6 +25,8 @@ public class FormAFields
 
     public DateTime? PrecisePeriodStart { get; init; }
     public DateTime? PrecisePeriodEnd { get; init; }
+    public TimeOnly? PrecisePeriodStartTime { get; init; }
+    public TimeOnly? PrecisePeriodEndTime { get; init; }
 
     [StringLength(8)]
     public string CruiseHours { get; init; } = null!;
@@ -230,6 +232,14 @@ public class CruiseApplicationCandidateResponse
     public Guid? CruiseId { get; init; }
 
     public string? CruiseNumber { get; init; }
+
+    public DateTime? PrecisePeriodStart { get; init; }
+
+    public DateTime? PrecisePeriodEnd { get; init; }
+
+    public TimeOnly? PrecisePeriodStartTime { get; init; }
+
+    public TimeOnly? PrecisePeriodEndTime { get; init; }
 }
 
 public class CruiseApplicationEvaluation

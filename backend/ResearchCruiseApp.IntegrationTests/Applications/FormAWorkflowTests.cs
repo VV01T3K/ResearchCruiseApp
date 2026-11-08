@@ -250,13 +250,65 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         "2030-12-04T23:00:00.000Z",
         "2030-12-05T23:00:00.000Z"
     )]
+    [InlineData(
+        "2030-12-02T23:00:00Z",
+        "2030-12-04T23:00:00Z",
+        58,
+        HttpStatusCode.Created,
+        null,
+        null,
+        "08:00",
+        "18:00"
+    )]
+    [InlineData(
+        "2030-12-02T23:00:00Z",
+        "2030-12-04T23:00:00Z",
+        59,
+        HttpStatusCode.BadRequest,
+        null,
+        null,
+        "08:00",
+        "18:00"
+    )]
+    [InlineData(
+        "2030-12-02T23:00:00Z",
+        "2030-12-04T23:00:00Z",
+        30,
+        HttpStatusCode.Conflict,
+        "2030-12-04T12:00:00.000Z",
+        "2030-12-04T13:00:00.000Z",
+        "08:00",
+        "18:00"
+    )]
+    [InlineData(
+        "2030-10-26T22:00:00Z",
+        "2030-10-26T22:00:00Z",
+        24,
+        HttpStatusCode.Created,
+        null,
+        null,
+        "00:00",
+        "23:00"
+    )]
+    [InlineData(
+        "2030-12-02T23:00:00Z",
+        "2030-12-02T23:00:00Z",
+        1,
+        HttpStatusCode.BadRequest,
+        null,
+        null,
+        "18:00",
+        "08:00"
+    )]
     public async Task Submit_ComparesPrecisePeriodAsPolishDays(
         string start,
         string end,
         int cruiseHours,
         HttpStatusCode expected,
         string? blockadeStart = null,
-        string? blockadeEnd = null
+        string? blockadeEnd = null,
+        string? startTime = null,
+        string? endTime = null
     )
     {
         var ct = TestContext.Current.CancellationToken;
@@ -281,6 +333,8 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
             .AsObject();
         form["PrecisePeriodStart"] = start;
         form["PrecisePeriodEnd"] = end;
+        form["PrecisePeriodStartTime"] = startTime;
+        form["PrecisePeriodEndTime"] = endTime;
         form["CruiseHours"] = cruiseHours.ToString(CultureInfo.InvariantCulture);
 
         using var response = await FormRequests.Write(

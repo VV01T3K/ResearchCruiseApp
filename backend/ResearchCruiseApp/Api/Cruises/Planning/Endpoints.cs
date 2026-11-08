@@ -228,29 +228,32 @@ public static class PlanningEndpoints
         )
             return null;
 
-        DateTime windowStart;
+        DateTime start;
         DateTime windowEnd;
         if (formA is { PrecisePeriodStart: not null, PrecisePeriodEnd: not null })
         {
-            windowStart = TimeZoneInfo
-                .ConvertTimeFromUtc(formA.PrecisePeriodStart.Value, timeZone)
-                .Date;
-            windowEnd = globalizationService.GetPolishDayStartUtc(formA.PrecisePeriodEnd.Value, 1);
+            start = globalizationService.GetPolishTimeUtc(
+                formA.PrecisePeriodStart.Value,
+                formA.PrecisePeriodStartTime ?? new TimeOnly(8, 0)
+            );
+            windowEnd = globalizationService.GetPolishTimeUtc(
+                formA.PrecisePeriodEnd.Value,
+                formA.PrecisePeriodEndTime,
+                1
+            );
         }
         else if (
             TryParsePeriodEdge(formA.OptimalPeriodBeg, out var startEdge)
             && TryParsePeriodEdge(formA.OptimalPeriodEnd, out var endEdge)
         )
         {
-            windowStart = GetPeriodEdgeDate(year, startEdge);
+            start = ToUtcAtEight(GetPeriodEdgeDate(year, startEdge), timeZone);
             windowEnd = ToUtcAtEight(GetPeriodEdgeDate(year, endEdge), timeZone);
         }
         else
         {
             return null;
         }
-
-        var start = ToUtcAtEight(windowStart, timeZone);
 
         return (start, start.AddHours(hours), windowEnd);
     }

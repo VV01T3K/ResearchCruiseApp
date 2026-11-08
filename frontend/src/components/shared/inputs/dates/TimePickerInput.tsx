@@ -1,7 +1,7 @@
 import { Popover } from '@base-ui/react/popover';
 import React from 'react';
 
-import { PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
+import { PickerClearButton, PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
 import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import { Button } from '@/components/shared/Button';
@@ -20,6 +20,10 @@ function timeToMinutes(time: Time) {
   return time.hours * 60 + time.minutes;
 }
 
+export function formatTime(time: Time) {
+  return `${time.hours.toString().padStart(2, '0')}:${time.minutes.toString().padStart(2, '0')}`;
+}
+
 type Props = {
   name: string;
   value: Time | undefined;
@@ -34,6 +38,8 @@ type Props = {
   minimalTime?: Time;
   maximalTime?: Time;
   minuteStep?: number;
+  clearable?: boolean;
+  'aria-label'?: string;
 };
 export function TimePickerInput({
   name,
@@ -48,16 +54,14 @@ export function TimePickerInput({
   minimalTime,
   maximalTime,
   minuteStep = 1,
+  clearable,
+  'aria-label': ariaLabel,
 }: Props) {
   const aria = useInputAria(errors, helper);
   const [expanded, setExpanded] = React.useState(false);
 
   if (60 % minuteStep !== 0) {
     throw new Error('minuteStep must be a divisor of 60');
-  }
-
-  function formatTime(time: Time) {
-    return `${time.hours.toString().padStart(2, '0')}:${time.minutes.toString().padStart(2, '0')}`;
   }
 
   function handleOpenChange(open: boolean) {
@@ -69,16 +73,26 @@ export function TimePickerInput({
     <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
       <div className="flex flex-col">
         <InputLabel name={aria.id} value={label} />
-        <div>
+        <div className="relative">
           <input type="hidden" name={name} value={time ? formatTime(time) : ''} disabled={disabled} />
           <Popover.Trigger
             disabled={disabled}
             {...aria.inputProps}
-            className={pickerTriggerClassName({ disabled, errors, className: 'px-5 text-center' })}
+            aria-label={ariaLabel}
+            className={pickerTriggerClassName({ disabled, errors })}
           >
-            <span className="w-full">{time ? formatTime(time) : placeholder}</span>
+            <span className="w-full truncate">{time ? formatTime(time) : placeholder}</span>
             <InputErrorTriangle errors={errors} />
           </Popover.Trigger>
+          {clearable && time && !disabled && (
+            <PickerClearButton
+              aria-label="Wyczyść godzinę"
+              onClick={() => {
+                onChange(undefined);
+                onBlur?.();
+              }}
+            />
+          )}
         </div>
         <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
           <InputHelper id={aria.helperId} helper={helper} />

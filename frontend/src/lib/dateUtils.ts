@@ -52,6 +52,20 @@ export function parsePolishDayStart(value: string, addDays = 0): Date {
   return new Date(utcMidnight.getTime() - Number(hourFormatter.format(utcMidnight)) * 3_600_000);
 }
 
+const polishOffsetHours = (date: Date) => (Number(hourFormatter.format(date)) - date.getUTCHours() + 24) % 24;
+
+export function parsePolishDateTime(value: string, time: string, addDaysWithoutTime = 0): Date {
+  if (!time) return parsePolishDayStart(value, addDaysWithoutTime);
+  const date = parseBackendDateTime(value);
+  if (Number.isNaN(date.getTime())) return date;
+
+  const [hours, minutes] = time.split(':').map(Number);
+  const wallClock = new Date(calendarDateFormatter.format(date));
+  wallClock.setUTCHours(hours, minutes);
+  const guess = new Date(wallClock.getTime() - polishOffsetHours(wallClock) * 3_600_000);
+  return new Date(wallClock.getTime() - polishOffsetHours(guess) * 3_600_000);
+}
+
 export function parseCalendarDate(value: string): Date {
   const date = parseBackendDateTime(value);
   if (Number.isNaN(date.getTime())) {

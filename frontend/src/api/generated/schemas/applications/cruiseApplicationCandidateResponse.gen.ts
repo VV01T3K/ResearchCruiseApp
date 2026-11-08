@@ -19,7 +19,11 @@ export const CruiseApplicationCandidateResponse = zod.object({
   "hasFormC": zod.boolean(),
   "points": zod.int(),
   "cruiseId": zod.string().regex(cruiseApplicationCandidateResponseCruiseIdRegExp).nullish(),
-  "cruiseNumber": zod.string().nullish()
+  "cruiseNumber": zod.string().nullish(),
+  "precisePeriodStart": zod.iso.datetime({"offset":true}).nullish(),
+  "precisePeriodEnd": zod.iso.datetime({"offset":true}).nullish(),
+  "precisePeriodStartTime": zod.iso.time({}).nullish(),
+  "precisePeriodEndTime": zod.iso.time({}).nullish()
 });
 
 export type CruiseApplicationCandidateResponse = zod.input<typeof CruiseApplicationCandidateResponse>;

@@ -28,6 +28,19 @@ public class GlobalizationService(TimeProvider clock)
         );
     }
 
+    public DateTime GetPolishTimeUtc(DateTime utc, TimeOnly? time, int addDaysWithoutTime = 0)
+    {
+        if (time is null)
+            return GetPolishDayStartUtc(utc, addDaysWithoutTime);
+
+        var timeZone = GetTimeZoneInfo();
+        var local =
+            TimeZoneInfo
+                .ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), timeZone)
+                .Date + time.Value.ToTimeSpan();
+        return DateTime.SpecifyKind(local - timeZone.GetUtcOffset(local), DateTimeKind.Utc);
+    }
+
     public string GetIsoUtcString(DateTime date)
     {
         if (date.Kind != DateTimeKind.Unspecified)

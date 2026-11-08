@@ -10,6 +10,7 @@ import { Table } from '@/components/shared/table/Table';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { CruiseApplicationCandidateResponse } from '@/api/generated/schemas';
 import { cruiseFormDefaultValues } from '@/features/cruises/schemas/form.schema';
+import { formatDate, parsePolishDateTime } from '@/lib/dateUtils';
 
 export function ApplicationsSection({
   cruiseId,
@@ -100,6 +101,27 @@ export function ApplicationsSection({
                 </div>
               ),
             },
+            {
+              header: 'Dokładny termin',
+              cell: ({ row }) => {
+                const { precisePeriodStart, precisePeriodEnd, precisePeriodStartTime, precisePeriodEndTime } =
+                  row.original;
+                if (!precisePeriodStart || !precisePeriodEnd) return '-';
+                return (
+                  <div className="text-sm whitespace-nowrap">
+                    <div>
+                      od: {formatDate(precisePeriodStart, 'date')} {precisePeriodStartTime?.slice(0, 5)}
+                    </div>
+                    <div>
+                      do: {formatDate(precisePeriodEnd, 'date')} {precisePeriodEndTime?.slice(0, 5)}
+                    </div>
+                  </div>
+                );
+              },
+              enableColumnFilter: false,
+              enableSorting: false,
+              size: 15,
+            },
             { header: 'Punkty', accessorFn: (row) => row.points, enableColumnFilter: false, size: 10 },
             ...(!isReadonly
               ? [
@@ -111,8 +133,25 @@ export function ApplicationsSection({
                         variant={attached ? 'dangerOutline' : 'successOutline'}
                         size="sm"
                         onClick={() => {
+                          const { precisePeriodStart, precisePeriodEnd, precisePeriodStartTime, precisePeriodEndTime } =
+                            row.original;
                           if (attached) field.removeValue(field.state.value.indexOf(row.original.id));
                           else field.pushValue(row.original.id);
+                          if (
+                            !attached &&
+                            precisePeriodStart &&
+                            precisePeriodStartTime &&
+                            !form.getFieldValue('startDate')
+                          )
+                            form.setFieldValue(
+                              'startDate',
+                              parsePolishDateTime(precisePeriodStart, precisePeriodStartTime).toISOString()
+                            );
+                          if (!attached && precisePeriodEnd && precisePeriodEndTime && !form.getFieldValue('endDate'))
+                            form.setFieldValue(
+                              'endDate',
+                              parsePolishDateTime(precisePeriodEnd, precisePeriodEndTime).toISOString()
+                            );
                           field.handleBlur();
                         }}
                       >

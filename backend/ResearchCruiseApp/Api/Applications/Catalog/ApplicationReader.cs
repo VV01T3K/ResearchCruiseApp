@@ -134,6 +134,10 @@ internal class ApplicationReader(
             Points = evaluator.GetPointsSum(application),
             CruiseId = application.Cruise?.Id,
             CruiseNumber = application.Cruise?.Number,
+            PrecisePeriodStart = application.FormA?.PrecisePeriodStart,
+            PrecisePeriodEnd = application.FormA?.PrecisePeriodEnd,
+            PrecisePeriodStartTime = application.FormA?.PrecisePeriodStartTime,
+            PrecisePeriodEndTime = application.FormA?.PrecisePeriodEndTime,
         };
     }
 

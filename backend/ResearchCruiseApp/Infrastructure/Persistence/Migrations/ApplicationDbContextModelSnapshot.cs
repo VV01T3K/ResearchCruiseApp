@@ -709,8 +709,14 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("PrecisePeriodEnd")
                         .HasColumnType("datetime2");
 
+                    b.Property<TimeOnly?>("PrecisePeriodEndTime")
+                        .HasColumnType("time");
+
                     b.Property<DateTime?>("PrecisePeriodStart")
                         .HasColumnType("datetime2");
+
+                    b.Property<TimeOnly?>("PrecisePeriodStartTime")
+                        .HasColumnType("time");
 
                     b.Property<string>("ShipUsage")
                         .HasMaxLength(1024)
