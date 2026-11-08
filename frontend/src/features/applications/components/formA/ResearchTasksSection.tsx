@@ -120,7 +120,6 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                   </DropdownElementSelectorButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zadania."
-                variant="form"
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}
               />

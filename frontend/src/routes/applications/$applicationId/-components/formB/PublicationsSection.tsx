@@ -101,7 +101,6 @@ export function PublicationsSection({ context }: { context: FormBViewModel }) {
           data={formA.publications}
           buttons={() => []}
           columns={columns}
-          variant="form"
           emptyTableMessage="Nie dodano żadnej publikacji."
         />
       </div>

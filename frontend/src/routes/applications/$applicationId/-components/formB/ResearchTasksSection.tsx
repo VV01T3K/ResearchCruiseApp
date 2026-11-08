@@ -35,7 +35,6 @@ export function ResearchTasksSection({ context }: { context: FormBViewModel }) {
         buttons={() => []}
         emptyTableMessage="Nie dodano żadnego zadania."
         showRequiredAsterisk
-        variant="form"
         disabled={isReadonly}
       />
     </Accordion>

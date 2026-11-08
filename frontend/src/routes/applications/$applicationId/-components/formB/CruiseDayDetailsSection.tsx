@@ -245,7 +245,6 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
                 }
                 return buttons;
               }}
-              variant="form"
             />
             <input
               type="file"

@@ -21,7 +21,6 @@ type Props<T extends object> = {
   manualSorting?: boolean;
   manualFiltering?: boolean;
   getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string;
-  variant?: 'form' | 'table';
   disabled?: boolean;
   errors?: string[];
   infiniteScroll?: InfiniteScrollProps;
@@ -46,7 +45,6 @@ export function Table<T extends object>({
   manualSorting = false,
   manualFiltering = false,
   getRowId,
-  variant = 'table',
   disabled = false,
   errors,
   infiniteScroll,
@@ -87,7 +85,6 @@ export function Table<T extends object>({
       buttons={!disabled ? buttons : () => []}
       emptyTableMessage={emptyTableMessage}
       showRequiredAsterisk={showRequiredAsterisk}
-      variant={variant}
       errors={errors}
       infiniteScroll={infiniteScroll}
       virtualized={virtualized}
