@@ -15,6 +15,7 @@ import { Link } from '@/components/shared/Link';
 import { Loader } from '@/components/shared/layout/Loader';
 import { Table } from '@/components/shared/table/Table';
 import { getDisplayPeriod } from '@/lib/applications/periodUtils';
+import { formatCruiseLength } from '@/features/applications/components/formA/cruisePeriodExplanation';
 import { formatDate, useNow } from '@/lib/dateUtils';
 import {
   CruiseApplicationsFilter,
@@ -117,7 +118,8 @@ function ApplicationsPage() {
             )}
             {row.original.cruiseDays !== null && (
               <div className="mt-1 text-muted-foreground">
-                Liczba dni: {parseFloat(row.original.cruiseDays.toFixed(2))}
+                <div>Czas trwania:</div>
+                <div>{formatCruiseLength(Math.round(row.original.cruiseDays * 24))}</div>
               </div>
             )}
           </div>

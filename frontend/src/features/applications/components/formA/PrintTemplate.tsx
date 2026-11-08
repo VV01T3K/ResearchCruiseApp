@@ -1,7 +1,8 @@
 import { Fragment, RefObject } from 'react';
 
-import { cn, roundNumber } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import {
+  formatCruiseLength,
   formatLocalDateStringFromUtcString,
   getExplanationForPeriod,
 } from '@/features/applications/components/formA/cruisePeriodExplanation';
@@ -72,8 +73,8 @@ export function PrintTemplate({ ref, context, values }: Props) {
             </>
           )}
 
-          <span>Liczba planowanych dób rejsowych: </span>
-          <span>{roundNumber((values.cruiseDays * 24 + values.cruiseHours) / 24, 2)}</span>
+          <span>Planowany czas trwania rejsu: </span>
+          <span>{formatCruiseLength(values.cruiseDays * 24 + values.cruiseHours)}</span>
           <span>Liczba planowanych godzin rejsowych:</span>
           <span>{values.cruiseDays * 24 + values.cruiseHours} h</span>
           <span>Uwagi dotyczące terminu:</span>

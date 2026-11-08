@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Accordion } from '@/components/shared/Accordion';
 import { Alert } from '@/components/shared/Alert';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
+import { Input } from '@/components/shared/inputs/Input';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
@@ -17,6 +18,7 @@ import type { BlockadeResponse as BlockadePeriod } from '@/api/generated/schemas
 
 import { CruiseApplicationPeriodInput } from './CruiseApplicationPeriodInput';
 import { BlockadeWarning } from './BlockadeWarning';
+import { formatCruiseLength } from './cruisePeriodExplanation';
 
 function isValidPeriod(period: unknown): period is CruisePeriodType {
   return Array.isArray(period) && period.length === 2 && period[0] !== '' && period[1] !== '';
@@ -406,26 +408,34 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
           )}
 
           <form.Subscribe selector={(state) => state.values.cruiseDays * 24 + Number(state.values.cruiseHours)}>
-            {(totalCruiseHours) => (
-              <form.AppField name="cruiseDays">
-                {(field) => (
-                  <field.NumberField
-                    value={totalCruiseHours / 24}
-                    onChange={(days) => {
-                      field.handleChange(Math.floor(days));
-                      form.setFieldValue('cruiseHours', Math.round((days % 1) * 24));
-                    }}
-                    minimum={0}
-                    maximum={60}
-                    step={1}
-                    type="float"
-                    label="Liczba planowanych dób rejsowych"
-                    showRequiredAsterisk
-                    disabled={isReadonly}
-                  />
-                )}
-              </form.AppField>
-            )}
+            {(totalCruiseHours) =>
+              isReadonly ? (
+                <Input
+                  name="cruiseLength"
+                  value={formatCruiseLength(totalCruiseHours)}
+                  label="Planowany czas trwania rejsu"
+                  disabled
+                />
+              ) : (
+                <form.AppField name="cruiseDays">
+                  {(field) => (
+                    <field.NumberField
+                      value={totalCruiseHours / 24}
+                      onChange={(days) => {
+                        field.handleChange(Math.floor(days));
+                        form.setFieldValue('cruiseHours', Math.round((days % 1) * 24));
+                      }}
+                      minimum={0}
+                      maximum={60}
+                      step={1}
+                      type="float"
+                      label="Liczba planowanych dób rejsowych"
+                      showRequiredAsterisk
+                    />
+                  )}
+                </form.AppField>
+              )
+            }
           </form.Subscribe>
 
           <form.Subscribe selector={(state) => state.values.cruiseDays * 24 + Number(state.values.cruiseHours)}>
