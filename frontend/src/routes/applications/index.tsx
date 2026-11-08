@@ -118,7 +118,8 @@ function ApplicationsPage() {
             )}
             {row.original.cruiseDays !== null && (
               <div className="mt-1 text-muted-foreground">
-                Czas trwania: {formatCruiseLength(Math.round(row.original.cruiseDays * 24))}
+                <div>Czas trwania:</div>
+                <div>{formatCruiseLength(Math.round(row.original.cruiseDays * 24))}</div>
               </div>
             )}
           </div>
