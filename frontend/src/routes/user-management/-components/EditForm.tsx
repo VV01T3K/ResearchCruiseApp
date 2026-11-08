@@ -1,3 +1,4 @@
+import { Collapsible } from '@base-ui/react/collapsible';
 import type { CreateUserRequest, UpdateUserRequest, UserResponse } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { formValidationLogic, selectCanSubmit } from '@/integrations/tanstack/form/validation';
@@ -10,7 +11,6 @@ import {
   UserPlusIcon,
   WarningIcon,
 } from '@phosphor-icons/react';
-import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 import { z } from 'zod';
 
@@ -290,15 +290,13 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
     <form noValidate onSubmit={handleSubmit}>
       <div className="mb-4 flex min-h-14 flex-wrap items-center gap-x-8 gap-y-2">
         <form.Subscribe selector={(state) => [state.values.firstName, state.values.lastName]}>
-          {([firstName, lastName]) => (
-            <AnimatePresence>
-              {(firstName || lastName) && (
-                <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
-                  <Avatar fullName={`${firstName} ${lastName}`} />
-                </motion.span>
-              )}
-            </AnimatePresence>
-          )}
+          {([firstName, lastName]) =>
+            (firstName || lastName) && (
+              <span className="transition-opacity duration-200 ease-out starting:opacity-0">
+                <Avatar fullName={`${firstName} ${lastName}`} />
+              </span>
+            )
+          }
         </form.Subscribe>
 
         {editMode && (
@@ -356,7 +354,13 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
           </Alert>
         )}
 
-        {assignmentWarning?.action === 'role' && <AssignmentsWarning items={assignmentWarning.items} action="role" />}
+        <Collapsible.Root open={assignmentWarning?.action === 'role'}>
+          <Collapsible.Panel className="h-(--collapsible-panel-height) overflow-hidden transition-[height,opacity] duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0">
+            {assignmentWarning?.action === 'role' && (
+              <AssignmentsWarning items={assignmentWarning.items} action="role" />
+            )}
+          </Collapsible.Panel>
+        </Collapsible.Root>
 
         <form.Subscribe selector={(state) => [selectCanSubmit(state), state.isSubmitting]}>
           {([canSubmit, isSubmitting]) => (
@@ -384,9 +388,15 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
 
               {editMode && (
                 <div className="space-y-4 border-t border-border pt-4">
-                  {assignmentWarning?.action === 'deactivate' && (
-                    <AssignmentsWarning items={assignmentWarning.items} action="deactivate" />
-                  )}
+                  <Collapsible.Root open={assignmentWarning?.action === 'deactivate'} className="contents">
+                    <Collapsible.Panel className="h-(--collapsible-panel-height) overflow-hidden transition-[height,opacity] duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0">
+                      {assignmentWarning?.action === 'deactivate' && (
+                        <div className="pb-4">
+                          <AssignmentsWarning items={assignmentWarning.items} action="deactivate" />
+                        </div>
+                      )}
+                    </Collapsible.Panel>
+                  </Collapsible.Root>
                   <div className="flex flex-wrap gap-2">
                     <Button
                       variant={passwordResetSent ? 'success' : 'primaryOutline'}
@@ -394,14 +404,13 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                       onClick={() => void handleInitiatePasswordReset()}
                     >
                       {passwordResetSent ? (
-                        <motion.div
-                          className="flex items-center gap-4"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
+                        <div
+                          key="sent"
+                          className="flex items-center gap-4 transition-opacity duration-200 ease-out starting:opacity-0"
                         >
                           <EnvelopeSimpleIcon className="h-4 w-4" />
                           <span>Link do zmiany hasła wysłany</span>
-                        </motion.div>
+                        </div>
                       ) : (
                         <div className="flex items-center gap-4">
                           <EnvelopeSimpleIcon className="h-4 w-4" />
@@ -444,14 +453,13 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                           onClick={() => void handleUserDeletion()}
                         >
                           {deletionConfirmed ? (
-                            <motion.div
-                              className="flex items-center gap-4"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
+                            <div
+                              key="confirm"
+                              className="flex items-center gap-4 transition-opacity duration-200 ease-out starting:opacity-0"
                             >
                               <WarningIcon weight="fill" className="h-4 w-4" />
                               <span>Czy na pewno?</span>
-                            </motion.div>
+                            </div>
                           ) : (
                             <div className="flex items-center gap-4">
                               <TrashIcon weight="fill" className="h-4 w-4" />

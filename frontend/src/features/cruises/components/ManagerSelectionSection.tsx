@@ -1,6 +1,6 @@
+import { Collapsible } from '@base-ui/react/collapsible';
 import { useSelector } from '@tanstack/react-form';
 import { useQuery } from '@tanstack/react-query';
-import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { Accordion } from '@/components/shared/Accordion';
@@ -63,21 +63,16 @@ export function ManagerSelectionSection({
   return (
     <Accordion title="3. Kierownik główny i zastępca kierownika głównego" expandedByDefault>
       {!isReadonly && (
-        <AnimatePresence initial={cruiseApplicationIds.length !== 0}>
-          {cruiseManagersNotAssignedToApplication.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ ease: 'easeOut' }}
-            >
+        <Collapsible.Root open={cruiseManagersNotAssignedToApplication.length > 0}>
+          <Collapsible.Panel className="h-(--collapsible-panel-height) overflow-hidden transition-[height,opacity] duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0">
+            {cruiseManagersNotAssignedToApplication.length > 0 && (
               <Alert variant="warning">
                 Nie przypisano {cruiseManagersNotAssignedToApplication.map(mapPersonToText).join(' i ')} do żadnego
                 zgłoszenia dołączonego do rejsu.
               </Alert>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            )}
+          </Collapsible.Panel>
+        </Collapsible.Root>
       )}
 
       <div className="my-4 grid grid-cols-1 gap-4 md:grid-cols-2">

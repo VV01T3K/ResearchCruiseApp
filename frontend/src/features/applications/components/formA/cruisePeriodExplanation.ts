@@ -1,4 +1,5 @@
 import { parseBackendDateTime } from '@/lib/dateUtils';
+import { plural } from '@/lib/plural';
 
 function getPointAtTime(position: number): string {
   const pointAtTimeMonths = [
@@ -42,4 +43,12 @@ export function formatLocalDateStringFromUtcString(utcString?: string): string {
     month: '2-digit',
     day: '2-digit',
   });
+}
+
+export function formatCruiseLength(totalHours: number): string {
+  const days = Math.floor(totalHours / 24);
+  const hours = totalHours % 24;
+  if (!days) return `${hours} h`;
+  const daysText = `${days} ${plural(days, 'dzień', 'dni', 'dni')}`;
+  return hours ? `${daysText} ${hours} h` : daysText;
 }

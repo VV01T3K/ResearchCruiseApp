@@ -12,16 +12,24 @@ import { Role } from '@/integrations/auth/types';
 import { CruiseCalendar } from '@/features/cruises/components/CruiseCalendar';
 import { ExportForm } from '@/features/cruises/components/ExportForm';
 import { TableView } from '@/features/cruises/components/TableView';
-import { useAutoPlanCruises, useDeleteCruise, useGetCruisesSuspense } from '@/api/generated/endpoints/cruises.gen';
+import {
+  getGetCruisesSuspenseQueryOptions,
+  useAutoPlanCruises,
+  useDeleteCruise,
+  useGetCruisesSuspense,
+} from '@/api/generated/endpoints/cruises.gen';
+import { groupedQueryStaleTime } from '@/integrations/tanstack/query/root-provider';
 import type { AutoPlanResponse, CruiseResponse } from '@/api/generated/schemas';
 
 export const Route = createFileRoute('/cruises/')({
   component: CruisesPage,
   beforeLoad: allowOnly.authenticated(),
+  loader: ({ context }) => context.queryClient.query({ ...getGetCruisesSuspenseQueryOptions(), staleTime: 'static' }),
+  preloadStaleTime: 0,
 });
 
 function CruisesPage() {
-  const cruisesQuery = useGetCruisesSuspense();
+  const cruisesQuery = useGetCruisesSuspense({ query: { staleTime: groupedQueryStaleTime } });
   const deleteCruiseMutation = useDeleteCruise();
   const autoAddCruisesMutation = useAutoPlanCruises();
 

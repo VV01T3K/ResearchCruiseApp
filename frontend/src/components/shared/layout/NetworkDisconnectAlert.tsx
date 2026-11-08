@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { Collapsible } from '@base-ui/react/collapsible';
 import React from 'react';
 import { useMutation } from '@tanstack/react-query';
 
@@ -26,16 +26,16 @@ export function NetworkDisconnectAlert() {
   }, [mutate]);
 
   return (
-    <AnimatePresence>
-      {status !== 'healthy' && (
-        <motion.div initial={{ y: '-100%' }} animate={{ y: 0 }} exit={{ y: '-100%' }}>
+    <Collapsible.Root open={status !== 'healthy'}>
+      <Collapsible.Panel className="h-(--collapsible-panel-height) overflow-hidden transition-[height,opacity] duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0">
+        {status !== 'healthy' && (
           <Alert variant="danger">
             {status === 'offline'
               ? 'Brak połączenia z serwerem. Upewnij się, że masz dostęp do internetu i spróbuj ponownie.'
               : 'Serwis ma chwilowo problemy techniczne. Twoje połączenie działa poprawnie.'}
           </Alert>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        )}
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 }

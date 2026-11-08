@@ -1,7 +1,6 @@
 import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
 import { CloudArrowUpIcon } from '@phosphor-icons/react';
-import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { UploadedFileList } from '@/components/shared/inputs/parts/UploadedFileList';
@@ -173,29 +172,23 @@ export function FileInput({
               hasErrors(errors) && 'focus:ring-danger focus:ring-2 focus:outline-hidden focus:ring-inset'
             )}
           >
-            <AnimatePresence>
-              {!disabled && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                >
-                  <div className="flex flex-col items-center justify-center pt-5 pb-4 text-sm">
-                    <CloudArrowUpIcon className="mb-4 h-8 w-8" />
-                    {uploadMessage}
-                    {notifications && notifications.length > 0 && (
-                      <div className="mx-2 mt-1 rounded-sm bg-danger-100 p-1 text-danger-900">
-                        <ul className="list-inside list-disc">
-                          {notifications.map((notification) => (
-                            <li key={notification}>{notification}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {!disabled && (
+              <div className="transition-opacity duration-200 ease-out starting:opacity-0">
+                <div className="flex flex-col items-center justify-center pt-5 pb-4 text-sm">
+                  <CloudArrowUpIcon className="mb-4 h-8 w-8" />
+                  {uploadMessage}
+                  {notifications && notifications.length > 0 && (
+                    <div className="mx-2 mt-1 rounded-sm bg-danger-100 p-1 text-danger-900">
+                      <ul className="list-inside list-disc">
+                        {notifications.map((notification) => (
+                          <li key={notification}>{notification}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
             {files.length === 0 && disabled && <div className="text-center">{emptyMessage}</div>}
           </div>
           <UploadedFileList files={files} onRemove={removeFile} disabled={disabled} className="my-1" />

@@ -22,6 +22,16 @@
   html:has([data-actions-section]) {
     scroll-padding-bottom: calc(var(--actions-height) + 2rem);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0s !important;
+    }
+  }
 }
 
 @layer utilities {

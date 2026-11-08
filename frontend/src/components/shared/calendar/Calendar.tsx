@@ -13,7 +13,6 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { Button } from '@/components/shared/Button';
@@ -68,7 +67,11 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
     const now = new Date();
     return { month: now.getMonth(), year: now.getFullYear() };
   });
-  const [previousMonth, setPreviousMonth] = React.useState(currentMonth);
+  const monthIndex = currentMonth.year * 12 + currentMonth.month;
+  const [shownMonth, setShownMonth] = React.useState({ index: monthIndex, forward: true });
+  if (shownMonth.index !== monthIndex) {
+    setShownMonth({ index: monthIndex, forward: monthIndex > shownMonth.index });
+  }
   const todayUtc = useNow(dateToUtcDay);
   const [dropPreviewDays, setDropPreviewDays] = React.useState<number[]>([]);
   const [activeDragEventId, setActiveDragEventId] = React.useState<string | undefined>(undefined);
@@ -432,7 +435,6 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
   function handleMonthChange(delta: 1 | -1) {
     const newYear = currentMonth.year;
     const newMonth = currentMonth.month + delta;
-    setPreviousMonth(currentMonth);
     if (newMonth < 0) {
       setCurrentMonth({ month: 11, year: newYear - 1 });
       return;
@@ -443,9 +445,6 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
     }
     setCurrentMonth({ month: newMonth, year: newYear });
   }
-
-  const animateDirection =
-    currentMonth.year * 12 + currentMonth.month > previousMonth.year * 12 + previousMonth.month ? 'right' : 'left';
 
   return (
     <div ref={calendarRef} className="flex flex-col gap-4 p-4">
@@ -468,81 +467,79 @@ export function Calendar({ events, buttons, onEventDrop }: Props) {
         </Button>
       </div>
       <div className="my-4 flex flex-wrap justify-end gap-4">{buttons?.(defaultButtons) ?? defaultButtons}</div>
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.div
-          key={currentMonth.month + currentMonth.year * 12}
-          initial={{ opacity: 0, scaleX: 0, transformOrigin: animateDirection === 'left' ? '0% 50%' : '100% 50%' }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          exit={{ opacity: 0, scaleX: 0, transformOrigin: animateDirection === 'left' ? '0% 50%' : '100% 50%' }}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
+      <div
+        key={monthIndex}
+        className={cn(
+          'transition-[opacity,translate] duration-200 ease-out starting:opacity-60',
+          shownMonth.forward ? 'starting:translate-x-2.5' : 'starting:-translate-x-2.5'
+        )}
+      >
+        <DndContext
+          collisionDetection={pointerWithinDayOrGap}
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragCancel={handleDragCancel}
+          onDragEnd={(event) => void handleDragEnd(event)}
         >
-          <DndContext
-            collisionDetection={pointerWithinDayOrGap}
-            sensors={sensors}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDragCancel={handleDragCancel}
-            onDragEnd={(event) => void handleDragEnd(event)}
-          >
-            <div className="grid grid-cols-7 gap-1">
-              {weekDays.map((day) => (
-                <div key={day} className="truncate text-center">
-                  {day}
-                </div>
-              ))}
-              {displayedMonthDays.map((date) => (
-                <CalendarTile
-                  date={date}
-                  eventsWithRows={eventsWithRows}
-                  currentMonth={currentMonth}
-                  tileWidth={tileWidth}
-                  enableDragAndDrop={Boolean(onEventDrop)}
-                  dayDropId={`calendar-day-${dateToUtcDay(date)}`}
-                  isDropPreview={dropPreviewDays.includes(dateToUtcDay(date))}
-                  isToday={dateToUtcDay(date) === todayUtc}
-                  activeDragEventId={activeDragEventId}
-                  key={date.toString()}
-                />
-              ))}
-            </div>
-            <DragOverlay adjustScale={false} dropAnimation={null}>
-              {activeDragOverlay && overlaySegments.length > 0 ? (
+          <div className="grid grid-cols-7 gap-1">
+            {weekDays.map((day) => (
+              <div key={day} className="truncate text-center">
+                {day}
+              </div>
+            ))}
+            {displayedMonthDays.map((date) => (
+              <CalendarTile
+                date={date}
+                eventsWithRows={eventsWithRows}
+                currentMonth={currentMonth}
+                tileWidth={tileWidth}
+                enableDragAndDrop={Boolean(onEventDrop)}
+                dayDropId={`calendar-day-${dateToUtcDay(date)}`}
+                isDropPreview={dropPreviewDays.includes(dateToUtcDay(date))}
+                isToday={dateToUtcDay(date) === todayUtc}
+                activeDragEventId={activeDragEventId}
+                key={date.toString()}
+              />
+            ))}
+          </div>
+          <DragOverlay adjustScale={false} dropAnimation={null}>
+            {activeDragOverlay && overlaySegments.length > 0 ? (
+              <div
+                className="pointer-events-none"
+                style={{
+                  marginLeft: overlayDrawLeft,
+                  marginTop: overlayDrawTop,
+                }}
+              >
                 <div
-                  className="pointer-events-none"
-                  style={{
-                    marginLeft: overlayDrawLeft,
-                    marginTop: overlayDrawTop,
-                  }}
+                  className="flex flex-col"
+                  style={{ gap: Math.max(dragBlockRowGap, dragWeekRowStep - dragBlockHeight) }}
                 >
-                  <div
-                    className="flex flex-col"
-                    style={{ gap: Math.max(dragBlockRowGap, dragWeekRowStep - dragBlockHeight) }}
-                  >
-                    {overlaySegments.map((segment, index) => (
-                      <div
-                        key={`${activeDragOverlay.title}-${index}`}
-                        className={cn(
-                          activeDragOverlay.color ? 'bg-[var(--color)]' : 'bg-primary',
-                          'h-8 rounded-lg p-2 text-sm text-inverse-foreground opacity-80 shadow-md'
-                        )}
-                        style={
-                          {
-                            '--color': activeDragOverlay.color,
-                            width: Math.max(40, segment.length * tileWidth - 20),
-                            marginLeft: segment.startColumn * tileWidth,
-                          } as React.CSSProperties
-                        }
-                      >
-                        <div className="truncate">{index === 0 ? activeDragOverlay.title : ''}</div>
-                      </div>
-                    ))}
-                  </div>
+                  {overlaySegments.map((segment, index) => (
+                    <div
+                      key={`${activeDragOverlay.title}-${index}`}
+                      className={cn(
+                        activeDragOverlay.color ? 'bg-[var(--color)]' : 'bg-primary',
+                        'h-8 rounded-lg p-2 text-sm text-inverse-foreground opacity-80 shadow-md'
+                      )}
+                      style={
+                        {
+                          '--color': activeDragOverlay.color,
+                          width: Math.max(40, segment.length * tileWidth - 20),
+                          marginLeft: segment.startColumn * tileWidth,
+                        } as React.CSSProperties
+                      }
+                    >
+                      <div className="truncate">{index === 0 ? activeDragOverlay.title : ''}</div>
+                    </div>
+                  ))}
                 </div>
-              ) : null}
-            </DragOverlay>
-          </DndContext>
-        </motion.div>
-      </AnimatePresence>
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+      </div>
     </div>
   );
 }

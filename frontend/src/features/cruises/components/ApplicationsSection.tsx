@@ -1,5 +1,5 @@
+import { Collapsible } from '@base-ui/react/collapsible';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
-import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { Accordion } from '@/components/shared/Accordion';
@@ -187,15 +187,9 @@ export function ApplicationsSection({
 
               <field.FieldErrors />
 
-              <AnimatePresence>
-                {expanded && !isReadonly && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ ease: 'easeOut' }}
-                    className="mt-4"
-                  >
+              <Collapsible.Root open={expanded && !isReadonly}>
+                <Collapsible.Panel className="h-(--collapsible-panel-height) overflow-hidden transition-[height,opacity] duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0">
+                  <div className="pt-4">
                     <div className="text-lg font-semibold">Zgłoszenia możliwe do załączenia</div>
                     <Table
                       columns={getColumns(false)}
@@ -203,9 +197,9 @@ export function ApplicationsSection({
                       buttons={() => []}
                       emptyTableMessage="Brak zgłoszeń możliwych do załączenia"
                     />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  </div>
+                </Collapsible.Panel>
+              </Collapsible.Root>
             </div>
           );
         }}
