@@ -102,7 +102,7 @@ public static class PlanningEndpoints
             }
 
             if (
-                GetAutoCalculatedDates(application.FormA, timeZone)
+                GetAutoCalculatedDates(application.FormA, globalizationService)
                 is not var (start, end, windowEnd)
             )
             {
@@ -212,9 +212,10 @@ public static class PlanningEndpoints
 
     private static (DateTime Start, DateTime End, DateTime WindowEnd)? GetAutoCalculatedDates(
         FormA formA,
-        TimeZoneInfo timeZone
+        GlobalizationService globalizationService
     )
     {
+        var timeZone = globalizationService.GetTimeZoneInfo();
         if (
             !TryParseYear(formA.Year, out var year)
             || !int.TryParse(
@@ -234,9 +235,7 @@ public static class PlanningEndpoints
             windowStart = TimeZoneInfo
                 .ConvertTimeFromUtc(formA.PrecisePeriodStart.Value, timeZone)
                 .Date;
-            windowEnd = TimeZoneInfo
-                .ConvertTimeFromUtc(formA.PrecisePeriodEnd.Value, timeZone)
-                .Date;
+            windowEnd = globalizationService.GetPolishDayStartUtc(formA.PrecisePeriodEnd.Value, 1);
         }
         else if (
             TryParsePeriodEdge(formA.OptimalPeriodBeg, out var startEdge)
@@ -244,7 +243,7 @@ public static class PlanningEndpoints
         )
         {
             windowStart = GetPeriodEdgeDate(year, startEdge);
-            windowEnd = GetPeriodEdgeDate(year, endEdge);
+            windowEnd = ToUtcAtEight(GetPeriodEdgeDate(year, endEdge), timeZone);
         }
         else
         {
@@ -253,7 +252,7 @@ public static class PlanningEndpoints
 
         var start = ToUtcAtEight(windowStart, timeZone);
 
-        return (start, start.AddHours(hours), ToUtcAtEight(windowEnd, timeZone));
+        return (start, start.AddHours(hours), windowEnd);
     }
 
     private static DateTime GetPeriodEdgeDate(int year, int edge) =>
