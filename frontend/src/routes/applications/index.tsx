@@ -88,7 +88,7 @@ function ApplicationsPage() {
       id: 'date',
       header: 'Data',
       accessorFn: (row) => row.date,
-      cell: ({ row }) => <span className="whitespace-nowrap">{row.original.date}</span>,
+      cell: ({ row }) => <span className="whitespace-nowrap">{formatDate(row.original.date, 'date')}</span>,
       sortDescFirst: true,
       meta: { filterInputType: 'date', getFilterOptionLabel: (value) => formatDate(value, 'date') },
       size: 92,
