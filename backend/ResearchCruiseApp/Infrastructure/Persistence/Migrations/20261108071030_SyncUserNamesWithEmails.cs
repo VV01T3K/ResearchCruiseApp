@@ -12,23 +12,38 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
         {
             migrationBuilder.Sql(
                 """
-                IF EXISTS (
-                    SELECT 1 FROM [AspNetUsers]
-                    WHERE COALESCE([NormalizedEmail], [NormalizedUserName]) IS NOT NULL
-                    GROUP BY COALESCE([NormalizedEmail], [NormalizedUserName])
-                    HAVING COUNT(*) > 1
-                )
-                    THROW 50916, N'Several accounts share an email, so user names cannot follow emails. Reconcile them first (#916).', 1;
+                DECLARE @pending TABLE ([Id] nvarchar(450) PRIMARY KEY);
 
-                UPDATE [AspNetUsers]
-                SET [UserName] = CONCAT(N'#916:', [Id]), [NormalizedUserName] = CONCAT(N'#916:', [Id])
+                INSERT INTO @pending
+                SELECT [Id] FROM [AspNetUsers]
                 WHERE [Email] IS NOT NULL AND [NormalizedEmail] IS NOT NULL
-                    AND ([UserName] IS NULL OR [UserName] <> [Email]
-                        OR [NormalizedUserName] IS NULL OR [NormalizedUserName] <> [NormalizedEmail]);
+                    AND ([UserName] IS NULL OR [UserName] <> [Email] COLLATE Latin1_General_BIN2
+                        OR [NormalizedUserName] IS NULL
+                        OR [NormalizedUserName] <> [NormalizedEmail] COLLATE Latin1_General_BIN2);
+                DECLARE @mismatched int = @@ROWCOUNT;
 
-                UPDATE [AspNetUsers]
-                SET [UserName] = [Email], [NormalizedUserName] = [NormalizedEmail]
-                WHERE [NormalizedUserName] = CONCAT(N'#916:', [Id]);
+                WHILE 1 = 1
+                BEGIN
+                    DELETE p FROM @pending p
+                    JOIN [AspNetUsers] u ON u.[Id] = p.[Id]
+                    WHERE EXISTS (
+                        SELECT 1 FROM [AspNetUsers] o
+                        LEFT JOIN @pending op ON op.[Id] = o.[Id]
+                        WHERE o.[Id] <> u.[Id]
+                            AND u.[NormalizedEmail] = IIF(op.[Id] IS NULL, o.[NormalizedUserName], o.[NormalizedEmail])
+                    );
+                    IF @@ROWCOUNT = 0 BREAK;
+                END;
+
+                UPDATE u SET [UserName] = CONCAT(N'#916:', u.[Id]), [NormalizedUserName] = CONCAT(N'#916:', u.[Id])
+                FROM [AspNetUsers] u JOIN @pending p ON p.[Id] = u.[Id];
+
+                UPDATE u SET [UserName] = u.[Email], [NormalizedUserName] = u.[NormalizedEmail]
+                FROM [AspNetUsers] u JOIN @pending p ON p.[Id] = u.[Id];
+
+                DECLARE @skipped int = @mismatched - (SELECT COUNT(*) FROM @pending);
+                IF @skipped > 0
+                    RAISERROR(N'%d accounts keep their old user name because their email clashes with another account (#916).', 10, 1, @skipped) WITH NOWAIT;
                 """
             );
         }

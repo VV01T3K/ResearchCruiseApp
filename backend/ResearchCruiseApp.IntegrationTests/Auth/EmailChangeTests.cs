@@ -146,7 +146,7 @@ public sealed class EmailChangeTests(SqlFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
-    public async Task SyncUserNamesWithEmails_WhenUserNamesAreSwapped_RepairsBothAndRefusesDuplicates()
+    public async Task SyncUserNamesWithEmails_WhenUserNamesAreSwapped_RepairsThemAndKeepsSharedEmails()
     {
         var ct = TestContext.Current.CancellationToken;
         var connection = new SqlConnectionStringBuilder(fixture.ConnectionString);
@@ -171,9 +171,19 @@ public sealed class EmailChangeTests(SqlFixture fixture) : IAsyncLifetime
                     LastName = "Researcher",
                     PasswordHash = $"hash-{email}",
                 };
-            var first = Account("a@example.invalid", "b@example.invalid");
-            var second = Account("b@example.invalid", "a@example.invalid");
-            db.Users.AddRange(first, second);
+            User[] repaired =
+            [
+                Account("a@example.invalid", "b@example.invalid"),
+                Account("b@example.invalid", "a@example.invalid"),
+                Account("Case@example.invalid", "case@example.invalid"),
+            ];
+            User[] kept =
+            [
+                Account("shared@example.invalid", "shared@example.invalid"),
+                Account("SHARED@example.invalid", "legacy@example.invalid"),
+                Account("legacy@example.invalid", "chain@example.invalid"),
+            ];
+            db.Users.AddRange([.. repaired, .. kept]);
             await db.SaveChangesAsync(ct);
 
             for (var run = 0; run < 2; run++)
@@ -181,22 +191,28 @@ public sealed class EmailChangeTests(SqlFixture fixture) : IAsyncLifetime
                 await migrator.MigrateAsync(previous, ct);
                 await db.Database.MigrateAsync(ct);
                 await using var verification = new ApplicationDbContext(options);
-                var stored = await verification.Users.OrderBy(row => row.Email).ToListAsync(ct);
-                Assert.Equal([first.Id, second.Id], stored.Select(row => row.Id));
+                var stored = await verification.Users.ToDictionaryAsync(row => row.Id, ct);
                 Assert.All(
-                    stored,
-                    row =>
+                    repaired,
+                    user =>
                         Assert.Equal(
-                            (row.Email, row.NormalizedEmail, $"hash-{row.Email}"),
-                            (row.UserName, row.NormalizedUserName, row.PasswordHash)
+                            (user.Email, user.NormalizedEmail, user.PasswordHash),
+                            (
+                                stored[user.Id].UserName,
+                                stored[user.Id].NormalizedUserName,
+                                stored[user.Id].PasswordHash
+                            )
+                        )
+                );
+                Assert.All(
+                    kept,
+                    user =>
+                        Assert.Equal(
+                            (user.UserName, user.NormalizedUserName),
+                            (stored[user.Id].UserName, stored[user.Id].NormalizedUserName)
                         )
                 );
             }
-
-            db.Users.Add(Account("A@example.invalid", "legacy@example.invalid"));
-            await db.SaveChangesAsync(ct);
-            await migrator.MigrateAsync(previous, ct);
-            await Assert.ThrowsAsync<SqlException>(() => db.Database.MigrateAsync(ct));
         }
         finally
         {
