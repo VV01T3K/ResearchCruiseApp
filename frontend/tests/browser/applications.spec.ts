@@ -77,6 +77,38 @@ test.describe('application table', () => {
     });
   }
 
+  test('bad links fall back, and filters and sorting survive a reload and a visit to the details', async ({
+    page,
+    network,
+  }) => {
+    network.use(
+      getGetApplicationsMockHandler(({ request }) => {
+        const query = new URL(request.url).searchParams;
+        const chosen = query.get('year') === '2026' && query.get('descending') === 'false';
+        return listPage([{ ...application(), number: chosen ? 'Chosen view' : 'Default view' }]);
+      })
+    );
+    await page.goto('/applications?year=oops&sortBy=nope&descending=7&status=%5B1%5D');
+    await expect(page.getByRole('cell', { name: 'Default view', exact: true })).toBeVisible();
+    await changes.sorted(page);
+    await page.keyboard.press('Escape');
+    await changes['filtered by year'](page);
+    const chosen = page.getByRole('cell', { name: 'Chosen view', exact: true });
+    await expect(chosen).toBeVisible();
+
+    await page.reload();
+    await expect(chosen).toBeVisible();
+    network.use(
+      getGetApplicationManagersMockHandler([application().mainManager]),
+      getGetApplicationEvaluationMockHandler(evaluation()),
+      getGetApplicationMockHandler(application())
+    );
+    await page.getByRole('link', { name: 'Szczegóły' }).click();
+    await expect(page).toHaveURL(/details/);
+    await page.goBack();
+    await expect(chosen).toBeVisible();
+  });
+
   test('filters send exact values, tell same-named managers apart, and clear together', async ({
     page,
     network,
