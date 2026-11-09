@@ -37,7 +37,7 @@ export function Modal({ title, children, isOpen, onClose, className, dismissible
         <Dialog.Popup
           className={cn(
             'fixed top-[calc(50%+var(--header-height)/2)] left-1/2 z-50 max-h-[calc(100dvh-var(--header-height)-2rem)] w-[calc(100%-2rem)] max-w-screen-sm -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg bg-surface p-4 shadow-lg',
-            'transition-all duration-200 ease-popup',
+            'transition-[opacity,scale] duration-200 ease-popup',
             'data-[starting-style]:scale-98 data-[starting-style]:opacity-0',
             'data-[ending-style]:scale-98 data-[ending-style]:opacity-0',
             className
@@ -50,7 +50,7 @@ export function Modal({ title, children, isOpen, onClose, className, dismissible
                 render={
                   <button
                     aria-label="Zamknij"
-                    className="rounded-md p-2 text-muted-foreground hover:cursor-pointer hover:bg-neutral-950/5 hover:text-neutral-700"
+                    className="rounded-md p-2 text-muted-foreground transition-colors duration-150 ease-out hover:cursor-pointer hover:bg-neutral-950/5 hover:text-neutral-700 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden active:bg-neutral-950/10"
                   />
                 }
               >

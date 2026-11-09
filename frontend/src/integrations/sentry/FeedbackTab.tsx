@@ -36,7 +36,7 @@ export function FeedbackTab() {
             ref={popupRef}
             initialFocus={() => popupRef.current?.querySelector('textarea')}
             finalFocus={tabRef}
-            className="fixed right-14 bottom-8 z-50 flex max-h-[calc(100dvh-var(--header-height)-3rem)] w-[calc(100vw-4.5rem)] max-w-sm origin-bottom-right flex-col overflow-hidden rounded-lg bg-surface p-4 shadow-xl transition-all duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 motion-reduce:transition-none [html:has([data-actions-section])_&]:bottom-[max(2rem,calc(var(--actions-height)+1rem))] [html:has([data-actions-section])_&]:max-h-[calc(100dvh-var(--header-height)-max(2rem,calc(var(--actions-height)+1rem))-1rem)]"
+            className="fixed right-14 bottom-8 z-50 flex max-h-[calc(100dvh-var(--header-height)-3rem)] w-[calc(100vw-4.5rem)] max-w-sm origin-bottom-right flex-col overflow-hidden rounded-lg bg-surface p-4 shadow-xl transition-[opacity,scale] duration-200 ease-out data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 motion-reduce:transition-none [html:has([data-actions-section])_&]:bottom-[max(2rem,calc(var(--actions-height)+1rem))] [html:has([data-actions-section])_&]:max-h-[calc(100dvh-var(--header-height)-max(2rem,calc(var(--actions-height)+1rem))-1rem)]"
           >
             <header className="flex items-center justify-between">
               <Dialog.Title className="text-lg font-bold">Zgłoś problem</Dialog.Title>

@@ -21,7 +21,7 @@ export function EmailConfirmationBadge({ email, emailConfirmed }: Props) {
       <Button
         size="xs"
         variant="primaryOutline"
-        disabled={resendConfirmation.isPending}
+        loading={resendConfirmation.isPending}
         onClick={() =>
           resendConfirmation.mutate(
             { data: { email } },

@@ -84,7 +84,7 @@ export function ComboboxInput({
           <span className="flex items-center gap-2">
             <InputErrorTriangle errors={errors} />
             {!disabled && (
-              <Combobox.Icon className="transition-transform duration-300 ease-out group-data-[popup-open]:rotate-180">
+              <Combobox.Icon className="transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
                 <CaretDownIcon className="h-5 w-5" />
               </Combobox.Icon>
             )}

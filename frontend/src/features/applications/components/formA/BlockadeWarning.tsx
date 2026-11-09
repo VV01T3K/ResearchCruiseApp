@@ -21,11 +21,11 @@ export function BlockadeWarning({ year, blockades }: Props) {
                 <span className="font-bold">Blokady statku w roku {year}</span>
                 <span className="text-sm font-normal">Rozwiń, aby zobaczyć wszystkie blokady</span>
               </div>
-              <span className="ml-4 transition-transform duration-200 group-data-[panel-open]:rotate-180">
+              <span className="ml-4 transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
                 <CaretDownIcon className="h-5 w-5" />
               </span>
             </Collapsible.Trigger>
-            <Collapsible.Panel className="overflow-hidden transition-all duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0">
+            <Collapsible.Panel className="overflow-hidden transition-[height,opacity] duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0">
               <ul className="mt-3 space-y-1">
                 {blockades?.map((blockade: BlockadePeriod) => (
                   <li key={`${blockade.startDate}-${blockade.endDate}`} className="text-sm">
