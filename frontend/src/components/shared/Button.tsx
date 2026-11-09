@@ -1,5 +1,4 @@
 import { Button as BaseButton } from '@base-ui/react/button';
-import { CircleNotchIcon } from '@phosphor-icons/react';
 import { createLink } from '@tanstack/react-router';
 
 import { cn } from '@/lib/utils';
@@ -27,16 +26,26 @@ export function Button({ variant, size, className, type = 'button', children, lo
   return (
     <BaseButton
       type={type}
-      className={buttonClassName({ variant, size, className })}
+      className={cn(
+        loading && 'relative',
+        buttonClassName({ variant, size, className }),
+        loading && 'scale-100 transition-none'
+      )}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       {...props}
     >
       {loading ? (
-        <span className="flex items-center gap-2">
-          <CircleNotchIcon className="size-4 shrink-0 animate-spin" />
-          {children}
-        </span>
+        <>
+          <span
+            className={cn('opacity-0', variant !== 'plain' && 'flex w-full items-center justify-around gap-[inherit]')}
+          >
+            {children}
+          </span>
+          <span className="absolute inset-0 flex items-center justify-center">
+            <span className="inline-block aspect-square size-4 shrink-0 animate-spin rounded-full bg-[conic-gradient(transparent_0_25%,currentColor_0)] will-change-transform [mask:radial-gradient(farthest-side,transparent_calc(100%-2px),#000_calc(100%-1.5px))]" />
+          </span>
+        </>
       ) : (
         children
       )}
