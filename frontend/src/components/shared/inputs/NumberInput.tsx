@@ -1,5 +1,5 @@
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
-import { useInputAria } from '@/components/inputs/useInputAria';
+import { Field } from '@base-ui/react/field';
 import { NumberField } from '@base-ui/react/number-field';
 import { MinusIcon, PlusIcon } from '@phosphor-icons/react';
 
@@ -57,53 +57,51 @@ export function NumberInput(props: Props) {
     precision = 2,
     'aria-label': ariaLabel,
   } = props;
-  const aria = useInputAria(errors, helper);
-
   return (
-    <NumberField.Root
-      id={aria.id}
-      value={Number.isFinite(value) ? value : null}
-      onValueChange={(newValue) => (props.nullable ? props.onChange?.(newValue) : props.onChange?.(newValue ?? 0))}
-      min={minimum}
-      max={maximum}
-      step={step}
-      disabled={disabled}
-      locale="en-US"
-      format={{ useGrouping: false, maximumFractionDigits: type === 'float' ? precision : 0 }}
-      className={cn(className, 'flex flex-col')}
-    >
-      <InputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
-      <NumberField.Group className="flex items-center" aria-label={typeof label === 'string' ? label : ariaLabel}>
-        {!disabled && <NumberInputButton side="left" />}
-        <div className="relative w-full">
-          <NumberField.Input
-            name={name}
-            onChange={(evt) => {
-              const caret = evt.currentTarget.selectionStart;
-              evt.currentTarget.value = evt.currentTarget.value.replace(',', '.');
-              evt.currentTarget.setSelectionRange(caret, caret);
-            }}
-            onBlur={onBlur}
-            {...aria.inputProps}
-            aria-label={ariaLabel}
-            aria-roledescription={undefined}
-            className={cn(
-              'block h-11 w-full border border-border bg-surface-muted py-2.5 text-center text-sm text-foreground',
-              'transition duration-300 ease-in-out',
-              'focus:ring-primary focus:border-primary focus:shadow-sm focus:outline-hidden forced-colors:focus:-outline-offset-4',
-              disabled ? 'rounded-lg bg-neutral-200' : '',
-              hasErrors(errors) && invalidInputClassName
-            )}
-          />
-          <InputErrorTriangle errors={errors} mode={'absolute'} />
-        </div>
-        {!disabled && <NumberInputButton side="right" />}
-      </NumberField.Group>
+    <Field.Root invalid={hasErrors(errors)} className={cn(className, 'flex flex-col')}>
+      {label && <Field.Label render={<InputLabel value={label} showRequiredAsterisk={showRequiredAsterisk} />} />}
+      <NumberField.Root
+        value={Number.isFinite(value) ? value : null}
+        onValueChange={(newValue) => (props.nullable ? props.onChange?.(newValue) : props.onChange?.(newValue ?? 0))}
+        min={minimum}
+        max={maximum}
+        step={step}
+        disabled={disabled}
+        locale="en-US"
+        format={{ useGrouping: false, maximumFractionDigits: type === 'float' ? precision : 0 }}
+      >
+        <NumberField.Group className="flex items-center" aria-label={typeof label === 'string' ? label : ariaLabel}>
+          {!disabled && <NumberInputButton side="left" />}
+          <div className="relative w-full">
+            <NumberField.Input
+              name={name}
+              onChange={(evt) => {
+                const caret = evt.currentTarget.selectionStart;
+                evt.currentTarget.value = evt.currentTarget.value.replace(',', '.');
+                evt.currentTarget.setSelectionRange(caret, caret);
+              }}
+              onBlur={onBlur}
+              aria-label={ariaLabel}
+              aria-labelledby={undefined}
+              aria-roledescription={undefined}
+              className={cn(
+                'block h-11 w-full border border-border bg-surface-muted py-2.5 text-center text-sm text-foreground',
+                'transition duration-300 ease-in-out',
+                'focus:ring-primary focus:border-primary focus:shadow-sm focus:outline-hidden forced-colors:focus:-outline-offset-4',
+                disabled ? 'rounded-lg bg-neutral-200' : '',
+                hasErrors(errors) && invalidInputClassName
+              )}
+            />
+            <InputErrorTriangle errors={errors} mode={'absolute'} />
+          </div>
+          {!disabled && <NumberInputButton side="right" />}
+        </NumberField.Group>
+      </NumberField.Root>
       <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
-        <InputHelper id={aria.helperId} helper={helper} />
-        <InputErrorsList id={aria.errorId} errors={errors} />
+        {helper && <Field.Description render={<InputHelper helper={helper} />} />}
+        {hasErrors(errors) && <Field.Error match render={<InputErrorsList errors={errors} />} />}
       </div>
-    </NumberField.Root>
+    </Field.Root>
   );
 }
 

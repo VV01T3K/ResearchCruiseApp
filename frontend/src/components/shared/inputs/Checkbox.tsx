@@ -1,6 +1,6 @@
 import { hasErrors } from '@/components/inputs/invalidInput';
-import { useInputAria } from '@/components/inputs/useInputAria';
 import { Checkbox as BaseCheckbox } from '@base-ui/react/checkbox';
+import { Field } from '@base-ui/react/field';
 import { CheckIcon, MinusIcon } from '@phosphor-icons/react';
 import React from 'react';
 
@@ -43,11 +43,10 @@ export function Checkbox({
   helper,
   'aria-label': ariaLabel,
 }: Props) {
-  const aria = useInputAria(errors, helper);
   return (
-    <div className={cn('flex flex-col', className)}>
+    <Field.Root invalid={hasErrors(errors)} className={cn('flex flex-col', className)}>
       <div className={cn('flex items-center gap-2', labelPosition === 'left' ? 'flex-row' : 'flex-col')}>
-        <InputLabel name={aria.id} value={label} className="mb-0" />
+        {label && <Field.Label render={<InputLabel value={label} className="mb-0" />} />}
 
         <BaseCheckbox.Root
           name={name}
@@ -56,7 +55,6 @@ export function Checkbox({
           onCheckedChange={(checked) => onChange?.(checked === true)}
           onBlur={onBlur}
           disabled={disabled}
-          {...aria.inputProps}
           aria-label={ariaLabel}
           className={cn(
             'flex items-center justify-center rounded-md border border-border transition-all duration-300',
@@ -73,10 +71,10 @@ export function Checkbox({
       </div>
 
       <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
-        <InputHelper id={aria.helperId} helper={helper} />
-        <InputErrorsList id={aria.errorId} errors={errors} />
+        {helper && <Field.Description render={<InputHelper helper={helper} />} />}
+        {hasErrors(errors) && <Field.Error match render={<InputErrorsList errors={errors} />} />}
       </div>
-    </div>
+    </Field.Root>
   );
 }
 
