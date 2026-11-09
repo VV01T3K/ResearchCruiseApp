@@ -13,7 +13,8 @@ export const queryClient = new QueryClient({
     // leaves stale data on screen, so it gets a notification.
     onError: (error, query) => {
       captureQueryFailure(error, query.queryKey);
-      if (query.state.data !== undefined) toast.error(getErrorMessage(error, 'Nie udało się odświeżyć danych'));
+      if (query.state.data !== undefined)
+        toast.backgroundError(getErrorMessage(error, 'Nie udało się odświeżyć danych'));
     },
   }),
   mutationCache: new MutationCache({

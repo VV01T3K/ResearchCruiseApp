@@ -8,8 +8,9 @@ const shownErrors = new Map<string, number>();
 
 export const toast = {
   success: (message: string) => toastManager.add({ description: message, type: 'success', timeout: TOAST_TIMEOUT }),
-  error: (message: string) => {
-    // The same error repeated while its toast is still visible doesn't stack another one.
+  error: (message: string) => toastManager.add({ description: message, type: 'error', timeout: TOAST_TIMEOUT }),
+  // For background failures: the same message repeated while its toast is still visible doesn't stack.
+  backgroundError: (message: string) => {
     const now = Date.now();
     if (now - (shownErrors.get(message) ?? 0) < TOAST_TIMEOUT) return undefined;
     shownErrors.set(message, now);
