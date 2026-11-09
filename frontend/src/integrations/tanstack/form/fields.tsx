@@ -23,11 +23,11 @@ function useErrors() {
   return getErrors(meta, submissionAttempts);
 }
 
-function useStoredValueErrors(disabled: boolean | undefined) {
+function useStoredValueErrors(disabled: boolean | undefined, checkStored = true) {
   const field = useFieldContext<unknown>();
   const value = useSelector(field.store, (state) => state.value);
   const errors = useErrors();
-  return useUnreadableErrors(field.name, value, disabled) ?? errors;
+  return useUnreadableErrors(field.name, checkStored ? value : undefined, disabled) ?? errors;
 }
 
 type TextProps = Omit<React.ComponentProps<typeof Input>, 'name' | 'value' | 'onBlur' | 'onChange' | 'errors'> & {
@@ -88,8 +88,8 @@ type SelectProps = Omit<
 
 function SelectField({ value, onChange, ...props }: SelectProps) {
   const field = useFieldContext<string>();
-  const errors = useErrors();
-  const storedValueErrors = useStoredValueErrors(props.disabled);
+  // A converted value (e.g. a boolean) comes back as a string only when it couldn't be read.
+  const errors = useStoredValueErrors(props.disabled, value !== undefined);
   return (
     <DropdownInput
       {...props}
@@ -97,7 +97,7 @@ function SelectField({ value, onChange, ...props }: SelectProps) {
       value={value ?? field.state.value}
       onBlur={field.handleBlur}
       onChange={onChange ?? field.handleChange}
-      errors={value === undefined ? errors : storedValueErrors}
+      errors={errors}
     />
   );
 }

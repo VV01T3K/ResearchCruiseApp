@@ -1,13 +1,15 @@
 import type { Page } from '@playwright/test';
 import {
+  getGetApplicationFormAMockHandler,
   getGetApplicationManagersMockHandler,
   getGetApplicationsForCruisePlanningMockHandler,
   getGetApplicationsMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
 import { getGetCruisesMockHandler } from '@/api/generated/mocks/cruises/cruises.msw.gen';
 import { getGetAvailableCruiseManagersMockHandler } from '@/api/generated/mocks/users/users.msw.gen';
-import { test, expect, fail } from './fixtures';
+import { test, expect, applicationForms, fail } from './fixtures';
 import { admin } from '../data/accounts';
+import { applicationId, filledFormA } from '../data/forms';
 
 async function captureEnvelopes(page: Page, replayRate = '') {
   await page.route('/runtime-config.js', (route) =>
@@ -39,6 +41,16 @@ test('reset tokens in the page URL never reach Sentry', async ({ page }) => {
 
 test.describe('signed in', () => {
   test.use({ account: admin });
+
+  test('a valid form A reports no unreadable stored values', async ({ page, network }) => {
+    const sent = await captureEnvelopes(page);
+    network.use(getGetApplicationFormAMockHandler(filledFormA()), ...applicationForms());
+    await page.goto(`/applications/${applicationId}/formA?mode=edit`);
+    await expect(page.getByRole('combobox', { name: /Otrzymano decyzję o finansowaniu/ })).toContainText('Tak');
+
+    await expect.poll(sent).toContain('"type":"span"');
+    expect(sent()).not.toContain('Unreadable stored form value');
+  });
 
   test('spans carry the user roles', async ({ page }) => {
     const sent = await captureEnvelopes(page);

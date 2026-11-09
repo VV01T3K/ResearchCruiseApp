@@ -1,6 +1,7 @@
 import {
   getGetApplicationFormAMockHandler,
   getGetApplicationFormBMockHandler,
+  getUpdateApplicationFormAMockHandler,
   getUpdateApplicationFormBMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
 import { getGetCruiseBlockadesMockHandler } from '@/api/generated/mocks/cruises/cruises.msw.gen';
@@ -9,6 +10,14 @@ import { admin } from '../data/accounts';
 import { applicationId, formA } from '../data/forms';
 
 test.use({ account: admin });
+const projectTask = {
+  type: '4',
+  title: 'Projekt',
+  startDate: '2026-09',
+  endDate: '2026-10',
+  financingAmount: '100',
+  securedAmount: '5',
+};
 test.beforeEach(({ network }) => network.use(...applicationForms()));
 
 test('cruise days and hours stay in sync through typing, decimals, steppers and limits', async ({ page, network }) => {
@@ -16,16 +25,7 @@ test('cruise days and hours stay in sync through typing, decimals, steppers and 
     getGetApplicationFormAMockHandler({
       ...formA(),
       cruiseHours: '48',
-      researchTasks: [
-        {
-          type: '4',
-          title: 'Projekt',
-          startDate: '2026-09',
-          endDate: '2026-10',
-          financingAmount: '100',
-          securedAmount: '5',
-        },
-      ],
+      researchTasks: [projectTask],
     })
   );
   await page.goto(`/applications/${applicationId}/formA?mode=edit`);
@@ -73,6 +73,31 @@ test('cruise days and hours stay in sync through typing, decimals, steppers and 
   await amount.fill('12,345');
   await amount.blur();
   await expect(amount).toHaveValue('12.35');
+});
+
+test('a pasted decimal comma is saved as a decimal point', async ({ page, network, requests }) => {
+  network.use(
+    getGetApplicationFormAMockHandler({ ...formA(), researchTasks: [projectTask] }),
+    getUpdateApplicationFormAMockHandler()
+  );
+  await page.goto(`/applications/${applicationId}/formA?mode=edit`);
+  const amount = page.locator('input[name="researchTasks[0].financingAmount"]');
+  await amount.fill('');
+  await amount.evaluate((input) => {
+    const clipboardData = new DataTransfer();
+    clipboardData.setData('text/plain', '12,34');
+    input.dispatchEvent(new ClipboardEvent('paste', { clipboardData, bubbles: true, cancelable: true }));
+  });
+  await amount.blur();
+  await expect(amount).toHaveValue('12.34');
+
+  await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+  await expect(page).toHaveURL('/');
+  expect(requests.bodies(`PUT /v2/applications/${applicationId}/form-a`)).toEqual([
+    expect.objectContaining({
+      form: expect.objectContaining({ researchTasks: [expect.objectContaining({ financingAmount: '12.34' })] }),
+    }),
+  ]);
 });
 
 for (const picker of [

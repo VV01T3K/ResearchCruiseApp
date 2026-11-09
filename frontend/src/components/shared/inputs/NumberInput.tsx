@@ -80,6 +80,7 @@ export function NumberInput(props: Props) {
                 evt.currentTarget.value = evt.currentTarget.value.replace(',', '.');
                 evt.currentTarget.setSelectionRange(caret, caret);
               }}
+              onPaste={pasteWithDecimalPoint}
               onBlur={onBlur}
               aria-label={ariaLabel}
               aria-labelledby={undefined}
@@ -103,6 +104,20 @@ export function NumberInput(props: Props) {
       </div>
     </Field.Root>
   );
+}
+
+// Base UI parses pasted text itself, so a comma would be read as grouping; send it through onChange instead.
+function pasteWithDecimalPoint(evt: React.ClipboardEvent<HTMLInputElement>) {
+  const pasted = evt.clipboardData.getData('text/plain');
+  if (!pasted.includes(',')) return;
+  evt.preventDefault();
+  const input = evt.currentTarget;
+  const start = input.selectionStart ?? input.value.length;
+  const next =
+    input.value.slice(0, start) + pasted.replaceAll(',', '.') + input.value.slice(input.selectionEnd ?? start);
+  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, next);
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  input.setSelectionRange(start + pasted.length, start + pasted.length);
 }
 
 function NumberInputButton({ side }: { side: 'left' | 'right' }) {
