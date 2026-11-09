@@ -98,12 +98,12 @@ function ColumnMenu<TData extends object, TValue>({
               aria-label={label}
               title={label}
               className={cn(
-                'group relative inline-flex h-6 w-9 shrink-0 cursor-pointer items-center justify-center gap-0.5 rounded-md border transition-colors duration-150 ease-out outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                'group relative inline-flex h-6 w-9 shrink-0 cursor-pointer items-center justify-center gap-0.5 rounded-md border outline-none focus-visible:ring-2 focus-visible:ring-primary',
                 count
-                  ? 'border-primary bg-primary-100 text-primary hover:bg-primary-200 active:bg-primary-300'
+                  ? 'border-primary bg-primary-100 text-primary hover:bg-primary-200'
                   : isSorted
-                    ? 'border-primary bg-surface text-primary hover:bg-primary-100 active:bg-primary-200 data-[popup-open]:bg-primary-100'
-                    : 'border-border bg-surface text-neutral-600 hover:bg-surface-subtle hover:text-foreground active:bg-neutral-200 data-[popup-open]:bg-surface-subtle'
+                    ? 'border-primary bg-surface text-primary hover:bg-primary-100 data-[popup-open]:bg-primary-100'
+                    : 'border-border bg-surface text-neutral-600 hover:bg-surface-subtle hover:text-foreground data-[popup-open]:bg-surface-subtle'
               )}
             >
               {count ? (
@@ -137,9 +137,8 @@ function ColumnMenu<TData extends object, TValue>({
                   aria-pressed={active}
                   onClick={apply}
                   className={cn(
-                    'flex h-8 cursor-pointer items-center gap-2.5 rounded-md px-2 text-left text-sm font-normal text-neutral-800 transition-colors duration-150 ease-out outline-none hover:bg-surface-subtle focus-visible:bg-surface-subtle focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-inset active:bg-neutral-200',
-                    active &&
-                      'bg-primary-100 font-medium text-primary hover:bg-primary-200 focus-visible:bg-primary-200 active:bg-primary-300'
+                    'flex h-8 cursor-pointer items-center gap-2.5 rounded-md px-2 text-left text-sm font-normal text-neutral-800 outline-none hover:bg-surface-subtle',
+                    active && 'bg-primary-100 font-medium text-primary hover:bg-primary-200'
                   )}
                 >
                   <Icon className="size-4 shrink-0" />
