@@ -69,7 +69,13 @@ export function Checkbox({
             hasErrors(errors) && 'border-danger hover:border-danger focus:ring-danger focus:ring-1 focus:outline-hidden'
           )}
         >
-          <BaseCheckbox.Indicator>{indeterminate ? <MinusIcon /> : <CheckIcon />}</BaseCheckbox.Indicator>
+          <BaseCheckbox.Indicator className="flex size-full items-center justify-center">
+            {indeterminate ? (
+              <MinusIcon weight="bold" className="size-2/3" />
+            ) : (
+              <CheckIcon weight="bold" className="size-2/3" />
+            )}
+          </BaseCheckbox.Indicator>
         </BaseCheckbox.Root>
         <InputErrorTriangle errors={errors} />
       </div>
