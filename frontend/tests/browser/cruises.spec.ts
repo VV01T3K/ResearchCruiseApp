@@ -639,10 +639,18 @@ for (const lastName of ['Ly', 'Brzęczyszczykiewicz']) {
 test('a held press at the edge of a button still clicks it', async ({ page, network, requests }) => {
   network.use(getGetCruisesMockHandler([cruise()]), getAutoPlanCruisesMockHandler({ plannedCount: 0, skipped: [] }));
   await page.goto('/cruises');
-  const button = (await page.getByRole('button', { name: 'Dodaj rejsy automatycznie' }).boundingBox())!;
-  await page.mouse.move(button.x + 1, button.y + button.height / 2);
+  await expect(page.getByRole('row').filter({ hasText: cruise().title! })).toBeVisible();
+  const button = page.getByRole('button', { name: 'Dodaj rejsy automatycznie' });
+  const box = (await button.boundingBox())!;
+  const point = { x: box.x + 1, y: box.y + box.height / 2 };
+  await page.mouse.move(point.x, point.y);
   await page.mouse.down();
   await page.waitForTimeout(180);
+  // The pressed button shrinks; its click area must not.
+  await expect.poll(() => button.evaluate((element) => element.getBoundingClientRect().width)).toBeLessThan(box.width);
+  expect(await button.evaluate((element, { x, y }) => element.contains(document.elementFromPoint(x, y)), point)).toBe(
+    true
+  );
   await page.mouse.up();
   await expect.poll(() => requests.bodies('POST /v2/cruises/auto-plan')).toHaveLength(1);
 });
