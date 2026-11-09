@@ -147,7 +147,7 @@ function NumberInputButton({ side }: { side: 'left' | 'right' }) {
         className: cn(
           'flex h-11 w-11 items-center justify-center',
           'text-muted-foreground',
-          'focus:ring-primary focus:border-primary focus:shadow-sm focus:outline-hidden forced-colors:focus:-outline-offset-4',
+          'focus:ring-primary focus:border-primary focus:shadow-sm focus:outline-hidden forced-colors:focus:-outline-offset-4 not-disabled:active:border-primary not-disabled:active:shadow-sm',
           'focus-visible:ring-inset focus-visible:ring-offset-0',
           'disabled:cursor-not-allowed disabled:opacity-50',
           'border-collapse border border-border px-2',
