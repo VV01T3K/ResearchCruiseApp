@@ -147,8 +147,10 @@ export function FileInput({
           className={cn(
             'relative flex w-full flex-col items-center justify-center border-2 border-border text-muted-foreground',
             'cursor-pointer overflow-x-auto rounded-lg border-dashed bg-surface-muted hover:bg-surface-subtle',
-            'min-h-10 transition-all duration-200 ease-in-out',
-            disabled ? 'cursor-pointer bg-neutral-200 hover:bg-neutral-200' : '',
+            'min-h-10 transition-colors duration-150 ease-out',
+            disabled
+              ? 'cursor-pointer bg-neutral-200 hover:bg-neutral-200'
+              : 'hover:border-neutral-400 active:bg-neutral-200',
             hasErrors(errors) && 'border-danger text-danger',
             className
           )}
@@ -169,7 +171,9 @@ export function FileInput({
             tabIndex={disabled ? -1 : 0}
             className={cn(
               'w-full rounded-lg',
-              hasErrors(errors) && 'focus:ring-danger focus:ring-2 focus:outline-hidden focus:ring-inset'
+              hasErrors(errors)
+                ? 'focus:ring-danger focus:ring-2 focus:outline-hidden focus:ring-inset'
+                : 'focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden focus-visible:ring-inset'
             )}
           >
             {!disabled && (

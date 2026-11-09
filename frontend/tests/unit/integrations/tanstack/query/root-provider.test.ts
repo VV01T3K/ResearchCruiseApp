@@ -90,7 +90,7 @@ it('leaves failed first loads to the page that needs the data', async () => {
 });
 
 it('reports a failed background refresh once', async () => {
-  const showError = vi.spyOn(toast, 'error').mockReturnValue('test');
+  const showError = vi.spyOn(toast, 'backgroundError').mockReturnValue('test');
   queryClient.setQueryData(['stale'], 'stare dane');
   await expect(
     queryClient.query({

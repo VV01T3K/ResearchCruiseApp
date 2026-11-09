@@ -1,9 +1,9 @@
 import { Combobox } from '@base-ui/react/combobox';
+import { Field } from '@base-ui/react/field';
 import { CaretDownIcon, CheckIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 import React from 'react';
 
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
-import { useInputAria } from '@/components/inputs/useInputAria';
 import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
 import { dropdownItemClassName, dropdownPopupClassName } from '@/components/shared/inputs/DropdownInput';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
@@ -40,7 +40,6 @@ export function ComboboxInput({
   showRequiredAsterisk,
   disabled,
 }: Props) {
-  const aria = useInputAria(errors, undefined);
   const { startsWith } = Combobox.useFilter({ locale: 'pl' });
   const matchesWordStart = (option: ComboboxInputOption, query: string) => {
     const words = option.label.split(wordSeparators);
@@ -52,8 +51,8 @@ export function ComboboxInput({
   );
 
   return (
-    <div className="flex flex-col">
-      <InputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+    <Field.Root invalid={hasErrors(errors)} className="flex flex-col">
+      {label && <Field.Label render={<InputLabel value={label} showRequiredAsterisk={showRequiredAsterisk} />} />}
 
       <Combobox.Root
         name={name}
@@ -69,7 +68,6 @@ export function ComboboxInput({
         autoHighlight
       >
         <Combobox.Trigger
-          {...aria.inputProps}
           className={cn(
             'group relative inline-flex w-full items-center justify-between gap-2 text-left',
             'rounded-lg border border-border bg-surface-muted p-2.5 text-sm text-foreground',
@@ -86,7 +84,7 @@ export function ComboboxInput({
           <span className="flex items-center gap-2">
             <InputErrorTriangle errors={errors} />
             {!disabled && (
-              <Combobox.Icon className="transition-transform duration-300 ease-out group-data-[popup-open]:rotate-180">
+              <Combobox.Icon className="transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
                 <CaretDownIcon className="h-5 w-5" />
               </Combobox.Icon>
             )}
@@ -104,6 +102,7 @@ export function ComboboxInput({
                 <MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-4.5 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Combobox.Input
                   aria-label="Szukaj na liście"
+                  aria-labelledby={undefined}
                   placeholder="Szukaj na liście"
                   className="w-full rounded-md border border-border bg-surface-muted py-2 pr-2 pl-8 text-sm text-foreground focus:border-primary-500 focus:outline-hidden"
                 />
@@ -127,8 +126,8 @@ export function ComboboxInput({
       </Combobox.Root>
 
       <div className={cn('flex flex-col text-sm', hasErrors(errors) && 'mt-2')}>
-        <InputErrorsList id={aria.errorId} errors={errors} />
+        {hasErrors(errors) && <Field.Error match render={<InputErrorsList errors={errors} />} />}
       </div>
-    </div>
+    </Field.Root>
   );
 }

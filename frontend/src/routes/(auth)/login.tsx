@@ -64,11 +64,11 @@ function LoginPage() {
       <form noValidate onSubmit={handleSubmit} className="px-4">
         <div className="space-y-4">
           <form.AppField name="email">
-            {(field) => <field.FloatingTextField type="email" label="E-mail" />}
+            {(field) => <field.TextField variant="floating" type="email" label="E-mail" />}
           </form.AppField>
 
           <form.AppField name="password">
-            {(field) => <field.FloatingTextField type="password" label="Hasło" />}
+            {(field) => <field.TextField variant="floating" type="password" label="Hasło" />}
           </form.AppField>
 
           <div className="!mt-8 flex flex-wrap items-center justify-end">
@@ -78,7 +78,7 @@ function LoginPage() {
           <div className="mt-8">
             <form.Subscribe selector={(state) => state.isSubmitting}>
               {(isSubmitting) => (
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                <Button type="submit" className="w-full" loading={isSubmitting}>
                   Zaloguj
                 </Button>
               )}

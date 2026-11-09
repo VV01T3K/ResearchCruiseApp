@@ -17,7 +17,7 @@ export function pickerTriggerClassName({
 }) {
   return cn(
     'relative inline-flex w-full items-center justify-between gap-4 rounded-lg border border-border bg-surface-muted p-2.5 text-left text-sm text-foreground',
-    'transition duration-300 ease-in-out focus-visible:outline-hidden',
+    'transition-[border-color,box-shadow] duration-150 ease-out focus-visible:outline-hidden',
     disabled
       ? 'cursor-default bg-neutral-200'
       : 'cursor-pointer focus:border-primary-500 focus:shadow-sm focus:ring-primary-500 focus:outline-hidden',
@@ -45,7 +45,7 @@ export function PickerPopup({ 'aria-label': ariaLabel, children, initialFocus }:
           initialFocus={initialFocus}
           className={cn(
             'max-h-[var(--available-height)] origin-[var(--transform-origin)] overflow-y-auto rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10 focus-visible:outline-hidden',
-            'transition-all duration-150 ease-popup',
+            'transition-[opacity,scale] duration-150 ease-popup',
             'data-[starting-style]:scale-98 data-[starting-style]:opacity-0',
             'data-[ending-style]:scale-98 data-[ending-style]:opacity-0',
             '[&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-primary-500'

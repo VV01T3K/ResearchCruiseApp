@@ -1,6 +1,6 @@
 import { hasErrors } from '@/components/inputs/invalidInput';
-import { useInputAria } from '@/components/inputs/useInputAria';
 import { Checkbox as BaseCheckbox } from '@base-ui/react/checkbox';
+import { Field } from '@base-ui/react/field';
 import { CheckIcon, MinusIcon } from '@phosphor-icons/react';
 import React from 'react';
 
@@ -43,11 +43,10 @@ export function Checkbox({
   helper,
   'aria-label': ariaLabel,
 }: Props) {
-  const aria = useInputAria(errors, helper);
   return (
-    <div className={cn('flex flex-col', className)}>
+    <Field.Root invalid={hasErrors(errors)} className={cn('flex flex-col', className)}>
       <div className={cn('flex items-center gap-2', labelPosition === 'left' ? 'flex-row' : 'flex-col')}>
-        <InputLabel name={aria.id} value={label} className="mb-0" />
+        {label && <Field.Label render={<InputLabel value={label} className="mb-0" />} />}
 
         <BaseCheckbox.Root
           name={name}
@@ -56,27 +55,34 @@ export function Checkbox({
           onCheckedChange={(checked) => onChange?.(checked === true)}
           onBlur={onBlur}
           disabled={disabled}
-          {...aria.inputProps}
           aria-label={ariaLabel}
           className={cn(
-            'flex items-center justify-center rounded-md border border-border transition-all duration-300',
+            'flex items-center justify-center rounded-md border border-border transition-[background-color,border-color,box-shadow,scale] duration-150 ease-out',
             sizes[size],
             (checked || indeterminate) && variants[variant][disabled ? 'disabled' : 'enabled'],
             !checked && !indeterminate && (disabled ? 'bg-surface-subtle' : 'bg-surface hover:border-neutral-400'),
-            disabled ? 'cursor-default' : 'cursor-pointer',
+            disabled ? 'cursor-default' : 'cursor-pointer active:scale-90',
+            !hasErrors(errors) &&
+              'focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:outline-hidden',
             hasErrors(errors) && 'border-danger hover:border-danger focus:ring-danger focus:ring-1 focus:outline-hidden'
           )}
         >
-          <BaseCheckbox.Indicator>{indeterminate ? <MinusIcon /> : <CheckIcon />}</BaseCheckbox.Indicator>
+          <BaseCheckbox.Indicator className="flex size-full items-center justify-center">
+            {indeterminate ? (
+              <MinusIcon weight="bold" className="size-2/3" />
+            ) : (
+              <CheckIcon weight="bold" className="size-2/3" />
+            )}
+          </BaseCheckbox.Indicator>
         </BaseCheckbox.Root>
         <InputErrorTriangle errors={errors} />
       </div>
 
       <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
-        <InputHelper id={aria.helperId} helper={helper} />
-        <InputErrorsList id={aria.errorId} errors={errors} />
+        {helper && <Field.Description render={<InputHelper helper={helper} />} />}
+        {hasErrors(errors) && <Field.Error match render={<InputErrorsList errors={errors} />} />}
       </div>
-    </div>
+    </Field.Root>
   );
 }
 
@@ -90,23 +96,23 @@ const sizes = {
 
 const variants = {
   primary: {
-    enabled: 'bg-primary border-primary text-inverse-foreground',
+    enabled: 'bg-primary border-primary text-inverse-foreground hover:bg-primary-900 hover:border-primary-900',
     disabled: 'bg-primary-500 border-primary-500 text-primary-200',
   },
   success: {
-    enabled: 'bg-success border-success text-inverse-foreground',
+    enabled: 'bg-success border-success text-inverse-foreground hover:bg-success-900 hover:border-success-900',
     disabled: 'bg-success-400 border-success-400 text-success-200',
   },
   danger: {
-    enabled: 'bg-danger border-danger text-inverse-foreground',
+    enabled: 'bg-danger border-danger text-inverse-foreground hover:bg-danger-700 hover:border-danger-700',
     disabled: 'bg-danger-400 border-danger-400 text-danger-200',
   },
   warning: {
-    enabled: 'bg-warning border-warning text-neutral-950',
+    enabled: 'bg-warning border-warning text-neutral-950 hover:bg-warning-400 hover:border-warning-400',
     disabled: 'bg-warning-100 border-warning-100 text-warning-800',
   },
   info: {
-    enabled: 'bg-info border-info text-inverse-foreground',
+    enabled: 'bg-info border-info text-inverse-foreground hover:bg-info-700 hover:border-info-700',
     disabled: 'bg-info-200 border-info-200 text-info-100',
   },
   plain: {

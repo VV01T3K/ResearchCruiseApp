@@ -1,6 +1,7 @@
 import {
   getGetApplicationFormAMockHandler,
   getGetApplicationFormBMockHandler,
+  getUpdateApplicationFormAMockHandler,
   getUpdateApplicationFormBMockHandler,
 } from '@/api/generated/mocks/applications/applications.msw.gen';
 import { getGetCruiseBlockadesMockHandler } from '@/api/generated/mocks/cruises/cruises.msw.gen';
@@ -9,6 +10,14 @@ import { admin } from '../data/accounts';
 import { applicationId, formA } from '../data/forms';
 
 test.use({ account: admin });
+const projectTask = {
+  type: '4',
+  title: 'Projekt',
+  startDate: '2026-09',
+  endDate: '2026-10',
+  financingAmount: '100',
+  securedAmount: '5',
+};
 test.beforeEach(({ network }) => network.use(...applicationForms()));
 
 test('cruise days and hours stay in sync through typing, decimals, steppers and limits', async ({ page, network }) => {
@@ -16,16 +25,7 @@ test('cruise days and hours stay in sync through typing, decimals, steppers and 
     getGetApplicationFormAMockHandler({
       ...formA(),
       cruiseHours: '48',
-      researchTasks: [
-        {
-          type: '4',
-          title: 'Projekt',
-          startDate: '2026-09',
-          endDate: '2026-10',
-          financingAmount: '100',
-          securedAmount: '5',
-        },
-      ],
+      researchTasks: [projectTask],
     })
   );
   await page.goto(`/applications/${applicationId}/formA?mode=edit`);
@@ -42,23 +42,28 @@ test('cruise days and hours stay in sync through typing, decimals, steppers and 
   await expect(days).toHaveValue('1.5');
   await expect(hours).toHaveValue('36');
   await days.fill('1.257');
+  await days.blur();
   await expect(days).toHaveValue('1.25');
   await expect(hours).toHaveValue('30');
   await hours.fill('7.9');
-  await expect(hours).toHaveValue('7');
-  await expect(days).toHaveValue('0.29');
+  await hours.blur();
+  await expect(hours).toHaveValue('8');
+  await expect(days).toHaveValue('0.33');
 
   await daysField.getByRole('button', { name: 'Zwiększ' }).click();
-  await expect(hours).toHaveValue('31');
+  await expect(hours).toHaveValue('32');
   await hoursField.getByRole('button', { name: 'Zmniejsz' }).click();
-  await expect(hours).toHaveValue('30');
+  await expect(hours).toHaveValue('31');
   await hours.fill('');
+  await hours.blur();
   await expect(hours).toHaveValue('0');
   await expect(days).toHaveValue('0');
 
   await days.fill('61');
+  await days.blur();
   await expect(days).toHaveValue('60');
   await hours.fill('1441');
+  await hours.blur();
   await expect(hours).toHaveValue('1440');
 
   const amount = page.locator('input[name="researchTasks[0].financingAmount"]');
@@ -68,6 +73,59 @@ test('cruise days and hours stay in sync through typing, decimals, steppers and 
   await amount.fill('12,345');
   await amount.blur();
   await expect(amount).toHaveValue('12.35');
+});
+
+test('cruise days and hours clamp to their maximum on each keystroke', async ({ page, network }) => {
+  network.use(getGetApplicationFormAMockHandler({ ...formA(), cruiseHours: '48', researchTasks: [projectTask] }));
+  await page.goto(`/applications/${applicationId}/formA?mode=edit`);
+  const days = page.getByRole('textbox', { name: 'Liczba planowanych dób rejsowych' });
+  const hours = page.getByRole('textbox', { name: 'Liczba planowanych godzin rejsowych' });
+
+  await days.selectText();
+  await days.pressSequentially('75');
+  await expect(days).toHaveValue('60');
+  await expect(hours).toHaveValue('1440');
+  await expect(days).toBeFocused();
+
+  await hours.selectText();
+  await hours.pressSequentially('2000');
+  await expect(hours).toHaveValue('1440');
+
+  const amount = page.locator('input[name="researchTasks[0].financingAmount"]');
+  await amount.selectText();
+  await amount.pressSequentially('12.');
+  await expect(amount).toHaveValue('12.');
+  await amount.press('5');
+  await expect(amount).toHaveValue('12.5');
+});
+
+test('a pasted decimal comma is saved as a decimal point', async ({
+  page,
+  context,
+  browserName,
+  network,
+  requests,
+}) => {
+  if (browserName === 'chromium') await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  network.use(
+    getGetApplicationFormAMockHandler({ ...formA(), researchTasks: [projectTask] }),
+    getUpdateApplicationFormAMockHandler()
+  );
+  await page.goto(`/applications/${applicationId}/formA?mode=edit`);
+  const amount = page.locator('input[name="researchTasks[0].financingAmount"]');
+  await amount.fill('');
+  await page.evaluate(() => navigator.clipboard.writeText('12,34'));
+  await amount.press('ControlOrMeta+V');
+  await amount.blur();
+  await expect(amount).toHaveValue('12.34');
+
+  await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
+  await expect(page).toHaveURL('/');
+  expect(requests.bodies(`PUT /v2/applications/${applicationId}/form-a`)).toEqual([
+    expect.objectContaining({
+      form: expect.objectContaining({ researchTasks: [expect.objectContaining({ financingAmount: '12.34' })] }),
+    }),
+  ]);
 });
 
 for (const picker of [

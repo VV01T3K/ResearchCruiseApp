@@ -40,7 +40,8 @@ export function OwnResearchTaskDetails({ row, disabled }: Props) {
 
       <form.AppField name={`researchTasks[${row.index}].ministerialPoints`}>
         {(field) => (
-          <field.NullableNumberField
+          <field.NumberField
+            nullable
             aria-label={`Przewidywane punkty ministerialne, wiersz ${row.index + 1}`}
             minimum={0}
             step={10}

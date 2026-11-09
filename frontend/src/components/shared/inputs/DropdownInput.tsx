@@ -1,6 +1,6 @@
 import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
-import { useInputAria } from '@/components/inputs/useInputAria';
+import { Field } from '@base-ui/react/field';
 import { Select } from '@base-ui/react/select';
 import { CaretDownIcon, CheckIcon } from '@phosphor-icons/react';
 import React from 'react';
@@ -19,7 +19,7 @@ export type DropdownInputOption = {
 
 export const dropdownPopupClassName = cn(
   'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10',
-  'transition-all duration-150 ease-popup',
+  'transition-[opacity,scale] duration-150 ease-popup',
   'data-[starting-style]:scale-98 data-[starting-style]:opacity-0',
   'data-[ending-style]:scale-98 data-[ending-style]:opacity-0'
 );
@@ -27,7 +27,7 @@ export const dropdownPopupClassName = cn(
 export const dropdownItemClassName = cn(
   'flex items-center justify-between gap-2 border-b border-border-muted px-3 py-2 text-sm text-neutral-700 last:border-b-0',
   'cursor-pointer focus-visible:outline-hidden select-none',
-  'transition-all duration-150 ease-out',
+  'transition-colors duration-150 ease-out',
   'data-[highlighted]:bg-primary-50 data-[highlighted]:text-foreground',
   'data-[selected]:bg-primary-50 data-[selected]:text-primary-800 data-[selected]:font-medium'
 );
@@ -66,7 +66,6 @@ export function DropdownInput({
   defaultValue = '',
   'aria-label': ariaLabel,
 }: Props) {
-  const aria = useInputAria(errors, helper);
   const allPossibleOptions = React.useMemo(() => {
     if (allowEmptyOption) {
       return [
@@ -91,8 +90,8 @@ export function DropdownInput({
   );
 
   return (
-    <div className="flex flex-col">
-      <InputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+    <Field.Root invalid={hasErrors(errors)} className="flex flex-col">
+      {label && <Field.Label render={<InputLabel value={label} showRequiredAsterisk={showRequiredAsterisk} />} />}
 
       <Select.Root
         name={name}
@@ -107,13 +106,13 @@ export function DropdownInput({
         }}
       >
         <Select.Trigger
-          {...aria.inputProps}
           aria-label={ariaLabel}
+          aria-labelledby={undefined}
           className={cn(
-            'relative inline-flex w-full items-center justify-between',
+            'group relative inline-flex w-full items-center justify-between',
             'rounded-lg border border-border bg-surface-muted text-sm text-foreground',
             'p-2.5',
-            'transition duration-300 ease-in-out',
+            'transition-[border-color,box-shadow] duration-150 ease-out',
             !disabled && 'cursor-pointer hover:border-neutral-400',
             !disabled && 'focus:border-primary-500 focus:ring-primary-500 focus:outline-hidden focus:ring-inset',
             disabled && 'cursor-not-allowed bg-neutral-200',
@@ -124,7 +123,7 @@ export function DropdownInput({
           <span className="flex items-center gap-2">
             <InputErrorTriangle errors={errors} />
             {!disabled && (
-              <Select.Icon className="transition-transform duration-300 ease-out data-[popup-open]:rotate-180">
+              <Select.Icon className="transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
                 <CaretDownIcon className="h-5 w-5" />
               </Select.Icon>
             )}
@@ -161,9 +160,9 @@ export function DropdownInput({
       </Select.Root>
 
       <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
-        <InputHelper id={aria.helperId} helper={helper} />
-        <InputErrorsList id={aria.errorId} errors={errors} />
+        {helper && <Field.Description render={<InputHelper helper={helper} />} />}
+        {hasErrors(errors) && <Field.Error match render={<InputErrorsList errors={errors} />} />}
       </div>
-    </div>
+    </Field.Root>
   );
 }

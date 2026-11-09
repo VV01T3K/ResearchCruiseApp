@@ -48,7 +48,7 @@ function moveFocus(evt: React.KeyboardEvent<HTMLElement>, columns: number) {
 }
 
 const cellClassName =
-  'h-8 rounded-md bg-surface-subtle text-sm tabular-nums transition hover:bg-primary-100 disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-surface-subtle';
+  'h-8 rounded-md bg-surface-subtle text-sm tabular-nums transition-colors duration-150 ease-out hover:bg-primary-100 disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-surface-subtle';
 const selectedCellClassName = 'bg-primary text-inverse-foreground hover:bg-primary';
 
 type Props = {

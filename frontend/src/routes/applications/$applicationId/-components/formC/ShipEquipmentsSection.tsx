@@ -18,8 +18,13 @@ const shipEquipmentColumns = (form: FormCFormApi, isReadonly: boolean): ColumnDe
     cell: ({ row }) => (
       <form.AppField name={`shipEquipmentsIds`}>
         {(field) => (
-          <field.ArrayCheckboxField
-            item={row.original.id}
+          <field.CheckboxField
+            checked={field.state.value.includes(row.original.id)}
+            onChange={(checked) =>
+              field.handleChange((ids) =>
+                checked ? [...ids, row.original.id] : ids.filter((id) => id !== row.original.id)
+              )
+            }
             aria-label={`W użyciu: ${row.original.name}`}
             size="md"
             className="grid place-items-center"
