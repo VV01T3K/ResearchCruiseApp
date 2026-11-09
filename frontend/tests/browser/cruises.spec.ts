@@ -636,6 +636,17 @@ for (const lastName of ['Ly', 'Brzęczyszczykiewicz']) {
   });
 }
 
+test('a held press at the edge of a button still clicks it', async ({ page, network, requests }) => {
+  network.use(getGetCruisesMockHandler([cruise()]), getAutoPlanCruisesMockHandler({ plannedCount: 0, skipped: [] }));
+  await page.goto('/cruises');
+  const button = (await page.getByRole('button', { name: 'Dodaj rejsy automatycznie' }).boundingBox())!;
+  await page.mouse.move(button.x + 1, button.y + button.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(180);
+  await page.mouse.up();
+  await expect.poll(() => requests.bodies('POST /v2/cruises/auto-plan')).toHaveLength(1);
+});
+
 test('auto-planning lists the skipped applications', async ({ page, network, requests }) => {
   const planned = { ...cruise(), id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', number: '2026/2', title: 'Zaplanowany' };
   const skipped = {
