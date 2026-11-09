@@ -31,14 +31,15 @@ type Props = {
   children: React.ReactNode;
   initialFocus?: Popover.Popup.Props['initialFocus'];
   anchor?: Popover.Positioner.Props['anchor'];
+  align?: Popover.Positioner.Props['align'];
 };
-export function PickerPopup({ 'aria-label': ariaLabel, children, initialFocus, anchor }: Props) {
+export function PickerPopup({ 'aria-label': ariaLabel, children, initialFocus, anchor, align = 'center' }: Props) {
   return (
     <Popover.Portal>
       <Popover.Positioner
         className="z-50"
         anchor={anchor}
-        align={anchor ? 'end' : 'center'}
+        align={align}
         sideOffset={4}
         collisionPadding={stickyBarsCollisionPadding}
         collisionAvoidance={{ fallbackAxisSide: 'none' }}

@@ -18,6 +18,7 @@ type Props = StyleProps & {
   role?: React.HTMLAttributes<HTMLButtonElement>['role'];
   name?: string;
   id?: string;
+  'aria-label'?: string;
   'aria-describedby'?: string;
   'aria-invalid'?: boolean;
 };

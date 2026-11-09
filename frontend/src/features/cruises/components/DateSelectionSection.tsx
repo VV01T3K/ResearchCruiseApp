@@ -35,6 +35,7 @@ export const DateSelectionSection = withForm({
               {(field) => (
                 <field.DateField
                   label="Data rozpoczęcia rejsu"
+                  timeLabel="Godzina rozpoczęcia rejsu"
                   placeholder="Wybierz datę rozpoczęcia rejsu"
                   type="datetime"
                   disabled={isReadonly}
@@ -47,6 +48,7 @@ export const DateSelectionSection = withForm({
               {(field) => (
                 <field.DateField
                   label="Data zakończenia rejsu"
+                  timeLabel="Godzina zakończenia rejsu"
                   placeholder="Wybierz datę zakończenia rejsu"
                   type="datetime"
                   disabled={isReadonly}

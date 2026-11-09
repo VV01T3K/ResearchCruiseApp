@@ -123,14 +123,24 @@ export const TypingAndArrows: Story = {
   },
 };
 
-export const OffStepTime: Story = {
+export const TypedTimeSnapsToHalfHour: Story = {
   play: async ({ args, canvas, userEvent }) => {
     const hours = canvas.getByRole('spinbutton', { name: 'godzina' });
+    const minutes = canvas.getByRole('spinbutton', { name: 'minuty' });
+    await userEvent.click(hours);
+    await userEvent.keyboard('0814{Enter}');
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 8, minutes: 0 });
+    await expect(minutes).toHaveAttribute('aria-valuenow', '0');
     await userEvent.click(hours);
     await userEvent.keyboard('0815{Enter}');
-    await expect(args.onChange).not.toHaveBeenCalled();
-    await expect(hours).toHaveAttribute('aria-invalid', 'true');
-    await expect(hours).toHaveAttribute('aria-valuenow', '12');
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 8, minutes: 30 });
+    await userEvent.click(hours);
+    await userEvent.keyboard('0850{Enter}');
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 9, minutes: 0 });
+    await userEvent.click(hours);
+    await userEvent.keyboard('2350{Enter}');
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 23, minutes: 30 });
+    await expect(hours).toHaveAttribute('aria-invalid', 'false');
   },
 };
 
@@ -140,24 +150,38 @@ export const PickingFromList: Story = {
   },
   play: async ({ args, canvas, canvasElement, userEvent }) => {
     const page = within(canvasElement.ownerDocument.body);
-    await userEvent.click(canvas.getByRole('button', { name: 'Wybierz godzinę z listy' }));
+    const clock = canvas.getByRole('button', { name: 'Wybierz godzinę z listy' });
+    await userEvent.click(clock);
     const picker = await page.findByRole('dialog', { name: 'Wybierz godzinę' });
-    const minutes = within(picker).getByRole('group', { name: 'Minuty' });
-    await expect(within(minutes).getAllByRole('button')).toHaveLength(2);
-    await expect(within(minutes).getByRole('button', { name: '30' })).toBeDisabled();
-    await userEvent.click(within(picker).getByRole('button', { name: '14' }));
-    await expect(picker).toBeInTheDocument();
-    await expect(args.onChange).not.toHaveBeenCalled();
-    await userEvent.click(within(minutes).getByRole('button', { name: '30' }));
+    const hours = within(within(picker).getByRole('group', { name: 'Godzina' }));
+    const minutes = within(within(picker).getByRole('group', { name: 'Minuty' }));
+    await userEvent.click(minutes.getByRole('button', { name: '30' }));
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 8, minutes: 30 });
+    await userEvent.click(hours.getByRole('button', { name: '14' }));
     await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 14, minutes: 30 });
-    await expect(args.onBlur).toHaveBeenCalled();
-    await waitFor(() => expect(picker).not.toBeInTheDocument());
-
-    await userEvent.click(canvas.getByRole('button', { name: 'Wybierz godzinę z listy' }));
-    const again = await page.findByRole('dialog', { name: 'Wybierz godzinę' });
-    await userEvent.click(within(again).getByRole('button', { name: '12:00' }));
+    await userEvent.click(within(picker).getByRole('button', { name: '12:00' }));
     await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 12, minutes: 0 });
+    await expect(picker).toBeInTheDocument();
+    await expect(args.onBlur).not.toHaveBeenCalled();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(picker).not.toBeInTheDocument());
+    await expect(args.onBlur).toHaveBeenCalled();
+    await expect(canvas.getByRole('spinbutton', { name: 'godzina' })).toHaveAttribute('aria-valuenow', '12');
+
+    await userEvent.click(clock);
+    const again = await page.findByRole('dialog', { name: 'Wybierz godzinę' });
+    await waitFor(() => expect(within(again).getByRole('button', { name: '12' })).toHaveFocus());
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 13, minutes: 0 });
     await waitFor(() => expect(again).not.toBeInTheDocument());
+
+    await userEvent.click(clock);
+    const third = await page.findByRole('dialog', { name: 'Wybierz godzinę' });
+    await waitFor(() => expect(within(third).getByRole('button', { name: '13' })).toHaveFocus());
+    await userEvent.tab();
+    await userEvent.tab();
+    await userEvent.tab();
+    await waitFor(() => expect(third).not.toBeInTheDocument());
   },
 };
 
@@ -197,6 +221,22 @@ export const OffStepSavedMinutes: Story = {
     await expect(
       within(within(picker).getByRole('group', { name: 'Minuty' })).getByRole('button', { name: '00' })
     ).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(picker).not.toBeInTheDocument());
+  },
+};
+
+export const PickingHourKeepsTheNearestHalfHour: Story = {
+  args: {
+    value: { hours: 8, minutes: 45 },
+  },
+  play: async ({ args, canvas, canvasElement, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Wybierz godzinę z listy' }));
+    const picker = await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Wybierz godzinę' });
+    await userEvent.click(
+      within(within(picker).getByRole('group', { name: 'Godzina' })).getByRole('button', { name: '14' })
+    );
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 14, minutes: 30 });
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(picker).not.toBeInTheDocument());
   },
