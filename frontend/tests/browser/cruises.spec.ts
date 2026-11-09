@@ -746,8 +746,10 @@ test('calendar edit mode lets a confirmed cruise be dragged, but not an ended on
   await page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' }).click();
   await locked.click({ force: true });
   await expect(page.getByRole('button', { name: 'Wyłącz tryb edycji kalendarza' })).toBeVisible();
+  network.use(getGetCruiseMockHandler(ended), getGetAvailableCruiseManagersMockHandler([admin]));
   await locked.dblclick({ force: true });
   await expect(page).toHaveURL(`/cruises/${ended.id}`);
+  await expect(page.getByRole('heading', { name: /Szczegóły rejsu/ })).toBeVisible();
 });
 
 test.describe(() => {
