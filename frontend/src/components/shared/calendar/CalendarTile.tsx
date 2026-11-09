@@ -245,7 +245,7 @@ export function CalendarTile({
               isToday ? 'bg-primary-100! border-primary-500!' : '',
               'hover:bg-surface-subtle',
             ],
-        'mb-3 h-full min-h-30 rounded-xl border border-border transition-colors duration-150 ease-out'
+        'mb-3 h-full min-h-30 rounded-xl border border-border transition'
       )}
     >
       <div className="gap-1 p-2">

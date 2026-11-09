@@ -78,7 +78,7 @@ function LoginPage() {
           <div className="mt-8">
             <form.Subscribe selector={(state) => state.isSubmitting}>
               {(isSubmitting) => (
-                <Button type="submit" className="w-full" loading={isSubmitting}>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
                   Zaloguj
                 </Button>
               )}

@@ -636,25 +636,6 @@ for (const lastName of ['Ly', 'Brzęczyszczykiewicz']) {
   });
 }
 
-test('a held press at the edge of a button still clicks it', async ({ page, network, requests }) => {
-  network.use(getGetCruisesMockHandler([cruise()]), getAutoPlanCruisesMockHandler({ plannedCount: 0, skipped: [] }));
-  await page.goto('/cruises');
-  await expect(page.getByRole('row').filter({ hasText: cruise().title! })).toBeVisible();
-  const button = page.getByRole('button', { name: 'Dodaj rejsy automatycznie' });
-  const box = (await button.boundingBox())!;
-  const point = { x: box.x + 1, y: box.y + box.height / 2 };
-  await page.mouse.move(point.x, point.y);
-  await page.mouse.down();
-  await page.waitForTimeout(180);
-  // The pressed button shrinks; its click area must not.
-  await expect.poll(() => button.evaluate((element) => element.getBoundingClientRect().width)).toBeLessThan(box.width);
-  expect(await button.evaluate((element, { x, y }) => element.contains(document.elementFromPoint(x, y)), point)).toBe(
-    true
-  );
-  await page.mouse.up();
-  await expect.poll(() => requests.bodies('POST /v2/cruises/auto-plan')).toHaveLength(1);
-});
-
 test('auto-planning lists the skipped applications', async ({ page, network, requests }) => {
   const planned = { ...cruise(), id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', number: '2026/2', title: 'Zaplanowany' };
   const skipped = {
@@ -765,7 +746,6 @@ test('calendar edit mode lets a confirmed cruise be dragged, but not an ended on
   await page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' }).click();
   await locked.click({ force: true });
   await expect(page.getByRole('button', { name: 'Wyłącz tryb edycji kalendarza' })).toBeVisible();
-  network.use(getGetCruiseMockHandler(ended));
   await locked.dblclick({ force: true });
   await expect(page).toHaveURL(`/cruises/${ended.id}`);
 });

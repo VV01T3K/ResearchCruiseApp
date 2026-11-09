@@ -1,3 +1,4 @@
+import anchorLogoUrl from '@/assets/anchor.svg';
 import ugLogoUrl from '@/assets/uglogo.svg';
 import { BroadcastIcon, EnvelopeSimpleIcon, SignOutIcon } from '@phosphor-icons/react';
 
@@ -29,14 +30,14 @@ export function Navbar() {
       id="header"
       className="z-50 flex h-[var(--header-height)] items-center justify-between gap-4 bg-primary px-2 py-4 sm:px-4 md:px-6 lg:px-8 phone:flex-wrap phone:content-center phone:gap-y-1 phone:px-4 phone:py-2"
     >
-      <div className="@container min-w-0 flex-1 phone:basis-full">
-        <div className="w-fit max-w-full origin-left flex-col items-end transition-transform duration-200 ease-out sm:flex sm:flex-row sm:gap-1 sm:font-thin @min-[39rem]:hover:scale-103 @min-[39rem]:has-focus-visible:scale-103 phone:flex phone:flex-row phone:gap-1">
+      <div className="min-w-0 phone:basis-full">
+        <div className="flex-col items-end sm:flex sm:flex-row sm:gap-1 sm:font-thin phone:flex phone:flex-row phone:gap-1">
           <Link
             to="/"
             title="Portal rejsów badawczych R/V Oceanograf – strona główna"
-            variant="white"
-            className="pr-4 text-inverse-foreground transition-opacity hover:no-underline hover:opacity-80 focus-visible:opacity-80 sm:truncate sm:text-2xl phone:truncate"
+            className="pr-4 text-inverse-foreground transition-opacity hover:no-underline hover:opacity-80 sm:truncate sm:text-2xl phone:truncate"
           >
+            <img src={anchorLogoUrl} alt="" aria-hidden className="mr-2 inline h-[1.2em] align-[-0.25em]" />
             Portal rejsów badawczych R/V Oceanograf
           </Link>
           <Anchor href={`${config.repositoryUrl}/releases/latest`} variant="white" className="shrink-0 text-xs">
@@ -50,7 +51,6 @@ export function Navbar() {
             href="https://ug.edu.pl"
             target="_blank"
             title="Uniwersytet Gdański"
-            variant="white"
             className="text-inverse-foreground"
           >
             <img src={ugLogoUrl} alt="" className="h-full w-full object-contain" />
@@ -71,7 +71,6 @@ export function Navbar() {
             href="https://outlook.com/ug.edu.pl"
             target="_blank"
             title="Poczta Uniwersytecka"
-            variant="white"
             className="text-inverse-foreground"
           >
             <EnvelopeSimpleIcon />

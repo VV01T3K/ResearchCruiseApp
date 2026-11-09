@@ -16,7 +16,7 @@ export function Tabs({ children, tabNames }: Props) {
           <BaseTabs.Tab
             key={tabName}
             value={index}
-            className="w-full rounded-full bg-neutral-200 px-5 py-2.5 transition-[color,background-color] duration-150 ease-out hover:cursor-pointer hover:not-data-active:bg-primary-200 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:outline-hidden active:not-data-active:bg-primary-300 data-active:bg-primary data-active:font-bold data-active:text-inverse-foreground"
+            className="w-full rounded-full bg-neutral-200 px-5 py-2.5 transition hover:cursor-pointer hover:not-data-active:bg-primary-200 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:outline-hidden data-active:bg-primary data-active:font-bold data-active:text-inverse-foreground"
           >
             {tabName}
           </BaseTabs.Tab>

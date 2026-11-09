@@ -1,4 +1,4 @@
-import { CaretDownIcon } from '@phosphor-icons/react';
+import { CaretDownIcon, CaretUpIcon } from '@phosphor-icons/react';
 import { Popover } from '@base-ui/react/popover';
 import React from 'react';
 
@@ -22,14 +22,12 @@ export function MonthPickerPopover({ value, onChange, renderDate }: Props) {
   return (
     <Popover.Root open={expanded} onOpenChange={setExpanded} modal={false}>
       <div>
-        <Popover.Trigger className="group relative inline-flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg px-5 py-2.5 text-sm focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden">
+        <Popover.Trigger className="relative inline-flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg px-5 py-2.5 text-sm focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden">
           {renderDate
             ? renderDate(value)
             : new Date(value.year, value.month).toLocaleDateString('pl-PL', { month: '2-digit', year: 'numeric' })}
           <span className="flex gap-2">
-            <span className="transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
-              <CaretDownIcon className="h-4 w-4" />
-            </span>
+            <span>{expanded ? <CaretUpIcon className="h-4 w-4" /> : <CaretDownIcon className="h-4 w-4" />}</span>
           </span>
         </Popover.Trigger>
       </div>

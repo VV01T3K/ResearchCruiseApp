@@ -37,7 +37,7 @@ function ToastList() {
           )}
           {t.type !== 'loading' && (
             <Toast.Close
-              className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 ease-out hover:cursor-pointer hover:bg-neutral-950/5 hover:text-neutral-700 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden active:bg-neutral-950/10"
+              className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:cursor-pointer hover:bg-neutral-950/5 hover:text-neutral-700"
               aria-label="Zamknij"
             >
               <XIcon className="h-4 w-4" />

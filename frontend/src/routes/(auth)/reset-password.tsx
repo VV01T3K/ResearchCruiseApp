@@ -132,7 +132,7 @@ function ResetPasswordPage() {
 
         <form.Subscribe selector={(state) => state.isSubmitting}>
           {(isSubmitting) => (
-            <Button type="submit" className="mt-6 w-full" loading={isSubmitting}>
+            <Button type="submit" className="mt-6 w-full" disabled={isSubmitting}>
               Zmień hasło
             </Button>
           )}

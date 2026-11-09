@@ -3,7 +3,7 @@ export function Loader() {
     <div className="absolute top-0 flex h-full w-full items-center justify-center">
       <div className="flex flex-col gap-8">
         <div className="inline-block h-32 w-32 animate-spin fill-primary-200 drop-shadow-lg" role="status">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="-36.8575 12.7605 504 504">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 456.527 456.527">
             <path
               d="M455.768,310.971c-5.397-38.312-99.612-46.241-166-43.953c0.251-8.286-0.87-16.753-3.551-25.096
 			c-5.628-17.515-17.125-31.5-31.61-40.514c23.898-43.029,41.406-105.359,25.39-131.664c-29.209-47.972-86.606-66.331-128.2-41.005

@@ -72,7 +72,7 @@ export function NumberInput(props: Props) {
       >
         <NumberField.Group className="flex items-center" aria-label={typeof label === 'string' ? label : ariaLabel}>
           {!disabled && <NumberInputButton side="left" />}
-          <div className="@container relative w-full">
+          <div className="relative w-full">
             <NumberField.Input
               name={name}
               onChange={(evt) => {
@@ -96,9 +96,7 @@ export function NumberInput(props: Props) {
                 hasErrors(errors) && invalidInputClassName
               )}
             />
-            <div className="hidden @min-[8rem]:block">
-              <InputErrorTriangle errors={errors} mode={'absolute'} />
-            </div>
+            <InputErrorTriangle errors={errors} mode={'absolute'} />
           </div>
           {!disabled && <NumberInputButton side="right" />}
         </NumberField.Group>

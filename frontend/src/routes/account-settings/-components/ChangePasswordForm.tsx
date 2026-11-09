@@ -92,7 +92,7 @@ export function ChangePasswordForm() {
       <div className="flex justify-end pt-4">
         <form.Subscribe selector={(state) => state.isSubmitting} key={result}>
           {(isSubmitting) => (
-            <Button type="submit" loading={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting}>
               Zmień hasło
             </Button>
           )}

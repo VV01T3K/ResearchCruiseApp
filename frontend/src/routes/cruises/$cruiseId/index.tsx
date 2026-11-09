@@ -304,7 +304,7 @@ function CruiseDetailsPage() {
                 { onSettled: () => setIsConfirmAcceptanceModalOpen(false) }
               )
             }
-            loading={confirmCruiseMutation.isPending}
+            disabled={confirmCruiseMutation.isPending}
           >
             Potwierdź rejs nr. {cruiseQuery.data?.number}
           </Button>
@@ -348,7 +348,7 @@ function CruiseDetailsPage() {
                 }
               )
             }
-            loading={deleteCruiseMutation.isPending}
+            disabled={deleteCruiseMutation.isPending}
           >
             Potwierdź usunięcie rejsu nr. {cruiseQuery.data?.number}
           </Button>
@@ -380,7 +380,7 @@ function CruiseDetailsPage() {
                 { onSettled: () => setIsConfirmEndModalOpen(false) }
               )
             }
-            loading={endCruiseMutation.isPending}
+            disabled={endCruiseMutation.isPending}
           >
             Oznacz rejs nr. {cruiseQuery.data?.number} jako zakończony
           </Button>

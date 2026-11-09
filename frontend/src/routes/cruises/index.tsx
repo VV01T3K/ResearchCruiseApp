@@ -53,7 +53,7 @@ function CruisesPage() {
 
   const buttons = [
     <Guard key="autoAddCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
-      <Button onClick={autoAddCruises} variant="primaryOutline" loading={autoAddCruisesMutation.isPending}>
+      <Button onClick={autoAddCruises} variant="primaryOutline" disabled={autoAddCruisesMutation.isPending}>
         Dodaj rejsy automatycznie
       </Button>
     </Guard>,
@@ -104,7 +104,7 @@ function CruisesPage() {
                 { onSuccess: () => setCruiseSelectedForDeletion(undefined) }
               );
             }}
-            loading={deleteCruiseMutation.isPending}
+            disabled={deleteCruiseMutation.isPending}
           >
             Usuń rejs nr. {cruiseSelectedForDeletion?.number}
           </Button>

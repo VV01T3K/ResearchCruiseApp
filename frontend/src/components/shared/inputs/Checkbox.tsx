@@ -57,23 +57,15 @@ export function Checkbox({
           disabled={disabled}
           aria-label={ariaLabel}
           className={cn(
-            'flex items-center justify-center rounded-md border border-border transition-[background-color,border-color,box-shadow,scale] duration-150 ease-out',
+            'flex items-center justify-center rounded-md border border-border transition-all duration-300',
             sizes[size],
             (checked || indeterminate) && variants[variant][disabled ? 'disabled' : 'enabled'],
             !checked && !indeterminate && (disabled ? 'bg-surface-subtle' : 'bg-surface hover:border-neutral-400'),
-            disabled ? 'cursor-default' : 'cursor-pointer active:scale-90',
-            !hasErrors(errors) &&
-              'focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:outline-hidden',
+            disabled ? 'cursor-default' : 'cursor-pointer',
             hasErrors(errors) && 'border-danger hover:border-danger focus:ring-danger focus:ring-1 focus:outline-hidden'
           )}
         >
-          <BaseCheckbox.Indicator className="flex size-full items-center justify-center">
-            {indeterminate ? (
-              <MinusIcon weight="bold" className="size-2/3" />
-            ) : (
-              <CheckIcon weight="bold" className="size-2/3" />
-            )}
-          </BaseCheckbox.Indicator>
+          <BaseCheckbox.Indicator>{indeterminate ? <MinusIcon /> : <CheckIcon />}</BaseCheckbox.Indicator>
         </BaseCheckbox.Root>
         <InputErrorTriangle errors={errors} />
       </div>
@@ -96,23 +88,23 @@ const sizes = {
 
 const variants = {
   primary: {
-    enabled: 'bg-primary border-primary text-inverse-foreground hover:bg-primary-900 hover:border-primary-900',
+    enabled: 'bg-primary border-primary text-inverse-foreground',
     disabled: 'bg-primary-500 border-primary-500 text-primary-200',
   },
   success: {
-    enabled: 'bg-success border-success text-inverse-foreground hover:bg-success-900 hover:border-success-900',
+    enabled: 'bg-success border-success text-inverse-foreground',
     disabled: 'bg-success-400 border-success-400 text-success-200',
   },
   danger: {
-    enabled: 'bg-danger border-danger text-inverse-foreground hover:bg-danger-700 hover:border-danger-700',
+    enabled: 'bg-danger border-danger text-inverse-foreground',
     disabled: 'bg-danger-400 border-danger-400 text-danger-200',
   },
   warning: {
-    enabled: 'bg-warning border-warning text-neutral-950 hover:bg-warning-400 hover:border-warning-400',
+    enabled: 'bg-warning border-warning text-neutral-950',
     disabled: 'bg-warning-100 border-warning-100 text-warning-800',
   },
   info: {
-    enabled: 'bg-info border-info text-inverse-foreground hover:bg-info-700 hover:border-info-700',
+    enabled: 'bg-info border-info text-inverse-foreground',
     disabled: 'bg-info-200 border-info-200 text-info-100',
   },
   plain: {
