@@ -1,4 +1,4 @@
-import { ColumnDef } from '@/integrations/tanstack/table/features';
+import { ColumnDef, Row } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Input } from '@/components/shared/inputs/Input';
@@ -11,6 +11,8 @@ import {
   useApplicationEvaluation,
 } from '@/features/applications/hooks/useApplicationDetails';
 import { getPublicationCategoryLabel } from '@/features/applications/schemas/types/PublicationValues';
+
+type PublicationRow = Row<ApplicationEvaluation['formAPublications'][number]>;
 
 export function PublicationsSection() {
   const evaluation = useApplicationEvaluation();
@@ -78,12 +80,7 @@ export function PublicationsSection() {
       accessorFn: (row) => row.publication.year,
       enableColumnFilter: false,
       enableSorting: false,
-      cell: function YearCell({ row }) {
-        const name = `publications[${row.index}].publication.year`;
-        const { year } = row.original.publication;
-        const errors = useUnreadableErrors(name, year, true);
-        return <YearPickerInput name={name} value={year ?? undefined} errors={errors} showRequiredAsterisk disabled />;
-      },
+      cell: YearCell,
       size: 10,
     },
     {
@@ -91,22 +88,7 @@ export function PublicationsSection() {
       accessorFn: (row) => row.publication.ministerialPoints,
       enableColumnFilter: false,
       enableSorting: false,
-      cell: function MinisterialPointsCell({ row }) {
-        const name = `publications[${row.index}].publication.ministerialPoints`;
-        const { ministerialPoints } = row.original.publication;
-        const errors = useUnreadableErrors(name, ministerialPoints, true);
-        return (
-          <NumberInput
-            name={name}
-            aria-label={`Punkty ministerialne, wiersz ${row.index + 1}`}
-            value={ministerialPoints}
-            errors={errors}
-            minimum={0}
-            showRequiredAsterisk
-            disabled
-          />
-        );
-      },
+      cell: MinisterialPointsCell,
       size: 10,
     },
     {
@@ -130,5 +112,29 @@ export function PublicationsSection() {
         />
       </div>
     </Accordion>
+  );
+}
+
+function YearCell({ row }: { row: PublicationRow }) {
+  const name = `publications[${row.index}].publication.year`;
+  const { year } = row.original.publication;
+  const errors = useUnreadableErrors(name, year, true);
+  return <YearPickerInput name={name} value={year ?? undefined} errors={errors} showRequiredAsterisk disabled />;
+}
+
+function MinisterialPointsCell({ row }: { row: PublicationRow }) {
+  const name = `publications[${row.index}].publication.ministerialPoints`;
+  const { ministerialPoints } = row.original.publication;
+  const errors = useUnreadableErrors(name, ministerialPoints, true);
+  return (
+    <NumberInput
+      name={name}
+      aria-label={`Punkty ministerialne, wiersz ${row.index + 1}`}
+      value={ministerialPoints}
+      errors={errors}
+      minimum={0}
+      showRequiredAsterisk
+      disabled
+    />
   );
 }
