@@ -25,7 +25,7 @@ export function BlockadeWarning({ year, blockades }: Props) {
                 <CaretDownIcon className="h-5 w-5" />
               </span>
             </Collapsible.Trigger>
-            <Collapsible.Panel className="overflow-hidden transition-all duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0">
+            <Collapsible.Panel className="overflow-hidden transition-[height,opacity] duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0">
               <ul className="mt-3 space-y-1">
                 {blockades?.map((blockade: BlockadePeriod) => (
                   <li key={`${blockade.startDate}-${blockade.endDate}`} className="text-sm">
