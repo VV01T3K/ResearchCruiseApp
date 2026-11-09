@@ -12,8 +12,8 @@ import { PermissionValues } from '@/features/applications/schemas/types/Permissi
 
 export const AdditionalPermissionsSection = withFieldGroup({
   defaultValues: { permissions: [] as PermissionValues[] },
-  props: {} as { title: string; markScanRequired?: boolean; context: Pick<FormBViewModel, 'isReadonly'> },
-  render: function Render({ group, title, markScanRequired, context }) {
+  props: {} as { title: string; context: Pick<FormBViewModel, 'isReadonly'> },
+  render: function Render({ group, title, context }) {
     const { isReadonly } = context;
 
     function getColumns(removeRow: (index: number) => void): ColumnDef<PermissionValues>[] {
@@ -61,17 +61,22 @@ export const AdditionalPermissionsSection = withFieldGroup({
         },
         {
           id: 'scan',
-          header: markScanRequired
-            ? ({ table }) => {
-                const showRequiredAsterisk = table.getRowModel().rows.length > 0;
-                return (
-                  <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
-                    Skan
-                    {showRequiredAsterisk && <span className="ml-1 font-bold text-danger">*</span>}
-                  </span>
-                );
-              }
-            : 'Skan',
+          header: ({ table }) => {
+            const showRequiredAsterisk = !isReadonly && table.getRowModel().rows.length > 0;
+            return (
+              <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
+                Skan
+                {showRequiredAsterisk && (
+                  <>
+                    <span aria-hidden="true" className="ml-1 font-bold text-danger">
+                      *
+                    </span>
+                    <span className="sr-only">wymagane</span>
+                  </>
+                )}
+              </span>
+            );
+          },
           accessorFn: (row) => row.scan,
           enableColumnFilter: false,
           enableSorting: false,

@@ -29,7 +29,17 @@ const shortResearchEquipmentColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.AppField name={`shortResearchEquipments[${row.index}].startDate`}>
+      <form.AppField
+        name={`shortResearchEquipments[${row.index}].startDate`}
+        listeners={{
+          onChange: ({ value }) => {
+            const endDate = form.getFieldValue(`shortResearchEquipments[${row.index}].endDate`);
+            if (value && endDate && parsePolishDayStart(value) > parsePolishDayStart(endDate)) {
+              form.setFieldValue(`shortResearchEquipments[${row.index}].endDate`, value);
+            }
+          },
+        }}
+      >
         {(field) => <field.DateField aria-label="Od" disabled={isReadonly} />}
       </form.AppField>
     ),
@@ -44,19 +54,14 @@ const shortResearchEquipmentColumns = (
       <form.AppField name={`shortResearchEquipments[${row.index}].endDate`}>
         {(field) => (
           <form.Subscribe selector={(state) => state.values.shortResearchEquipments[row.index].startDate}>
-            {(state) => {
-              if (state && field.state.value && parsePolishDayStart(state) > parsePolishDayStart(field.state.value)) {
-                field.handleChange(state);
-              }
-              return (
-                <field.DateField
-                  aria-label="Do"
-                  disabled={isReadonly}
-                  selectionStartDate={state ? parseCalendarDate(state) : undefined}
-                  minimalDate={state ? parseCalendarDate(state) : undefined}
-                />
-              );
-            }}
+            {(startDate) => (
+              <field.DateField
+                aria-label="Do"
+                disabled={isReadonly}
+                selectionStartDate={startDate ? parseCalendarDate(startDate) : undefined}
+                minimalDate={startDate ? parseCalendarDate(startDate) : undefined}
+              />
+            )}
           </form.Subscribe>
         )}
       </form.AppField>
@@ -192,7 +197,17 @@ const portColumns = (
     enableColumnFilter: false,
     enableSorting: false,
     cell: ({ row }) => (
-      <form.AppField name={`ports[${row.index}].startTime`}>
+      <form.AppField
+        name={`ports[${row.index}].startTime`}
+        listeners={{
+          onChange: ({ value }) => {
+            const endTime = form.getFieldValue(`ports[${row.index}].endTime`);
+            if (value && endTime && value > endTime) {
+              form.setFieldValue(`ports[${row.index}].endTime`, value);
+            }
+          },
+        }}
+      >
         {(field) => <field.DateField aria-label="Wejście" disabled={isReadonly} type="datetime" />}
       </form.AppField>
     ),
@@ -207,20 +222,15 @@ const portColumns = (
       <form.AppField name={`ports[${row.index}].endTime`}>
         {(field) => (
           <form.Subscribe selector={(state) => state.values.ports[row.index].startTime}>
-            {(state) => {
-              if (state > field.state.value && field.state.value !== '') {
-                field.handleChange(state);
-              }
-              return (
-                <field.DateField
-                  aria-label="Wyjście"
-                  disabled={isReadonly}
-                  type="datetime"
-                  selectionStartDate={state ? new Date(state) : undefined}
-                  minimalDate={state ? new Date(state) : undefined}
-                />
-              );
-            }}
+            {(startTime) => (
+              <field.DateField
+                aria-label="Wyjście"
+                disabled={isReadonly}
+                type="datetime"
+                selectionStartDate={startTime ? new Date(startTime) : undefined}
+                minimalDate={startTime ? new Date(startTime) : undefined}
+              />
+            )}
           </form.Subscribe>
         )}
       </form.AppField>

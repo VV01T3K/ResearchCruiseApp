@@ -51,7 +51,6 @@ export function FormView({ context }: Props) {
           form={form}
           fields={{ permissions: 'permissions' }}
           title="4. Dodatkowe pozwolenia do planowanych podczas rejsu badań"
-          markScanRequired
           context={context}
         />
         <ResearchAreaSection context={context} />
