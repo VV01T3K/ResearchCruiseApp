@@ -59,7 +59,7 @@ export function SessionStatusBadge({ refreshTokenExpirationDate, onRefresh }: Pr
         title="Odśwież sesję"
         onClick={() => void handleRefresh()}
         disabled={isRefreshing}
-        className="hover:opacity-70 disabled:opacity-40"
+        className="cursor-pointer rounded-sm transition-opacity duration-150 ease-out hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current active:opacity-50 disabled:cursor-default disabled:opacity-40"
       >
         <ArrowClockwiseIcon
           className="h-4 w-4"

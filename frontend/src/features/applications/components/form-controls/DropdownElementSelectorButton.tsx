@@ -36,7 +36,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
           <button
             type="button"
             className={cn(
-              'text-inverse-foreground hover:cursor-pointer disabled:cursor-default focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+              'group text-inverse-foreground hover:cursor-pointer disabled:cursor-default focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
               variants[variant],
               'flex items-center gap-4 px-5 py-2.5'
             )}
@@ -45,7 +45,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
         }
       >
         <span>{children}</span>
-        <span className="transition-transform duration-300 ease-out data-[popup-open]:rotate-180">
+        <span className="transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
           <CaretDownIcon className="h-5 w-5" />
         </span>
       </Popover.Trigger>
@@ -60,7 +60,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
           <Popover.Popup
             className={cn(
               'w-max max-w-sm min-w-64 origin-[var(--transform-origin)] rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10',
-              'transition-all duration-150 ease-popup',
+              'transition-[opacity,scale] duration-150 ease-popup',
               'data-[starting-style]:scale-98 data-[starting-style]:opacity-0',
               'data-[ending-style]:scale-98 data-[ending-style]:opacity-0',
               'flex max-h-96 flex-col overflow-hidden'
@@ -126,13 +126,13 @@ const variants = {
     'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning text-neutral-950 disabled:hover:bg-surface disabled:bg-surface disabled:text-muted-foreground disabled:inset-ring disabled:inset-ring-border',
   info: 'rounded-lg bg-info hover:bg-info-700 active:bg-info disabled:bg-info-200',
   primaryOutline:
-    'rounded-lg bg-surface hover:bg-primary active:bg-primary text-primary hover:text-inverse-foreground border border-primary transition-all duration-300 disabled:border-primary-300 disabled:text-primary-400 disabled:hover:bg-surface',
+    'rounded-lg bg-surface hover:bg-primary active:bg-primary text-primary hover:text-inverse-foreground border border-primary transition-colors duration-150 ease-out disabled:border-primary-300 disabled:text-primary-400 disabled:hover:bg-surface',
   successOutline:
-    'rounded-lg bg-surface hover:bg-success active:bg-success text-success hover:text-inverse-foreground border border-success transition-all duration-300 disabled:border-success-300 disabled:text-success-400 disabled:hover:bg-surface',
+    'rounded-lg bg-surface hover:bg-success active:bg-success text-success hover:text-inverse-foreground border border-success transition-colors duration-150 ease-out disabled:border-success-300 disabled:text-success-400 disabled:hover:bg-surface',
   dangerOutline:
-    'rounded-lg bg-surface hover:bg-danger active:bg-danger text-danger hover:text-inverse-foreground border border-danger transition-all duration-300 disabled:border-border disabled:text-muted-foreground disabled:hover:bg-surface',
+    'rounded-lg bg-surface hover:bg-danger active:bg-danger text-danger hover:text-inverse-foreground border border-danger transition-colors duration-150 ease-out disabled:border-border disabled:text-muted-foreground disabled:hover:bg-surface',
   warningOutline:
-    'rounded-lg bg-surface hover:bg-warning active:bg-warning text-warning-600 hover:text-neutral-950 border border-warning transition-all duration-300 disabled:border-border disabled:text-muted-foreground disabled:hover:bg-surface',
+    'rounded-lg bg-surface hover:bg-warning active:bg-warning text-warning-600 hover:text-neutral-950 border border-warning transition-colors duration-150 ease-out disabled:border-border disabled:text-muted-foreground disabled:hover:bg-surface',
   infoOutline:
-    'rounded-lg bg-surface hover:bg-info active:bg-info text-info hover:text-inverse-foreground border border-info transition-all duration-300 disabled:border-info-200 disabled:text-info-300 disabled:hover:bg-surface',
+    'rounded-lg bg-surface hover:bg-info active:bg-info text-info hover:text-inverse-foreground border border-info transition-colors duration-150 ease-out disabled:border-info-200 disabled:text-info-300 disabled:hover:bg-surface',
 };

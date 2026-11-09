@@ -110,7 +110,7 @@ function RegisterPage() {
           <div className="!mt-12">
             <form.Subscribe selector={(state) => state.isSubmitting}>
               {(isSubmitting) => (
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                <Button type="submit" className="w-full" loading={isSubmitting}>
                   Zarejestruj się
                 </Button>
               )}
