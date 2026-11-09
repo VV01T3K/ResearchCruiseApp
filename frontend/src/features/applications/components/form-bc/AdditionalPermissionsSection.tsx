@@ -62,7 +62,7 @@ export const AdditionalPermissionsSection = withFieldGroup({
         {
           id: 'scan',
           header: ({ table }) => {
-            const showRequiredAsterisk = table.getRowModel().rows.length > 0;
+            const showRequiredAsterisk = !isReadonly && table.getRowModel().rows.length > 0;
             return (
               <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
                 Skan
