@@ -7,6 +7,7 @@ import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsLis
 import { InputErrorTriangle } from '@/components/shared/inputs/parts/InputErrorTriangle';
 import { InputHelper } from '@/components/shared/inputs/parts/InputHelper';
 import { InputLabel } from '@/components/shared/inputs/parts/InputLabel';
+import { buttonClassName } from '@/components/shared/Button';
 import { cn } from '@/lib/utils';
 
 type CommonProps = {
@@ -140,19 +141,20 @@ function NumberInputButton({ side }: { side: 'left' | 'right' }) {
   const title = side === 'left' ? 'Zmniejsz' : 'Zwiększ';
   return (
     <StepButton
-      className={cn(
-        'text-inverse-foreground focus-visible:outline-hidden hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-default',
-        'text-inherit',
-        'flex h-11 w-11 items-center justify-center',
-        'text-muted-foreground',
-        'transition duration-300 ease-in-out',
-        'focus:ring-primary focus:border-primary focus:shadow-sm focus:outline-hidden forced-colors:focus:-outline-offset-4',
-        'focus-visible:ring-inset focus-visible:ring-offset-0',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        'border-collapse border border-border px-2',
-        side === 'left' ? 'rounded-l-sm' : 'rounded-r-sm',
-        'bg-surface-subtle hover:text-foreground'
-      )}
+      className={buttonClassName({
+        variant: 'plain',
+        size: 'plain',
+        className: cn(
+          'flex h-11 w-11 items-center justify-center',
+          'text-muted-foreground',
+          'focus:ring-primary focus:border-primary focus:shadow-sm focus:outline-hidden forced-colors:focus:-outline-offset-4',
+          'focus-visible:ring-inset focus-visible:ring-offset-0',
+          'disabled:cursor-not-allowed disabled:opacity-50',
+          'border-collapse border border-border px-2',
+          side === 'left' ? 'rounded-l-sm' : 'rounded-r-sm',
+          'bg-surface-subtle hover:text-foreground'
+        ),
+      })}
       title={title}
       aria-label={title}
     >
