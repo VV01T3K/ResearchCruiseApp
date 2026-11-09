@@ -1,4 +1,4 @@
-import { flexRender } from '@tanstack/react-table';
+import { FlexRender } from '@tanstack/react-table';
 
 import { hasErrors } from '@/components/inputs/invalidInput';
 import { TableClearFiltersButton } from '@/components/shared/table/common/TableClearFiltersButton';
@@ -7,7 +7,6 @@ import { TableProps } from '@/components/shared/table/common/tableProps';
 import { DesktopTableHeader } from '@/integrations/tanstack/table/DesktopTableHeader';
 import { TableActiveFilters } from '@/integrations/tanstack/table/TableActiveFilters';
 import { TableBody } from '@/integrations/tanstack/table/TableBody';
-import { TableCell } from '@/integrations/tanstack/table/TableCell';
 import { cn } from '@/lib/utils';
 
 export function DesktopTable<T extends object>({
@@ -52,7 +51,7 @@ export function DesktopTable<T extends object>({
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <DesktopTableHeader key={header.id} header={header}>
-                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      <FlexRender header={header} />
                     </DesktopTableHeader>
                   ))}
                 </tr>
@@ -72,7 +71,7 @@ export function DesktopTable<T extends object>({
                     key={cell.id}
                     className={cn('px-1.5 py-3 text-center', virtualized && '[overflow-wrap:anywhere]')}
                   >
-                    <TableCell cell={cell} />
+                    <FlexRender cell={cell} />
                   </td>
                 );
               })
