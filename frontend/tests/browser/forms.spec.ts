@@ -3,6 +3,7 @@ import {
   getCreateApplicationMockHandler,
   getGetApplicationFormAMockHandler,
   getGetApplicationFormBMockHandler,
+  getGetApplicationFormCMockHandler,
   getGetApplicationMockHandler,
   getRefillApplicationFormBMockHandler,
   getUpdateApplicationFormAMockHandler,
@@ -12,7 +13,7 @@ import {
 import { test, expect, applicationForms, dropFile, fail } from './fixtures';
 import { admin, deputyAccount, managerAccount, outsider } from '../data/accounts';
 import { application } from '../data/cruises';
-import { applicationId, formA as formAFields, formB } from '../data/forms';
+import { applicationId, formA as formAFields, formB, formC } from '../data/forms';
 
 const formA = `/applications/${applicationId}/formA?mode=edit`;
 const savedForm = (form: string) => `PUT /v2/applications/${applicationId}/${form}`;
@@ -469,4 +470,42 @@ test('form C clears point awards for an unfinished task and saves attached photo
       }),
     }),
   ]);
+});
+
+test('form C marks the permission scan as required and moves an earlier end date with the start date', async ({
+  page,
+  network,
+  requests,
+}) => {
+  network.use(
+    getGetApplicationFormCMockHandler({
+      ...formC(),
+      shortResearchEquipments: [{ name: 'Sonda CTD', startDate: '2026-06-01', endDate: '2026-06-02' }],
+    }),
+    getUpdateApplicationFormCMockHandler()
+  );
+  await page.goto(`/applications/${applicationId}/formC?mode=edit`);
+  const permissions = page.getByRole('group', {
+    name: '4. Dodatkowe pozwolenia do przeprowadzonych w trakcie rejsu badań',
+  });
+  await permissions.getByRole('button', { name: 'Dodaj pozwolenie' }).click();
+  await expect(permissions.getByRole('columnheader', { name: 'Skan*' })).toBeVisible();
+
+  const details = page.getByRole('group', { name: '12. Szczegóły rejsu' });
+  await details.getByRole('button', { name: /^Od/ }).click();
+  await page
+    .getByRole('dialog', { name: 'Wybierz datę' })
+    .getByRole('button', { name: '5', exact: true })
+    .first()
+    .click();
+  await page.getByRole('button', { name: 'Zapisz wersję roboczą' }).click();
+  await expect
+    .poll(() => requests.bodies(savedForm('form-c')))
+    .toEqual([
+      expect.objectContaining({
+        form: expect.objectContaining({
+          shortResearchEquipments: [{ name: 'Sonda CTD', startDate: '2026-06-05', endDate: '2026-06-05' }],
+        }),
+      }),
+    ]);
 });
