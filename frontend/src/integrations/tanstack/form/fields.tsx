@@ -1,6 +1,5 @@
 import { useSelector } from '@tanstack/react-form';
 import { useFieldContext } from './context';
-import { FloatingLabelInput } from '@/components/shared/inputs/FloatingLabelInput';
 
 import { ComboboxInput } from '@/components/inputs/ComboboxInput';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
@@ -24,11 +23,11 @@ function useErrors() {
   return getErrors(meta, submissionAttempts);
 }
 
-function useStoredValueErrors(disabled: boolean | undefined) {
+function useStoredValueErrors(disabled: boolean | undefined, checkStored = true) {
   const field = useFieldContext<unknown>();
   const value = useSelector(field.store, (state) => state.value);
   const errors = useErrors();
-  return useUnreadableErrors(field.name, value, disabled) ?? errors;
+  return useUnreadableErrors(field.name, checkStored ? value : undefined, disabled) ?? errors;
 }
 
 type TextProps = Omit<React.ComponentProps<typeof Input>, 'name' | 'value' | 'onBlur' | 'onChange' | 'errors'> & {
@@ -54,35 +53,30 @@ function TextField({ value, onChange, ...props }: TextProps) {
 }
 
 type NumberProps = WithoutFieldProps<React.ComponentProps<typeof NumberInput>> & {
+  nullable?: boolean;
   value?: number;
   onChange?: (value: number) => void;
 };
 
-function NumberField({ value, onChange, ...props }: NumberProps) {
-  const field = useFieldContext<number>();
-  return (
-    <NumberInput
-      {...props}
-      name={field.name}
-      value={value ?? field.state.value}
-      onChange={onChange ?? field.handleChange}
-      errors={useStoredValueErrors(props.disabled)}
-    />
-  );
-}
-
-function NullableNumberField(
-  props: WithoutFieldProps<Extract<React.ComponentProps<typeof NumberInput>, { nullable: true }>>
-) {
+function NumberField({ nullable, value, onChange, ...props }: NumberProps) {
   const field = useFieldContext<number | null>();
-  return (
+  const errors = useStoredValueErrors(props.disabled);
+  return nullable ? (
     <NumberInput
       {...props}
       nullable
       name={field.name}
       value={field.state.value}
       onChange={field.handleChange}
-      errors={useStoredValueErrors(props.disabled)}
+      errors={errors}
+    />
+  ) : (
+    <NumberInput
+      {...props}
+      name={field.name}
+      value={value ?? field.state.value!}
+      onChange={onChange ?? field.handleChange}
+      errors={errors}
     />
   );
 }
@@ -90,18 +84,20 @@ function NullableNumberField(
 type SelectProps = Omit<
   React.ComponentProps<typeof DropdownInput>,
   'name' | 'value' | 'onBlur' | 'onChange' | 'errors'
-> & { onChange?: (value: string) => void };
+> & { value?: string; onChange?: (value: string) => void };
 
-function SelectField({ onChange, ...props }: SelectProps) {
+function SelectField({ value, onChange, ...props }: SelectProps) {
   const field = useFieldContext<string>();
+  // A converted value (e.g. a boolean) comes back as a string only when it couldn't be read.
+  const errors = useStoredValueErrors(props.disabled, value !== undefined);
   return (
     <DropdownInput
       {...props}
       name={field.name}
-      value={field.state.value}
+      value={value ?? field.state.value}
       onBlur={field.handleBlur}
       onChange={onChange ?? field.handleChange}
-      errors={useErrors()}
+      errors={errors}
     />
   );
 }
@@ -125,48 +121,20 @@ function ComboboxField(props: ComboboxProps) {
   );
 }
 
-function BooleanSelectField(props: Omit<SelectProps, 'onChange'>) {
-  const field = useFieldContext<boolean>();
-  return (
-    <DropdownInput
-      {...props}
-      name={field.name}
-      value={String(field.state.value)}
-      onBlur={field.handleBlur}
-      onChange={(value) => field.handleChange(value === 'true')}
-      errors={useStoredValueErrors(props.disabled)}
-    />
-  );
-}
+type CheckboxProps = Omit<React.ComponentProps<typeof Checkbox>, 'name' | 'checked' | 'onBlur' | 'errors'> & {
+  checked?: boolean;
+};
 
-type CheckboxProps = Omit<React.ComponentProps<typeof Checkbox>, 'name' | 'checked' | 'onBlur' | 'onChange' | 'errors'>;
-
-function CheckboxField(props: CheckboxProps) {
+function CheckboxField({ checked, onChange, ...props }: CheckboxProps) {
   const field = useFieldContext<boolean>();
   return (
     <Checkbox
       {...props}
       name={field.name}
-      checked={field.state.value === true}
+      checked={checked ?? field.state.value === true}
       onBlur={field.handleBlur}
-      onChange={field.handleChange}
+      onChange={onChange ?? field.handleChange}
       errors={useStoredValueErrors(props.disabled)}
-    />
-  );
-}
-
-function ArrayCheckboxField({ item, ...props }: CheckboxProps & { item: string }) {
-  const field = useFieldContext<string[]>();
-  return (
-    <Checkbox
-      {...props}
-      name={field.name}
-      checked={field.state.value.includes(item)}
-      onBlur={field.handleBlur}
-      onChange={(checked) =>
-        field.handleChange((values) => (checked ? [...values, item] : values.filter((value) => value !== item)))
-      }
-      errors={useErrors()}
     />
   );
 }
@@ -238,55 +206,16 @@ function MonthField(props: MonthProps) {
   );
 }
 
-type FileProps = Omit<
-  Extract<React.ComponentProps<typeof FileInput>, { allowMultiple?: false }>,
-  'name' | 'value' | 'onBlur' | 'onChange' | 'errors'
->;
+type FileProps = WithoutFieldProps<React.ComponentProps<typeof FileInput>>;
 
 function FileField(props: FileProps) {
-  const field = useFieldContext<FileValue | undefined>();
-  return (
-    <FileInput
-      {...props}
-      name={field.name}
-      value={field.state.value}
-      onBlur={field.handleBlur}
-      onChange={field.handleChange}
-      errors={useErrors()}
-    />
-  );
-}
-
-type FilesProps = Omit<
-  Extract<React.ComponentProps<typeof FileInput>, { allowMultiple: true }>,
-  'name' | 'value' | 'onBlur' | 'onChange' | 'errors'
->;
-
-function FilesField(props: FilesProps) {
-  const field = useFieldContext<FileValue[]>();
-  return (
-    <FileInput
-      {...props}
-      allowMultiple
-      name={field.name}
-      value={field.state.value}
-      onBlur={field.handleBlur}
-      onChange={field.handleChange}
-      errors={useErrors()}
-    />
-  );
-}
-
-function FloatingTextField(props: WithoutFieldProps<React.ComponentProps<typeof FloatingLabelInput>>) {
-  const field = useFieldContext<string>();
-  return (
-    <FloatingLabelInput
-      {...props}
-      name={field.name}
-      value={field.state.value}
-      onChange={field.handleChange}
-      errors={useErrors()}
-    />
+  const field = useFieldContext<FileValue[] | FileValue | undefined>();
+  const { value } = field.state;
+  const common = { name: field.name, onBlur: field.handleBlur, onChange: field.handleChange, errors: useErrors() };
+  return props.allowMultiple ? (
+    <FileInput {...props} {...common} value={Array.isArray(value) ? value : []} />
+  ) : (
+    <FileInput {...props} {...common} value={Array.isArray(value) ? undefined : value} />
   );
 }
 
@@ -295,20 +224,15 @@ function FieldErrors() {
 }
 
 export const fieldComponents = {
-  FloatingTextField,
   TextField,
   NumberField,
-  NullableNumberField,
   SelectField,
   ComboboxField,
-  BooleanSelectField,
   CheckboxField,
-  ArrayCheckboxField,
   DateField,
   TimeField,
   YearField,
   MonthField,
   FileField,
-  FilesField,
   FieldErrors,
 };

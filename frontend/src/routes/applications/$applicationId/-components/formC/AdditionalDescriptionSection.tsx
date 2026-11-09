@@ -26,7 +26,7 @@ export function AdditionalDescriptionSection({ context }: { context: FormCViewMo
       </form.AppField>
       <form.AppField name="photos">
         {(field) => (
-          <field.FilesField
+          <field.FileField
             label="Załączniki"
             disabled={isReadonly}
             allowMultiple

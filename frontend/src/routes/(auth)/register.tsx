@@ -88,23 +88,23 @@ function RegisterPage() {
       <form noValidate className="px-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
           <form.AppField name="email">
-            {(field) => <field.FloatingTextField type="email" label="E-mail" />}
+            {(field) => <field.TextField variant="floating" type="email" label="E-mail" />}
           </form.AppField>
 
           <form.AppField name="firstName">
-            {(field) => <field.FloatingTextField type="text" label="Imię" />}
+            {(field) => <field.TextField variant="floating" type="text" label="Imię" />}
           </form.AppField>
 
           <form.AppField name="lastName">
-            {(field) => <field.FloatingTextField type="text" label="Nazwisko" />}
+            {(field) => <field.TextField variant="floating" type="text" label="Nazwisko" />}
           </form.AppField>
 
           <form.AppField name="password">
-            {(field) => <field.FloatingTextField type="password" label="Hasło" />}
+            {(field) => <field.TextField variant="floating" type="password" label="Hasło" />}
           </form.AppField>
 
           <form.AppField name="confirmPassword">
-            {(field) => <field.FloatingTextField type="password" label="Potwierdź hasło" />}
+            {(field) => <field.TextField variant="floating" type="password" label="Potwierdź hasło" />}
           </form.AppField>
 
           <div className="!mt-12">

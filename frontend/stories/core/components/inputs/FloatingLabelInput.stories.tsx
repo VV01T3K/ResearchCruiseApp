@@ -2,12 +2,13 @@ import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { FloatingLabelInput } from '@/components/shared/inputs/FloatingLabelInput';
+import { Input } from '@/components/shared/inputs/Input';
 
 const meta = {
   decorators: [withControlledValue],
-  component: FloatingLabelInput,
+  component: Input,
   args: {
+    variant: 'floating',
     name: 'Text input',
     value: '',
     errors: undefined,
@@ -16,7 +17,7 @@ const meta = {
     onChange: fn(),
     onBlur: fn(),
   },
-} satisfies Meta<typeof FloatingLabelInput>;
+} satisfies Meta<typeof Input>;
 
 export default meta;
 

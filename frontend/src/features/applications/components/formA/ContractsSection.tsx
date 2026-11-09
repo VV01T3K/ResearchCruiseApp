@@ -97,7 +97,7 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
         cell: ({ row }) => (
           <form.AppField name={`contracts[${row.index}].scans`}>
             {(field) => (
-              <field.FilesField
+              <field.FileField
                 allowMultiple={true}
                 label="Skany"
                 uploadMessage="Kliknij lub przeciągnij pliki"
