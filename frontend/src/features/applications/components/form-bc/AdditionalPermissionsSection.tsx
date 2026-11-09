@@ -66,7 +66,14 @@ export const AdditionalPermissionsSection = withFieldGroup({
             return (
               <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
                 Skan
-                {showRequiredAsterisk && <span className="ml-1 font-bold text-danger">*</span>}
+                {showRequiredAsterisk && (
+                  <>
+                    <span aria-hidden="true" className="ml-1 font-bold text-danger">
+                      *
+                    </span>
+                    <span className="sr-only">wymagane</span>
+                  </>
+                )}
               </span>
             );
           },
