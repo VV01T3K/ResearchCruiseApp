@@ -257,13 +257,12 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     </form.AppField>
                   </div>
                   {(!isReadonly || precisePeriodStartTime || precisePeriodEndTime) && (
-                    <div className="w-40 shrink-0">
+                    <div className="w-48 shrink-0">
                       <form.AppField name="precisePeriodStartTime">
                         {(field) => (
                           <field.TimeField
                             aria-label="Godzina rozpoczęcia rejsu"
-                            placeholder={isReadonly ? 'Nie podano' : 'Godzina (opcjonalnie)'}
-                            minuteStep={30}
+                            placeholder="Nie podano"
                             clearable
                             disabled={isReadonly}
                           />
@@ -308,13 +307,12 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                     </form.Subscribe>
                   </div>
                   {(!isReadonly || precisePeriodStartTime || precisePeriodEndTime) && (
-                    <div className="w-40 shrink-0">
+                    <div className="w-48 shrink-0">
                       <form.AppField name="precisePeriodEndTime">
                         {(field) => (
                           <field.TimeField
                             aria-label="Godzina zakończenia rejsu"
-                            placeholder={isReadonly ? 'Nie podano' : 'Godzina (opcjonalnie)'}
-                            minuteStep={30}
+                            placeholder="Nie podano"
                             clearable
                             disabled={isReadonly}
                           />

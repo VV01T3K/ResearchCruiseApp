@@ -29,18 +29,23 @@ export function pickerTriggerClassName({
 type Props = {
   'aria-label': string;
   children: React.ReactNode;
+  initialFocus?: Popover.Popup.Props['initialFocus'];
+  anchor?: Popover.Positioner.Props['anchor'];
 };
-export function PickerPopup({ 'aria-label': ariaLabel, children }: Props) {
+export function PickerPopup({ 'aria-label': ariaLabel, children, initialFocus, anchor }: Props) {
   return (
     <Popover.Portal>
       <Popover.Positioner
         className="z-50"
+        anchor={anchor}
+        align={anchor ? 'end' : 'center'}
         sideOffset={4}
         collisionPadding={stickyBarsCollisionPadding}
         collisionAvoidance={{ fallbackAxisSide: 'none' }}
       >
         <Popover.Popup
           aria-label={ariaLabel}
+          initialFocus={initialFocus}
           className={cn(
             'max-h-[var(--available-height)] origin-[var(--transform-origin)] overflow-y-auto rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10 focus-visible:outline-hidden',
             'transition-[opacity,scale] duration-150 ease-popup',

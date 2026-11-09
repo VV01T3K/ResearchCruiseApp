@@ -83,6 +83,67 @@ async function fillNewCruise(page: Page) {
   await page.getByRole('option', { name: `${deputy.firstName} ${deputy.lastName}` }).click();
 }
 
+test('the time in the cruise date picker works by keyboard and Escape reaches the date picker', async ({
+  page,
+  network,
+}) => {
+  await page.clock.setFixedTime(new Date('2026-05-16T12:00:00Z'));
+  network.use(
+    getGetApplicationsForCruisePlanningMockHandler([]),
+    getGetAvailableCruiseManagersMockHandler([manager, deputy]),
+    getGetCruisesMockHandler([])
+  );
+  await page.goto('/cruises/new');
+  await page.getByText('Wybierz datę rozpoczęcia rejsu').click();
+  const picker = page.getByRole('dialog', { name: 'Wybierz datę' });
+  await picker.getByText('17', { exact: true }).click();
+  const time = picker.getByRole('group', { name: 'Godzina' });
+  await time.getByRole('spinbutton', { name: 'godzina' }).click();
+  await page.keyboard.type('8');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('button', { name: /Data rozpoczęcia rejsu: 17\.05\.2026, 08:00/ })).toBeVisible();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter');
+  const list = page.getByRole('dialog', { name: 'Wybierz godzinę' });
+  await expect(list.getByRole('button', { name: '08', exact: true })).toBeFocused();
+  for (let i = 0; i < 7; i++) await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  await expect(list).toBeVisible();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  const startDate = (shown: string) =>
+    page.getByRole('button', { name: `Data rozpoczęcia rejsu: 17.05.2026, ${shown}` });
+  await expect(startDate('15:30')).toBeVisible();
+  await expect(list).toBeHidden();
+  await expect(picker).toBeVisible();
+  const clock = time.getByRole('button', { name: 'Wybierz godzinę z listy' });
+  await expect(clock).toBeFocused();
+
+  const minutes = time.getByRole('spinbutton', { name: 'minuty' });
+  await minutes.focus();
+  await page.keyboard.type('15');
+  await page.keyboard.press('Enter');
+  await expect(minutes).toHaveAttribute('aria-invalid', 'true');
+  await expect(startDate('15:30')).toBeVisible();
+
+  await clock.click();
+  await list.getByRole('button', { name: '12:00' }).click();
+  await expect(list).toBeHidden();
+  await expect(startDate('12:00')).toBeVisible();
+  await clock.press('Enter');
+  await expect(list).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(list).toBeHidden();
+  await expect(picker).toBeVisible();
+  await expect(clock).toBeFocused();
+  await time.getByRole('spinbutton', { name: 'godzina' }).focus();
+  await page.keyboard.type('9');
+  await page.keyboard.press('Escape');
+  await expect(picker).toBeHidden();
+  await expect(startDate('12:00')).toBeVisible();
+});
+
 test('a new cruise is saved once with Warsaw-midnight dates and the chosen managers, then leaves without asking', async ({
   page,
   network,
@@ -759,15 +820,18 @@ test('calendar edit mode lets a confirmed cruise be dragged, but not an ended on
     startDate: '2026-06-04T08:00:00.000Z',
   });
 
+  // dnd-kit swallows clicks until its 50 ms post-drop timer runs; a later page timer fires after it.
+  await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
   await page.getByRole('button', { name: 'Wyłącz tryb edycji kalendarza' }).click();
   await expect(page.getByRole('link', { name: 'Rejs Zakończony' })).toHaveAttribute('href', `/cruises/${ended.id}`);
 
   await page.getByRole('button', { name: 'Włącz tryb edycji kalendarza' }).click();
   await locked.click({ force: true });
   await expect(page.getByRole('button', { name: 'Wyłącz tryb edycji kalendarza' })).toBeVisible();
-  network.use(getGetCruiseMockHandler(ended));
+  network.use(getGetCruiseMockHandler(ended), getGetAvailableCruiseManagersMockHandler([admin]));
   await locked.dblclick({ force: true });
   await expect(page).toHaveURL(`/cruises/${ended.id}`);
+  await expect(page.getByRole('heading', { name: /Szczegóły rejsu/ })).toBeVisible();
 });
 
 test.describe(() => {

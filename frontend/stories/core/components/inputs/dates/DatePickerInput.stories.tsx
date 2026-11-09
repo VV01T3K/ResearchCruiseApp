@@ -134,11 +134,17 @@ export const WithTime: Story = {
   args: {
     type: 'datetime',
   },
-};
-
-export const WithTimeStep: Story = {
-  args: {
-    type: 'datetime',
-    minuteStep: 30,
+  play: async ({ canvas, canvasElement, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Wybierz datę' }));
+    const calendar = await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Wybierz datę' });
+    const time = within(calendar).getByRole('group', { name: 'Godzina' });
+    await expect(within(time).queryByRole('spinbutton')).not.toBeInTheDocument();
+    await expect(within(time).getByRole('button', { name: 'Wybierz godzinę z listy' })).toBeDisabled();
+    await userEvent.click(within(calendar).getByRole('button', { name: '15' }));
+    await userEvent.click(within(time).getByRole('spinbutton', { name: 'godzina' }));
+    await userEvent.keyboard('0830{Enter}');
+    await expect(canvas.getByText(/^15\.\d\d\.\d{4}, 08:30$/)).toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(calendar).not.toBeInTheDocument());
   },
 };

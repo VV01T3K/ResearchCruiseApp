@@ -200,16 +200,25 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
   await page.getByText('17', { exact: true }).click();
   await page.getByRole('button', { name: 'Dokładny termin zakończenia rejsu' }).click();
   await page.getByText('19', { exact: true }).last().click();
-  for (const [name, hour] of [
-    ['Godzina rozpoczęcia rejsu', '08'],
-    ['Godzina zakończenia rejsu', '18'],
-  ]) {
-    await page.getByRole('button', { name }).click();
-    const picker = page.getByRole('dialog', { name: 'Wybierz godzinę' });
-    await picker.getByRole('button', { name: hour, exact: true }).click();
-    await picker.getByRole('button', { name: 'Zatwierdź' }).click();
-    await expect(picker).toBeHidden();
-  }
+  const startHour = page
+    .getByRole('group', { name: 'Godzina rozpoczęcia rejsu' })
+    .getByRole('spinbutton', { name: 'godzina' });
+  await startHour.click();
+  await page.keyboard.type('0800');
+  await page.keyboard.press('Enter');
+  await startHour.focus();
+  await page.keyboard.type('22');
+  await page.keyboard.press('Escape');
+  await expect(startHour).toHaveAttribute('aria-valuenow', '8');
+  await page
+    .getByRole('group', { name: 'Godzina zakończenia rejsu' })
+    .getByRole('button', { name: 'Wybierz godzinę z listy' })
+    .click();
+  const picker = page.getByRole('dialog', { name: 'Wybierz godzinę' });
+  await picker.getByRole('group', { name: 'Godzina' }).getByRole('button', { name: '09', exact: true }).click();
+  await expect(picker).toBeVisible();
+  await picker.getByRole('group', { name: 'Minuty' }).getByRole('button', { name: '30' }).click();
+  await expect(picker).toBeHidden();
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
   await expect(page).toHaveURL('/');
   expect(requests.bodies(savedForm('form-a'))).toEqual([
@@ -219,7 +228,7 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
         precisePeriodStart: '2026-05-17T00:00:00Z',
         precisePeriodEnd: '2026-05-19T00:00:00Z',
         precisePeriodStartTime: '08:00',
-        precisePeriodEndTime: '18:00',
+        precisePeriodEndTime: '09:30',
         acceptablePeriod: null,
         optimalPeriod: null,
       }),

@@ -37,7 +37,6 @@ export const DateSelectionSection = withForm({
                   label="Data rozpoczęcia rejsu"
                   placeholder="Wybierz datę rozpoczęcia rejsu"
                   type="datetime"
-                  minuteStep={30}
                   disabled={isReadonly}
                   minimalDate={minimalDateForStartDate}
                 />
@@ -50,7 +49,6 @@ export const DateSelectionSection = withForm({
                   label="Data zakończenia rejsu"
                   placeholder="Wybierz datę zakończenia rejsu"
                   type="datetime"
-                  minuteStep={30}
                   disabled={isReadonly}
                   minimalDate={cruiseStartDate}
                   selectionStartDate={cruiseStartDate}

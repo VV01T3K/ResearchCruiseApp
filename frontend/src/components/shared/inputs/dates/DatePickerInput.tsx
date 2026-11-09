@@ -31,16 +31,8 @@ type Props = {
   maximalDate?: Date;
   selectionStartDate?: Date;
   'aria-label'?: string;
-} & (
-  | {
-      type?: 'date';
-      minuteStep?: never;
-    }
-  | {
-      type: 'datetime';
-      minuteStep?: number;
-    }
-);
+  type?: 'date' | 'datetime';
+};
 export function DatePickerInput({
   name,
   value,
@@ -53,7 +45,6 @@ export function DatePickerInput({
   helper,
   placeholder = 'Wybierz datę',
   type = 'date',
-  minuteStep,
   minimalDate,
   maximalDate,
   selectionStartDate,
@@ -219,7 +210,9 @@ export function DatePickerInput({
                   minutes: selectedDate?.getMinutes(),
                 }
               }
-              placeholder="Wybierz godzinę"
+              aria-label="Godzina"
+              disabled={!selectedDate}
+              placeholder="Najpierw wybierz dzień"
               onChange={(x) => {
                 const newDate = new Date(selectedDate ?? new Date());
                 newDate.setHours(x?.hours ?? 0);
@@ -227,7 +220,6 @@ export function DatePickerInput({
                 onChange?.(getValueFromDate(newDate, type));
               }}
               onBlur={onBlur}
-              minuteStep={minuteStep}
               minimalTime={
                 minimalDate && selectedDate && dateToUtcDay(minimalDate) === dateToUtcDay(selectedDate)
                   ? {
