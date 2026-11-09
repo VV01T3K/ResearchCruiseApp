@@ -62,7 +62,7 @@ export const ButtonLink = createLink(ButtonAnchor);
 
 export function buttonClassName({ variant = 'primary', size = 'md', className }: StyleProps) {
   return cn(
-    'text-inverse-foreground [transition:color_150ms_ease-out,background-color_150ms_ease-out,border-color_150ms_ease-out,box-shadow_150ms_ease-out,scale_200ms_cubic-bezier(0.34,1.56,0.64,1)] focus-visible:outline-hidden hover:cursor-pointer relative not-disabled:active:scale-96 before:absolute before:inset-0 not-disabled:active:before:-inset-1 not-disabled:active:before:scale-[104.17%] not-disabled:active:[transition-duration:150ms,150ms,150ms,150ms,100ms] not-disabled:active:[transition-timing-function:ease-out] focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-default',
+    'text-inverse-foreground [transition:color_150ms_ease-out,background-color_150ms_ease-out,border-color_150ms_ease-out,box-shadow_150ms_ease-out,scale_200ms_cubic-bezier(0.34,1.56,0.64,1)] focus-visible:outline-hidden hover:cursor-pointer relative not-disabled:active:scale-96 before:absolute before:inset-0 not-disabled:active:before:-inset-1 not-disabled:active:before:scale-[104.17%] not-disabled:active:[transition-duration:150ms,150ms,150ms,150ms,100ms] not-disabled:active:[transition-timing-function:ease-out] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-default',
     variants[variant],
     sizes[size],
     className,

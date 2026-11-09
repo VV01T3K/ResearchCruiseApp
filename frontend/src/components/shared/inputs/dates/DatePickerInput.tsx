@@ -319,7 +319,7 @@ function CalendarDateTile({
       className={cn(
         isFirstDayOfSelection ? 'rounded-l-full' : '',
         (isHovered && !selectedDate) || isSelected ? 'rounded-r-full' : '',
-        (!selectedDate && isHoveredBetweenSelection) || isInSelectedRange ? 'bg-surface-subtle' : '',
+        (!selectedDate && isHoveredBetweenSelection) || isInSelectedRange ? 'bg-primary-50' : '',
         'mt-0.5'
       )}
       onMouseEnter={() => setHoveredDate(date)}
@@ -329,8 +329,8 @@ function CalendarDateTile({
         variant="plain"
         size="plain"
         className={cn(
-          isSelected ? 'bg-primary-500 !text-inverse-foreground' : 'hover:bg-neutral-300',
-          isFirstDayOfSelection ? '!bg-primary-200 !text-inherit' : '',
+          isSelected ? 'bg-primary !text-inverse-foreground' : 'hover:bg-primary-50',
+          isFirstDayOfSelection ? '!bg-primary-100 !text-primary' : '',
           'mx-auto grid size-9 place-items-center rounded-full text-sm',
           !isVisibleMonth || !isAllowed ? 'text-neutral-400' : '',
           !isAllowed ? 'hover:bg-surface-subtle' : ''

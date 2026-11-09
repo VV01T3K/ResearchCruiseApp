@@ -42,7 +42,7 @@ export function AddMenuButton({ variant, options, children, disabled }: Props) {
       <Combobox.Trigger
         aria-label={children}
         className={cn(
-          'group flex items-center gap-4 px-5 py-2.5 text-inverse-foreground hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:cursor-default',
+          'group flex items-center gap-4 px-5 py-2.5 text-inverse-foreground hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:cursor-default',
           variants[variant]
         )}
       >
@@ -68,7 +68,7 @@ export function AddMenuButton({ variant, options, children, disabled }: Props) {
               <Combobox.Input
                 aria-label="Szukaj na liście"
                 placeholder="Szukaj na liście"
-                className="w-full rounded-lg border border-border bg-surface-muted p-2.5 pl-9 text-sm text-foreground focus:border-primary-500 focus:outline-hidden"
+                className="w-full rounded-lg border border-border bg-surface-muted p-2.5 pl-9 text-sm text-foreground focus:border-primary focus:outline-hidden"
               />
             </div>
             <Combobox.Empty className="py-6 text-center text-base text-muted-foreground empty:hidden">

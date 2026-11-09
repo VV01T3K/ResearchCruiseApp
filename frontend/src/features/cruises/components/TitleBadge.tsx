@@ -15,7 +15,7 @@ export function TitleBadge({ title, shipUnavailable }: Props) {
       type="button"
       aria-expanded={isExpanded}
       onClick={() => setIsExpanded(!isExpanded)}
-      className="block cursor-pointer rounded-lg focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden md:w-0 md:min-w-full"
+      className="block cursor-pointer rounded-lg focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden md:w-0 md:min-w-full"
       title={!isExpanded ? 'Kliknij, aby rozwinąć' : 'Kliknij, aby zwinąć'}
     >
       <Badge

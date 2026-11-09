@@ -17,7 +17,7 @@ export function GridCard({ name, className, Icon, iconWeight, description, to }:
   return (
     <div key={name} className={cn('phone:col-span-1 phone:row-span-1', className)}>
       <Link to={to} variant="card">
-        <div className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 text-primary shadow-card transition-[translate,box-shadow] duration-150 ease-out group-hover:-translate-y-1 group-hover:shadow-card-hover group-focus-visible:-translate-y-1 group-focus-visible:shadow-card-hover group-focus-visible:ring-2 group-focus-visible:ring-primary-500 group-active:translate-y-0 group-active:shadow-card phone:p-3">
+        <div className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 text-primary shadow-card transition-[translate,box-shadow] duration-150 ease-out group-hover:-translate-y-1 group-hover:shadow-card-hover group-focus-visible:-translate-y-1 group-focus-visible:shadow-card-hover group-focus-visible:ring-2 group-focus-visible:ring-primary group-active:translate-y-0 group-active:shadow-card phone:p-3">
           <div className="size-16 phone:size-11">
             <Icon weight={iconWeight} />
           </div>

@@ -44,9 +44,9 @@ export function MonthPicker({ selectedDate, onSelectMonth }: Props) {
             onClick={() => handleSelectMonth(index)}
             className={cn(
               selectedDate?.getFullYear() === visibleYear && selectedDate?.getMonth() === index
-                ? 'text-primary-500 font-bold'
+                ? 'text-primary font-bold'
                 : '',
-              'grid place-items-center rounded-lg hover:bg-surface-subtle'
+              'grid place-items-center rounded-lg hover:bg-primary-50'
             )}
           >
             {month}
