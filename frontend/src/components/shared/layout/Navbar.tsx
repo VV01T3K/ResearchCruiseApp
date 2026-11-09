@@ -1,3 +1,4 @@
+import anchorLogoUrl from '@/assets/anchor.svg';
 import ugLogoUrl from '@/assets/uglogo.svg';
 import { BroadcastIcon, EnvelopeSimpleIcon, SignOutIcon } from '@phosphor-icons/react';
 
@@ -37,6 +38,7 @@ export function Navbar() {
             variant="white"
             className="pr-4 text-inverse-foreground transition-opacity hover:no-underline hover:opacity-80 focus-visible:opacity-80 sm:truncate sm:text-2xl phone:truncate"
           >
+            <img src={anchorLogoUrl} alt="" aria-hidden className="mr-2 inline h-[1.2em] align-[-0.25em]" />
             Portal rejsów badawczych R/V Oceanograf
           </Link>
           <Anchor href={`${config.repositoryUrl}/releases/latest`} variant="white" className="shrink-0 text-xs">
