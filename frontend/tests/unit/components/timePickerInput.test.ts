@@ -1,21 +1,19 @@
 import { describe, expect, it } from 'vite-plus/test';
 
-import { formatTime, parseTime } from '@/components/shared/inputs/dates/TimePickerInput';
+import { typeDigit } from '@/components/shared/inputs/dates/TimePickerInput';
 
-describe('parseTime', () => {
+describe('typeDigit', () => {
   it.each([
-    ['8', '08:00'],
-    ['08', '08:00'],
-    ['830', '08:30'],
-    ['0830', '08:30'],
-    ['8:30', '08:30'],
-    ['8.30', '08:30'],
-    [' 23:59 ', '23:59'],
-  ])('reads %j as %s', (text, expected) => {
-    expect(formatTime(parseTime(text)!)).toBe(expected);
-  });
-
-  it.each(['', '24', '12:60', '8:3', '12345', 'ab'])('rejects %j', (text) => {
-    expect(parseTime(text)).toBeUndefined();
+    ['', '0', 23, 0, false],
+    ['0', '8', 23, 8, true],
+    ['', '9', 23, 9, true],
+    ['', '2', 23, 2, false],
+    ['2', '3', 23, 23, true],
+    ['2', '5', 23, 5, true],
+    ['', '5', 59, 5, false],
+    ['5', '9', 59, 59, true],
+    ['', '7', 59, 7, true],
+  ])('typed %j then %s (max %i) gives %i, done %s', (typed, digit, limit, value, done) => {
+    expect(typeDigit(typed, digit, limit)).toEqual({ value, done });
   });
 });

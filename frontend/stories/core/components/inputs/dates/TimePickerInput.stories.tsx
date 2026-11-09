@@ -1,6 +1,6 @@
 import { withControlledValue } from '@stories/decorators/withControlledValue';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn } from 'storybook/test';
+import { expect, fn, waitFor, within } from 'storybook/test';
 
 import { TimePickerInput } from '@/components/shared/inputs/dates/TimePickerInput';
 
@@ -47,14 +47,15 @@ export const Disabled: Story = {
   },
   play: async ({ canvas, userEvent }) => {
     await userEvent.tab();
-    await expect(canvas.getByRole('combobox')).not.toHaveFocus();
+    await expect(canvas.getByRole('spinbutton', { name: 'godzina' })).not.toHaveFocus();
   },
 };
 
 export const WithPlaceholder: Story = {
   args: {
     value: undefined,
-    placeholder: 'Select a time',
+    disabled: true,
+    placeholder: 'Nie podano',
   },
 };
 
@@ -67,6 +68,13 @@ export const WithMinuteStep: Story = {
 export const WithMinimalTime: Story = {
   args: {
     minimalTime: { hours: 10, minutes: 0 },
+  },
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('spinbutton', { name: 'godzina' }));
+    await userEvent.keyboard('0900{Enter}');
+    await expect(args.onChange).not.toHaveBeenCalled();
+    await expect(canvas.getByRole('spinbutton', { name: 'godzina' })).toHaveAttribute('aria-valuenow', '12');
+    await expect(canvas.getByRole('spinbutton', { name: 'godzina' })).toHaveAttribute('aria-invalid', 'true');
   },
 };
 
@@ -82,8 +90,51 @@ export const NoTimeLeftAfterMinimalTime: Story = {
     minimalTime: { hours: 23, minutes: 45 },
   },
   play: async ({ args, canvas, userEvent }) => {
-    await userEvent.type(canvas.getByRole('combobox'), '2359{Enter}');
+    await userEvent.click(canvas.getByRole('spinbutton', { name: 'godzina' }));
+    await userEvent.keyboard('2359{Enter}');
     await expect(args.onChange).not.toHaveBeenCalled();
-    await expect(canvas.getByRole('combobox')).toHaveValue('');
+    await expect(canvas.getByRole('spinbutton', { name: 'godzina' })).toHaveAttribute('aria-invalid', 'true');
+  },
+};
+
+export const TypingAndArrows: Story = {
+  args: {
+    value: undefined,
+    clearable: true,
+  },
+  play: async ({ args, canvas, userEvent }) => {
+    const hours = canvas.getByRole('spinbutton', { name: 'godzina' });
+    const minutes = canvas.getByRole('spinbutton', { name: 'minuty' });
+    await userEvent.click(hours);
+    await userEvent.keyboard('083');
+    await expect(minutes).toHaveFocus();
+    await userEvent.keyboard('0{Enter}');
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 8, minutes: 30 });
+    await userEvent.keyboard('{ArrowUp}{ArrowLeft}{ArrowDown}{Enter}');
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 7, minutes: 0 });
+    await userEvent.keyboard('15{Escape}');
+    await expect(hours).toHaveAttribute('aria-valuenow', '7');
+    await userEvent.keyboard('{Backspace}{Enter}');
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 7, minutes: 0 });
+    await userEvent.click(canvas.getByRole('button', { name: 'Wyczyść godzinę' }));
+    await expect(args.onChange).toHaveBeenLastCalledWith(undefined);
+  },
+};
+
+export const PickingFromGrid: Story = {
+  args: {
+    value: undefined,
+    minuteStep: 15,
+  },
+  play: async ({ args, canvas, canvasElement, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Wybierz godzinę z siatki' }));
+    const picker = await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Wybierz godzinę' });
+    const minutes = within(picker).getByRole('group', { name: 'Minuty' });
+    await expect(within(minutes).getAllByRole('button')).toHaveLength(4);
+    await expect(within(minutes).getByRole('button', { name: '45' })).toBeDisabled();
+    await userEvent.click(within(picker).getByRole('button', { name: '14' }));
+    await userEvent.click(within(minutes).getByRole('button', { name: '45' }));
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 14, minutes: 45 });
+    await waitFor(() => expect(picker).not.toBeInTheDocument());
   },
 };

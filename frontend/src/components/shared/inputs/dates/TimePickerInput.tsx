@@ -1,12 +1,10 @@
-import { Autocomplete } from '@base-ui/react/autocomplete';
-import { ClockIcon } from '@phosphor-icons/react';
+import { Popover } from '@base-ui/react/popover';
+import { ClockIcon, XIcon } from '@phosphor-icons/react';
 import React from 'react';
 
-import { PickerClearButton, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
+import { PickerPopup, pickerTriggerClassName } from '@/components/inputs/dates/PickerPopup';
 import { hasErrors } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
-import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
-import { dropdownItemClassName, dropdownPopupClassName } from '@/components/shared/inputs/DropdownInput';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { InputErrorTriangle } from '@/components/shared/inputs/parts/InputErrorTriangle';
 import { InputHelper } from '@/components/shared/inputs/parts/InputHelper';
@@ -18,20 +16,40 @@ type Time = {
   minutes: number;
 };
 
+type Segment = 'hours' | 'minutes';
+
 function timeToMinutes(time: Time) {
   return time.hours * 60 + time.minutes;
 }
 
-export function formatTime(time: Time) {
-  return `${time.hours.toString().padStart(2, '0')}:${time.minutes.toString().padStart(2, '0')}`;
+function pad(value: number) {
+  return value.toString().padStart(2, '0');
 }
 
-export function parseTime(text: string): Time | undefined {
-  const match = /^(\d{1,2})(?:[:.]?(\d{2}))?$/.exec(text.trim());
-  const hours = Number(match?.[1]);
-  const minutes = Number(match?.[2] ?? 0);
-  return match && hours < 24 && minutes < 60 ? { hours, minutes } : undefined;
+export function formatTime(time: Time) {
+  return `${pad(time.hours)}:${pad(time.minutes)}`;
 }
+
+export function typeDigit(typed: string, digit: string, limit: number) {
+  const combined = Number(typed + digit);
+  const value = typed && combined <= limit ? combined : Number(digit);
+  return { value, done: (typed !== '' && value === combined) || value * 10 > limit };
+}
+
+function moveFocus(evt: React.KeyboardEvent<HTMLElement>, columns: number) {
+  const delta = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: columns, ArrowUp: -columns }[evt.key];
+  const cells = [...evt.currentTarget.querySelectorAll('button')];
+  const index = cells.indexOf(evt.target as HTMLButtonElement);
+  if (delta === undefined || index < 0) return;
+  evt.preventDefault();
+  let next = index + delta;
+  while (cells[next]?.disabled) next += delta;
+  cells[next]?.focus();
+}
+
+const cellClassName =
+  'h-8 rounded-md bg-surface-subtle text-sm tabular-nums transition hover:bg-primary-100 disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-surface-subtle';
+const selectedCellClassName = 'bg-primary text-inverse-foreground hover:bg-primary';
 
 type Props = {
   name: string;
@@ -59,15 +77,23 @@ export function TimePickerInput({
   label,
   disabled,
   helper,
-  placeholder = 'gg:mm',
+  placeholder,
   minimalTime,
   maximalTime,
   minuteStep = 30,
   clearable,
   'aria-label': ariaLabel,
 }: Props) {
-  const aria = useInputAria(errors, helper);
-  const [draft, setDraft] = React.useState<string>();
+  const [draft, setDraft] = React.useState<Partial<Time>>();
+  const [typed, setTyped] = React.useState('');
+  const [rangeError, setRangeError] = React.useState<string>();
+  const [pickerOpen, setPickerOpen] = React.useState(false);
+  const [pickedHour, setPickedHour] = React.useState<number>();
+  const minutesRef = React.useRef<HTMLSpanElement>(null);
+  const hoursRef = React.useRef<HTMLSpanElement>(null);
+  const hourGridRef = React.useRef<HTMLDivElement>(null);
+  const allErrors = rangeError ? [...(errors ?? []), rangeError] : errors;
+  const aria = useInputAria(allErrors, helper);
 
   if (60 % minuteStep !== 0) {
     throw new Error('minuteStep must be a divisor of 60');
@@ -75,134 +101,240 @@ export function TimePickerInput({
 
   const min = Math.ceil((minimalTime ? timeToMinutes(minimalTime) : 0) / minuteStep) * minuteStep;
   const max = Math.floor((maximalTime ? timeToMinutes(maximalTime) : 24 * 60 - 1) / minuteStep) * minuteStep;
-  const times = Array.from({ length: (max - min) / minuteStep + 1 }, (_, i) => {
-    const minutes = min + i * minuteStep;
-    return formatTime({ hours: Math.floor(minutes / 60), minutes: minutes % 60 });
-  });
-  const shown = time ? formatTime(time) : '';
-  const typedDigits = draft?.replace(/\D/g, '');
-  const shownTimes = typedDigits
-    ? times.filter((item) =>
-        [typedDigits, `0${typedDigits}`].some((digits) => item.replace(':', '').startsWith(digits))
-      )
-    : times;
+  const shown = draft ?? { hours: time?.hours, minutes: time?.minutes };
 
-  function commit(text: string) {
+  function apply(next: Time | undefined) {
     setDraft(undefined);
-    const parsed = parseTime(text);
-    if (!text.trim()) {
+    setTyped('');
+    setRangeError(undefined);
+    if (!next) {
       if (clearable) onChange(undefined);
       return;
     }
-    if (!parsed || min > max) return;
-    const minutes = Math.min(Math.max(Math.round(timeToMinutes(parsed) / minuteStep) * minuteStep, min), max);
+    const minutes = Math.round(timeToMinutes(next) / minuteStep) * minuteStep;
+    if (minutes < min || minutes > max) {
+      setRangeError(
+        min > max
+          ? 'W tym dniu nie ma już wolnych godzin.'
+          : `Wybierz godzinę od ${formatTime({ hours: Math.floor(min / 60), minutes: min % 60 })} do ${formatTime({ hours: Math.floor(max / 60), minutes: max % 60 })}.`
+      );
+      return;
+    }
     onChange({ hours: Math.floor(minutes / 60), minutes: minutes % 60 });
   }
+
+  function commitDraft() {
+    if (!draft) return;
+    if (draft.hours === undefined && draft.minutes !== undefined) {
+      setDraft(undefined);
+      setTyped('');
+      return;
+    }
+    apply(draft.hours === undefined ? undefined : { hours: draft.hours, minutes: draft.minutes ?? 0 });
+  }
+
+  function edit(segment: Segment, value: number | undefined) {
+    setDraft({ ...shown, [segment]: value });
+    setRangeError(undefined);
+  }
+
+  function handleSegmentKeyDown(segment: Segment, evt: React.KeyboardEvent<HTMLSpanElement>) {
+    const value = shown[segment];
+    const limit = segment === 'hours' ? 23 : 59;
+    const step = segment === 'hours' ? 1 : minuteStep;
+    if (/^\d$/.test(evt.key)) {
+      evt.preventDefault();
+      const next = typeDigit(typed, evt.key, limit);
+      edit(segment, next.value);
+      setTyped(next.done ? '' : evt.key);
+      if (next.done && segment === 'hours') minutesRef.current?.focus();
+      return;
+    }
+    if (evt.key === 'ArrowUp' || evt.key === 'ArrowDown') {
+      evt.preventDefault();
+      const up = evt.key === 'ArrowUp';
+      const steps = value === undefined ? 0 : up ? Math.floor(value / step) + 1 : Math.ceil(value / step) - 1;
+      const start = value === undefined && segment === 'hours' ? Math.floor(min / 60) : 0;
+      edit(segment, value === undefined ? start : (steps * step + limit + 1) % (limit + 1));
+      setTyped('');
+    } else if (evt.key === 'ArrowLeft' || evt.key === 'ArrowRight') {
+      evt.preventDefault();
+      (evt.key === 'ArrowLeft' ? hoursRef : minutesRef).current?.focus();
+    } else if (evt.key === 'Backspace' || evt.key === 'Delete') {
+      evt.preventDefault();
+      edit(segment, undefined);
+      setTyped('');
+    } else if (evt.key === 'Enter') {
+      evt.preventDefault();
+      commitDraft();
+    } else if (evt.key === 'Escape') {
+      setDraft(undefined);
+      setTyped('');
+      setRangeError(undefined);
+    }
+  }
+
+  function renderSegment(segment: Segment) {
+    const value = shown[segment];
+    return (
+      <span
+        ref={segment === 'hours' ? hoursRef : minutesRef}
+        role="spinbutton"
+        tabIndex={disabled ? -1 : 0}
+        aria-label={segment === 'hours' ? 'godzina' : 'minuty'}
+        aria-valuenow={value}
+        aria-valuetext={value === undefined ? 'puste' : pad(value)}
+        aria-valuemin={0}
+        aria-valuemax={segment === 'hours' ? 23 : 59}
+        aria-disabled={disabled || undefined}
+        aria-invalid={hasErrors(allErrors)}
+        onFocus={() => setTyped('')}
+        onKeyDown={(evt) => handleSegmentKeyDown(segment, evt)}
+        className={cn(
+          'rounded-sm px-0.5 text-center tabular-nums outline-hidden',
+          !disabled && 'focus:bg-primary focus:text-inverse-foreground',
+          value === undefined && 'text-neutral-500'
+        )}
+      >
+        {value === undefined ? (segment === 'hours' ? 'gg' : 'mm') : pad(value)}
+      </span>
+    );
+  }
+
+  const hourAllowed = (hour: number) => hour * 60 + 60 - minuteStep >= min && hour * 60 <= max;
+  const minuteAllowed = (minutes: number) =>
+    pickedHour !== undefined && pickedHour * 60 + minutes >= min && pickedHour * 60 + minutes <= max;
+  const minuteOptions = Array.from({ length: 60 / minuteStep }, (_, i) => i * minuteStep);
+  const hourTabStop = pickedHour ?? Array.from({ length: 24 }, (_, hour) => hour).find(hourAllowed);
+  const selectedMinute = pickedHour === time?.hours ? time?.minutes : undefined;
+  const minuteTabStop = minuteOptions.includes(selectedMinute ?? -1)
+    ? selectedMinute
+    : minuteOptions.find(minuteAllowed);
 
   return (
     <div className="flex flex-col">
       <InputLabel name={aria.id} value={label} />
-      <Autocomplete.Root
-        items={times}
-        filteredItems={shownTimes}
-        value={draft ?? shown}
-        onValueChange={(text, details) => {
-          if (details.reason === 'item-press') commit(text);
-          else setDraft(text.replace(/[^\d:.]/g, '').slice(0, 5));
+      <input type="hidden" name={name} value={time ? formatTime(time) : ''} disabled={disabled} />
+      <Popover.Root
+        open={pickerOpen}
+        onOpenChange={(open) => {
+          setPickerOpen(open);
+          if (open) setPickedHour(time?.hours);
         }}
-        disabled={disabled}
-        openOnInputClick
-        autoHighlight
+        modal={false}
       >
-        <div className="relative">
-          <input type="hidden" name={name} value={shown} disabled={disabled} />
-          <Autocomplete.Input
-            {...aria.inputProps}
-            aria-label={ariaLabel}
-            placeholder={placeholder}
-            inputMode="numeric"
-            autoComplete="off"
-            className={pickerTriggerClassName({
-              disabled,
-              errors,
-              className: cn(hasErrors(errors) ? 'pr-16' : 'pr-9', 'placeholder:text-neutral-500'),
-            })}
-            onBlur={() => {
-              if (draft !== undefined) commit(draft);
-              onBlur?.();
-            }}
-            onKeyDown={(evt) => {
-              if (evt.key === 'Escape') {
-                setDraft(undefined);
-                if (evt.currentTarget.getAttribute('aria-expanded') !== 'true') evt.preventBaseUIHandler();
-              }
-              if (
-                evt.key === 'Enter' &&
-                draft !== undefined &&
-                !evt.currentTarget.hasAttribute('aria-activedescendant')
-              ) {
-                evt.preventDefault();
-                commit(draft);
-              }
-            }}
-          />
-          <span className="absolute top-1/2 right-8 -translate-y-1/2">
-            <InputErrorTriangle errors={errors} />
-          </span>
-          {clearable && time && !disabled ? (
-            <PickerClearButton
-              aria-label="Wyczyść godzinę"
-              onMouseDown={(evt) => evt.preventDefault()}
-              onClick={() => {
-                setDraft(undefined);
-                onChange(undefined);
-                onBlur?.();
-              }}
-            />
+        <div
+          role="group"
+          {...aria.inputProps}
+          aria-label={ariaLabel ?? label}
+          className={pickerTriggerClassName({
+            disabled,
+            errors: allErrors,
+            className: 'cursor-text justify-start gap-0 focus-within:border-primary-500',
+          })}
+          onMouseDown={(evt) => {
+            if (!disabled && evt.target === evt.currentTarget) {
+              evt.preventDefault();
+              hoursRef.current?.focus();
+            }
+          }}
+          onBlur={(evt) => {
+            if (evt.currentTarget.contains(evt.relatedTarget)) return;
+            commitDraft();
+            onBlur?.();
+          }}
+        >
+          {disabled && !time && placeholder ? (
+            <span className="truncate">{placeholder}</span>
           ) : (
-            <Autocomplete.Trigger
-              aria-label="Pokaż listę godzin"
-              className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded-sm focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden disabled:cursor-default"
+            <>
+              {renderSegment('hours')}
+              <span className="px-0.5 text-neutral-500">:</span>
+              {renderSegment('minutes')}
+            </>
+          )}
+          <span className="ml-auto flex items-center gap-1.5">
+            <InputErrorTriangle errors={allErrors} />
+            {clearable && time && !disabled && (
+              <button
+                type="button"
+                aria-label="Wyczyść godzinę"
+                onMouseDown={(evt) => evt.preventDefault()}
+                onClick={() => {
+                  apply(undefined);
+                  onBlur?.();
+                }}
+                className="cursor-pointer rounded-sm hover:text-danger-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden"
+              >
+                <XIcon className="h-4 w-4" />
+              </button>
+            )}
+            <Popover.Trigger
+              disabled={disabled}
+              aria-label="Wybierz godzinę z siatki"
+              className="cursor-pointer rounded-sm focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden disabled:cursor-default"
             >
               <ClockIcon className="h-4 w-4" />
-            </Autocomplete.Trigger>
-          )}
+            </Popover.Trigger>
+          </span>
         </div>
-        <Autocomplete.Portal>
-          <Autocomplete.Positioner
-            className="z-50 w-[var(--anchor-width)]"
-            sideOffset={4}
-            collisionPadding={stickyBarsCollisionPadding}
-          >
-            <Autocomplete.Popup aria-label="Wybierz godzinę" className={dropdownPopupClassName}>
-              <Autocomplete.List className="relative flex max-h-60 flex-col overflow-y-auto empty:hidden">
-                {(item: string) => (
-                  <Autocomplete.Item
-                    key={item}
-                    value={item}
-                    ref={
-                      item === shown
-                        ? (el: HTMLElement | null) => {
-                            if (el?.parentElement) el.parentElement.scrollTop = el.offsetTop - 96;
-                          }
-                        : undefined
-                    }
-                    className={cn(
-                      dropdownItemClassName,
-                      item === shown && 'bg-primary-50 font-medium text-primary-800'
-                    )}
-                  >
-                    {item}
-                  </Autocomplete.Item>
-                )}
-              </Autocomplete.List>
-            </Autocomplete.Popup>
-          </Autocomplete.Positioner>
-        </Autocomplete.Portal>
-      </Autocomplete.Root>
-      <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
+        <PickerPopup
+          aria-label="Wybierz godzinę"
+          initialFocus={() => hourGridRef.current?.querySelector<HTMLElement>('[aria-pressed="true"]') ?? true}
+        >
+          <div className="w-60 p-2.5">
+            <div className="mb-1.5 text-xs font-medium text-neutral-600">Godzina</div>
+            <div
+              ref={hourGridRef}
+              role="group"
+              aria-label="Godzina"
+              className="grid grid-cols-6 gap-1"
+              onKeyDown={(evt) => moveFocus(evt, 6)}
+            >
+              {Array.from({ length: 24 }, (_, hour) => (
+                <button
+                  key={hour}
+                  type="button"
+                  aria-pressed={hour === pickedHour}
+                  tabIndex={hour === hourTabStop ? 0 : -1}
+                  disabled={!hourAllowed(hour)}
+                  onClick={() => setPickedHour(hour)}
+                  className={cn(cellClassName, hour === pickedHour && selectedCellClassName)}
+                >
+                  {pad(hour)}
+                </button>
+              ))}
+            </div>
+            <div className="mt-3 mb-1.5 text-xs font-medium text-neutral-600">Minuty</div>
+            <div
+              role="group"
+              aria-label="Minuty"
+              className="grid grid-cols-4 gap-1"
+              onKeyDown={(evt) => moveFocus(evt, 4)}
+            >
+              {minuteOptions.map((minutes) => (
+                <button
+                  key={minutes}
+                  type="button"
+                  aria-pressed={minutes === selectedMinute}
+                  tabIndex={minutes === minuteTabStop ? 0 : -1}
+                  disabled={!minuteAllowed(minutes)}
+                  onClick={() => {
+                    apply({ hours: pickedHour!, minutes });
+                    setPickerOpen(false);
+                  }}
+                  className={cn(cellClassName, minutes === selectedMinute && selectedCellClassName)}
+                >
+                  {pad(minutes)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </PickerPopup>
+      </Popover.Root>
+      <div className={cn('flex flex-col justify-between text-sm', hasErrors(allErrors) || helper ? 'mt-2' : '')}>
         <InputHelper id={aria.helperId} helper={helper} />
-        <InputErrorsList id={aria.errorId} errors={errors} />
+        <InputErrorsList id={aria.errorId} errors={allErrors} />
       </div>
     </div>
   );

@@ -198,16 +198,24 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
   await page.getByText('17', { exact: true }).click();
   await page.getByRole('button', { name: 'Dokładny termin zakończenia rejsu' }).click();
   await page.getByText('19', { exact: true }).last().click();
-  const startTime = page.getByRole('combobox', { name: 'Godzina rozpoczęcia rejsu' });
-  await startTime.fill('8');
-  await startTime.press('Tab');
-  await expect(startTime).toHaveValue('08:00');
-  await startTime.fill('22');
-  await startTime.press('Escape');
-  await expect(startTime).toHaveValue('08:00');
-  await page.getByRole('combobox', { name: 'Godzina zakończenia rejsu' }).click();
-  await page.getByRole('option', { name: '18:00' }).click();
-  await expect(page.getByRole('listbox')).toHaveCount(0);
+  const startHour = page
+    .getByRole('group', { name: 'Godzina rozpoczęcia rejsu' })
+    .getByRole('spinbutton', { name: 'godzina' });
+  await startHour.click();
+  await page.keyboard.type('0800');
+  await page.keyboard.press('Enter');
+  await startHour.focus();
+  await page.keyboard.type('22');
+  await page.keyboard.press('Escape');
+  await expect(startHour).toHaveAttribute('aria-valuenow', '8');
+  await page
+    .getByRole('group', { name: 'Godzina zakończenia rejsu' })
+    .getByRole('button', { name: 'Wybierz godzinę z siatki' })
+    .click();
+  const grid = page.getByRole('dialog', { name: 'Wybierz godzinę' });
+  await grid.getByRole('group', { name: 'Godzina' }).getByRole('button', { name: '18' }).click();
+  await grid.getByRole('group', { name: 'Minuty' }).getByRole('button', { name: '00' }).click();
+  await expect(grid).toBeHidden();
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
   await expect(page).toHaveURL('/');
   expect(requests.bodies(savedForm('form-a'))).toEqual([
