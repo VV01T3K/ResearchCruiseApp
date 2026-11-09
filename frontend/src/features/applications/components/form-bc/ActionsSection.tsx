@@ -11,7 +11,7 @@ type Props = {
   onRevertToEdit?: () => void;
   onPrint?: () => void;
   disabled?: boolean;
-  context: FormBViewModel;
+  context: Pick<FormBViewModel, 'isReadonly'>;
 };
 export function ActionsSection({ onSaveDraft, onRevertToEdit, onPrint, disabled, context }: Props) {
   const { isReadonly } = context;
