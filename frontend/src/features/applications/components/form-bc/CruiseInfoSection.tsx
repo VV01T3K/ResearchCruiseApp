@@ -3,10 +3,10 @@ import { Accordion } from '@/components/shared/Accordion';
 import { Badge } from '@/components/shared/Badge';
 import { ButtonLink } from '@/components/shared/Button';
 import { formatDate } from '@/lib/dateUtils';
-import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
+import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
 import type { CruiseResponse } from '@/api/generated/schemas';
 
-export function CruiseInfoSection({ context }: { context: FormCViewModel }) {
+export function CruiseInfoSection({ context }: { context: Pick<FormBViewModel, 'cruise'> }) {
   const { cruise } = context;
 
   return (

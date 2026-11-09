@@ -2,19 +2,19 @@ import { submitApplicationForm } from '@/integrations/tanstack/form/submitApplic
 import { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 
-import { ActionsSection } from './ActionsSection';
+import { ActionsSection } from '@/features/applications/components/form-bc/ActionsSection';
+import { CruiseGoalSection } from '@/features/applications/components/form-bc/CruiseGoalSection';
+import { CruiseInfoSection } from '@/features/applications/components/form-bc/CruiseInfoSection';
+import { PublicationsSection } from '@/features/applications/components/form-bc/PublicationsSection';
 import { AdditionalDescriptionSection } from './AdditionalDescriptionSection';
 import { AdditionalPermissionsSection } from './AdditionalPermissionsSection';
 import { CollectedSamplesSection } from './CollectedSamplesSection';
 import { ContractsSection } from './ContractsSection';
 import { CruiseDayDetailsSection } from './CruiseDayDetailsSection';
 import { CruiseDetailsSection } from './CruiseDetailsSection';
-import { CruiseGoalSection } from './CruiseGoalSection';
-import { CruiseInfoSection } from './CruiseInfoSection';
 import { CruiseManagerInfoSection } from './CruiseManagerInfoSection';
 import { MembersSection } from './MembersSection';
 import { PrintTemplate } from './PrintTemplate';
-import { PublicationsSection } from './PublicationsSection';
 import { ResearchAreaSection } from './ResearchAreaSection';
 import { ResearchEquipmentsSection } from './ResearchEquipmentsSection';
 import { ResearchTasksEffectsSection } from './ResearchTasksEffectsSection';

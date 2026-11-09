@@ -8,7 +8,7 @@ import {
   PublicationValues,
 } from '@/features/applications/schemas/types/PublicationValues';
 
-export function PublicationsSection({ context }: { context: FormBViewModel }) {
+export function PublicationsSection({ context }: { context: Pick<FormBViewModel, 'formA'> }) {
   const { formA } = context;
 
   const columns: ColumnDef<PublicationValues>[] = [

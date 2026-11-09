@@ -3,7 +3,7 @@ import { DropdownInput } from '@/components/shared/inputs/DropdownInput';
 import { Input } from '@/components/shared/inputs/Input';
 import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
 
-export function CruiseGoalSection({ context }: { context: FormBViewModel }) {
+export function CruiseGoalSection({ context }: { context: Pick<FormBViewModel, 'formA' | 'formAInitValues'> }) {
   const { formA, formAInitValues } = context;
 
   return (
