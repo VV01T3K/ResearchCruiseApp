@@ -225,3 +225,19 @@ export const OffStepSavedMinutes: Story = {
     await waitFor(() => expect(picker).not.toBeInTheDocument());
   },
 };
+
+export const PickingHourKeepsTheNearestHalfHour: Story = {
+  args: {
+    value: { hours: 8, minutes: 45 },
+  },
+  play: async ({ args, canvas, canvasElement, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Wybierz godzinę z listy' }));
+    const picker = await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Wybierz godzinę' });
+    await userEvent.click(
+      within(within(picker).getByRole('group', { name: 'Godzina' })).getByRole('button', { name: '14' })
+    );
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 14, minutes: 30 });
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(picker).not.toBeInTheDocument());
+  },
+};

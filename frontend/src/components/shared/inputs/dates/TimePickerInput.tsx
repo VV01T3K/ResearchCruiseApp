@@ -343,7 +343,12 @@ export function TimePickerInput({
                         pick({
                           hours: hour,
                           minutes:
-                            [time?.minutes ?? 0, ...minuteOptions].find((minutes) => inRange(hour * 60 + minutes)) ?? 0,
+                            minuteOptions
+                              .toSorted(
+                                (a, b) =>
+                                  Math.abs(a - (time?.minutes ?? 0)) - Math.abs(b - (time?.minutes ?? 0)) || b - a
+                              )
+                              .find((minutes) => inRange(hour * 60 + minutes)) ?? 0,
                         });
                         evt.currentTarget.parentElement?.scrollTo({
                           top: evt.currentTarget.offsetTop - 34,
