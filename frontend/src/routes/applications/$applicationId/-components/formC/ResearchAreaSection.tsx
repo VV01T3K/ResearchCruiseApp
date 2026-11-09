@@ -3,7 +3,7 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { Accordion } from '@/components/shared/Accordion';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { Table } from '@/components/shared/table/Table';
-import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
+import { ActionsHeader, DeleteRowCell } from '@/integrations/tanstack/table/DeleteRowCell';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
@@ -17,7 +17,7 @@ export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
   const { isReadonly, formAInitValues } = context;
 
-  function getColumns(removeRow: (index: number) => void): ColumnDef<ResearchAreaValues>[] {
+  function getColumns(): ColumnDef<ResearchAreaValues>[] {
     return [
       {
         header: 'Lp.',
@@ -72,21 +72,13 @@ export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
       },
       {
         id: 'actions',
-        header: () => <span className="sr-only">Akcje</span>,
-        cell: ({ row }) => (
-          <div className="flex justify-end">
-            <TableDeleteRowButton
-              onClick={() => {
-                removeRow(row.index);
-              }}
-              disabled={isReadonly}
-            />
-          </div>
-        ),
+        header: ActionsHeader,
+        cell: DeleteRowCell,
         size: 5,
       },
     ];
   }
+  const columns = getColumns();
 
   return (
     <Accordion title="5. Rejony prowadzenia badań" expandedByDefault>
@@ -94,10 +86,13 @@ export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
         {(field) => (
           <>
             <Table
-              columns={getColumns((index) => {
-                field.removeValue(index);
-                field.handleBlur();
-              })}
+              columns={columns}
+              meta={{
+                removeRow: (index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                },
+              }}
               data={field.state.value}
               buttons={() => [
                 <AddMenuButton

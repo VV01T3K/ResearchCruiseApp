@@ -3,7 +3,7 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { Accordion } from '@/components/shared/Accordion';
 import { Button } from '@/components/shared/Button';
 import { Table } from '@/components/shared/table/Table';
-import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
+import { ActionsHeader, DeleteRowCell } from '@/integrations/tanstack/table/DeleteRowCell';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
 import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
@@ -15,7 +15,6 @@ import { ShortResearchEquipmentValues } from '@/features/applications/schemas/ty
 
 const shortResearchEquipmentColumns = (
   form: FormCFormApi,
-  removeRow: (index: number) => void,
   isReadonly: boolean
 ): ColumnDef<ShortResearchEquipmentValues>[] => [
   {
@@ -87,24 +86,14 @@ const shortResearchEquipmentColumns = (
   },
   {
     id: 'actions',
-    header: () => <span className="sr-only">Akcje</span>,
-    cell: ({ row }) => (
-      <div className="flex justify-end">
-        <TableDeleteRowButton
-          onClick={() => {
-            removeRow(row.index);
-          }}
-          disabled={isReadonly}
-        />
-      </div>
-    ),
+    header: ActionsHeader,
+    cell: DeleteRowCell,
     size: 10,
   },
 ];
 
 const longResearchEquipmentColumns = (
   form: FormCFormApi,
-  removeRow: (index: number) => void,
   isReadonly: boolean
 ): ColumnDef<LongResearchEquipmentValues>[] => [
   {
@@ -166,26 +155,13 @@ const longResearchEquipmentColumns = (
   },
   {
     id: 'actions',
-    header: () => <span className="sr-only">Akcje</span>,
-    cell: ({ row }) => (
-      <div className="flex justify-end">
-        <TableDeleteRowButton
-          onClick={() => {
-            removeRow(row.index);
-          }}
-          disabled={isReadonly}
-        />
-      </div>
-    ),
+    header: ActionsHeader,
+    cell: DeleteRowCell,
     size: 10,
   },
 ];
 
-const portColumns = (
-  form: FormCFormApi,
-  removeRow: (index: number) => void,
-  isReadonly: boolean
-): ColumnDef<PortCallValues>[] => [
+const portColumns = (form: FormCFormApi, isReadonly: boolean): ColumnDef<PortCallValues>[] => [
   {
     header: 'Lp.',
     cell: ({ row }) => `${row.index + 1}`,
@@ -256,17 +232,8 @@ const portColumns = (
   },
   {
     id: 'actions',
-    header: () => <span className="sr-only">Akcje</span>,
-    cell: ({ row }) => (
-      <div className="flex justify-end">
-        <TableDeleteRowButton
-          onClick={() => {
-            removeRow(row.index);
-          }}
-          disabled={isReadonly}
-        />
-      </div>
-    ),
+    header: ActionsHeader,
+    cell: DeleteRowCell,
     size: 10,
   },
 ];
@@ -274,6 +241,9 @@ const portColumns = (
 export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
   const { isReadonly } = context;
+  const shortEquipmentColumns = shortResearchEquipmentColumns(form, isReadonly);
+  const longEquipmentColumns = longResearchEquipmentColumns(form, isReadonly);
+  const portCallColumns = portColumns(form, isReadonly);
 
   return (
     <Accordion title="12. Szczegóły rejsu" expandedByDefault>
@@ -284,14 +254,13 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
         <form.AppField name="shortResearchEquipments" mode="array">
           {(field) => (
             <Table
-              columns={shortResearchEquipmentColumns(
-                form,
-                (index) => {
+              columns={shortEquipmentColumns}
+              meta={{
+                removeRow: (index) => {
                   field.removeValue(index);
                   field.handleBlur();
                 },
-                isReadonly
-              )}
+              }}
               data={field.state.value}
               buttons={() => [
                 <Button
@@ -319,14 +288,13 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
         <form.AppField name="longResearchEquipments" mode="array">
           {(field) => (
             <Table
-              columns={longResearchEquipmentColumns(
-                form,
-                (index) => {
+              columns={longEquipmentColumns}
+              meta={{
+                removeRow: (index) => {
                   field.removeValue(index);
                   field.handleBlur();
                 },
-                isReadonly
-              )}
+              }}
               data={field.state.value}
               buttons={() => [
                 <AddMenuButton
@@ -362,14 +330,13 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
         <form.AppField name="ports" mode="array">
           {(field) => (
             <Table
-              columns={portColumns(
-                form,
-                (index) => {
+              columns={portCallColumns}
+              meta={{
+                removeRow: (index) => {
                   field.removeValue(index);
                   field.handleBlur();
                 },
-                isReadonly
-              )}
+              }}
               data={field.state.value}
               buttons={() => [
                 <Button
