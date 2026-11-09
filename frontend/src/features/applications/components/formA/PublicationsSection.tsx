@@ -7,7 +7,7 @@ import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { groupBy } from '@/lib/utils';
-import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
+import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
 import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
@@ -196,11 +196,11 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                 })}
                 data={field.state.value}
                 buttons={() => [
-                  <DropdownElementSelectorButton
+                  <AddMenuButton
                     key="new"
                     options={Object.values(PublicationCategory).map((role) => ({
-                      value: getPublicationCategoryLabel(role),
-                      onClick: () => {
+                      label: getPublicationCategoryLabel(role),
+                      onSelect: () => {
                         field.pushValue({
                           id: '',
                           category: role,
@@ -218,8 +218,8 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                     disabled={isReadonly}
                   >
                     Dodaj nową publikację
-                  </DropdownElementSelectorButton>,
-                  <DropdownElementSelectorButton
+                  </AddMenuButton>,
+                  <AddMenuButton
                     key="historical"
                     options={groupBy(
                       initValues.historicalPublications.filter(
@@ -231,19 +231,12 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                           publication.year
                       ),
                       (x) => x.category ?? ''
-                    ).flatMap(([category, publications]) => [
-                      {
-                        value: category ?? '',
+                    ).map(([category, publications]) => ({
+                      label: getPublicationCategoryLabel(category as PublicationCategory),
+                      items: publications.map((publication) => ({
+                        label: `${publication.doi} ${publication.authors} ${publication.title} ${publication.magazine} ${publication.year}`,
                         content: (
-                          <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-muted-foreground">
-                            {getPublicationCategoryLabel(category as PublicationCategory)}
-                          </div>
-                        ),
-                      },
-                      ...publications.map((publication) => ({
-                        value: JSON.stringify(publication),
-                        content: (
-                          <div className="w-full cursor-pointer rounded-lg px-2 inset-ring-primary-500 hover:bg-surface-subtle focus:inset-ring-2">
+                          <div className="px-2">
                             <div>
                               <strong>DOI:</strong> {publication.doi}
                             </div>
@@ -261,17 +254,17 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
                             </div>
                           </div>
                         ),
-                        onClick: () => {
+                        onSelect: () => {
                           field.pushValue(mapPublicationToValues(publication));
                           field.handleBlur();
                         },
                       })),
-                    ])}
+                    }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
                   >
                     Dodaj historyczną publikację
-                  </DropdownElementSelectorButton>,
+                  </AddMenuButton>,
                 ]}
                 disabled={isReadonly}
                 errors={getErrors(field.state.meta, form.state.submissionAttempts)}

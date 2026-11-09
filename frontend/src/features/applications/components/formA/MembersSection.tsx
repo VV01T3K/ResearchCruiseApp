@@ -6,7 +6,7 @@ import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsLis
 import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
-import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
+import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
 import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
@@ -178,12 +178,11 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                 data={field.state.value}
                 showRequiredAsterisk
                 buttons={() => [
-                  <DropdownElementSelectorButton
+                  <AddMenuButton
                     key="new"
                     options={initValues.ugUnits.map((unit) => ({
-                      value: unit.name,
-                      content: unit.name,
-                      onClick: () => {
+                      label: unit.name,
+                      onSelect: () => {
                         field.pushValue({
                           ugUnitId: unit.id,
                           noOfEmployees: 0,
@@ -196,7 +195,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                     disabled={isReadonly}
                   >
                     Dodaj jednostkę UG
-                  </DropdownElementSelectorButton>,
+                  </AddMenuButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 disabled={isReadonly}
@@ -229,11 +228,11 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                   >
                     Dodaj nowy zespół
                   </Button>,
-                  <DropdownElementSelectorButton
+                  <AddMenuButton
                     key="historical"
                     options={initValues.historicalGuestInstitutions.map((institution) => ({
-                      value: institution,
-                      onClick: () => {
+                      label: institution,
+                      onSelect: () => {
                         field.pushValue({ name: institution, noOfPersons: 0 });
                         field.handleBlur();
                       },
@@ -242,7 +241,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
                     disabled={isReadonly}
                   >
                     Dodaj historyczny zespół
-                  </DropdownElementSelectorButton>,
+                  </AddMenuButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zespołu."
                 disabled={isReadonly}

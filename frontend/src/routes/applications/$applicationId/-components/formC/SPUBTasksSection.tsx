@@ -8,7 +8,7 @@ import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsLis
 import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
-import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
+import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
 import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
@@ -139,12 +139,11 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
                   >
                     Dodaj
                   </Button>,
-                  <DropdownElementSelectorButton
+                  <AddMenuButton
                     key="historical"
                     options={formAInitValues.historicalSpubTasks.map((task) => ({
-                      value: JSON.stringify(task),
-                      content: `${task.name} (${task.yearFrom} - ${task.yearTo})`,
-                      onClick: () => {
+                      label: `${task.name} (${task.yearFrom} - ${task.yearTo})`,
+                      onSelect: () => {
                         field.pushValue(mapSpubTaskToValues(task));
                         field.handleBlur();
                       },
@@ -153,7 +152,7 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
                     disabled={isReadonly}
                   >
                     Dodaj historyczne zadanie
-                  </DropdownElementSelectorButton>,
+                  </AddMenuButton>,
                 ]}
                 emptyTableMessage="Brak zadań SPUB"
                 disabled={isReadonly}
