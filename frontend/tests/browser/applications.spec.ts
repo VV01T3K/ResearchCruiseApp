@@ -16,7 +16,7 @@ import { application, evaluation } from '../data/cruises';
 import { applicationId, formA, formOptions } from '../data/forms';
 
 const listPage = (items: ApplicationResponse[], nextCursor: string | null = null) => ({ items, nextCursor });
-const listRequests = 'GET /v2/applications';
+const listRequests = 'GET /applications';
 
 test.describe('application table', () => {
   test.use({ account: admin });
@@ -258,7 +258,7 @@ test.describe('application review', () => {
       getGetApplicationMockHandler(application()),
       getUpdateApplicationDecisionMockHandler()
     );
-    const decisions = () => requests.bodies(`PUT /v2/applications/${applicationId}/decision`);
+    const decisions = () => requests.bodies(`PUT /applications/${applicationId}/decision`);
     await page.goto(`/applications/${applicationId}/details`);
     await page.getByRole('button', { name: 'Zaakceptuj zgłoszenie' }).click();
     await expect.poll(decisions).toEqual([{ accept: true, revision: application().revision }]);
@@ -283,7 +283,7 @@ test.describe('application review', () => {
     const resend = page.getByRole('button', { name: 'Wyślij ponownie do przełożonego' });
     await resend.dblclick();
     await expect(resend).toBeDisabled();
-    expect(requests.bodies(`POST /v2/applications/${applicationId}/supervisor-review/invitation`)).toHaveLength(1);
+    expect(requests.bodies(`POST /applications/${applicationId}/supervisor-review/invitation`)).toHaveLength(1);
   });
 
   test('an inaccessible application offers a way back instead of a crash page', async ({ page, network, requests }) => {
@@ -294,7 +294,7 @@ test.describe('application review', () => {
     );
     await page.goto(`/applications/${applicationId}/details`);
     await expect(page.getByRole('heading', { name: 'Nie znaleziono lub brak dostępu' })).toBeVisible();
-    expect(requests.queries(`GET /v2/applications/${applicationId}`)).toHaveLength(1);
+    expect(requests.queries(`GET /applications/${applicationId}`)).toHaveLength(1);
     await page.getByRole('link', { name: 'Przejdź do strony głównej' }).click();
     await expect(page).toHaveURL('/');
   });
@@ -402,7 +402,7 @@ test.describe('supervisor review link', () => {
   const reviewLink = `/cruise-approval?cruiseApplicationId=${applicationId}&supervisorCode=review-token`;
 
   const review = () => ({ number: '2026/17', form: formA(), initValues: formOptions() });
-  const decisions = `PUT /v2/applications/${applicationId}/supervisor-review/decision`;
+  const decisions = `PUT /applications/${applicationId}/supervisor-review/decision`;
 
   for (const accept of [true, false]) {
     const action = accept ? 'Zaakceptuj' : 'Odrzuć';
@@ -425,7 +425,7 @@ test.describe('supervisor review link', () => {
       await page.getByRole('button', { name: `${action} zgłoszenie nr 2026/17` }).dblclick();
       await expect(page.getByRole('status')).toContainText('2026/17');
       await expect(page).toHaveURL(reviewLink);
-      expect(requests.queries(`GET /v2/applications/${applicationId}/supervisor-review`)[0]).toEqual({
+      expect(requests.queries(`GET /applications/${applicationId}/supervisor-review`)[0]).toEqual({
         code: 'review-token',
       });
       expect(requests.bodies(decisions)).toEqual([{ accept, code: 'review-token' }]);

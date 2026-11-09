@@ -56,7 +56,7 @@ export const getLoginUrl = () => {
 
 
 
-  return `/v2/auth/login`
+  return `/auth/login`
 }
 
 /**
@@ -143,7 +143,7 @@ export const useLogin = <TError = ErrorType<HttpValidationProblemDetails | Probl
 
 
 
-  return `/v2/auth/refresh`
+  return `/auth/refresh`
 }
 
 /**
@@ -167,7 +167,7 @@ export const getGetCurrentSessionUrl = () => {
 
 
 
-  return `/v2/auth/session`
+  return `/auth/session`
 }
 
 /**
@@ -190,7 +190,7 @@ export const getCurrentSession = async ( options?: Parameters<typeof customFetch
 
 export const getGetCurrentSessionQueryKey = () => {
     return [
-    'v2','auth','session'
+    'auth','session'
     ] as const;
     }
 
@@ -255,7 +255,7 @@ export const getLogoutUrl = () => {
 
 
 
-  return `/v2/auth/logout`
+  return `/auth/logout`
 }
 
 /**
@@ -328,7 +328,7 @@ export const useLogout = <TError = ErrorType<unknown>,
 
 
 
-  return `/v2/auth/register`
+  return `/auth/register`
 }
 
 /**
@@ -422,7 +422,7 @@ export const useRegisterAccount = <TError = ErrorType<HttpValidationProblemDetai
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v2/auth/confirm-email?${stringifiedParams}` : `/v2/auth/confirm-email`
+  return stringifiedParams.length > 0 ? `/auth/confirm-email?${stringifiedParams}` : `/auth/confirm-email`
 }
 
 /**
@@ -446,7 +446,7 @@ export const getResendConfirmationEmailUrl = () => {
 
 
 
-  return `/v2/auth/resend-confirmation-email`
+  return `/auth/resend-confirmation-email`
 }
 
 /**
@@ -533,7 +533,7 @@ export const useResendConfirmationEmail = <TError = ErrorType<HttpValidationProb
 
 
 
-  return `/v2/auth/password-reset-request`
+  return `/auth/password-reset-request`
 }
 
 /**
@@ -620,7 +620,7 @@ export const useRequestPasswordReset = <TError = ErrorType<HttpValidationProblem
 
 
 
-  return `/v2/auth/password-reset`
+  return `/auth/password-reset`
 }
 
 /**

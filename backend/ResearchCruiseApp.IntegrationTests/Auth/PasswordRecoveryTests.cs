@@ -31,7 +31,7 @@ public sealed class PasswordRecoveryTests(SqlFixture fixture) : IAsyncLifetime
             refreshHash = stored.RefreshToken;
         });
         using var requested = await client.PostAsJsonAsync(
-            "/v2/auth/password-reset-request",
+            "/auth/password-reset-request",
             new { Email = user.Email },
             ct
         );
@@ -46,7 +46,7 @@ public sealed class PasswordRecoveryTests(SqlFixture fixture) : IAsyncLifetime
         foreach (var badCode in new[] { "aW52YWxpZA", "not base64!" })
         {
             using var invalid = await client.PostAsJsonAsync(
-                "/v2/auth/password-reset",
+                "/auth/password-reset",
                 new
                 {
                     EmailBase64 = query["emailBase64"].ToString(),
@@ -72,7 +72,7 @@ public sealed class PasswordRecoveryTests(SqlFixture fixture) : IAsyncLifetime
             Password = replacement,
             PasswordConfirm = replacement,
         };
-        using var changed = await client.PostAsJsonAsync("/v2/auth/password-reset", reset, ct);
+        using var changed = await client.PostAsJsonAsync("/auth/password-reset", reset, ct);
         Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
         await app.InDatabase(async db =>
         {
@@ -84,18 +84,18 @@ public sealed class PasswordRecoveryTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var refresh = await RefreshSessionTests.SendCookie(
             client,
-            "/v2/auth/refresh",
+            "/auth/refresh",
             original.Cookie
         );
         Assert.Equal(HttpStatusCode.Unauthorized, refresh.StatusCode);
         using var oldLogin = await client.PostAsJsonAsync(
-            "/v2/auth/login",
+            "/auth/login",
             new { Email = user.Email, Password = TestUsers.Password },
             ct
         );
         Assert.Equal(HttpStatusCode.Unauthorized, oldLogin.StatusCode);
         using var newLogin = await client.PostAsJsonAsync(
-            "/v2/auth/login",
+            "/auth/login",
             new { Email = user.Email, Password = replacement },
             ct
         );
@@ -105,7 +105,7 @@ public sealed class PasswordRecoveryTests(SqlFixture fixture) : IAsyncLifetime
             replacementHash = (await db.Users.SingleAsync(ct)).RefreshToken
         );
 
-        using var replay = await client.PostAsJsonAsync("/v2/auth/password-reset", reset, ct);
+        using var replay = await client.PostAsJsonAsync("/auth/password-reset", reset, ct);
         Assert.Equal(HttpStatusCode.BadRequest, replay.StatusCode);
         await app.InDatabase(async db =>
         {

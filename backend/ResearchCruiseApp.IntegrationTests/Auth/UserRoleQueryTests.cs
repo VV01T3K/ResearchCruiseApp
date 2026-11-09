@@ -52,7 +52,7 @@ public sealed class UserRoleQueryTests(SqlFixture fixture) : IAsyncLifetime
         async Task<int[]> Measure(int expected)
         {
             counter.Reset();
-            var page = await admin.GetFromJsonAsync<JsonElement>("/v2/applications", ct);
+            var page = await admin.GetFromJsonAsync<JsonElement>("/applications", ct);
             var pageCount = counter.Count;
             var items = page.GetProperty("items").EnumerateArray().ToArray();
             Assert.Equal(expected, items.Length);
@@ -64,7 +64,7 @@ public sealed class UserRoleQueryTests(SqlFixture fixture) : IAsyncLifetime
 
             counter.Reset();
             var candidates = await admin.GetFromJsonAsync<JsonElement[]>(
-                "/v2/applications/for-cruise-planning",
+                "/applications/for-cruise-planning",
                 ct
             );
             var candidatesCount = counter.Count;
@@ -130,7 +130,7 @@ public sealed class UserRoleQueryTests(SqlFixture fixture) : IAsyncLifetime
         async Task<int> Measure(int expected)
         {
             counter.Reset();
-            var cruises = await admin.GetFromJsonAsync<JsonElement[]>("/v2/cruises", ct);
+            var cruises = await admin.GetFromJsonAsync<JsonElement[]>("/cruises", ct);
             Assert.Equal(expected, cruises!.Length);
             foreach (var cruise in cruises)
                 Assert.Equal(
@@ -167,7 +167,7 @@ public sealed class UserRoleQueryTests(SqlFixture fixture) : IAsyncLifetime
         foreach (var (client, visible) in new[] { (admin, roles.Keys), (office, managers) })
         {
             counter.Reset();
-            var users = (await client.GetFromJsonAsync<List<UserResponse>>("/v2/users", ct))!;
+            var users = (await client.GetFromJsonAsync<List<UserResponse>>("/users", ct))!;
             counts.Add(counter.Count);
             Assert.Equal(visible.Order(), users.Select(user => user.Id).Order());
             foreach (var user in users)

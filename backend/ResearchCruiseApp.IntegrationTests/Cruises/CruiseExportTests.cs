@@ -19,10 +19,10 @@ public sealed class CruiseExportTests(SqlFixture fixture) : IAsyncLifetime
     public async ValueTask DisposeAsync() => await fixture.ResetAsync();
 
     [Theory]
-    [InlineData("/v2/cruises/blockades?year=99999")]
-    [InlineData("/v2/cruises/blockades?year=0")]
-    [InlineData("/v2/cruises/export?year=99999")]
-    [InlineData("/v2/cruises/export?year=20")]
+    [InlineData("/cruises/blockades?year=99999")]
+    [InlineData("/cruises/blockades?year=0")]
+    [InlineData("/cruises/export?year=99999")]
+    [InlineData("/cruises/export?year=20")]
     public async Task Year_WhenOutOfRange_ReturnsBadRequest(string route)
     {
         var ct = TestContext.Current.CancellationToken;
@@ -73,7 +73,7 @@ public sealed class CruiseExportTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var client = await TestApplications.Login(app, reader.Email!);
 
-        using var response = await client.GetAsync("/v2/cruises/export?year=2024", ct);
+        using var response = await client.GetAsync("/cruises/export?year=2024", ct);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var file = await response.Content.ReadFromJsonAsync<ExportResponse>(ct);

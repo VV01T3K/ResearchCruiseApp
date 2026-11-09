@@ -54,10 +54,10 @@ test('an administrator creates a user, then edits them and sees the refreshed re
   await page.getByRole('button', { name: 'Zapisz', exact: true }).click();
   await expect(row).toContainText('Updated Hopper');
 
-  expect(requests.bodies('POST /v2/users')).toEqual([
+  expect(requests.bodies('POST /users')).toEqual([
     { email: deputy.email, firstName: deputy.firstName, lastName: deputy.lastName, roles: ['CruiseManager'] },
   ]);
-  expect(requests.bodies(`PATCH /v2/users/${deputy.id}`)).toEqual([
+  expect(requests.bodies(`PATCH /users/${deputy.id}`)).toEqual([
     { email: deputy.email, firstName: 'Updated', lastName: deputy.lastName },
   ]);
 });
@@ -67,14 +67,14 @@ for (const { action, accepted, button, route, handler } of [
     action: 'acceptance',
     accepted: false,
     button: 'Zaakceptuj konto użytkownika',
-    route: `PUT /v2/users/${deputy.id}/acceptance`,
+    route: `PUT /users/${deputy.id}/acceptance`,
     handler: getAcceptUserMockHandler,
   },
   {
     action: 'deactivation',
     accepted: true,
     button: 'Cofnij akceptację konta',
-    route: `DELETE /v2/users/${deputy.id}/acceptance`,
+    route: `DELETE /users/${deputy.id}/acceptance`,
     handler: getDeactivateUserMockHandler,
   },
 ]) {
@@ -124,14 +124,14 @@ test('repeated invalid Add submissions focus the email field, and a failed add c
   await expect(page.getByText('Niepoprawny adres email')).toBeVisible();
   await add.click();
   await expect(email).toBeFocused();
-  expect(requests.bodies('POST /v2/users')).toEqual([]);
+  expect(requests.bodies('POST /users')).toEqual([]);
 
   await email.fill(deputy.email);
   await add.click();
   await expect(page.getByRole('alert')).toContainText('Spróbuj ponownie później');
   await add.click();
   await expect(add).toHaveCount(0);
-  expect(requests.bodies('POST /v2/users')).toHaveLength(2);
+  expect(requests.bodies('POST /users')).toHaveLength(2);
 });
 
 test('a user is deactivated, then deleted only after the deletion is confirmed', async ({
@@ -151,15 +151,15 @@ test('a user is deactivated, then deleted only after the deletion is confirmed',
   await row.getByRole('button', { name: 'Edytuj' }).click();
   await dialog.getByRole('button', { name: 'Cofnij akceptację konta' }).click();
   await expect(dialog).toBeHidden();
-  expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(1);
+  expect(requests.bodies(`DELETE /users/${deputy.id}/acceptance`)).toHaveLength(1);
 
   await row.getByRole('button', { name: 'Edytuj' }).click();
   await expect(dialog.getByText('Niezaakceptowane', { exact: true })).toBeVisible();
   await dialog.getByRole('button', { name: 'Usuń', exact: true }).click();
-  expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(0);
+  expect(requests.bodies(`DELETE /users/${deputy.id}`)).toHaveLength(0);
   await dialog.getByRole('button', { name: 'Czy na pewno?' }).click();
   await expect(row).toHaveCount(0);
-  expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(1);
+  expect(requests.bodies(`DELETE /users/${deputy.id}`)).toHaveLength(1);
 });
 
 test('demoting or deactivating a manager of active records warns and needs a second click', async ({
@@ -189,10 +189,10 @@ test('demoting or deactivating a manager of active records warns and needs a sec
   await expect(warning).toContainText('Zgłoszenie nr 12 (kierownik)');
   await expect(warning).toContainText('Rejs nr 2030/1 (zastępca)');
   await expect(warning).toContainText('Zamknięte zgłoszenia i rejsy (2)');
-  expect(requests.bodies(`PATCH /v2/users/${deputy.id}`)).toHaveLength(0);
+  expect(requests.bodies(`PATCH /users/${deputy.id}`)).toHaveLength(0);
   await dialog.getByRole('button', { name: 'Zmień rolę mimo to' }).click();
   await expect(dialog).toBeHidden();
-  expect(requests.bodies(`PUT /v2/users/${deputy.id}/role`)).toEqual([{ roleName: 'Guest' }]);
+  expect(requests.bodies(`PUT /users/${deputy.id}/role`)).toEqual([{ roleName: 'Guest' }]);
 
   await row.getByRole('button', { name: 'Edytuj' }).click();
   await dialog.getByRole('button', { name: 'Cofnij akceptację konta' }).click();
@@ -204,10 +204,10 @@ test('demoting or deactivating a manager of active records warns and needs a sec
   await row.getByRole('button', { name: 'Edytuj' }).click();
   await dialog.getByRole('button', { name: 'Cofnij akceptację konta' }).click();
   await expect(warning).toContainText('Nie udało się sprawdzić');
-  expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(0);
+  expect(requests.bodies(`DELETE /users/${deputy.id}/acceptance`)).toHaveLength(0);
   await dialog.getByRole('button', { name: 'Cofnij akceptację mimo to' }).click();
   await expect(dialog).toBeHidden();
-  expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(1);
+  expect(requests.bodies(`DELETE /users/${deputy.id}/acceptance`)).toHaveLength(1);
 });
 
 test('the edit dialog stays below the navbar on a short desktop viewport', async ({ page, network }) => {
@@ -242,8 +242,8 @@ test('the last administrator cannot be deleted alone or in a group', async ({ pa
   await expect(
     page.getByText('Po usunięciu zaznaczonych użytkowników musi istnieć co najmniej jeden admin', { exact: true })
   ).toBeVisible();
-  expect(requests.bodies(`DELETE /v2/users/${onlyAdmin.id}`)).toHaveLength(0);
-  expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(0);
+  expect(requests.bodies(`DELETE /users/${onlyAdmin.id}`)).toHaveLength(0);
+  expect(requests.bodies(`DELETE /users/${deputy.id}`)).toHaveLength(0);
 });
 
 test('a group deletion deletes every selected user and reports the ones that failed', async ({
@@ -264,13 +264,13 @@ test('a group deletion deletes every selected user and reports the ones that fai
   await page.getByRole('button', { name: 'Akcje Grupowe' }).click();
   const dialog = page.getByRole('dialog');
   await dialog.getByRole('button', { name: 'Usuń zaznaczonych użytkowników' }).click();
-  expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(0);
+  expect(requests.bodies(`DELETE /users/${deputy.id}`)).toHaveLength(0);
   await dialog.getByRole('button', { name: 'Na pewno?' }).click();
   await expect(page.getByText('Usunięto część osób. Błąd przy 1 użytkowniku', { exact: true })).toBeVisible();
   await expect(page.getByRole('row').filter({ hasText: deputy.email })).toHaveCount(0);
   await expect(page.getByRole('row').filter({ hasText: outsider.email })).toBeVisible();
-  expect(requests.bodies(`DELETE /v2/users/${deputy.id}`)).toHaveLength(1);
-  expect(requests.bodies(`DELETE /v2/users/${outsider.id}`)).toHaveLength(1);
+  expect(requests.bodies(`DELETE /users/${deputy.id}`)).toHaveLength(1);
+  expect(requests.bodies(`DELETE /users/${outsider.id}`)).toHaveLength(1);
 });
 
 test('a group deactivation names the affected user and sends requests only for accepted users', async ({
@@ -292,11 +292,11 @@ test('a group deactivation names the affected user and sends requests only for a
   await page.getByRole('button', { name: 'Akcje Grupowe' }).click();
   await page.getByRole('button', { name: 'Usuń akceptację zaznaczonych użytkowników' }).click();
   await expect(page.getByRole('alert')).toContainText(`${deputy.firstName} ${deputy.lastName}`);
-  expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(0);
+  expect(requests.bodies(`DELETE /users/${deputy.id}/acceptance`)).toHaveLength(0);
   await page.getByRole('button', { name: 'Usuń akceptację mimo to' }).click();
   await expect(page.getByText('Pomyślnie usunięto akceptację wszystkich wybranych użytkowników')).toBeVisible();
-  expect(requests.bodies(`DELETE /v2/users/${deputy.id}/acceptance`)).toHaveLength(1);
-  expect(requests.bodies(`DELETE /v2/users/${outsider.id}/acceptance`)).toHaveLength(0);
+  expect(requests.bodies(`DELETE /users/${deputy.id}/acceptance`)).toHaveLength(1);
+  expect(requests.bodies(`DELETE /users/${outsider.id}/acceptance`)).toHaveLength(0);
 });
 
 test('a long filter list keeps its keyboard position while the list scrolls', async ({ page, network }) => {

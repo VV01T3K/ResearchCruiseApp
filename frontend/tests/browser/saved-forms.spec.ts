@@ -60,7 +60,7 @@ for (const { name, saved, handlers, shown } of forms) {
 
     await page.goto(`${form}?mode=edit`);
     await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
-    const route = `PUT /v2/applications/${applicationId}/form-${name.toLowerCase()}`;
+    const route = `PUT /applications/${applicationId}/form-${name.toLowerCase()}`;
     await expect.poll(() => requests.bodies(route)).toEqual([{ draft: false, form: saved }]);
   });
 }
@@ -80,7 +80,7 @@ test('an unreadable stored flag in form C blocks saving until it is fixed', asyn
     getUpdateApplicationFormCMockHandler(),
     ...applicationForms()
   );
-  const route = `PUT /v2/applications/${applicationId}/form-c`;
+  const route = `PUT /applications/${applicationId}/form-c`;
   await page.goto(`/applications/${applicationId}/formC?mode=edit`);
 
   const done = page.getByRole('checkbox', { name: 'Zrealizowane' });

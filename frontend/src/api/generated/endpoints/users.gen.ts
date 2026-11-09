@@ -60,7 +60,7 @@ export const getGetCurrentUserUrl = () => {
 
 
 
-  return `/v2/users/me`
+  return `/users/me`
 }
 
 /**
@@ -83,7 +83,7 @@ export const getCurrentUser = async ( options?: Parameters<typeof customFetch>[1
 
 export const getGetCurrentUserQueryKey = () => {
     return [
-    'v2','users','me'
+    'users','me'
     ] as const;
     }
 
@@ -148,7 +148,7 @@ export const getChangeCurrentUserPasswordUrl = () => {
 
 
 
-  return `/v2/users/me/password`
+  return `/users/me/password`
 }
 
 /**
@@ -235,7 +235,7 @@ export const useChangeCurrentUserPassword = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/users/me/cruise-effects`
+  return `/users/me/cruise-effects`
 }
 
 /**
@@ -258,7 +258,7 @@ export const getCurrentUserCruiseEffects = async ( options?: Parameters<typeof c
 
 export const getGetCurrentUserCruiseEffectsQueryKey = () => {
     return [
-    'v2','users','me','cruise-effects'
+    'users','me','cruise-effects'
     ] as const;
     }
 
@@ -323,7 +323,7 @@ export const getGetCurrentUserPublicationsUrl = () => {
 
 
 
-  return `/v2/users/me/publications`
+  return `/users/me/publications`
 }
 
 /**
@@ -346,7 +346,7 @@ export const getCurrentUserPublications = async ( options?: Parameters<typeof cu
 
 export const getGetCurrentUserPublicationsQueryKey = () => {
     return [
-    'v2','users','me','publications'
+    'users','me','publications'
     ] as const;
     }
 
@@ -411,7 +411,7 @@ export const getDeleteAllCurrentUserPublicationsUrl = () => {
 
 
 
-  return `/v2/users/me/publications`
+  return `/users/me/publications`
 }
 
 /**
@@ -484,7 +484,7 @@ export const useDeleteAllCurrentUserPublications = <TError = ErrorType<ProblemDe
 
 
 
-  return `/v2/users/me/publications/import`
+  return `/users/me/publications/import`
 }
 
 /**
@@ -571,7 +571,7 @@ export const useImportCurrentUserPublications = <TError = ErrorType<ProblemDetai
 
 
 
-  return `/v2/users/me/publications/${publicationId}`
+  return `/users/me/publications/${publicationId}`
 }
 
 /**
@@ -644,7 +644,7 @@ export const useDeleteCurrentUserPublication = <TError = ErrorType<ProblemDetail
 
 
 
-  return `/v2/users`
+  return `/users`
 }
 
 /**
@@ -667,7 +667,7 @@ export const getUsers = async ( options?: Parameters<typeof customFetch>[1]): Pr
 
 export const getGetUsersQueryKey = () => {
     return [
-    'v2','users'
+    'users'
     ] as const;
     }
 
@@ -732,7 +732,7 @@ export const getCreateUserUrl = () => {
 
 
 
-  return `/v2/users`
+  return `/users`
 }
 
 /**
@@ -819,7 +819,7 @@ export const useCreateUser = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/users/available-cruise-managers`
+  return `/users/available-cruise-managers`
 }
 
 /**
@@ -842,7 +842,7 @@ export const getAvailableCruiseManagers = async ( options?: Parameters<typeof cu
 
 export const getGetAvailableCruiseManagersQueryKey = () => {
     return [
-    'v2','users','available-cruise-managers'
+    'users','available-cruise-managers'
     ] as const;
     }
 
@@ -907,7 +907,7 @@ export const getUpdateUserUrl = (userId: string,) => {
 
 
 
-  return `/v2/users/${userId}`
+  return `/users/${userId}`
 }
 
 /**
@@ -995,7 +995,7 @@ export const useUpdateUser = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/users/${userId}`
+  return `/users/${userId}`
 }
 
 /**
@@ -1068,7 +1068,7 @@ export const useDeleteUser = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/users/${userId}/acceptance`
+  return `/users/${userId}/acceptance`
 }
 
 /**
@@ -1141,7 +1141,7 @@ export const useAcceptUser = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/users/${userId}/acceptance`
+  return `/users/${userId}/acceptance`
 }
 
 /**
@@ -1215,7 +1215,7 @@ export const useDeactivateUser = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/users/${userId}/roles/${roleName}`
+  return `/users/${userId}/roles/${roleName}`
 }
 
 /**
@@ -1290,7 +1290,7 @@ export const useAddUserRole = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/users/${userId}/roles/${roleName}`
+  return `/users/${userId}/roles/${roleName}`
 }
 
 /**
@@ -1364,7 +1364,7 @@ export const useRemoveUserRole = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/users/${userId}/role`
+  return `/users/${userId}/role`
 }
 
 /**
@@ -1452,7 +1452,7 @@ export const useReplaceUserRole = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/users/${userId}/assignments`
+  return `/users/${userId}/assignments`
 }
 
 /**
@@ -1475,7 +1475,7 @@ export const getUserAssignments = async (userId: string, options?: Parameters<ty
 
 export const getGetUserAssignmentsQueryKey = (userId: string,) => {
     return [
-    'v2','users',userId,'assignments'
+    'users',userId,'assignments'
     ] as const;
     }
 

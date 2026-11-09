@@ -43,7 +43,7 @@ public sealed class PasswordChangeTests(SqlFixture fixture) : IAsyncLifetime
         ];
         foreach (var request in rejected)
         {
-            using var denied = await client.PatchAsJsonAsync("/v2/users/me/password", request, ct);
+            using var denied = await client.PatchAsJsonAsync("/users/me/password", request, ct);
             Assert.Equal(HttpStatusCode.BadRequest, denied.StatusCode);
             await app.InDatabase(async db =>
             {
@@ -54,7 +54,7 @@ public sealed class PasswordChangeTests(SqlFixture fixture) : IAsyncLifetime
             });
         }
         using var changed = await client.PatchAsJsonAsync(
-            "/v2/users/me/password",
+            "/users/me/password",
             new ChangePasswordRequest(TestUsers.Password, replacement),
             ct
         );
@@ -69,18 +69,18 @@ public sealed class PasswordChangeTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var refresh = await RefreshSessionTests.SendCookie(
             client,
-            "/v2/auth/refresh",
+            "/auth/refresh",
             session.Cookie
         );
         Assert.Equal(HttpStatusCode.Unauthorized, refresh.StatusCode);
         using var oldLogin = await client.PostAsJsonAsync(
-            "/v2/auth/login",
+            "/auth/login",
             new { user.Email, Password = TestUsers.Password },
             ct
         );
         Assert.Equal(HttpStatusCode.Unauthorized, oldLogin.StatusCode);
         using var newLogin = await client.PostAsJsonAsync(
-            "/v2/auth/login",
+            "/auth/login",
             new { user.Email, Password = replacement },
             ct
         );
@@ -110,7 +110,7 @@ public sealed class PasswordChangeTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var anonymous = app.CreateApiClient();
         using var denied = await anonymous.PatchAsJsonAsync(
-            "/v2/users/me/password",
+            "/users/me/password",
             new ChangePasswordRequest(TestUsers.Password, "ReplacementPassword2!"),
             ct
         );
@@ -129,7 +129,7 @@ public sealed class PasswordChangeTests(SqlFixture fixture) : IAsyncLifetime
                 System.Text.Encoding.UTF8,
                 "application/json"
             );
-            using var response = await client.PatchAsync("/v2/users/me/password", content, ct);
+            using var response = await client.PatchAsync("/users/me/password", content, ct);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             await app.InDatabase(async db =>
             {
@@ -141,7 +141,7 @@ public sealed class PasswordChangeTests(SqlFixture fixture) : IAsyncLifetime
         }
         using var refresh = await RefreshSessionTests.SendCookie(
             client,
-            "/v2/auth/refresh",
+            "/auth/refresh",
             session.Cookie
         );
         Assert.Equal(HttpStatusCode.OK, refresh.StatusCode);

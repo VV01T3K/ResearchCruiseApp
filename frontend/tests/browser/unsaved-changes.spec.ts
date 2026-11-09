@@ -179,7 +179,7 @@ test.describe('pending saves', () => {
     await expect(page).toHaveURL(formA);
     await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
     await expect(page).toHaveURL('/');
-    expect(requests.bodies(`PUT /v2/applications/${applicationId}/form-a`)).toHaveLength(2);
+    expect(requests.bodies(`PUT /applications/${applicationId}/form-a`)).toHaveLength(2);
   });
 
   test('a save that finishes after the user left does not navigate away from the next page', async ({
@@ -250,7 +250,7 @@ test.describe('returning to view mode', () => {
 
   for (const { name, route, field, save, stored, update } of forms) {
     test(`form ${name} shows the saved version after a discard`, async ({ page, network, requests }) => {
-      const puts = () => requests.bodies(`PUT /v2/applications/${applicationId}/${route}`);
+      const puts = () => requests.bodies(`PUT /applications/${applicationId}/${route}`);
       const { promise: released, resolve: release } = Promise.withResolvers<void>();
       await page.goto(`/applications/${applicationId}/form${name}?mode=view`);
       const original = await field(page).inputValue();
@@ -384,7 +384,7 @@ test.describe('edits lost when the session ends', () => {
     await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
     await expect(page.getByRole('alert').getByText(/Dane zostały w międzyczasie zmienione/)).toBeVisible();
     await expect(employees(page)).toHaveValue('7');
-    expect(requests.bodies(`PUT /v2/applications/${applicationId}/form-b`)).toEqual([
+    expect(requests.bodies(`PUT /applications/${applicationId}/form-b`)).toEqual([
       expect.objectContaining({ form: expect.objectContaining({ revision: 'AAAAAAAAB9E=' }) }),
     ]);
   });

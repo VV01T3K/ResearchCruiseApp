@@ -21,7 +21,7 @@ it('resolves a signed-out startup to no user with only the session request', asy
   fetchMock.mockResolvedValue(Response.json(null));
   await expect(loadCurrentUser()).resolves.toBeNull();
   await expect(loadCurrentUser()).resolves.toBeNull();
-  expect(requestedUrls()).toEqual(['https://api.test/v2/auth/session']);
+  expect(requestedUrls()).toEqual(['https://api.test/auth/session']);
 });
 
 it('drops cached and in-flight account data, including a late profile, when the session ends', async () => {
@@ -30,14 +30,14 @@ it('drops cached and in-flight account data, including a late profile, when the 
   const profile = Promise.withResolvers<typeof admin>();
   const fetchDraft = () => draft.promise;
   const fetchProfile = () => profile.promise;
-  queryClient.setQueryData(['v2', 'applications', 'cached'], 'private draft');
-  const pendingDraft = queryClient.query({ queryKey: ['v2', 'applications', 'pending'], queryFn: fetchDraft });
-  const pendingProfile = queryClient.query({ queryKey: ['v2', 'users', 'me'], queryFn: fetchProfile });
+  queryClient.setQueryData(['applications', 'cached'], 'private draft');
+  const pendingDraft = queryClient.query({ queryKey: ['applications', 'pending'], queryFn: fetchDraft });
+  const pendingProfile = queryClient.query({ queryKey: ['users', 'me'], queryFn: fetchProfile });
   auth.clearAccountQueries(queryClient);
   draft.resolve('previous account draft');
   profile.resolve(admin);
   await pendingDraft.catch(() => {});
   await expect(pendingProfile).resolves.toBeNull();
   const cache = queryClient.getQueryCache().getAll();
-  expect(cache.map((query) => [query.queryKey, query.state.data])).toEqual([[['v2', 'users', 'me'], null]]);
+  expect(cache.map((query) => [query.queryKey, query.state.data])).toEqual([[['users', 'me'], null]]);
 });

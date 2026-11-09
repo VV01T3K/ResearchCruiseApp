@@ -67,7 +67,7 @@ export const getGetCruisesUrl = () => {
 
 
 
-  return `/v2/cruises`
+  return `/cruises`
 }
 
 /**
@@ -90,7 +90,7 @@ export const getCruises = async ( options?: Parameters<typeof customFetch>[1]): 
 
 export const getGetCruisesQueryKey = () => {
     return [
-    'v2','cruises'
+    'cruises'
     ] as const;
     }
 
@@ -155,7 +155,7 @@ export const getCreateCruiseUrl = () => {
 
 
 
-  return `/v2/cruises`
+  return `/cruises`
 }
 
 /**
@@ -242,7 +242,7 @@ export const useCreateCruise = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/cruises/${cruiseId}`
+  return `/cruises/${cruiseId}`
 }
 
 /**
@@ -265,7 +265,7 @@ export const getCruise = async (cruiseId: string, options?: Parameters<typeof cu
 
 export const getGetCruiseQueryKey = (cruiseId: string,) => {
     return [
-    'v2','cruises',cruiseId
+    'cruises',cruiseId
     ] as const;
     }
 
@@ -330,7 +330,7 @@ export const getUpdateCruiseUrl = (cruiseId: string,) => {
 
 
 
-  return `/v2/cruises/${cruiseId}`
+  return `/cruises/${cruiseId}`
 }
 
 /**
@@ -426,7 +426,7 @@ export const useUpdateCruise = <TError = ErrorType<ProblemDetails>,
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v2/cruises/${cruiseId}?${stringifiedParams}` : `/v2/cruises/${cruiseId}`
+  return stringifiedParams.length > 0 ? `/cruises/${cruiseId}?${stringifiedParams}` : `/cruises/${cruiseId}`
 }
 
 /**
@@ -508,7 +508,7 @@ export const useDeleteCruise = <TError = ErrorType<ProblemDetails>,
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v2/cruises/${cruiseId}/confirmation?${stringifiedParams}` : `/v2/cruises/${cruiseId}/confirmation`
+  return stringifiedParams.length > 0 ? `/cruises/${cruiseId}/confirmation?${stringifiedParams}` : `/cruises/${cruiseId}/confirmation`
 }
 
 /**
@@ -590,7 +590,7 @@ export const useConfirmCruise = <TError = ErrorType<ProblemDetails>,
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v2/cruises/${cruiseId}/confirmation?${stringifiedParams}` : `/v2/cruises/${cruiseId}/confirmation`
+  return stringifiedParams.length > 0 ? `/cruises/${cruiseId}/confirmation?${stringifiedParams}` : `/cruises/${cruiseId}/confirmation`
 }
 
 /**
@@ -672,7 +672,7 @@ export const useRemoveCruiseConfirmation = <TError = ErrorType<ProblemDetails>,
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v2/cruises/${cruiseId}/completion?${stringifiedParams}` : `/v2/cruises/${cruiseId}/completion`
+  return stringifiedParams.length > 0 ? `/cruises/${cruiseId}/completion?${stringifiedParams}` : `/cruises/${cruiseId}/completion`
 }
 
 /**
@@ -746,7 +746,7 @@ export const useCompleteCruise = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/cruises/auto-plan`
+  return `/cruises/auto-plan`
 }
 
 /**
@@ -826,7 +826,7 @@ export const useAutoPlanCruises = <TError = ErrorType<ProblemDetails>,
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v2/cruises/blockades?${stringifiedParams}` : `/v2/cruises/blockades`
+  return stringifiedParams.length > 0 ? `/cruises/blockades?${stringifiedParams}` : `/cruises/blockades`
 }
 
 /**
@@ -849,7 +849,7 @@ export const getCruiseBlockades = async (params: GetCruiseBlockadesParams, optio
 
 export const getGetCruiseBlockadesQueryKey = (params?: GetCruiseBlockadesParams,) => {
     return [
-    'v2','cruises','blockades', ...(params ? [params] : [])
+    'cruises','blockades', ...(params ? [params] : [])
     ] as const;
     }
 
@@ -933,7 +933,7 @@ export const getExportCruisesUrl = (params: ExportCruisesParams,) => {
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v2/cruises/export?${stringifiedParams}` : `/v2/cruises/export`
+  return stringifiedParams.length > 0 ? `/cruises/export?${stringifiedParams}` : `/cruises/export`
 }
 
 /**

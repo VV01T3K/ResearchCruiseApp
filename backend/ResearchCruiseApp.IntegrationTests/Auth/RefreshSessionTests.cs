@@ -30,12 +30,12 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
             originalHash = (await db.Users.SingleAsync(ct)).RefreshToken
         );
 
-        using var rotated = await SendCookie(client, "/v2/auth/refresh", original.Cookie);
+        using var rotated = await SendCookie(client, "/auth/refresh", original.Cookie);
         Assert.Equal(HttpStatusCode.OK, rotated.StatusCode);
         var replacement = ReadCookie(rotated);
         Assert.NotEqual(original.Cookie, replacement);
         var access = await ReadAccessToken(rotated);
-        using var profileRequest = new HttpRequestMessage(HttpMethod.Get, "/v2/users/me");
+        using var profileRequest = new HttpRequestMessage(HttpMethod.Get, "/users/me");
         profileRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", access);
         using var profile = await client.SendAsync(profileRequest, ct);
         Assert.Equal(HttpStatusCode.OK, profile.StatusCode);
@@ -50,7 +50,7 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
             Assert.NotNull(replacementHash);
             Assert.NotEqual(originalHash, replacementHash);
         });
-        using var replay = await SendCookie(client, "/v2/auth/refresh", original.Cookie);
+        using var replay = await SendCookie(client, "/auth/refresh", original.Cookie);
         Assert.Equal(HttpStatusCode.Unauthorized, replay.StatusCode);
         Assert.False(replay.Headers.Contains("Set-Cookie"));
         await app.InDatabase(async db =>
@@ -60,7 +60,7 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Equal(replacementExpiry, stored.RefreshTokenExpiry);
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
         });
-        using var next = await SendCookie(client, "/v2/auth/refresh", replacement);
+        using var next = await SendCookie(client, "/auth/refresh", replacement);
         Assert.Equal(HttpStatusCode.OK, next.StatusCode);
         Assert.NotEqual(replacement, ReadCookie(next));
         Assert.Empty(app.Transport.Messages);
@@ -74,19 +74,19 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
         var user = await TestUsers.Create(app, "session@example.invalid", RoleName.Guest);
         using var client = app.CreateApiClient();
 
-        using var anonymous = await client.GetAsync("/v2/auth/session", ct);
+        using var anonymous = await client.GetAsync("/auth/session", ct);
         Assert.Equal(HttpStatusCode.OK, anonymous.StatusCode);
         Assert.Equal("null", await anonymous.Content.ReadAsStringAsync(ct));
         Assert.True(anonymous.Headers.CacheControl?.NoStore);
 
         var original = await Login(client, user.Email!);
-        using var request = new HttpRequestMessage(HttpMethod.Get, "/v2/auth/session");
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/auth/session");
         request.Headers.Add("Cookie", original.Cookie);
         using var restored = await client.SendAsync(request, ct);
         Assert.Equal(HttpStatusCode.OK, restored.StatusCode);
         Assert.NotEqual(original.Cookie, ReadCookie(restored));
         Assert.True(restored.Headers.CacheControl?.NoStore);
-        using var profileRequest = new HttpRequestMessage(HttpMethod.Get, "/v2/users/me");
+        using var profileRequest = new HttpRequestMessage(HttpMethod.Get, "/users/me");
         profileRequest.Headers.Authorization = new AuthenticationHeaderValue(
             "Bearer",
             await ReadAccessToken(restored)
@@ -110,17 +110,17 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
             }
         );
         var session = await Login(client, user.Email!);
-        using var refresh = await client.PostAsync("/v2/auth/refresh", null, ct);
+        using var refresh = await client.PostAsync("/auth/refresh", null, ct);
         Assert.Equal(HttpStatusCode.OK, refresh.StatusCode);
         Assert.NotEqual(session.Cookie, ReadCookie(refresh));
-        using var logout = await client.PostAsync("/v2/auth/logout", null, ct);
+        using var logout = await client.PostAsync("/auth/logout", null, ct);
         Assert.Equal(HttpStatusCode.NoContent, logout.StatusCode);
         var deletion = Assert.Single(
             SetCookieHeaderValue.ParseList(logout.Headers.GetValues("Set-Cookie").ToList())
         );
         Assert.Equal("/", deletion.Path.Value);
         Assert.True(deletion.Expires < DateTimeOffset.UtcNow);
-        using var rejected = await client.PostAsync("/v2/auth/refresh", null, ct);
+        using var rejected = await client.PostAsync("/auth/refresh", null, ct);
         Assert.Equal(HttpStatusCode.Unauthorized, rejected.StatusCode);
         Assert.False(rejected.Headers.Contains("Set-Cookie"));
         await app.InDatabase(async db =>
@@ -175,7 +175,7 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
             "invalid" => "rca_refresh_token=not-a-valid-session",
             _ => session.Cookie,
         };
-        using var response = await SendCookie(client, "/v2/auth/refresh", cookie);
+        using var response = await SendCookie(client, "/auth/refresh", cookie);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         Assert.False(response.Headers.Contains("Set-Cookie"));
@@ -197,7 +197,7 @@ public sealed class RefreshSessionTests(SqlFixture fixture) : IAsyncLifetime
     )
     {
         using var response = await client.PostAsJsonAsync(
-            "/v2/auth/login",
+            "/auth/login",
             new { Email = email, Password = TestUsers.Password },
             TestContext.Current.CancellationToken
         );

@@ -28,7 +28,7 @@ public sealed class FormCWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         var office = await TestUsers.Create(app, "office@example.invalid", RoleName.Shipowner);
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
         using var shipowner = await TestApplications.Login(app, office.Email!);
-        var route = $"/v2/applications/{application.Id}/form-c";
+        var route = $"/applications/{application.Id}/form-c";
         using var unsentRefill = await shipowner.PutAsync(route + "/refill", null, ct);
         Assert.Equal(HttpStatusCode.BadRequest, unsentRefill.StatusCode);
         Assert.Contains("już dostępny do edycji", await unsentRefill.Content.ReadAsStringAsync(ct));
@@ -42,7 +42,7 @@ public sealed class FormCWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         await AssertState(app, CruiseApplicationStatus.Undertaken, "first.png");
         Assert.Contains(
             "\"effectsDoneRate\":\"0\"",
-            await manager.GetStringAsync("/v2/applications", ct)
+            await manager.GetStringAsync("/applications", ct)
         );
         using var read = await manager.GetAsync(route, ct);
         Assert.Equal(HttpStatusCode.OK, read.StatusCode);
@@ -114,7 +114,7 @@ public sealed class FormCWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
 
         using var refused = await manager.PutFormAsync(
-            $"/v2/applications/{application.Id}/form-c",
+            $"/applications/{application.Id}/form-c",
             new FormCWriteRequest { Form = Fields(null), Draft = false },
             ct
         );
@@ -131,7 +131,7 @@ public sealed class FormCWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         var application = await TestApplications.Create(app, CruiseApplicationStatus.Undertaken);
         using var first = await TestApplications.Login(app, application.OwnerEmail);
         using var second = await TestApplications.Login(app, application.OwnerEmail);
-        var route = $"/v2/applications/{application.Id}/form-c";
+        var route = $"/applications/{application.Id}/form-c";
         var read = await FormRequests.CurrentRevision(second, route);
 
         using var saved = await first.PutFormAsync(

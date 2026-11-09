@@ -15,7 +15,7 @@ public sealed class SentryScrubbingTests
             User = new SentryUser { Id = "user-1", IpAddress = "10.0.0.1" },
             Request = new SentryRequest
             {
-                Url = "https://app.test/api/v2/auth/login",
+                Url = "https://app.test/api/auth/login",
                 Data = new Dictionary<string, string>
                 {
                     ["email"] = "a@example.test",
@@ -36,24 +36,24 @@ public sealed class SentryScrubbingTests
         {
             Request = new SentryRequest
             {
-                Url = "https://app.test/api/v2/applications/a1/form-a",
+                Url = "https://app.test/api/applications/a1/form-a",
                 Data = formBody,
             },
         };
-        var reset = new SentryTransaction("POST /api/v2/auth/password-reset", "http.server")
+        var reset = new SentryTransaction("POST /api/auth/password-reset", "http.server")
         {
             Request = new SentryRequest
             {
-                Url = "https://app.test/api/v2/auth/password-reset",
+                Url = "https://app.test/api/auth/password-reset",
                 Data =
                     """{"password":"pw-secret","password":"pw-secret","resetCode":"reset-secret""",
             },
         };
-        var confirm = new SentryTransaction("GET /api/v2/auth/confirm-email", "http.server")
+        var confirm = new SentryTransaction("GET /api/auth/confirm-email", "http.server")
         {
             Request = new SentryRequest
             {
-                Url = "https://app.test/api/v2/auth/confirm-email",
+                Url = "https://app.test/api/auth/confirm-email",
                 QueryString = "?userId=u1&code=code-secret",
             },
         };
@@ -64,7 +64,7 @@ public sealed class SentryScrubbingTests
         SentryConfiguration.ScrubSensitiveData(confirm.Request, confirm.User);
         var breadcrumb = SentryConfiguration.ScrubBreadcrumb(
             new Breadcrumb(
-                "Request starting GET /api/v2/applications/a1/supervisor-review?code=code-secret - -",
+                "Request starting GET /api/applications/a1/supervisor-review?code=code-secret - -",
                 "default",
                 new Dictionary<string, string>
                 {

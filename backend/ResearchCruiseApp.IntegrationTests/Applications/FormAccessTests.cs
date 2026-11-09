@@ -45,7 +45,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         }
 
         using var response = await client.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new FormAWriteRequest { Form = Draft(Guid.Parse(manager.Id)), Draft = true },
             ct
         );
@@ -81,7 +81,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         var draft = await CreateDraft(app);
         using var client = await ActorClient(app, actor);
 
-        using var response = await client.GetAsync($"/v2/applications/{draft.Id}/form-a", ct);
+        using var response = await client.GetAsync($"/applications/{draft.Id}/form-a", ct);
 
         Assert.Equal(expected, response.StatusCode);
         if (expected == HttpStatusCode.OK)
@@ -125,7 +125,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         using var client = await ActorClient(app, actor);
 
         using var response = await client.PutFormAsync(
-            $"/v2/applications/{draft.Id}/form-a",
+            $"/applications/{draft.Id}/form-a",
             new FormAWriteRequest
             {
                 Form = Draft(draft.Owner, draft.Deputy, "Edited"),
@@ -152,7 +152,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
         });
         using var owner = await ActorClient(app, "owner");
-        using var read = await owner.GetAsync($"/v2/applications/{draft.Id}/form-a", ct);
+        using var read = await owner.GetAsync($"/applications/{draft.Id}/form-a", ct);
         Assert.Equal(HttpStatusCode.OK, read.StatusCode);
         Assert.Empty(app.Transport.Messages);
     }
@@ -192,7 +192,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         );
 
         using var response = await client.PutFormAsync(
-            $"/v2/applications/{draft.Id}/form-a",
+            $"/applications/{draft.Id}/form-a",
             new FormAWriteRequest
             {
                 Form = Draft(
@@ -233,7 +233,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         HttpResponseMessage response;
         if (form == "b")
             response = await client.PutFormAsync(
-                $"/v2/applications/{draft.Id}/form-b",
+                $"/applications/{draft.Id}/form-b",
                 new FormBWriteRequest
                 {
                     Form = new FormBFields { IsCruiseManagerPresent = "" },
@@ -243,7 +243,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
             );
         else
             response = await client.PutFormAsync(
-                $"/v2/applications/{draft.Id}/form-c",
+                $"/applications/{draft.Id}/form-c",
                 new FormCWriteRequest
                 {
                     Form = new FormCFields { ShipUsage = "", DifferentUsage = "" },
@@ -279,7 +279,7 @@ public sealed class FormAccessTests(SqlFixture fixture) : IAsyncLifetime
         var ownerId = Guid.Parse(owner.Id);
         var deputyId = Guid.Parse(deputy.Id);
         using var response = await client.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new FormAWriteRequest { Form = Draft(ownerId, deputyId), Draft = true },
             ct
         );

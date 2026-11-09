@@ -32,7 +32,7 @@ public sealed class PermissionScanHttpTests(SqlFixture fixture) : IAsyncLifetime
             : CruiseApplicationStatus.FormBRequired;
         var application = await TestApplications.Create(app, status);
         using var client = await TestApplications.Login(app, application.OwnerEmail);
-        var route = $"/v2/applications/{application.Id}/form-{(formC ? "c" : "b")}";
+        var route = $"/applications/{application.Id}/form-{(formC ? "c" : "b")}";
         var permissions = new List<PermissionFields> { Permission("original.pdf", SmallPdf) };
         using var saved = await Write(client, route, formC, permissions, true);
         Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
@@ -113,7 +113,7 @@ public sealed class PermissionScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         var office = await TestUsers.Create(app, "office@example.invalid", RoleName.Shipowner);
         var other = await TestUsers.Create(app, "other@example.invalid", RoleName.CruiseManager);
         using var client = await TestApplications.Login(app, application.OwnerEmail);
-        var route = $"/v2/applications/{application.Id}/form-{(formC ? "c" : "b")}";
+        var route = $"/applications/{application.Id}/form-{(formC ? "c" : "b")}";
         var permissions = new List<PermissionFields>();
         Guid previousPermission = default;
         string lastName = "";

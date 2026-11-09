@@ -13,38 +13,6 @@
           "xunit.v3.core.mtp-v2": "[4.0.2]"
         }
       },
-      "Asp.Versioning.Abstractions": {
-        "type": "Transitive",
-        "resolved": "10.2.1",
-        "contentHash": "jMBztsVim+rYVrkNY23dMuOjTGXGQ9+je1xb3i17KgUof7OcBZtMMDduEWoCQ52SpTlYqKsuzgJyUMCMOFCBfg==",
-        "dependencies": {
-          "Microsoft.Extensions.Primitives": "10.0.0"
-        }
-      },
-      "Asp.Versioning.Http": {
-        "type": "Transitive",
-        "resolved": "10.2.3",
-        "contentHash": "tx/OIyp39OP2uM57MHn8GqRSCi7+XYFU3/KqcPeiqt8rQE+oiK4bRcMXZvShtiS+SbtifqXy4zg6vr5+LPubNQ==",
-        "dependencies": {
-          "Asp.Versioning.Abstractions": "10.2.1"
-        }
-      },
-      "Asp.Versioning.Mvc": {
-        "type": "Transitive",
-        "resolved": "10.2.1",
-        "contentHash": "fMzUraYZOAobKQn2PffrgPsULbCWFeWroYRYndPasxPsiQl1+i8x5qYRuMYZAbzDrBnymPUMBxT2gZG2PwbkcQ==",
-        "dependencies": {
-          "Asp.Versioning.Http": "10.2.1"
-        }
-      },
-      "Asp.Versioning.Mvc.ApiExplorer": {
-        "type": "Transitive",
-        "resolved": "10.2.1",
-        "contentHash": "Tv1megkpUy+3FN9yfVJKIcYMLXTe5CPs4zftBxGaZhADJe6h9CJZ2Okh5cG4PoE7wzHTef+AK++8IuZta3Ppog==",
-        "dependencies": {
-          "Asp.Versioning.Mvc": "10.2.1"
-        }
-      },
       "BouncyCastle.Cryptography": {
         "type": "Transitive",
         "resolved": "2.7.0",
@@ -672,8 +640,6 @@
       "researchcruiseapp": {
         "type": "Project",
         "dependencies": {
-          "Asp.Versioning.Http": "[10.2.3, )",
-          "Asp.Versioning.Mvc.ApiExplorer": "[10.2.1, )",
           "FluentValidation.DependencyInjectionExtensions": "[12.2.0, )",
           "MailKit": "[4.18.2, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.14, )",

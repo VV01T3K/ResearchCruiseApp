@@ -72,7 +72,7 @@ export const getGetApplicationSupervisorReviewResponseMock = (overrideResponse: 
 
 
 export const getGetApplicationsMockHandler = (overrideResponse?: ApplicationsPageResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ApplicationsPageResponse> | ApplicationsPageResponse), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/applications', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/applications', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -84,7 +84,7 @@ export const getGetApplicationsMockHandler = (overrideResponse?: ApplicationsPag
 }
 
 export const getCreateApplicationMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/applications', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/applications', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -94,7 +94,7 @@ export const getCreateApplicationMockHandler = (overrideResponse?: void | ((info
 }
 
 export const getGetApplicationManagersMockHandler = (overrideResponse?: ApplicationPersonResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ApplicationPersonResponse[]> | ApplicationPersonResponse[]), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/applications/managers', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/applications/managers', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -106,7 +106,7 @@ export const getGetApplicationManagersMockHandler = (overrideResponse?: Applicat
 }
 
 export const getGetApplicationMockHandler = (overrideResponse?: ApplicationResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ApplicationResponse> | ApplicationResponse), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/applications/:applicationId', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/applications/:applicationId', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -118,7 +118,7 @@ export const getGetApplicationMockHandler = (overrideResponse?: ApplicationRespo
 }
 
 export const getGetApplicationCruiseMockHandler = (overrideResponse?: ApplicationCruiseResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ApplicationCruiseResponse> | ApplicationCruiseResponse), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/applications/:applicationId/cruise', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/applications/:applicationId/cruise', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -130,7 +130,7 @@ export const getGetApplicationCruiseMockHandler = (overrideResponse?: Applicatio
 }
 
 export const getGetApplicationEvaluationMockHandler = (overrideResponse?: CruiseApplicationEvaluation | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CruiseApplicationEvaluation> | CruiseApplicationEvaluation), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/applications/:applicationId/evaluation', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/applications/:applicationId/evaluation', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -142,7 +142,7 @@ export const getGetApplicationEvaluationMockHandler = (overrideResponse?: Cruise
 }
 
 export const getUpdateApplicationDecisionMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.put('*/v2/applications/:applicationId/decision', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  return http.put('*/api/applications/:applicationId/decision', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -152,7 +152,7 @@ export const getUpdateApplicationDecisionMockHandler = (overrideResponse?: void 
 }
 
 export const getGetApplicationsForCruisePlanningMockHandler = (overrideResponse?: CruiseApplicationCandidateResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CruiseApplicationCandidateResponse[]> | CruiseApplicationCandidateResponse[]), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/applications/for-cruise-planning', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/applications/for-cruise-planning', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -164,7 +164,7 @@ export const getGetApplicationsForCruisePlanningMockHandler = (overrideResponse?
 }
 
 export const getGetApplicationFormAContextMockHandler = (overrideResponse?: FormAOptions | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<FormAOptions> | FormAOptions), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/applications/form-a/context', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/applications/form-a/context', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -176,7 +176,7 @@ export const getGetApplicationFormAContextMockHandler = (overrideResponse?: Form
 }
 
 export const getGetApplicationFormBContextMockHandler = (overrideResponse?: FormBOptions | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<FormBOptions> | FormBOptions), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/applications/form-b/context', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/applications/form-b/context', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -188,7 +188,7 @@ export const getGetApplicationFormBContextMockHandler = (overrideResponse?: Form
 }
 
 export const getGetApplicationFormAMockHandler = (overrideResponse?: FormAFields | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<FormAFields> | FormAFields), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/applications/:applicationId/form-a', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/applications/:applicationId/form-a', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -200,7 +200,7 @@ export const getGetApplicationFormAMockHandler = (overrideResponse?: FormAFields
 }
 
 export const getUpdateApplicationFormAMockHandler = (overrideResponse?: RevisionResponse | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<RevisionResponse> | RevisionResponse), options?: RequestHandlerOptions) => {
-  return http.put('*/v2/applications/:applicationId/form-a', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  return http.put('*/api/applications/:applicationId/form-a', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -212,7 +212,7 @@ export const getUpdateApplicationFormAMockHandler = (overrideResponse?: Revision
 }
 
 export const getGetApplicationFormBMockHandler = (overrideResponse?: FormBFields | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<FormBFields> | FormBFields), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/applications/:applicationId/form-b', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/applications/:applicationId/form-b', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -224,7 +224,7 @@ export const getGetApplicationFormBMockHandler = (overrideResponse?: FormBFields
 }
 
 export const getUpdateApplicationFormBMockHandler = (overrideResponse?: RevisionResponse | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<RevisionResponse> | RevisionResponse), options?: RequestHandlerOptions) => {
-  return http.put('*/v2/applications/:applicationId/form-b', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  return http.put('*/api/applications/:applicationId/form-b', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -236,7 +236,7 @@ export const getUpdateApplicationFormBMockHandler = (overrideResponse?: Revision
 }
 
 export const getRefillApplicationFormBMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.put('*/v2/applications/:applicationId/form-b/refill', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  return http.put('*/api/applications/:applicationId/form-b/refill', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -246,7 +246,7 @@ export const getRefillApplicationFormBMockHandler = (overrideResponse?: void | (
 }
 
 export const getGetApplicationFormCMockHandler = (overrideResponse?: FormCFields | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<FormCFields> | FormCFields), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/applications/:applicationId/form-c', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/applications/:applicationId/form-c', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -258,7 +258,7 @@ export const getGetApplicationFormCMockHandler = (overrideResponse?: FormCFields
 }
 
 export const getUpdateApplicationFormCMockHandler = (overrideResponse?: RevisionResponse | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<RevisionResponse> | RevisionResponse), options?: RequestHandlerOptions) => {
-  return http.put('*/v2/applications/:applicationId/form-c', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  return http.put('*/api/applications/:applicationId/form-c', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -270,7 +270,7 @@ export const getUpdateApplicationFormCMockHandler = (overrideResponse?: Revision
 }
 
 export const getRefillApplicationFormCMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.put('*/v2/applications/:applicationId/form-c/refill', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  return http.put('*/api/applications/:applicationId/form-c/refill', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -280,7 +280,7 @@ export const getRefillApplicationFormCMockHandler = (overrideResponse?: void | (
 }
 
 export const getGetApplicationSupervisorReviewMockHandler = (overrideResponse?: SupervisorReviewResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<SupervisorReviewResponse> | SupervisorReviewResponse), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/applications/:applicationId/supervisor-review', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/applications/:applicationId/supervisor-review', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -292,7 +292,7 @@ export const getGetApplicationSupervisorReviewMockHandler = (overrideResponse?: 
 }
 
 export const getUpdateApplicationSupervisorReviewDecisionMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.put('*/v2/applications/:applicationId/supervisor-review/decision', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  return http.put('*/api/applications/:applicationId/supervisor-review/decision', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -302,7 +302,7 @@ export const getUpdateApplicationSupervisorReviewDecisionMockHandler = (override
 }
 
 export const getResendApplicationSupervisorReviewInvitationMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/applications/:applicationId/supervisor-review/invitation', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/applications/:applicationId/supervisor-review/invitation', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,

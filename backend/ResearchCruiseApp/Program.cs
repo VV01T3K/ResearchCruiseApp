@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Asp.Versioning;
 using MailKit.Security;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -37,60 +36,37 @@ builder.Services.AddProblemDetails(options =>
 );
 const string dotNetGuidPattern =
     "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
-builder.Services.AddOpenApi(
-    "v2",
-    options =>
-    {
-        options.ShouldInclude = description =>
-            description.GroupName == "v2"
-            && (
-                description.RelativePath?.StartsWith("v2/", StringComparison.OrdinalIgnoreCase)
-                    == true
-                || description.RelativePath?.StartsWith(
-                    "v{version",
-                    StringComparison.OrdinalIgnoreCase
-                ) == true
-            );
-        options.AddSchemaTransformer(
-            (schema, context, _) =>
+builder.Services.AddOpenApi(options =>
+{
+    options.AddSchemaTransformer(
+        (schema, context, _) =>
+        {
+            var type =
+                Nullable.GetUnderlyingType(context.JsonTypeInfo.Type) ?? context.JsonTypeInfo.Type;
+            if (type == typeof(Guid))
             {
-                var type =
-                    Nullable.GetUnderlyingType(context.JsonTypeInfo.Type)
-                    ?? context.JsonTypeInfo.Type;
-                if (type == typeof(Guid))
-                {
-                    schema.Format = null;
-                    schema.Pattern = dotNetGuidPattern;
-                }
-
-                var strictNumber =
-                    context
-                        .JsonPropertyInfo?.AttributeProvider?.GetCustomAttributes(
-                            typeof(JsonNumberHandlingAttribute),
-                            true
-                        )
-                        .OfType<JsonNumberHandlingAttribute>()
-                        .Any(attribute => attribute.Handling == JsonNumberHandling.Strict) == true;
-                if (strictNumber)
-                {
-                    schema.Type &= ~JsonSchemaType.String;
-                    schema.Pattern = null;
-                }
-
-                return Task.CompletedTask;
+                schema.Format = null;
+                schema.Pattern = dotNetGuidPattern;
             }
-        );
-    }
-);
-builder
-    .Services.AddApiVersioning(options =>
-    {
-        options.DefaultApiVersion = new ApiVersion(2, 0);
-        options.AssumeDefaultVersionWhenUnspecified = false;
-        options.ReportApiVersions = true;
-        options.ApiVersionReader = new UrlSegmentApiVersionReader();
-    })
-    .AddApiExplorer(options => options.SubstituteApiVersionInUrl = true);
+
+            var strictNumber =
+                context
+                    .JsonPropertyInfo?.AttributeProvider?.GetCustomAttributes(
+                        typeof(JsonNumberHandlingAttribute),
+                        true
+                    )
+                    .OfType<JsonNumberHandlingAttribute>()
+                    .Any(attribute => attribute.Handling == JsonNumberHandling.Strict) == true;
+            if (strictNumber)
+            {
+                schema.Type &= ~JsonSchemaType.String;
+                schema.Pattern = null;
+            }
+
+            return Task.CompletedTask;
+        }
+    );
+});
 builder.Services.AddAuthorization(AuthorizationPolicies.AddApiAuthorizationPolicies);
 builder.Services.AddHealthChecks();
 builder.Services.AddCors(options =>
@@ -152,8 +128,7 @@ if (app.Environment.IsDevelopment())
     {
         options
             .WithTitle("ResearchCruiseApp API")
-            .WithOpenApiRoutePattern("/openapi/{documentName}.json")
-            .AddDocument("v2", "ResearchCruiseApp API v2");
+            .WithOpenApiRoutePattern("/openapi/{documentName}.json");
     });
 }
 

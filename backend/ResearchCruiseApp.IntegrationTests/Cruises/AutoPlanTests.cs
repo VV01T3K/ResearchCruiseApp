@@ -41,7 +41,7 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
             await db.SaveChangesAsync(ct);
         });
 
-        using var response = await client.PostAsync("/v2/cruises/auto-plan", null, ct);
+        using var response = await client.PostAsync("/cruises/auto-plan", null, ct);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         await app.InDatabase(async db =>
@@ -99,7 +99,7 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
             await db.SaveChangesAsync(ct);
         });
 
-        using var response = await client.PostAsync("/v2/cruises/auto-plan", null, ct);
+        using var response = await client.PostAsync("/cruises/auto-plan", null, ct);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         await app.InDatabase(async db =>
@@ -142,8 +142,8 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
             await db.SaveChangesAsync(ct);
         });
 
-        using var response = await client.PostAsync("/v2/cruises/auto-plan", null, ct);
-        using var repeated = await client.PostAsync("/v2/cruises/auto-plan", null, ct);
+        using var response = await client.PostAsync("/cruises/auto-plan", null, ct);
+        using var repeated = await client.PostAsync("/cruises/auto-plan", null, ct);
 
         var result = await response.Content.ReadFromJsonAsync<AutoPlanResponse>(ct);
         Assert.Equal(2, result!.PlannedCount);
@@ -211,11 +211,11 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
         });
 
         using var created = await client.PostAsJsonAsync(
-            "/v2/cruises",
+            "/cruises",
             new CreateRequest("not-a-date", "2030-07-02", Guid.Empty, Guid.Empty, [], null, false),
             ct
         );
-        using var response = await client.PostAsync("/v2/cruises/auto-plan", null, ct);
+        using var response = await client.PostAsync("/cruises/auto-plan", null, ct);
 
         Assert.Equal(HttpStatusCode.BadRequest, created.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<AutoPlanResponse>(ct);
@@ -239,7 +239,7 @@ public sealed class AutoPlanTests(SqlFixture fixture) : IAsyncLifetime
         });
 
         var blockades = await client.GetFromJsonAsync<List<BlockadeResponse>>(
-            "/v2/cruises/blockades?year=2031",
+            "/cruises/blockades?year=2031",
             ct
         );
 

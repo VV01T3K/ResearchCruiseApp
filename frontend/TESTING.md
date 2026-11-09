@@ -46,7 +46,7 @@ test('a failed save can be retried', async ({ page, network, requests }) => {
     getUpdateApplicationFormAMockHandler()
   );
   // ...act like a user...
-  expect(requests.bodies(`PUT /v2/applications/${applicationId}/form-a`)).toHaveLength(2);
+  expect(requests.bodies(`PUT /applications/${applicationId}/form-a`)).toHaveLength(2);
 });
 ```
 

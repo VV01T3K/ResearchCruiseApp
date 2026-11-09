@@ -53,7 +53,7 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
         Assert.Equal(target == 0 ? HttpStatusCode.Created : HttpStatusCode.OK, response.StatusCode);
         Guid id = default;
         await app.InDatabase(async db => id = (await db.CruiseApplications.SingleAsync(ct)).Id);
-        var route = target == 0 ? $"/v2/applications/{id}/form-a" : prepared.Route;
+        var route = target == 0 ? $"/applications/{id}/form-a" : prepared.Route;
         using var read = JsonDocument.Parse(await Read(client, route));
         var tasks = read.RootElement.GetProperty(
             target == 2 ? "researchTasksEffects" : "researchTasks"
@@ -187,7 +187,7 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
             {
                 using var response = await Write(
                     client,
-                    "/v2/applications",
+                    "/applications",
                     fields,
                     true,
                     create: true
@@ -199,8 +199,8 @@ public sealed class ResearchTaskTypeInputTests(SqlFixture fixture) : IAsyncLifet
             }
             var route =
                 target == 0
-                    ? "/v2/applications"
-                    : $"/v2/applications/{id}/form-{(target == 1 ? "a" : "c")}";
+                    ? "/applications"
+                    : $"/applications/{id}/form-{(target == 1 ? "a" : "c")}";
             if (target == 2)
             {
                 using var response = await Write(client, route, fields, true, target == 0);

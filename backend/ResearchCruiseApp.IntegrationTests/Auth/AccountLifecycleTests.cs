@@ -28,7 +28,7 @@ public sealed class AccountLifecycleTests(SqlFixture fixture) : IAsyncLifetime
         using var client = app.CreateApiClient();
         const string email = "new-account@example.invalid";
         using var registered = await client.PostAsJsonAsync(
-            "/v2/auth/register",
+            "/auth/register",
             new
             {
                 Email = email,
@@ -47,23 +47,23 @@ public sealed class AccountLifecycleTests(SqlFixture fixture) : IAsyncLifetime
         var userId = query["userId"].ToString();
 
         using var invalid = await client.GetAsync(
-            $"/v2/auth/confirm-email?userId={userId}&code=invalid",
+            $"/auth/confirm-email?userId={userId}&code=invalid",
             ct
         );
         Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
         await AssertAccount(app, userId, false, false, false);
-        using var confirmed = await client.GetAsync("/v2/auth/confirm-email" + link.Query, ct);
+        using var confirmed = await client.GetAsync("/auth/confirm-email" + link.Query, ct);
         Assert.Equal(HttpStatusCode.NoContent, confirmed.StatusCode);
         await AssertAccount(app, userId, true, false, false);
         using var awaitingAcceptance = await client.PostAsJsonAsync(
-            "/v2/auth/login",
+            "/auth/login",
             new { Email = email, Password = TestUsers.Password },
             ct
         );
         Assert.Equal(HttpStatusCode.Unauthorized, awaitingAcceptance.StatusCode);
 
         using var office = await TestApplications.Login(app, admin.Email!);
-        using var accepted = await office.PutAsync($"/v2/users/{userId}/acceptance", null, ct);
+        using var accepted = await office.PutAsync($"/users/{userId}/acceptance", null, ct);
         Assert.Equal(HttpStatusCode.NoContent, accepted.StatusCode);
         await AssertAccount(app, userId, true, true, false);
         await app.InDatabase(async db =>
@@ -75,18 +75,18 @@ public sealed class AccountLifecycleTests(SqlFixture fixture) : IAsyncLifetime
         var session = await RefreshSessionTests.Login(client, email);
         await AssertAccount(app, userId, true, true, true);
 
-        using var deactivated = await office.DeleteAsync($"/v2/users/{userId}/acceptance", ct);
+        using var deactivated = await office.DeleteAsync($"/users/{userId}/acceptance", ct);
         Assert.Equal(HttpStatusCode.NoContent, deactivated.StatusCode);
         await AssertAccount(app, userId, true, false, false);
         using var login = await client.PostAsJsonAsync(
-            "/v2/auth/login",
+            "/auth/login",
             new { Email = email, Password = TestUsers.Password },
             ct
         );
         Assert.Equal(HttpStatusCode.Unauthorized, login.StatusCode);
         using var refresh = await RefreshSessionTests.SendCookie(
             client,
-            "/v2/auth/refresh",
+            "/auth/refresh",
             session.Cookie
         );
         Assert.Equal(HttpStatusCode.Unauthorized, refresh.StatusCode);

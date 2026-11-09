@@ -103,7 +103,7 @@ public sealed partial class CruiseStatusTransitionTests
         var revision = await FormRequests.ApplicationRevision(office, id);
         Task<HttpResponseMessage> Decide(bool accept) =>
             office.PutAsJsonAsync(
-                $"/v2/applications/{id}/decision",
+                $"/applications/{id}/decision",
                 new { Accept = accept, Revision = revision }
             );
 
@@ -130,7 +130,7 @@ public sealed partial class CruiseStatusTransitionTests
             app,
             CruiseApplicationStatus.AcceptedBySupervisor
         );
-        var route = $"/v2/applications/{id}/decision";
+        var route = $"/applications/{id}/decision";
         var stale = await FormRequests.ApplicationRevision(office, id);
 
         using var accepted = await office.PutAsJsonAsync(

@@ -41,7 +41,7 @@ export const getGetUserAssignmentsResponseMock = (overrideResponse: Partial<Extr
 
 
 export const getGetCurrentUserMockHandler = (overrideResponse?: CurrentUserResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CurrentUserResponse> | CurrentUserResponse), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/users/me', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/users/me', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -53,7 +53,7 @@ export const getGetCurrentUserMockHandler = (overrideResponse?: CurrentUserRespo
 }
 
 export const getChangeCurrentUserPasswordMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.patch('*/v2/users/me/password', async (info: Parameters<Parameters<typeof http.patch>[1]>[0]) => {
+  return http.patch('*/api/users/me/password', async (info: Parameters<Parameters<typeof http.patch>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -63,7 +63,7 @@ export const getChangeCurrentUserPasswordMockHandler = (overrideResponse?: void 
 }
 
 export const getGetCurrentUserCruiseEffectsMockHandler = (overrideResponse?: CruiseEffectsResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CruiseEffectsResponse> | CruiseEffectsResponse), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/users/me/cruise-effects', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/users/me/cruise-effects', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -75,7 +75,7 @@ export const getGetCurrentUserCruiseEffectsMockHandler = (overrideResponse?: Cru
 }
 
 export const getGetCurrentUserPublicationsMockHandler = (overrideResponse?: PublicationResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PublicationResponse[]> | PublicationResponse[]), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/users/me/publications', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/users/me/publications', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -87,7 +87,7 @@ export const getGetCurrentUserPublicationsMockHandler = (overrideResponse?: Publ
 }
 
 export const getDeleteAllCurrentUserPublicationsMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.delete('*/v2/users/me/publications', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  return http.delete('*/api/users/me/publications', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -97,7 +97,7 @@ export const getDeleteAllCurrentUserPublicationsMockHandler = (overrideResponse?
 }
 
 export const getImportCurrentUserPublicationsMockHandler = (overrideResponse?: ImportPublicationsResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<ImportPublicationsResponse> | ImportPublicationsResponse), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/users/me/publications/import', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/users/me/publications/import', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -109,7 +109,7 @@ export const getImportCurrentUserPublicationsMockHandler = (overrideResponse?: I
 }
 
 export const getDeleteCurrentUserPublicationMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.delete('*/v2/users/me/publications/:publicationId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  return http.delete('*/api/users/me/publications/:publicationId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -119,7 +119,7 @@ export const getDeleteCurrentUserPublicationMockHandler = (overrideResponse?: vo
 }
 
 export const getGetUsersMockHandler = (overrideResponse?: UserResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<UserResponse[]> | UserResponse[]), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/users', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/users', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -131,7 +131,7 @@ export const getGetUsersMockHandler = (overrideResponse?: UserResponse[] | ((inf
 }
 
 export const getCreateUserMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/users', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/users', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -141,7 +141,7 @@ export const getCreateUserMockHandler = (overrideResponse?: void | ((info: Param
 }
 
 export const getGetAvailableCruiseManagersMockHandler = (overrideResponse?: CruiseManagerResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CruiseManagerResponse[]> | CruiseManagerResponse[]), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/users/available-cruise-managers', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/users/available-cruise-managers', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -153,7 +153,7 @@ export const getGetAvailableCruiseManagersMockHandler = (overrideResponse?: Crui
 }
 
 export const getUpdateUserMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.patch('*/v2/users/:userId', async (info: Parameters<Parameters<typeof http.patch>[1]>[0]) => {
+  return http.patch('*/api/users/:userId', async (info: Parameters<Parameters<typeof http.patch>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -163,7 +163,7 @@ export const getUpdateUserMockHandler = (overrideResponse?: void | ((info: Param
 }
 
 export const getDeleteUserMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.delete('*/v2/users/:userId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  return http.delete('*/api/users/:userId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -173,7 +173,7 @@ export const getDeleteUserMockHandler = (overrideResponse?: void | ((info: Param
 }
 
 export const getAcceptUserMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.put('*/v2/users/:userId/acceptance', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  return http.put('*/api/users/:userId/acceptance', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -183,7 +183,7 @@ export const getAcceptUserMockHandler = (overrideResponse?: void | ((info: Param
 }
 
 export const getDeactivateUserMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.delete('*/v2/users/:userId/acceptance', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  return http.delete('*/api/users/:userId/acceptance', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -193,7 +193,7 @@ export const getDeactivateUserMockHandler = (overrideResponse?: void | ((info: P
 }
 
 export const getAddUserRoleMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.put('*/v2/users/:userId/roles/:roleName', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  return http.put('*/api/users/:userId/roles/:roleName', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -203,7 +203,7 @@ export const getAddUserRoleMockHandler = (overrideResponse?: void | ((info: Para
 }
 
 export const getRemoveUserRoleMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.delete('*/v2/users/:userId/roles/:roleName', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  return http.delete('*/api/users/:userId/roles/:roleName', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -213,7 +213,7 @@ export const getRemoveUserRoleMockHandler = (overrideResponse?: void | ((info: P
 }
 
 export const getReplaceUserRoleMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.put('*/v2/users/:userId/role', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  return http.put('*/api/users/:userId/role', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -223,7 +223,7 @@ export const getReplaceUserRoleMockHandler = (overrideResponse?: void | ((info: 
 }
 
 export const getGetUserAssignmentsMockHandler = (overrideResponse?: UserAssignmentsResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<UserAssignmentsResponse> | UserAssignmentsResponse), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/users/:userId/assignments', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/users/:userId/assignments', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined

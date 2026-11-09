@@ -16,7 +16,7 @@ import { application } from '../data/cruises';
 import { applicationId, formA as formAFields, formB, formC } from '../data/forms';
 
 const formA = `/applications/${applicationId}/formA?mode=edit`;
-const savedForm = (form: string) => `PUT /v2/applications/${applicationId}/${form}`;
+const savedForm = (form: string) => `PUT /applications/${applicationId}/${form}`;
 
 test.use({ account: admin });
 test.beforeEach(({ network }) => network.use(...applicationForms()));
@@ -321,7 +321,7 @@ test('a new application can be created as an incomplete draft with a note', asyn
   await dialog.getByLabel('Notatka aktualnej wersji roboczej').fill('Czekam na przełożonego');
   await dialog.getByRole('button', { name: 'Zapisz wersję roboczą', exact: true }).click();
   await expect(page).toHaveURL('/');
-  expect(requests.bodies('POST /v2/applications')).toEqual([
+  expect(requests.bodies('POST /applications')).toEqual([
     expect.objectContaining({
       draft: true,
       form: expect.objectContaining({ supervisorEmail: '', note: 'Czekam na przełożonego' }),

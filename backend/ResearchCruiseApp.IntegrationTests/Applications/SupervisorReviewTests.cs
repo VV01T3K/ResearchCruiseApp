@@ -32,7 +32,7 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         using var client = app.CreateApiClient();
         var code = WebEncoders.Base64UrlEncode(target.SupervisorCode);
         using var review = await client.GetAsync(
-            $"/v2/applications/{target.Id}/supervisor-review?code={code}",
+            $"/applications/{target.Id}/supervisor-review?code={code}",
             ct
         );
         Assert.Equal(HttpStatusCode.OK, review.StatusCode);
@@ -40,7 +40,7 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         Assert.NotNull(view);
         Assert.Equal(target.FormA!.CruiseManagerId, view.Form.CruiseManagerId);
         using var response = await client.PutAsJsonAsync(
-            $"/v2/applications/{target.Id}/supervisor-review/decision",
+            $"/applications/{target.Id}/supervisor-review/decision",
             new SupervisorDecisionRequest(accept, code),
             ct
         );
@@ -74,7 +74,7 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         var (target, _) = await Seed(app);
         using var client = app.CreateApiClient();
         var code = WebEncoders.Base64UrlEncode(target.SupervisorCode);
-        var route = $"/v2/applications/{target.Id}/supervisor-review";
+        var route = $"/applications/{target.Id}/supervisor-review";
         using var first = await client.PutAsJsonAsync(
             route + "/decision",
             new SupervisorDecisionRequest(accept, code),
@@ -114,7 +114,7 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         await using var app = new TestApplication(fixture.ConnectionString);
         var (target, other) = await Seed(app);
         using var client = app.CreateApiClient();
-        var route = $"/v2/applications/{target.Id}/supervisor-review";
+        var route = $"/applications/{target.Id}/supervisor-review";
         using var missing = await client.GetAsync(route, ct);
         Assert.Equal(HttpStatusCode.BadRequest, missing.StatusCode);
         string[] codes = ["!invalid!", "", WebEncoders.Base64UrlEncode(other.SupervisorCode)];
@@ -160,7 +160,7 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         using var office = await TestApplications.Login(app, "office@example.invalid");
         using var manager = await TestApplications.Login(app, "review-owner@example.invalid");
         using var anonymous = app.CreateApiClient();
-        var route = $"/v2/applications/{target.Id}/supervisor-review/invitation";
+        var route = $"/applications/{target.Id}/supervisor-review/invitation";
 
         Assert.Equal(
             HttpStatusCode.NoContent,
@@ -192,7 +192,7 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
             .ToString();
         Assert.Equal(WebEncoders.Base64UrlEncode(target.SupervisorCode), code);
         using var decision = await anonymous.PutAsJsonAsync(
-            $"/v2/applications/{target.Id}/supervisor-review/decision",
+            $"/applications/{target.Id}/supervisor-review/decision",
             new SupervisorDecisionRequest(true, code),
             ct
         );
@@ -218,7 +218,7 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         using var office = await TestApplications.Login(app, "office@example.invalid");
         using var supervisor = app.CreateApiClient();
         using var officeDecision = await office.PutAsJsonAsync(
-            $"/v2/applications/{target.Id}/decision",
+            $"/applications/{target.Id}/decision",
             new ApplicationDecisionRequest(
                 officeAccepts,
                 await FormRequests.ApplicationRevision(office, target.Id)
@@ -228,7 +228,7 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NoContent, officeDecision.StatusCode);
 
         using var late = await supervisor.PutAsJsonAsync(
-            $"/v2/applications/{target.Id}/supervisor-review/decision",
+            $"/applications/{target.Id}/supervisor-review/decision",
             new SupervisorDecisionRequest(true, WebEncoders.Base64UrlEncode(target.SupervisorCode)),
             ct
         );
@@ -257,7 +257,7 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
         var (denied, accepted) = await gate.Race(
             fixture.ConnectionString,
             supervisor.PutAsJsonAsync(
-                $"/v2/applications/{target.Id}/supervisor-review/decision",
+                $"/applications/{target.Id}/supervisor-review/decision",
                 new SupervisorDecisionRequest(
                     false,
                     WebEncoders.Base64UrlEncode(target.SupervisorCode)
@@ -266,7 +266,7 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
             ),
             () =>
                 office.PutAsJsonAsync(
-                    $"/v2/applications/{target.Id}/decision",
+                    $"/applications/{target.Id}/decision",
                     new ApplicationDecisionRequest(true, revision),
                     ct
                 ),

@@ -30,7 +30,7 @@ it('coalesces concurrent bootstrap requests into one cookie-backed session reque
   await expect(Promise.all([first, second])).resolves.toEqual(['test-access-token', 'test-access-token']);
   expect(fetchMock).toHaveBeenCalledTimes(1);
   const [url, options] = fetchMock.mock.calls[0];
-  expect(url).toBe('https://api.test/v2/auth/session');
+  expect(url).toBe('https://api.test/auth/session');
   expect(options).toMatchObject({ method: 'GET', credentials: 'include' });
   expect(options?.body).toBeUndefined();
   expect(new Headers(options?.headers).has('Authorization')).toBe(false);
@@ -110,13 +110,13 @@ it('retries a protected request once with a rotated token and preserves its body
     requests.push({ token: new Headers(options?.headers).get('Authorization'), body: options?.body });
     return responses[requests.length - 1];
   });
-  await expect(client.customFetch('/v2/example', { method: 'PUT', body: '{"name":"Ada"}' })).resolves.toEqual({
+  await expect(client.customFetch('/example', { method: 'PUT', body: '{"name":"Ada"}' })).resolves.toEqual({
     saved: true,
   });
   expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
-    'https://api.test/v2/example',
-    'https://api.test/v2/auth/refresh',
-    'https://api.test/v2/example',
+    'https://api.test/example',
+    'https://api.test/auth/refresh',
+    'https://api.test/example',
   ]);
   expect(requests).toEqual([
     { token: 'Bearer test-access-token', body: '{"name":"Ada"}' },
@@ -134,7 +134,7 @@ it('does not loop when the retried request is also unauthorized', async () => {
     .mockResolvedValueOnce(new Response(null, { status: 401 }))
     .mockResolvedValueOnce(Response.json(session()))
     .mockResolvedValueOnce(new Response(null, { status: 401 }));
-  await expect(client.customFetch('/v2/example', {})).rejects.toMatchObject({ status: 401 });
+  await expect(client.customFetch('/example', {})).rejects.toMatchObject({ status: 401 });
   expect(fetchMock).toHaveBeenCalledTimes(3);
 });
 
@@ -147,12 +147,12 @@ it('preserves problem details and supports empty success responses', async () =>
   fetchMock
     .mockResolvedValueOnce(Response.json(problem, { status: 400 }))
     .mockResolvedValueOnce(new Response(null, { status: 204 }));
-  await expect(client.customFetch('/v2/example', {})).rejects.toMatchObject({
+  await expect(client.customFetch('/example', {})).rejects.toMatchObject({
     status: 400,
     message: 'Support code ABC123\nRejected',
     problem,
   });
-  await expect(client.customFetch('/v2/example', {})).resolves.toBeNull();
+  await expect(client.customFetch('/example', {})).resolves.toBeNull();
 });
 
 describe('another tab', () => {

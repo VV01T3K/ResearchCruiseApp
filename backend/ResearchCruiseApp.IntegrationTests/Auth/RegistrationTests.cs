@@ -25,7 +25,7 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         using var client = app.CreateApiClient();
 
         using var response = await client.PostAsJsonAsync(
-            "/v2/auth/register",
+            "/auth/register",
             new
             {
                 Email = "registration@example.invalid",
@@ -87,7 +87,7 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         try
         {
             using var response = await client.PostAsJsonAsync(
-                "/v2/auth/register",
+                "/auth/register",
                 new
                 {
                     Email = "rollback@example.invalid",
@@ -129,7 +129,7 @@ public sealed class RegistrationTests(SqlFixture fixture) : IAsyncLifetime
         }
 
         using var recovered = await client.PostAsJsonAsync(
-            "/v2/auth/register",
+            "/auth/register",
             new
             {
                 Email = "rollback@example.invalid",

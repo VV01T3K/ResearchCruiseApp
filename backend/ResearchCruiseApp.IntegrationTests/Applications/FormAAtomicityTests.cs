@@ -50,7 +50,7 @@ public sealed class FormAAtomicityTests(SqlFixture fixture) : IAsyncLifetime
         if (fromDraft)
         {
             using var draft = await client.PostAsJsonAsync(
-                "/v2/applications",
+                "/applications",
                 new FormAWriteRequest { Form = form, Draft = true },
                 ct
             );
@@ -60,7 +60,7 @@ public sealed class FormAAtomicityTests(SqlFixture fixture) : IAsyncLifetime
                 id = (await db.CruiseApplications.SingleAsync(ct)).Id;
                 originalFormId = (await db.FormsA.SingleAsync(ct)).Id;
             });
-            originalBody = await client.GetStringAsync($"/v2/applications/{id}/form-a", ct);
+            originalBody = await client.GetStringAsync($"/applications/{id}/form-a", ct);
         }
         var request = new FormAWriteRequest { Form = form, Draft = false };
         await app.InDatabase(db =>
@@ -72,8 +72,8 @@ public sealed class FormAAtomicityTests(SqlFixture fixture) : IAsyncLifetime
         try
         {
             using var failed = fromDraft
-                ? await client.PutFormAsync($"/v2/applications/{id}/form-a", request, ct)
-                : await client.PostAsJsonAsync("/v2/applications", request, ct);
+                ? await client.PutFormAsync($"/applications/{id}/form-a", request, ct)
+                : await client.PostAsJsonAsync("/applications", request, ct);
             Assert.Equal(HttpStatusCode.InternalServerError, failed.StatusCode);
             Assert.Equal("application/problem+json", failed.Content.Headers.ContentType?.MediaType);
             var body = await failed.Content.ReadAsStringAsync(ct);
@@ -102,7 +102,7 @@ public sealed class FormAAtomicityTests(SqlFixture fixture) : IAsyncLifetime
             if (fromDraft)
                 Assert.Equal(
                     originalBody,
-                    await client.GetStringAsync($"/v2/applications/{id}/form-a", ct)
+                    await client.GetStringAsync($"/applications/{id}/form-a", ct)
                 );
             Assert.Empty(app.Transport.Messages);
         }
@@ -116,8 +116,8 @@ public sealed class FormAAtomicityTests(SqlFixture fixture) : IAsyncLifetime
             );
         }
         using var recovered = fromDraft
-            ? await client.PutFormAsync($"/v2/applications/{id}/form-a", request, ct)
-            : await client.PostAsJsonAsync("/v2/applications", request, ct);
+            ? await client.PutFormAsync($"/applications/{id}/form-a", request, ct)
+            : await client.PostAsJsonAsync("/applications", request, ct);
         Assert.Equal(fromDraft ? HttpStatusCode.OK : HttpStatusCode.Created, recovered.StatusCode);
         await app.InDatabase(async db =>
         {

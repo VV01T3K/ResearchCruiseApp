@@ -3,7 +3,7 @@ import { defineConfig } from 'orval';
 export default defineConfig({
   backend: {
     input: {
-      target: '../backend/ResearchCruiseApp/openapi/ResearchCruiseApp_v2.json',
+      target: '../backend/ResearchCruiseApp/openapi/ResearchCruiseApp.json',
       unsafeDisableValidation: false,
     },
     output: {
@@ -22,7 +22,7 @@ export default defineConfig({
       mock: {
         path: 'src/api/generated/mocks',
         indexMockFiles: true,
-        generators: [{ type: 'msw', delay: false }],
+        generators: [{ type: 'msw', delay: false, baseUrl: '*/api' }],
       },
       docs: false,
       headers: false,

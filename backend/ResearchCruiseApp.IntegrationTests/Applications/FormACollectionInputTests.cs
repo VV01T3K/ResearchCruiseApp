@@ -64,7 +64,7 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         using var created = await Write(client, prepared.Route, fields, true, true);
         Assert.Equal(HttpStatusCode.Created, created.StatusCode);
         var id = await ApplicationId(app);
-        var route = $"/v2/applications/{id}/form-a";
+        var route = $"/applications/{id}/form-a";
         using var updated = await Write(client, route, fields, true, false);
         Assert.Equal(HttpStatusCode.OK, updated.StatusCode);
         using var read = await client.GetAsync(route, ct);
@@ -127,10 +127,7 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         using var response = await Write(client, prepared.Route, fields, false, create);
         Assert.Equal(create ? HttpStatusCode.Created : HttpStatusCode.OK, response.StatusCode);
         var id = await ApplicationId(app);
-        var stored = await client.GetFromJsonAsync<FormAFields>(
-            $"/v2/applications/{id}/form-a",
-            ct
-        );
+        var stored = await client.GetFromJsonAsync<FormAFields>($"/applications/{id}/form-a", ct);
         Assert.NotNull(stored);
         Assert.Null(stored.AcceptablePeriod);
         Assert.Null(stored.OptimalPeriod);
@@ -272,14 +269,14 @@ public sealed class FormACollectionInputTests(SqlFixture fixture) : IAsyncLifeti
         {
             if (target == 1)
             {
-                using var saved = await Write(client, "/v2/applications", fields, true, true);
+                using var saved = await Write(client, "/applications", fields, true, true);
                 Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
                 id = await ApplicationId(app);
             }
             var route =
                 target == 0
-                    ? "/v2/applications"
-                    : $"/v2/applications/{id}/form-{(target == 2 ? "c" : "a")}";
+                    ? "/applications"
+                    : $"/applications/{id}/form-{(target == 2 ? "c" : "a")}";
             if (target == 2)
             {
                 using var saved = await Write(client, route, fields, true, false);

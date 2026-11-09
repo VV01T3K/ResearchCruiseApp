@@ -222,7 +222,7 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
         using var deputyClient = await TestApplications.Login(app, deputy.Email!);
         using var unrelatedClient = await TestApplications.Login(app, unrelated.Email!);
-        var route = $"/v2/applications/{application.Id}/form-c";
+        var route = $"/applications/{application.Id}/form-c";
         using var draft = await manager.PutFormAsync(
             route,
             new FormCWriteRequest { Form = fields, Draft = true },
@@ -241,7 +241,7 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
         Assert.Empty(
             (
                 await manager.GetFromJsonAsync<CruiseEffectsResponse>(
-                    "/v2/users/me/cruise-effects",
+                    "/users/me/cruise-effects",
                     ct
                 )
             )!.Items
@@ -270,7 +270,7 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
         Assert.Empty(
             (
                 await unrelatedClient.GetFromJsonAsync<CruiseEffectsResponse>(
-                    "/v2/users/me/cruise-effects",
+                    "/users/me/cruise-effects",
                     ct
                 )
             )!.Items
@@ -288,7 +288,7 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
 
         var nextForm = FormAWorkflowTests.CompleteForm(managerId, deputyId, unit.Id);
         using var nextDraft = await manager.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new FormAWriteRequest { Form = nextForm, Draft = true },
             ct
         );
@@ -305,13 +305,13 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
             "0",
             (
                 await manager.GetFromJsonAsync<CruiseApplicationEvaluation>(
-                    $"/v2/applications/{nextId}/evaluation",
+                    $"/applications/{nextId}/evaluation",
                     ct
                 )
             )!.EffectsPoints
         );
         using var final = await manager.PutFormAsync(
-            $"/v2/applications/{nextId}/form-a",
+            $"/applications/{nextId}/form-a",
             new FormAWriteRequest { Form = nextForm, Draft = false },
             ct
         );
@@ -320,7 +320,7 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
             "738",
             (
                 await manager.GetFromJsonAsync<CruiseApplicationEvaluation>(
-                    $"/v2/applications/{nextId}/evaluation",
+                    $"/applications/{nextId}/evaluation",
                     ct
                 )
             )!.EffectsPoints
@@ -407,7 +407,7 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
 
         using var submitted = await manager.PutFormAsync(
-            $"/v2/applications/{application.Id}/form-c",
+            $"/applications/{application.Id}/form-c",
             new FormCWriteRequest { Form = fields, Draft = false },
             ct
         );
@@ -459,7 +459,7 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
 
         var response = await manager.GetFromJsonAsync<CruiseEffectsResponse>(
-            "/v2/users/me/cruise-effects",
+            "/users/me/cruise-effects",
             ct
         );
 
@@ -486,7 +486,7 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
     {
         var ct = TestContext.Current.CancellationToken;
         var effects = (
-            await client.GetFromJsonAsync<CruiseEffectsResponse>("/v2/users/me/cruise-effects", ct)
+            await client.GetFromJsonAsync<CruiseEffectsResponse>("/users/me/cruise-effects", ct)
         )!.Items;
         Assert.Equal(expected.Count, effects.Count);
         foreach (var score in expected)

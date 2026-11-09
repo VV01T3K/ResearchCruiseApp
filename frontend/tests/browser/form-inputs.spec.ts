@@ -121,7 +121,7 @@ test('a pasted decimal comma is saved as a decimal point', async ({
 
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
   await expect(page).toHaveURL('/');
-  expect(requests.bodies(`PUT /v2/applications/${applicationId}/form-a`)).toEqual([
+  expect(requests.bodies(`PUT /applications/${applicationId}/form-a`)).toEqual([
     expect.objectContaining({
       form: expect.objectContaining({ researchTasks: [expect.objectContaining({ financingAmount: '12.34' })] }),
     }),

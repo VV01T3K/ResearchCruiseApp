@@ -43,7 +43,7 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
                 ? app.CreateApiClient()
                 : await TestApplications.Login(app, "actor@example.invalid");
         using var response = await client.PutAsync(
-            $"/v2/users/{target.Id}/roles/{requestedRole}",
+            $"/users/{target.Id}/roles/{requestedRole}",
             null,
             ct
         );
@@ -63,7 +63,7 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
         await TestUsers.Create(app, "role-holder@example.invalid", RoleName.Guest);
         await TestUsers.Create(app, "actor@example.invalid", actorRole);
         using var client = await TestApplications.Login(app, "actor@example.invalid");
-        var route = $"/v2/users/{target.Id}/roles/{RoleName.Guest}";
+        var route = $"/users/{target.Id}/roles/{RoleName.Guest}";
         using var granted = await client.PutAsync(route, null, ct);
         Assert.Equal(HttpStatusCode.NoContent, granted.StatusCode);
         await AssertRoles(app, target.Id, [RoleName.CruiseManager, RoleName.Guest]);
@@ -120,7 +120,7 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
             : await TestUsers.Create(app, "target@example.invalid", originalRoles);
         using var client = await TestApplications.Login(app, "actor@example.invalid");
         using var response = await client.PutAsJsonAsync(
-            $"/v2/users/{targetUser.Id}/role",
+            $"/users/{targetUser.Id}/role",
             new { roleName = requestedRole },
             ct
         );
@@ -142,13 +142,13 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
         var actor = await TestUsers.Create(app, "actor@example.invalid", role);
         await TestUsers.Create(app, "other-admin@example.invalid", RoleName.Administrator);
         using var client = await TestApplications.Login(app, actor.Email!);
-        using var removed = await client.DeleteAsync($"/v2/users/{actor.Id}/roles/{role}", ct);
+        using var removed = await client.DeleteAsync($"/users/{actor.Id}/roles/{role}", ct);
         using var replaced = await client.PutAsJsonAsync(
-            $"/v2/users/{actor.Id}/role",
+            $"/users/{actor.Id}/role",
             new { roleName = RoleName.Guest },
             ct
         );
-        using var deleted = await client.DeleteAsync($"/v2/users/{actor.Id}", ct);
+        using var deleted = await client.DeleteAsync($"/users/{actor.Id}", ct);
         Assert.Equal(HttpStatusCode.Forbidden, removed.StatusCode);
         Assert.Equal(HttpStatusCode.Forbidden, replaced.StatusCode);
         Assert.Equal(HttpStatusCode.Forbidden, deleted.StatusCode);
@@ -169,12 +169,12 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
         using var staleToken = await TestApplications.Login(app, demoted.Email!);
         using var lastClient = await TestApplications.Login(app, last.Email!);
         using var demotion = await lastClient.DeleteAsync(
-            $"/v2/users/{demoted.Id}/roles/{RoleName.Administrator}",
+            $"/users/{demoted.Id}/roles/{RoleName.Administrator}",
             ct
         );
         Assert.Equal(HttpStatusCode.NoContent, demotion.StatusCode);
         using var refused = await staleToken.DeleteAsync(
-            $"/v2/users/{last.Id}/roles/{RoleName.Administrator}",
+            $"/users/{last.Id}/roles/{RoleName.Administrator}",
             ct
         );
         Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
@@ -228,7 +228,7 @@ public sealed class RoleManagementTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var client = await TestApplications.Login(app, "actor@example.invalid");
         var assignments = await client.GetFromJsonAsync<UserAssignmentsResponse>(
-            $"/v2/users/{target}/assignments",
+            $"/users/{target}/assignments",
             new JsonSerializerOptions(JsonSerializerDefaults.Web)
             {
                 Converters = { new JsonStringEnumConverter() },

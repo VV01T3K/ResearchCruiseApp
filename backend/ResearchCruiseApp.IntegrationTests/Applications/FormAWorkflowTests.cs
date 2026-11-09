@@ -60,14 +60,14 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         {
             var draft = FormAccessTests.Draft(Guid.Parse(manager.Id), Guid.Parse(deputy.Id));
             using var created = await client.PostAsJsonAsync(
-                "/v2/applications",
+                "/applications",
                 new FormAWriteRequest { Form = draft, Draft = true },
                 ct
             );
             Assert.Equal(HttpStatusCode.Created, created.StatusCode);
             await app.InDatabase(async db => id = (await db.CruiseApplications.SingleAsync(ct)).Id);
             using var invalid = await client.PutFormAsync(
-                $"/v2/applications/{id}/form-a",
+                $"/applications/{id}/form-a",
                 new FormAWriteRequest { Form = draft, Draft = false },
                 ct
             );
@@ -84,8 +84,8 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         var form = CompleteForm(Guid.Parse(manager.Id), Guid.Parse(deputy.Id), unit.Id);
         var request = new FormAWriteRequest { Form = form, Draft = false };
         using var submitted = fromDraft
-            ? await client.PutFormAsync($"/v2/applications/{id}/form-a", request, ct)
-            : await client.PostAsJsonAsync("/v2/applications", request, ct);
+            ? await client.PutFormAsync($"/applications/{id}/form-a", request, ct)
+            : await client.PostAsJsonAsync("/applications", request, ct);
         Assert.True(
             submitted.StatusCode == (fromDraft ? HttpStatusCode.OK : HttpStatusCode.Created),
             await submitted.Content.ReadAsStringAsync(ct)
@@ -99,12 +99,12 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Single(await db.FormAUgUnits.ToListAsync(ct));
             Assert.Single(await db.EmailOutboxMessages.ToListAsync(ct));
         });
-        var read = await client.GetFromJsonAsync<FormAFields>($"/v2/applications/{id}/form-a", ct);
+        var read = await client.GetFromJsonAsync<FormAFields>($"/applications/{id}/form-a", ct);
         Assert.NotNull(read);
         Assert.Equal(unit.Id, Assert.Single(read.UgTeams).UgUnitId);
         Assert.Equal("2", Assert.Single(read.UgTeams).NoOfEmployees);
         Assert.Equal("Synthetic thesis", Assert.Single(read.ResearchTasks).Title);
-        using var locked = await client.PutFormAsync($"/v2/applications/{id}/form-a", request, ct);
+        using var locked = await client.PutFormAsync($"/applications/{id}/form-a", request, ct);
         Assert.Equal(HttpStatusCode.Forbidden, locked.StatusCode);
         Assert.Empty(app.Transport.Messages);
         await app.Dispatch(ct);
@@ -118,19 +118,19 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         Assert.NotEmpty(code);
         using var supervisor = app.CreateApiClient();
         using var review = await supervisor.GetAsync(
-            $"/v2/applications/{id}/supervisor-review?code={Uri.EscapeDataString(code)}",
+            $"/applications/{id}/supervisor-review?code={Uri.EscapeDataString(code)}",
             ct
         );
         Assert.Equal(HttpStatusCode.OK, review.StatusCode);
         using var approved = await supervisor.PutAsJsonAsync(
-            $"/v2/applications/{id}/supervisor-review/decision",
+            $"/applications/{id}/supervisor-review/decision",
             new SupervisorDecisionRequest(true, code),
             ct
         );
         Assert.Equal(HttpStatusCode.NoContent, approved.StatusCode);
         using var officeClient = await TestApplications.Login(app, office.Email!);
         using var decision = await officeClient.PutAsJsonAsync(
-            $"/v2/applications/{id}/decision",
+            $"/applications/{id}/decision",
             new ApplicationDecisionRequest(
                 officeAccepts,
                 await FormRequests.ApplicationRevision(officeClient, id)
@@ -181,7 +181,7 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
             Form = FormAccessTests.Draft(Guid.Parse(submitter.Id), Guid.Parse(assignee.Id)),
             Draft = true,
         };
-        using var created = await client.PostAsJsonAsync("/v2/applications", draft, ct);
+        using var created = await client.PostAsJsonAsync("/applications", draft, ct);
         Assert.Equal(HttpStatusCode.Created, created.StatusCode);
         Guid id = default;
         await app.InDatabase(async db => id = (await db.CruiseApplications.SingleAsync(ct)).Id);
@@ -189,28 +189,28 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         using var changed =
             change == "guest"
                 ? await office.PutAsJsonAsync(
-                    $"/v2/users/{assignee.Id}/role",
+                    $"/users/{assignee.Id}/role",
                     new { roleName = RoleName.Guest },
                     ct
                 )
-                : await office.DeleteAsync($"/v2/users/{assignee.Id}/acceptance", ct);
+                : await office.DeleteAsync($"/users/{assignee.Id}/acceptance", ct);
         Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
 
         var assigneeId = Guid.Parse(assignee.Id);
         var options = await client.GetFromJsonAsync<FormAOptions>(
-            "/v2/applications/form-a/context",
+            "/applications/form-a/context",
             ct
         );
         Assert.DoesNotContain(options!.CruiseManagers, user => user.Id == assigneeId);
         Assert.DoesNotContain(options.DeputyManagers, user => user.Id == assigneeId);
         options = await client.GetFromJsonAsync<FormAOptions>(
-            $"/v2/applications/form-a/context?applicationId={id}",
+            $"/applications/form-a/context?applicationId={id}",
             ct
         );
         Assert.Contains(options!.DeputyManagers, user => user.Id == assigneeId);
-        using var kept = await client.PutFormAsync($"/v2/applications/{id}/form-a", draft, ct);
+        using var kept = await client.PutFormAsync($"/applications/{id}/form-a", draft, ct);
         Assert.Equal(HttpStatusCode.OK, kept.StatusCode);
-        using var rejected = await client.PostAsJsonAsync("/v2/applications", draft, ct);
+        using var rejected = await client.PostAsJsonAsync("/applications", draft, ct);
         Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
         await app.InDatabase(async db =>
             Assert.Single(await db.CruiseApplications.ToListAsync(ct))
@@ -337,13 +337,7 @@ public sealed class FormAWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         form["PrecisePeriodEndTime"] = endTime;
         form["CruiseHours"] = cruiseHours.ToString(CultureInfo.InvariantCulture);
 
-        using var response = await FormRequests.Write(
-            client,
-            "/v2/applications",
-            form,
-            false,
-            true
-        );
+        using var response = await FormRequests.Write(client, "/applications", form, false, true);
 
         Assert.Equal(expected, response.StatusCode);
     }

@@ -42,7 +42,7 @@ public sealed class WorkflowStatusTests(SqlFixture fixture) : IAsyncLifetime
                 (await db.CruiseApplications.SingleAsync(ct)).Status = status;
                 await db.SaveChangesAsync(ct);
             });
-            using var response = await client.GetAsync($"/v2/applications/{application.Id}", ct);
+            using var response = await client.GetAsync($"/applications/{application.Id}", ct);
             await AssertResponse(response, application.Id, code);
             await app.InDatabase(async db =>
             {
@@ -102,7 +102,7 @@ public sealed class WorkflowStatusTests(SqlFixture fixture) : IAsyncLifetime
                 (await db.Cruises.SingleAsync(ct)).Status = status;
                 await db.SaveChangesAsync(ct);
             });
-            using var response = await client.GetAsync($"/v2/cruises/{cruise.Id}", ct);
+            using var response = await client.GetAsync($"/cruises/{cruise.Id}", ct);
             await AssertResponse(response, cruise.Id, code);
             await app.InDatabase(async db =>
             {

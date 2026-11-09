@@ -36,7 +36,7 @@ export const getExportCruisesResponseMock = (overrideResponse: Partial<Extract<E
 
 
 export const getGetCruisesMockHandler = (overrideResponse?: CruiseResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CruiseResponse[]> | CruiseResponse[]), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/cruises', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/cruises', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -48,7 +48,7 @@ export const getGetCruisesMockHandler = (overrideResponse?: CruiseResponse[] | (
 }
 
 export const getCreateCruiseMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/cruises', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/cruises', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -58,7 +58,7 @@ export const getCreateCruiseMockHandler = (overrideResponse?: void | ((info: Par
 }
 
 export const getGetCruiseMockHandler = (overrideResponse?: CruiseResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CruiseResponse> | CruiseResponse), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/cruises/:cruiseId', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/cruises/:cruiseId', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -70,7 +70,7 @@ export const getGetCruiseMockHandler = (overrideResponse?: CruiseResponse | ((in
 }
 
 export const getUpdateCruiseMockHandler = (overrideResponse?: RevisionResponse | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<RevisionResponse> | RevisionResponse), options?: RequestHandlerOptions) => {
-  return http.patch('*/v2/cruises/:cruiseId', async (info: Parameters<Parameters<typeof http.patch>[1]>[0]) => {
+  return http.patch('*/api/cruises/:cruiseId', async (info: Parameters<Parameters<typeof http.patch>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -82,7 +82,7 @@ export const getUpdateCruiseMockHandler = (overrideResponse?: RevisionResponse |
 }
 
 export const getDeleteCruiseMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.delete('*/v2/cruises/:cruiseId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  return http.delete('*/api/cruises/:cruiseId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -92,7 +92,7 @@ export const getDeleteCruiseMockHandler = (overrideResponse?: void | ((info: Par
 }
 
 export const getConfirmCruiseMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.put('*/v2/cruises/:cruiseId/confirmation', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  return http.put('*/api/cruises/:cruiseId/confirmation', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -102,7 +102,7 @@ export const getConfirmCruiseMockHandler = (overrideResponse?: void | ((info: Pa
 }
 
 export const getRemoveCruiseConfirmationMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.delete('*/v2/cruises/:cruiseId/confirmation', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  return http.delete('*/api/cruises/:cruiseId/confirmation', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -112,7 +112,7 @@ export const getRemoveCruiseConfirmationMockHandler = (overrideResponse?: void |
 }
 
 export const getCompleteCruiseMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.put('*/v2/cruises/:cruiseId/completion', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  return http.put('*/api/cruises/:cruiseId/completion', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -122,7 +122,7 @@ export const getCompleteCruiseMockHandler = (overrideResponse?: void | ((info: P
 }
 
 export const getAutoPlanCruisesMockHandler = (overrideResponse?: AutoPlanResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<AutoPlanResponse> | AutoPlanResponse), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/cruises/auto-plan', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/cruises/auto-plan', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -134,7 +134,7 @@ export const getAutoPlanCruisesMockHandler = (overrideResponse?: AutoPlanRespons
 }
 
 export const getGetCruiseBlockadesMockHandler = (overrideResponse?: BlockadeResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<BlockadeResponse[]> | BlockadeResponse[]), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/cruises/blockades', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/cruises/blockades', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -146,7 +146,7 @@ export const getGetCruiseBlockadesMockHandler = (overrideResponse?: BlockadeResp
 }
 
 export const getExportCruisesMockHandler = (overrideResponse?: ExportResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ExportResponse> | ExportResponse), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/cruises/export', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/cruises/export', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined

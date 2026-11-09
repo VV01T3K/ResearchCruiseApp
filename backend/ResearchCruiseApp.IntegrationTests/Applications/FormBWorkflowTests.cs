@@ -32,7 +32,7 @@ public sealed class FormBWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
         using var admin = await TestApplications.Login(app, office.Email!);
-        var route = $"/v2/applications/{application.Id}/form-b";
+        var route = $"/applications/{application.Id}/form-b";
         using var unsentRefill = await admin.PutAsync(route + "/refill", null, ct);
         Assert.Equal(HttpStatusCode.Forbidden, unsentRefill.StatusCode);
         Assert.Contains("już dostępny do edycji", await unsentRefill.Content.ReadAsStringAsync(ct));
@@ -99,7 +99,7 @@ public sealed class FormBWorkflowTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var first = await TestApplications.Login(app, application.OwnerEmail);
         using var second = await TestApplications.Login(app, application.OwnerEmail);
-        var route = $"/v2/applications/{application.Id}/form-b";
+        var route = $"/applications/{application.Id}/form-b";
         var read = await FormRequests.CurrentRevision(second, route);
 
         using var saved = await first.PutFormAsync(

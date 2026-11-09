@@ -30,7 +30,7 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
         await using var app = new TestApplication(fixture.ConnectionString);
         var application = await TestApplications.Create(app, EditableStatus(form));
         using var client = await TestApplications.Login(app, application.OwnerEmail);
-        var route = $"/v2/applications/{application.Id}/form-{form}";
+        var route = $"/applications/{application.Id}/form-{form}";
         string[] inputs = ["Put", "Collect", "0", "1", " 1 "];
         string[] expected = ["Put", "Collect", "Put", "Collect", "Collect"];
         using var response = await Write(client, route, Fields(form, inputs), draft);
@@ -103,7 +103,7 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
         await using var app = new TestApplication(fixture.ConnectionString);
         var application = await TestApplications.Create(app, EditableStatus(form));
         using var client = await TestApplications.Login(app, application.OwnerEmail);
-        var route = $"/v2/applications/{application.Id}/form-{form}";
+        var route = $"/applications/{application.Id}/form-{form}";
         using var response = await Write(client, route, Fields(form, [action]), draft: true);
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }

@@ -74,18 +74,18 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         {
             using var oldRefresh = await RefreshSessionTests.SendCookie(
                 client,
-                "/v2/auth/refresh",
+                "/auth/refresh",
                 cookie!
             );
             Assert.Equal(HttpStatusCode.Unauthorized, oldRefresh.StatusCode);
             using var oldLogin = await client.PostAsJsonAsync(
-                "/v2/auth/login",
+                "/auth/login",
                 new { Email = user.Email, Password = TestUsers.Password },
                 ct
             );
             Assert.Equal(HttpStatusCode.Unauthorized, oldLogin.StatusCode);
             using var newLogin = await client.PostAsJsonAsync(
-                "/v2/auth/login",
+                "/auth/login",
                 new { Email = user.Email, Password = ReplacementPassword },
                 ct
             );
@@ -94,7 +94,7 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         else
         {
             using var awaitingAcceptance = await client.PostAsJsonAsync(
-                "/v2/auth/login",
+                "/auth/login",
                 new { Email = user.Email, Password = TestUsers.Password },
                 ct
             );
@@ -177,7 +177,7 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         using var first = await UseToken(client, true, token);
         Assert.Equal(HttpStatusCode.NoContent, first.StatusCode);
         using var office = await TestApplications.Login(app, admin.Email!);
-        using var accepted = await office.PutAsync($"/v2/users/{user.Id}/acceptance", null, ct);
+        using var accepted = await office.PutAsync($"/users/{user.Id}/acceptance", null, ct);
         Assert.Equal(HttpStatusCode.NoContent, accepted.StatusCode);
         await app.Dispatch(ct);
         Assert.Equal(2, app.Transport.Messages.Count);
@@ -194,7 +194,7 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         }
         using var refreshed = await RefreshSessionTests.SendCookie(
             client,
-            "/v2/auth/refresh",
+            "/auth/refresh",
             session.Cookie
         );
         Assert.Equal(HttpStatusCode.OK, refreshed.StatusCode);
@@ -221,7 +221,7 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, resetReplay.StatusCode);
         await AssertUnchanged(app, original);
         using var resent = await client.PostAsJsonAsync(
-            "/v2/auth/resend-confirmation-email",
+            "/auth/resend-confirmation-email",
             new { Email = user.Email },
             ct
         );
@@ -262,7 +262,7 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
                 );
         }
         using var created = await client.PostAsJsonAsync(
-            "/v2/auth/register",
+            "/auth/register",
             new
             {
                 Email = email,
@@ -291,7 +291,7 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         if (!confirmation)
         {
             using var requested = await client.PostAsJsonAsync(
-                "/v2/auth/password-reset-request",
+                "/auth/password-reset-request",
                 new { Email = email },
                 ct
             );
@@ -321,11 +321,11 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
     ) =>
         confirmation
             ? client.GetAsync(
-                $"/v2/auth/confirm-email?userId={Uri.EscapeDataString(token.Identity)}&code={Uri.EscapeDataString(token.Code)}",
+                $"/auth/confirm-email?userId={Uri.EscapeDataString(token.Identity)}&code={Uri.EscapeDataString(token.Code)}",
                 TestContext.Current.CancellationToken
             )
             : client.PostAsJsonAsync(
-                "/v2/auth/password-reset",
+                "/auth/password-reset",
                 new
                 {
                     EmailBase64 = token.Identity,
