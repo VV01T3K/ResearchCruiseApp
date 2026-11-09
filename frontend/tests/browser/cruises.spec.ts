@@ -83,65 +83,65 @@ async function fillNewCruise(page: Page) {
   await page.getByRole('option', { name: `${deputy.firstName} ${deputy.lastName}` }).click();
 }
 
-test('the time in the cruise date picker works by keyboard and Escape reaches the date picker', async ({
+test('the cruise form time fields sit beside the dates, work by keyboard and save in Warsaw time', async ({
   page,
   network,
+  requests,
 }) => {
   await page.clock.setFixedTime(new Date('2026-05-16T12:00:00Z'));
   network.use(
     getGetApplicationsForCruisePlanningMockHandler([]),
     getGetAvailableCruiseManagersMockHandler([manager, deputy]),
-    getGetCruisesMockHandler([])
+    getGetCruisesMockHandler([]),
+    getCreateCruiseMockHandler()
   );
   await page.goto('/cruises/new');
-  await page.getByText('Wybierz datę rozpoczęcia rejsu').click();
-  const picker = page.getByRole('dialog', { name: 'Wybierz datę' });
-  await picker.getByText('17', { exact: true }).click();
-  const time = picker.getByRole('group', { name: 'Godzina' });
-  await time.getByRole('spinbutton', { name: 'godzina' }).click();
+  const startTime = page.getByRole('group', { name: 'Godzina rozpoczęcia rejsu' });
+  const startClock = startTime.getByRole('button', { name: 'Wybierz godzinę z listy' });
+  await expect(startTime.getByRole('spinbutton')).toHaveCount(0);
+  await expect(startClock).toBeDisabled();
+  await fillNewCruise(page);
+
+  const startHour = startTime.getByRole('spinbutton', { name: 'godzina' });
+  const startMinutes = startTime.getByRole('spinbutton', { name: 'minuty' });
+  await startHour.click();
   await page.keyboard.type('8');
   await page.keyboard.press('Enter');
-  await expect(page.getByRole('button', { name: /Data rozpoczęcia rejsu: 17\.05\.2026, 08:00/ })).toBeVisible();
-  await page.keyboard.press('Tab');
-  await page.keyboard.press('Enter');
+  await expect(startHour).toHaveAttribute('aria-valuenow', '8');
+
+  await startClock.press('Enter');
   const list = page.getByRole('dialog', { name: 'Wybierz godzinę' });
   await expect(list.getByRole('button', { name: '08', exact: true })).toBeFocused();
   for (let i = 0; i < 7; i++) await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter');
-  await expect(list).toBeVisible();
+  await expect(list).toBeHidden();
+  await expect(startHour).toHaveAttribute('aria-valuenow', '15');
+  await startClock.press('Enter');
+  await expect(list.getByRole('button', { name: '15', exact: true })).toBeFocused();
   await page.keyboard.press('Tab');
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter');
-  const startDate = (shown: string) =>
-    page.getByRole('button', { name: `Data rozpoczęcia rejsu: 17.05.2026, ${shown}` });
-  await expect(startDate('15:30')).toBeVisible();
-  await expect(list).toBeHidden();
-  await expect(picker).toBeVisible();
-  const clock = time.getByRole('button', { name: 'Wybierz godzinę z listy' });
-  await expect(clock).toBeFocused();
+  await expect(startMinutes).toHaveAttribute('aria-valuenow', '30');
 
-  const minutes = time.getByRole('spinbutton', { name: 'minuty' });
-  await minutes.focus();
-  await page.keyboard.type('15');
+  await startMinutes.focus();
+  await page.keyboard.type('14');
   await page.keyboard.press('Enter');
-  await expect(minutes).toHaveAttribute('aria-invalid', 'true');
-  await expect(startDate('15:30')).toBeVisible();
+  await expect(startMinutes).toHaveAttribute('aria-valuenow', '0');
 
-  await clock.click();
+  const endTime = page.getByRole('group', { name: 'Godzina zakończenia rejsu' });
+  const endClock = endTime.getByRole('button', { name: 'Wybierz godzinę z listy' });
+  await endClock.click();
   await list.getByRole('button', { name: '12:00' }).click();
-  await expect(list).toBeHidden();
-  await expect(startDate('12:00')).toBeVisible();
-  await clock.press('Enter');
   await expect(list).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(list).toBeHidden();
-  await expect(picker).toBeVisible();
-  await expect(clock).toBeFocused();
-  await time.getByRole('spinbutton', { name: 'godzina' }).focus();
-  await page.keyboard.type('9');
-  await page.keyboard.press('Escape');
-  await expect(picker).toBeHidden();
-  await expect(startDate('12:00')).toBeVisible();
+  await expect(endClock).toBeFocused();
+  await expect(endTime.getByRole('spinbutton', { name: 'godzina' })).toHaveAttribute('aria-valuenow', '12');
+
+  await page.getByRole('button', { name: 'Zapisz' }).click();
+  await expect
+    .poll(() => requests.bodies('POST /v2/cruises'))
+    .toEqual([expect.objectContaining({ startDate: '2026-05-17T13:00:00.000Z', endDate: '2026-05-18T10:00:00.000Z' })]);
 });
 
 test('a new cruise is saved once with Warsaw-midnight dates and the chosen managers, then leaves without asking', async ({

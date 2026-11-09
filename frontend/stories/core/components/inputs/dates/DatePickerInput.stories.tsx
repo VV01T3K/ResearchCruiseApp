@@ -148,3 +148,27 @@ export const WithTime: Story = {
     await waitFor(() => expect(calendar).not.toBeInTheDocument());
   },
 };
+
+export const WithSeparateTime: Story = {
+  args: {
+    type: 'datetime',
+    label: 'Data rozpoczęcia rejsu',
+    timeLabel: 'Godzina rozpoczęcia rejsu',
+  },
+  play: async ({ args, canvas, canvasElement, userEvent }) => {
+    const time = canvas.getByRole('group', { name: 'Godzina rozpoczęcia rejsu' });
+    await expect(within(time).queryByRole('spinbutton')).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole('button', { name: /^Data rozpoczęcia rejsu:/ }));
+    const calendar = await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Wybierz datę' });
+    await expect(within(calendar).queryByRole('group', { name: /Godzina/ })).not.toBeInTheDocument();
+    await userEvent.click(within(calendar).getByRole('button', { name: '15' }));
+    await expect(calendar).toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(calendar).not.toBeInTheDocument());
+    await userEvent.click(within(time).getByRole('spinbutton', { name: 'godzina' }));
+    await userEvent.keyboard('0830{Enter}');
+    await expect(args.onChange).toHaveBeenCalled();
+    await expect(within(time).getByRole('spinbutton', { name: 'godzina' })).toHaveAttribute('aria-valuenow', '8');
+    await expect(canvas.getByRole('button', { name: /^Data rozpoczęcia rejsu: 15\.\d\d\.\d{4}$/ })).toBeInTheDocument();
+  },
+};
