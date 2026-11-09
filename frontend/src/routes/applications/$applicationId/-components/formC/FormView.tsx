@@ -3,11 +3,13 @@ import { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 
 import { ActionsSection } from '@/features/applications/components/form-bc/ActionsSection';
+import { AdditionalPermissionsSection } from '@/features/applications/components/form-bc/AdditionalPermissionsSection';
 import { CruiseGoalSection } from '@/features/applications/components/form-bc/CruiseGoalSection';
 import { CruiseInfoSection } from '@/features/applications/components/form-bc/CruiseInfoSection';
 import { PublicationsSection } from '@/features/applications/components/form-bc/PublicationsSection';
+import { ResearchEquipmentsSection } from '@/features/applications/components/form-bc/ResearchEquipmentsSection';
+import { ShipEquipmentsSection } from '@/features/applications/components/form-bc/ShipEquipmentsSection';
 import { AdditionalDescriptionSection } from './AdditionalDescriptionSection';
-import { AdditionalPermissionsSection } from './AdditionalPermissionsSection';
 import { CollectedSamplesSection } from './CollectedSamplesSection';
 import { ContractsSection } from './ContractsSection';
 import { CruiseDayDetailsSection } from './CruiseDayDetailsSection';
@@ -16,9 +18,7 @@ import { CruiseManagerInfoSection } from './CruiseManagerInfoSection';
 import { MembersSection } from './MembersSection';
 import { PrintTemplate } from './PrintTemplate';
 import { ResearchAreaSection } from './ResearchAreaSection';
-import { ResearchEquipmentsSection } from './ResearchEquipmentsSection';
 import { ResearchTasksEffectsSection } from './ResearchTasksEffectsSection';
-import { ShipEquipmentsSection } from './ShipEquipmentsSection';
 import { ShipUsageSection } from './ShipUsageSection';
 import { SPUBReportDataSection } from './SPUBReportDataSection';
 import { SPUBTasksSection } from './SPUBTasksSection';
@@ -49,7 +49,12 @@ export function FormView({ context }: Props) {
         <CruiseInfoSection context={context} />
         <CruiseManagerInfoSection context={context} />
         <ShipUsageSection context={context} />
-        <AdditionalPermissionsSection context={context} />
+        <AdditionalPermissionsSection
+          form={form}
+          fields={{ permissions: 'permissions' }}
+          title="4. Dodatkowe pozwolenia do przeprowadzonych w trakcie rejsu badań"
+          context={context}
+        />
         <ResearchAreaSection context={context} />
         <CruiseGoalSection context={context} />
         <ResearchTasksEffectsSection context={context} />
@@ -59,8 +64,13 @@ export function FormView({ context }: Props) {
         <SPUBTasksSection context={context} />
         <CruiseDetailsSection context={context} />
         <CruiseDayDetailsSection context={context} />
-        <ResearchEquipmentsSection context={context} />
-        <ShipEquipmentsSection context={context} />
+        <ResearchEquipmentsSection
+          form={form}
+          fields={{ researchEquipments: 'researchEquipments' }}
+          title="14. Lista sprzętu i aparatury badawczej użytej podczas rejsu"
+          context={context}
+        />
+        <ShipEquipmentsSection form={form} fields={{ shipEquipmentsIds: 'shipEquipmentsIds' }} context={context} />
         <CollectedSamplesSection context={context} />
         <SPUBReportDataSection context={context} />
         <AdditionalDescriptionSection context={context} />
