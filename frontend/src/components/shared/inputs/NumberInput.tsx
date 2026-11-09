@@ -76,9 +76,12 @@ export function NumberInput(props: Props) {
             <NumberField.Input
               name={name}
               onChange={(evt) => {
-                const caret = evt.currentTarget.selectionStart;
-                evt.currentTarget.value = evt.currentTarget.value.replace(',', '.');
-                evt.currentTarget.setSelectionRange(caret, caret);
+                const input = evt.currentTarget;
+                const caret = input.selectionStart;
+                input.value = input.value.replace(',', '.');
+                const clamped = clampWhileTyping(input.value, minimum, maximum);
+                if (clamped === undefined) input.setSelectionRange(caret, caret);
+                else input.value = clamped;
               }}
               onPaste={pasteWithDecimalPoint}
               onBlur={onBlur}
@@ -104,6 +107,16 @@ export function NumberInput(props: Props) {
       </div>
     </Field.Root>
   );
+}
+
+// Typing more digits only moves a value further past a bound, so clamp it now instead of on blur.
+function clampWhileTyping(text: string, minimum: number | undefined, maximum: number | undefined) {
+  if (!/^-?\d*\.?\d*$/.test(text)) return undefined;
+  const value = Number(text);
+  if (!Number.isFinite(value) || !/\d/.test(text)) return undefined;
+  if (maximum !== undefined && value > maximum && value >= 0) return String(maximum);
+  if (minimum !== undefined && value < minimum && value < 0) return String(minimum);
+  return undefined;
 }
 
 // Base UI parses pasted text itself, so a comma would be read as grouping; send it through onChange instead.

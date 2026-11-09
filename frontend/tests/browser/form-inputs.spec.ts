@@ -75,6 +75,30 @@ test('cruise days and hours stay in sync through typing, decimals, steppers and 
   await expect(amount).toHaveValue('12.35');
 });
 
+test('cruise days and hours clamp to their maximum on each keystroke', async ({ page, network }) => {
+  network.use(getGetApplicationFormAMockHandler({ ...formA(), cruiseHours: '48', researchTasks: [projectTask] }));
+  await page.goto(`/applications/${applicationId}/formA?mode=edit`);
+  const days = page.getByRole('textbox', { name: 'Liczba planowanych dób rejsowych' });
+  const hours = page.getByRole('textbox', { name: 'Liczba planowanych godzin rejsowych' });
+
+  await days.selectText();
+  await days.pressSequentially('75');
+  await expect(days).toHaveValue('60');
+  await expect(hours).toHaveValue('1440');
+  await expect(days).toBeFocused();
+
+  await hours.selectText();
+  await hours.pressSequentially('2000');
+  await expect(hours).toHaveValue('1440');
+
+  const amount = page.locator('input[name="researchTasks[0].financingAmount"]');
+  await amount.selectText();
+  await amount.pressSequentially('12.');
+  await expect(amount).toHaveValue('12.');
+  await amount.press('5');
+  await expect(amount).toHaveValue('12.5');
+});
+
 test('a pasted decimal comma is saved as a decimal point', async ({
   page,
   context,
