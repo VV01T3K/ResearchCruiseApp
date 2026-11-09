@@ -333,7 +333,7 @@ function CalendarDateTile({
           (isPreviewing ? isHovered : isSelected)
             ? 'bg-primary !text-inverse-foreground'
             : isSelected
-              ? 'text-primary ring-1 ring-primary-200 ring-inset'
+              ? 'bg-primary-100 text-primary'
               : 'hover:bg-primary-200',
           isFirstDayOfSelection ? '!bg-surface font-bold !text-primary ring-2 ring-primary ring-inset' : '',
           'mx-auto grid size-9 place-items-center rounded-full text-sm',
