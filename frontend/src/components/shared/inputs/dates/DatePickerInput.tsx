@@ -310,6 +310,7 @@ function CalendarDateTile({
       selectionStartDateUtc && hoveredDateUtc && dateUtc >= selectionStartDateUtc && dateUtc <= hoveredDateUtc,
     isInSelectedRange =
       selectionStartDateUtc && selectedDateUtc && dateUtc >= selectionStartDateUtc && dateUtc <= selectedDateUtc,
+    isPreviewing = selectionStartDateUtc && hoveredDateUtc && hoveredDateUtc >= selectionStartDateUtc,
     isAllowed =
       (!minimalDate || dateUtc >= dateToUtcDay(minimalDate)) && (!maximalDate || dateUtc <= dateToUtcDay(maximalDate)),
     isVisibleMonth = date.getMonth() === visibleMonth.month;
@@ -318,8 +319,8 @@ function CalendarDateTile({
       key={date.getTime()}
       className={cn(
         isFirstDayOfSelection ? 'rounded-l-full' : '',
-        (isHovered && !selectedDate) || isSelected ? 'rounded-r-full' : '',
-        (!selectedDate && isHoveredBetweenSelection) || isInSelectedRange ? 'bg-primary-50' : '',
+        (isPreviewing ? isHovered : isSelected) ? 'rounded-r-full' : '',
+        (isPreviewing ? isHoveredBetweenSelection : isInSelectedRange) ? 'bg-primary-100' : '',
         'mt-0.5'
       )}
       onMouseEnter={() => setHoveredDate(date)}
@@ -329,8 +330,12 @@ function CalendarDateTile({
         variant="plain"
         size="plain"
         className={cn(
-          isSelected ? 'bg-primary !text-inverse-foreground' : 'hover:bg-primary-100',
-          isFirstDayOfSelection ? '!bg-primary-100 !text-primary' : '',
+          (isPreviewing ? isHovered : isSelected)
+            ? 'bg-primary !text-inverse-foreground'
+            : isSelected
+              ? 'text-primary ring-1 ring-primary-200 ring-inset'
+              : 'hover:bg-primary-200',
+          isFirstDayOfSelection ? '!bg-surface font-bold !text-primary ring-2 ring-primary ring-inset' : '',
           'mx-auto grid size-9 place-items-center rounded-full text-sm',
           !isVisibleMonth || !isAllowed ? 'text-neutral-400' : '',
           !isAllowed ? 'hover:bg-surface-subtle' : ''
