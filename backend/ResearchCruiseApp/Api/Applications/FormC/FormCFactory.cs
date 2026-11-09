@@ -2,12 +2,11 @@
 using ResearchCruiseApp.Api.Applications.Shared;
 using ResearchCruiseApp.Domain;
 using ResearchCruiseApp.Domain.Entities;
-using ResearchCruiseApp.Infrastructure.Persistence;
 
 namespace ResearchCruiseApp.Api.Applications;
 
 internal class FormCFactory(
-    ApplicationDbContext dbContext,
+    FormBCFieldsWriter formFieldsWriter,
     UniqueFormFieldResolver formsFieldsService,
     CruiseEffectService effectsService,
     Compressor compressor
@@ -20,10 +19,35 @@ internal class FormCFactory(
     {
         var formC = ApplicationMappings.ToFormC(formCFields);
 
-        await AddPermissions(formC, formCFields, cancellationToken);
+        await formFieldsWriter.AddPermissions(
+            formC.Permissions,
+            formCFields.Permissions,
+            cancellationToken
+        );
         await AddResearchAreaDescriptions(formC, formCFields, cancellationToken);
-        await AddFormCUgUnits(formC, formCFields, cancellationToken);
-        await AddFormCGuestUnits(formC, formCFields, cancellationToken);
+        await formFieldsWriter.AddUgUnits(
+            formC.FormCUgUnits,
+            formCFields.UgTeams,
+            (ugUnit, ugTeamFields) =>
+                new FormCUgUnit
+                {
+                    UgUnit = ugUnit,
+                    NoOfEmployees = ugTeamFields.NoOfEmployees,
+                    NoOfStudents = ugTeamFields.NoOfStudents,
+                },
+            cancellationToken
+        );
+        await formFieldsWriter.AddGuestUnits(
+            formC.FormCGuestUnits,
+            formCFields.GuestTeams,
+            (guestUnit, guestTeamFields) =>
+                new FormCGuestUnit
+                {
+                    GuestUnit = guestUnit,
+                    NoOfPersons = guestTeamFields.NoOfPersons,
+                },
+            cancellationToken
+        );
         await effectsService.AddResearchTasksEffects(
             formC,
             formCFields.ResearchTasksEffects,
@@ -31,53 +55,73 @@ internal class FormCFactory(
         );
         await AddContracts(formC, formCFields, cancellationToken);
         await AddFormCSpubTasks(formC, formCFields, cancellationToken);
-        await AddFormCPorts(formC, formCFields, cancellationToken);
-        await AddCruiseDaysDetails(formC, formCFields, cancellationToken);
-        await AddShipEquipments(formC, formCFields, cancellationToken);
+        await formFieldsWriter.AddPorts(
+            formC.FormCPorts,
+            formCFields.Ports,
+            (port, portCallFields) =>
+                new FormCPort
+                {
+                    Port = port,
+                    StartTime = portCallFields.StartTime,
+                    EndTime = portCallFields.EndTime,
+                },
+            cancellationToken
+        );
+        await formFieldsWriter.AddCruiseDaysDetails(
+            formC.CruiseDaysDetails,
+            formCFields.CruiseDaysDetails,
+            cancellationToken
+        );
+        await formFieldsWriter.AddShipEquipments(
+            formC.ShipEquipments,
+            formCFields.ShipEquipmentsIds,
+            cancellationToken
+        );
         await AddPhotos(formC, formCFields, cancellationToken);
 
         var alreadyAddedResearchEquipments = new HashSet<ResearchEquipment>();
-        await AddFormCShortResearchEquipments(
-            formC,
-            formCFields,
+        await formFieldsWriter.AddResearchEquipments(
+            formC.FormCShortResearchEquipments,
+            formCFields.ShortResearchEquipments,
             alreadyAddedResearchEquipments,
+            (researchEquipment, shortTermEquipmentFields) =>
+                new FormCShortResearchEquipment
+                {
+                    ResearchEquipment = researchEquipment,
+                    StartDate = shortTermEquipmentFields.StartDate,
+                    EndDate = shortTermEquipmentFields.EndDate,
+                },
             cancellationToken
         );
-        await AddFormCLongResearchEquipments(
-            formC,
-            formCFields,
+        await formFieldsWriter.AddResearchEquipments(
+            formC.FormCLongResearchEquipments,
+            formCFields.LongResearchEquipments,
             alreadyAddedResearchEquipments,
+            (researchEquipment, longTermEquipmentFields) =>
+                new FormCLongResearchEquipment
+                {
+                    ResearchEquipment = researchEquipment,
+                    Action = longTermEquipmentFields.Action.ToEnum<ResearchEquipmentAction>(),
+                    Duration = longTermEquipmentFields.Duration,
+                },
             cancellationToken
         );
-        await AddFormCResearchEquipments(
-            formC,
-            formCFields,
+        await formFieldsWriter.AddResearchEquipments(
+            formC.FormCResearchEquipments,
+            formCFields.ResearchEquipments,
             alreadyAddedResearchEquipments,
+            (researchEquipment, researchEquipmentFields) =>
+                new FormCResearchEquipment
+                {
+                    ResearchEquipment = researchEquipment,
+                    InsuranceStartDate = researchEquipmentFields.InsuranceStartDate,
+                    InsuranceEndDate = researchEquipmentFields.InsuranceEndDate,
+                    Permission = researchEquipmentFields.Permission,
+                },
             cancellationToken
         );
 
         return formC;
-    }
-
-    private async Task AddPermissions(
-        FormC formC,
-        FormCFields formCFields,
-        CancellationToken cancellationToken
-    )
-    {
-        var alreadyAddedPermissions = new HashSet<Permission>();
-
-        foreach (var permissionFields in formCFields.Permissions)
-        {
-            var permission = await formsFieldsService.GetUniquePermission(
-                permissionFields,
-                alreadyAddedPermissions,
-                cancellationToken
-            );
-            alreadyAddedPermissions.Add(permission);
-
-            formC.Permissions.Add(permission);
-        }
     }
 
     private async Task AddResearchAreaDescriptions(
@@ -98,57 +142,6 @@ internal class FormCFactory(
             alreadyAddedResearchAreaDescriptions.Add(researchAreaDescription);
 
             formC.ResearchAreaDescriptions.Add(researchAreaDescription);
-        }
-    }
-
-    private async Task AddFormCUgUnits(
-        FormC formC,
-        FormCFields formCFields,
-        CancellationToken cancellationToken
-    )
-    {
-        foreach (var ugTeamFields in formCFields.UgTeams)
-        {
-            var ugUnit = await dbContext.UgUnits.FindAsync(
-                [ugTeamFields.UgUnitId],
-                cancellationToken
-            );
-            if (ugUnit is null)
-                continue;
-
-            var formCUgUnit = new FormCUgUnit
-            {
-                UgUnit = ugUnit,
-                NoOfEmployees = ugTeamFields.NoOfEmployees,
-                NoOfStudents = ugTeamFields.NoOfStudents,
-            };
-            formC.FormCUgUnits.Add(formCUgUnit);
-        }
-    }
-
-    private async Task AddFormCGuestUnits(
-        FormC formC,
-        FormCFields formCFields,
-        CancellationToken cancellationToken
-    )
-    {
-        var alreadyAddedGuestUnits = new HashSet<GuestUnit>();
-
-        foreach (var guestTeamFields in formCFields.GuestTeams)
-        {
-            var guestUnit = await formsFieldsService.GetUniqueGuestUnit(
-                guestTeamFields,
-                alreadyAddedGuestUnits,
-                cancellationToken
-            );
-            alreadyAddedGuestUnits.Add(guestUnit);
-
-            var formCGuestUnit = new FormCGuestUnit
-            {
-                GuestUnit = guestUnit,
-                NoOfPersons = guestTeamFields.NoOfPersons,
-            };
-            formC.FormCGuestUnits.Add(formCGuestUnit);
         }
     }
 
@@ -191,152 +184,6 @@ internal class FormCFactory(
             alreadyAddedSpubTasks.Add(spubTask);
 
             formC.SpubTasks.Add(spubTask);
-        }
-    }
-
-    private async Task AddFormCShortResearchEquipments(
-        FormC formC,
-        FormCFields formCFields,
-        HashSet<ResearchEquipment> alreadyAddedResearchEquipments,
-        CancellationToken cancellationToken
-    )
-    {
-        foreach (var shortTermEquipmentFields in formCFields.ShortResearchEquipments)
-        {
-            var researchEquipment = await formsFieldsService.GetUniqueResearchEquipment(
-                shortTermEquipmentFields,
-                alreadyAddedResearchEquipments,
-                cancellationToken
-            );
-            alreadyAddedResearchEquipments.Add(researchEquipment);
-
-            var formCShortResearchEquipment = new FormCShortResearchEquipment
-            {
-                ResearchEquipment = researchEquipment,
-                StartDate = shortTermEquipmentFields.StartDate,
-                EndDate = shortTermEquipmentFields.EndDate,
-            };
-            formC.FormCShortResearchEquipments.Add(formCShortResearchEquipment);
-        }
-    }
-
-    private async Task AddFormCLongResearchEquipments(
-        FormC formC,
-        FormCFields formCFields,
-        HashSet<ResearchEquipment> alreadyAddedResearchEquipments,
-        CancellationToken cancellationToken
-    )
-    {
-        foreach (var longTermEquipmentFields in formCFields.LongResearchEquipments)
-        {
-            var researchEquipment = await formsFieldsService.GetUniqueResearchEquipment(
-                longTermEquipmentFields,
-                alreadyAddedResearchEquipments,
-                cancellationToken
-            );
-            alreadyAddedResearchEquipments.Add(researchEquipment);
-
-            var formCLongResearchEquipment = new FormCLongResearchEquipment
-            {
-                ResearchEquipment = researchEquipment,
-                Action = longTermEquipmentFields.Action.ToEnum<ResearchEquipmentAction>(),
-                Duration = longTermEquipmentFields.Duration,
-            };
-            formC.FormCLongResearchEquipments.Add(formCLongResearchEquipment);
-        }
-    }
-
-    private async Task AddFormCPorts(
-        FormC formC,
-        FormCFields formCFields,
-        CancellationToken cancellationToken
-    )
-    {
-        var alreadyAddedPorts = new HashSet<Port>();
-
-        foreach (var portCallFields in formCFields.Ports)
-        {
-            var port = await formsFieldsService.GetUniquePort(
-                portCallFields,
-                alreadyAddedPorts,
-                cancellationToken
-            );
-            alreadyAddedPorts.Add(port);
-
-            var formCPort = new FormCPort
-            {
-                Port = port,
-                StartTime = portCallFields.StartTime,
-                EndTime = portCallFields.EndTime,
-            };
-            formC.FormCPorts.Add(formCPort);
-        }
-    }
-
-    private async Task AddCruiseDaysDetails(
-        FormC formC,
-        FormCFields formCFields,
-        CancellationToken cancellationToken
-    )
-    {
-        var alreadyAddedCruiseDaysDetails = new HashSet<CruiseDayDetails>();
-
-        foreach (var cruiseDayFields in formCFields.CruiseDaysDetails)
-        {
-            var cruiseDayDetails = await formsFieldsService.GetUniqueCruiseDayDetails(
-                cruiseDayFields,
-                alreadyAddedCruiseDaysDetails,
-                cancellationToken
-            );
-            alreadyAddedCruiseDaysDetails.Add(cruiseDayDetails);
-
-            formC.CruiseDaysDetails.Add(cruiseDayDetails);
-        }
-    }
-
-    private async Task AddFormCResearchEquipments(
-        FormC formC,
-        FormCFields formCFields,
-        HashSet<ResearchEquipment> alreadyAddedResearchEquipments,
-        CancellationToken cancellationToken
-    )
-    {
-        foreach (var researchEquipmentFields in formCFields.ResearchEquipments)
-        {
-            var researchEquipment = await formsFieldsService.GetUniqueResearchEquipment(
-                researchEquipmentFields,
-                alreadyAddedResearchEquipments,
-                cancellationToken
-            );
-            alreadyAddedResearchEquipments.Add(researchEquipment);
-
-            var formCResearchEquipment = new FormCResearchEquipment
-            {
-                ResearchEquipment = researchEquipment,
-                InsuranceStartDate = researchEquipmentFields.InsuranceStartDate,
-                InsuranceEndDate = researchEquipmentFields.InsuranceEndDate,
-                Permission = researchEquipmentFields.Permission,
-            };
-            formC.FormCResearchEquipments.Add(formCResearchEquipment);
-        }
-    }
-
-    private async Task AddShipEquipments(
-        FormC formC,
-        FormCFields formCFields,
-        CancellationToken cancellationToken
-    )
-    {
-        foreach (var shipEquipmentId in formCFields.ShipEquipmentsIds)
-        {
-            var shipEquipment = await dbContext.ShipEquipments.FindAsync(
-                [shipEquipmentId],
-                cancellationToken
-            );
-            if (shipEquipment is null)
-                continue;
-
-            formC.ShipEquipments.Add(shipEquipment);
         }
     }
 
