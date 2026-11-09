@@ -1,15 +1,13 @@
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
 import { useInputAria } from '@/components/inputs/useInputAria';
+import { NumberField } from '@base-ui/react/number-field';
 import { MinusIcon, PlusIcon } from '@phosphor-icons/react';
-import React from 'react';
 
-import { Button } from '@/components/shared/Button';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { InputErrorTriangle } from '@/components/shared/inputs/parts/InputErrorTriangle';
 import { InputHelper } from '@/components/shared/inputs/parts/InputHelper';
 import { InputLabel } from '@/components/shared/inputs/parts/InputLabel';
-import { useInputCursorPosition } from '@/hooks/shared/InputCursorPositionHook';
-import { cn, roundNumber } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 type CommonProps = {
   name: string;
@@ -35,124 +33,60 @@ type CommonProps = {
       precision?: number;
     }
 );
-function roundToType(value: number, type: 'integer' | 'float', precision: number) {
-  // Round integers too, without adding trailing zeros.
-  return roundNumber(value, type === 'float' ? precision : 0);
-}
-
-function formatValue(value: number | null, type: 'integer' | 'float', precision: number) {
-  return Number.isFinite(value) ? String(roundToType(Number(value), type, precision)) : '';
-}
 
 type Props = CommonProps &
   (
     | { nullable?: false; value: number; onChange?: (value: number) => void }
     | { nullable: true; value: number | null; onChange?: (value: number | null) => void }
   );
-export function NumberInput({
-  name,
-  value,
-  nullable,
-  onBlur,
-  onChange,
-  errors,
-  label,
-  showRequiredAsterisk,
-  className,
-  disabled,
-  helper,
-  minimum,
-  maximum,
-  step = 1,
-  type = 'integer',
-  precision = 2,
-  'aria-label': ariaLabel,
-}: Props) {
+export function NumberInput(props: Props) {
+  const {
+    name,
+    value,
+    onBlur,
+    errors,
+    label,
+    showRequiredAsterisk,
+    className,
+    disabled,
+    helper,
+    minimum,
+    maximum,
+    step = 1,
+    type = 'integer',
+    precision = 2,
+    'aria-label': ariaLabel,
+  } = props;
   const aria = useInputAria(errors, helper);
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const [stringValue, setStringValue] = React.useState(() => formatValue(value, type, precision));
-  const [syncedProps, setSyncedProps] = React.useState({ value, type, precision });
-  const setCursorPosition = useInputCursorPosition({ inputRef });
-
-  // Synchronize external changes without erasing a decimal separator being typed.
-  if (!Object.is(syncedProps.value, value) || syncedProps.type !== type || syncedProps.precision !== precision) {
-    setSyncedProps({ value, type, precision });
-    setStringValue(formatValue(value, type, precision));
-  }
-
-  function handleInputChange(evt: React.ChangeEvent<HTMLInputElement>) {
-    const stringInput = evt.target.value.replace(',', '.'); // float input require dot as the decimal separator
-
-    let cursorPosition = evt.target.selectionStart!;
-    const zerosAtBeginningRegex = /^0+/;
-    const zerosAtBeginningCount = stringInput.match(zerosAtBeginningRegex)?.[0].length;
-    cursorPosition -= zerosAtBeginningCount ?? 0;
-    setCursorPosition(cursorPosition);
-
-    if (stringInput === '') {
-      updateValue(nullable ? null : 0);
-      if (!nullable) setCursorPosition(1);
-      return;
-    }
-
-    const parsedValue = type === 'integer' ? parseInt(stringInput) : parseFloat(stringInput);
-
-    // If the input contains a number followed by a dot, we don't want to set the value to the parsed number
-    const numberWithDotRegex = /^-{0,1}\d*\.$/;
-    if (type === 'float' && numberWithDotRegex.test(stringInput)) {
-      setStringValue(stringInput);
-      return;
-    }
-    if (isNaN(parsedValue)) {
-      return;
-    }
-
-    updateValue(parsedValue);
-  }
-
-  function updateValue(newValue: number | null) {
-    if (newValue === null) {
-      setStringValue('');
-      if (nullable) onChange?.(null);
-      return;
-    }
-
-    newValue = roundToType(newValue, type, precision);
-
-    if (minimum !== undefined && newValue < minimum) {
-      newValue = minimum;
-    } else if (maximum !== undefined && newValue > maximum) {
-      newValue = maximum;
-    }
-
-    setStringValue(String(newValue));
-    onChange?.(newValue);
-  }
 
   return (
-    <div className={cn(className, 'flex flex-col')}>
+    <NumberField.Root
+      id={aria.id}
+      value={Number.isFinite(value) ? value : null}
+      onValueChange={(newValue) => (props.nullable ? props.onChange?.(newValue) : props.onChange?.(newValue ?? 0))}
+      min={minimum}
+      max={maximum}
+      step={step}
+      disabled={disabled}
+      locale="en-US"
+      format={{ useGrouping: false, maximumFractionDigits: type === 'float' ? precision : 0 }}
+      className={cn(className, 'flex flex-col')}
+    >
       <InputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
-      <div className="flex items-center" role="group" aria-label={typeof label === 'string' ? label : ariaLabel}>
-        {!disabled && (
-          <NumberInputButton
-            onClick={() => updateValue((Number(value) || 0) - step)}
-            side="left"
-            disabled={false}
-            inputToFocus={inputRef}
-          />
-        )}
+      <NumberField.Group className="flex items-center" aria-label={typeof label === 'string' ? label : ariaLabel}>
+        {!disabled && <NumberInputButton side="left" />}
         <div className="relative w-full">
-          <input
+          <NumberField.Input
             name={name}
-            value={stringValue}
-            onChange={handleInputChange}
-            onBlur={() => {
-              setStringValue(formatValue(value, type, precision));
-              onBlur?.();
+            onChange={(evt) => {
+              const caret = evt.currentTarget.selectionStart;
+              evt.currentTarget.value = evt.currentTarget.value.replace(',', '.');
+              evt.currentTarget.setSelectionRange(caret, caret);
             }}
-            disabled={disabled}
+            onBlur={onBlur}
             {...aria.inputProps}
             aria-label={ariaLabel}
+            aria-roledescription={undefined}
             className={cn(
               'block h-11 w-full border border-border bg-surface-muted py-2.5 text-center text-sm text-foreground',
               'transition duration-300 ease-in-out',
@@ -160,45 +94,27 @@ export function NumberInput({
               disabled ? 'rounded-lg bg-neutral-200' : '',
               hasErrors(errors) && invalidInputClassName
             )}
-            ref={inputRef}
           />
           <InputErrorTriangle errors={errors} mode={'absolute'} />
         </div>
-        {!disabled && (
-          <NumberInputButton
-            onClick={() => updateValue((Number(value) || 0) + step)}
-            side="right"
-            disabled={false}
-            inputToFocus={inputRef}
-          />
-        )}
-      </div>
+        {!disabled && <NumberInputButton side="right" />}
+      </NumberField.Group>
       <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
         <InputHelper id={aria.helperId} helper={helper} />
         <InputErrorsList id={aria.errorId} errors={errors} />
       </div>
-    </div>
+    </NumberField.Root>
   );
 }
 
-type ButtonProps = {
-  side: 'left' | 'right';
-  inputToFocus: React.RefObject<HTMLInputElement | null>;
-  onClick: (() => void) | undefined;
-  disabled: boolean | undefined;
-};
-function NumberInputButton({ side, inputToFocus, onClick, disabled }: ButtonProps) {
-  function handleClick() {
-    onClick?.();
-    inputToFocus.current?.focus();
-    inputToFocus.current?.blur();
-  }
-
+function NumberInputButton({ side }: { side: 'left' | 'right' }) {
+  const StepButton = side === 'left' ? NumberField.Decrement : NumberField.Increment;
+  const title = side === 'left' ? 'Zmniejsz' : 'Zwiększ';
   return (
-    <Button
-      onClick={() => handleClick()}
-      disabled={disabled}
+    <StepButton
       className={cn(
+        'text-inverse-foreground focus-visible:outline-hidden hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-default',
+        'text-inherit',
         'flex h-11 w-11 items-center justify-center',
         'text-muted-foreground',
         'transition duration-300 ease-in-out',
@@ -207,13 +123,12 @@ function NumberInputButton({ side, inputToFocus, onClick, disabled }: ButtonProp
         'disabled:cursor-not-allowed disabled:opacity-50',
         'border-collapse border border-border px-2',
         side === 'left' ? 'rounded-l-sm' : 'rounded-r-sm',
-        disabled ? 'bg-neutral-300' : 'bg-surface-subtle hover:text-foreground'
+        'bg-surface-subtle hover:text-foreground'
       )}
-      variant="plain"
-      size="plain"
-      title={side === 'left' ? 'Zmniejsz' : 'Zwiększ'}
+      title={title}
+      aria-label={title}
     >
       {side === 'left' ? <MinusIcon /> : <PlusIcon />}
-    </Button>
+    </StepButton>
   );
 }

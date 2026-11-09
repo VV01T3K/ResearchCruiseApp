@@ -42,23 +42,28 @@ test('cruise days and hours stay in sync through typing, decimals, steppers and 
   await expect(days).toHaveValue('1.5');
   await expect(hours).toHaveValue('36');
   await days.fill('1.257');
+  await days.blur();
   await expect(days).toHaveValue('1.25');
   await expect(hours).toHaveValue('30');
   await hours.fill('7.9');
-  await expect(hours).toHaveValue('7');
-  await expect(days).toHaveValue('0.29');
+  await hours.blur();
+  await expect(hours).toHaveValue('8');
+  await expect(days).toHaveValue('0.33');
 
   await daysField.getByRole('button', { name: 'Zwiększ' }).click();
-  await expect(hours).toHaveValue('31');
+  await expect(hours).toHaveValue('32');
   await hoursField.getByRole('button', { name: 'Zmniejsz' }).click();
-  await expect(hours).toHaveValue('30');
+  await expect(hours).toHaveValue('31');
   await hours.fill('');
+  await hours.blur();
   await expect(hours).toHaveValue('0');
   await expect(days).toHaveValue('0');
 
   await days.fill('61');
+  await days.blur();
   await expect(days).toHaveValue('60');
   await hours.fill('1441');
+  await hours.blur();
   await expect(hours).toHaveValue('1440');
 
   const amount = page.locator('input[name="researchTasks[0].financingAmount"]');
