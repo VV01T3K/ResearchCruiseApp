@@ -54,7 +54,7 @@ export const Disabled: Story = {
     await expect(hours).not.toHaveFocus();
     await expect(hours).toHaveAttribute('aria-valuenow', '12');
     await expect(args.onChange).not.toHaveBeenCalled();
-    await expect(canvas.getByRole('button', { name: 'Wybierz godzinę z siatki' })).toBeDisabled();
+    await expect(canvas.getByRole('button', { name: 'Wybierz godzinę z listy' })).toBeDisabled();
   },
 };
 
@@ -63,12 +63,6 @@ export const WithPlaceholder: Story = {
     value: undefined,
     disabled: true,
     placeholder: 'Nie podano',
-  },
-};
-
-export const WithMinuteStep: Story = {
-  args: {
-    minuteStep: 10,
   },
 };
 
@@ -129,20 +123,40 @@ export const TypingAndArrows: Story = {
   },
 };
 
-export const PickingFromGrid: Story = {
+export const OffStepTime: Story = {
+  play: async ({ args, canvas, userEvent }) => {
+    const hours = canvas.getByRole('spinbutton', { name: 'godzina' });
+    await userEvent.click(hours);
+    await userEvent.keyboard('0815{Enter}');
+    await expect(args.onChange).not.toHaveBeenCalled();
+    await expect(hours).toHaveAttribute('aria-invalid', 'true');
+    await expect(hours).toHaveAttribute('aria-valuenow', '12');
+  },
+};
+
+export const PickingFromList: Story = {
   args: {
     value: undefined,
-    minuteStep: 15,
   },
   play: async ({ args, canvas, canvasElement, userEvent }) => {
-    await userEvent.click(canvas.getByRole('button', { name: 'Wybierz godzinę z siatki' }));
-    const picker = await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Wybierz godzinę' });
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(canvas.getByRole('button', { name: 'Wybierz godzinę z listy' }));
+    const picker = await page.findByRole('dialog', { name: 'Wybierz godzinę' });
     const minutes = within(picker).getByRole('group', { name: 'Minuty' });
-    await expect(within(minutes).getAllByRole('button')).toHaveLength(4);
-    await expect(within(minutes).getByRole('button', { name: '45' })).toBeDisabled();
+    await expect(within(minutes).getAllByRole('button')).toHaveLength(2);
+    await expect(within(minutes).getByRole('button', { name: '30' })).toBeDisabled();
     await userEvent.click(within(picker).getByRole('button', { name: '14' }));
-    await userEvent.click(within(minutes).getByRole('button', { name: '45' }));
-    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 14, minutes: 45 });
+    await expect(picker).toBeInTheDocument();
+    await expect(args.onChange).not.toHaveBeenCalled();
+    await userEvent.click(within(minutes).getByRole('button', { name: '30' }));
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 14, minutes: 30 });
+    await expect(args.onBlur).toHaveBeenCalled();
     await waitFor(() => expect(picker).not.toBeInTheDocument());
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Wybierz godzinę z listy' }));
+    const again = await page.findByRole('dialog', { name: 'Wybierz godzinę' });
+    await userEvent.click(within(again).getByRole('button', { name: '12:00' }));
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 12, minutes: 0 });
+    await waitFor(() => expect(again).not.toBeInTheDocument());
   },
 };

@@ -263,7 +263,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                           <field.TimeField
                             aria-label="Godzina rozpoczęcia rejsu"
                             placeholder="Nie podano"
-                            minuteStep={30}
                             clearable
                             disabled={isReadonly}
                           />
@@ -314,7 +313,6 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
                           <field.TimeField
                             aria-label="Godzina zakończenia rejsu"
                             placeholder="Nie podano"
-                            minuteStep={30}
                             clearable
                             disabled={isReadonly}
                           />

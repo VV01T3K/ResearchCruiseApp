@@ -104,29 +104,44 @@ test('the time in the cruise date picker works by keyboard and Escape reaches th
   await expect(page.getByRole('button', { name: /Data rozpoczęcia rejsu: 17\.05\.2026, 08:00/ })).toBeVisible();
   await page.keyboard.press('Tab');
   await page.keyboard.press('Enter');
-  const grid = page.getByRole('dialog', { name: 'Wybierz godzinę' });
-  await expect(grid.getByRole('button', { name: '08' })).toBeFocused();
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('ArrowRight');
+  const list = page.getByRole('dialog', { name: 'Wybierz godzinę' });
+  await expect(list.getByRole('button', { name: '08', exact: true })).toBeFocused();
+  for (let i = 0; i < 7; i++) await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter');
+  await expect(list).toBeVisible();
   await page.keyboard.press('Tab');
-  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter');
-  await expect(page.getByRole('button', { name: /Data rozpoczęcia rejsu: 17\.05\.2026, 15:30/ })).toBeVisible();
-  await expect(grid).toBeHidden();
+  const startDate = (shown: string) =>
+    page.getByRole('button', { name: `Data rozpoczęcia rejsu: 17.05.2026, ${shown}` });
+  await expect(startDate('15:30')).toBeVisible();
+  await expect(list).toBeHidden();
   await expect(picker).toBeVisible();
-  await expect(time.getByRole('button', { name: 'Wybierz godzinę z siatki' })).toBeFocused();
+  const clock = time.getByRole('button', { name: 'Wybierz godzinę z listy' });
+  await expect(clock).toBeFocused();
+
+  const minutes = time.getByRole('spinbutton', { name: 'minuty' });
+  await minutes.focus();
+  await page.keyboard.type('15');
   await page.keyboard.press('Enter');
-  await expect(grid).toBeVisible();
+  await expect(minutes).toHaveAttribute('aria-invalid', 'true');
+  await expect(startDate('15:30')).toBeVisible();
+
+  await clock.click();
+  await list.getByRole('button', { name: '12:00' }).click();
+  await expect(list).toBeHidden();
+  await expect(startDate('12:00')).toBeVisible();
+  await clock.press('Enter');
+  await expect(list).toBeVisible();
   await page.keyboard.press('Escape');
-  await expect(grid).toBeHidden();
+  await expect(list).toBeHidden();
   await expect(picker).toBeVisible();
-  await expect(time.getByRole('button', { name: 'Wybierz godzinę z siatki' })).toBeFocused();
+  await expect(clock).toBeFocused();
   await time.getByRole('spinbutton', { name: 'godzina' }).focus();
   await page.keyboard.type('9');
   await page.keyboard.press('Escape');
   await expect(picker).toBeHidden();
-  await expect(page.getByRole('button', { name: /Data rozpoczęcia rejsu: 17\.05\.2026, 15:30/ })).toBeVisible();
+  await expect(startDate('12:00')).toBeVisible();
 });
 
 test('a new cruise is saved once with Warsaw-midnight dates and the chosen managers, then leaves without asking', async ({

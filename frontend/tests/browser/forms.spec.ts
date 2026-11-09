@@ -210,12 +210,13 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
   await expect(startHour).toHaveAttribute('aria-valuenow', '8');
   await page
     .getByRole('group', { name: 'Godzina zakończenia rejsu' })
-    .getByRole('button', { name: 'Wybierz godzinę z siatki' })
+    .getByRole('button', { name: 'Wybierz godzinę z listy' })
     .click();
-  const grid = page.getByRole('dialog', { name: 'Wybierz godzinę' });
-  await grid.getByRole('group', { name: 'Godzina' }).getByRole('button', { name: '18' }).click();
-  await grid.getByRole('group', { name: 'Minuty' }).getByRole('button', { name: '00' }).click();
-  await expect(grid).toBeHidden();
+  const picker = page.getByRole('dialog', { name: 'Wybierz godzinę' });
+  await picker.getByRole('group', { name: 'Godzina' }).getByRole('button', { name: '09', exact: true }).click();
+  await expect(picker).toBeVisible();
+  await picker.getByRole('group', { name: 'Minuty' }).getByRole('button', { name: '30' }).click();
+  await expect(picker).toBeHidden();
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
   await expect(page).toHaveURL('/');
   expect(requests.bodies(savedForm('form-a'))).toEqual([
@@ -225,7 +226,7 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
         precisePeriodStart: '2026-05-17T00:00:00Z',
         precisePeriodEnd: '2026-05-19T00:00:00Z',
         precisePeriodStartTime: '08:00',
-        precisePeriodEndTime: '18:00',
+        precisePeriodEndTime: '09:30',
         acceptablePeriod: null,
         optimalPeriod: null,
       }),

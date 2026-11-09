@@ -31,16 +31,8 @@ type Props = {
   maximalDate?: Date;
   selectionStartDate?: Date;
   'aria-label'?: string;
-} & (
-  | {
-      type?: 'date';
-      minuteStep?: never;
-    }
-  | {
-      type: 'datetime';
-      minuteStep?: number;
-    }
-);
+  type?: 'date' | 'datetime';
+};
 export function DatePickerInput({
   name,
   value,
@@ -53,7 +45,6 @@ export function DatePickerInput({
   helper,
   placeholder = 'Wybierz datę',
   type = 'date',
-  minuteStep,
   minimalDate,
   maximalDate,
   selectionStartDate,
@@ -229,7 +220,6 @@ export function DatePickerInput({
                 onChange?.(getValueFromDate(newDate, type));
               }}
               onBlur={onBlur}
-              minuteStep={minuteStep}
               minimalTime={
                 minimalDate && selectedDate && dateToUtcDay(minimalDate) === dateToUtcDay(selectedDate)
                   ? {
