@@ -8,6 +8,7 @@ import {
   createFilteredRowModel,
   createSortedRowModel,
   filterFn_arrIncludes,
+  metaHelper,
   rowSelectionFeature,
   rowSortingFeature,
   sortFn_alphanumeric,
@@ -28,6 +29,7 @@ export const appTableFeatures = tableFeatures({
   sortedRowModel: createSortedRowModel(),
   filterFns: { arrIncludes: filterFn_arrIncludes },
   sortFns: { alphanumeric: sortFn_alphanumeric },
+  tableMeta: metaHelper<{ removeRow?: (index: number) => void }>(),
 });
 
 export type ColumnDef<T extends TableTypes.RowData, TValue = unknown> = TableTypes.ColumnDef<

@@ -4,7 +4,7 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { Accordion } from '@/components/shared/Accordion';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { Table } from '@/components/shared/table/Table';
-import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
+import { ActionsHeader, DeleteRowCell } from '@/integrations/tanstack/table/DeleteRowCell';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
@@ -16,7 +16,7 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   const { isReadonly, initValues } = context;
 
-  function getColumns(removeRow: (index: number) => void): ColumnDef<ContractValues>[] {
+  function getColumns(): ColumnDef<ContractValues>[] {
     return [
       {
         header: 'Lp.',
@@ -111,21 +111,13 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
       },
       {
         id: 'actions',
-        header: () => <span className="sr-only">Akcje</span>,
-        cell: ({ row }) => (
-          <div className="flex justify-end">
-            <TableDeleteRowButton
-              onClick={() => {
-                removeRow(row.index);
-              }}
-              disabled={isReadonly}
-            />
-          </div>
-        ),
+        header: ActionsHeader,
+        cell: DeleteRowCell,
         size: 5,
       },
     ];
   }
+  const columns = getColumns();
 
   return (
     <Accordion
@@ -137,10 +129,13 @@ export function ContractsSection({ context }: { context: FormAViewModel }) {
           {(field) => (
             <>
               <Table
-                columns={getColumns((index) => {
-                  field.removeValue(index);
-                  field.handleBlur();
-                })}
+                columns={columns}
+                meta={{
+                  removeRow: (index) => {
+                    field.removeValue(index);
+                    field.handleBlur();
+                  },
+                }}
                 data={field.state.value}
                 buttons={() => [
                   <AddMenuButton
