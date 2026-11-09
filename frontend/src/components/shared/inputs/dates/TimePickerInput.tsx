@@ -100,16 +100,19 @@ export function TimePickerInput({
   const allErrors = inputError ? [...(errors ?? []), inputError] : errors;
   const aria = useInputAria(allErrors, helper);
 
-  const min = Math.ceil((minimalTime ? timeToMinutes(minimalTime) : 0) / minuteStep) * minuteStep;
-  const max = Math.floor((maximalTime ? timeToMinutes(maximalTime) : 24 * 60 - 1) / minuteStep) * minuteStep;
+  const earliest = minimalTime ? timeToMinutes(minimalTime) : 0;
+  const latest = maximalTime ? timeToMinutes(maximalTime) : 24 * 60 - 1;
+  const min = Math.ceil(earliest / minuteStep) * minuteStep;
+  const max = Math.floor(latest / minuteStep) * minuteStep;
   const shown = draft ?? { hours: time?.hours, minutes: time?.minutes };
   const inRange = (minutes: number) => minutes >= min && minutes <= max;
   const hourAllowed = (hour: number) => hour * 60 + 60 - minuteStep >= min && hour * 60 <= max;
   const centredHour = pickedHour ?? (hourAllowed(8) ? 8 : hourOptions.find(hourAllowed));
   const selectedMinute = pickedHour === time?.hours ? time?.minutes : undefined;
+  const minuteHour = pickedHour ?? centredHour ?? 0;
   const minuteTabStop = minuteOptions.includes(selectedMinute ?? -1)
     ? selectedMinute
-    : minuteOptions.find((minutes) => pickedHour !== undefined && inRange(pickedHour * 60 + minutes));
+    : minuteOptions.find((minutes) => inRange(minuteHour * 60 + minutes));
 
   function apply(next: Time | undefined) {
     setDraft(undefined);
@@ -120,11 +123,8 @@ export function TimePickerInput({
       onChange(undefined);
       return undefined;
     }
-    if (next.minutes % minuteStep !== 0) {
-      setInputError('Wybierz pełną godzinę lub pół godziny.');
-      return time;
-    }
-    if (!inRange(timeToMinutes(next))) {
+    const typed = timeToMinutes(next);
+    if (typed < earliest || typed > latest || min > max) {
       setInputError(
         min > max
           ? 'W tym dniu nie ma już wolnych godzin.'
@@ -132,8 +132,15 @@ export function TimePickerInput({
       );
       return time;
     }
-    onChange(next);
-    return next;
+    const minutes = Math.min(Math.max(Math.round(typed / minuteStep) * minuteStep, min), max);
+    const snapped = { hours: Math.floor(minutes / 60), minutes: minutes % 60 };
+    onChange(snapped);
+    return snapped;
+  }
+
+  function pick(next: Time) {
+    const applied = apply(next);
+    if (applied) setPickedHour(applied.hours);
   }
 
   function commitDraft() {
@@ -295,9 +302,19 @@ export function TimePickerInput({
         <PickerPopup
           aria-label="Wybierz godzinę"
           anchor={fieldRef}
+          align="end"
           initialFocus={() => hourColumnRef.current?.querySelector<HTMLElement>(`[data-hour="${centredHour}"]`) ?? true}
         >
-          <div className="w-56 p-1.5">
+          <div
+            className="w-56 p-1.5"
+            onKeyDown={(evt) => {
+              if (evt.key === 'Enter' && evt.target instanceof HTMLButtonElement) {
+                evt.preventDefault();
+                evt.target.click();
+                closePicker();
+              }
+            }}
+          >
             <div className="grid grid-cols-[1fr_1px_1fr]">
               <div>
                 <div aria-hidden className={columnHeadClassName}>
@@ -323,7 +340,11 @@ export function TimePickerInput({
                       tabIndex={hour === centredHour ? 0 : -1}
                       disabled={!hourAllowed(hour)}
                       onClick={(evt) => {
-                        setPickedHour(hour);
+                        pick({
+                          hours: hour,
+                          minutes:
+                            [time?.minutes ?? 0, ...minuteOptions].find((minutes) => inRange(hour * 60 + minutes)) ?? 0,
+                        });
                         evt.currentTarget.parentElement?.scrollTo({
                           top: evt.currentTarget.offsetTop - 34,
                           behavior: 'smooth',
@@ -353,11 +374,13 @@ export function TimePickerInput({
                       type="button"
                       aria-pressed={minutes === selectedMinute}
                       tabIndex={minutes === minuteTabStop ? 0 : -1}
-                      disabled={pickedHour === undefined || !inRange(pickedHour * 60 + minutes)}
-                      onClick={() => {
-                        apply({ hours: pickedHour!, minutes });
-                        closePicker();
-                      }}
+                      disabled={!inRange(minuteHour * 60 + minutes)}
+                      onClick={() =>
+                        pick({
+                          hours: pickedHour ?? Math.round((hourColumnRef.current?.scrollTop ?? 0) / 32),
+                          minutes,
+                        })
+                      }
                       className={cn(itemClassName, minutes === selectedMinute && selectedClassName)}
                     >
                       {pad(minutes)}
@@ -381,10 +404,7 @@ export function TimePickerInput({
                     aria-pressed={selected}
                     tabIndex={hour === commonHours.find((common) => inRange(common * 60)) ? 0 : -1}
                     disabled={!inRange(hour * 60)}
-                    onClick={() => {
-                      apply({ hours: hour, minutes: 0 });
-                      closePicker();
-                    }}
+                    onClick={() => pick({ hours: hour, minutes: 0 })}
                     className={cn(
                       'rounded-md py-1 text-xs text-neutral-600 tabular-nums transition-colors duration-150 ease-out hover:bg-primary-50 hover:text-primary disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-transparent',
                       selected && 'bg-primary text-inverse-foreground hover:bg-primary hover:text-inverse-foreground'

@@ -210,14 +210,21 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
   await page.keyboard.type('22');
   await page.keyboard.press('Escape');
   await expect(startHour).toHaveAttribute('aria-valuenow', '8');
-  await page
+  // Keyboard keeps the list in view; a click would need the hour column scrolled first.
+  const endClock = page
     .getByRole('group', { name: 'Godzina zakończenia rejsu' })
-    .getByRole('button', { name: 'Wybierz godzinę z listy' })
-    .click();
+    .getByRole('button', { name: 'Wybierz godzinę z listy' });
   const picker = page.getByRole('dialog', { name: 'Wybierz godzinę' });
-  await picker.getByRole('group', { name: 'Godzina' }).getByRole('button', { name: '09', exact: true }).click();
-  await expect(picker).toBeVisible();
-  await picker.getByRole('group', { name: 'Minuty' }).getByRole('button', { name: '30' }).click();
+  await endClock.press('Enter');
+  await expect(picker.getByRole('button', { name: '08', exact: true })).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  await expect(picker).toBeHidden();
+  await endClock.press('Enter');
+  await expect(picker.getByRole('button', { name: '09', exact: true })).toBeFocused();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
   await expect(picker).toBeHidden();
   await page.getByRole('button', { name: 'Wyślij', exact: true }).click();
   await expect(page).toHaveURL('/');
