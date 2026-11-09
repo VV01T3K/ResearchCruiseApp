@@ -15,7 +15,8 @@ export const Link = createLink(Anchor);
 const variants = {
   default:
     'text-primary transition-colors duration-150 ease-out hover:text-primary-900 hover:underline active:text-primary-950',
-  white: 'text-neutral-200 hover:underline',
+  white:
+    'rounded-sm text-neutral-200 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current',
   disabled: 'text-neutral-400',
   plain: '',
   card: 'group block h-full rounded-xl outline-none',
