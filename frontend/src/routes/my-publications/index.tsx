@@ -9,9 +9,10 @@ import React from 'react';
 import { Button, ButtonAnchor } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
 import { Modal } from '@/components/shared/Modal';
-import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { Table } from '@/components/shared/table/Table';
 import { toast } from '@/components/shared/layout/toast';
+import { ActionsHeader } from '@/integrations/tanstack/table/DeleteRowCell';
+import { SelectAllPublicationsHeader, SelectPublicationCell } from './-components/PublicationTableCells';
 import { UploadButton } from './-components/UploadButton';
 import {
   getGetCurrentUserPublicationsQueryKey,
@@ -71,26 +72,8 @@ function MyPublicationsPage() {
   const columns: ColumnDef<PublicationResponse>[] = [
     {
       id: 'selector',
-      header: ({ table }) => (
-        <Checkbox
-          aria-label="Zaznacz wszystkie publikacje"
-          name="selectAllPublications"
-          onChange={(x) => table.toggleAllRowsSelected(x)}
-          checked={table.getIsAllRowsSelected()}
-          size="lg"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          aria-label={`Zaznacz publikację ${row.original.title}`}
-          name={`selectPublication-${row.id}`}
-          checked={row.getIsSelected()}
-          disabled={!row.getCanSelect()}
-          onChange={(checked) => row.toggleSelected(checked)}
-          className="inline-block"
-          size="md"
-        />
-      ),
+      header: SelectAllPublicationsHeader,
+      cell: SelectPublicationCell,
       enableSorting: false,
       enableColumnFilter: false,
       size: 5,
@@ -128,7 +111,7 @@ function MyPublicationsPage() {
     },
     {
       id: 'actions',
-      header: () => <span className="sr-only">Akcje</span>,
+      header: ActionsHeader,
       cell: (cell) => (
         <Button
           variant="dangerOutline"
