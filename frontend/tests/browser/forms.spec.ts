@@ -489,22 +489,19 @@ test('form C marks the permission scan as required and moves an earlier end date
     name: '4. Dodatkowe pozwolenia do przeprowadzonych w trakcie rejsu badań',
   });
   await permissions.getByRole('button', { name: 'Dodaj pozwolenie' }).click();
-  await expect(permissions.getByRole('columnheader', { name: 'Skan*' })).toBeVisible();
+  await expect(permissions.getByRole('columnheader', { name: 'Skan wymagane' })).toBeVisible();
 
   const details = page.getByRole('group', { name: '12. Szczegóły rejsu' });
   await details.getByRole('button', { name: /^Od/ }).click();
-  await page
-    .getByRole('dialog', { name: 'Wybierz datę' })
-    .getByRole('button', { name: '5', exact: true })
-    .first()
-    .click();
+  // The grid only repeats days before the 7th and after the 22nd.
+  await page.getByRole('dialog', { name: 'Wybierz datę' }).getByRole('button', { name: '15', exact: true }).click();
   await page.getByRole('button', { name: 'Zapisz wersję roboczą' }).click();
   await expect
     .poll(() => requests.bodies(savedForm('form-c')))
     .toEqual([
       expect.objectContaining({
         form: expect.objectContaining({
-          shortResearchEquipments: [{ name: 'Sonda CTD', startDate: '2026-06-05', endDate: '2026-06-05' }],
+          shortResearchEquipments: [{ name: 'Sonda CTD', startDate: '2026-06-15', endDate: '2026-06-15' }],
         }),
       }),
     ]);
