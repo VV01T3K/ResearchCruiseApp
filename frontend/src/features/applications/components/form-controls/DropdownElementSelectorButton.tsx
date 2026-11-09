@@ -36,7 +36,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
           <button
             type="button"
             className={cn(
-              'text-inverse-foreground hover:cursor-pointer disabled:cursor-default focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+              'group text-inverse-foreground hover:cursor-pointer disabled:cursor-default focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
               variants[variant],
               'flex items-center gap-4 px-5 py-2.5'
             )}
@@ -45,7 +45,7 @@ export function DropdownElementSelectorButton({ variant, options, children, disa
         }
       >
         <span>{children}</span>
-        <span className="transition-transform duration-300 ease-out data-[popup-open]:rotate-180">
+        <span className="transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
           <CaretDownIcon className="h-5 w-5" />
         </span>
       </Popover.Trigger>

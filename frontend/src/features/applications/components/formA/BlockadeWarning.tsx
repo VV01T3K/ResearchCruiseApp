@@ -21,7 +21,7 @@ export function BlockadeWarning({ year, blockades }: Props) {
                 <span className="font-bold">Blokady statku w roku {year}</span>
                 <span className="text-sm font-normal">Rozwiń, aby zobaczyć wszystkie blokady</span>
               </div>
-              <span className="ml-4 transition-transform duration-200 group-data-[panel-open]:rotate-180">
+              <span className="ml-4 transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
                 <CaretDownIcon className="h-5 w-5" />
               </span>
             </Collapsible.Trigger>

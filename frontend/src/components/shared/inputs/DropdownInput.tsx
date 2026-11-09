@@ -110,7 +110,7 @@ export function DropdownInput({
           {...aria.inputProps}
           aria-label={ariaLabel}
           className={cn(
-            'relative inline-flex w-full items-center justify-between',
+            'group relative inline-flex w-full items-center justify-between',
             'rounded-lg border border-border bg-surface-muted text-sm text-foreground',
             'p-2.5',
             'transition-[border-color,box-shadow] duration-150 ease-out',
@@ -124,7 +124,7 @@ export function DropdownInput({
           <span className="flex items-center gap-2">
             <InputErrorTriangle errors={errors} />
             {!disabled && (
-              <Select.Icon className="transition-transform duration-300 ease-out data-[popup-open]:rotate-180">
+              <Select.Icon className="transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
                 <CaretDownIcon className="h-5 w-5" />
               </Select.Icon>
             )}
