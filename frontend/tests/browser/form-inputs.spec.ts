@@ -75,7 +75,14 @@ test('cruise days and hours stay in sync through typing, decimals, steppers and 
   await expect(amount).toHaveValue('12.35');
 });
 
-test('a pasted decimal comma is saved as a decimal point', async ({ page, network, requests }) => {
+test('a pasted decimal comma is saved as a decimal point', async ({
+  page,
+  context,
+  browserName,
+  network,
+  requests,
+}) => {
+  if (browserName === 'chromium') await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   network.use(
     getGetApplicationFormAMockHandler({ ...formA(), researchTasks: [projectTask] }),
     getUpdateApplicationFormAMockHandler()
@@ -83,11 +90,8 @@ test('a pasted decimal comma is saved as a decimal point', async ({ page, networ
   await page.goto(`/applications/${applicationId}/formA?mode=edit`);
   const amount = page.locator('input[name="researchTasks[0].financingAmount"]');
   await amount.fill('');
-  await amount.evaluate((input) => {
-    const clipboardData = new DataTransfer();
-    clipboardData.setData('text/plain', '12,34');
-    input.dispatchEvent(new ClipboardEvent('paste', { clipboardData, bubbles: true, cancelable: true }));
-  });
+  await page.evaluate(() => navigator.clipboard.writeText('12,34'));
+  await amount.press('ControlOrMeta+V');
   await amount.blur();
   await expect(amount).toHaveValue('12.34');
 
