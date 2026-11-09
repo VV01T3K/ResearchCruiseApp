@@ -94,7 +94,7 @@ export function TimePickerInput({
       if (clearable) onChange(undefined);
       return;
     }
-    if (!parsed) return;
+    if (!parsed || min > max) return;
     const minutes = Math.min(Math.max(Math.round(timeToMinutes(parsed) / minuteStep) * minuteStep, min), max);
     onChange({ hours: Math.floor(minutes / 60), minutes: minutes % 60 });
   }
@@ -108,7 +108,6 @@ export function TimePickerInput({
         value={draft ?? shown}
         onValueChange={(text, details) => {
           if (details.reason === 'item-press') commit(text);
-          else if (details.reason === 'escape-key') setDraft(undefined);
           else setDraft(text.replace(/[^\d:.]/g, '').slice(0, 5));
         }}
         disabled={disabled}
@@ -133,6 +132,10 @@ export function TimePickerInput({
               onBlur?.();
             }}
             onKeyDown={(evt) => {
+              if (evt.key === 'Escape') {
+                setDraft(undefined);
+                if (evt.currentTarget.getAttribute('aria-expanded') !== 'true') evt.preventBaseUIHandler();
+              }
               if (
                 evt.key === 'Enter' &&
                 draft !== undefined &&

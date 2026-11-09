@@ -83,6 +83,26 @@ async function fillNewCruise(page: Page) {
   await page.getByRole('option', { name: `${deputy.firstName} ${deputy.lastName}` }).click();
 }
 
+test('Escape closes the cruise date picker after a typed time', async ({ page, network }) => {
+  await page.clock.setFixedTime(new Date('2026-05-16T12:00:00Z'));
+  network.use(
+    getGetApplicationsForCruisePlanningMockHandler([]),
+    getGetAvailableCruiseManagersMockHandler([manager, deputy]),
+    getGetCruisesMockHandler([])
+  );
+  await page.goto('/cruises/new');
+  await page.getByText('Wybierz datę rozpoczęcia rejsu').click();
+  const picker = page.getByRole('dialog', { name: 'Wybierz datę' });
+  await picker.getByText('17', { exact: true }).click();
+  const time = picker.getByRole('combobox', { name: 'Godzina' });
+  await time.fill('8');
+  await time.press('Enter');
+  await expect(time).toHaveValue('08:00');
+  await expect(page.getByRole('listbox')).toHaveCount(0);
+  await time.press('Escape');
+  await expect(picker).toBeHidden();
+});
+
 test('a new cruise is saved once with Warsaw-midnight dates and the chosen managers, then leaves without asking', async ({
   page,
   network,
@@ -740,6 +760,8 @@ test('calendar edit mode lets a confirmed cruise be dragged, but not an ended on
     startDate: '2026-06-04T08:00:00.000Z',
   });
 
+  // dnd-kit swallows clicks until its 50 ms post-drop timer runs; a later page timer fires after it.
+  await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
   await page.getByRole('button', { name: 'Wyłącz tryb edycji kalendarza' }).click();
   await expect(page.getByRole('link', { name: 'Rejs Zakończony' })).toHaveAttribute('href', `/cruises/${ended.id}`);
 

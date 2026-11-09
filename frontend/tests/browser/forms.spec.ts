@@ -202,6 +202,9 @@ test('form A saves precise cruise dates on the days chosen in the calendar', asy
   await startTime.fill('8');
   await startTime.press('Tab');
   await expect(startTime).toHaveValue('08:00');
+  await startTime.fill('22');
+  await startTime.press('Escape');
+  await expect(startTime).toHaveValue('08:00');
   await page.getByRole('combobox', { name: 'Godzina zakończenia rejsu' }).click();
   await page.getByRole('option', { name: '18:00' }).click();
   await expect(page.getByRole('listbox')).toHaveCount(0);

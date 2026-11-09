@@ -75,3 +75,15 @@ export const WithMaximalTime: Story = {
     maximalTime: { hours: 20, minutes: 0 },
   },
 };
+
+export const NoTimeLeftAfterMinimalTime: Story = {
+  args: {
+    value: undefined,
+    minimalTime: { hours: 23, minutes: 45 },
+  },
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.type(canvas.getByRole('combobox'), '2359{Enter}');
+    await expect(args.onChange).not.toHaveBeenCalled();
+    await expect(canvas.getByRole('combobox')).toHaveValue('');
+  },
+};
