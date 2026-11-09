@@ -28,10 +28,14 @@ const defaultSort = { sortBy: 'number', descending: true } as const;
 
 const searchSchema = z.object({
   number: z.int32().optional().catch(undefined),
-  date: z.iso.date().optional().catch(undefined),
-  year: z.array(z.int32()).optional().catch(undefined),
-  status: z.array(CruiseApplicationStatus).optional().catch(undefined),
-  cruiseManager: z.array(z.guid()).optional().catch(undefined),
+  date: z.iso
+    .date()
+    .refine((date) => date >= '2000-01-01')
+    .optional()
+    .catch(undefined),
+  year: z.array(z.int32()).max(50).optional().catch(undefined),
+  status: z.array(CruiseApplicationStatus).max(50).optional().catch(undefined),
+  cruiseManager: z.array(z.guid()).max(50).optional().catch(undefined),
   sortBy: z.enum(['number', 'date', 'year']).default(defaultSort.sortBy).catch(defaultSort.sortBy),
   descending: z.boolean().default(defaultSort.descending).catch(defaultSort.descending),
 });
