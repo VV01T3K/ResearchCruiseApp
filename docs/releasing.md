@@ -54,6 +54,9 @@ set `APP_VERSION=vX.Y.Z` in `docker/.env` and run
 `docker compose -f compose.production.yaml --env-file .env up -d` (see
 [Deployment](../README.md#deployment) for database migrations).
 
+The upgrade from v2.4.0 also changes the configuration. UG IT follows
+[Aktualizacja produkcji z wersji 2.4.0 do 3.2.0](wdrozenie-produkcyjne.md) (in Polish).
+
 ## Hotfix
 
 A hotfix ships like any change: a pull request into `staging`, then a `patch` release. If `staging`
