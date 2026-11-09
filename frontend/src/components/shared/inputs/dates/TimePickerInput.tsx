@@ -54,7 +54,7 @@ function moveFocus(evt: React.KeyboardEvent<HTMLElement>, columns: number) {
 
 const itemClassName =
   'h-8 w-full shrink-0 snap-center rounded-lg text-[15px] text-neutral-700 tabular-nums transition-colors duration-150 ease-out hover:bg-primary-50 focus-visible:outline-hidden disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-transparent';
-const selectedClassName = 'bg-primary font-semibold text-inverse-foreground hover:bg-primary';
+const selectedClassName = 'bg-primary-100 font-bold text-primary hover:bg-primary-100';
 const columnHeadClassName = 'pt-1 pb-0.5 text-center text-[10px] tracking-wider text-neutral-600 uppercase';
 
 type Props = {
@@ -412,7 +412,7 @@ export function TimePickerInput({
                     onClick={() => pick({ hours: hour, minutes: 0 })}
                     className={cn(
                       'rounded-md py-1 text-xs text-neutral-600 tabular-nums transition-colors duration-150 ease-out hover:bg-primary-50 focus-visible:outline-hidden hover:text-primary disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-transparent',
-                      selected && 'bg-primary text-inverse-foreground hover:bg-primary hover:text-inverse-foreground'
+                      selected && 'bg-primary-100 font-bold text-primary hover:bg-primary-100'
                     )}
                   >
                     {formatTime({ hours: hour, minutes: 0 })}
