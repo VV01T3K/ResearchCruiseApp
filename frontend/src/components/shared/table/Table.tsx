@@ -1,4 +1,11 @@
-import { ColumnFiltersState, OnChangeFn, RowSelectionState, SortingState, useTable } from '@tanstack/react-table';
+import {
+  ColumnFiltersState,
+  ExtractTableMeta,
+  OnChangeFn,
+  RowSelectionState,
+  SortingState,
+  useTable,
+} from '@tanstack/react-table';
 import { appTableFeatures, ColumnDef, Row } from '@/integrations/tanstack/table/features';
 
 import { DesktopTable } from '@/components/shared/table/desktop/DesktopTable';
@@ -26,6 +33,7 @@ type Props<T extends object> = {
   infiniteScroll?: InfiniteScrollProps;
   virtualized?: boolean;
   className?: string;
+  meta?: ExtractTableMeta<typeof appTableFeatures, T>;
 };
 
 export function Table<T extends object>({
@@ -50,6 +58,7 @@ export function Table<T extends object>({
   infiniteScroll,
   virtualized = false,
   className,
+  meta,
 }: Props<T>) {
   const table = useTable({
     features: appTableFeatures,
@@ -77,6 +86,7 @@ export function Table<T extends object>({
       sorting: initialSortingState ?? [],
     },
     getRowId: getRowId,
+    meta,
   });
 
   return (

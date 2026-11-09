@@ -4,7 +4,7 @@ import { Accordion } from '@/components/shared/Accordion';
 import { Button } from '@/components/shared/Button';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { Table } from '@/components/shared/table/Table';
-import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
+import { ActionsHeader, DeleteRowCell } from '@/integrations/tanstack/table/DeleteRowCell';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
@@ -17,7 +17,7 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formADefaultValues });
   const { isReadonly, initValues } = context;
 
-  function getUgTeamsColumns(removeRow: (index: number) => void): ColumnDef<UgTeamValues>[] {
+  function getUgTeamsColumns(): ColumnDef<UgTeamValues>[] {
     return [
       {
         header: 'Lp.',
@@ -80,23 +80,14 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
       },
       {
         id: 'actions',
-        header: () => <span className="sr-only">Akcje</span>,
-        cell: ({ row }) => (
-          <div className="flex justify-end">
-            <TableDeleteRowButton
-              onClick={() => {
-                removeRow(row.index);
-              }}
-              disabled={isReadonly}
-            />
-          </div>
-        ),
+        header: ActionsHeader,
+        cell: DeleteRowCell,
         size: 5,
       },
     ];
   }
 
-  function getGuestTeams(removeRow: (index: number) => void): ColumnDef<GuestTeamValues>[] {
+  function getGuestTeams(): ColumnDef<GuestTeamValues>[] {
     return [
       {
         header: 'Lp.',
@@ -147,21 +138,14 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
       },
       {
         id: 'actions',
-        header: () => <span className="sr-only">Akcje</span>,
-        cell: ({ row }) => (
-          <div className="flex justify-end">
-            <TableDeleteRowButton
-              onClick={() => {
-                removeRow(row.index);
-              }}
-              disabled={isReadonly}
-            />
-          </div>
-        ),
+        header: ActionsHeader,
+        cell: DeleteRowCell,
         size: 5,
       },
     ];
   }
+  const ugTeamsColumns = getUgTeamsColumns();
+  const guestTeamsColumns = getGuestTeams();
 
   return (
     <Accordion title="8. Zespoły badawcze, które miałyby uczestniczyć w rejsie" expandedByDefault>
@@ -171,10 +155,13 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
             <div className="mt-auto">
               <Table
                 className="md:-mt-2"
-                columns={getUgTeamsColumns((index) => {
-                  field.removeValue(index);
-                  field.handleBlur();
-                })}
+                columns={ugTeamsColumns}
+                meta={{
+                  removeRow: (index) => {
+                    field.removeValue(index);
+                    field.handleBlur();
+                  },
+                }}
                 data={field.state.value}
                 showRequiredAsterisk
                 buttons={() => [
@@ -210,10 +197,13 @@ export function MembersSection({ context }: { context: FormAViewModel }) {
             <div>
               <Table
                 className="md:-mt-2"
-                columns={getGuestTeams((index) => {
-                  field.removeValue(index);
-                  field.handleBlur();
-                })}
+                columns={guestTeamsColumns}
+                meta={{
+                  removeRow: (index) => {
+                    field.removeValue(index);
+                    field.handleBlur();
+                  },
+                }}
                 data={field.state.value}
                 buttons={() => [
                   <Button
