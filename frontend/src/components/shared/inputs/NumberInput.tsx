@@ -141,7 +141,7 @@ export function NumberInput({
             inputToFocus={inputRef}
           />
         )}
-        <div className="relative w-full">
+        <div className="@container relative w-full">
           <input
             name={name}
             value={stringValue}
@@ -162,7 +162,9 @@ export function NumberInput({
             )}
             ref={inputRef}
           />
-          <InputErrorTriangle errors={errors} mode={'absolute'} />
+          <div className="hidden @min-[8rem]:block">
+            <InputErrorTriangle errors={errors} mode={'absolute'} />
+          </div>
         </div>
         {!disabled && (
           <NumberInputButton
