@@ -29,7 +29,7 @@ export function Button({ variant, size, className, type = 'button', children, lo
       className={cn(
         loading && 'relative',
         buttonClassName({ variant, size, className }),
-        loading && 'scale-100 transition-none'
+        loading && 'scale-100 [transition:none]'
       )}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
@@ -61,7 +61,7 @@ export const ButtonLink = createLink(ButtonAnchor);
 
 function buttonClassName({ variant = 'primary', size = 'md', className }: StyleProps) {
   return cn(
-    'text-inverse-foreground transition-[color,background-color,border-color,box-shadow,scale] duration-150 ease-out focus-visible:outline-hidden hover:cursor-pointer not-disabled:active:scale-98 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-default',
+    'text-inverse-foreground [transition:color_150ms_ease-out,background-color_150ms_ease-out,border-color_150ms_ease-out,box-shadow_150ms_ease-out,scale_200ms_cubic-bezier(0.34,1.56,0.64,1)] focus-visible:outline-hidden hover:cursor-pointer not-disabled:active:scale-96 not-disabled:active:[transition-duration:150ms,150ms,150ms,150ms,100ms] not-disabled:active:[transition-timing-function:ease-out] focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-default',
     variants[variant],
     sizes[size],
     className,
