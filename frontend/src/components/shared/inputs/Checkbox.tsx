@@ -63,7 +63,7 @@ export function Checkbox({
             !checked && !indeterminate && (disabled ? 'bg-surface-subtle' : 'bg-surface hover:border-neutral-400'),
             disabled ? 'cursor-default' : 'cursor-pointer active:scale-90',
             !hasErrors(errors) &&
-              'focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:outline-hidden',
+              'focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-hidden',
             hasErrors(errors) && 'border-danger hover:border-danger focus:ring-danger focus:ring-1 focus:outline-hidden'
           )}
         >

@@ -78,7 +78,7 @@ function CalendarEventTiles({
 
       const focusRing = (
         <div
-          className="pointer-events-none absolute top-0 left-3 z-30 hidden h-8 rounded-lg ring-2 ring-primary-500 ring-offset-2 group-focus-visible:block"
+          className="pointer-events-none absolute top-0 left-3 z-30 hidden h-8 rounded-lg ring-2 ring-primary ring-offset-2 group-focus-visible:block"
           style={{ width: visibleDays * tileWidth - 14 }}
         />
       );
@@ -237,12 +237,12 @@ export function CalendarTile({
       data-calendar-day-tile
       ref={setNodeRef}
       className={cn(
-        enableDragAndDrop && isOver ? 'ring-2 ring-primary-500' : '',
+        enableDragAndDrop && isOver ? 'ring-2 ring-primary' : '',
         enableDragAndDrop && isDropPreview
           ? 'ring-2 ring-primary-300 bg-primary-50'
           : [
               !isCurrentMonth ? 'bg-surface-subtle' : '',
-              isToday ? 'bg-primary-100! border-primary-500!' : '',
+              isToday ? 'bg-primary-100! border-primary!' : '',
               'hover:bg-surface-subtle',
             ],
         'mb-3 h-full min-h-30 rounded-xl border border-border transition-colors duration-150 ease-out'
@@ -254,7 +254,7 @@ export function CalendarTile({
             className={cn(
               !isCurrentMonth ? 'text-muted-foreground' : '',
               isSunday ? 'text-danger' : '',
-              isToday ? 'rounded-full bg-primary-600 px-2 text-inverse-foreground' : '',
+              isToday ? 'rounded-full bg-primary px-2 text-inverse-foreground' : '',
               isToday && isSunday ? 'bg-danger' : ''
             )}
           >

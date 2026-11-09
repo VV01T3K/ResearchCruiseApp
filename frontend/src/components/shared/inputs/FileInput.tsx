@@ -173,7 +173,7 @@ export function FileInput({
               'w-full rounded-lg',
               hasErrors(errors)
                 ? 'focus:ring-danger focus:ring-2 focus:outline-hidden focus:ring-inset'
-                : 'focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden focus-visible:ring-inset'
+                : 'focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden focus-visible:ring-inset'
             )}
           >
             {!disabled && (

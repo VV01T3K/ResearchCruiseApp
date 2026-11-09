@@ -53,8 +53,8 @@ function moveFocus(evt: React.KeyboardEvent<HTMLElement>, columns: number) {
 }
 
 const itemClassName =
-  'h-8 w-full shrink-0 snap-center rounded-lg text-[15px] text-neutral-700 tabular-nums transition-colors duration-150 ease-out hover:bg-primary-50 disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-transparent';
-const selectedClassName = 'bg-primary font-semibold text-inverse-foreground hover:bg-primary';
+  'h-8 w-full shrink-0 snap-center rounded-lg text-[15px] text-neutral-700 tabular-nums transition-colors duration-150 ease-out hover:bg-primary-50 focus-visible:ring-offset-1 focus-visible:outline-hidden disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-transparent';
+const selectedClassName = 'bg-primary-100 font-bold text-primary hover:bg-primary-100';
 const columnHeadClassName = 'pt-1 pb-0.5 text-center text-[10px] tracking-wider text-neutral-600 uppercase';
 
 type Props = {
@@ -251,7 +251,7 @@ export function TimePickerInput({
           className={pickerTriggerClassName({
             disabled,
             errors: allErrors,
-            className: 'cursor-text justify-start gap-0 focus-within:border-primary-500',
+            className: 'cursor-text justify-start gap-0 focus-within:border-primary',
           })}
           onMouseDown={(evt) => {
             if (!disabled && evt.target === evt.currentTarget) {
@@ -285,7 +285,7 @@ export function TimePickerInput({
                   apply(undefined);
                   onBlur?.();
                 }}
-                className="cursor-pointer rounded-sm hover:text-danger-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden"
+                className="cursor-pointer rounded-sm hover:text-danger-500 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
               >
                 <XIcon className="h-4 w-4" />
               </button>
@@ -293,7 +293,7 @@ export function TimePickerInput({
             <Popover.Trigger
               disabled={disabled}
               aria-label="Wybierz godzinę z listy"
-              className="cursor-pointer rounded-sm focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-hidden disabled:cursor-default"
+              className="cursor-pointer rounded-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden disabled:cursor-default"
             >
               <ClockIcon className="h-4 w-4" />
             </Popover.Trigger>
@@ -411,8 +411,8 @@ export function TimePickerInput({
                     disabled={!inRange(hour * 60)}
                     onClick={() => pick({ hours: hour, minutes: 0 })}
                     className={cn(
-                      'rounded-md py-1 text-xs text-neutral-600 tabular-nums transition-colors duration-150 ease-out hover:bg-primary-50 hover:text-primary disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-transparent',
-                      selected && 'bg-primary text-inverse-foreground hover:bg-primary hover:text-inverse-foreground'
+                      'rounded-md py-1 text-xs text-neutral-600 tabular-nums transition-colors duration-150 ease-out hover:bg-primary-50 focus-visible:ring-offset-1 focus-visible:outline-hidden hover:text-primary disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-transparent',
+                      selected && 'bg-primary-100 font-bold text-primary hover:bg-primary-100'
                     )}
                   >
                     {formatTime({ hours: hour, minutes: 0 })}

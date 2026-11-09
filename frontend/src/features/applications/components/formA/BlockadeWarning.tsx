@@ -16,7 +16,7 @@ export function BlockadeWarning({ year, blockades }: Props) {
       <Collapsible.Panel className="h-(--collapsible-panel-height) overflow-hidden transition-[height,opacity] duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0 [&_[role=alert]>svg]:mt-2.5">
         <Alert variant="warning" iconAlign="start">
           <Collapsible.Root>
-            <Collapsible.Trigger className="group -m-2 flex w-[calc(100%+1rem)] cursor-pointer items-center justify-between rounded-lg p-2 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:outline-hidden">
+            <Collapsible.Trigger className="group -m-2 flex w-[calc(100%+1rem)] cursor-pointer items-center justify-between rounded-lg p-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-hidden">
               <div className="flex flex-col items-start">
                 <span className="font-bold">Blokady statku w roku {year}</span>
                 <span className="text-sm font-normal">Rozwiń, aby zobaczyć wszystkie blokady</span>

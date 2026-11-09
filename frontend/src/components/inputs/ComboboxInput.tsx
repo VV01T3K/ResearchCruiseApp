@@ -77,7 +77,7 @@ export function ComboboxInput({
             'rounded-lg border border-border bg-surface-muted p-2.5 text-sm text-foreground',
             'transition duration-300 ease-in-out',
             !disabled && 'cursor-pointer hover:border-neutral-400',
-            !disabled && 'focus:border-primary-500 focus:ring-primary-500 focus:outline-hidden focus:ring-inset',
+            !disabled && 'focus:border-primary focus:ring-primary focus:outline-hidden focus:ring-inset',
             disabled && 'cursor-not-allowed bg-neutral-200',
             hasErrors(errors) && invalidInputClassName
           )}
@@ -108,7 +108,7 @@ export function ComboboxInput({
                   aria-label="Szukaj na liście"
                   aria-labelledby={undefined}
                   placeholder="Szukaj na liście"
-                  className="w-full rounded-md border border-border bg-surface-muted py-2 pr-2 pl-8 text-sm text-foreground focus:border-primary-500 focus:outline-hidden"
+                  className="w-full rounded-md border border-border bg-surface-muted py-2 pr-2 pl-8 text-sm text-foreground focus:border-primary focus:outline-hidden"
                 />
               </div>
               <Combobox.Empty className="px-3 py-2 text-sm text-neutral-600 empty:hidden">

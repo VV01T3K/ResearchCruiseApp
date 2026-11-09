@@ -133,8 +133,8 @@ export function YearPickerInput({
                 variant="plain"
                 onClick={() => handleSelectYear(year)}
                 className={cn(
-                  'grid place-items-center rounded-lg hover:bg-surface-subtle',
-                  year === selectedYear ? 'text-primary-500 font-bold' : ''
+                  'grid place-items-center rounded-lg hover:bg-primary-50',
+                  year === selectedYear ? 'bg-primary-100 text-primary font-bold hover:bg-primary-100' : ''
                 )}
               >
                 {year}

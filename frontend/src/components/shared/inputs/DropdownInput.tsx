@@ -29,7 +29,7 @@ export const dropdownItemClassName = cn(
   'cursor-pointer focus-visible:outline-hidden select-none',
   'transition-colors duration-150 ease-out',
   'data-[highlighted]:bg-primary-50 data-[highlighted]:text-foreground',
-  'data-[selected]:bg-primary-50 data-[selected]:text-primary-800 data-[selected]:font-medium'
+  'data-[selected]:bg-primary-50 data-[selected]:text-primary data-[selected]:font-medium'
 );
 
 type Props = {
@@ -114,7 +114,7 @@ export function DropdownInput({
             'p-2.5',
             'transition-[border-color,box-shadow] duration-150 ease-out',
             !disabled && 'cursor-pointer hover:border-neutral-400',
-            !disabled && 'focus:border-primary-500 focus:ring-primary-500 focus:outline-hidden focus:ring-inset',
+            !disabled && 'focus:border-primary focus:ring-primary focus:outline-hidden focus:ring-inset',
             disabled && 'cursor-not-allowed bg-neutral-200',
             hasErrors(errors) && invalidInputClassName
           )}
