@@ -70,12 +70,9 @@ public sealed class AccountAccessTests(SqlFixture fixture) : IAsyncLifetime
                 ? app.CreateApiClient()
                 : await TestApplications.Login(app, actorRole + "@example.invalid");
         var original = await Snapshot(app);
-        using var usersResponse = await client.GetAsync("/v2/users", ct);
+        using var usersResponse = await client.GetAsync("/users", ct);
         Assert.Equal(expected, usersResponse.StatusCode);
-        using var managersResponse = await client.GetAsync(
-            "/v2/users/available-cruise-managers",
-            ct
-        );
+        using var managersResponse = await client.GetAsync("/users/available-cruise-managers", ct);
         Assert.Equal(expected, managersResponse.StatusCode);
         if (expected == HttpStatusCode.OK)
         {
@@ -162,14 +159,14 @@ public sealed class AccountAccessTests(SqlFixture fixture) : IAsyncLifetime
         using var client = await TestApplications.Login(app, office.Email!);
         var original = await Snapshot(app);
         using var response = await client.PatchAsJsonAsync(
-            $"/v2/users/{target.Id}",
+            $"/users/{target.Id}",
             new { FirstName = "Updated", LastName = "Researcher" },
             ct
         );
         Assert.Equal(expected, response.StatusCode);
         if (expected == HttpStatusCode.NoContent)
         {
-            var users = await client.GetFromJsonAsync<List<UserResponse>>("/v2/users", ct);
+            var users = await client.GetFromJsonAsync<List<UserResponse>>("/users", ct);
             Assert.Equal(
                 "Updated",
                 Assert.Single(users!, row => row.Id == Guid.Parse(target.Id)).FirstName
@@ -184,12 +181,12 @@ public sealed class AccountAccessTests(SqlFixture fixture) : IAsyncLifetime
         else
         {
             Assert.Equal(original, await Snapshot(app));
-            var users = await client.GetFromJsonAsync<List<UserResponse>>("/v2/users", ct);
+            var users = await client.GetFromJsonAsync<List<UserResponse>>("/users", ct);
             Assert.DoesNotContain(users!, row => row.Id == Guid.Parse(target.Id));
         }
         using var refreshed = await RefreshSessionTests.SendCookie(
             targetClient,
-            "/v2/auth/refresh",
+            "/auth/refresh",
             session.Cookie
         );
         Assert.Equal(HttpStatusCode.OK, refreshed.StatusCode);

@@ -132,7 +132,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
             _ => throw new ArgumentOutOfRangeException(nameof(change)),
         };
 
-        using var response = await office.PatchAsJsonAsync($"/v2/cruises/{cruiseId}", request, ct);
+        using var response = await office.PatchAsJsonAsync($"/cruises/{cruiseId}", request, ct);
 
         await AssertRejected(response, EndedCruiseLocked);
         await app.InDatabase(async db =>
@@ -185,7 +185,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         );
 
         using var refill = await office.PutAsync(
-            $"/v2/applications/{application.Id}/form-c/refill",
+            $"/applications/{application.Id}/form-c/refill",
             null,
             ct
         );
@@ -367,7 +367,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
 
         // Accepted bypass: reopening Form C lifts the block; Form C and its points stay.
         using var refill = await office.PutAsync(
-            $"/v2/applications/{reported.Id}/form-c/refill",
+            $"/applications/{reported.Id}/form-c/refill",
             null,
             TestContext.Current.CancellationToken
         );
@@ -429,7 +429,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
     {
         var ct = TestContext.Current.CancellationToken;
         using var response = await office.PostAsJsonAsync(
-            "/v2/cruises",
+            "/cruises",
             new CreateRequest(
                 "2030-06-01",
                 "2030-06-02",
@@ -465,7 +465,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         List<Guid> applicationIds
     ) =>
         await office.PatchAsJsonAsync(
-            $"/v2/cruises/{cruiseId}",
+            $"/cruises/{cruiseId}",
             new UpdateRequest(
                 "2030-06-01",
                 "2030-06-02",
@@ -482,7 +482,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
     private static async Task<HttpStatusCode> Confirm(HttpClient office, Guid cruiseId)
     {
         using var response = await office.PutAsync(
-            $"/v2/cruises/{cruiseId}/confirmation{await FormRequests.CruiseRevisionQuery(office, cruiseId)}",
+            $"/cruises/{cruiseId}/confirmation{await FormRequests.CruiseRevisionQuery(office, cruiseId)}",
             null,
             TestContext.Current.CancellationToken
         );
@@ -500,7 +500,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
         Guid cruiseId
     ) =>
         await office.DeleteAsync(
-            $"/v2/cruises/{cruiseId}/confirmation{await FormRequests.CruiseRevisionQuery(office, cruiseId)}",
+            $"/cruises/{cruiseId}/confirmation{await FormRequests.CruiseRevisionQuery(office, cruiseId)}",
             TestContext.Current.CancellationToken
         );
 
@@ -519,7 +519,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
     private static async Task<HttpStatusCode> Complete(HttpClient office, Guid cruiseId)
     {
         using var response = await office.PutAsync(
-            $"/v2/cruises/{cruiseId}/completion{await FormRequests.CruiseRevisionQuery(office, cruiseId)}",
+            $"/cruises/{cruiseId}/completion{await FormRequests.CruiseRevisionQuery(office, cruiseId)}",
             null,
             TestContext.Current.CancellationToken
         );
@@ -531,7 +531,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
     ) =>
         (
             await office.GetFromJsonAsync<List<CruiseApplicationCandidateResponse>>(
-                "/v2/applications/for-cruise-planning",
+                "/applications/for-cruise-planning",
                 TestContext.Current.CancellationToken
             )
         )!;
@@ -545,7 +545,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
 
     private static Task<HttpResponseMessage> SendFormB(HttpClient manager, Seeded application) =>
         manager.PutFormAsync(
-            $"/v2/applications/{application.Id}/form-b",
+            $"/applications/{application.Id}/form-b",
             new FormBWriteRequest
             {
                 Form = new FormBFields { IsCruiseManagerPresent = "true" },
@@ -576,7 +576,7 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
             }
         );
         return manager.PutFormAsync(
-            $"/v2/applications/{application.Id}/form-c",
+            $"/applications/{application.Id}/form-c",
             new FormCWriteRequest { Form = fields, Draft = false },
             TestContext.Current.CancellationToken
         );

@@ -62,7 +62,7 @@ public sealed class GuestAccessTests(SqlFixture fixture) : IAsyncLifetime
         CancellationToken ct
     )
     {
-        foreach (var route in new[] { "/v2/cruises", $"/v2/cruises/{cruise.Id}" })
+        foreach (var route in new[] { "/cruises", $"/cruises/{cruise.Id}" })
         {
             using var body = JsonDocument.Parse(await client.GetStringAsync(route, ct));
             var item =
@@ -76,19 +76,17 @@ public sealed class GuestAccessTests(SqlFixture fixture) : IAsyncLifetime
             );
             Assert.Equal(0, item.GetProperty("applications").GetArrayLength());
         }
-        using var list = JsonDocument.Parse(await client.GetStringAsync("/v2/applications", ct));
+        using var list = JsonDocument.Parse(await client.GetStringAsync("/applications", ct));
         Assert.Equal(0, list.RootElement.GetProperty("items").GetArrayLength());
         foreach (var suffix in new[] { "", "/form-a", "/evaluation", "/cruise" })
         {
             using var response = await client.GetAsync(
-                $"/v2/applications/{applicationId}{suffix}",
+                $"/applications/{applicationId}{suffix}",
                 ct
             );
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
-        foreach (
-            var route in new[] { "/v2/applications/form-a/context", "/v2/users/me/cruise-effects" }
-        )
+        foreach (var route in new[] { "/applications/form-a/context", "/users/me/cruise-effects" })
         {
             using var response = await client.GetAsync(route, ct);
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);

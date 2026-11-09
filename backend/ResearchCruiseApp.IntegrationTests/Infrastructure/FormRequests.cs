@@ -54,7 +54,7 @@ internal static class FormRequests
     internal static async Task<string?> CruiseRevision(HttpClient client, Guid cruiseId)
     {
         var cruise = await client.GetFromJsonAsync<JsonObject>(
-            $"/v2/cruises/{cruiseId}",
+            $"/cruises/{cruiseId}",
             TestContext.Current.CancellationToken
         );
         return cruise?["revision"]?.GetValue<string>();
@@ -63,7 +63,7 @@ internal static class FormRequests
     internal static async Task<string?> ApplicationRevision(HttpClient client, Guid applicationId)
     {
         var application = await client.GetFromJsonAsync<JsonObject>(
-            $"/v2/applications/{applicationId}",
+            $"/applications/{applicationId}",
             TestContext.Current.CancellationToken
         );
         return application?["revision"]?.GetValue<string>();

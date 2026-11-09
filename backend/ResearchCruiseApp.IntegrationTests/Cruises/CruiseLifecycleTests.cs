@@ -30,7 +30,7 @@ public sealed class CruiseLifecycleTests(SqlFixture fixture) : IAsyncLifetime
         );
 
         using var created = await client.PostAsJsonAsync(
-            "/v2/cruises",
+            "/cruises",
             new CreateRequest(
                 "2030-06-01",
                 "2030-06-02",
@@ -55,7 +55,7 @@ public sealed class CruiseLifecycleTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Equal(managerId, cruise.MainCruiseManagerId);
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
         });
-        var route = $"/v2/cruises/{cruiseId}";
+        var route = $"/cruises/{cruiseId}";
         using var premature = await client.PutAsync(
             route + "/completion" + await FormRequests.CruiseRevisionQuery(client, cruiseId),
             null,
@@ -86,7 +86,7 @@ public sealed class CruiseLifecycleTests(SqlFixture fixture) : IAsyncLifetime
 
         using var manager = await TestApplications.Login(app, application.OwnerEmail);
         using var submitted = await manager.PutFormAsync(
-            $"/v2/applications/{application.Id}/form-b",
+            $"/applications/{application.Id}/form-b",
             new FormBWriteRequest
             {
                 Form = new FormBFields { IsCruiseManagerPresent = "true" },

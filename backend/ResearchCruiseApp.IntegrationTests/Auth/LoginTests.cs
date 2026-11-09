@@ -32,7 +32,7 @@ public sealed class LoginTests(SqlFixture fixture) : IAsyncLifetime
 
         var before = app.Clock.GetUtcNow().UtcDateTime;
         using var response = await client.PostAsJsonAsync(
-            "/v2/auth/login",
+            "/auth/login",
             new { Email = user.Email, Password = TestUsers.Password },
             cancellationToken
         );

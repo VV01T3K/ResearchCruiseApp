@@ -1,4 +1,3 @@
-using Asp.Versioning;
 using FluentValidation;
 using ResearchCruiseApp.Api.Applications;
 using ResearchCruiseApp.Api.Applications.Shared;
@@ -37,22 +36,16 @@ public static class ApiComposition
 
     public static IEndpointRouteBuilder MapApi(this IEndpointRouteBuilder app)
     {
-        var api = app.NewVersionedApi("ResearchCruiseApp");
-
-        var v2 = api.MapGroup("/v{version:apiVersion}")
-            .HasApiVersion(new ApiVersion(2, 0))
-            .WithGroupName("v2");
-
-        var auth = v2.MapGroup("/auth").WithTags("Auth");
+        var auth = app.MapGroup("/auth").WithTags("Auth");
         AuthEndpoints.Map(auth);
 
-        var users = v2.MapGroup("/users").WithTags("Users");
+        var users = app.MapGroup("/users").WithTags("Users");
         UsersEndpoints.Map(users);
 
-        var cruises = v2.MapGroup("/cruises").WithTags("Cruises");
+        var cruises = app.MapGroup("/cruises").WithTags("Cruises");
         CruisesEndpoints.Map(cruises);
 
-        var applications = v2.MapGroup("/applications").WithTags("Applications");
+        var applications = app.MapGroup("/applications").WithTags("Applications");
         ApplicationsEndpoints.Map(applications);
 
         return app;

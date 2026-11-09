@@ -60,7 +60,7 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
         };
 
         using var created = await client.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new FormAWriteRequest { Form = form, Draft = true },
             cancellationToken
         );
@@ -81,7 +81,7 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(cancellationToken));
         });
         using var response = await client.GetAsync(
-            $"/v2/applications/{applicationId}/form-a",
+            $"/applications/{applicationId}/form-a",
             cancellationToken
         );
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -114,11 +114,11 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
         form["PrecisePeriodStart"] = sent;
         form["PrecisePeriodEnd"] = sent;
         form["ResearchTasks"] = new JsonArray(new JsonObject { ["Type"] = "10", ["Date"] = sent });
-        using (var created = await FormRequests.Write(client, "/v2/applications", form, true, true))
+        using (var created = await FormRequests.Write(client, "/applications", form, true, true))
             Assert.Equal(HttpStatusCode.Created, created.StatusCode);
         var route = "";
         await app.InDatabase(async db =>
-            route = $"/v2/applications/{(await db.CruiseApplications.SingleAsync(ct)).Id}/form-a"
+            route = $"/applications/{(await db.CruiseApplications.SingleAsync(ct)).Id}/form-a"
         );
 
         var loaded = JsonNode.Parse(await FormRequests.Read(client, route))!.AsObject();
@@ -145,7 +145,7 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
             using var client = await CreateAuthorizedClient(app, user.Email!, cancellationToken);
 
             using var response = await client.PostAsJsonAsync(
-                "/v2/applications",
+                "/applications",
                 new { draft = true },
                 cancellationToken
             );
@@ -176,7 +176,7 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
         var application = await TestApplications.Create(app, CruiseApplicationStatus.Draft);
         using var first = await TestApplications.Login(app, application.OwnerEmail);
         using var second = await TestApplications.Login(app, application.OwnerEmail);
-        var route = $"/v2/applications/{application.Id}/form-a";
+        var route = $"/applications/{application.Id}/form-a";
         var read = (await second.GetFromJsonAsync<JsonObject>(route, ct))!;
         var staleRevision = read["revision"]!.GetValue<string>();
 
@@ -212,7 +212,7 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
         using var client = await CreateAuthorizedClient(app, user.Email!, cancellationToken);
 
         using var saved = await client.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new
             {
                 draft = true,
@@ -228,7 +228,7 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
             cancellationToken
         );
         using var rejected = await client.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new { draft = true, form = new { cruiseManagerId = user.Id, cruiseHours = "0" } },
             cancellationToken
         );
@@ -247,7 +247,7 @@ public sealed class FormADraftTests(SqlFixture fixture) : IAsyncLifetime
         try
         {
             using var response = await client.PostAsJsonAsync(
-                "/v2/auth/login",
+                "/auth/login",
                 new LoginRequest(email, TestUsers.Password),
                 cancellationToken
             );

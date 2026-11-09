@@ -53,7 +53,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
             });
         }
         using var client = await TestApplications.Login(app, owner.Email!);
-        var route = $"/v2/applications?pageSize=1&sortBy={sortBy}&descending={descending}";
+        var route = $"/applications?pageSize=1&sortBy={sortBy}&descending={descending}";
         var expected = descending ? ids.Reverse().ToArray() : ids;
         string? cursor = null;
         foreach (var id in expected)
@@ -110,7 +110,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
             });
         }
         using var client = await TestApplications.Login(app, actor.Email!);
-        const string route = "/v2/applications?pageSize=1&year=2030&date=2030-01-15";
+        const string route = "/applications?pageSize=1&year=2030&date=2030-01-15";
         var expected = canViewOthers
             ? new[] { deputyDraft.Id, visibleOther.Id, own.Id }
             : [deputyDraft.Id, own.Id];
@@ -128,23 +128,23 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
                 Assert.False(string.IsNullOrEmpty(cursor));
         }
         Assert.Null(cursor);
-        using var hiddenDetail = await client.GetAsync($"/v2/applications/{hidden.Id}", ct);
+        using var hiddenDetail = await client.GetAsync($"/applications/{hidden.Id}", ct);
         Assert.Equal(System.Net.HttpStatusCode.NotFound, hiddenDetail.StatusCode);
-        using var otherDetail = await client.GetAsync($"/v2/applications/{visibleOther.Id}", ct);
+        using var otherDetail = await client.GetAsync($"/applications/{visibleOther.Id}", ct);
         Assert.Equal(
             canViewOthers ? System.Net.HttpStatusCode.OK : System.Net.HttpStatusCode.NotFound,
             otherDetail.StatusCode
         );
-        using var deputyDetail = await client.GetAsync($"/v2/applications/{deputyDraft.Id}", ct);
+        using var deputyDetail = await client.GetAsync($"/applications/{deputyDraft.Id}", ct);
         Assert.Equal(System.Net.HttpStatusCode.OK, deputyDetail.StatusCode);
         var deputyForm = await client.GetFromJsonAsync<FormAFields>(
-            $"/v2/applications/{deputyDraft.Id}/form-a",
+            $"/applications/{deputyDraft.Id}/form-a",
             ct
         );
         Assert.Equal(Guid.Parse(other.Id), deputyForm!.CruiseManagerId);
         Assert.Equal(Guid.Parse(actor.Id), deputyForm.DeputyManagerId);
         var managers = await client.GetFromJsonAsync<List<ApplicationPersonResponse>>(
-            "/v2/applications/managers",
+            "/applications/managers",
             ct
         );
         Assert.Equal(2, managers!.Count);
@@ -154,7 +154,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
 
         using var owner = await TestApplications.Login(app, other.Email!);
         using var removed = await owner.PutFormAsync(
-            $"/v2/applications/{deputyDraft.Id}/form-a",
+            $"/applications/{deputyDraft.Id}/form-a",
             new FormAWriteRequest
             {
                 Form = FormAccessTests.Draft(Guid.Parse(other.Id)),
@@ -166,13 +166,13 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         foreach (var suffix in new[] { "", "/form-a" })
         {
             using var concealed = await client.GetAsync(
-                $"/v2/applications/{deputyDraft.Id}{suffix}",
+                $"/applications/{deputyDraft.Id}{suffix}",
                 ct
             );
             Assert.Equal(System.Net.HttpStatusCode.NotFound, concealed.StatusCode);
         }
         var afterRemoval = await client.GetFromJsonAsync<ApplicationsPageResponse>(
-            "/v2/applications?year=2030&date=2030-01-15",
+            "/applications?year=2030&date=2030-01-15",
             JsonOptions,
             ct
         );
@@ -182,7 +182,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         );
         Assert.Null(afterRemoval.NextCursor);
         managers = await client.GetFromJsonAsync<List<ApplicationPersonResponse>>(
-            "/v2/applications/managers",
+            "/applications/managers",
             ct
         );
         Assert.Equal(canViewOthers ? 2 : 1, managers!.Count);
@@ -226,19 +226,19 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var client = await TestApplications.Login(app, first.Email!);
         var managers = await client.GetFromJsonAsync<List<ApplicationPersonResponse>>(
-            "/v2/applications/managers",
+            "/applications/managers",
             ct
         );
         Assert.Equal(2, managers!.Count);
         Assert.Contains(managers, row => row.Id == Guid.Parse(first.Id));
         Assert.Contains(managers, row => row.Id == Guid.Parse(second.Id));
         var selected = await client.GetFromJsonAsync<ApplicationsPageResponse>(
-            $"/v2/applications?cruiseManager={second.Id}",
+            $"/applications?cruiseManager={second.Id}",
             JsonOptions,
             ct
         );
         Assert.Equal(secondApplication.Id, Assert.Single(selected!.Items).Id);
-        var route = $"/v2/applications?cruiseManager={first.Id}&number={firstApplication.Number}";
+        var route = $"/applications?cruiseManager={first.Id}&number={firstApplication.Number}";
         var matching = await client.GetFromJsonAsync<ApplicationsPageResponse>(
             route + "&date=2030-01-15",
             JsonOptions,
@@ -253,7 +253,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         );
         Assert.Empty(differentDate!.Items);
         var differentManager = await client.GetFromJsonAsync<ApplicationsPageResponse>(
-            $"/v2/applications?cruiseManager={second.Id}&number={firstApplication.Number}&date=2030-01-15",
+            $"/applications?cruiseManager={second.Id}&number={firstApplication.Number}&date=2030-01-15",
             JsonOptions,
             ct
         );
@@ -290,7 +290,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         }
         using var client = await TestApplications.Login(app, owner.Email!);
         var numbered = await client.GetFromJsonAsync<ApplicationsPageResponse>(
-            "/v2/applications?pageSize=1",
+            "/applications?pageSize=1",
             JsonOptions,
             ct
         );
@@ -299,7 +299,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         foreach (var cursor in invalidCursors)
         {
             var page = await client.GetFromJsonAsync<ApplicationsPageResponse>(
-                $"/v2/applications?sortBy=date&pageSize=1&cursor={Uri.EscapeDataString(cursor)}",
+                $"/applications?sortBy=date&pageSize=1&cursor={Uri.EscapeDataString(cursor)}",
                 JsonOptions,
                 ct
             );
@@ -345,7 +345,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         foreach (var editing in new[] { false, true })
         {
             var candidates = await client.GetFromJsonAsync<JsonElement[]>(
-                "/v2/applications/for-cruise-planning" + (editing ? $"?cruiseId={cruise.Id}" : ""),
+                "/applications/for-cruise-planning" + (editing ? $"?cruiseId={cruise.Id}" : ""),
                 ct
             );
             Assert.NotNull(candidates);
@@ -391,7 +391,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
         using var client = await TestApplications.Login(app, owner.Email!);
 
         var items = await GetItems(client, ct);
-        using var planned = await client.PostAsync("/v2/cruises/auto-plan", null, ct);
+        using var planned = await client.PostAsync("/cruises/auto-plan", null, ct);
 
         var row = Assert.Single(items, item => item.Id == malformed.Id);
         Assert.Null(row.Year);
@@ -442,7 +442,7 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
     ) =>
         (
             await client.GetFromJsonAsync<ApplicationsPageResponse>(
-                "/v2/applications",
+                "/applications",
                 JsonOptions,
                 ct
             )

@@ -86,7 +86,7 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
             client.DefaultRequestHeaders.Add("X-Api-Key", "api-key-secret");
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
             using var response = await client.PutFormAsync(
-                $"/v2/applications/{application.Id}/form-b",
+                $"/applications/{application.Id}/form-b",
                 new FormBWriteRequest
                 {
                     Form = new FormBFields { IsCruiseManagerPresent = "capture-failure" },
@@ -203,13 +203,13 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
             scope.Request.Env["SERVER_PORT"] = "8080";
         });
         hub.StartTransaction(name, "http.server").Finish();
-        hub.StartTransaction("GET /v2/cruises", "http.server").Finish();
+        hub.StartTransaction("GET /cruises", "http.server").Finish();
         await hub.FlushAsync(TimeSpan.FromSeconds(10));
         var transaction = Assert.Single(
             transport.Payloads(),
             payload => payload.TryGetProperty("transaction", out _)
         );
-        Assert.Equal("GET /v2/cruises", transaction.GetProperty("transaction").GetString());
+        Assert.Equal("GET /cruises", transaction.GetProperty("transaction").GetString());
         Assert.False(transaction.GetProperty("user").TryGetProperty("ip_address", out _));
         var request = transaction.GetProperty("request");
         var headers = request.GetProperty("headers");

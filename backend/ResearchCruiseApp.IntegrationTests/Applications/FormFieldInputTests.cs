@@ -47,8 +47,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         var route = prepared.Route;
         if (target == 0)
             await app.InDatabase(async db =>
-                route =
-                    $"/v2/applications/{(await db.CruiseApplications.SingleAsync(ct)).Id}/form-a"
+                route = $"/applications/{(await db.CruiseApplications.SingleAsync(ct)).Id}/form-a"
             );
         using var read = JsonDocument.Parse(await Read(client, route));
         foreach (var field in controls)
@@ -185,8 +184,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         var route = prepared.Route;
         if (target == 0)
             await app.InDatabase(async db =>
-                route =
-                    $"/v2/applications/{(await db.CruiseApplications.SingleAsync(ct)).Id}/form-a"
+                route = $"/applications/{(await db.CruiseApplications.SingleAsync(ct)).Id}/form-a"
             );
         using (var response = await Write(client, route, fields, true))
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -525,13 +523,7 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
         {
             if (target == 1)
             {
-                using var saved = await Write(
-                    client,
-                    "/v2/applications",
-                    fields,
-                    true,
-                    create: true
-                );
+                using var saved = await Write(client, "/applications", fields, true, create: true);
                 Assert.Equal(HttpStatusCode.Created, saved.StatusCode);
                 await app.InDatabase(async db =>
                     id = (await db.CruiseApplications.SingleAsync(ct)).Id
@@ -539,8 +531,8 @@ public sealed class FormFieldInputTests(SqlFixture fixture) : IAsyncLifetime
             }
             var route =
                 target == 0
-                    ? "/v2/applications"
-                    : $"/v2/applications/{id}/form-{(target == 1 ? "a" : target == 2 ? "b" : "c")}";
+                    ? "/applications"
+                    : $"/applications/{id}/form-{(target == 1 ? "a" : target == 2 ? "b" : "c")}";
             if (target is 2 or 3)
             {
                 using var saved = await Write(client, route, fields, true, target == 0);

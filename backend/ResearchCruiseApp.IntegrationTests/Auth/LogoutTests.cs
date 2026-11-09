@@ -30,7 +30,7 @@ public sealed class LogoutTests(SqlFixture fixture) : IAsyncLifetime
         await app.InDatabase(async db =>
             otherHash = (await db.Users.SingleAsync(row => row.Id == other.Id, ct)).RefreshToken
         );
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/v2/auth/logout");
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/auth/logout");
         if (useBearer)
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", session.Access);
         else
@@ -61,13 +61,13 @@ public sealed class LogoutTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var replay = await RefreshSessionTests.SendCookie(
             client,
-            "/v2/auth/refresh",
+            "/auth/refresh",
             session.Cookie
         );
         Assert.Equal(HttpStatusCode.Unauthorized, replay.StatusCode);
         using var otherRefresh = await RefreshSessionTests.SendCookie(
             client,
-            "/v2/auth/refresh",
+            "/auth/refresh",
             otherSession.Cookie
         );
         Assert.Equal(HttpStatusCode.OK, otherRefresh.StatusCode);

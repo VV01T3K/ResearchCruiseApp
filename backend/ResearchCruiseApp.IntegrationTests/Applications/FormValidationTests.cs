@@ -28,7 +28,7 @@ public sealed class FormValidationTests(SqlFixture fixture) : IAsyncLifetime
         await using var app = new TestApplication(fixture.ConnectionString);
         var application = await TestApplications.Create(app, status);
         using var client = await TestApplications.Login(app, application.OwnerEmail);
-        var route = $"/v2/applications/{application.Id}/form-{form}";
+        var route = $"/applications/{application.Id}/form-{form}";
         var permission = new PermissionFields
         {
             Description = "Sampling approval",

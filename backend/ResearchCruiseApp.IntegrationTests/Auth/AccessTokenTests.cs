@@ -33,7 +33,7 @@ public sealed class AccessTokenTests(SqlFixture fixture) : IAsyncLifetime
         var user = await TestUsers.Create(app, "access@example.invalid", RoleName.Guest);
         using var client = app.CreateApiClient();
         var valid = await RefreshSessionTests.Login(client, user.Email!);
-        using var control = new HttpRequestMessage(HttpMethod.Get, "/v2/users/me");
+        using var control = new HttpRequestMessage(HttpMethod.Get, "/users/me");
         control.Headers.Authorization = new AuthenticationHeaderValue("Bearer", valid.Access);
         using var controlResponse = await client.SendAsync(control, ct);
         Assert.Equal(HttpStatusCode.OK, controlResponse.StatusCode);
@@ -71,7 +71,7 @@ public sealed class AccessTokenTests(SqlFixture fixture) : IAsyncLifetime
                 SecurityAlgorithms.HmacSha256
             )
         );
-        using var request = new HttpRequestMessage(HttpMethod.Get, "/v2/users/me");
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/users/me");
         if (defect != "missing")
             request.Headers.Authorization = new AuthenticationHeaderValue(
                 "Bearer",

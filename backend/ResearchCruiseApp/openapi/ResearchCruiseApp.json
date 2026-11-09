@@ -1,11 +1,11 @@
 {
   "openapi": "3.1.1",
   "info": {
-    "title": "ResearchCruiseApp | v2",
+    "title": "ResearchCruiseApp | v1",
     "version": "1.0.0"
   },
   "paths": {
-    "/v2/auth/login": {
+    "/auth/login": {
       "post": {
         "tags": [
           "Auth"
@@ -56,7 +56,7 @@
         }
       }
     },
-    "/v2/auth/refresh": {
+    "/auth/refresh": {
       "post": {
         "tags": [
           "Auth"
@@ -97,7 +97,7 @@
         }
       }
     },
-    "/v2/auth/session": {
+    "/auth/session": {
       "get": {
         "tags": [
           "Auth"
@@ -135,7 +135,7 @@
         }
       }
     },
-    "/v2/auth/logout": {
+    "/auth/logout": {
       "post": {
         "tags": [
           "Auth"
@@ -149,7 +149,7 @@
         }
       }
     },
-    "/v2/auth/register": {
+    "/auth/register": {
       "post": {
         "tags": [
           "Auth"
@@ -183,7 +183,7 @@
         }
       }
     },
-    "/v2/auth/confirm-email": {
+    "/auth/confirm-email": {
       "get": {
         "tags": [
           "Auth"
@@ -226,7 +226,7 @@
         }
       }
     },
-    "/v2/auth/resend-confirmation-email": {
+    "/auth/resend-confirmation-email": {
       "post": {
         "tags": [
           "Auth"
@@ -260,7 +260,7 @@
         }
       }
     },
-    "/v2/auth/password-reset-request": {
+    "/auth/password-reset-request": {
       "post": {
         "tags": [
           "Auth"
@@ -294,7 +294,7 @@
         }
       }
     },
-    "/v2/auth/password-reset": {
+    "/auth/password-reset": {
       "post": {
         "tags": [
           "Auth"
@@ -328,7 +328,7 @@
         }
       }
     },
-    "/v2/users/me": {
+    "/users/me": {
       "get": {
         "tags": [
           "Users"
@@ -359,7 +359,7 @@
         }
       }
     },
-    "/v2/users/me/password": {
+    "/users/me/password": {
       "patch": {
         "tags": [
           "Users"
@@ -413,7 +413,7 @@
         }
       }
     },
-    "/v2/users/me/cruise-effects": {
+    "/users/me/cruise-effects": {
       "get": {
         "tags": [
           "Users"
@@ -464,7 +464,7 @@
         }
       }
     },
-    "/v2/users/me/publications": {
+    "/users/me/publications": {
       "get": {
         "tags": [
           "Users"
@@ -550,7 +550,7 @@
         }
       }
     },
-    "/v2/users/me/publications/import": {
+    "/users/me/publications/import": {
       "post": {
         "tags": [
           "Users"
@@ -624,7 +624,7 @@
         }
       }
     },
-    "/v2/users/me/publications/{publicationId}": {
+    "/users/me/publications/{publicationId}": {
       "delete": {
         "tags": [
           "Users"
@@ -679,7 +679,7 @@
         }
       }
     },
-    "/v2/users": {
+    "/users": {
       "get": {
         "tags": [
           "Users"
@@ -785,7 +785,7 @@
         }
       }
     },
-    "/v2/users/available-cruise-managers": {
+    "/users/available-cruise-managers": {
       "get": {
         "tags": [
           "Users"
@@ -829,7 +829,7 @@
         }
       }
     },
-    "/v2/users/{userId}": {
+    "/users/{userId}": {
       "patch": {
         "tags": [
           "Users"
@@ -977,7 +977,7 @@
         }
       }
     },
-    "/v2/users/{userId}/acceptance": {
+    "/users/{userId}/acceptance": {
       "put": {
         "tags": [
           "Users"
@@ -1095,7 +1095,7 @@
         }
       }
     },
-    "/v2/users/{userId}/roles/{roleName}": {
+    "/users/{userId}/roles/{roleName}": {
       "put": {
         "tags": [
           "Users"
@@ -1259,7 +1259,7 @@
         }
       }
     },
-    "/v2/users/{userId}/role": {
+    "/users/{userId}/role": {
       "put": {
         "tags": [
           "Users"
@@ -1344,7 +1344,7 @@
         }
       }
     },
-    "/v2/users/{userId}/assignments": {
+    "/users/{userId}/assignments": {
       "get": {
         "tags": [
           "Users"
@@ -1396,7 +1396,7 @@
         }
       }
     },
-    "/v2/cruises": {
+    "/cruises": {
       "get": {
         "tags": [
           "Cruises"
@@ -1502,7 +1502,7 @@
         }
       }
     },
-    "/v2/cruises/{cruiseId}": {
+    "/cruises/{cruiseId}": {
       "get": {
         "tags": [
           "Cruises"
@@ -1734,7 +1734,7 @@
         }
       }
     },
-    "/v2/cruises/{cruiseId}/confirmation": {
+    "/cruises/{cruiseId}/confirmation": {
       "put": {
         "tags": [
           "Cruises"
@@ -1886,7 +1886,7 @@
         }
       }
     },
-    "/v2/cruises/{cruiseId}/completion": {
+    "/cruises/{cruiseId}/completion": {
       "put": {
         "tags": [
           "Cruises"
@@ -1968,7 +1968,7 @@
         }
       }
     },
-    "/v2/cruises/auto-plan": {
+    "/cruises/auto-plan": {
       "post": {
         "tags": [
           "Cruises"
@@ -2019,7 +2019,7 @@
         }
       }
     },
-    "/v2/cruises/blockades": {
+    "/cruises/blockades": {
       "get": {
         "tags": [
           "Cruises"
@@ -2078,7 +2078,7 @@
         }
       }
     },
-    "/v2/cruises/export": {
+    "/cruises/export": {
       "get": {
         "tags": [
           "Cruises"
@@ -2129,7 +2129,7 @@
         }
       }
     },
-    "/v2/applications": {
+    "/applications": {
       "get": {
         "tags": [
           "Applications"
@@ -2321,7 +2321,7 @@
         }
       }
     },
-    "/v2/applications/managers": {
+    "/applications/managers": {
       "get": {
         "tags": [
           "Applications"
@@ -2355,7 +2355,7 @@
         }
       }
     },
-    "/v2/applications/{applicationId}": {
+    "/applications/{applicationId}": {
       "get": {
         "tags": [
           "Applications"
@@ -2407,7 +2407,7 @@
         }
       }
     },
-    "/v2/applications/{applicationId}/cruise": {
+    "/applications/{applicationId}/cruise": {
       "get": {
         "tags": [
           "Applications"
@@ -2459,7 +2459,7 @@
         }
       }
     },
-    "/v2/applications/{applicationId}/evaluation": {
+    "/applications/{applicationId}/evaluation": {
       "get": {
         "tags": [
           "Applications"
@@ -2511,7 +2511,7 @@
         }
       }
     },
-    "/v2/applications/{applicationId}/decision": {
+    "/applications/{applicationId}/decision": {
       "put": {
         "tags": [
           "Applications"
@@ -2596,7 +2596,7 @@
         }
       }
     },
-    "/v2/applications/for-cruise-planning": {
+    "/applications/for-cruise-planning": {
       "get": {
         "tags": [
           "Applications"
@@ -2640,7 +2640,7 @@
         }
       }
     },
-    "/v2/applications/form-a/context": {
+    "/applications/form-a/context": {
       "get": {
         "tags": [
           "Applications"
@@ -2691,7 +2691,7 @@
         }
       }
     },
-    "/v2/applications/form-b/context": {
+    "/applications/form-b/context": {
       "get": {
         "tags": [
           "Applications"
@@ -2722,7 +2722,7 @@
         }
       }
     },
-    "/v2/applications/{applicationId}/form-a": {
+    "/applications/{applicationId}/form-a": {
       "get": {
         "tags": [
           "Applications"
@@ -2874,7 +2874,7 @@
         }
       }
     },
-    "/v2/applications/{applicationId}/form-b": {
+    "/applications/{applicationId}/form-b": {
       "get": {
         "tags": [
           "Applications"
@@ -3016,7 +3016,7 @@
         }
       }
     },
-    "/v2/applications/{applicationId}/form-b/refill": {
+    "/applications/{applicationId}/form-b/refill": {
       "put": {
         "tags": [
           "Applications"
@@ -3081,7 +3081,7 @@
         }
       }
     },
-    "/v2/applications/{applicationId}/form-c": {
+    "/applications/{applicationId}/form-c": {
       "get": {
         "tags": [
           "Applications"
@@ -3223,7 +3223,7 @@
         }
       }
     },
-    "/v2/applications/{applicationId}/form-c/refill": {
+    "/applications/{applicationId}/form-c/refill": {
       "put": {
         "tags": [
           "Applications"
@@ -3288,7 +3288,7 @@
         }
       }
     },
-    "/v2/applications/{applicationId}/supervisor-review": {
+    "/applications/{applicationId}/supervisor-review": {
       "get": {
         "tags": [
           "Applications"
@@ -3338,7 +3338,7 @@
         }
       }
     },
-    "/v2/applications/{applicationId}/supervisor-review/decision": {
+    "/applications/{applicationId}/supervisor-review/decision": {
       "put": {
         "tags": [
           "Applications"
@@ -3413,7 +3413,7 @@
         }
       }
     },
-    "/v2/applications/{applicationId}/supervisor-review/invitation": {
+    "/applications/{applicationId}/supervisor-review/invitation": {
       "post": {
         "tags": [
           "Applications"

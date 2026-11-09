@@ -29,7 +29,7 @@ export function fail(status: number, problem?: object): () => never {
 
 type SentRequest = { route: string; body: unknown; query: Record<string, string> };
 
-/** The API requests a test's pages sent, by route such as `'POST /v2/auth/login'`. */
+/** The API requests a test's pages sent, by route such as `'POST /auth/login'`. */
 class Requests {
   readonly #sent: SentRequest[] = [];
 

@@ -32,7 +32,7 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         var original = new FileContent { Name = "original.txt", Content = Content(20, false) };
         form.Contracts.Add(Contract(original));
         var id = await CreateDraft(app, client, form);
-        var route = $"/v2/applications/{id}/form-a";
+        var route = $"/applications/{id}/form-a";
         var identities = await AssertFiles(app, client, id, [original], false);
         Guid originalForm = default;
         await app.InDatabase(async db => originalForm = (await db.FormsA.SingleAsync(ct)).Id);
@@ -89,7 +89,7 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         };
         form.Contracts.Add(Contract(first));
         var id = await CreateDraft(app, client, form);
-        var route = $"/v2/applications/{id}/form-a";
+        var route = $"/applications/{id}/form-a";
         var initial = await AssertFiles(app, client, id, [first], false);
         var second = new FileContent
         {
@@ -167,30 +167,20 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Equal(2, await db.Set<FormAContract>().CountAsync(ct));
         });
         form.Contracts.Clear();
-        using var removedFirst = await Write(
-            client,
-            $"/v2/applications/{first}/form-a",
-            form,
-            true
-        );
+        using var removedFirst = await Write(client, $"/applications/{first}/form-a", form, true);
         Assert.Equal(HttpStatusCode.OK, removedFirst.StatusCode);
         var retained = await AssertFiles(app, client, second, files, false);
         Assert.Equal(contractId, retained.Contract);
         Assert.Equal(fileIds.Order(), retained.Files);
         var firstRead = await client.GetFromJsonAsync<FormAFields>(
-            $"/v2/applications/{first}/form-a",
+            $"/applications/{first}/form-a",
             ct
         );
         Assert.Empty(firstRead!.Contracts);
-        using var removedSecond = await Write(
-            client,
-            $"/v2/applications/{second}/form-a",
-            form,
-            true
-        );
+        using var removedSecond = await Write(client, $"/applications/{second}/form-a", form, true);
         Assert.Equal(HttpStatusCode.OK, removedSecond.StatusCode);
         var secondRead = await client.GetFromJsonAsync<FormAFields>(
-            $"/v2/applications/{second}/form-a",
+            $"/applications/{second}/form-a",
             ct
         );
         Assert.Empty(secondRead!.Contracts);
@@ -223,15 +213,15 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
         var id = await CreateDraft(app, client, form);
 
         scans.Reset();
-        var page = await client.GetFromJsonAsync<JsonElement>("/v2/applications", ct);
+        var page = await client.GetFromJsonAsync<JsonElement>("/applications", ct);
         Assert.Single(page.GetProperty("items").EnumerateArray());
         Assert.Equal(0, scans.Count);
         foreach (
             var (route, loaded) in new[]
             {
-                ($"/v2/applications/{id}", false),
-                ($"/v2/applications/{id}/form-a", true),
-                ($"/v2/applications/{id}/evaluation", true),
+                ($"/applications/{id}", false),
+                ($"/applications/{id}/form-a", true),
+                ($"/applications/{id}/evaluation", true),
             }
         )
         {
@@ -290,7 +280,7 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
             existing.UnionWith(await db.CruiseApplications.Select(row => row.Id).ToListAsync(ct))
         );
         using var created = await client.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new FormAWriteRequest { Form = form, Draft = true },
             ct
         );
@@ -325,7 +315,7 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
     )
     {
         var ct = TestContext.Current.CancellationToken;
-        var read = await client.GetFromJsonAsync<FormAFields>($"/v2/applications/{id}/form-a", ct);
+        var read = await client.GetFromJsonAsync<FormAFields>($"/applications/{id}/form-a", ct);
         var contract = Assert.Single(read!.Contracts);
         Assert.Equal(expected.Length, contract.Scans.Count);
         foreach (var scan in expected)

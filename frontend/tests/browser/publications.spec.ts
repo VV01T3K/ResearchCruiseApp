@@ -33,7 +33,7 @@ test('a Windows-1250 CSV upload submits the parsed publications and refreshes th
   });
   await expect(page.getByRole('cell', { name: 'Salinity', exact: true })).toBeVisible();
   const { id: _, ...imported } = publication();
-  expect(requests.bodies('POST /v2/users/me/publications/import')).toEqual([[imported]]);
+  expect(requests.bodies('POST /users/me/publications/import')).toEqual([[imported]]);
 });
 
 test('publications can be deleted one at a time or all at once after confirmation', async ({
@@ -56,15 +56,15 @@ test('publications can be deleted one at a time or all at once after confirmatio
     .click();
   await expect(page.getByRole('cell', { name: first.title!, exact: true })).toHaveCount(0);
   await expect(page.getByRole('cell', { name: second.title, exact: true })).toBeVisible();
-  expect(requests.bodies(`DELETE /v2/users/me/publications/${first.id}`)).toHaveLength(1);
+  expect(requests.bodies(`DELETE /users/me/publications/${first.id}`)).toHaveLength(1);
 
   await page.getByRole('button', { name: 'Usuń wszystkie publikacje' }).click();
   const confirmation = page.getByRole('dialog', { name: 'Czy na pewno chcesz usunąć wszystkie publikacje?' });
   await expect(confirmation).toBeVisible();
-  expect(requests.bodies('DELETE /v2/users/me/publications')).toHaveLength(0);
+  expect(requests.bodies('DELETE /users/me/publications')).toHaveLength(0);
   await confirmation.getByRole('button', { name: 'Usuń wszystkie publikacje' }).click();
   await expect(page.getByRole('cell', { name: second.title, exact: true })).toHaveCount(0);
-  expect(requests.bodies('DELETE /v2/users/me/publications')).toHaveLength(1);
+  expect(requests.bodies('DELETE /users/me/publications')).toHaveLength(1);
 });
 
 test('a partly failed bulk delete reports one error and keeps the failed row selected', async ({
@@ -94,7 +94,7 @@ test('a partly failed bulk delete reports one error and keeps the failed row sel
   await deleteSelected.click();
 
   await expect(deleteSelected).toBeDisabled();
-  expect(requests.bodies(`DELETE /v2/users/me/publications/${second.id}`)).toHaveLength(0);
+  expect(requests.bodies(`DELETE /users/me/publications/${second.id}`)).toHaveLength(0);
   releaseFirst();
   await expect(page.getByRole('cell', { name: second.title, exact: true })).toHaveCount(0);
   await expect(

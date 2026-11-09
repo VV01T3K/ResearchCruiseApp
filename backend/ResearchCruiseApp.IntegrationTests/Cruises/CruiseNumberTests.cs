@@ -30,7 +30,7 @@ public sealed class CruiseNumberTests(SqlFixture fixture) : IAsyncLifetime
         using var client = await TestApplications.Login(app, office.Email!);
 
         using var application = await client.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new FormAWriteRequest
             {
                 Form = FormAccessTests.Draft(Guid.Parse(office.Id)),
@@ -39,12 +39,12 @@ public sealed class CruiseNumberTests(SqlFixture fixture) : IAsyncLifetime
             ct
         );
         using var cruise = await client.PostAsJsonAsync(
-            "/v2/cruises",
+            "/cruises",
             new CreateRequest("2031-06-01", "2031-06-02", Guid.Empty, Guid.Empty, [], "", false),
             ct
         );
         var options = await client.GetFromJsonAsync<FormAOptions>(
-            "/v2/applications/form-a/context",
+            "/applications/form-a/context",
             ct
         );
 
@@ -100,7 +100,7 @@ public sealed class CruiseNumberTests(SqlFixture fixture) : IAsyncLifetime
         var (held, other) = await gate.Race(
             fixture.ConnectionString,
             client.PostAsJsonAsync(
-                "/v2/cruises",
+                "/cruises",
                 new CreateRequest(
                     "2030-07-01",
                     "2030-07-02",
@@ -114,9 +114,9 @@ public sealed class CruiseNumberTests(SqlFixture fixture) : IAsyncLifetime
             ),
             () =>
                 autoPlan
-                    ? client.PostAsync("/v2/cruises/auto-plan", null, ct)
+                    ? client.PostAsync("/cruises/auto-plan", null, ct)
                     : client.PostAsJsonAsync(
-                        "/v2/cruises",
+                        "/cruises",
                         new CreateRequest(
                             "2030-08-01",
                             "2030-08-02",

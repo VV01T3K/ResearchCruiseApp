@@ -39,9 +39,9 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
                     app,
                     (await TestUsers.Create(app, "actor@example.invalid", role)).Email!
                 );
-        var route = $"/v2/cruises/{id}";
+        var route = $"/cruises/{id}";
         using var created = await client.PostAsJsonAsync(
-            "/v2/cruises",
+            "/cruises",
             new CreateRequest(
                 "2030-07-01",
                 "2030-07-02",
@@ -94,7 +94,7 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
         var id = await CreateCruise(app);
         var office = await TestUsers.Create(app, "office@example.invalid", RoleName.Administrator);
         using var client = await TestApplications.Login(app, office.Email!);
-        var route = $"/v2/cruises/{id}";
+        var route = $"/cruises/{id}";
 
         using var rejected = await client.PatchAsJsonAsync(
             route,
@@ -158,7 +158,7 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
         var office = await TestUsers.Create(app, "office@example.invalid", RoleName.Administrator);
         using var first = await TestApplications.Login(app, office.Email!);
         using var second = await TestApplications.Login(app, office.Email!);
-        var route = $"/v2/cruises/{id}";
+        var route = $"/cruises/{id}";
         var applicationIds = new List<Guid>();
         await app.InDatabase(async db =>
             applicationIds = await db.CruiseApplications.Select(row => row.Id).ToListAsync(ct)
@@ -202,7 +202,7 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
 
         // Moving the application to another cruise changes this cruise's list too.
         using var created = await first.PostAsJsonAsync(
-            "/v2/cruises",
+            "/cruises",
             new CreateRequest(
                 "2030-08-01",
                 "2030-08-02",
@@ -237,7 +237,7 @@ public sealed class CruiseWriteTests(SqlFixture fixture) : IAsyncLifetime
         var id = await CreateCruise(app);
         await TestUsers.Create(app, "office@example.invalid", RoleName.Administrator);
         using var client = await TestApplications.Login(app, "office@example.invalid");
-        var route = $"/v2/cruises/{id}";
+        var route = $"/cruises/{id}";
         var revision = await FormRequests.CruiseRevision(client, id);
         pause.Armed = true;
         var reading = client.GetFromJsonAsync<JsonObject>(route, ct);

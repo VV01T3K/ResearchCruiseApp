@@ -39,10 +39,10 @@ test('login returns to the requested page and logout removes access', async ({ p
   await page.goto('/login?redirect=%2Fhelp');
   await logIn(page);
   await expect(page).toHaveURL('/help');
-  expect(requests.bodies('POST /v2/auth/login')).toEqual([{ email: admin.email, password: 'Password1!' }]);
+  expect(requests.bodies('POST /auth/login')).toEqual([{ email: admin.email, password: 'Password1!' }]);
 
   await signOut(page);
-  await expect.poll(() => requests.bodies('POST /v2/auth/logout')).toHaveLength(1);
+  await expect.poll(() => requests.bodies('POST /auth/logout')).toHaveLength(1);
   await page.goto('/user-management');
   await expect(page).toHaveURL(/\/login/);
   expect(await page.evaluate(() => localStorage.getItem('authDetails'))).toBeNull();
@@ -78,7 +78,7 @@ test('invalid login submissions show the app errors instead of the browser ones 
   await email.press('Enter');
   await expect(page.getByText('Nieprawidłowy adres email')).toBeVisible();
   await expect(email).toHaveAttribute('type', 'email');
-  expect(requests.bodies('POST /v2/auth/login')).toEqual([]);
+  expect(requests.bodies('POST /auth/login')).toEqual([]);
 
   await page.reload();
   await page.getByLabel('Hasło', { exact: true }).fill('Password1!');
@@ -87,7 +87,7 @@ test('invalid login submissions show the app errors instead of the browser ones 
   await page.getByLabel('Hasło', { exact: true }).focus();
   await page.getByRole('button', { name: 'Zaloguj', exact: true }).click();
   await expect(email).toBeFocused();
-  expect(requests.bodies('POST /v2/auth/login')).toEqual([]);
+  expect(requests.bodies('POST /auth/login')).toEqual([]);
 });
 
 test('a login whose profile cannot load is revoked and can be retried', async ({ page, network, requests }) => {
@@ -99,7 +99,7 @@ test('a login whose profile cannot load is revoked and can be retried', async ({
   await page.goto('/login');
   await logIn(page);
   await expect(page.getByText('Profil chwilowo niedostępny', { exact: true })).toBeVisible();
-  await expect.poll(() => requests.bodies('POST /v2/auth/logout')).toHaveLength(1);
+  await expect.poll(() => requests.bodies('POST /auth/logout')).toHaveLength(1);
 
   await logIn(page);
   await expect(page).toHaveURL('/');
@@ -129,7 +129,7 @@ test.describe('authenticated session', () => {
     await page.reload();
     await expect(page.getByRole('button', { name: 'Dodaj użytkownika' })).toBeVisible();
     // The refresh token travels as a cookie, never in the body.
-    expect(requests.bodies('GET /v2/auth/session')).toEqual([null, null]);
+    expect(requests.bodies('GET /auth/session')).toEqual([null, null]);
     expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain(session().accessToken);
   });
 
@@ -165,7 +165,7 @@ test.describe('authenticated session', () => {
     );
     page.on('dialog', (dialog) => dialog.dismiss());
     await page.clock.fastForward(30 * 60_000);
-    await expect.poll(() => requests.bodies('GET /v2/auth/session')).toHaveLength(2);
+    await expect.poll(() => requests.bodies('GET /auth/session')).toHaveLength(2);
     await expect(page.getByLabel('Uwagi dotyczące terminu')).toHaveCount(0);
   });
 
@@ -207,7 +207,7 @@ test.describe('authenticated session', () => {
     await page.locator('input[name="repeatedNewPassword"]').fill('NewStrongPass1');
     await page.getByRole('button', { name: 'Zmień hasło' }).click();
     await expect(page.getByText('Hasło zostało zmienione')).toBeVisible();
-    expect(requests.bodies('PATCH /v2/users/me/password')).toEqual([
+    expect(requests.bodies('PATCH /users/me/password')).toEqual([
       { password: 'CurrentPass1', newPassword: 'NewStrongPass1' },
     ]);
   });
@@ -222,7 +222,7 @@ test.describe(() => {
     await expect(page.getByText('Niepotwierdzony adres e-mail', { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Wyślij ponownie', exact: true }).click();
     await expect(page.getByText('Wiadomość potwierdzająca została wysłana ponownie')).toBeVisible();
-    expect(requests.bodies('POST /v2/auth/resend-confirmation-email')).toEqual([{ email: admin.email }]);
+    expect(requests.bodies('POST /auth/resend-confirmation-email')).toEqual([{ email: admin.email }]);
   });
 });
 
@@ -249,7 +249,7 @@ test('a rejected registration explains why and can be resubmitted', async ({ pag
   await register.click();
   await expect(page).toHaveURL(/\/login$/);
   const account = { email: 'person@example.com', firstName: 'Ada', lastName: 'Lovelace', password: 'Password1' };
-  expect(requests.bodies('POST /v2/auth/register')).toEqual([account, account]);
+  expect(requests.bodies('POST /auth/register')).toEqual([account, account]);
 });
 
 test('a failed password reset request can be retried and confirms where the link went', async ({
@@ -271,7 +271,7 @@ test('a failed password reset request can be retried and confirms where the link
 
   await send.click();
   await expect(page.getByText(`Link do resetowania hasła został wysłany na adres: ${admin.email}`)).toBeVisible();
-  expect(requests.bodies('POST /v2/auth/password-reset-request')).toEqual([
+  expect(requests.bodies('POST /auth/password-reset-request')).toEqual([
     { email: admin.email },
     { email: admin.email },
   ]);
@@ -284,7 +284,7 @@ test('password reset carries the emailed token and the new password', async ({ p
   await page.getByLabel('Potwierdź hasło').fill('StrongPass1!');
   await page.getByRole('button', { name: 'Zmień hasło' }).click();
   await expect(page.getByText('Hasło zostało zmienione')).toBeVisible();
-  expect(requests.bodies('POST /v2/auth/password-reset')).toEqual([
+  expect(requests.bodies('POST /auth/password-reset')).toEqual([
     { emailBase64: 'email-token', resetCode: 'reset-token', password: 'StrongPass1!', passwordConfirm: 'StrongPass1!' },
   ]);
 });
@@ -299,5 +299,5 @@ test('email confirmation sends the link parameters', async ({ page, network, req
   network.use(getConfirmEmailMockHandler());
   await page.goto(`/confirm-email?userId=${admin.id}&code=confirmation-token`);
   await expect(page.getByText('Email został potwierdzony', { exact: true })).toBeVisible();
-  expect(requests.queries('GET /v2/auth/confirm-email')).toEqual([{ userId: admin.id, code: 'confirmation-token' }]);
+  expect(requests.queries('GET /auth/confirm-email')).toEqual([{ userId: admin.id, code: 'confirmation-token' }]);
 });

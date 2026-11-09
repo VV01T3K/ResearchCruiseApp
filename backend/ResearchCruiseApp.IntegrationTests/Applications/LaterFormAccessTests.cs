@@ -81,7 +81,7 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
             app,
             actor == "shipowner-owner" ? email : application.OwnerEmail
         );
-        var route = $"/v2/applications/{application.Id}/form-{form}";
+        var route = $"/applications/{application.Id}/form-{form}";
         var initial = await Capture(app);
         Assert.Equal(editable, initial.Status);
         using var missing = await reader.GetAsync(route, ct);
@@ -152,7 +152,7 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
             db.UgUnits.Add(unit);
             await db.SaveChangesAsync(ct);
         });
-        var route = $"/v2/applications/{application.Id}/form-b";
+        var route = $"/applications/{application.Id}/form-b";
         using var manager = app.CreateApiClient();
         var session = await RefreshSessionTests.Login(manager, application.OwnerEmail);
         manager.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
@@ -164,22 +164,22 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
         using var changed = change switch
         {
             "remove" => await office.DeleteAsync(
-                $"/v2/users/{managerId}/roles/{RoleName.CruiseManager}",
+                $"/users/{managerId}/roles/{RoleName.CruiseManager}",
                 ct
             ),
             "replace" => await office.PutAsJsonAsync(
-                $"/v2/users/{managerId}/role",
+                $"/users/{managerId}/role",
                 new { roleName = RoleName.Guest },
                 ct
             ),
-            _ => await office.DeleteAsync($"/v2/users/{managerId}/acceptance", ct),
+            _ => await office.DeleteAsync($"/users/{managerId}/acceptance", ct),
         };
         Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
         using var denied = await Write(manager, route, "b", unit.Id, "2", true, ct);
         Assert.Equal(HttpStatusCode.NotFound, denied.StatusCode);
         using var refresh = await RefreshSessionTests.SendCookie(
             manager,
-            "/v2/auth/refresh",
+            "/auth/refresh",
             session.Cookie
         );
         if (change == "deactivate")
@@ -216,15 +216,15 @@ public sealed class LaterFormAccessTests(SqlFixture fixture) : IAsyncLifetime
 
         using var changed =
             role == RoleName.Shipowner
-                ? await office.DeleteAsync($"/v2/users/{revoked.Id}/acceptance", ct)
+                ? await office.DeleteAsync($"/users/{revoked.Id}/acceptance", ct)
                 : await office.PutAsJsonAsync(
-                    $"/v2/users/{revoked.Id}/role",
+                    $"/users/{revoked.Id}/role",
                     new { roleName = RoleName.Guest },
                     ct
                 );
         Assert.Equal(HttpStatusCode.NoContent, changed.StatusCode);
         using var denied = await oldToken.PutAsync(
-            $"/v2/applications/{application.Id}/form-b/refill",
+            $"/applications/{application.Id}/form-b/refill",
             null,
             ct
         );

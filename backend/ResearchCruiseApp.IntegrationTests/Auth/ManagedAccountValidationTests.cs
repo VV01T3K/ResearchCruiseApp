@@ -37,8 +37,8 @@ public sealed class ManagedAccountValidationTests(SqlFixture fixture) : IAsyncLi
         );
         var (created, duplicate) = await gate.Race(
             fixture.ConnectionString,
-            client.PostAsJsonAsync("/v2/users", request, ct),
-            () => client.PostAsJsonAsync("/v2/users", request, ct),
+            client.PostAsJsonAsync("/users", request, ct),
+            () => client.PostAsJsonAsync("/users", request, ct),
             ct
         );
 
@@ -73,12 +73,12 @@ public sealed class ManagedAccountValidationTests(SqlFixture fixture) : IAsyncLi
         using var client = await TestApplications.Login(app, "administrator@example.invalid");
         using var response = update
             ? await client.PatchAsJsonAsync(
-                $"/v2/users/{target.Id}",
+                $"/users/{target.Id}",
                 new UpdateUserRequest("invalid", "Changed", "Names"),
                 ct
             )
             : await client.PostAsJsonAsync(
-                "/v2/users",
+                "/users",
                 new CreateUserRequest("invalid", "New", "Account", [RoleName.Guest]),
                 ct
             );
@@ -101,7 +101,7 @@ public sealed class ManagedAccountValidationTests(SqlFixture fixture) : IAsyncLi
             refresh,
             refreshExpiry
         );
-        using var read = await client.GetAsync("/v2/users", ct);
+        using var read = await client.GetAsync("/users", ct);
         Assert.Equal(HttpStatusCode.OK, read.StatusCode);
         var users = await read.Content.ReadFromJsonAsync<List<UserResponse>>(ct);
         Assert.Equal(2, users!.Count);
@@ -111,7 +111,7 @@ public sealed class ManagedAccountValidationTests(SqlFixture fixture) : IAsyncLi
         Assert.Equal("Researcher", result.LastName);
         using var refreshed = await RefreshSessionTests.SendCookie(
             targetClient,
-            "/v2/auth/refresh",
+            "/auth/refresh",
             session.Cookie
         );
         Assert.Equal(HttpStatusCode.OK, refreshed.StatusCode);
@@ -154,7 +154,7 @@ public sealed class ManagedAccountValidationTests(SqlFixture fixture) : IAsyncLi
                 System.Text.Encoding.UTF8,
                 "application/json"
             );
-            using var response = await client.PatchAsync($"/v2/users/{target.Id}", content, ct);
+            using var response = await client.PatchAsync($"/users/{target.Id}", content, ct);
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             await AssertTarget(
                 app,
@@ -166,7 +166,7 @@ public sealed class ManagedAccountValidationTests(SqlFixture fixture) : IAsyncLi
                 refresh,
                 refreshExpiry
             );
-            using var read = await client.GetAsync("/v2/users", ct);
+            using var read = await client.GetAsync("/users", ct);
             Assert.Equal(HttpStatusCode.OK, read.StatusCode);
             var users = await read.Content.ReadFromJsonAsync<List<UserResponse>>(ct);
             var result = Assert.Single(users!, user => user.Id.ToString() == target.Id);
@@ -179,7 +179,7 @@ public sealed class ManagedAccountValidationTests(SqlFixture fixture) : IAsyncLi
         }
         using var refreshed = await RefreshSessionTests.SendCookie(
             targetClient,
-            "/v2/auth/refresh",
+            "/auth/refresh",
             session.Cookie
         );
         Assert.Equal(HttpStatusCode.OK, refreshed.StatusCode);

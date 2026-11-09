@@ -39,7 +39,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         );
         Task<HttpResponseMessage> Submit() =>
             client.PostAsJsonAsync(
-                "/v2/applications",
+                "/applications",
                 new FormAWriteRequest { Form = form, Draft = true },
                 ct
             );
@@ -230,12 +230,12 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         );
 
         var publications = await client.GetFromJsonAsync<List<PublicationResponse>>(
-            "/v2/users/me/publications",
+            "/users/me/publications",
             ct
         );
         Assert.Equal("0", Assert.Single(publications!).MinisterialPoints);
         var context = await client.GetFromJsonAsync<JsonElement>(
-            "/v2/applications/form-a/context",
+            "/applications/form-a/context",
             ct
         );
         var historical = Assert
@@ -246,7 +246,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         var form = FormAccessTests.Draft(Guid.Parse(owner.Id));
         form.Publications.Add(historical);
         using var created = await client.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new FormAWriteRequest { Form = form, Draft = true },
             ct
         );
@@ -259,7 +259,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Equal("0", (await db.Publications.SingleAsync(ct)).MinisterialPoints);
             Assert.Equal(0, (await db.FormAPublications.SingleAsync(ct)).Points);
         });
-        var summary = await client.GetFromJsonAsync<JsonElement>($"/v2/applications/{id}", ct);
+        var summary = await client.GetFromJsonAsync<JsonElement>($"/applications/{id}", ct);
         Assert.Equal(0, summary.GetProperty("points").GetInt32());
     }
 
@@ -280,7 +280,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         Guid id = default;
         await app.InDatabase(async db => id = (await db.Publications.SingleAsync(ct)).Id);
         Task<HttpResponseMessage> Delete() =>
-            client.DeleteAsync($"/v2/users/me/publications/{id}", ct);
+            client.DeleteAsync($"/users/me/publications/{id}", ct);
 
         gate.Hold(db =>
             db.ChangeTracker.Entries<UserPublication>()
@@ -298,7 +298,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         await app.InDatabase(async db => Assert.Equal(0, await db.Publications.CountAsync(ct)));
     }
 
-    private const string ImportRoute = "/v2/users/me/publications/import";
+    private const string ImportRoute = "/users/me/publications/import";
 
     private static ImportPublicationRequest ImportedPublication(string title) =>
         new("subject", $"10.1000/{title}", "Author", title, "Journal", "2030", "100");
@@ -324,7 +324,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
                 }
             );
         using var response = await client.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new FormAWriteRequest { Form = form, Draft = true },
             ct
         );
@@ -341,7 +341,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
         });
         var evaluation = await client.GetFromJsonAsync<CruiseApplicationEvaluation>(
-            $"/v2/applications/{id}/evaluation",
+            $"/applications/{id}/evaluation",
             ct
         );
         Assert.Equal(2, evaluation!.FormAPublications.Count);
@@ -349,7 +349,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             evaluation.FormAPublications,
             publication => Assert.Equal("0", publication.Points)
         );
-        var summary = await client.GetFromJsonAsync<JsonElement>($"/v2/applications/{id}", ct);
+        var summary = await client.GetFromJsonAsync<JsonElement>($"/applications/{id}", ct);
         Assert.Equal(0, summary.GetProperty("points").GetInt32());
         Assert.Empty(app.Transport.Messages);
     }
@@ -372,7 +372,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             new PublicationFields { Category = category, MinisterialPoints = "1000" }
         );
         using var response = await client.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new FormAWriteRequest { Form = form, Draft = true },
             ct
         );
@@ -387,11 +387,11 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
         });
         var evaluation = await client.GetFromJsonAsync<CruiseApplicationEvaluation>(
-            $"/v2/applications/{id}/evaluation",
+            $"/applications/{id}/evaluation",
             ct
         );
         Assert.Equal(expected, Assert.Single(evaluation!.FormAPublications).Points);
-        var summary = await client.GetFromJsonAsync<JsonElement>($"/v2/applications/{id}", ct);
+        var summary = await client.GetFromJsonAsync<JsonElement>($"/applications/{id}", ct);
         Assert.Equal(total, summary.GetProperty("points").GetInt32());
         Assert.Empty(app.Transport.Messages);
     }
@@ -414,7 +414,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
                 }
             );
         using var response = await client.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new FormAWriteRequest { Form = form, Draft = true },
             ct
         );
@@ -426,7 +426,7 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             )
         );
 
-        var page = await client.GetFromJsonAsync<JsonElement>("/v2/applications", ct);
+        var page = await client.GetFromJsonAsync<JsonElement>("/applications", ct);
 
         var summary = Assert.Single(page.GetProperty("items").EnumerateArray());
         Assert.Equal(3L * int.MaxValue, summary.GetProperty("points").GetInt64());

@@ -25,7 +25,7 @@ export const getGetCurrentSessionResponseMock = (): null | TokenResponse => (fak
 
 
 export const getLoginMockHandler = (overrideResponse?: TokenResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<TokenResponse> | TokenResponse), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/auth/login', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/auth/login', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -37,7 +37,7 @@ export const getLoginMockHandler = (overrideResponse?: TokenResponse | ((info: P
 }
 
 export const getRefreshTokensMockHandler = (overrideResponse?: TokenResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<TokenResponse> | TokenResponse), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/auth/refresh', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/auth/refresh', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -49,7 +49,7 @@ export const getRefreshTokensMockHandler = (overrideResponse?: TokenResponse | (
 }
 
 export const getGetCurrentSessionMockHandler = (overrideResponse?: null | TokenResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<null | TokenResponse> | null | TokenResponse), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/auth/session', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/auth/session', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
@@ -61,7 +61,7 @@ export const getGetCurrentSessionMockHandler = (overrideResponse?: null | TokenR
 }
 
 export const getLogoutMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/auth/logout', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/auth/logout', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -71,7 +71,7 @@ export const getLogoutMockHandler = (overrideResponse?: void | ((info: Parameter
 }
 
 export const getRegisterAccountMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/auth/register', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/auth/register', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -81,7 +81,7 @@ export const getRegisterAccountMockHandler = (overrideResponse?: void | ((info: 
 }
 
 export const getConfirmEmailMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.get('*/v2/auth/confirm-email', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+  return http.get('*/api/auth/confirm-email', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -91,7 +91,7 @@ export const getConfirmEmailMockHandler = (overrideResponse?: void | ((info: Par
 }
 
 export const getResendConfirmationEmailMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/auth/resend-confirmation-email', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/auth/resend-confirmation-email', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -101,7 +101,7 @@ export const getResendConfirmationEmailMockHandler = (overrideResponse?: void | 
 }
 
 export const getRequestPasswordResetMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/auth/password-reset-request', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/auth/password-reset-request', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -111,7 +111,7 @@ export const getRequestPasswordResetMockHandler = (overrideResponse?: void | ((i
 }
 
 export const getResetPasswordMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.post('*/v2/auth/password-reset', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  return http.post('*/api/auth/password-reset', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,

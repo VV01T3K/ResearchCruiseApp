@@ -42,7 +42,7 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
             await db.SaveChangesAsync(ct);
         });
         using var client = await TestApplications.Login(app, application.OwnerEmail);
-        var route = $"/v2/applications/{application.Id}/form-{(formC ? "c" : "b")}";
+        var route = $"/applications/{application.Id}/form-{(formC ? "c" : "b")}";
         var fields = Fields(formC, unit.Id, shipEquipment.Id);
         var originalFields = Fields(formC, unit.Id, shipEquipment.Id);
         var originalPermissions = originalFields is FormBFields formBFields
@@ -202,8 +202,8 @@ public sealed class FormReplacementTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var firstClient = await TestApplications.Login(app, first.OwnerEmail);
         using var secondClient = await TestApplications.Login(app, second.OwnerEmail);
-        var firstRoute = $"/v2/applications/{first.Id}/form-{(formC ? "c" : "b")}";
-        var secondRoute = $"/v2/applications/{second.Id}/form-{(formC ? "c" : "b")}";
+        var firstRoute = $"/applications/{first.Id}/form-{(formC ? "c" : "b")}";
+        var secondRoute = $"/applications/{second.Id}/form-{(formC ? "c" : "b")}";
         var fields = Fields(formC, unit.Id, shipEquipment.Id);
         object empty = formC
             ? new FormCFields { ShipUsage = "0", DifferentUsage = "" }

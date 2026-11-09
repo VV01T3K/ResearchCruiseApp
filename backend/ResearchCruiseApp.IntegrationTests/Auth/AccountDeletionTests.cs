@@ -23,7 +23,7 @@ public sealed class AccountDeletionTests(SqlFixture fixture) : IAsyncLifetime
         var target = await TestUsers.Create(app, "target@example.invalid", RoleName.Guest);
         await TestUsers.Create(app, "actor@example.invalid", RoleName.Administrator);
         using var client = await TestApplications.Login(app, "actor@example.invalid");
-        var route = $"/v2/users/{target.Id}";
+        var route = $"/users/{target.Id}";
 
         gate.Hold(db =>
             db.ChangeTracker.Entries<User>()
@@ -85,7 +85,7 @@ public sealed class AccountDeletionTests(SqlFixture fixture) : IAsyncLifetime
             actorRole == "anonymous"
                 ? app.CreateApiClient()
                 : await TestApplications.Login(app, "actor@example.invalid");
-        using var response = await client.DeleteAsync($"/v2/users/{target.Id}", ct);
+        using var response = await client.DeleteAsync($"/users/{target.Id}", ct);
         Assert.Equal(expected, response.StatusCode);
         var deleted = expected == HttpStatusCode.NoContent;
         await app.InDatabase(async db =>
@@ -118,7 +118,7 @@ public sealed class AccountDeletionTests(SqlFixture fixture) : IAsyncLifetime
         });
         using var refresh = await RefreshSessionTests.SendCookie(
             targetClient,
-            "/v2/auth/refresh",
+            "/auth/refresh",
             targetSession.Cookie
         );
         Assert.Equal(deleted ? HttpStatusCode.Unauthorized : HttpStatusCode.OK, refresh.StatusCode);

@@ -34,7 +34,7 @@ public sealed class RejectedLoginTests(SqlFixture fixture) : IAsyncLifetime
         using var client = app.CreateApiClient();
 
         using var response = await client.PostAsJsonAsync(
-            "/v2/auth/login",
+            "/auth/login",
             new
             {
                 Email = reason == "unknown-account" ? "unknown@example.invalid" : user.Email,

@@ -66,7 +66,7 @@ public sealed class FormCollectionInputTests(SqlFixture fixture) : IAsyncLifetim
             formC ? CruiseApplicationStatus.Undertaken : CruiseApplicationStatus.FormBRequired
         );
         using var client = await TestApplications.Login(app, application.OwnerEmail);
-        var route = $"/v2/applications/{application.Id}/form-{(formC ? "c" : "b")}";
+        var route = $"/applications/{application.Id}/form-{(formC ? "c" : "b")}";
         var fields = Fields(formC);
         var properties = formC ? FormCCollections : FormBCollections;
         if (explicitEmpty)

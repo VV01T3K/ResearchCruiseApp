@@ -45,7 +45,7 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
             await db.SaveChangesAsync(ct);
         });
         using var client = await TestApplications.Login(app, application.OwnerEmail);
-        var route = $"/v2/applications/{application.Id}/form-c";
+        var route = $"/applications/{application.Id}/form-c";
         var fields = Fields(points, "TrUe", "TRUE", "", type);
         using var draft = await Write(client, route, fields, true);
         Assert.Equal(HttpStatusCode.OK, draft.StatusCode);
@@ -80,7 +80,7 @@ public sealed class FormCEffectInputTests(SqlFixture fixture) : IAsyncLifetime
             );
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
         });
-        var scores = await client.GetFromJsonAsync<JsonElement>("/v2/users/me/cruise-effects", ct);
+        var scores = await client.GetFromJsonAsync<JsonElement>("/users/me/cruise-effects", ct);
         Assert.Equal(
             expected.ToString(CultureInfo.InvariantCulture),
             Assert

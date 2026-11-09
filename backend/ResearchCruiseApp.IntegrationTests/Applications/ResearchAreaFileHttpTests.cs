@@ -29,7 +29,7 @@ public sealed class ResearchAreaFileHttpTests(SqlFixture fixture) : IAsyncLifeti
         FileContent[] initial = [Pdf("map-north.pdf", 1000, 1), Pdf("map-south.pdf", 2000, 2)];
         form.ResearchAreaFiles.AddRange(initial);
         var id = await CreateDraft(app, client, form);
-        var route = $"/v2/applications/{id}/form-a";
+        var route = $"/applications/{id}/form-a";
         await AssertFiles(app, client, id, initial);
 
         FileContent[] replaced =
@@ -72,7 +72,7 @@ public sealed class ResearchAreaFileHttpTests(SqlFixture fixture) : IAsyncLifeti
         var original = Pdf("original.pdf", 100, 1);
         form.ResearchAreaFiles.Add(original);
         var id = await CreateDraft(app, client, form);
-        var route = $"/v2/applications/{id}/form-a";
+        var route = $"/applications/{id}/form-a";
         var snapshot = await FormRequests.Snapshot(app);
         var text = "data:text/plain;base64," + Convert.ToBase64String("not a pdf"u8);
         (FileContent[] Files, string Key)[] invalid =
@@ -117,7 +117,7 @@ public sealed class ResearchAreaFileHttpTests(SqlFixture fixture) : IAsyncLifeti
         FileContent[] files = [Pdf("first.pdf", 100, 1), Pdf("second.pdf", 100, 2)];
         form.ResearchAreaFiles.AddRange(files);
         var id = await CreateDraft(app, client, form);
-        var route = $"/v2/applications/{id}/form-a";
+        var route = $"/applications/{id}/form-a";
         var stale = await FormRequests.CurrentRevision(client, route);
         form.ResearchAreaFiles.RemoveAt(1);
         using (var saved = await Write(client, route, form, true))
@@ -174,7 +174,7 @@ public sealed class ResearchAreaFileHttpTests(SqlFixture fixture) : IAsyncLifeti
     {
         var ct = TestContext.Current.CancellationToken;
         using var created = await client.PostAsJsonAsync(
-            "/v2/applications",
+            "/applications",
             new FormAWriteRequest { Form = form, Draft = true },
             ct
         );
@@ -206,7 +206,7 @@ public sealed class ResearchAreaFileHttpTests(SqlFixture fixture) : IAsyncLifeti
     )
     {
         var ct = TestContext.Current.CancellationToken;
-        var read = await client.GetFromJsonAsync<FormAFields>($"/v2/applications/{id}/form-a", ct);
+        var read = await client.GetFromJsonAsync<FormAFields>($"/applications/{id}/form-a", ct);
         Assert.Equal(Pairs(expected), Pairs(read!.ResearchAreaFiles));
         await app.InDatabase(async db =>
         {

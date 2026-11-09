@@ -49,12 +49,12 @@ test('cruise deletion requires confirmation and removes the row after saving', a
   await dialog.getByRole('button', { name: 'Anuluj' }).click();
   await expect(dialog).toBeHidden();
   await expect(row).toBeVisible();
-  expect(requests.bodies(`DELETE /v2/cruises/${item.id}`)).toHaveLength(0);
+  expect(requests.bodies(`DELETE /cruises/${item.id}`)).toHaveLength(0);
 
   await row.getByRole('button', { name: 'Usuń', exact: true }).click();
   await dialog.getByRole('button', { name: `Usuń rejs nr. ${item.number}` }).click();
   await expect(row).toHaveCount(0);
-  expect(requests.bodies(`DELETE /v2/cruises/${item.id}`)).toHaveLength(1);
+  expect(requests.bodies(`DELETE /cruises/${item.id}`)).toHaveLength(1);
 });
 
 test('hovering the cruises link loads the list once for the navigation that follows', async ({ page, requests }) => {
@@ -62,12 +62,12 @@ test('hovering the cruises link loads the list once for the navigation that foll
   await page.goto('/');
   const link = page.getByRole('link', { name: /Harmonogram rejsów/ });
   await link.hover();
-  await expect.poll(() => requests.bodies('GET /v2/cruises')).toHaveLength(1);
+  await expect.poll(() => requests.bodies('GET /cruises')).toHaveLength(1);
   // Past the 1 s minimum stale time that suspense queries get anyway.
   await page.clock.fastForward(2_000);
   await link.click();
   await expect(page.getByRole('tab', { name: 'Kalendarz' })).toBeVisible();
-  expect(requests.bodies('GET /v2/cruises')).toHaveLength(1);
+  expect(requests.bodies('GET /cruises')).toHaveLength(1);
 });
 
 async function fillNewCruise(page: Page) {
@@ -140,7 +140,7 @@ test('the cruise form time fields sit beside the dates, work by keyboard and sav
 
   await page.getByRole('button', { name: 'Zapisz' }).click();
   await expect
-    .poll(() => requests.bodies('POST /v2/cruises'))
+    .poll(() => requests.bodies('POST /cruises'))
     .toEqual([expect.objectContaining({ startDate: '2026-05-17T13:00:00.000Z', endDate: '2026-05-18T10:00:00.000Z' })]);
 });
 
@@ -169,7 +169,7 @@ test('a new cruise is saved once with Warsaw-midnight dates and the chosen manag
   await page.getByRole('button', { name: 'Zapisz' }).click();
 
   await expect
-    .poll(() => requests.bodies('POST /v2/cruises'))
+    .poll(() => requests.bodies('POST /cruises'))
     .toEqual([
       {
         startDate: '2026-05-16T22:00:00.000Z',
@@ -187,7 +187,7 @@ test('a new cruise is saved once with Warsaw-midnight dates and the chosen manag
   await expect(page).toHaveURL('/cruises');
   await expect(page.getByRole('dialog', { name: 'Niezapisane zmiany' })).toBeHidden();
   refetch.resolve();
-  expect(requests.bodies('POST /v2/cruises')).toHaveLength(1);
+  expect(requests.bodies('POST /cruises')).toHaveLength(1);
 });
 
 test('an edit made during a new cruise POST asks before leaving and never repeats the POST', async ({
@@ -210,7 +210,7 @@ test('an edit made during a new cruise POST asks before leaving and never repeat
   const title = page.locator('input[name="title"]');
   const dialog = page.getByRole('dialog', { name: 'Niezapisane zmiany' });
   await save.dblclick();
-  await expect.poll(() => requests.bodies('POST /v2/cruises').length).toBe(1);
+  await expect.poll(() => requests.bodies('POST /cruises').length).toBe(1);
   await title.fill('Poprawka');
   response.resolve();
 
@@ -221,7 +221,7 @@ test('an edit made during a new cruise POST asks before leaving and never repeat
   await save.click();
   await dialog.getByRole('button', { name: 'Opuść bez zapisywania' }).click();
   await expect(page).toHaveURL('/cruises');
-  expect(requests.bodies('POST /v2/cruises')).toEqual([expect.objectContaining({ title: null })]);
+  expect(requests.bodies('POST /cruises')).toEqual([expect.objectContaining({ title: null })]);
 });
 
 test('a cruise manager who is no longer available keeps their name, without an empty email', async ({
@@ -272,7 +272,7 @@ test('a saved manager change is labelled by the new id before the cruise is refe
   await page.getByRole('button', { name: 'Zapisz rejs' }).click();
 
   await expect(page.getByRole('button', { name: 'Edytuj', exact: true })).toBeVisible();
-  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toEqual([
+  expect(requests.bodies(`PATCH /cruises/${item.id}`)).toEqual([
     expect.objectContaining({ mainManagerId: manager.id, deputyManagerId: outsider.id }),
   ]);
   await expect(deputyManager).toHaveText('Alan Turing (alan@example.com)');
@@ -307,7 +307,7 @@ test('rejected cruise edits show field and general errors, keep the edits and ca
 
   await page.getByRole('button', { name: 'Zapisz rejs' }).click();
   await expect(page.getByRole('button', { name: 'Edytuj', exact: true })).toBeVisible();
-  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`).at(-1)).toEqual({
+  expect(requests.bodies(`PATCH /cruises/${item.id}`).at(-1)).toEqual({
     startDate: item.startDate,
     endDate: item.endDate,
     mainManagerId: manager.id,
@@ -365,7 +365,7 @@ test('the page behind an open modal cannot be clicked or focused', async ({ page
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
   await expect(page.locator('input[name="title"]')).toHaveValue('Nowy tytuł');
-  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toHaveLength(0);
+  expect(requests.bodies(`PATCH /cruises/${item.id}`)).toHaveLength(0);
 });
 
 test('discarding cruise edits asks only when the form has changes and lands on the server version after a conflict', async ({
@@ -411,7 +411,7 @@ test('discarding cruise edits asks only when the form has changes and lands on t
   await expect(title).toHaveValue('Cudzy');
   await page.getByRole('button', { name: 'Zapisz rejs' }).click();
   await expect(page.getByRole('button', { name: 'Edytuj', exact: true })).toBeVisible();
-  expect(requests.bodies(`PATCH /v2/cruises/${item.id}`).at(-1)).toMatchObject({ revision: 'AAAAAAAAB+A=' });
+  expect(requests.bodies(`PATCH /cruises/${item.id}`).at(-1)).toMatchObject({ revision: 'AAAAAAAAB+A=' });
 
   await page.goto('/cruises/new');
   await page.locator('input[name="title"]').fill('Szkic');
@@ -449,7 +449,7 @@ test('a cruise save waits for the previous one and starts from its accepted revi
   const title = page.locator('input[name="title"]');
   const edit = page.getByRole('button', { name: 'Edytuj', exact: true });
   const save = page.getByRole('button', { name: 'Zapisz rejs' });
-  const patches = () => requests.bodies(`PATCH /v2/cruises/${item.id}`);
+  const patches = () => requests.bodies(`PATCH /cruises/${item.id}`);
 
   try {
     await edit.click();
@@ -518,7 +518,7 @@ test('cruise saves finish without waiting for the slow overlap check', async ({ 
       await page.getByRole('button', { name: 'Zapisz rejs' }).click();
       await expect(edit).toBeVisible();
     }
-    expect(requests.bodies(`PATCH /v2/cruises/${item.id}`)).toEqual([
+    expect(requests.bodies(`PATCH /cruises/${item.id}`)).toEqual([
       expect.objectContaining({ title: 'Pierwszy' }),
       expect.objectContaining({ title: 'Drugi' }),
     ]);
@@ -572,17 +572,17 @@ test('a cruise is confirmed, completed and reverted step by step, offering the a
 
   const sent = (route: string) => requests.bodies(route.replace('{id}', item.id)).length;
   expect([
-    sent('PUT /v2/cruises/{id}/confirmation'),
-    sent('PUT /v2/cruises/{id}/completion'),
-    sent('DELETE /v2/cruises/{id}/confirmation'),
+    sent('PUT /cruises/{id}/confirmation'),
+    sent('PUT /cruises/{id}/completion'),
+    sent('DELETE /cruises/{id}/confirmation'),
   ]).toEqual([1, 1, 2]);
 
-  const fetches = requests.queries(`GET /v2/cruises/${item.id}`).length;
+  const fetches = requests.queries(`GET /cruises/${item.id}`).length;
   await button('Usuń rejs').click();
   await dialog.getByRole('button', { name: `Potwierdź usunięcie rejsu nr. ${item.number}` }).click();
   await expect(page.getByRole('heading', { name: 'Rejsy' })).toBeVisible();
-  expect(requests.queries(`DELETE /v2/cruises/${item.id}`)).toHaveLength(1);
-  expect(requests.queries(`GET /v2/cruises/${item.id}`)).toHaveLength(fetches);
+  expect(requests.queries(`DELETE /cruises/${item.id}`)).toHaveLength(1);
+  expect(requests.queries(`GET /cruises/${item.id}`)).toHaveLength(fetches);
 });
 
 test('a status change stays pending until the refreshed cruise arrives', async ({ page, network }) => {
@@ -657,7 +657,7 @@ test('a stale status undo refetches the cruise so the retry sends the current re
     await expect(dialog).toBeHidden();
   }
 
-  expect(requests.queries(`DELETE /v2/cruises/${server.id}/confirmation`)).toEqual([
+  expect(requests.queries(`DELETE /cruises/${server.id}/confirmation`)).toEqual([
     { revision: stale },
     { revision: 'AAAAAAAAB+A=' },
   ]);
@@ -713,7 +713,7 @@ test('a held press at the edge of a button still clicks it', async ({ page, netw
     true
   );
   await page.mouse.up();
-  await expect.poll(() => requests.bodies('POST /v2/cruises/auto-plan')).toHaveLength(1);
+  await expect.poll(() => requests.bodies('POST /cruises/auto-plan')).toHaveLength(1);
 });
 
 test('auto-planning lists the skipped applications', async ({ page, network, requests }) => {
@@ -745,7 +745,7 @@ test('auto-planning lists the skipped applications', async ({ page, network, req
   await expect(dialog.getByText(`Nr ${skipped.applicationNumber}: ${skipped.reason}`)).toBeVisible();
   await dialog.getByRole('button', { name: 'Zamknij' }).click();
   await expect(page.getByRole('row').filter({ hasText: planned.title })).toBeVisible();
-  expect(requests.bodies('POST /v2/cruises/auto-plan')).toHaveLength(2);
+  expect(requests.bodies('POST /cruises/auto-plan')).toHaveLength(2);
   expect(pageErrors).toEqual([]);
 });
 
@@ -770,7 +770,7 @@ test('the export downloads the CSV file of the chosen year', async ({ page, netw
   const file = await download;
   expect(file.suggestedFilename()).toBe('rejsy-2025.csv');
   expect((await readFile(await file.path())).toString()).toBe(csv);
-  expect(requests.queries('GET /v2/cruises/export')).toEqual([{ year: '2025' }]);
+  expect(requests.queries('GET /cruises/export')).toEqual([{ year: '2025' }]);
 });
 
 test('calendar edit mode lets a confirmed cruise be dragged, but not an ended one, and opens them only on double click', async ({
@@ -815,8 +815,8 @@ test('calendar edit mode lets a confirmed cruise be dragged, but not an ended on
   // Half a pixel before June 4's border: the gap is nearer June 4 than June 3.
   await page.mouse.move(june4.x - 0.5, bar.y + bar.height / 2, { steps: 20 });
   await page.mouse.up();
-  await expect.poll(() => requests.bodies(`PATCH /v2/cruises/${confirmed().id}`)).toHaveLength(1);
-  expect(requests.bodies(`PATCH /v2/cruises/${confirmed().id}`)[0]).toMatchObject({
+  await expect.poll(() => requests.bodies(`PATCH /cruises/${confirmed().id}`)).toHaveLength(1);
+  expect(requests.bodies(`PATCH /cruises/${confirmed().id}`)[0]).toMatchObject({
     startDate: '2026-06-04T08:00:00.000Z',
   });
 
@@ -867,7 +867,7 @@ test.describe(() => {
     await page.goto(`/cruises/${cruise().id}`);
     await expect(page.getByText(`${manager.firstName} ${manager.lastName}`)).toBeVisible();
     await expect(page.getByText('Zgłoszenia przypisane do rejsu')).toHaveCount(0);
-    expect(requests.bodies('GET /v2/users/available-cruise-managers')).toHaveLength(0);
+    expect(requests.bodies('GET /users/available-cruise-managers')).toHaveLength(0);
 
     await page.goto('/applications');
     await expect(page).toHaveURL('/');

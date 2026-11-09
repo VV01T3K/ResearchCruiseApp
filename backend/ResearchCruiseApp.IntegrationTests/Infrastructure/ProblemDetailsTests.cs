@@ -23,7 +23,7 @@ public sealed class ProblemDetailsTests(SqlFixture fixture) : IAsyncLifetime
 
         await AssertProblem(
             await client.PostAsJsonAsync(
-                "/v2/auth/login",
+                "/auth/login",
                 new LoginRequest(user.Email!, "IncorrectPassword1!"),
                 ct
             ),
@@ -31,18 +31,18 @@ public sealed class ProblemDetailsTests(SqlFixture fixture) : IAsyncLifetime
             "Podano błędne hasło lub użytkownik nie istnieje."
         );
         await AssertProblem(
-            await client.GetAsync("/v2/applications", ct),
+            await client.GetAsync("/applications", ct),
             HttpStatusCode.Unauthorized,
             "Sesja wygasła. Zaloguj się ponownie."
         );
         await AssertProblem(
-            await client.GetAsync("/v2/does-not-exist", ct),
+            await client.GetAsync("/does-not-exist", ct),
             HttpStatusCode.NotFound,
             "Nie znaleziono żądanego zasobu. Mógł zostać usunięty."
         );
         await AssertProblem(
             await client.PostAsJsonAsync(
-                "/v2/auth/register",
+                "/auth/register",
                 new RegisterAccountRequest(user.Email!, TestUsers.Password, "Anna", "Nowak"),
                 ct
             ),
@@ -65,7 +65,7 @@ public sealed class ProblemDetailsTests(SqlFixture fixture) : IAsyncLifetime
         using var client = app.CreateApiClient();
 
         using var response = await client.PostAsJsonAsync(
-            "/v2/auth/register",
+            "/auth/register",
             new RegisterAccountRequest("anna@example.invalid", "", "", "Nowak"),
             ct
         );

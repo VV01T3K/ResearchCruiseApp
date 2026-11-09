@@ -85,7 +85,7 @@ export const getGetApplicationsUrl = (params?: GetApplicationsParams,) => {
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v2/applications?${stringifiedParams}` : `/v2/applications`
+  return stringifiedParams.length > 0 ? `/applications?${stringifiedParams}` : `/applications`
 }
 
 /**
@@ -108,7 +108,7 @@ export const getApplications = async (params?: GetApplicationsParams, options?: 
 
 export const getGetApplicationsQueryKey = (params?: GetApplicationsParams,) => {
     return [
-    'v2','applications', ...(params ? [params] : [])
+    'applications', ...(params ? [params] : [])
     ] as const;
     }
 
@@ -173,7 +173,7 @@ export const getCreateApplicationUrl = () => {
 
 
 
-  return `/v2/applications`
+  return `/applications`
 }
 
 /**
@@ -260,7 +260,7 @@ export const useCreateApplication = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/applications/managers`
+  return `/applications/managers`
 }
 
 /**
@@ -283,7 +283,7 @@ export const getApplicationManagers = async ( options?: Parameters<typeof custom
 
 export const getGetApplicationManagersQueryKey = () => {
     return [
-    'v2','applications','managers'
+    'applications','managers'
     ] as const;
     }
 
@@ -348,7 +348,7 @@ export const getGetApplicationUrl = (applicationId: string,) => {
 
 
 
-  return `/v2/applications/${applicationId}`
+  return `/applications/${applicationId}`
 }
 
 /**
@@ -371,7 +371,7 @@ export const getApplication = async (applicationId: string, options?: Parameters
 
 export const getGetApplicationQueryKey = (applicationId: string,) => {
     return [
-    'v2','applications',applicationId
+    'applications',applicationId
     ] as const;
     }
 
@@ -436,7 +436,7 @@ export const getGetApplicationCruiseUrl = (applicationId: string,) => {
 
 
 
-  return `/v2/applications/${applicationId}/cruise`
+  return `/applications/${applicationId}/cruise`
 }
 
 /**
@@ -459,7 +459,7 @@ export const getApplicationCruise = async (applicationId: string, options?: Para
 
 export const getGetApplicationCruiseQueryKey = (applicationId: string,) => {
     return [
-    'v2','applications',applicationId,'cruise'
+    'applications',applicationId,'cruise'
     ] as const;
     }
 
@@ -524,7 +524,7 @@ export const getGetApplicationEvaluationUrl = (applicationId: string,) => {
 
 
 
-  return `/v2/applications/${applicationId}/evaluation`
+  return `/applications/${applicationId}/evaluation`
 }
 
 /**
@@ -547,7 +547,7 @@ export const getApplicationEvaluation = async (applicationId: string, options?: 
 
 export const getGetApplicationEvaluationQueryKey = (applicationId: string,) => {
     return [
-    'v2','applications',applicationId,'evaluation'
+    'applications',applicationId,'evaluation'
     ] as const;
     }
 
@@ -612,7 +612,7 @@ export const getUpdateApplicationDecisionUrl = (applicationId: string,) => {
 
 
 
-  return `/v2/applications/${applicationId}/decision`
+  return `/applications/${applicationId}/decision`
 }
 
 /**
@@ -707,7 +707,7 @@ export const useUpdateApplicationDecision = <TError = ErrorType<ProblemDetails>,
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v2/applications/for-cruise-planning?${stringifiedParams}` : `/v2/applications/for-cruise-planning`
+  return stringifiedParams.length > 0 ? `/applications/for-cruise-planning?${stringifiedParams}` : `/applications/for-cruise-planning`
 }
 
 /**
@@ -730,7 +730,7 @@ export const getApplicationsForCruisePlanning = async (params?: GetApplicationsF
 
 export const getGetApplicationsForCruisePlanningQueryKey = (params?: GetApplicationsForCruisePlanningParams,) => {
     return [
-    'v2','applications','for-cruise-planning', ...(params ? [params] : [])
+    'applications','for-cruise-planning', ...(params ? [params] : [])
     ] as const;
     }
 
@@ -802,7 +802,7 @@ export const getGetApplicationFormAContextUrl = (params?: GetApplicationFormACon
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v2/applications/form-a/context?${stringifiedParams}` : `/v2/applications/form-a/context`
+  return stringifiedParams.length > 0 ? `/applications/form-a/context?${stringifiedParams}` : `/applications/form-a/context`
 }
 
 /**
@@ -825,7 +825,7 @@ export const getApplicationFormAContext = async (params?: GetApplicationFormACon
 
 export const getGetApplicationFormAContextQueryKey = (params?: GetApplicationFormAContextParams,) => {
     return [
-    'v2','applications','form-a','context', ...(params ? [params] : [])
+    'applications','form-a','context', ...(params ? [params] : [])
     ] as const;
     }
 
@@ -890,7 +890,7 @@ export const getGetApplicationFormBContextUrl = () => {
 
 
 
-  return `/v2/applications/form-b/context`
+  return `/applications/form-b/context`
 }
 
 /**
@@ -913,7 +913,7 @@ export const getApplicationFormBContext = async ( options?: Parameters<typeof cu
 
 export const getGetApplicationFormBContextQueryKey = () => {
     return [
-    'v2','applications','form-b','context'
+    'applications','form-b','context'
     ] as const;
     }
 
@@ -978,7 +978,7 @@ export const getGetApplicationFormAUrl = (applicationId: string,) => {
 
 
 
-  return `/v2/applications/${applicationId}/form-a`
+  return `/applications/${applicationId}/form-a`
 }
 
 /**
@@ -1001,7 +1001,7 @@ export const getApplicationFormA = async (applicationId: string, options?: Param
 
 export const getGetApplicationFormAQueryKey = (applicationId: string,) => {
     return [
-    'v2','applications',applicationId,'form-a'
+    'applications',applicationId,'form-a'
     ] as const;
     }
 
@@ -1066,7 +1066,7 @@ export const getUpdateApplicationFormAUrl = (applicationId: string,) => {
 
 
 
-  return `/v2/applications/${applicationId}/form-a`
+  return `/applications/${applicationId}/form-a`
 }
 
 /**
@@ -1154,7 +1154,7 @@ export const useUpdateApplicationFormA = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/applications/${applicationId}/form-b`
+  return `/applications/${applicationId}/form-b`
 }
 
 /**
@@ -1177,7 +1177,7 @@ export const getApplicationFormB = async (applicationId: string, options?: Param
 
 export const getGetApplicationFormBQueryKey = (applicationId: string,) => {
     return [
-    'v2','applications',applicationId,'form-b'
+    'applications',applicationId,'form-b'
     ] as const;
     }
 
@@ -1242,7 +1242,7 @@ export const getUpdateApplicationFormBUrl = (applicationId: string,) => {
 
 
 
-  return `/v2/applications/${applicationId}/form-b`
+  return `/applications/${applicationId}/form-b`
 }
 
 /**
@@ -1330,7 +1330,7 @@ export const useUpdateApplicationFormB = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/applications/${applicationId}/form-b/refill`
+  return `/applications/${applicationId}/form-b/refill`
 }
 
 /**
@@ -1403,7 +1403,7 @@ export const useRefillApplicationFormB = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/applications/${applicationId}/form-c`
+  return `/applications/${applicationId}/form-c`
 }
 
 /**
@@ -1426,7 +1426,7 @@ export const getApplicationFormC = async (applicationId: string, options?: Param
 
 export const getGetApplicationFormCQueryKey = (applicationId: string,) => {
     return [
-    'v2','applications',applicationId,'form-c'
+    'applications',applicationId,'form-c'
     ] as const;
     }
 
@@ -1491,7 +1491,7 @@ export const getUpdateApplicationFormCUrl = (applicationId: string,) => {
 
 
 
-  return `/v2/applications/${applicationId}/form-c`
+  return `/applications/${applicationId}/form-c`
 }
 
 /**
@@ -1579,7 +1579,7 @@ export const useUpdateApplicationFormC = <TError = ErrorType<ProblemDetails>,
 
 
 
-  return `/v2/applications/${applicationId}/form-c/refill`
+  return `/applications/${applicationId}/form-c/refill`
 }
 
 /**
@@ -1611,7 +1611,7 @@ export const getGetApplicationSupervisorReviewUrl = (applicationId: string,
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v2/applications/${applicationId}/supervisor-review?${stringifiedParams}` : `/v2/applications/${applicationId}/supervisor-review`
+  return stringifiedParams.length > 0 ? `/applications/${applicationId}/supervisor-review?${stringifiedParams}` : `/applications/${applicationId}/supervisor-review`
 }
 
 /**
@@ -1636,7 +1636,7 @@ export const getApplicationSupervisorReview = async (applicationId: string,
 export const getGetApplicationSupervisorReviewQueryKey = (applicationId: string,
     params?: GetApplicationSupervisorReviewParams,) => {
     return [
-    'v2','applications',applicationId,'supervisor-review', ...(params ? [params] : [])
+    'applications',applicationId,'supervisor-review', ...(params ? [params] : [])
     ] as const;
     }
 
@@ -1706,7 +1706,7 @@ export const getUpdateApplicationSupervisorReviewDecisionUrl = (applicationId: s
 
 
 
-  return `/v2/applications/${applicationId}/supervisor-review/decision`
+  return `/applications/${applicationId}/supervisor-review/decision`
 }
 
 /**
@@ -1794,7 +1794,7 @@ export const useUpdateApplicationSupervisorReviewDecision = <TError = ErrorType<
 
 
 
-  return `/v2/applications/${applicationId}/supervisor-review/invitation`
+  return `/applications/${applicationId}/supervisor-review/invitation`
 }
 
 /**
