@@ -110,6 +110,7 @@ test('form A research tasks can be removed, added and saved, with errors that fo
   const addTask = async (name: string) => {
     await page.getByRole('combobox', { name: 'Dodaj nowe zadanie badawcze' }).click();
     await page.getByRole('combobox', { name: 'Szukaj na liście' }).fill(name);
+    await expect(page.getByRole('option', { name, exact: true })).toHaveAttribute('data-highlighted');
     await page.keyboard.press('Enter');
   };
   const required = page.getByText('Co najmniej jedno zadanie badawcze jest wymagane');

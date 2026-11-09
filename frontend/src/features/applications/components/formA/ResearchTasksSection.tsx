@@ -96,7 +96,7 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                     options={groupBy(initValues.historicalResearchTasks, (x) => x.type ?? '').map(([type, tasks]) => ({
                       label: getTaskName(type),
                       items: tasks.map((task) => ({
-                        label: Object.values(task).join(' '),
+                        label: [task.title, task.author, task.description].filter(Boolean).join(' '),
                         content: <ResearchTaskThumbnail task={task} />,
                         onSelect: () => {
                           field.pushValue(mapResearchTaskToValues(task));
