@@ -389,6 +389,21 @@ test('an invalid form B names the section and reason of the first error in an em
   ).toBeFocused();
 });
 
+test('a form B table cell keeps focus and the caret when its table re-renders', async ({ page }) => {
+  await page.goto(`/applications/${applicationId}/formB?mode=edit`);
+  const addPort = page.getByRole('button', { name: 'Dodaj port', exact: true });
+  await addPort.click();
+  const port = page.getByLabel('Nazwa portu, wiersz 1');
+  await port.fill('Gdynia');
+  await port.press('ArrowLeft');
+  // A dispatched click adds a row without moving focus.
+  await addPort.dispatchEvent('click');
+  await expect(page.getByLabel('Nazwa portu, wiersz 2')).toBeVisible();
+  await expect(port).toBeFocused();
+  await page.keyboard.type('x');
+  await expect(port).toHaveValue('Gdynixa');
+});
+
 test('form B offers going back to editing only while eligible, explains a stale refusal and saves on the refilled revision', async ({
   page,
   network,
