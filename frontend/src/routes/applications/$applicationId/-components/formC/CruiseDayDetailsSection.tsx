@@ -3,17 +3,13 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { Accordion } from '@/components/shared/Accordion';
 import { Button } from '@/components/shared/Button';
 import { Table } from '@/components/shared/table/Table';
-import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
+import { ActionsHeader, DeleteRowCell } from '@/integrations/tanstack/table/DeleteRowCell';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCFormApi, FormCViewModel } from '@/features/applications/models/formC-view-model';
 import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
 import { CruiseDayValues } from '@/features/applications/schemas/types/CruiseDayValues';
 
-const cruiseDayDetailsColumns = (
-  form: FormCFormApi,
-  removeRow: (index: number) => void,
-  isReadonly: boolean
-): ColumnDef<CruiseDayValues>[] => [
+const cruiseDayDetailsColumns = (form: FormCFormApi, isReadonly: boolean): ColumnDef<CruiseDayValues>[] => [
   {
     header: 'Dzień',
     enableColumnFilter: false,
@@ -122,17 +118,8 @@ const cruiseDayDetailsColumns = (
   },
   {
     id: 'actions',
-    header: () => <span className="sr-only">Akcje</span>,
-    cell: ({ row }) => (
-      <div className="flex justify-end">
-        <TableDeleteRowButton
-          onClick={() => {
-            removeRow(row.index);
-          }}
-          disabled={isReadonly}
-        />
-      </div>
-    ),
+    header: ActionsHeader,
+    cell: DeleteRowCell,
     size: 10,
   },
 ];
@@ -140,6 +127,7 @@ const cruiseDayDetailsColumns = (
 export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
   const { isReadonly } = context;
+  const columns = cruiseDayDetailsColumns(form, isReadonly);
 
   return (
     <Accordion title="13. Szczegółowy plan zadań zrealizowanych podczas rejsu" expandedByDefault>
@@ -147,14 +135,13 @@ export function CruiseDayDetailsSection({ context }: { context: FormCViewModel }
         {(field) => (
           <Table
             data={field.state.value}
-            columns={cruiseDayDetailsColumns(
-              form,
-              (index) => {
+            columns={columns}
+            meta={{
+              removeRow: (index) => {
                 field.removeValue(index);
                 field.handleBlur();
               },
-              isReadonly
-            )}
+            }}
             buttons={() => [
               <Button
                 key="new"

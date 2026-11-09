@@ -6,7 +6,7 @@ import { Button } from '@/components/shared/Button';
 import { YearPickerInput } from '@/components/shared/inputs/dates/YearPickerInput';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { Table } from '@/components/shared/table/Table';
-import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
+import { ActionsHeader, DeleteRowCell } from '@/integrations/tanstack/table/DeleteRowCell';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
@@ -18,7 +18,7 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
   const { isReadonly, formAInitValues } = context;
 
-  function getColumns(removeRow: (index: number) => void): ColumnDef<SpubTaskValues>[] {
+  function getColumns(): ColumnDef<SpubTaskValues>[] {
     return [
       {
         header: 'Lp.',
@@ -100,21 +100,13 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
       },
       {
         id: 'actions',
-        header: () => <span className="sr-only">Akcje</span>,
-        cell: ({ row }) => (
-          <div className="flex justify-end">
-            <TableDeleteRowButton
-              onClick={() => {
-                removeRow(row.index);
-              }}
-              disabled={isReadonly}
-            />
-          </div>
-        ),
+        header: ActionsHeader,
+        cell: DeleteRowCell,
         size: 5,
       },
     ];
   }
+  const columns = getColumns();
 
   return (
     <Accordion title="11. Zadania SPUB, z którymi pokrywają się zadania zrealizowane na rejsie" expandedByDefault>
@@ -123,10 +115,13 @@ export function SPUBTasksSection({ context }: { context: FormCViewModel }) {
           {(field) => (
             <>
               <Table
-                columns={getColumns((index) => {
-                  field.removeValue(index);
-                  field.handleBlur();
-                })}
+                columns={columns}
+                meta={{
+                  removeRow: (index) => {
+                    field.removeValue(index);
+                    field.handleBlur();
+                  },
+                }}
                 data={field.state.value}
                 buttons={() => [
                   <Button

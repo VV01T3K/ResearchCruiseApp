@@ -3,17 +3,13 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { Accordion } from '@/components/shared/Accordion';
 import { Button } from '@/components/shared/Button';
 import { Table } from '@/components/shared/table/Table';
-import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
+import { ActionsHeader, DeleteRowCell } from '@/integrations/tanstack/table/DeleteRowCell';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCFormApi, FormCViewModel } from '@/features/applications/models/formC-view-model';
 import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
 import { CollectedSampleValues } from '@/features/applications/schemas/types/CollectedSampleValues';
 
-const collectedSamplesColumns = (
-  form: FormCFormApi,
-  removeRow: (index: number) => void,
-  isReadonly: boolean
-): ColumnDef<CollectedSampleValues>[] => [
+const collectedSamplesColumns = (form: FormCFormApi, isReadonly: boolean): ColumnDef<CollectedSampleValues>[] => [
   {
     header: 'Rodzaj materiału badawczego/próbek/danych',
     cell: ({ row }) => (
@@ -70,12 +66,8 @@ const collectedSamplesColumns = (
   },
   {
     id: 'actions',
-    header: () => <span className="sr-only">Akcje</span>,
-    cell: ({ row }) => (
-      <div className="flex justify-end">
-        <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
-      </div>
-    ),
+    header: ActionsHeader,
+    cell: DeleteRowCell,
     size: 5,
   },
 ];
@@ -83,6 +75,7 @@ const collectedSamplesColumns = (
 export function CollectedSamplesSection({ context }: { context: FormCViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
   const { isReadonly } = context;
+  const columns = collectedSamplesColumns(form, isReadonly);
 
   return (
     <Accordion title="16. Lista próbek pobranych i poddanych analizie podczas rejsu" expandedByDefault>
@@ -90,7 +83,8 @@ export function CollectedSamplesSection({ context }: { context: FormCViewModel }
         {(field) => (
           <Table
             data={field.state.value}
-            columns={collectedSamplesColumns(form, (index) => field.removeValue(index), isReadonly)}
+            columns={columns}
+            meta={{ removeRow: (index) => field.removeValue(index) }}
             buttons={() => [
               <Button
                 key="new"
