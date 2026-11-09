@@ -16,18 +16,18 @@ type Props = {
 export function GridCard({ name, className, Icon, iconWeight, description, to }: Props) {
   return (
     <div key={name} className={cn('phone:col-span-1 phone:row-span-1', className)}>
-      <Link to={to} variant="plain" className="group">
-        <div className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 text-primary shadow-card phone:p-3">
-          <div className="size-16 phone:size-11">
+      <Link to={to} variant="card">
+        <div className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 text-primary shadow-card transition-[translate,box-shadow] duration-150 ease-out group-hover:-translate-y-1 group-hover:shadow-card-hover group-focus-visible:-translate-y-1 group-focus-visible:shadow-card-hover group-focus-visible:ring-2 group-focus-visible:ring-primary-500 group-active:translate-y-0 group-active:shadow-card phone:p-3">
+          <div className="size-16 origin-top-left transition-[scale,color] duration-150 ease-out group-hover:scale-110 group-hover:text-primary-600 group-focus-visible:scale-110 group-focus-visible:text-primary-600 phone:size-11">
             <Icon weight={iconWeight} />
           </div>
           <div>
             <h3 className="font-semibold text-primary md:text-lg xl:text-xl">{name}</h3>
-            <p className="text-sm text-neutral-600 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 phone:hidden">
+            <p className="translate-y-1 text-sm text-neutral-600 opacity-0 transition-[opacity,translate] duration-150 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 phone:hidden">
               {description}
             </p>
           </div>
-          <div className="absolute inset-0 transition-colors duration-150 group-hover:bg-neutral-950/[.03]" />
+          <div className="absolute inset-0 transition-colors duration-150 ease-out group-hover:bg-neutral-950/[.03] group-active:bg-neutral-950/[.06]" />
         </div>
       </Link>
     </div>

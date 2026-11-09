@@ -97,7 +97,7 @@ export function FeedbackForm({ context, close }: Props) {
       </div>
       <form.Subscribe selector={(state) => state.isSubmitting}>
         {(isSubmitting) => (
-          <Button type="submit" className="mt-3 w-full shrink-0" disabled={isSubmitting || pendingReads > 0}>
+          <Button type="submit" className="mt-3 w-full shrink-0" loading={isSubmitting} disabled={pendingReads > 0}>
             {isSubmitting ? 'Wysyłanie...' : 'Wyślij zgłoszenie'}
           </Button>
         )}

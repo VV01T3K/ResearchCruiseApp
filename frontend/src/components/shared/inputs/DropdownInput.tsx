@@ -19,7 +19,7 @@ export type DropdownInputOption = {
 
 export const dropdownPopupClassName = cn(
   'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10',
-  'transition-all duration-150 ease-popup',
+  'transition-[opacity,scale] duration-150 ease-popup',
   'data-[starting-style]:scale-98 data-[starting-style]:opacity-0',
   'data-[ending-style]:scale-98 data-[ending-style]:opacity-0'
 );
@@ -27,7 +27,7 @@ export const dropdownPopupClassName = cn(
 export const dropdownItemClassName = cn(
   'flex items-center justify-between gap-2 border-b border-border-muted px-3 py-2 text-sm text-neutral-700 last:border-b-0',
   'cursor-pointer focus-visible:outline-hidden select-none',
-  'transition-all duration-150 ease-out',
+  'transition-colors duration-150 ease-out',
   'data-[highlighted]:bg-primary-50 data-[highlighted]:text-foreground',
   'data-[selected]:bg-primary-50 data-[selected]:text-primary-800 data-[selected]:font-medium'
 );
@@ -113,7 +113,7 @@ export function DropdownInput({
             'relative inline-flex w-full items-center justify-between',
             'rounded-lg border border-border bg-surface-muted text-sm text-foreground',
             'p-2.5',
-            'transition duration-300 ease-in-out',
+            'transition-[border-color,box-shadow] duration-150 ease-out',
             !disabled && 'cursor-pointer hover:border-neutral-400',
             !disabled && 'focus:border-primary-500 focus:ring-primary-500 focus:outline-hidden focus:ring-inset',
             disabled && 'cursor-not-allowed bg-neutral-200',

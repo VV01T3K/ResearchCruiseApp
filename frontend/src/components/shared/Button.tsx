@@ -1,4 +1,5 @@
 import { Button as BaseButton } from '@base-ui/react/button';
+import { CircleNotchIcon } from '@phosphor-icons/react';
 import { createLink } from '@tanstack/react-router';
 
 import { cn } from '@/lib/utils';
@@ -13,6 +14,7 @@ type Props = StyleProps & {
   type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
   onClick?: (evt: React.MouseEvent) => void;
   disabled?: boolean;
+  loading?: boolean;
   title?: string;
   role?: React.HTMLAttributes<HTMLButtonElement>['role'];
   name?: string;
@@ -21,10 +23,23 @@ type Props = StyleProps & {
   'aria-invalid'?: boolean;
 };
 export type ButtonVariant = keyof typeof variants;
-export function Button({ variant, size, className, type = 'button', children, ...props }: Props) {
+export function Button({ variant, size, className, type = 'button', children, loading, disabled, ...props }: Props) {
   return (
-    <BaseButton type={type} className={buttonClassName({ variant, size, className })} {...props}>
-      {children}
+    <BaseButton
+      type={type}
+      className={buttonClassName({ variant, size, className })}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      {...props}
+    >
+      {loading ? (
+        <span className="flex items-center gap-2">
+          <CircleNotchIcon className="size-4 shrink-0 animate-spin" />
+          {children}
+        </span>
+      ) : (
+        children
+      )}
     </BaseButton>
   );
 }
@@ -37,7 +52,7 @@ export const ButtonLink = createLink(ButtonAnchor);
 
 function buttonClassName({ variant = 'primary', size = 'md', className }: StyleProps) {
   return cn(
-    'text-inverse-foreground focus-visible:outline-hidden hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-default',
+    'text-inverse-foreground transition-[color,background-color,border-color,box-shadow,scale] duration-150 ease-out focus-visible:outline-hidden hover:cursor-pointer not-disabled:active:scale-98 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-default',
     variants[variant],
     sizes[size],
     className,
@@ -58,22 +73,22 @@ const sizes = {
 const variants = {
   plain: 'text-inherit',
 
-  primary: 'rounded-lg bg-primary hover:bg-primary-900 active:bg-primary disabled:bg-primary-500',
-  success: 'rounded-lg bg-success hover:bg-success-900 active:bg-success disabled:bg-success-400',
+  primary: 'rounded-lg bg-primary hover:bg-primary-900 active:bg-primary-950 disabled:bg-primary-500',
+  success: 'rounded-lg bg-success hover:bg-success-900 active:bg-success-950 disabled:bg-success-400',
   danger:
-    'rounded-lg bg-danger hover:bg-danger-700 active:bg-danger disabled:hover:bg-surface disabled:bg-surface disabled:text-muted-foreground disabled:inset-ring disabled:inset-ring-border',
+    'rounded-lg bg-danger hover:bg-danger-700 active:bg-danger-800 disabled:hover:bg-surface disabled:bg-surface disabled:text-muted-foreground disabled:inset-ring disabled:inset-ring-border',
   warning:
-    'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning text-neutral-950 disabled:hover:bg-surface disabled:bg-surface disabled:text-muted-foreground disabled:inset-ring disabled:inset-ring-border',
-  info: 'rounded-lg bg-info hover:bg-info-700 active:bg-info disabled:bg-info-200',
+    'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning-500 text-neutral-950 disabled:hover:bg-surface disabled:bg-surface disabled:text-muted-foreground disabled:inset-ring disabled:inset-ring-border',
+  info: 'rounded-lg bg-info hover:bg-info-700 active:bg-info-800 disabled:bg-info-200',
 
   primaryOutline:
-    'rounded-lg bg-surface hover:bg-primary active:bg-primary text-primary hover:text-inverse-foreground border border-primary transition-all duration-300 disabled:border-border disabled:text-neutral-400 disabled:hover:bg-surface',
+    'rounded-lg bg-surface hover:bg-primary active:bg-primary-900 text-primary hover:text-inverse-foreground border border-primary disabled:border-border disabled:text-neutral-400 disabled:hover:bg-surface',
   successOutline:
-    'rounded-lg bg-surface hover:bg-success active:bg-success text-success hover:text-inverse-foreground border border-success transition-all duration-300 disabled:border-success-300 disabled:text-success-400 disabled:hover:bg-surface',
+    'rounded-lg bg-surface hover:bg-success active:bg-success-900 text-success hover:text-inverse-foreground border border-success disabled:border-success-300 disabled:text-success-400 disabled:hover:bg-surface',
   dangerOutline:
-    'rounded-lg bg-surface hover:bg-danger active:bg-danger text-danger hover:text-inverse-foreground border border-danger transition-all duration-300 disabled:border-border disabled:text-muted-foreground disabled:hover:bg-surface',
+    'rounded-lg bg-surface hover:bg-danger active:bg-danger-700 text-danger hover:text-inverse-foreground border border-danger disabled:border-border disabled:text-muted-foreground disabled:hover:bg-surface',
   warningOutline:
-    'rounded-lg bg-surface hover:bg-warning active:bg-warning text-warning-600 hover:text-neutral-950 border border-warning transition-all duration-300 disabled:border-border disabled:text-muted-foreground disabled:hover:bg-surface',
+    'rounded-lg bg-surface hover:bg-warning active:bg-warning-400 text-warning-600 hover:text-neutral-950 border border-warning disabled:border-border disabled:text-muted-foreground disabled:hover:bg-surface',
   infoOutline:
-    'rounded-lg bg-surface hover:bg-info active:bg-info text-info hover:text-inverse-foreground border border-info transition-all duration-300 disabled:border-info-200 disabled:text-info-300 disabled:hover:bg-surface',
+    'rounded-lg bg-surface hover:bg-info active:bg-info-700 text-info hover:text-inverse-foreground border border-info disabled:border-info-200 disabled:text-info-300 disabled:hover:bg-surface',
 };

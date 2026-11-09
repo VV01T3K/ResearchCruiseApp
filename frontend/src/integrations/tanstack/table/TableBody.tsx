@@ -41,7 +41,7 @@ export function TableBody<T extends object>({
           ref={measureElement}
           data-index={index}
           aria-rowindex={virtualized ? headerRowCount + index + 1 : undefined}
-          className={`text-neutral-800 ${index % 2 === 0 ? 'bg-surface-subtle' : ''}`}
+          className={`text-neutral-800 transition-colors duration-150 ease-out hover:bg-primary-50 ${index % 2 === 0 ? 'bg-surface-subtle' : ''}`}
         >
           {renderCells(row)}
         </tr>
