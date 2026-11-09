@@ -5,7 +5,7 @@ import { Accordion } from '@/components/shared/Accordion';
 import { Button } from '@/components/shared/Button';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { Table } from '@/components/shared/table/Table';
-import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
+import { ActionsHeader, DeleteRowCell } from '@/integrations/tanstack/table/DeleteRowCell';
 import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
@@ -17,7 +17,6 @@ import { ShortResearchEquipmentValues } from '@/features/applications/schemas/ty
 
 const shortResearchEquipmentColumns = (
   form: FormBFormApi,
-  removeRow: (index: number) => void,
   isReadonly: boolean,
   allowPastDates: boolean
 ): ColumnDef<ShortResearchEquipmentValues>[] => [
@@ -96,19 +95,14 @@ const shortResearchEquipmentColumns = (
   },
   {
     id: 'actions',
-    header: () => <span className="sr-only">Akcje</span>,
-    cell: ({ row }) => (
-      <div className="flex justify-end">
-        <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
-      </div>
-    ),
+    header: ActionsHeader,
+    cell: DeleteRowCell,
     size: 10,
   },
 ];
 
 const longResearchEquipmentColumns = (
   form: FormBFormApi,
-  removeRow: (index: number) => void,
   isReadonly: boolean
 ): ColumnDef<LongResearchEquipmentValues>[] => [
   {
@@ -170,22 +164,13 @@ const longResearchEquipmentColumns = (
   },
   {
     id: 'actions',
-    header: () => <span className="sr-only">Akcje</span>,
-    cell: ({ row }) => (
-      <div className="flex justify-end">
-        <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
-      </div>
-    ),
+    header: ActionsHeader,
+    cell: DeleteRowCell,
     size: 10,
   },
 ];
 
-const portColumns = (
-  form: FormBFormApi,
-  removeRow: (index: number) => void,
-  isReadonly: boolean,
-  allowPastDates: boolean
-): ColumnDef<PortCallValues>[] => [
+const portColumns = (form: FormBFormApi, isReadonly: boolean, allowPastDates: boolean): ColumnDef<PortCallValues>[] => [
   {
     header: 'Lp.',
     cell: ({ row }) => `${row.index + 1}`,
@@ -263,12 +248,8 @@ const portColumns = (
   },
   {
     id: 'actions',
-    header: () => <span className="sr-only">Akcje</span>,
-    cell: ({ row }) => (
-      <div className="flex justify-end">
-        <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
-      </div>
-    ),
+    header: ActionsHeader,
+    cell: DeleteRowCell,
     size: 10,
   },
 ];
@@ -279,6 +260,9 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
 
   const [includeShortResearchEquipments, setIncludeShortResearchEquipments] = useState(false);
   const [includePorts, setIncludePorts] = useState(false);
+  const shortEquipmentColumns = shortResearchEquipmentColumns(form, isReadonly, includeShortResearchEquipments);
+  const longEquipmentColumns = longResearchEquipmentColumns(form, isReadonly);
+  const portCallColumns = portColumns(form, isReadonly, includePorts);
 
   return (
     <Accordion title="12. Szczegóły rejsu" expandedByDefault>
@@ -290,15 +274,13 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
         <form.AppField name="shortResearchEquipments" mode="array">
           {(field) => (
             <Table
-              columns={shortResearchEquipmentColumns(
-                form,
-                (index) => {
+              columns={shortEquipmentColumns}
+              meta={{
+                removeRow: (index) => {
                   field.removeValue(index);
                   field.handleBlur();
                 },
-                isReadonly,
-                includeShortResearchEquipments
-              )}
+              }}
               data={field.state.value}
               buttons={() => [
                 <Button
@@ -340,14 +322,13 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
         <form.AppField name="longResearchEquipments" mode="array">
           {(field) => (
             <Table
-              columns={longResearchEquipmentColumns(
-                form,
-                (index) => {
+              columns={longEquipmentColumns}
+              meta={{
+                removeRow: (index) => {
                   field.removeValue(index);
                   field.handleBlur();
                 },
-                isReadonly
-              )}
+              }}
               data={field.state.value}
               buttons={() => [
                 <AddMenuButton
@@ -384,15 +365,13 @@ export function CruiseDetailsSection({ context }: { context: FormBViewModel }) {
         <form.AppField name="ports" mode="array">
           {(field) => (
             <Table
-              columns={portColumns(
-                form,
-                (index) => {
+              columns={portCallColumns}
+              meta={{
+                removeRow: (index) => {
                   field.removeValue(index);
                   field.handleBlur();
                 },
-                isReadonly,
-                includePorts
-              )}
+              }}
               data={field.state.value}
               buttons={() => [
                 <Button

@@ -1,12 +1,12 @@
 import { getErrorMessage } from '@/api/errors';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Button } from '@/components/shared/Button';
 import { toast } from '@/components/shared/layout/toast';
 import { Table } from '@/components/shared/table/Table';
-import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
+import { ActionsHeader, DeleteRowCell } from '@/integrations/tanstack/table/DeleteRowCell';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormBFormApi, FormBViewModel } from '@/features/applications/models/formB-view-model';
 import { formBDefaultValues } from '@/features/applications/schemas/formB.schema';
@@ -17,11 +17,7 @@ import { plural } from '@/lib/plural';
 const cruiseDayKey = (row: CruiseDayValues) =>
   JSON.stringify([row.number, row.hours, row.taskName, row.region, row.position, row.comment]);
 
-const cruiseDayDetailsColumns = (
-  form: FormBFormApi,
-  removeRow: (index: number) => void,
-  isReadonly: boolean
-): ColumnDef<CruiseDayValues>[] => [
+const cruiseDayDetailsColumns = (form: FormBFormApi, isReadonly: boolean): ColumnDef<CruiseDayValues>[] => [
   {
     header: 'Dzień',
     enableColumnFilter: false,
@@ -132,12 +128,8 @@ const cruiseDayDetailsColumns = (
     ? [
         {
           id: 'actions',
-          header: () => <span className="sr-only">Akcje</span>,
-          cell: ({ row }) => (
-            <div className="flex justify-end">
-              <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
-            </div>
-          ),
+          header: ActionsHeader,
+          cell: DeleteRowCell,
           size: 10,
         } as ColumnDef<CruiseDayValues>,
       ]
@@ -174,6 +166,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
+  const columns = useMemo(() => cruiseDayDetailsColumns(form, isReadonly), [form, isReadonly]);
 
   return (
     <Accordion title="13. Szczegółowy plan zadań do realizacji podczas rejsu" expandedByDefault>
@@ -182,14 +175,13 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
           <>
             <Table
               data={field.state.value}
-              columns={cruiseDayDetailsColumns(
-                form,
-                (index) => {
+              columns={columns}
+              meta={{
+                removeRow: (index) => {
                   field.removeValue(index);
                   field.handleBlur();
                 },
-                isReadonly
-              )}
+              }}
               buttons={() => {
                 const buttons = [];
                 if (!isReadonly) {
