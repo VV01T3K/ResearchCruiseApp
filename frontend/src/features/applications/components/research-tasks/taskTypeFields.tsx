@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { formatDate } from '@/lib/dateUtils';
 
 import type { ResearchTaskFields } from '@/api/generated/schemas';
@@ -24,7 +26,7 @@ export type TaskField = {
 
 type TaskTypeFields = {
   fields: TaskField[];
-  summary: (task: ResearchTaskFields) => string[];
+  summary: (task: ResearchTaskFields) => ReactNode[];
 };
 
 const thesis: TaskTypeFields = {
@@ -32,7 +34,7 @@ const thesis: TaskTypeFields = {
     { name: 'author', label: 'Autor', kind: 'text', placeholder: 'Wprowadź autora' },
     { name: 'title', label: 'Tytuł', kind: 'text', placeholder: 'Wprowadź tytuł' },
   ],
-  summary: (task) => [`Tytuł: ${task.title ?? ''}`, `Autor: ${task.author ?? ''}`],
+  summary: (task) => [<>Tytuł: {task.title}</>, <>Autor: {task.author}</>],
 };
 
 const projectPreparation: TaskTypeFields = {
@@ -41,7 +43,7 @@ const projectPreparation: TaskTypeFields = {
     { name: 'date', label: 'Przewidywany termin składania', kind: 'date' },
     { name: 'financingApproved', label: 'Otrzymano decyzję o finansowaniu?', kind: 'yesNo' },
   ],
-  summary: (task) => [`Tytuł: ${task.title ?? ''}`, `Data: ${formatDate(task.date ?? '', 'date')}`],
+  summary: (task) => [<>Tytuł: {task.title}</>, <>Data: {formatDate(task.date ?? '', 'date')}</>],
 };
 
 const project: TaskTypeFields = {
@@ -53,9 +55,11 @@ const project: TaskTypeFields = {
     { name: 'securedAmount', label: 'Środki zabezpieczone na realizację rejsu', kind: 'amount' },
   ],
   summary: (task) => [
-    `Tytuł: ${task.title ?? ''}`,
-    `${formatDate(task.startDate ?? '', 'monthYear')} - ${formatDate(task.endDate ?? '', 'monthYear')}`,
-    `Kwota: ${task.financingAmount ?? ''} zł`,
+    <>Tytuł: {task.title}</>,
+    <>
+      {formatDate(task.startDate ?? '', 'monthYear')} - {formatDate(task.endDate ?? '', 'monthYear')}
+    </>,
+    <>Kwota: {task.financingAmount} zł</>,
   ],
 };
 
@@ -68,7 +72,7 @@ const didactics: TaskTypeFields = {
       placeholder: 'Wprowadź opis zajęcia dydaktycznego',
     },
   ],
-  summary: (task) => [`Opis: ${task.description ?? ''}`],
+  summary: (task) => [<>Opis: {task.description}</>],
 };
 
 const own: TaskTypeFields = {
@@ -78,12 +82,12 @@ const own: TaskTypeFields = {
     { name: 'magazine', label: 'Czasopismo', kind: 'text', placeholder: 'Wprowadź czasopismo' },
     { name: 'ministerialPoints', label: 'Przewidywane punkty ministerialne', kind: 'points' },
   ],
-  summary: (task) => [`Tytuł: ${task.title ?? ''}`, `Data: ${formatDate(task.date ?? '', 'date')}`],
+  summary: (task) => [<>Tytuł: {task.title}</>, <>Data: {formatDate(task.date ?? '', 'date')}</>],
 };
 
 const other: TaskTypeFields = {
   fields: [{ name: 'description', label: 'Opis zadania', kind: 'text', placeholder: 'Wprowadź opis zadania' }],
-  summary: (task) => [`Opis: ${task.description ?? ''}`],
+  summary: (task) => [<>Opis: {task.description}</>],
 };
 
 export function getTaskTypeFields(type: string | undefined): TaskTypeFields {
