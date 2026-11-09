@@ -481,6 +481,7 @@ test('form C marks the permission scan as required and moves an earlier end date
     getGetApplicationFormCMockHandler({
       ...formC(),
       shortResearchEquipments: [{ name: 'Sonda CTD', startDate: '2026-06-01', endDate: '2026-06-02' }],
+      ports: [{ name: 'Gdynia', startTime: '2026-06-01T08:00:00.000Z', endTime: '2026-06-02T08:00:00.000Z' }],
     }),
     getUpdateApplicationFormCMockHandler()
   );
@@ -494,7 +495,13 @@ test('form C marks the permission scan as required and moves an earlier end date
   const details = page.getByRole('group', { name: '12. Szczegóły rejsu' });
   await details.getByRole('button', { name: /^Od/ }).click();
   // The grid only repeats days before the 7th and after the 22nd.
-  await page.getByRole('dialog', { name: 'Wybierz datę' }).getByRole('button', { name: '15', exact: true }).click();
+  const calendar = page.getByRole('dialog', { name: 'Wybierz datę' });
+  await calendar.getByRole('button', { name: '15', exact: true }).click();
+  await page.keyboard.press('Escape');
+  await expect(calendar).toBeHidden();
+  await details.getByRole('button', { name: /^Wejście/ }).click();
+  await calendar.getByRole('button', { name: '15', exact: true }).click();
+  await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Zapisz wersję roboczą' }).click();
   await expect
     .poll(() => requests.bodies(savedForm('form-c')))
@@ -502,6 +509,7 @@ test('form C marks the permission scan as required and moves an earlier end date
       expect.objectContaining({
         form: expect.objectContaining({
           shortResearchEquipments: [{ name: 'Sonda CTD', startDate: '2026-06-15', endDate: '2026-06-15' }],
+          ports: [{ name: 'Gdynia', startTime: '2026-06-15T08:00:00.000Z', endTime: '2026-06-15T08:00:00.000Z' }],
         }),
       }),
     ]);
