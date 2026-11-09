@@ -1,6 +1,6 @@
 import { getErrorMessage } from '@/api/errors';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Button } from '@/components/shared/Button';
@@ -166,7 +166,7 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
-  const columns = cruiseDayDetailsColumns(form, isReadonly);
+  const columns = useMemo(() => cruiseDayDetailsColumns(form, isReadonly), [form, isReadonly]);
 
   return (
     <Accordion title="13. Szczegółowy plan zadań do realizacji podczas rejsu" expandedByDefault>

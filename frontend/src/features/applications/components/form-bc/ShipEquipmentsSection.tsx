@@ -9,6 +9,7 @@ export const ShipEquipmentsSection = withFieldGroup({
   defaultValues: { shipEquipmentsIds: [] as string[] },
   props: {} as { context: Pick<FormBViewModel, 'formBInitValues' | 'isReadonly'> },
   render: function Render({ group, context }) {
+    'use memo';
     const { formBInitValues, isReadonly } = context;
     const columns: ColumnDef<ShipEquipmentOption>[] = [
       {

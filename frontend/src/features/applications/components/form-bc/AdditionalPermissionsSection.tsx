@@ -14,6 +14,7 @@ export const AdditionalPermissionsSection = withFieldGroup({
   defaultValues: { permissions: [] as PermissionValues[] },
   props: {} as { title: string; context: Pick<FormBViewModel, 'isReadonly'> },
   render: function Render({ group, title, context }) {
+    'use memo';
     const { isReadonly } = context;
 
     function getColumns(): ColumnDef<PermissionValues>[] {

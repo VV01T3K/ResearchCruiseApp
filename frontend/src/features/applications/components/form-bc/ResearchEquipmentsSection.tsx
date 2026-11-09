@@ -13,6 +13,7 @@ export const ResearchEquipmentsSection = withFieldGroup({
   defaultValues: { researchEquipments: [] as ResearchEquipmentValues[] },
   props: {} as { title: string; context: Pick<FormBViewModel, 'isReadonly'> },
   render: function Render({ group, title, context }) {
+    'use memo';
     const { isReadonly } = context;
 
     function getColumns(): ColumnDef<ResearchEquipmentValues>[] {
