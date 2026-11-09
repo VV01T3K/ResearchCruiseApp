@@ -3,7 +3,7 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { Accordion } from '@/components/shared/Accordion';
 import { Button } from '@/components/shared/Button';
 import { Table } from '@/components/shared/table/Table';
-import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
+import { ActionsHeader, DeleteRowCell } from '@/integrations/tanstack/table/DeleteRowCell';
 import { withFieldGroup } from '@/integrations/tanstack/form/hook';
 import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
 import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
@@ -15,7 +15,7 @@ export const ResearchEquipmentsSection = withFieldGroup({
   render: function Render({ group, title, context }) {
     const { isReadonly } = context;
 
-    function getColumns(removeRow: (index: number) => void): ColumnDef<ResearchEquipmentValues>[] {
+    function getColumns(): ColumnDef<ResearchEquipmentValues>[] {
       return [
         {
           header: 'Lp.',
@@ -96,16 +96,13 @@ export const ResearchEquipmentsSection = withFieldGroup({
         },
         {
           id: 'actions',
-          header: () => <span className="sr-only">Akcje</span>,
-          cell: ({ row }) => (
-            <div className="flex justify-end">
-              <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
-            </div>
-          ),
+          header: ActionsHeader,
+          cell: DeleteRowCell,
           size: 5,
         },
       ];
     }
+    const columns = getColumns();
 
     return (
       <Accordion title={title} expandedByDefault>
@@ -113,10 +110,13 @@ export const ResearchEquipmentsSection = withFieldGroup({
           {(field) => (
             <Table
               data={field.state.value}
-              columns={getColumns((index) => {
-                field.removeValue(index);
-                field.handleBlur();
-              })}
+              columns={columns}
+              meta={{
+                removeRow: (index) => {
+                  field.removeValue(index);
+                  field.handleBlur();
+                },
+              }}
               buttons={() => [
                 <Button
                   key="new"

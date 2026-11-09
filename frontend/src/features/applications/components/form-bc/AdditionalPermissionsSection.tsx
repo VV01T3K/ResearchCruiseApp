@@ -4,7 +4,7 @@ import { Accordion } from '@/components/shared/Accordion';
 import { Button } from '@/components/shared/Button';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { Table } from '@/components/shared/table/Table';
-import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
+import { ActionsHeader, DeleteRowCell } from '@/integrations/tanstack/table/DeleteRowCell';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { withFieldGroup } from '@/integrations/tanstack/form/hook';
 import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
@@ -16,7 +16,7 @@ export const AdditionalPermissionsSection = withFieldGroup({
   render: function Render({ group, title, context }) {
     const { isReadonly } = context;
 
-    function getColumns(removeRow: (index: number) => void): ColumnDef<PermissionValues>[] {
+    function getColumns(): ColumnDef<PermissionValues>[] {
       return [
         {
           header: 'Lp.',
@@ -89,16 +89,13 @@ export const AdditionalPermissionsSection = withFieldGroup({
         },
         {
           id: 'actions',
-          header: () => <span className="sr-only">Akcje</span>,
-          cell: ({ row }) => (
-            <div className="flex justify-end">
-              <TableDeleteRowButton onClick={() => removeRow(row.index)} disabled={isReadonly} />
-            </div>
-          ),
+          header: ActionsHeader,
+          cell: DeleteRowCell,
           size: 5,
         },
       ];
     }
+    const columns = getColumns();
 
     return (
       <Accordion title={title} expandedByDefault>
@@ -106,10 +103,13 @@ export const AdditionalPermissionsSection = withFieldGroup({
           {(field) => (
             <>
               <Table
-                columns={getColumns((index) => {
-                  field.removeValue(index);
-                  field.handleBlur();
-                })}
+                columns={columns}
+                meta={{
+                  removeRow: (index) => {
+                    field.removeValue(index);
+                    field.handleBlur();
+                  },
+                }}
                 data={field.state.value}
                 buttons={() => [
                   <Button
