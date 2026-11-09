@@ -72,7 +72,7 @@ export function NumberInput(props: Props) {
         format={{ useGrouping: false, maximumFractionDigits: type === 'float' ? precision : 0 }}
       >
         <NumberField.Group className="flex items-center" aria-label={typeof label === 'string' ? label : ariaLabel}>
-          {!disabled && <NumberInputButton side="left" />}
+          {!disabled && <NumberInputButton side="left" invalid={hasErrors(errors)} />}
           <div className="@container relative w-full">
             <NumberField.Input
               name={name}
@@ -101,7 +101,7 @@ export function NumberInput(props: Props) {
               <InputErrorTriangle errors={errors} mode={'absolute'} />
             </div>
           </div>
-          {!disabled && <NumberInputButton side="right" />}
+          {!disabled && <NumberInputButton side="right" invalid={hasErrors(errors)} />}
         </NumberField.Group>
       </NumberField.Root>
       <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
@@ -136,7 +136,7 @@ function pasteWithDecimalPoint(evt: React.ClipboardEvent<HTMLInputElement>) {
   input.setSelectionRange(start + pasted.length, start + pasted.length);
 }
 
-function NumberInputButton({ side }: { side: 'left' | 'right' }) {
+function NumberInputButton({ side, invalid }: { side: 'left' | 'right'; invalid: boolean }) {
   const StepButton = side === 'left' ? NumberField.Decrement : NumberField.Increment;
   const title = side === 'left' ? 'Zmniejsz' : 'Zwiększ';
   return (
@@ -147,11 +147,12 @@ function NumberInputButton({ side }: { side: 'left' | 'right' }) {
         className: cn(
           'flex h-11 w-11 items-center justify-center',
           'text-muted-foreground',
-          'focus:ring-primary focus:border-primary focus:shadow-sm focus:outline-hidden forced-colors:focus:-outline-offset-4',
+          'focus:ring-primary focus:border-primary focus:shadow-sm focus:outline-hidden forced-colors:focus:-outline-offset-4 not-disabled:active:border-primary not-disabled:active:shadow-sm',
           'focus-visible:ring-inset focus-visible:ring-offset-0',
           'disabled:cursor-not-allowed disabled:opacity-50',
           'border-collapse border border-border px-2',
           side === 'left' ? 'rounded-l-sm' : 'rounded-r-sm',
+          invalid && 'border-danger not-disabled:active:border-danger',
           'bg-surface-subtle hover:text-foreground'
         ),
       })}
