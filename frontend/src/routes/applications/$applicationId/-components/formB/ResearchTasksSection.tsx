@@ -2,7 +2,7 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Table } from '@/components/shared/table/Table';
-import { ResearchTaskDetails } from '@/features/applications/components/tasks/readonly/ResearchTaskDetails';
+import { ReadonlyResearchTaskDetails } from '@/features/applications/components/research-tasks/ResearchTaskDetails';
 import type { FormBViewModel } from '@/features/applications/models/formB-view-model';
 import { getTaskName, ResearchTaskValues } from '@/features/applications/schemas/types/ResearchTaskValues';
 
@@ -22,7 +22,7 @@ export function ResearchTasksSection({ context }: { context: FormBViewModel }) {
     },
     {
       header: 'Szczegóły',
-      cell: ({ row }) => <ResearchTaskDetails data={row.original} />,
+      cell: ({ row }) => <ReadonlyResearchTaskDetails data={row.original} />,
       size: 70,
     },
   ];

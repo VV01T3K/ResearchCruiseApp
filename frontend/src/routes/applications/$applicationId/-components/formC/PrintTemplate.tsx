@@ -2,7 +2,7 @@ import { formatDate } from '@/lib/dateUtils';
 import { Fragment, RefObject } from 'react';
 
 import { cn } from '@/lib/utils';
-import { PrintableResearchTaskDetails } from '@/components/print/research-task-details/PrintableResearchTaskDetails';
+import { PrintableResearchTaskDetails } from '@/features/applications/components/research-tasks/PrintableResearchTaskDetails';
 import { PrintingPage } from '@/components/print/layout/PrintingPage';
 import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';
 import type { FormCViewModel } from '@/features/applications/models/formC-view-model';

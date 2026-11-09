@@ -6,7 +6,7 @@ import {
   formatLocalDateStringFromUtcString,
   getExplanationForPeriod,
 } from '@/features/applications/components/formA/cruisePeriodExplanation';
-import { PrintableResearchTaskDetails } from '@/components/print/research-task-details/PrintableResearchTaskDetails';
+import { PrintableResearchTaskDetails } from '@/features/applications/components/research-tasks/PrintableResearchTaskDetails';
 import { PrintingPage } from '@/components/print/layout/PrintingPage';
 import { PrintingPageSection } from '@/components/print/layout/PrintingPageSection';
 import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
