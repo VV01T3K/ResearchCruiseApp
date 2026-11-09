@@ -44,6 +44,7 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
     () => options.filter(({ label }) => label.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())),
     [options, search]
   );
+  // oxlint-disable-next-line react/incompatible-library
   const virtualizer = useVirtualizer({
     count: visibleOptions.length,
     estimateSize: () => 32,
