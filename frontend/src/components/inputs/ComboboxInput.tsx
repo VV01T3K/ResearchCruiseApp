@@ -15,6 +15,14 @@ export type ComboboxInputOption = { value: string; label: string; richLabel: Rea
 
 const wordSeparators = /[\s().@_-]+/;
 
+export function useWordStartFilter() {
+  const { startsWith } = Combobox.useFilter({ locale: 'pl' });
+  return (option: { label: string }, query: string) => {
+    const words = option.label.split(wordSeparators);
+    return query.split(wordSeparators).every((part) => words.some((word) => startsWith(word, part)));
+  };
+}
+
 type Props = {
   name: string;
   value: string;
@@ -40,11 +48,7 @@ export function ComboboxInput({
   showRequiredAsterisk,
   disabled,
 }: Props) {
-  const { startsWith } = Combobox.useFilter({ locale: 'pl' });
-  const matchesWordStart = (option: ComboboxInputOption, query: string) => {
-    const words = option.label.split(wordSeparators);
-    return query.split(wordSeparators).every((part) => words.some((word) => startsWith(word, part)));
-  };
+  const matchesWordStart = useWordStartFilter();
   const items = React.useMemo(
     () => Combobox.createItems(allOptions, { getValue: (option) => option.value, getLabel: (option) => option.label }),
     [allOptions]

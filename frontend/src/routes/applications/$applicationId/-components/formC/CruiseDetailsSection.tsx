@@ -6,7 +6,7 @@ import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { parseCalendarDate, parsePolishDayStart } from '@/lib/dateUtils';
-import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
+import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
 import type { FormCFormApi, FormCViewModel } from '@/features/applications/models/formC-view-model';
 import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
 import { LongResearchEquipmentValues } from '@/features/applications/schemas/types/LongResearchEquipmentValues';
@@ -319,14 +319,14 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
               )}
               data={field.state.value}
               buttons={() => [
-                <DropdownElementSelectorButton
+                <AddMenuButton
                   key="new"
                   options={[
                     { value: 'Put', label: 'Pozostawienie' },
                     { value: 'Collect', label: 'Zabranie' },
                   ].map((option) => ({
-                    value: option.label,
-                    onClick: () => {
+                    label: option.label,
+                    onSelect: () => {
                       field.pushValue({
                         action: option.value as LongResearchEquipmentValues['action'],
                         duration: '',
@@ -339,7 +339,7 @@ export function CruiseDetailsSection({ context }: { context: FormCViewModel }) {
                   disabled={isReadonly}
                 >
                   Dodaj nowe
-                </DropdownElementSelectorButton>,
+                </AddMenuButton>,
               ]}
               disabled={isReadonly}
             />

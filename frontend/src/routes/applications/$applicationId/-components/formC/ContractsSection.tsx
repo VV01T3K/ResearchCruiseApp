@@ -6,7 +6,7 @@ import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsLis
 import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
-import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
+import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
 import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
@@ -143,14 +143,14 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
                 })}
                 data={field.state.value}
                 buttons={() => [
-                  <DropdownElementSelectorButton
+                  <AddMenuButton
                     key="new"
                     options={[
                       { name: 'Krajowa', category: 'domestic' },
                       { name: 'Międzynarodowa', category: 'international' },
                     ].map(({ name, category }) => ({
-                      value: name,
-                      onClick: () => {
+                      label: name,
+                      onSelect: () => {
                         field.pushValue({
                           category: category as ContractValues['category'],
                           institutionName: '',
@@ -166,12 +166,12 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
                     disabled={isReadonly}
                   >
                     Dodaj nowy kontrakt
-                  </DropdownElementSelectorButton>,
-                  <DropdownElementSelectorButton
+                  </AddMenuButton>,
+                  <AddMenuButton
                     key="historical"
                     options={formAInitValues.historicalContracts.map((contract) => ({
-                      value: `${contract.institutionName}, ${contract.institutionUnit}, ${contract.institutionLocalization} - ${contract.description}`,
-                      onClick: () => {
+                      label: `${contract.institutionName}, ${contract.institutionUnit}, ${contract.institutionLocalization} - ${contract.description}`,
+                      onSelect: () => {
                         field.pushValue(mapContractToValues(contract));
                         field.handleBlur();
                       },
@@ -180,7 +180,7 @@ export function ContractsSection({ context }: { context: FormCViewModel }) {
                     disabled={isReadonly}
                   >
                     Dodaj historyczną umowę
-                  </DropdownElementSelectorButton>,
+                  </AddMenuButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnej umowy."
                 disabled={isReadonly}

@@ -8,7 +8,7 @@ import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsLis
 import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
-import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
+import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
 import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
@@ -142,14 +142,13 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
                   >
                     Dodaj
                   </Button>,
-                  <DropdownElementSelectorButton
+                  <AddMenuButton
                     key="historical"
                     options={initValues.historicalSpubTasks
                       .filter((task) => task.name && task.yearFrom && task.yearTo)
                       .map((task) => ({
-                        value: JSON.stringify(task),
-                        content: `${task.name ?? ''} (${task.yearFrom ?? ''} - ${task.yearTo ?? ''})`,
-                        onClick: () => {
+                        label: `${task.name ?? ''} (${task.yearFrom ?? ''} - ${task.yearTo ?? ''})`,
+                        onSelect: () => {
                           field.pushValue(mapSpubTaskToValues(task));
                           field.handleBlur();
                         },
@@ -158,7 +157,7 @@ export function SPUBTasksSection({ context }: { context: FormAViewModel }) {
                     disabled={isReadonly}
                   >
                     Dodaj historyczne zadanie
-                  </DropdownElementSelectorButton>,
+                  </AddMenuButton>,
                 ]}
                 emptyTableMessage="Brak zadań SPUB"
                 disabled={isReadonly}

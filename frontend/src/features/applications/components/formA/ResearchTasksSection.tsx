@@ -7,7 +7,7 @@ import { Table } from '@/components/shared/table/Table';
 import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowButton';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { groupBy } from '@/lib/utils';
-import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
+import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
 import { ResearchTaskThumbnail } from '@/features/applications/components/research-tasks/ResearchTaskThumbnail';
 import { ResearchTaskDetails } from '@/features/applications/components/research-tasks/ResearchTaskDetails';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
@@ -85,11 +85,11 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                 data={field.state.value}
                 showRequiredAsterisk
                 buttons={() => [
-                  <DropdownElementSelectorButton
+                  <AddMenuButton
                     key="new"
                     options={taskTypes.map((type) => ({
-                      value: getTaskName(type),
-                      onClick: () => {
+                      label: getTaskName(type),
+                      onSelect: () => {
                         field.pushValue(getEmptyTask(type));
                         field.handleBlur();
                       },
@@ -98,34 +98,25 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
                     disabled={isReadonly}
                   >
                     Dodaj nowe zadanie badawcze
-                  </DropdownElementSelectorButton>,
-                  <DropdownElementSelectorButton
+                  </AddMenuButton>,
+                  <AddMenuButton
                     key="historical"
-                    options={groupBy(initValues.historicalResearchTasks, (x) => x.type ?? '').flatMap(
-                      ([type, tasks]) => [
-                        {
-                          value: type,
-                          content: (
-                            <div className="my-2 w-full rounded-lg px-2 text-center text-sm text-muted-foreground">
-                              {getTaskName(type)}
-                            </div>
-                          ),
+                    options={groupBy(initValues.historicalResearchTasks, (x) => x.type ?? '').map(([type, tasks]) => ({
+                      label: getTaskName(type),
+                      items: tasks.map((task) => ({
+                        label: [task.title, task.author, task.description].filter(Boolean).join(' '),
+                        content: <ResearchTaskThumbnail task={task} />,
+                        onSelect: () => {
+                          field.pushValue(mapResearchTaskToValues(task));
+                          field.handleBlur();
                         },
-                        ...tasks.map((task) => ({
-                          value: JSON.stringify(task),
-                          content: <ResearchTaskThumbnail task={task} />,
-                          onClick: () => {
-                            field.pushValue(mapResearchTaskToValues(task));
-                            field.handleBlur();
-                          },
-                        })),
-                      ]
-                    )}
+                      })),
+                    }))}
                     variant="primaryOutline"
                     disabled={isReadonly}
                   >
                     Dodaj historyczne zadanie badawcze
-                  </DropdownElementSelectorButton>,
+                  </AddMenuButton>,
                 ]}
                 emptyTableMessage="Nie dodano żadnego zadania."
                 disabled={isReadonly}

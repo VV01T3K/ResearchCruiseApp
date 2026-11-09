@@ -11,7 +11,7 @@ import { formCDefaultValues } from '@/features/applications/schemas/formC.schema
 import { ResearchAreaValues } from '@/features/applications/schemas/types/ResearchAreaValues';
 import { getResearchAreaName } from '@/lib/applications/researchArea';
 
-import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
+import { AddMenuButton } from '@/features/applications/components/form-controls/AddMenuButton';
 
 export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
   const form = useTypedAppFormContext({ defaultValues: formCDefaultValues });
@@ -100,11 +100,11 @@ export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
               })}
               data={field.state.value}
               buttons={() => [
-                <DropdownElementSelectorButton
+                <AddMenuButton
                   key="new"
                   options={formAInitValues.researchAreas.concat([{ id: '', name: 'Inne...' }]).map((area) => ({
-                    value: area.name,
-                    onClick: () => {
+                    label: area.name,
+                    onSelect: () => {
                       field.pushValue({
                         areaId: area.id != '' ? area.id : null,
                         differentName: area.id != '' ? null : '',
@@ -117,7 +117,7 @@ export function ResearchAreaSection({ context }: { context: FormCViewModel }) {
                   disabled={isReadonly}
                 >
                   Dodaj rejon
-                </DropdownElementSelectorButton>,
+                </AddMenuButton>,
               ]}
               emptyTableMessage="Nie dodano żadnego rejonu."
               disabled={isReadonly}
