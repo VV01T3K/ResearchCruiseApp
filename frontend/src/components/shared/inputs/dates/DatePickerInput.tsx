@@ -329,7 +329,7 @@ function CalendarDateTile({
         variant="plain"
         size="plain"
         className={cn(
-          isSelected ? 'bg-primary !text-inverse-foreground' : 'hover:bg-primary-50',
+          isSelected ? 'bg-primary !text-inverse-foreground' : 'hover:bg-primary-100',
           isFirstDayOfSelection ? '!bg-primary-100 !text-primary' : '',
           'mx-auto grid size-9 place-items-center rounded-full text-sm',
           !isVisibleMonth || !isAllowed ? 'text-neutral-400' : '',

@@ -44,7 +44,7 @@ const variants = {
     screenReaderMessage: 'Powiadomienie',
     icon: InfoIcon,
     containerClassName: 'text-primary-dark bg-primary-light',
-    closeButtonClassName: 'bg-primary-light text-primary focus:ring-primary-400 p-1.5 hover:bg-primary-200',
+    closeButtonClassName: 'bg-primary-light text-primary focus:ring-primary p-1.5 hover:bg-primary-200',
   },
   success: {
     weight: 'regular',

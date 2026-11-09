@@ -52,7 +52,7 @@ export function PickerPopup({ 'aria-label': ariaLabel, children, initialFocus, a
             'transition-[opacity,scale] duration-150 ease-popup',
             'data-[starting-style]:scale-98 data-[starting-style]:opacity-0',
             'data-[ending-style]:scale-98 data-[ending-style]:opacity-0',
-            '[&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-primary [&_button:focus-visible]:ring-offset-1'
+            '[&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-primary'
           )}
         >
           {children}
