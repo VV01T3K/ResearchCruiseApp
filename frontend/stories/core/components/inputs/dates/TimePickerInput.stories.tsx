@@ -45,9 +45,16 @@ export const Disabled: Story = {
   args: {
     disabled: true,
   },
-  play: async ({ canvas, userEvent }) => {
+  play: async ({ args, canvas, userEvent }) => {
+    const hours = canvas.getByRole('spinbutton', { name: 'godzina' });
     await userEvent.tab();
-    await expect(canvas.getByRole('spinbutton', { name: 'godzina' })).not.toHaveFocus();
+    await expect(hours).not.toHaveFocus();
+    await userEvent.click(hours);
+    await userEvent.keyboard('0930{Enter}');
+    await expect(hours).not.toHaveFocus();
+    await expect(hours).toHaveAttribute('aria-valuenow', '12');
+    await expect(args.onChange).not.toHaveBeenCalled();
+    await expect(canvas.getByRole('button', { name: 'Wybierz godzinę z siatki' })).toBeDisabled();
   },
 };
 
@@ -67,13 +74,14 @@ export const WithMinuteStep: Story = {
 
 export const WithMinimalTime: Story = {
   args: {
-    minimalTime: { hours: 10, minutes: 0 },
+    value: { hours: 16, minutes: 0 },
+    minimalTime: { hours: 15, minutes: 30 },
   },
   play: async ({ args, canvas, userEvent }) => {
     await userEvent.click(canvas.getByRole('spinbutton', { name: 'godzina' }));
-    await userEvent.keyboard('0900{Enter}');
+    await userEvent.keyboard('1520{Enter}');
     await expect(args.onChange).not.toHaveBeenCalled();
-    await expect(canvas.getByRole('spinbutton', { name: 'godzina' })).toHaveAttribute('aria-valuenow', '12');
+    await expect(canvas.getByRole('spinbutton', { name: 'godzina' })).toHaveAttribute('aria-valuenow', '16');
     await expect(canvas.getByRole('spinbutton', { name: 'godzina' })).toHaveAttribute('aria-invalid', 'true');
   },
 };

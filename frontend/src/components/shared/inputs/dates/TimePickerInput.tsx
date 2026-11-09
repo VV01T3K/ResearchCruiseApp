@@ -111,8 +111,7 @@ export function TimePickerInput({
       if (clearable) onChange(undefined);
       return;
     }
-    const minutes = Math.round(timeToMinutes(next) / minuteStep) * minuteStep;
-    if (minutes < min || minutes > max) {
+    if (timeToMinutes(next) < min || timeToMinutes(next) > max) {
       setRangeError(
         min > max
           ? 'W tym dniu nie ma już wolnych godzin.'
@@ -120,6 +119,7 @@ export function TimePickerInput({
       );
       return;
     }
+    const minutes = Math.round(timeToMinutes(next) / minuteStep) * minuteStep;
     onChange({ hours: Math.floor(minutes / 60), minutes: minutes % 60 });
   }
 
@@ -139,6 +139,7 @@ export function TimePickerInput({
   }
 
   function handleSegmentKeyDown(segment: Segment, evt: React.KeyboardEvent<HTMLSpanElement>) {
+    if (disabled) return;
     const value = shown[segment];
     const limit = segment === 'hours' ? 23 : 59;
     const step = segment === 'hours' ? 1 : minuteStep;
@@ -180,7 +181,7 @@ export function TimePickerInput({
       <span
         ref={segment === 'hours' ? hoursRef : minutesRef}
         role="spinbutton"
-        tabIndex={disabled ? -1 : 0}
+        tabIndex={disabled ? undefined : 0}
         aria-label={segment === 'hours' ? 'godzina' : 'minuty'}
         aria-valuenow={value}
         aria-valuetext={value === undefined ? 'puste' : pad(value)}

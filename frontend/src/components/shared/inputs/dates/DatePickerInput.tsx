@@ -220,6 +220,8 @@ export function DatePickerInput({
                 }
               }
               aria-label="Godzina"
+              disabled={!selectedDate}
+              placeholder="Najpierw wybierz dzień"
               onChange={(x) => {
                 const newDate = new Date(selectedDate ?? new Date());
                 newDate.setHours(x?.hours ?? 0);
