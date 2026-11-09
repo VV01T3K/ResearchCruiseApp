@@ -107,20 +107,22 @@ export function TimePickerInput({
   const hourAllowed = (hour: number) => hour * 60 + 60 - minuteStep >= min && hour * 60 <= max;
   const centredHour = pickedHour ?? (hourAllowed(8) ? 8 : hourOptions.find(hourAllowed));
   const selectedMinute = pickedHour === time?.hours ? time?.minutes : undefined;
-  const minuteTabStop =
-    selectedMinute ?? minuteOptions.find((minutes) => pickedHour !== undefined && inRange(pickedHour * 60 + minutes));
+  const minuteTabStop = minuteOptions.includes(selectedMinute ?? -1)
+    ? selectedMinute
+    : minuteOptions.find((minutes) => pickedHour !== undefined && inRange(pickedHour * 60 + minutes));
 
   function apply(next: Time | undefined) {
     setDraft(undefined);
     setTyped('');
     setInputError(undefined);
     if (!next) {
-      if (clearable) onChange(undefined);
-      return;
+      if (!clearable) return time;
+      onChange(undefined);
+      return undefined;
     }
     if (next.minutes % minuteStep !== 0) {
       setInputError('Wybierz pełną godzinę lub pół godziny.');
-      return;
+      return time;
     }
     if (!inRange(timeToMinutes(next))) {
       setInputError(
@@ -128,19 +130,20 @@ export function TimePickerInput({
           ? 'W tym dniu nie ma już wolnych godzin.'
           : `Wybierz godzinę od ${formatTime({ hours: Math.floor(min / 60), minutes: min % 60 })} do ${formatTime({ hours: Math.floor(max / 60), minutes: max % 60 })}.`
       );
-      return;
+      return time;
     }
     onChange(next);
+    return next;
   }
 
   function commitDraft() {
-    if (!draft) return;
+    if (!draft) return time;
     if (draft.hours === undefined && draft.minutes !== undefined) {
       setDraft(undefined);
       setTyped('');
-      return;
+      return time;
     }
-    apply(draft.hours === undefined ? undefined : { hours: draft.hours, minutes: draft.minutes ?? 0 });
+    return apply(draft.hours === undefined ? undefined : { hours: draft.hours, minutes: draft.minutes ?? 0 });
   }
 
   function closePicker() {
@@ -225,8 +228,7 @@ export function TimePickerInput({
         open={pickerOpen}
         onOpenChange={(open) => {
           if (open) {
-            commitDraft();
-            setPickedHour(time?.hours);
+            setPickedHour(commitDraft()?.hours);
             setPickerOpen(true);
           } else {
             closePicker();

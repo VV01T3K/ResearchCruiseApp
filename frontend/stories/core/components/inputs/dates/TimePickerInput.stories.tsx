@@ -160,3 +160,44 @@ export const PickingFromList: Story = {
     await waitFor(() => expect(again).not.toBeInTheDocument());
   },
 };
+
+export const OpeningListAfterTyping: Story = {
+  args: {
+    value: { hours: 8, minutes: 15 },
+  },
+  play: async ({ args, canvas, canvasElement, userEvent }) => {
+    await userEvent.click(canvas.getByRole('spinbutton', { name: 'godzina' }));
+    await userEvent.keyboard('1830');
+    await userEvent.click(canvas.getByRole('button', { name: 'Wybierz godzinę z listy' }));
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 18, minutes: 30 });
+    const picker = await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Wybierz godzinę' });
+    const hours = within(picker).getByRole('group', { name: 'Godzina' });
+    await expect(within(hours).getByRole('button', { name: '18' })).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(
+      within(within(picker).getByRole('group', { name: 'Minuty' })).getByRole('button', { name: '00' })
+    );
+    await expect(args.onChange).toHaveBeenLastCalledWith({ hours: 18, minutes: 0 });
+  },
+};
+
+export const OffStepSavedMinutes: Story = {
+  args: {
+    value: { hours: 8, minutes: 15 },
+  },
+  play: async ({ canvas, canvasElement, userEvent }) => {
+    await expect(canvas.getByRole('spinbutton', { name: 'minuty' })).toHaveAttribute('aria-valuenow', '15');
+    await userEvent.click(canvas.getByRole('button', { name: 'Wybierz godzinę z listy' }));
+    const picker = await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Wybierz godzinę' });
+    await waitFor(() =>
+      expect(
+        within(within(picker).getByRole('group', { name: 'Godzina' })).getByRole('button', { name: '08' })
+      ).toHaveFocus()
+    );
+    await userEvent.tab();
+    await expect(
+      within(within(picker).getByRole('group', { name: 'Minuty' })).getByRole('button', { name: '00' })
+    ).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(picker).not.toBeInTheDocument());
+  },
+};
