@@ -19,6 +19,7 @@ public static class ApiComposition
             .AddScoped<FormAFactory>()
             .AddScoped<FormBFactory>()
             .AddScoped<FormCFactory>()
+            .AddScoped<FormBCFieldsWriter>()
             .AddScoped<ApplicationFactory>()
             .AddScoped<FileReader>()
             .AddScoped<ContractReader>()
