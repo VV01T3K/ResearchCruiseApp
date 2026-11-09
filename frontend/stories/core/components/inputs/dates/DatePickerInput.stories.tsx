@@ -157,6 +157,7 @@ export const WithSeparateTime: Story = {
   },
   play: async ({ args, canvas, canvasElement, userEvent }) => {
     const time = canvas.getByRole('group', { name: 'Godzina rozpoczęcia rejsu' });
+    await expect(canvas.getByText('Godzina', { exact: true })).toBeVisible();
     await expect(within(time).queryByRole('spinbutton')).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: /^Data rozpoczęcia rejsu:/ }));
     const calendar = await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Wybierz datę' });
@@ -170,5 +171,28 @@ export const WithSeparateTime: Story = {
     await expect(args.onChange).toHaveBeenCalled();
     await expect(within(time).getByRole('spinbutton', { name: 'godzina' })).toHaveAttribute('aria-valuenow', '8');
     await expect(canvas.getByRole('button', { name: /^Data rozpoczęcia rejsu: 15\.\d\d\.\d{4}$/ })).toBeInTheDocument();
+  },
+};
+
+export const SelectedDayFitsItsCell: Story = {
+  args: {
+    value: '2026-05-17',
+  },
+  play: async ({ canvas, canvasElement, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: /17\.05\.2026/ }));
+    const calendar = await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'Wybierz datę' });
+    await waitFor(() => expect(calendar.getAnimations()).toHaveLength(0));
+    for (const day of ['11', '12', '13', '14', '15', '16', '17']) {
+      const button = within(calendar).getByRole('button', { name: day });
+      await userEvent.click(button);
+      const popup = calendar.getBoundingClientRect();
+      const cell = button.parentElement!.getBoundingClientRect();
+      const circle = button.getBoundingClientRect();
+      await expect(circle.left).toBeGreaterThanOrEqual(Math.max(popup.left, cell.left));
+      await expect(circle.right).toBeLessThanOrEqual(Math.min(popup.right, cell.right));
+      await expect(Math.abs(circle.left + circle.right - cell.left - cell.right) / 2).toBeLessThan(0.5);
+    }
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(calendar).not.toBeInTheDocument());
   },
 };

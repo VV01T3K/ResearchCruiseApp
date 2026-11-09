@@ -133,6 +133,7 @@ export function DatePickerInput({
           minutes: selectedDate?.getMinutes(),
         }
       }
+      label={timeLabel && 'Godzina'}
       aria-label={timeLabel ?? 'Godzina'}
       disabled={disabled || !selectedDate}
       placeholder={disabled ? 'Nie podano' : 'Najpierw wybierz dzień'}
@@ -165,33 +166,35 @@ export function DatePickerInput({
   return (
     <Popover.Root open={expanded} onOpenChange={handleOpenChange} modal={false}>
       <div className="flex flex-col">
-        <InputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
         <div className={cn(timeLabel && 'flex gap-2')}>
-          <div className="relative min-w-0 flex-1">
-            <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
-            <Popover.Trigger
-              ref={triggerRef}
-              name={name}
-              disabled={disabled}
-              {...aria.inputProps}
-              aria-label={fieldName && `${fieldName}: ${shownValue}`}
-              className={pickerTriggerClassName({ disabled, errors })}
-            >
-              {shownValue}
-              <span className="flex items-center gap-2">
-                <InputErrorTriangle errors={errors} />
-                {selectedDate && !disabled && <span className="w-4" />}
-                {!selectedDate && <CalendarDotIcon className="h-4 w-4" />}
-              </span>
-            </Popover.Trigger>
-            {selectedDate && !disabled && (
-              <PickerClearButton
-                ref={clearRef}
-                aria-label="Wyczyść datę"
-                onClick={handleResetSelection}
-                onMouseDown={(evt) => evt.preventDefault()}
-              />
-            )}
+          <div className="min-w-0 flex-1">
+            <InputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+            <div className="relative">
+              <input type="hidden" name={name} value={value ?? ''} disabled={disabled} />
+              <Popover.Trigger
+                ref={triggerRef}
+                name={name}
+                disabled={disabled}
+                {...aria.inputProps}
+                aria-label={fieldName && `${fieldName}: ${shownValue}`}
+                className={pickerTriggerClassName({ disabled, errors })}
+              >
+                {shownValue}
+                <span className="flex items-center gap-2">
+                  <InputErrorTriangle errors={errors} />
+                  {selectedDate && !disabled && <span className="w-4" />}
+                  {!selectedDate && <CalendarDotIcon className="h-4 w-4" />}
+                </span>
+              </Popover.Trigger>
+              {selectedDate && !disabled && (
+                <PickerClearButton
+                  ref={clearRef}
+                  aria-label="Wyczyść datę"
+                  onClick={handleResetSelection}
+                  onMouseDown={(evt) => evt.preventDefault()}
+                />
+              )}
+            </div>
           </div>
           {type === 'datetime' && timeLabel && <div className="w-48 shrink-0">{timeInput}</div>}
         </div>
@@ -204,6 +207,7 @@ export function DatePickerInput({
         <div className="flex w-72 items-center justify-between px-2 pt-2">
           <Button
             variant="plain"
+            size="plain"
             aria-label="Poprzedni miesiąc"
             onClick={() => handleMonthChange(-1)}
             className="grid size-8 place-items-center rounded-lg hover:bg-surface-subtle"
@@ -217,6 +221,7 @@ export function DatePickerInput({
 
           <Button
             variant="plain"
+            size="plain"
             aria-label="Następny miesiąc"
             onClick={() => handleMonthChange(1)}
             className="grid size-8 place-items-center rounded-lg hover:bg-surface-subtle"
@@ -322,6 +327,7 @@ function CalendarDateTile({
     >
       <Button
         variant="plain"
+        size="plain"
         className={cn(
           isSelected ? 'bg-primary-500 !text-inverse-foreground' : 'hover:bg-neutral-300',
           isFirstDayOfSelection ? '!bg-primary-200 !text-inherit' : '',
