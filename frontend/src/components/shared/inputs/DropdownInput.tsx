@@ -1,6 +1,6 @@
 import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
 import { hasErrors, invalidInputClassName } from '@/components/inputs/invalidInput';
-import { useInputAria } from '@/components/inputs/useInputAria';
+import { Field } from '@base-ui/react/field';
 import { Select } from '@base-ui/react/select';
 import { CaretDownIcon, CheckIcon } from '@phosphor-icons/react';
 import React from 'react';
@@ -66,7 +66,6 @@ export function DropdownInput({
   defaultValue = '',
   'aria-label': ariaLabel,
 }: Props) {
-  const aria = useInputAria(errors, helper);
   const allPossibleOptions = React.useMemo(() => {
     if (allowEmptyOption) {
       return [
@@ -91,8 +90,8 @@ export function DropdownInput({
   );
 
   return (
-    <div className="flex flex-col">
-      <InputLabel name={aria.id} value={label} showRequiredAsterisk={showRequiredAsterisk} />
+    <Field.Root invalid={hasErrors(errors)} className="flex flex-col">
+      {label && <Field.Label render={<InputLabel value={label} showRequiredAsterisk={showRequiredAsterisk} />} />}
 
       <Select.Root
         name={name}
@@ -107,8 +106,8 @@ export function DropdownInput({
         }}
       >
         <Select.Trigger
-          {...aria.inputProps}
           aria-label={ariaLabel}
+          aria-labelledby={undefined}
           className={cn(
             'relative inline-flex w-full items-center justify-between',
             'rounded-lg border border-border bg-surface-muted text-sm text-foreground',
@@ -161,9 +160,9 @@ export function DropdownInput({
       </Select.Root>
 
       <div className={cn('flex flex-col justify-between text-sm', hasErrors(errors) || helper ? 'mt-2' : '')}>
-        <InputHelper id={aria.helperId} helper={helper} />
-        <InputErrorsList id={aria.errorId} errors={errors} />
+        {helper && <Field.Description render={<InputHelper helper={helper} />} />}
+        {hasErrors(errors) && <Field.Error match render={<InputErrorsList errors={errors} />} />}
       </div>
-    </div>
+    </Field.Root>
   );
 }

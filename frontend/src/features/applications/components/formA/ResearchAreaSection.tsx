@@ -130,7 +130,7 @@ export function ResearchAreaSection({ context }: { context: FormAViewModel }) {
       <div className="mt-4">
         <form.AppField name="researchAreaFiles">
           {(field) => (
-            <field.FilesField
+            <field.FileField
               allowMultiple
               label="Załączniki, np. mapy"
               helper={

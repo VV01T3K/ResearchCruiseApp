@@ -22,11 +22,6 @@ export function groupBy<T>(array: T[], key: (item: T) => string): [string, T[]][
   );
 }
 
-export function roundNumber(value: number, precision: number) {
-  const factor = 10 ** precision;
-  return Math.round(value * factor) / factor;
-}
-
 export function createModalPortal(modal: React.ReactNode): React.ReactPortal {
   return createPortal(modal, document.getElementById('modal-root') ?? document.body);
 }

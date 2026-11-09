@@ -81,7 +81,7 @@ function ForgotPasswordPage() {
       <form noValidate className="px-4" onSubmit={handleSubmit}>
         <div className="space-y-4">
           <form.AppField name="email">
-            {(field) => <field.FloatingTextField type="email" label="E-mail" />}
+            {(field) => <field.TextField variant="floating" type="email" label="E-mail" />}
           </form.AppField>
         </div>
 
