@@ -30,6 +30,11 @@ function ToastList() {
         <div className="flex items-center gap-4">
           <ToastIcon type={t.type} />
           <Toast.Description className="flex-1 text-sm" />
+          {(t.data?.count ?? 1) > 1 && (
+            <span className="shrink-0 rounded-full bg-danger-100 px-1.5 text-xs font-semibold text-danger-700 tabular-nums">
+              ×{t.data?.count}
+            </span>
+          )}
           {t.type !== 'loading' && (
             <Toast.Close
               className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:cursor-pointer hover:bg-neutral-950/5 hover:text-neutral-700"
