@@ -2,7 +2,7 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Table } from '@/components/shared/table/Table';
-import { ResearchTaskDetails } from '@/features/applications/components/tasks/readonly/ResearchTaskDetails';
+import { ReadonlyResearchTaskDetails } from '@/features/applications/components/research-tasks/ResearchTaskDetails';
 import {
   type ApplicationEvaluation,
   useApplicationEvaluation,
@@ -26,7 +26,7 @@ export function ResearchTasksSection() {
     },
     {
       header: 'Szczegóły',
-      cell: ({ row }) => <ResearchTaskDetails data={row.original.researchTask} />,
+      cell: ({ row }) => <ReadonlyResearchTaskDetails data={row.original.researchTask} />,
     },
     {
       header: 'Punkty',

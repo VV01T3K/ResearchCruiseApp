@@ -8,8 +8,8 @@ import { TableDeleteRowButton } from '@/components/shared/table/TableDeleteRowBu
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import { groupBy } from '@/lib/utils';
 import { DropdownElementSelectorButton } from '@/features/applications/components/form-controls/DropdownElementSelectorButton';
-import { ResearchTaskThumbnail } from '@/features/applications/components/formA/research-task-thumbnails/ResearchTaskThumbnail';
-import { ResearchTaskDetails } from '@/features/applications/components/formA/research-task-details/ResearchTaskDetails';
+import { ResearchTaskThumbnail } from '@/features/applications/components/research-tasks/ResearchTaskThumbnail';
+import { ResearchTaskDetails } from '@/features/applications/components/research-tasks/ResearchTaskDetails';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
 import { formADefaultValues } from '@/features/applications/schemas/formA.schema';
@@ -43,7 +43,15 @@ export function ResearchTasksSection({ context }: { context: FormAViewModel }) {
       },
       {
         header: 'Szczegóły',
-        cell: ({ row }) => <ResearchTaskDetails row={row} disabled={isReadonly} />,
+        cell: ({ row }) => (
+          <ResearchTaskDetails
+            form={form}
+            fields={`researchTasks[${row.index}]`}
+            type={row.original.type}
+            rowLabel={`wiersz ${row.index + 1}`}
+            disabled={isReadonly}
+          />
+        ),
       },
       {
         id: 'actions',

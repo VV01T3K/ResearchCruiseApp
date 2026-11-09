@@ -3,7 +3,7 @@ import { useSelector } from '@tanstack/react-form';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Table } from '@/components/shared/table/Table';
-import { ResearchTaskDetails } from '@/features/applications/components/tasks/readonly/ResearchTaskDetails';
+import { ReadonlyResearchTaskDetails } from '@/features/applications/components/research-tasks/ResearchTaskDetails';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormCViewModel } from '@/features/applications/models/formC-view-model';
 import { formCDefaultValues } from '@/features/applications/schemas/formC.schema';
@@ -28,7 +28,7 @@ export function ResearchTasksEffectsSection({ context }: { context: FormCViewMod
     },
     {
       header: 'Szczegóły',
-      cell: ({ row }) => <ResearchTaskDetails data={row.original} />,
+      cell: ({ row }) => <ReadonlyResearchTaskDetails data={row.original} />,
       size: 45,
     },
     {

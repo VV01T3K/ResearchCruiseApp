@@ -7,7 +7,7 @@ import { Badge } from '@/components/shared/Badge';
 import { Layout } from '@/components/shared/Layout';
 import { Link } from '@/components/shared/Link';
 import { Table } from '@/components/shared/table/Table';
-import { ResearchTaskDetails } from '@/features/applications/components/tasks/readonly/ResearchTaskDetails';
+import { ReadonlyResearchTaskDetails } from '@/features/applications/components/research-tasks/ResearchTaskDetails';
 import { useGetCurrentUserCruiseEffectsSuspense } from '@/api/generated/endpoints/users.gen';
 import { getTaskName } from '@/features/applications/schemas/types/ResearchTaskValues';
 import type { CruiseEffectsResponse } from '@/api/generated/schemas';
@@ -41,7 +41,7 @@ function CruiseEffectsPage() {
     },
     {
       header: 'Szczegóły',
-      cell: ({ row }) => <ResearchTaskDetails data={row.original.effect} />,
+      cell: ({ row }) => <ReadonlyResearchTaskDetails data={row.original.effect} />,
     },
     {
       header: 'Punkty',
