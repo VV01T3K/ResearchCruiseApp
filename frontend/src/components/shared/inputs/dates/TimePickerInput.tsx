@@ -53,9 +53,9 @@ function moveFocus(evt: React.KeyboardEvent<HTMLElement>, columns: number) {
 }
 
 const itemClassName =
-  'h-8 w-full shrink-0 snap-center rounded-lg text-[15px] text-neutral-700 tabular-nums transition-colors duration-150 ease-out hover:bg-primary-50 focus-visible:ring-offset-1 focus-visible:outline-hidden disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-transparent';
+  'h-8 w-full shrink-0 snap-center rounded-lg text-sm text-neutral-800 tabular-nums transition-colors duration-150 ease-out hover:bg-primary-50 focus-visible:ring-offset-1 focus-visible:outline-hidden disabled:cursor-default disabled:text-neutral-400 disabled:hover:bg-transparent';
 const selectedClassName = 'bg-primary-100 font-bold text-primary hover:bg-primary-100';
-const columnHeadClassName = 'pt-1 pb-0.5 text-center text-[10px] tracking-wider text-neutral-600 uppercase';
+const columnHeadClassName = 'pt-1 pb-0.5 text-center text-xs tracking-wider text-muted-foreground uppercase';
 
 type Props = {
   name: string;
@@ -219,7 +219,7 @@ export function TimePickerInput({
         className={cn(
           'rounded-sm px-0.5 text-center tabular-nums outline-hidden',
           !disabled && 'focus:bg-primary focus:text-inverse-foreground',
-          value === undefined && 'text-neutral-500'
+          value === undefined && 'text-muted-foreground'
         )}
       >
         {value === undefined ? (segment === 'hours' ? 'gg' : 'mm') : pad(value)}
@@ -270,7 +270,7 @@ export function TimePickerInput({
           ) : (
             <>
               {renderSegment('hours')}
-              <span className="px-0.5 text-neutral-500">:</span>
+              <span className="px-0.5 text-muted-foreground">:</span>
               {renderSegment('minutes')}
             </>
           )}
@@ -285,7 +285,7 @@ export function TimePickerInput({
                   apply(undefined);
                   onBlur?.();
                 }}
-                className="cursor-pointer rounded-sm hover:text-danger-500 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+                className="cursor-pointer rounded-sm hover:text-danger focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
               >
                 <XIcon className="h-4 w-4" />
               </button>

@@ -1,6 +1,7 @@
 import { FlexRender } from '@tanstack/react-table';
 
 import { hasErrors } from '@/components/inputs/invalidInput';
+import { RequiredAsterisk } from '@/components/shared/inputs/parts/InputLabel';
 import { TableClearFiltersButton } from '@/components/shared/table/common/TableClearFiltersButton';
 import { TableInfiniteScrollTrigger } from '@/components/shared/table/common/TableInfiniteScrollTrigger';
 import { TableProps } from '@/components/shared/table/common/tableProps';
@@ -81,18 +82,15 @@ export function DesktopTable<T extends object>({
               <tr>
                 <td colSpan={table.getAllColumns().length} className="px-0 pb-0 text-center">
                   <div
-                    className={`rounded-lg border bg-surface-subtle p-2.5 ${
-                      hasErrors(errors) ? 'border-danger bg-surface-muted text-danger ring-danger' : 'border-border'
-                    }`}
+                    className={cn(
+                      'empty-state rounded-lg border bg-surface-muted',
+                      hasErrors(errors) ? 'border-danger text-danger' : 'border-border'
+                    )}
                   >
                     <span title={showRequiredAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>
                       {emptyTableMessage}
                     </span>
-                    {showRequiredAsterisk && (
-                      <span className="ml-1 font-bold text-danger" title="Pole jest obowiązkowe do wypełnienia">
-                        *
-                      </span>
-                    )}
+                    {showRequiredAsterisk && <RequiredAsterisk />}
                   </div>
                 </td>
               </tr>

@@ -27,7 +27,7 @@ export function FeedbackAttachments({ attachments, errors, onAdd, onRemove }: Pr
           aria-describedby={helperId}
           disabled={attachments.length >= MAX_ATTACHMENTS}
           onClick={() => inputRef.current?.click()}
-          className="flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium text-primary hover:cursor-pointer hover:bg-primary/5 disabled:cursor-not-allowed disabled:text-neutral-400 disabled:hover:bg-transparent"
+          className="flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium text-primary hover:cursor-pointer hover:bg-primary/5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden disabled:cursor-not-allowed disabled:text-neutral-400 disabled:hover:bg-transparent"
         >
           <PaperclipIcon className="h-4 w-4" aria-hidden />
           Dołącz plik

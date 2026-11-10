@@ -119,7 +119,7 @@ function ColumnMenu<TData extends object, TValue>({
               {isSorted === 'asc' && <ArrowUpIcon weight="bold" className="size-3.5" />}
               {isSorted === 'desc' && <ArrowDownIcon weight="bold" className="size-3.5" />}
               {count > 1 && (
-                <span className="absolute -top-2 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-semibold text-inverse-foreground tabular-nums">
+                <span className="absolute -top-2 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-xs leading-none font-semibold text-inverse-foreground tabular-nums">
                   <span className="[text-box:trim-both_cap_alphabetic]">{count}</span>
                 </span>
               )}
@@ -137,8 +137,8 @@ function ColumnMenu<TData extends object, TValue>({
                   aria-pressed={active}
                   onClick={apply}
                   className={cn(
-                    'flex h-8 cursor-pointer items-center gap-2.5 rounded-md px-2 text-left text-sm font-normal text-neutral-800 outline-none hover:bg-surface-subtle',
-                    active && 'bg-primary-100 font-medium text-primary hover:bg-primary-200'
+                    'menu-item flex h-8 items-center gap-2.5 rounded-md px-2 text-left font-normal',
+                    active && 'bg-primary-50 font-medium text-primary'
                   )}
                 >
                   <Icon className="size-4 shrink-0" />

@@ -18,17 +18,14 @@ export type DropdownInputOption = {
 };
 
 export const dropdownPopupClassName = cn(
-  'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10',
+  'w-full origin-[var(--transform-origin)] overflow-hidden rounded-lg popup-surface',
   'transition-[opacity,scale] duration-150 ease-popup',
   'data-[starting-style]:scale-98 data-[starting-style]:opacity-0',
   'data-[ending-style]:scale-98 data-[ending-style]:opacity-0'
 );
 
 export const dropdownItemClassName = cn(
-  'flex items-center justify-between gap-2 border-b border-border-muted px-3 py-2 text-sm text-neutral-700 last:border-b-0',
-  'cursor-pointer focus-visible:outline-hidden select-none',
-  'transition-colors duration-150 ease-out',
-  'data-[highlighted]:bg-primary-50 data-[highlighted]:text-foreground',
+  'menu-item flex items-center justify-between gap-2 border-b border-border-muted px-3 py-2 last:border-b-0',
   'data-[selected]:bg-primary-50 data-[selected]:text-primary data-[selected]:font-medium'
 );
 
@@ -72,7 +69,7 @@ export function DropdownInput({
         {
           value: defaultValue,
           inlineLabel: placeholder,
-          richLabel: value !== defaultValue ? <span className="text-danger-500">Usuń aktualny wybór</span> : undefined,
+          richLabel: value !== defaultValue ? <span className="text-danger">Usuń aktualny wybór</span> : undefined,
         },
         ...allOptions,
       ];

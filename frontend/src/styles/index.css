@@ -46,3 +46,15 @@
     padding-top: 0;
   }
 }
+
+@utility popup-surface {
+  @apply bg-surface shadow-xl ring-1 ring-neutral-950/10;
+}
+
+@utility menu-item {
+  @apply cursor-pointer text-sm text-neutral-800 outline-hidden transition-colors duration-150 ease-out select-none hover:bg-primary-50 data-highlighted:bg-primary-50 data-highlighted:text-foreground;
+}
+
+@utility empty-state {
+  @apply p-3 text-center text-sm text-muted-foreground;
+}

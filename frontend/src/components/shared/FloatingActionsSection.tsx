@@ -32,7 +32,7 @@ export function FloatingActionsSection({ children }: Props) {
         ref={popoverRef}
         popover="manual"
         data-actions-section
-        className="fixed inset-auto bottom-4 left-1/2 m-0 flex w-fit max-w-full -translate-x-1/2 gap-4 rounded-2xl bg-surface px-6 py-4 shadow-lg ring-1 ring-neutral-900/5"
+        className="fixed inset-auto bottom-4 left-1/2 m-0 flex w-fit max-w-full -translate-x-1/2 gap-4 rounded-2xl popup-surface px-6 py-4"
       >
         {children}
       </div>

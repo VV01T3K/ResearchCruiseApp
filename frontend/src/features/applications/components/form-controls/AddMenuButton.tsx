@@ -20,11 +20,7 @@ export function AddMenuButton({ variant, options, children, disabled }: Props) {
   const matchesWordStart = useWordStartFilter();
 
   const renderItem = (option: Option, index: number) => (
-    <Combobox.Item
-      key={index}
-      value={option}
-      className="block w-full cursor-pointer rounded-md px-3 py-2.5 text-left text-base transition-colors duration-150 select-none active:bg-primary-100 data-[highlighted]:bg-primary-50 data-[highlighted]:text-foreground"
-    >
+    <Combobox.Item key={index} value={option} className="block w-full menu-item rounded-md px-3 py-2 text-left">
       {option.content ?? option.label}
     </Combobox.Item>
   );
@@ -51,7 +47,7 @@ export function AddMenuButton({ variant, options, children, disabled }: Props) {
         <Combobox.Positioner className="z-50" sideOffset={4} collisionPadding={stickyBarsCollisionPadding}>
           <Combobox.Popup
             className={cn(
-              'w-max max-w-sm min-w-64 origin-[var(--transform-origin)] rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10',
+              'w-max max-w-sm min-w-64 origin-[var(--transform-origin)] rounded-lg popup-surface',
               'transition-[opacity,scale] duration-150 ease-popup',
               'data-[starting-style]:scale-98 data-[starting-style]:opacity-0',
               'data-[ending-style]:scale-98 data-[ending-style]:opacity-0',
@@ -59,16 +55,14 @@ export function AddMenuButton({ variant, options, children, disabled }: Props) {
             )}
           >
             <div className="relative shrink-0 border-b border-border-muted p-2">
-              <MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-5 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+              <MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-4.5 size-4 -translate-y-1/2 text-muted-foreground" />
               <Combobox.Input
                 aria-label="Szukaj na liście"
                 placeholder="Szukaj na liście"
-                className="w-full rounded-lg border border-border bg-surface-muted p-2.5 pl-9 text-sm text-foreground focus:border-primary focus:outline-hidden"
+                className="w-full rounded-lg border border-border bg-surface-muted py-2 pr-2 pl-8 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-hidden"
               />
             </div>
-            <Combobox.Empty className="py-6 text-center text-base text-muted-foreground empty:hidden">
-              Brak pasujących opcji
-            </Combobox.Empty>
+            <Combobox.Empty className="empty-state empty:hidden">Brak pasujących opcji</Combobox.Empty>
             <Combobox.List className="overflow-x-hidden overflow-y-auto p-1 empty:hidden">
               {(entry: Option | OptionGroup, index: number) =>
                 'items' in entry ? (

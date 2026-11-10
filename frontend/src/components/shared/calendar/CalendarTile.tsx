@@ -147,7 +147,7 @@ function CalendarEventTiles({
             </Tooltip.Trigger>
             <Tooltip.Portal>
               <Tooltip.Positioner className="z-50" sideOffset={4} collisionPadding={8}>
-                <Tooltip.Popup className="max-w-64 rounded-md bg-surface px-2 py-1 text-xs text-foreground shadow-md ring-1 ring-border">
+                <Tooltip.Popup className="max-w-64 rounded-md popup-surface px-2 py-1 text-xs text-foreground">
                   {event.dragLockedReason}
                 </Tooltip.Popup>
               </Tooltip.Positioner>

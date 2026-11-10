@@ -5,10 +5,10 @@ import { toastManager } from './toast';
 
 function ToastIcon({ type }: { type?: string }) {
   if (type === 'success') {
-    return <CheckCircleIcon weight="fill" className="h-5 w-5 text-success-500" />;
+    return <CheckCircleIcon weight="fill" className="h-5 w-5 text-success" />;
   }
   if (type === 'error') {
-    return <WarningCircleIcon weight="fill" className="h-5 w-5 text-danger-500" />;
+    return <WarningCircleIcon weight="fill" className="h-5 w-5 text-danger" />;
   }
   if (type === 'loading') {
     return <div className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-neutral-600" />;
@@ -24,7 +24,7 @@ function ToastList() {
       key={t.id}
       toast={t}
       swipeDirection={[]}
-      className="absolute top-0 right-0 left-auto z-[calc(1000-var(--toast-index))] mr-0 h-[var(--height)] w-[350px] origin-top [transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)+(var(--toast-index)*var(--peek))+(var(--shrink)*var(--height))))_scale(var(--scale))] overflow-hidden rounded-lg border-x border-t border-border-muted bg-surface p-4 shadow-lg [--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--offset-y:calc(var(--toast-offset-y)+(var(--toast-index)*var(--gap))+var(--toast-swipe-movement-y))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))] [transition:transform_0.2s_cubic-bezier(0.22,1,0.36,1),opacity_0.2s,height_0.15s] after:absolute after:bottom-full after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-[''] data-[ending-style]:opacity-0 data-[expanded]:h-[var(--toast-height)] data-[expanded]:[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--offset-y)))] data-[limited]:opacity-0 data-[starting-style]:[transform:translateY(-150%)] [&[data-ending-style]:not([data-limited])]:[transform:translateY(-150%)]"
+      className="absolute top-0 right-0 left-auto z-[calc(1000-var(--toast-index))] mr-0 h-[var(--height)] w-[350px] origin-top [transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)+(var(--toast-index)*var(--peek))+(var(--shrink)*var(--height))))_scale(var(--scale))] overflow-hidden rounded-lg popup-surface p-4 [--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--offset-y:calc(var(--toast-offset-y)+(var(--toast-index)*var(--gap))+var(--toast-swipe-movement-y))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))] [transition:transform_0.2s_cubic-bezier(0.22,1,0.36,1),opacity_0.2s,height_0.15s] after:absolute after:bottom-full after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-[''] data-[ending-style]:opacity-0 data-[expanded]:h-[var(--toast-height)] data-[expanded]:[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--offset-y)))] data-[limited]:opacity-0 data-[starting-style]:[transform:translateY(-150%)] [&[data-ending-style]:not([data-limited])]:[transform:translateY(-150%)]"
     >
       <Toast.Content className="overflow-hidden transition-opacity [transition-duration:150ms] data-[behind]:pointer-events-none data-[behind]:opacity-0 data-[expanded]:pointer-events-auto data-[expanded]:opacity-100">
         <div className="flex items-center gap-4">

@@ -1,6 +1,6 @@
-import { WarningIcon } from '@phosphor-icons/react';
 import React from 'react';
 
+import { Alert } from '@/components/shared/Alert';
 import { Button } from '@/components/shared/Button';
 import { Modal } from '@/components/shared/Modal';
 import { useSessionRemainingMs } from '@/integrations/auth/useSessionClock';
@@ -48,18 +48,17 @@ export function SessionExpirationWarning({ expirationDate, onRefreshSession, onS
   return (
     <Modal title="Sesja wygasa" isOpen={isOpen} onClose={() => {}} dismissible={false}>
       <div className="flex flex-col gap-4">
-        <div className="flex items-start gap-3 rounded-lg bg-warning-50 p-4">
-          <WarningIcon weight="fill" className="mt-0.5 h-5 w-5 shrink-0 text-warning-600" />
+        <Alert variant="warning" iconAlign="start" role="none">
           <div>
-            <p className="font-medium text-warning-800">
+            <p className="font-medium">
               Twoja sesja wygaśnie za <span className="font-mono font-bold">{formatTimeRemaining(remainingMs)}</span>.
             </p>
-            <p className="mt-1 text-sm text-warning-700">
+            <p className="mt-1 text-sm">
               Odśwież sesję, aby kontynuować pracę. W przeciwnym razie niezapisane dane w formularzu mogą zostać
               utracone.
             </p>
           </div>
-        </div>
+        </Alert>
 
         <div className="flex justify-end gap-2">
           <Button variant="dangerOutline" size="sm" onClick={() => void handleSignOut()}>

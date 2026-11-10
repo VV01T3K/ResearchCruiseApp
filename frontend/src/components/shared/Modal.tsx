@@ -44,7 +44,7 @@ export function Modal({ title, children, isOpen, onClose, className, dismissible
           )}
         >
           <header className="mb-4 flex items-center justify-between">
-            <Dialog.Title className="text-xl font-bold">{title}</Dialog.Title>
+            <Dialog.Title className="text-xl font-semibold">{title}</Dialog.Title>
             {dismissible && (
               <Dialog.Close
                 render={

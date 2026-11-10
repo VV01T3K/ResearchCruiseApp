@@ -55,7 +55,7 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
       {(filterValue) => {
         const footer = (
           <div className="flex items-center justify-between gap-2 border-t border-border-muted px-3 py-2">
-            <span role="status" className="text-xs font-normal text-neutral-600 tabular-nums">
+            <span role="status" className="text-xs font-normal text-muted-foreground tabular-nums">
               {!inputType && `Wybrano: ${filterValue.length} z ${options.length}`}
             </span>
             <Button variant="primaryOutline" size="xs" disabled={!filterValue.length} onClick={clearFilter}>
@@ -111,7 +111,7 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
                   className={`${fieldClassName} py-2 pr-2 pl-8`}
                 />
               </div>
-              <label className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium text-foreground hover:bg-surface-subtle">
+              <label className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium text-foreground hover:bg-primary-50">
                 <Checkbox
                   name="toggleAll"
                   checked={visibleOptions.length > 0 && selectedVisible === visibleOptions.length}
@@ -127,15 +127,13 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
                 {search ? 'Zaznacz znalezione' : 'Zaznacz wszystkie'}
               </label>
             </div>
-            <Combobox.Empty className="px-5 pb-3 text-sm font-normal text-neutral-600 empty:hidden">
-              Brak pasujących opcji
-            </Combobox.Empty>
+            <Combobox.Empty className="empty-state font-normal empty:hidden">Brak pasujących opcji</Combobox.Empty>
             <Combobox.List className="max-h-64 overflow-y-auto px-3 pb-2 focus-visible:outline-hidden">
               {(option: (typeof options)[number]) => (
                 <Combobox.Item
                   key={option.value}
                   value={option}
-                  className="group flex h-8 cursor-pointer items-center gap-2.5 rounded-md px-2 text-sm font-normal text-neutral-800 data-highlighted:bg-surface-subtle"
+                  className="group flex h-8 menu-item items-center gap-2.5 rounded-md px-2 font-normal"
                 >
                   <span className="flex size-4 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-inverse-foreground group-data-selected:border-primary group-data-selected:bg-primary">
                     <Combobox.ItemIndicator render={<CheckIcon />} />
@@ -144,7 +142,7 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
                     {option.label}
                   </span>
                   {option.count > 0 && (
-                    <span aria-hidden className="text-xs text-neutral-600 tabular-nums">
+                    <span aria-hidden className="text-xs text-muted-foreground tabular-nums">
                       {option.count}
                     </span>
                   )}

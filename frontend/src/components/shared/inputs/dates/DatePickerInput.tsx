@@ -231,7 +231,7 @@ export function DatePickerInput({
         </div>
         <div className="grid w-72 grid-cols-7 px-2 pt-1 pb-2" onMouseLeave={() => setHoveredDate(undefined)}>
           {shortWeekDays.map((day) => (
-            <div key={day} className="pb-1 text-center text-xs font-semibold text-neutral-600">
+            <div key={day} className="pb-1 text-center text-xs font-semibold text-muted-foreground">
               {day}
             </div>
           ))}

@@ -8,13 +8,14 @@ type Props = {
   onClose?: () => void;
   variant?: keyof typeof variants;
   iconAlign?: 'center' | 'start';
+  role?: React.AriaRole;
 };
 
-export function Alert({ children, onClose, variant = 'primary', iconAlign = 'center' }: Props) {
+export function Alert({ children, onClose, variant = 'primary', iconAlign = 'center', role = 'alert' }: Props) {
   const Icon = variants[variant].icon;
 
   return (
-    <div className={cn('flex items-center rounded-lg p-4', variants[variant].containerClassName)} role="alert">
+    <div className={cn('flex items-center rounded-lg p-4', variants[variant].containerClassName)} role={role}>
       <Icon
         weight={variants[variant].weight}
         className={cn('mr-4 h-6 w-6', iconAlign === 'start' && 'shrink-0 self-start')}

@@ -106,12 +106,10 @@ export function ComboboxInput({
                   aria-label="Szukaj na liście"
                   aria-labelledby={undefined}
                   placeholder="Szukaj na liście"
-                  className="w-full rounded-md border border-border bg-surface-muted py-2 pr-2 pl-8 text-sm text-foreground focus:border-primary focus:outline-hidden"
+                  className="w-full rounded-lg border border-border bg-surface-muted py-2 pr-2 pl-8 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-hidden"
                 />
               </div>
-              <Combobox.Empty className="px-3 py-2 text-sm text-neutral-600 empty:hidden">
-                Brak pasujących opcji
-              </Combobox.Empty>
+              <Combobox.Empty className="empty-state empty:hidden">Brak pasujących opcji</Combobox.Empty>
               <Combobox.List className="flex max-h-64 flex-col overflow-y-auto empty:hidden">
                 {(option: ComboboxInputOption) => (
                   <Combobox.Item key={option.value} value={option.value} className={dropdownItemClassName}>

@@ -149,7 +149,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
   return (
     <Accordion title="9. Publikacje" expandedByDefault>
       <header className="mx-auto mb-8 max-w-2xl space-y-4 text-center">
-        <h3 className="text-xl">
+        <h3 className="text-lg font-medium">
           Publikacje kategorii <span className="font-semibold">temat</span>
         </h3>
         <p className="text-sm">
@@ -159,7 +159,7 @@ export function PublicationsSection({ context }: { context: FormAViewModel }) {
             opublikowane przez zespoł zaangażowany w realizację rejsu – z afiliacją UG.
           </span>
         </p>
-        <h3 className="text-xl">
+        <h3 className="text-lg font-medium">
           Publikacje kategorii <span className="font-semibold">dopisek</span>
         </h3>
         <p className="text-sm">

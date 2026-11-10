@@ -23,7 +23,7 @@ export function GridCard({ name, className, Icon, iconWeight, description, to }:
           </div>
           <div>
             <h3 className="font-semibold text-primary md:text-lg xl:text-xl">{name}</h3>
-            <p className="translate-y-1 text-sm text-neutral-600 opacity-0 transition-[opacity,translate] duration-150 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 phone:hidden">
+            <p className="translate-y-1 text-sm text-muted-foreground opacity-0 transition-[opacity,translate] duration-150 ease-out group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 phone:hidden">
               {description}
             </p>
           </div>

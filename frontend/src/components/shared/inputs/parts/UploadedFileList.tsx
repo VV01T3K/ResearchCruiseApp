@@ -92,7 +92,7 @@ function UploadedFileListElement<File extends FileContent>({
     >
       <button
         type="button"
-        className="truncate text-left duration-300 ease-in-out hover:text-primary"
+        className="truncate rounded-sm text-left duration-300 ease-in-out hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
         onClick={() => setFileInPreview(file)}
       >
         {file.name}
@@ -104,7 +104,12 @@ function UploadedFileListElement<File extends FileContent>({
             <XIcon className="h-8 w-8 scale-55" />
           </button>
         )}
-        <a download={file.name} href={file.content} aria-label={`Pobierz plik ${file.name ?? ''}`}>
+        <a
+          download={file.name}
+          href={file.content}
+          aria-label={`Pobierz plik ${file.name ?? ''}`}
+          className="rounded-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+        >
           <DownloadSimpleIcon className="h-6 w-6" />
         </a>
       </div>
