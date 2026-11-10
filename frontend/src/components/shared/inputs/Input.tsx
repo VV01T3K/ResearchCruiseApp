@@ -112,9 +112,9 @@ export function Input({
           aria-labelledby={undefined}
           className={cn(
             'block w-full rounded-lg border border-border bg-surface-muted p-2.5 text-sm text-foreground',
-            'resize-none transition duration-300 ease-in-out',
+            'resize-none transition-[border-color,box-shadow] duration-150 ease-out',
             'focus:border-primary focus:shadow-sm focus:ring-primary focus:outline-hidden',
-            disabled ? 'bg-neutral-200' : '',
+            disabled ? 'bg-neutral-200' : 'hover:border-neutral-400',
             hasErrors(errors) && invalidInputClassName,
             className
           )}
