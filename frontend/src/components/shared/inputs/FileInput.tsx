@@ -146,11 +146,11 @@ export function FileInput({
         <div
           className={cn(
             'relative flex w-full flex-col items-center justify-center border-2 border-border text-muted-foreground',
-            'cursor-pointer overflow-x-auto rounded-lg border-dashed bg-surface-muted hover:bg-surface-subtle',
+            'overflow-x-auto rounded-lg border-dashed bg-surface-muted',
             'min-h-10 transition-colors duration-150 ease-out',
             disabled
-              ? 'cursor-pointer bg-neutral-200 hover:bg-neutral-200'
-              : 'hover:border-neutral-400 active:bg-neutral-200',
+              ? 'cursor-default bg-neutral-200'
+              : 'cursor-pointer hover:border-neutral-400 hover:bg-surface-subtle active:bg-neutral-200',
             hasErrors(errors) && 'border-danger text-danger',
             className
           )}

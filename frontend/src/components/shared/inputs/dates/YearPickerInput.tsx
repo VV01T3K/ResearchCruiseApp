@@ -88,7 +88,7 @@ export function YearPickerInput({
             <span className="flex items-center gap-2">
               <InputErrorTriangle errors={errors} />
               {selectedYear && !disabled && <span className="w-4" />}
-              {!selectedYear && <CalendarDotIcon className="h-4 w-4" />}
+              {(!selectedYear || disabled) && <CalendarDotIcon className="h-4 w-4" />}
             </span>
           </Popover.Trigger>
           {selectedYear && !disabled && (

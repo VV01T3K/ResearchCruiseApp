@@ -2,6 +2,7 @@ import { Combobox } from '@base-ui/react/combobox';
 import { CaretDownIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 
 import { useWordStartFilter } from '@/components/inputs/ComboboxInput';
+import { buttonClassName } from '@/components/shared/Button';
 import { stickyBarsCollisionPadding } from '@/components/layout/stickyBarsCollisionPadding';
 import { cn } from '@/lib/utils';
 
@@ -9,7 +10,7 @@ type Option = { label: string; content?: React.ReactNode; onSelect: () => void }
 type OptionGroup = { label: string; items: Option[] };
 
 type Props = {
-  variant: keyof typeof variants;
+  variant: 'primary' | 'primaryOutline';
   options: Option[] | OptionGroup[];
   children: string;
   disabled?: boolean;
@@ -39,13 +40,7 @@ export function AddMenuButton({ variant, options, children, disabled }: Props) {
       disabled={disabled}
       autoHighlight
     >
-      <Combobox.Trigger
-        aria-label={children}
-        className={cn(
-          'group flex items-center gap-4 px-5 py-2.5 text-inverse-foreground hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:cursor-default',
-          variants[variant]
-        )}
-      >
+      <Combobox.Trigger aria-label={children} className={buttonClassName({ variant, className: 'group' })}>
         <span>{children}</span>
         <span className="transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
           <CaretDownIcon className="h-5 w-5" />
@@ -94,9 +89,3 @@ export function AddMenuButton({ variant, options, children, disabled }: Props) {
     </Combobox.Root>
   );
 }
-
-const variants = {
-  primary: 'rounded-lg bg-primary hover:bg-primary-900 active:bg-primary disabled:bg-primary-500',
-  primaryOutline:
-    'rounded-lg bg-surface hover:bg-primary active:bg-primary text-primary hover:text-inverse-foreground border border-primary transition-colors duration-150 ease-out disabled:border-primary-300 disabled:text-primary-400 disabled:hover:bg-surface',
-};
