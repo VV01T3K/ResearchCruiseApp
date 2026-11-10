@@ -56,7 +56,7 @@ function ConfirmEmailPage() {
             <WarningCircleIcon className="text-danger" />
           )}
         </div>
-        <div className="text-center text-neutral-600">
+        <div className="text-center text-muted-foreground">
           {result === 'success' && (
             <>Aby umożliwić Ci zalogowanie się, Biuro Armatora musi jeszcze zaakceptować Twoje konto</>
           )}

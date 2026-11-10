@@ -33,7 +33,7 @@ export function Layout({ title, children, description, variant = 'default', disa
             </div>
           )}
           <h1 className="mb-2 pt-8 text-center text-3xl font-bold md:pt-0">{title}</h1>
-          {description ? <p className="text-center font-semibold text-neutral-600">{description}</p> : null}
+          {description ? <p className="text-center font-semibold text-muted-foreground">{description}</p> : null}
         </header>
         {children}
       </div>

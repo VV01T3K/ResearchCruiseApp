@@ -7,6 +7,7 @@ import { Accordion } from '@/components/shared/Accordion';
 import { Alert } from '@/components/shared/Alert';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { Input } from '@/components/shared/inputs/Input';
+import { RequiredAsterisk } from '@/components/shared/inputs/parts/RequiredAsterisk';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import type { FormAViewModel } from '@/features/applications/models/formA-view-model';
@@ -239,9 +240,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
               <fieldset className="min-w-0">
                 <legend className="mb-2 text-sm font-medium text-foreground">
                   Rozpoczęcie rejsu
-                  <span className="ml-1 font-bold text-danger" title="Pole jest obowiązkowe do wypełnienia">
-                    *
-                  </span>
+                  <RequiredAsterisk />
                 </legend>
                 <div className="flex gap-2">
                   <div className="min-w-0 flex-1">
@@ -276,9 +275,7 @@ export function CruiseLengthSection({ context }: { context: FormAViewModel }) {
               <fieldset className="min-w-0">
                 <legend className="mb-2 text-sm font-medium text-foreground">
                   Zakończenie rejsu
-                  <span className="ml-1 font-bold text-danger" title="Pole jest obowiązkowe do wypełnienia">
-                    *
-                  </span>
+                  <RequiredAsterisk />
                 </legend>
                 <div className="flex gap-2">
                   <div className="min-w-0 flex-1">

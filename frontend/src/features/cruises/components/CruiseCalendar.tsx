@@ -81,7 +81,7 @@ export function CruiseCalendar({ cruises, buttons }: Props) {
         start: new Date(cruise.startDate),
         end: new Date(cruise.endDate),
         link: `/cruises/${cruise.id}`,
-        color: cruise.shipUnavailable ? `#a10000` : getColor(getTitle(cruise)),
+        color: cruise.shipUnavailable ? 'var(--color-danger-dark)' : getColor(getTitle(cruise)),
         dragLockedReason: cruise.status === 'ended' ? 'Zakończonego rejsu nie można przenieść.' : undefined,
       })),
     [cruises]

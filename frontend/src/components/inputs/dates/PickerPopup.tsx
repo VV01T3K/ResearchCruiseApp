@@ -48,7 +48,7 @@ export function PickerPopup({ 'aria-label': ariaLabel, children, initialFocus, a
           aria-label={ariaLabel}
           initialFocus={initialFocus}
           className={cn(
-            'max-h-[var(--available-height)] origin-[var(--transform-origin)] overflow-y-auto rounded-lg bg-surface shadow-xl ring-1 ring-neutral-950/10 focus-visible:outline-hidden',
+            'max-h-[var(--available-height)] origin-[var(--transform-origin)] overflow-y-auto rounded-lg popup-surface focus-visible:outline-hidden',
             'transition-[opacity,scale] duration-150 ease-popup',
             'data-[starting-style]:scale-98 data-[starting-style]:opacity-0',
             'data-[ending-style]:scale-98 data-[ending-style]:opacity-0',
@@ -80,7 +80,7 @@ export function PickerClearButton({
       aria-label={ariaLabel}
       onClick={onClick}
       onMouseDown={onMouseDown}
-      className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded-sm hover:text-danger-500 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+      className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer rounded-sm hover:text-danger focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
     >
       <XIcon className="h-4 w-4" />
     </button>

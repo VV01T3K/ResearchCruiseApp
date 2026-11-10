@@ -66,7 +66,7 @@ function HelpPage() {
     >
       <div className="mt-8 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <h2 className="text-center text-2xl font-semibold">Obsługa problemów związanych z aplikacją</h2>
+          <h2 className="text-center text-xl font-semibold">Obsługa problemów związanych z aplikacją</h2>
           <p className="mt-4 text-center">
             W razie problemów związanych z aplikacją prosimy o maila na adres{' '}
             <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>.

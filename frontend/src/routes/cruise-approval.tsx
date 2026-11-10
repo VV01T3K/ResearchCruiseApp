@@ -67,10 +67,10 @@ function SupervisorViewPage() {
           ) : (
             <XCircleIcon weight="fill" className="h-16 w-16 text-danger" />
           )}
-          <h2 className="text-2xl font-semibold">
+          <h2 className="text-xl font-semibold">
             Zgłoszenie nr {number} zostało {accept ? 'zaakceptowane' : 'odrzucone'}
           </h2>
-          <p className="text-neutral-600">Dziękujemy za odpowiedź. Możesz zamknąć tę stronę.</p>
+          <p className="text-muted-foreground">Dziękujemy za odpowiedź. Możesz zamknąć tę stronę.</p>
         </div>
       </Layout>
     );
