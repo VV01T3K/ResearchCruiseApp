@@ -297,8 +297,8 @@ function ApplicationsPage() {
             params={{ applicationId: row.original.id }}
             className="mx-auto flex"
           >
-            Szczegóły
             <MagnifyingGlassPlusIcon className="h-4 w-4" />
+            Szczegóły
           </ButtonLink>
         </>
       ),

@@ -9,7 +9,7 @@ type Props = {
 export function TableDeleteRowButton({ onClick, disabled }: Props) {
   return (
     <Button variant="dangerOutline" size="square" onClick={onClick} title="Usuń wiersz" disabled={disabled}>
-      <TrashIcon className="h-5 w-5" />
+      <TrashIcon className="h-4 w-4" />
     </Button>
   );
 }

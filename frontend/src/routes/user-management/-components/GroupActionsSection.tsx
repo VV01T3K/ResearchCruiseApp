@@ -151,12 +151,12 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
               key="confirm"
               className="flex items-center gap-4 transition-opacity duration-200 ease-out starting:opacity-0"
             >
-              <WarningIcon weight="fill" className="h-4 w-4" />
+              <WarningIcon className="h-4 w-4" />
               <span>Na pewno?</span>
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              <TrashIcon weight="fill" className="h-4 w-4" />
+              <TrashIcon className="h-4 w-4" />
               <span>Usuń zaznaczonych użytkowników</span>
             </div>
           )}
@@ -171,7 +171,7 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
           onClick={() => void handleAcceptSelectedUsers()}
         >
           <div className="flex items-center gap-4">
-            <UserCheckIcon weight="fill" className="h-4 w-4" />
+            <UserCheckIcon className="h-4 w-4" />
             <span>Akceptuj zaznaczonych użytkowników</span>
           </div>
         </Button>
@@ -188,12 +188,12 @@ export function GroupActionsSection({ selectedUsers, allUsers, allowToRemoveUser
         >
           {assignmentWarning !== undefined ? (
             <div className="flex items-center gap-4">
-              <WarningIcon weight="fill" className="h-4 w-4" />
+              <WarningIcon className="h-4 w-4" />
               <span>Usuń akceptację mimo to</span>
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              <UserMinusIcon weight="fill" className="h-4 w-4" />
+              <UserMinusIcon className="h-4 w-4" />
               <span>Usuń akceptację zaznaczonych użytkowników</span>
             </div>
           )}

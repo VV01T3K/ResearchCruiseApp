@@ -1,7 +1,7 @@
 import { Dialog } from '@base-ui/react/dialog';
-import { XIcon } from '@phosphor-icons/react';
 import React from 'react';
 
+import { CloseButton } from '@/components/shared/Button';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -45,18 +45,7 @@ export function Modal({ title, children, isOpen, onClose, className, dismissible
         >
           <header className="mb-4 flex items-center justify-between">
             <Dialog.Title className="text-xl font-semibold">{title}</Dialog.Title>
-            {dismissible && (
-              <Dialog.Close
-                render={
-                  <button
-                    aria-label="Zamknij"
-                    className="rounded-md p-2 text-muted-foreground transition-colors duration-150 ease-out hover:cursor-pointer hover:bg-neutral-950/5 hover:text-neutral-700 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden active:bg-neutral-950/10"
-                  />
-                }
-              >
-                <XIcon className="h-5 w-5" />
-              </Dialog.Close>
-            )}
+            {dismissible && <Dialog.Close render={<CloseButton aria-label="Zamknij" />} />}
           </header>
           <div>{children}</div>
         </Dialog.Popup>

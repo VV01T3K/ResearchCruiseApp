@@ -1,6 +1,7 @@
-import { FileImageIcon, FilePdfIcon, PaperclipIcon, XIcon } from '@phosphor-icons/react';
+import { FileImageIcon, FilePdfIcon, PaperclipIcon } from '@phosphor-icons/react';
 import { useCallback, useId, useRef, useState } from 'react';
 
+import { CloseButton } from '@/components/shared/Button';
 import {
   ACCEPTED_ATTACHMENTS,
   type FeedbackAttachment,
@@ -59,14 +60,11 @@ export function FeedbackAttachments({ attachments, errors, onAdd, onRemove }: Pr
                 {attachment.filename}
               </span>
               <span className="shrink-0 text-xs text-muted-foreground">{formatSize(attachment.data.byteLength)}</span>
-              <button
-                type="button"
+              <CloseButton
                 aria-label={`Usuń załącznik ${attachment.filename}`}
                 onClick={() => onRemove(attachment.id)}
-                className="shrink-0 rounded-md p-1 text-muted-foreground hover:cursor-pointer hover:bg-neutral-950/5 hover:text-neutral-700"
-              >
-                <XIcon className="h-4 w-4 scale-55" aria-hidden />
-              </button>
+                className="-my-1.5 shrink-0"
+              />
             </li>
           ))}
         </ul>

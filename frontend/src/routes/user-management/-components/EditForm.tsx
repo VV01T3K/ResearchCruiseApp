@@ -369,12 +369,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                 <Button type="submit" disabled={isSubmitting}>
                   {assignmentWarning?.action === 'role' ? (
                     <div className="flex items-center gap-4">
-                      <WarningIcon weight="fill" className="h-4 w-4" />
+                      <WarningIcon className="h-4 w-4" />
                       <span>Zmień rolę mimo to</span>
                     </div>
                   ) : editMode ? (
                     <div className="flex items-center gap-4">
-                      <FloppyDiskIcon weight="fill" className="h-4 w-4" />
+                      <FloppyDiskIcon className="h-4 w-4" />
                       <span>Zapisz</span>
                     </div>
                   ) : (
@@ -430,17 +430,17 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                     >
                       {!user.accepted ? (
                         <div className="flex items-center gap-4">
-                          <UserCheckIcon weight="fill" className="h-4 w-4" />
+                          <UserCheckIcon className="h-4 w-4" />
                           <span>Zaakceptuj konto użytkownika</span>
                         </div>
                       ) : assignmentWarning?.action === 'deactivate' ? (
                         <div className="flex items-center gap-4">
-                          <WarningIcon weight="fill" className="h-4 w-4" />
+                          <WarningIcon className="h-4 w-4" />
                           <span>Cofnij akceptację mimo to</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-4">
-                          <UserMinusIcon weight="fill" className="h-4 w-4" />
+                          <UserMinusIcon className="h-4 w-4" />
                           <span>Cofnij akceptację konta</span>
                         </div>
                       )}
@@ -457,12 +457,12 @@ export function EditForm({ user, allUsers, allowedRoles, allowToRemoveUsers, clo
                               key="confirm"
                               className="flex items-center gap-4 transition-opacity duration-200 ease-out starting:opacity-0"
                             >
-                              <WarningIcon weight="fill" className="h-4 w-4" />
+                              <WarningIcon className="h-4 w-4" />
                               <span>Czy na pewno?</span>
                             </div>
                           ) : (
                             <div className="flex items-center gap-4">
-                              <TrashIcon weight="fill" className="h-4 w-4" />
+                              <TrashIcon className="h-4 w-4" />
                               <span>Usuń</span>
                             </div>
                           )}
