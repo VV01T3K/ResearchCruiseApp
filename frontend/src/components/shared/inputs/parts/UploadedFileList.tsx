@@ -1,7 +1,7 @@
 import { DownloadSimpleIcon } from '@phosphor-icons/react';
 import React from 'react';
 
-import { CloseButton } from '@/components/buttons/CloseButton';
+import { CloseButton } from '@/components/shared/Button';
 import { Modal } from '@/components/shared/Modal';
 import type { FileContent } from '@/api/generated/schemas';
 import { cn, createModalPortal } from '@/lib/utils';

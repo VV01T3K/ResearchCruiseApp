@@ -1,7 +1,7 @@
 import { Toast } from '@base-ui/react/toast';
 import { CheckCircleIcon, WarningCircleIcon } from '@phosphor-icons/react';
 
-import { CloseButton } from '@/components/buttons/CloseButton';
+import { CloseButton } from '@/components/shared/Button';
 
 import { toastManager } from './toast';
 

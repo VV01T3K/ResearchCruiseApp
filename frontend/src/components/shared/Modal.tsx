@@ -1,7 +1,7 @@
 import { Dialog } from '@base-ui/react/dialog';
 import React from 'react';
 
-import { CloseButton } from '@/components/buttons/CloseButton';
+import { CloseButton } from '@/components/shared/Button';
 import { cn } from '@/lib/utils';
 
 type Props = {

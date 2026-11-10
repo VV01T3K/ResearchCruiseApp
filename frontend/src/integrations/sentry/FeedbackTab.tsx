@@ -1,7 +1,7 @@
 import { Dialog } from '@base-ui/react/dialog';
 import { useRef } from 'react';
 
-import { CloseButton } from '@/components/buttons/CloseButton';
+import { CloseButton } from '@/components/shared/Button';
 import { closeFeedback, openFeedback, useCanSendFeedback, useFeedbackState } from '@/integrations/sentry/feedback';
 import { FeedbackForm } from '@/integrations/sentry/FeedbackForm';
 

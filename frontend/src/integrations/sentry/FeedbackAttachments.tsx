@@ -1,7 +1,7 @@
 import { FileImageIcon, FilePdfIcon, PaperclipIcon } from '@phosphor-icons/react';
 import { useCallback, useId, useRef, useState } from 'react';
 
-import { CloseButton } from '@/components/buttons/CloseButton';
+import { CloseButton } from '@/components/shared/Button';
 import {
   ACCEPTED_ATTACHMENTS,
   type FeedbackAttachment,

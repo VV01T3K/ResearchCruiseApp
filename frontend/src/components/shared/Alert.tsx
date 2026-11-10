@@ -1,6 +1,6 @@
 import { CheckIcon, InfoIcon, WarningCircleIcon, WarningIcon } from '@phosphor-icons/react';
 
-import { CloseButton } from '@/components/buttons/CloseButton';
+import { CloseButton } from '@/components/shared/Button';
 import { cn } from '@/lib/utils';
 
 type Props = {
