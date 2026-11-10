@@ -42,6 +42,7 @@ jobs:
           node-version-file: .node-version
           run-install: false
           cache: true
+          cache-dependency-path: ../bun.lock
 
       - name: Install dependencies
         if: steps.changes.outputs.skip != 'true'

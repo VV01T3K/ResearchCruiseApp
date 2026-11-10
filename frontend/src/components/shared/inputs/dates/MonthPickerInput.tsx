@@ -85,7 +85,7 @@ export function MonthPickerInput({
             <span className="flex items-center gap-2">
               <InputErrorTriangle errors={errors} />
               {selectedDate && !disabled && <span className="w-4" />}
-              {!selectedDate && <CalendarDotIcon className="h-4 w-4" />}
+              {(!selectedDate || disabled) && <CalendarDotIcon className="h-4 w-4" />}
             </span>
           </Popover.Trigger>
           {selectedDate && !disabled && (

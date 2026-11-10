@@ -1,4 +1,4 @@
-# Aktualizacja produkcji z wersji 2.4.0 do 3.2.0
+# Aktualizacja produkcji z wersji 2.4.0 do 3.2.1
 
 Aktualizacja przebiega jak poprzednie, ale zmienia się konfiguracja. Prosimy o użycie plików
 `compose.production.yaml` i `.env` z tej paczki zamiast dotychczasowego pliku Compose lub o
@@ -57,7 +57,7 @@ podaje nazwę brakującego lub błędnego ustawienia.
 
 W przeglądarce:
 
-- [ ] na pasku nawigacji widać wersję 3.2.0,
+- [ ] na pasku nawigacji widać wersję 3.2.1,
 - [ ] można się zalogować i otworzyć dowolne zgłoszenie,
 - [ ] „Zapomniałeś hasła?” na stronie logowania wysyła wiadomość e-mail,
 - [ ] przycisk „Zgłoś problem” w prawym dolnym rogu wysyła testowe zgłoszenie. Prosimy o informację

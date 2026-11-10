@@ -90,10 +90,10 @@ export function NumberInput(props: Props) {
               aria-labelledby={undefined}
               aria-roledescription={undefined}
               className={cn(
-                'block h-11 w-full border border-border bg-surface-muted py-2.5 text-center text-sm text-foreground',
-                'transition duration-300 ease-in-out',
+                'block w-full border border-border bg-surface-muted py-2.5 text-center text-sm text-foreground',
+                'transition-[border-color,box-shadow] duration-150 ease-out',
                 'focus:ring-primary focus:border-primary focus:shadow-sm focus:outline-hidden forced-colors:focus:-outline-offset-4',
-                disabled ? 'rounded-lg bg-neutral-200' : '',
+                disabled ? 'rounded-lg bg-neutral-200' : 'hover:border-neutral-400',
                 hasErrors(errors) && invalidInputClassName
               )}
             />
@@ -145,13 +145,13 @@ function NumberInputButton({ side, invalid }: { side: 'left' | 'right'; invalid:
         variant: 'plain',
         size: 'plain',
         className: cn(
-          'flex h-11 w-11 items-center justify-center',
+          'flex size-10.5 items-center justify-center',
           'text-muted-foreground',
           'focus:ring-primary focus:border-primary focus:shadow-sm focus:outline-hidden forced-colors:focus:-outline-offset-4 not-disabled:active:border-primary not-disabled:active:shadow-sm',
           'focus-visible:ring-inset focus-visible:ring-offset-0',
-          'disabled:cursor-not-allowed disabled:opacity-50',
+          'disabled:cursor-default disabled:opacity-50',
           'border-collapse border border-border px-2',
-          side === 'left' ? 'rounded-l-sm' : 'rounded-r-sm',
+          side === 'left' ? 'rounded-l-lg' : 'rounded-r-lg',
           invalid && 'border-danger not-disabled:active:border-danger',
           'bg-surface-subtle hover:text-foreground'
         ),

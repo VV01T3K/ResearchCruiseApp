@@ -64,6 +64,7 @@ export function buttonClassName({ variant = 'primary', size = 'md', className }:
   return cn(
     'text-inverse-foreground [transition:color_150ms_ease-out,background-color_150ms_ease-out,border-color_150ms_ease-out,box-shadow_150ms_ease-out,scale_200ms_cubic-bezier(0.34,1.56,0.64,1)] focus-visible:outline-hidden hover:cursor-pointer relative not-disabled:active:scale-96 before:absolute before:inset-0 not-disabled:active:before:-inset-1 not-disabled:active:before:scale-[104.17%] not-disabled:active:[transition-duration:150ms,150ms,150ms,150ms,100ms] not-disabled:active:[transition-timing-function:ease-out] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-default',
     variants[variant],
+    variant != 'plain' && 'rounded-lg disabled:bg-surface disabled:text-muted-foreground disabled:hover:bg-surface',
     sizes[size],
     className,
     variant != 'plain' ? 'flex items-center justify-around' : ''
@@ -83,22 +84,21 @@ const sizes = {
 const variants = {
   plain: 'text-inherit',
 
-  primary: 'rounded-lg bg-primary hover:bg-primary-900 active:bg-primary-950 disabled:bg-primary-500',
-  success: 'rounded-lg bg-success hover:bg-success-900 active:bg-success-950 disabled:bg-success-400',
-  danger:
-    'rounded-lg bg-danger hover:bg-danger-700 active:bg-danger-800 disabled:hover:bg-surface disabled:bg-surface disabled:text-muted-foreground disabled:inset-ring disabled:inset-ring-border',
+  primary: 'bg-primary hover:bg-primary-900 active:bg-primary-950 disabled:inset-ring disabled:inset-ring-border',
+  success: 'bg-success hover:bg-success-800 active:bg-success-900 disabled:inset-ring disabled:inset-ring-border',
+  danger: 'bg-danger hover:bg-danger-700 active:bg-danger-800 disabled:inset-ring disabled:inset-ring-border',
   warning:
-    'rounded-lg bg-warning hover:bg-warning-400 active:bg-warning-500 text-neutral-950 disabled:hover:bg-surface disabled:bg-surface disabled:text-muted-foreground disabled:inset-ring disabled:inset-ring-border',
-  info: 'rounded-lg bg-info hover:bg-info-700 active:bg-info-800 disabled:bg-info-200',
+    'bg-warning hover:bg-warning-300 active:bg-warning-400 text-neutral-950 disabled:inset-ring disabled:inset-ring-border',
+  info: 'bg-info hover:bg-info-700 active:bg-info-800 disabled:inset-ring disabled:inset-ring-border',
 
   primaryOutline:
-    'rounded-lg bg-surface hover:bg-primary active:bg-primary-900 text-primary hover:text-inverse-foreground border border-primary disabled:border-border disabled:text-neutral-400 disabled:hover:bg-surface',
+    'bg-surface hover:bg-primary active:bg-primary-900 text-primary hover:text-inverse-foreground border border-primary disabled:border-border',
   successOutline:
-    'rounded-lg bg-surface hover:bg-success active:bg-success-900 text-success hover:text-inverse-foreground border border-success disabled:border-success-300 disabled:text-success-400 disabled:hover:bg-surface',
+    'bg-surface hover:bg-success active:bg-success-800 text-success hover:text-inverse-foreground border border-success disabled:border-border',
   dangerOutline:
-    'rounded-lg bg-surface hover:bg-danger active:bg-danger-700 text-danger hover:text-inverse-foreground border border-danger disabled:border-border disabled:text-muted-foreground disabled:hover:bg-surface',
+    'bg-surface hover:bg-danger active:bg-danger-700 text-danger hover:text-inverse-foreground border border-danger disabled:border-border',
   warningOutline:
-    'rounded-lg bg-surface hover:bg-warning active:bg-warning-400 text-warning-600 hover:text-neutral-950 border border-warning disabled:border-border disabled:text-muted-foreground disabled:hover:bg-surface',
+    'bg-surface hover:bg-warning active:bg-warning-300 text-warning-600 hover:text-neutral-950 border border-warning disabled:border-border',
   infoOutline:
-    'rounded-lg bg-surface hover:bg-info active:bg-info-700 text-info hover:text-inverse-foreground border border-info disabled:border-info-200 disabled:text-info-300 disabled:hover:bg-surface',
+    'bg-surface hover:bg-info active:bg-info-700 text-info hover:text-inverse-foreground border border-info disabled:border-border',
 };

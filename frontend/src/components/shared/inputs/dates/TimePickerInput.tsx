@@ -251,7 +251,7 @@ export function TimePickerInput({
           className={pickerTriggerClassName({
             disabled,
             errors: allErrors,
-            className: 'cursor-text justify-start gap-0 focus-within:border-primary',
+            className: cn('justify-start gap-0 focus-within:border-primary', !disabled && 'cursor-text'),
           })}
           onMouseDown={(evt) => {
             if (!disabled && evt.target === evt.currentTarget) {

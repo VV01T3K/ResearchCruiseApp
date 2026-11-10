@@ -299,7 +299,7 @@ test('a group deactivation names the affected user and sends requests only for a
   expect(requests.bodies(`DELETE /users/${outsider.id}/acceptance`)).toHaveLength(0);
 });
 
-test('a long filter list keeps its keyboard position while the list scrolls', async ({ page, network }) => {
+test('a long filter list scrolls the keyboard-highlighted option into view', async ({ page, network }) => {
   network.use(
     getGetUsersMockHandler(
       Array.from({ length: 100 }, (_, i) =>
@@ -312,17 +312,14 @@ test('a long filter list keeps its keyboard position while the list scrolls', as
   await filter.click();
   const search = page.getByRole('combobox');
   const active = page.locator('[role="option"][data-highlighted]');
-  await search.press('ArrowDown');
-  await search.press('ArrowDown');
-  await expect(active).toHaveAttribute('aria-posinset', '2');
-  const second = page.getByRole('option', { name: 'user001@example.com' });
-  await second.hover();
-  await page.mouse.wheel(0, 1800);
-  await expect(page.getByRole('option', { name: 'user056@example.com' })).toBeVisible();
+  for (let i = 0; i < 61; i++) await search.press('ArrowDown');
+  await expect(active).toHaveText(/user060@example.com/);
+  await expect(active).toBeInViewport();
   await search.press('ArrowUp');
-  await expect(page.locator(`[id="${await search.getAttribute('aria-activedescendant')}"]`)).toBeInViewport();
+  await expect(active).toHaveText(/user059@example.com/);
+  await expect(active).toBeInViewport();
   await search.press('Enter');
-  await expect(page.getByRole('option', { selected: true })).toHaveCount(1);
+  await expect(page.getByRole('option', { selected: true })).toHaveText(/user059@example.com/);
   await search.press('Escape');
   await expect(filter).toBeFocused();
 });

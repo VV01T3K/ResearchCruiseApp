@@ -20,7 +20,7 @@ export function pickerTriggerClassName({
     'transition-[border-color,box-shadow] duration-150 ease-out focus-visible:outline-hidden',
     disabled
       ? 'cursor-default bg-neutral-200'
-      : 'cursor-pointer focus:border-primary focus:shadow-sm focus:ring-primary focus:outline-hidden',
+      : 'cursor-pointer hover:border-neutral-400 focus:border-primary focus:shadow-sm focus:ring-primary focus:outline-hidden',
     className,
     hasErrors(errors) && invalidInputClassName
   );

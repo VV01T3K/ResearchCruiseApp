@@ -112,18 +112,16 @@ export function DropdownInput({
             'transition-[border-color,box-shadow] duration-150 ease-out',
             !disabled && 'cursor-pointer hover:border-neutral-400',
             !disabled && 'focus:border-primary focus:ring-primary focus:outline-hidden focus:ring-inset',
-            disabled && 'cursor-not-allowed bg-neutral-200',
+            disabled && 'cursor-default bg-neutral-200',
             hasErrors(errors) && invalidInputClassName
           )}
         >
           <Select.Value>{() => selectedOption?.inlineLabel ?? placeholder}</Select.Value>
           <span className="flex items-center gap-2">
             <InputErrorTriangle errors={errors} />
-            {!disabled && (
-              <Select.Icon className="transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
-                <CaretDownIcon className="h-5 w-5" />
-              </Select.Icon>
-            )}
+            <Select.Icon className="transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
+              <CaretDownIcon className="h-5 w-5" />
+            </Select.Icon>
           </span>
         </Select.Trigger>
 

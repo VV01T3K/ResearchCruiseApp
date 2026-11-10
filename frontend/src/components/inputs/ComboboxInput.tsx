@@ -75,10 +75,10 @@ export function ComboboxInput({
           className={cn(
             'group relative inline-flex w-full items-center justify-between gap-2 text-left',
             'rounded-lg border border-border bg-surface-muted p-2.5 text-sm text-foreground',
-            'transition duration-300 ease-in-out',
+            'transition-[border-color,box-shadow] duration-150 ease-out',
             !disabled && 'cursor-pointer hover:border-neutral-400',
             !disabled && 'focus:border-primary focus:ring-primary focus:outline-hidden focus:ring-inset',
-            disabled && 'cursor-not-allowed bg-neutral-200',
+            disabled && 'cursor-default bg-neutral-200',
             hasErrors(errors) && invalidInputClassName
           )}
         >
@@ -87,11 +87,9 @@ export function ComboboxInput({
           </Combobox.Value>
           <span className="flex items-center gap-2">
             <InputErrorTriangle errors={errors} />
-            {!disabled && (
-              <Combobox.Icon className="transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
-                <CaretDownIcon className="h-5 w-5" />
-              </Combobox.Icon>
-            )}
+            <Combobox.Icon className="transition-transform duration-150 ease-out group-aria-expanded:rotate-180">
+              <CaretDownIcon className="h-5 w-5" />
+            </Combobox.Icon>
           </span>
         </Combobox.Trigger>
 
