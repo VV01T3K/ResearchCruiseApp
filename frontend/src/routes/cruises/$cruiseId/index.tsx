@@ -178,7 +178,7 @@ function CruiseDetailsPage() {
             Cofnij zmiany
           </Button>
           <Button className="w-36 !justify-center lg:w-48" onClick={() => void form.handleSubmit()}>
-            <FloppyDiskIcon weight="fill" className="h-4 w-4" />
+            <FloppyDiskIcon className="h-4 w-4" />
             Zapisz rejs
           </Button>
         </>

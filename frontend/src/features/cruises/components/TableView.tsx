@@ -169,8 +169,8 @@ function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
         params={{ cruiseId: cruise.id }}
         className="w-full !justify-center"
       >
-        Szczegóły
         <MagnifyingGlassPlusIcon className="h-4 w-4" />
+        Szczegóły
       </ButtonLink>
       <Guard allowedRoles={[Role.Administrator, Role.ShipOwner]}>
         {(cruise.status === 'new' || cruise.status === 'confirmed') && (
@@ -180,8 +180,8 @@ function ActionsCell({ cruise, deleteCruise }: ActionsCellProps) {
             className="w-full !justify-center"
             onClick={() => deleteCruise(cruise)}
           >
-            Usuń
             <TrashIcon className="h-4 w-4" />
+            Usuń
           </Button>
         )}
       </Guard>

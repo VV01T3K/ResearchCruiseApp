@@ -59,20 +59,20 @@ function CruisesPage() {
     </Guard>,
     <Guard key="newCruise" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <ButtonLink to="/cruises/new">
+        <PlusIcon className="h-4 w-4" />
         Nowy rejs
-        <PlusIcon className="h-6 w-6" />
       </ButtonLink>
     </Guard>,
     <Guard key="newBlockade" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <ButtonLink to="/cruises/new" search={{ blockade: true }} variant="primaryOutline">
+        <PlusIcon className="h-4 w-4" />
         Nowa blokada
-        <PlusIcon className="h-6 w-6" />
       </ButtonLink>
     </Guard>,
     <Guard key="exportCruises" allowedRoles={[Role.ShipOwner, Role.Administrator]}>
       <Button onClick={() => setIsExportModalOpen(true)} variant="primaryOutline">
-        Eksport
         <ArrowSquareOutIcon className="h-4 w-4" />
+        Eksport
       </Button>
     </Guard>,
   ];

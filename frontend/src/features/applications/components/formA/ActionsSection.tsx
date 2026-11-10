@@ -17,19 +17,19 @@ export function ActionsSection({ onSaveDraft, onPrint, disabled, context }: Prop
     <FloatingActionsSection>
       {!isReadonly && (
         <Button className="w-64 !justify-center" variant="primaryOutline" onClick={onSaveDraft} disabled={disabled}>
-          <FloppyDiskIcon weight="fill" className="h-4 w-4" />
+          <FloppyDiskIcon className="h-4 w-4" />
           Zapisz wersję roboczą
         </Button>
       )}
       {!isReadonly && (
         <Button type="submit" className="w-64 !justify-center" disabled={disabled}>
-          <PaperPlaneTiltIcon weight="fill" className="h-4 w-4" />
+          <PaperPlaneTiltIcon className="h-4 w-4" />
           Wyślij
         </Button>
       )}
       {isReadonly && (
         <Button className="w-64 !justify-center" onClick={onPrint} disabled={disabled}>
-          <PrinterIcon weight="fill" className="h-4 w-4" />
+          <PrinterIcon className="h-4 w-4" />
           Wydrukuj
         </Button>
       )}

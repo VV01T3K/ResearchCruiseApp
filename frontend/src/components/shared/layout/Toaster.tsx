@@ -1,5 +1,7 @@
 import { Toast } from '@base-ui/react/toast';
-import { CheckCircleIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react';
+import { CheckCircleIcon, WarningCircleIcon } from '@phosphor-icons/react';
+
+import { CloseButton } from '@/components/buttons/CloseButton';
 
 import { toastManager } from './toast';
 
@@ -36,12 +38,7 @@ function ToastList() {
             </span>
           )}
           {t.type !== 'loading' && (
-            <Toast.Close
-              className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 ease-out hover:cursor-pointer hover:bg-neutral-950/5 hover:text-neutral-700 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden active:bg-neutral-950/10"
-              aria-label="Zamknij"
-            >
-              <XIcon className="h-4 w-4" />
-            </Toast.Close>
+            <Toast.Close render={<CloseButton aria-label="Zamknij" className="-my-2 me-0.5" />} />
           )}
         </div>
       </Toast.Content>

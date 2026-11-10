@@ -84,7 +84,7 @@ function NewCruisePage() {
         Wyczyść formularz
       </Button>
       <Button className="w-36 !justify-center lg:w-64" type="submit">
-        <FloppyDiskIcon weight="fill" className="h-4 w-4" />
+        <FloppyDiskIcon className="h-4 w-4" />
         Zapisz
       </Button>
     </>

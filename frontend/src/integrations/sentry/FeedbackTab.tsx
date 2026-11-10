@@ -1,7 +1,7 @@
 import { Dialog } from '@base-ui/react/dialog';
-import { XIcon } from '@phosphor-icons/react';
 import { useRef } from 'react';
 
+import { CloseButton } from '@/components/buttons/CloseButton';
 import { closeFeedback, openFeedback, useCanSendFeedback, useFeedbackState } from '@/integrations/sentry/feedback';
 import { FeedbackForm } from '@/integrations/sentry/FeedbackForm';
 
@@ -40,12 +40,7 @@ export function FeedbackTab() {
           >
             <header className="flex items-center justify-between">
               <Dialog.Title className="text-xl font-semibold">Zgłoś problem</Dialog.Title>
-              <Dialog.Close
-                aria-label="Zamknij"
-                className="rounded-md p-1.5 text-muted-foreground hover:cursor-pointer hover:bg-neutral-950/5 hover:text-neutral-700"
-              >
-                <XIcon className="h-4 w-4" />
-              </Dialog.Close>
+              <Dialog.Close render={<CloseButton aria-label="Zamknij" />} />
             </header>
             <Dialog.Description className="mb-4 text-sm text-muted-foreground">
               Opis, załączniki, adres strony, nagranie sesji i adres e-mail konta trafią do programistów, aby pomóc
