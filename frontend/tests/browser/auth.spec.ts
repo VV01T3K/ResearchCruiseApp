@@ -98,7 +98,7 @@ test('a login whose profile cannot load is revoked and can be retried', async ({
   );
   await page.goto('/login');
   await logIn(page);
-  await expect(page.getByText('Profil chwilowo niedostępny', { exact: true })).toBeVisible();
+  await expect(page.getByRole('alert')).toContainText('Profil chwilowo niedostępny');
   await expect.poll(() => requests.bodies('POST /auth/logout')).toHaveLength(1);
 
   await logIn(page);

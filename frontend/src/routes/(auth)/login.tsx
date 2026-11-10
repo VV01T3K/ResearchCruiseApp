@@ -6,11 +6,12 @@ import { allowOnly, safeRedirect } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { Button } from '@/components/shared/Button';
-import { Layout } from '@/components/shared/Layout';
+import { Alert } from '@/components/shared/Alert';
 import { Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useSignIn } from '@/integrations/tanstack/query/auth';
+import { AuthCard } from '@/features/auth/components/AuthCard';
 
 export const Route = createFileRoute('/(auth)/login')({
   component: LoginPage,
@@ -60,38 +61,33 @@ function LoginPage() {
   }
 
   return (
-    <Layout title="Logowanie" variant="narrow" disableBackButton>
-      <form noValidate onSubmit={handleSubmit} className="px-4">
-        <div className="space-y-4">
-          <form.AppField name="email">
-            {(field) => <field.TextField variant="floating" type="email" label="E-mail" />}
-          </form.AppField>
+    <AuthCard
+      title="Logowanie"
+      footer={
+        <>
+          Brak konta? <Link to="/register">Zarejestruj się</Link>
+        </>
+      }
+    >
+      <form noValidate onSubmit={handleSubmit} className="space-y-4">
+        <form.AppField name="email">{(field) => <field.TextField type="email" label="E-mail" />}</form.AppField>
 
-          <form.AppField name="password">
-            {(field) => <field.TextField variant="floating" type="password" label="Hasło" />}
-          </form.AppField>
+        <form.AppField name="password">{(field) => <field.TextField type="password" label="Hasło" />}</form.AppField>
 
-          <div className="!mt-8 flex flex-wrap items-center justify-end">
-            <Link to="/forgot-password">Zapomniałeś hasła?</Link>
-          </div>
-
-          <div className="mt-8">
-            <form.Subscribe selector={(state) => state.isSubmitting}>
-              {(isSubmitting) => (
-                <Button type="submit" className="w-full" loading={isSubmitting}>
-                  Zaloguj
-                </Button>
-              )}
-            </form.Subscribe>
-
-            {signInError && <p className="mt-2 text-center text-sm font-semibold text-danger">{signInError}</p>}
-          </div>
-
-          <p className="!mt-8">
-            Brak konta? <Link to="/register">Zarejestruj się</Link>
-          </p>
+        <div className="text-right text-sm">
+          <Link to="/forgot-password">Zapomniałeś hasła?</Link>
         </div>
+
+        {signInError && <Alert variant="danger">{signInError}</Alert>}
+
+        <form.Subscribe selector={(state) => state.isSubmitting}>
+          {(isSubmitting) => (
+            <Button type="submit" className="w-full" loading={isSubmitting}>
+              Zaloguj
+            </Button>
+          )}
+        </form.Subscribe>
       </form>
-    </Layout>
+    </AuthCard>
   );
 }

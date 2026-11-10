@@ -43,7 +43,7 @@ export function Layout({ title, children, description, variant = 'default', disa
 
 const variants = {
   default: 'max-w-screen-2xl',
-  narrow: 'max-w-2xl mt-[10vh] md:mt-[25zvh]',
+  narrow: 'max-w-2xl mt-[10vh] md:mt-[25vh]',
   defaultWithCentering: 'max-w-screen-2xl mt-[10vh] md:mt-[20vh]',
   wide: 'max-w-full',
 };
