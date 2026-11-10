@@ -55,7 +55,7 @@ set `APP_VERSION=vX.Y.Z` in `docker/.env` and run
 [Deployment](../README.md#deployment) for database migrations).
 
 The upgrade from v2.4.0 also changes the configuration. UG IT follows
-[Aktualizacja produkcji z wersji 2.4.0 do 3.2.0](wdrozenie-produkcyjne.md) (in Polish).
+[Aktualizacja produkcji z wersji 2.4.0 do 3.2.1](wdrozenie-produkcyjne.md) (in Polish).
 
 ## Hotfix
 
