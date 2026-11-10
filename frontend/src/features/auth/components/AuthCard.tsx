@@ -8,7 +8,7 @@ type Props = {
 export function AuthCard({ title, children, footer }: Props) {
   return (
     <div className="min-h-[calc(100vh-var(--header-height))] w-full px-4 py-[8vh]">
-      <div className="mx-auto max-w-md rounded-xl bg-surface-muted p-6 md:p-8">
+      <div className="mx-auto max-w-2xl rounded-xl bg-surface-muted p-6 md:p-8">
         <header className="mb-6 flex flex-col items-center gap-4">
           <img src="/icon.svg" alt="" className="size-12" />
           <h1 className="text-center text-2xl font-bold">{title}</h1>
