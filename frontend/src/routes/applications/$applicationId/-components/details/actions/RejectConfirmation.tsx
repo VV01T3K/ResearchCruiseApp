@@ -31,7 +31,7 @@ export function RejectConfirmation({ onReject, setConfirmationMode, disabled }: 
             setConfirmationMode(false);
           }}
         >
-          <XSquareIcon weight="fill" className="h-4 w-4" />
+          <XSquareIcon className="h-4 w-4" />
           Potwierdź odrzucenie
         </Button>
       </div>

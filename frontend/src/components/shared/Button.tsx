@@ -1,4 +1,5 @@
 import { Button as BaseButton } from '@base-ui/react/button';
+import { XIcon } from '@phosphor-icons/react';
 import { createLink } from '@tanstack/react-router';
 
 import { cn } from '@/lib/utils';
@@ -102,3 +103,20 @@ const variants = {
   infoOutline:
     'bg-surface hover:bg-info active:bg-info-700 text-info hover:text-inverse-foreground border border-info disabled:border-border',
 };
+
+type CloseButtonProps = React.ComponentPropsWithRef<'button'> & { 'aria-label': string };
+
+export function CloseButton({ className, ...props }: CloseButtonProps) {
+  return (
+    <button
+      type="button"
+      {...props}
+      className={cn(
+        'rounded-md p-2 text-muted-foreground transition-colors duration-150 ease-out hover:cursor-pointer hover:bg-neutral-950/5 hover:text-neutral-700 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden active:bg-neutral-950/10',
+        className
+      )}
+    >
+      <XIcon className="h-5 w-5" />
+    </button>
+  );
+}

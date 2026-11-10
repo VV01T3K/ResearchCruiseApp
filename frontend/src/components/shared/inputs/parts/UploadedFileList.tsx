@@ -1,6 +1,7 @@
-import { DownloadSimpleIcon, XIcon } from '@phosphor-icons/react';
+import { DownloadSimpleIcon } from '@phosphor-icons/react';
 import React from 'react';
 
+import { CloseButton } from '@/components/shared/Button';
 import { Modal } from '@/components/shared/Modal';
 import type { FileContent } from '@/api/generated/schemas';
 import { cn, createModalPortal } from '@/lib/utils';
@@ -100,9 +101,7 @@ function UploadedFileListElement<File extends FileContent>({
 
       <div className="mr-2 flex flex-row items-center gap-2">
         {onRemove && !disabled && (
-          <button type="button" aria-label={`Usuń plik ${file.name ?? ''}`} onClick={() => onRemove(file)}>
-            <XIcon className="h-8 w-8 scale-55" />
-          </button>
+          <CloseButton aria-label={`Usuń plik ${file.name ?? ''}`} onClick={() => onRemove(file)} className="-my-0.5" />
         )}
         <a
           download={file.name}

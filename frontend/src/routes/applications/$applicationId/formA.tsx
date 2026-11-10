@@ -168,7 +168,7 @@ function FormAPage() {
 
           <div className="flex justify-center gap-4">
             <Button loading={saveMutation.isPending} onClick={() => void submitApplicationForm(form, true)}>
-              <FloppyDiskIcon weight="fill" className="h-4 w-4" />
+              <FloppyDiskIcon className="h-4 w-4" />
               Zapisz wersję roboczą
             </Button>
           </div>

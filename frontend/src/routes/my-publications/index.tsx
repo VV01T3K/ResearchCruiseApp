@@ -119,7 +119,7 @@ function MyPublicationsPage() {
           disabled={deleteOwnPublicationMutation.isPending}
           onClick={() => deleteOwnPublicationMutation.mutate({ publicationId: cell.row.original.id })}
         >
-          <TrashIcon className="h-3 w-3" />
+          <TrashIcon className="h-4 w-4" />
           Usuń
         </Button>
       ),
