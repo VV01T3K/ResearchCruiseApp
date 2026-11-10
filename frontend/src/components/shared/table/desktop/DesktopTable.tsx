@@ -1,7 +1,7 @@
 import { FlexRender } from '@tanstack/react-table';
 
 import { hasErrors } from '@/components/inputs/invalidInput';
-import { RequiredAsterisk } from '@/components/shared/inputs/parts/RequiredAsterisk';
+import { RequiredAsterisk } from '@/components/shared/inputs/parts/InputLabel';
 import { TableClearFiltersButton } from '@/components/shared/table/common/TableClearFiltersButton';
 import { TableInfiniteScrollTrigger } from '@/components/shared/table/common/TableInfiniteScrollTrigger';
 import { TableProps } from '@/components/shared/table/common/tableProps';

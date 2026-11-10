@@ -7,7 +7,7 @@ import { Accordion } from '@/components/shared/Accordion';
 import { Alert } from '@/components/shared/Alert';
 import { Checkbox } from '@/components/shared/inputs/Checkbox';
 import { Input } from '@/components/shared/inputs/Input';
-import { RequiredAsterisk } from '@/components/shared/inputs/parts/RequiredAsterisk';
+import { RequiredAsterisk } from '@/components/shared/inputs/parts/InputLabel';
 import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import { getErrors } from '@/integrations/tanstack/form/errors';
 import type { FormAViewModel } from '@/features/applications/models/formA-view-model';

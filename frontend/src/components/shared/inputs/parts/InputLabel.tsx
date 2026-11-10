@@ -1,4 +1,3 @@
-import { RequiredAsterisk } from '@/components/shared/inputs/parts/RequiredAsterisk';
 import { cn } from '@/lib/utils';
 
 type Props = React.ComponentProps<'label'> & {
@@ -22,5 +21,14 @@ export function InputLabel({ name, value, className, showRequiredAsterisk, ...pr
       <span title={showAsterisk ? 'Pole jest obowiązkowe do wypełnienia' : undefined}>{labelContent}</span>
       {showAsterisk && <RequiredAsterisk />}
     </label>
+  );
+}
+
+export function RequiredAsterisk() {
+  return (
+    <span className="ml-1 font-bold text-danger" title="Pole jest obowiązkowe do wypełnienia">
+      <span aria-hidden="true">*</span>
+      <span className="sr-only">wymagane</span>
+    </span>
   );
 }

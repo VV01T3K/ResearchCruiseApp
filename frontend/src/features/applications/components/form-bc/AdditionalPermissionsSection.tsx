@@ -2,7 +2,7 @@ import { ColumnDef } from '@/integrations/tanstack/table/features';
 
 import { Accordion } from '@/components/shared/Accordion';
 import { Button } from '@/components/shared/Button';
-import { RequiredAsterisk } from '@/components/shared/inputs/parts/RequiredAsterisk';
+import { RequiredAsterisk } from '@/components/shared/inputs/parts/InputLabel';
 import { InputErrorsList } from '@/components/shared/inputs/parts/InputErrorsList';
 import { Table } from '@/components/shared/table/Table';
 import { ActionsHeader, DeleteRowCell } from '@/integrations/tanstack/table/DeleteRowCell';
