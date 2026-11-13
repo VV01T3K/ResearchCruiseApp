@@ -2,15 +2,14 @@ import { getProblemDetail } from '@/api/errors';
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
-import { CheckIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import React from 'react';
-import { ButtonLink } from '@/components/shared/Button';
-import { Layout } from '@/components/shared/Layout';
 import { Anchor } from '@/components/shared/Link';
 import { Loader } from '@/components/shared/layout/Loader';
 import { useMutation } from '@tanstack/react-query';
 import { confirmEmail } from '@/api/generated/endpoints/auth.gen';
 import { Result } from '@/integrations/auth/types';
+import { AuthCard } from '@/features/auth/components/AuthCard';
+import { ResultPanel } from '@/features/auth/components/ResultPanel';
 
 export const Route = createFileRoute('/(auth)/confirm-email')({
   component: ConfirmEmailPage,
@@ -44,33 +43,18 @@ function ConfirmEmailPage() {
     return <Loader />;
   }
 
-  const title = result === 'success' ? 'Email został potwierdzony' : 'Błąd podczas potwierdzania emaila';
-
   return (
-    <Layout title={title} variant="narrow">
-      <div className="flex flex-col items-center">
-        <div className="h-60">
-          {result === 'success' ? (
-            <CheckIcon className="text-success" />
-          ) : (
-            <WarningCircleIcon className="text-danger" />
-          )}
-        </div>
-        <div className="text-center text-muted-foreground">
-          {result === 'success' && (
-            <>Aby umożliwić Ci zalogowanie się, Biuro Armatora musi jeszcze zaakceptować Twoje konto</>
-          )}
-          {result !== 'success' && (
-            <>
-              {errorMessage} W razie problemów napisz na{' '}
-              <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>
-            </>
-          )}
-        </div>
-      </div>
-      <ButtonLink to="/login" className="mt-6 w-full">
-        Wróć do logowania
-      </ButtonLink>
-    </Layout>
+    <AuthCard title="Potwierdzenie adresu e-mail">
+      {result === 'success' ? (
+        <ResultPanel variant="success" title="Email został potwierdzony" loginLink>
+          Aby umożliwić Ci zalogowanie się, Biuro Armatora musi jeszcze zaakceptować Twoje konto
+        </ResultPanel>
+      ) : (
+        <ResultPanel variant="danger" title="Błąd podczas potwierdzania emaila" loginLink>
+          {errorMessage} W razie problemów napisz na{' '}
+          <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>
+        </ResultPanel>
+      )}
+    </AuthCard>
   );
 }

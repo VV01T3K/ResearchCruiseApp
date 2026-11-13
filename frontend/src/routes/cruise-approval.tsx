@@ -1,4 +1,3 @@
-import { CheckCircleIcon, XCircleIcon } from '@phosphor-icons/react';
 import { createFileRoute } from '@tanstack/react-router';
 import React from 'react';
 import { z } from 'zod';
@@ -10,6 +9,7 @@ import { getErrorMessage } from '@/api/errors';
 import { Button } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
 import { Modal } from '@/components/shared/Modal';
+import { ResultPanel } from '@/features/auth/components/ResultPanel';
 import { SupervisorView } from '@/features/applications/components/formA/SupervisorView';
 import { mapFormAToValues } from '@/features/applications/schemas/formA.schema';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
@@ -60,18 +60,13 @@ function SupervisorViewPage() {
 
   if (answerMutation.isSuccess) {
     return (
-      <Layout title="Formularz A" disableBackButton>
-        <div role="status" className="flex flex-col items-center gap-4 py-16 text-center">
-          {accept ? (
-            <CheckCircleIcon weight="fill" className="h-16 w-16 text-primary" />
-          ) : (
-            <XCircleIcon weight="fill" className="h-16 w-16 text-danger" />
-          )}
-          <h2 className="text-xl font-semibold">
-            Zgłoszenie nr {number} zostało {accept ? 'zaakceptowane' : 'odrzucone'}
-          </h2>
-          <p className="text-muted-foreground">Dziękujemy za odpowiedź. Możesz zamknąć tę stronę.</p>
-        </div>
+      <Layout title="Formularz A" variant="narrow" disableBackButton>
+        <ResultPanel
+          variant={accept ? 'success' : 'danger'}
+          title={`Zgłoszenie nr ${number} zostało ${accept ? 'zaakceptowane' : 'odrzucone'}`}
+        >
+          Dziękujemy za odpowiedź. Możesz zamknąć tę stronę.
+        </ResultPanel>
       </Layout>
     );
   }

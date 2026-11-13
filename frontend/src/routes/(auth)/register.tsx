@@ -7,11 +7,12 @@ import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
 import { Button } from '@/components/shared/Button';
-import { Layout } from '@/components/shared/Layout';
+import { Alert } from '@/components/shared/Alert';
 import { Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useRegisterAccount } from '@/api/generated/endpoints/auth.gen';
+import { AuthCard } from '@/features/auth/components/AuthCard';
 
 export const Route = createFileRoute('/(auth)/register')({
   component: RegisterPage,
@@ -84,46 +85,39 @@ function RegisterPage() {
   }
 
   return (
-    <Layout title="Rejestracja" variant="narrow">
-      <form noValidate className="px-4" onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          <form.AppField name="email">
-            {(field) => <field.TextField variant="floating" type="email" label="E-mail" />}
-          </form.AppField>
+    <AuthCard
+      title="Rejestracja"
+      footer={
+        <>
+          Masz już konto? <Link to="/login">Zaloguj się</Link>
+        </>
+      }
+    >
+      <form noValidate className="space-y-4" onSubmit={handleSubmit}>
+        <form.AppField name="email">{(field) => <field.TextField type="email" label="E-mail" />}</form.AppField>
 
-          <form.AppField name="firstName">
-            {(field) => <field.TextField variant="floating" type="text" label="Imię" />}
-          </form.AppField>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <form.AppField name="firstName">{(field) => <field.TextField type="text" label="Imię" />}</form.AppField>
 
-          <form.AppField name="lastName">
-            {(field) => <field.TextField variant="floating" type="text" label="Nazwisko" />}
-          </form.AppField>
-
-          <form.AppField name="password">
-            {(field) => <field.TextField variant="floating" type="password" label="Hasło" />}
-          </form.AppField>
-
-          <form.AppField name="confirmPassword">
-            {(field) => <field.TextField variant="floating" type="password" label="Potwierdź hasło" />}
-          </form.AppField>
-
-          <div className="!mt-12">
-            <form.Subscribe selector={(state) => state.isSubmitting}>
-              {(isSubmitting) => (
-                <Button type="submit" className="w-full" loading={isSubmitting}>
-                  Zarejestruj się
-                </Button>
-              )}
-            </form.Subscribe>
-
-            {submitError && <p className="mt-2 text-center text-sm font-semibold text-danger">{submitError}</p>}
-          </div>
-
-          <p className="!mt-8">
-            Masz już konto? <Link to="/login">Zaloguj się</Link>
-          </p>
+          <form.AppField name="lastName">{(field) => <field.TextField type="text" label="Nazwisko" />}</form.AppField>
         </div>
+
+        <form.AppField name="password">{(field) => <field.TextField type="password" label="Hasło" />}</form.AppField>
+
+        <form.AppField name="confirmPassword">
+          {(field) => <field.TextField type="password" label="Potwierdź hasło" />}
+        </form.AppField>
+
+        {submitError && <Alert variant="danger">{submitError}</Alert>}
+
+        <form.Subscribe selector={(state) => state.isSubmitting}>
+          {(isSubmitting) => (
+            <Button type="submit" className="w-full" loading={isSubmitting}>
+              Zarejestruj się
+            </Button>
+          )}
+        </form.Subscribe>
       </form>
-    </Layout>
+    </AuthCard>
   );
 }

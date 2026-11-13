@@ -1,5 +1,5 @@
 import { getErrorMessage } from '@/api/errors';
-import { toast } from '@/components/shared/layout/toast';
+import { Alert } from '@/components/shared/Alert';
 import { RequestPasswordResetRequest } from '@/api/generated/schemas';
 import { useAppForm } from '@/integrations/tanstack/form/hook';
 import { createFileRoute } from '@tanstack/react-router';
@@ -7,13 +7,13 @@ import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import React from 'react';
 import { z } from 'zod';
-import { Button, ButtonLink } from '@/components/shared/Button';
-import { Layout } from '@/components/shared/Layout';
+import { Button } from '@/components/shared/Button';
 import { Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
-import { Result } from '@/integrations/auth/types';
+import { AuthCard } from '@/features/auth/components/AuthCard';
+import { ResultPanel } from '@/features/auth/components/ResultPanel';
 
 export const Route = createFileRoute('/(auth)/forgot-password')({
   component: ForgotPasswordPage,
@@ -27,8 +27,8 @@ const validationSchema = z
   .pipe(RequestPasswordResetRequest);
 
 function ForgotPasswordPage() {
-  const [result, setResult] = React.useState<Result | undefined>(undefined);
   const [email, setEmail] = React.useState<string | undefined>(undefined);
+  const [errorMessage, setErrorMessage] = React.useState<string | undefined>(undefined);
   const { mutateAsync } = useRequestPasswordReset({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
@@ -41,14 +41,12 @@ function ForgotPasswordPage() {
     onSubmit: async ({ value, formApi }) => {
       trackFormSubmit('forgot-password', 'valid', formApi.state);
 
-      setResult(undefined);
+      setErrorMessage(undefined);
       try {
         await mutateAsync({ data: { email: value.email } });
         setEmail(value.email);
-        setResult('success');
       } catch (error) {
-        setResult('error');
-        toast.error(getErrorMessage(error, 'Operacja nie powiodła się'));
+        setErrorMessage(getErrorMessage(error, 'Operacja nie powiodła się'));
       }
     },
     onSubmitInvalid: ({ formApi }) => {
@@ -63,42 +61,32 @@ function ForgotPasswordPage() {
     void form.handleSubmit();
   }
 
-  if (result === 'success') {
+  if (email) {
     return (
-      <Layout title="Przywracanie hasła" variant="narrow">
-        <p className="text-lg">
-          Link do resetowania hasła został wysłany na adres: <span className="font-bold text-primary">{email}</span>
-          <ButtonLink to="/login" className="mt-8 w-full">
-            Wróć do logowania
-          </ButtonLink>
-        </p>
-      </Layout>
+      <AuthCard title="Przywracanie hasła">
+        <ResultPanel variant="success" title="Sprawdź skrzynkę e-mail" loginLink>
+          Link do resetowania hasła został wysłany na adres:{' '}
+          <span className="font-semibold text-foreground">{email}</span>
+        </ResultPanel>
+      </AuthCard>
     );
   }
 
   return (
-    <Layout title="Przywracanie hasła" variant="narrow">
-      <form noValidate className="px-4" onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          <form.AppField name="email">
-            {(field) => <field.TextField variant="floating" type="email" label="E-mail" />}
-          </form.AppField>
-        </div>
+    <AuthCard title="Przywracanie hasła" footer={<Link to="/login">Wróć do logowania</Link>}>
+      <form noValidate className="space-y-4" onSubmit={handleSubmit}>
+        <form.AppField name="email">{(field) => <field.TextField type="email" label="E-mail" />}</form.AppField>
 
-        <div className="mt-8">
-          <form.Subscribe selector={(state) => state.isSubmitting}>
-            {(isSubmitting) => (
-              <Button type="submit" className="w-full" loading={isSubmitting}>
-                Przypomnij hasło
-              </Button>
-            )}
-          </form.Subscribe>
-        </div>
+        {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
-        <div className="!mt-8 flex flex-wrap items-center justify-end">
-          <Link to="/login">Powrót do logowania</Link>
-        </div>
+        <form.Subscribe selector={(state) => state.isSubmitting}>
+          {(isSubmitting) => (
+            <Button type="submit" className="w-full" loading={isSubmitting}>
+              Przypomnij hasło
+            </Button>
+          )}
+        </form.Subscribe>
       </form>
-    </Layout>
+    </AuthCard>
   );
 }
