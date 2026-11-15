@@ -46,11 +46,11 @@ function ConfirmEmailPage() {
   return (
     <AuthCard title="Potwierdzenie adresu e-mail">
       {result === 'success' ? (
-        <ResultPanel variant="success" title="Email został potwierdzony" loginLink>
+        <ResultPanel variant="success" title="E-mail został potwierdzony" loginLink>
           Aby umożliwić Ci zalogowanie się, Biuro Armatora musi jeszcze zaakceptować Twoje konto
         </ResultPanel>
       ) : (
-        <ResultPanel variant="danger" title="Błąd podczas potwierdzania emaila" loginLink>
+        <ResultPanel variant="danger" title="Błąd podczas potwierdzania e-maila" loginLink>
           {errorMessage} W razie problemów napisz na{' '}
           <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>
         </ResultPanel>

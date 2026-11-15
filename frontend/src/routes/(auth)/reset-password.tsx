@@ -121,7 +121,14 @@ function ResetPasswordPage() {
           {(field) => <field.TextField type="password" label="Potwierdź hasło" />}
         </form.AppField>
 
-        {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+        {errorMessage && (
+          <Alert variant="danger">
+            <p>
+              {errorMessage} W razie problemów napisz na{' '}
+              <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>
+            </p>
+          </Alert>
+        )}
 
         <form.Subscribe selector={(state) => state.isSubmitting}>
           {(isSubmitting) => (
