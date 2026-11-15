@@ -11,7 +11,7 @@ import { Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useSignIn } from '@/integrations/tanstack/query/auth';
-import { AuthCard } from '@/features/auth/components/AuthCard';
+import { Layout } from '@/components/shared/Layout';
 
 export const Route = createFileRoute('/(auth)/login')({
   component: LoginPage,
@@ -61,15 +61,8 @@ function LoginPage() {
   }
 
   return (
-    <AuthCard
-      title="Logowanie"
-      footer={
-        <>
-          Brak konta? <Link to="/register">Zarejestruj się</Link>
-        </>
-      }
-    >
-      <form noValidate onSubmit={handleSubmit} className="space-y-4">
+    <Layout title="Logowanie" variant="narrow" disableBackButton>
+      <form noValidate onSubmit={handleSubmit} className="space-y-4 px-4">
         <form.AppField name="email">{(field) => <field.TextField type="email" label="E-mail" />}</form.AppField>
 
         <form.AppField name="password">{(field) => <field.TextField type="password" label="Hasło" />}</form.AppField>
@@ -88,6 +81,9 @@ function LoginPage() {
           )}
         </form.Subscribe>
       </form>
-    </AuthCard>
+      <p className="mt-6 text-center text-sm">
+        Brak konta? <Link to="/register">Zarejestruj się</Link>
+      </p>
+    </Layout>
   );
 }

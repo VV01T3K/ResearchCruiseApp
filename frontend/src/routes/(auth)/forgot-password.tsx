@@ -12,7 +12,7 @@ import { Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useRequestPasswordReset } from '@/api/generated/endpoints/auth.gen';
-import { AuthCard } from '@/features/auth/components/AuthCard';
+import { Layout } from '@/components/shared/Layout';
 import { ResultPanel } from '@/features/auth/components/ResultPanel';
 
 export const Route = createFileRoute('/(auth)/forgot-password')({
@@ -63,18 +63,18 @@ function ForgotPasswordPage() {
 
   if (email) {
     return (
-      <AuthCard title="Przywracanie hasła">
+      <Layout title="Przywracanie hasła" variant="narrow" disableBackButton>
         <ResultPanel variant="success" title="Sprawdź skrzynkę e-mail" loginLink>
           Link do resetowania hasła został wysłany na adres:{' '}
           <span className="font-semibold text-foreground">{email}</span>
         </ResultPanel>
-      </AuthCard>
+      </Layout>
     );
   }
 
   return (
-    <AuthCard title="Przywracanie hasła" footer={<Link to="/login">Wróć do logowania</Link>}>
-      <form noValidate className="space-y-4" onSubmit={handleSubmit}>
+    <Layout title="Przywracanie hasła" variant="narrow" disableBackButton>
+      <form noValidate className="space-y-4 px-4" onSubmit={handleSubmit}>
         <form.AppField name="email">{(field) => <field.TextField type="email" label="E-mail" />}</form.AppField>
 
         {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
@@ -87,6 +87,9 @@ function ForgotPasswordPage() {
           )}
         </form.Subscribe>
       </form>
-    </AuthCard>
+      <p className="mt-6 text-center text-sm">
+        <Link to="/login">Wróć do logowania</Link>
+      </p>
+    </Layout>
   );
 }

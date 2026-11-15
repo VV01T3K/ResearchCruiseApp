@@ -8,7 +8,7 @@ import { Loader } from '@/components/shared/layout/Loader';
 import { useMutation } from '@tanstack/react-query';
 import { confirmEmail } from '@/api/generated/endpoints/auth.gen';
 import { Result } from '@/integrations/auth/types';
-import { AuthCard } from '@/features/auth/components/AuthCard';
+import { Layout } from '@/components/shared/Layout';
 import { ResultPanel } from '@/features/auth/components/ResultPanel';
 
 export const Route = createFileRoute('/(auth)/confirm-email')({
@@ -44,7 +44,7 @@ function ConfirmEmailPage() {
   }
 
   return (
-    <AuthCard title="Potwierdzenie adresu e-mail">
+    <Layout title="Potwierdzenie adresu e-mail" variant="narrow" disableBackButton>
       {result === 'success' ? (
         <ResultPanel variant="success" title="E-mail został potwierdzony" loginLink>
           Aby umożliwić Ci zalogowanie się, Biuro Armatora musi jeszcze zaakceptować Twoje konto
@@ -55,6 +55,6 @@ function ConfirmEmailPage() {
           <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>
         </ResultPanel>
       )}
-    </AuthCard>
+    </Layout>
   );
 }

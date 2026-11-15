@@ -12,7 +12,7 @@ import { Button } from '@/components/shared/Button';
 import { Anchor, Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { useResetPassword } from '@/api/generated/endpoints/auth.gen';
-import { AuthCard } from '@/features/auth/components/AuthCard';
+import { Layout } from '@/components/shared/Layout';
 import { ResultPanel } from '@/features/auth/components/ResultPanel';
 
 export const Route = createFileRoute('/(auth)/reset-password')({
@@ -85,30 +85,30 @@ function ResetPasswordPage() {
 
   if (changed) {
     return (
-      <AuthCard title="Resetowanie hasła">
+      <Layout title="Resetowanie hasła" variant="narrow" disableBackButton>
         <ResultPanel variant="success" title="Hasło zostało zmienione" loginLink>
           Możesz teraz zalogować się nowym hasłem.
         </ResultPanel>
-      </AuthCard>
+      </Layout>
     );
   }
 
   if (!emailBase64 || !resetCode) {
     return (
-      <AuthCard title="Resetowanie hasła">
+      <Layout title="Resetowanie hasła" variant="narrow" disableBackButton>
         <ResultPanel variant="danger" title="Błąd podczas resetowania hasła" loginLink>
           Link do resetowania hasła jest nieprawidłowy lub wygasł. W razie problemów napisz na{' '}
           <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>
         </ResultPanel>
-      </AuthCard>
+      </Layout>
     );
   }
 
   return (
-    <AuthCard title="Resetowanie hasła" footer={<Link to="/login">Wróć do logowania</Link>}>
+    <Layout title="Resetowanie hasła" variant="narrow" disableBackButton>
       <form
         noValidate
-        className="space-y-4"
+        className="space-y-4 px-4"
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -138,6 +138,9 @@ function ResetPasswordPage() {
           )}
         </form.Subscribe>
       </form>
-    </AuthCard>
+      <p className="mt-6 text-center text-sm">
+        <Link to="/login">Wróć do logowania</Link>
+      </p>
+    </Layout>
   );
 }

@@ -12,7 +12,7 @@ import { Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
 import { useRegisterAccount } from '@/api/generated/endpoints/auth.gen';
-import { AuthCard } from '@/features/auth/components/AuthCard';
+import { Layout } from '@/components/shared/Layout';
 
 export const Route = createFileRoute('/(auth)/register')({
   component: RegisterPage,
@@ -85,15 +85,8 @@ function RegisterPage() {
   }
 
   return (
-    <AuthCard
-      title="Rejestracja"
-      footer={
-        <>
-          Masz już konto? <Link to="/login">Zaloguj się</Link>
-        </>
-      }
-    >
-      <form noValidate className="space-y-4" onSubmit={handleSubmit}>
+    <Layout title="Rejestracja" variant="narrow" disableBackButton>
+      <form noValidate className="space-y-4 px-4" onSubmit={handleSubmit}>
         <form.AppField name="email">{(field) => <field.TextField type="email" label="E-mail" />}</form.AppField>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -118,6 +111,9 @@ function RegisterPage() {
           )}
         </form.Subscribe>
       </form>
-    </AuthCard>
+      <p className="mt-6 text-center text-sm">
+        Masz już konto? <Link to="/login">Zaloguj się</Link>
+      </p>
+    </Layout>
   );
 }

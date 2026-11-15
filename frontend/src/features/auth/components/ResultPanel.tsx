@@ -13,7 +13,7 @@ type Props = {
 export function ResultPanel({ variant, title, children, loginLink }: Props) {
   const Icon = variant === 'success' ? CheckCircleIcon : XCircleIcon;
   return (
-    <div className="flex flex-col items-center gap-4 text-center">
+    <div className="flex flex-col items-center gap-4 px-4 text-center">
       <div role="status" className="flex flex-col items-center gap-4">
         <Icon weight="fill" className={variant === 'success' ? 'size-16 text-success' : 'size-16 text-danger'} />
         <h2 className="text-xl font-semibold">{title}</h2>
