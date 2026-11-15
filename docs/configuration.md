@@ -1,0 +1,65 @@
+# Configuration and deployment
+
+Both applications read their settings from environment variables. Docker Compose files in [`docker/`](../docker/) set them for each environment.
+
+Production defaults sample every trace (`SENTRY_TRACES_SAMPLE_RATE=1`, shared by frontend and
+backend) and every replay session (`SENTRY_REPLAYS_SESSION_SAMPLE_RATE=1`); lower them through the
+environment once traffic grows. Staging samples everything.
+
+## Frontend
+
+| Environment Variable                 | Description                            | Example               | Required |
+| ------------------------------------ | -------------------------------------- | --------------------- | -------- |
+| `API_URL`                            | The address of the backend service     | `http://backend:8080` | Yes      |
+| `SENTRY_DSN`                         | Frontend Sentry DSN; empty disables it |                       | No       |
+| `SENTRY_TRACES_SAMPLE_RATE`          | Frontend trace sampling rate           | `0.4`                 | No       |
+| `SENTRY_REPLAYS_SESSION_SAMPLE_RATE` | Frontend replay session sampling rate  | `0.4`                 | No       |
+
+## Backend
+
+| Environment Variable                    | Description                                    | Example                                                                         | Required |
+| --------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------- | -------- |
+| `Database__ApplyMigrations`             | Apply pending database migrations on startup   | `false`                                                                         | No       |
+| `Database__SeedAccountsAutomatically`   | Create or repair configured seed accounts      | `false`                                                                         | No       |
+| `Database__LogUserPasswordsWhenSeeding` | Log user passwords when seeding                | `true`                                                                          | No       |
+| `ConnectionStrings__Database`           | Database connection string                     | `db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False` | Yes      |
+| `FrontendUrl`                           | Frontend URL - for CORS and email verification | `http://localhost:3000`                                                         | Yes      |
+| `Sentry__Dsn`                           | Backend Sentry DSN; empty disables it          |                                                                                 | No       |
+| `Sentry__TracesSampleRate`              | Backend trace sampling rate                    | `0.4`                                                                           | No       |
+| `SmtpSettings__SmtpServer`              | SMTP server address                            | `smtp.gmail.com`                                                                | Yes      |
+| `SmtpSettings__SmtpPort`                | SMTP server port                               | `465`                                                                           | No       |
+| `SmtpSettings__SmtpUsername`            | SMTP mailbox address                           | `example@gmail.com`                                                             | Yes      |
+| `SmtpSettings__SmtpPassword`            | Gmail app password                             |                                                                                 | Yes      |
+| `SmtpSettings__SenderName`              | Email sender name                              | `Biuro Armatora z jednostką r/v Oceanograf, Uniwersytet Gdański`                | No       |
+| `JWT__ValidAudience`                    | JWT valid audience                             | `https://rejsy.ug.edu.pl/`                                                      | No       |
+| `JWT__ValidIssuer`                      | JWT valid issuer                               | `https://rejsy.ug.edu.pl/`                                                      | No       |
+| `JWT__AccessTokenLifetimeSeconds`       | JWT access token lifetime in seconds           | `3600`                                                                          | No       |
+| `JWT__RefreshTokenLifetimeSeconds`      | JWT refresh token lifetime in seconds          | `7200`                                                                          | No       |
+| `JWT__Secret`                           | JWT signing secret                             | `JWTp@ssw0rdTwoHundredFiftySixBitsAtLeast`                                      | Yes      |
+
+## Database
+
+Database migrations run on startup only when `Database__ApplyMigrations` is `true`. It defaults to off in the backend and production Compose (`DATABASE_APPLY_MIGRATIONS`), and is on in development and staging. With it off, the backend refuses to start while migrations are pending and logs their names.
+
+To upgrade production, back up the database, then start the new version once with `DATABASE_APPLY_MIGRATIONS=true`. Unset it again after the upgrade.
+
+See [Releasing](releasing.md) for cutting a release.
+
+Reference data seeding runs on every startup once the schema is current. Missing roles, UG units, research areas and ship equipment are added; existing reference rows, including inactive entries, are preserved. Seeding shares Entity Framework's migration lock so application replicas do not seed simultaneously.
+
+`Database__SeedAccountsAutomatically` controls only the accounts configured in `users.json`. It replaces `Database__SeedAutomatically`; `Database__MigrateAutomatically` has been removed. Account seeding defaults to off in the backend, staging and production Compose, and is enabled in development Compose. For staging, rename `DATABASE_SEED_AUTOMATICALLY` to `DATABASE_SEED_ACCOUNTS_AUTOMATICALLY` in the deployment environment.
+
+## Deployment
+
+### Docker
+
+The application can be run using Docker compose. Multiple configuration files are provided in the [`docker` directory](../docker/).
+
+- `docker-compose.dev.yml` - Development configuration
+- `docker-compose.infra.yml` - MS SQL Database configuration
+- `compose.production.yaml` - Production configuration (settings in `.env.production.template`)
+- `compose.staging.yaml` - Staging application and database
+
+See [the Sentry on-prem migration notes](sentry/sentry-on-prem-migration.md) for the planned move to a self-hosted Sentry instance.
+
+SMTP credentials must not be added to `appsettings*.json` or another tracked file. Local development uses the fake SMTP sender by default, including Docker development. Staging and production Compose require `SMTP_USERNAME` and `SMTP_PASSWORD` in the deployment environment and map them to the backend's `SmtpSettings` configuration. For staging, configure these in the staging deployment environment. Copy `docker/.env.staging.template` only for local deployment setup and keep the populated file untracked. See [SMTP configuration and rollout](smtp-configuration.md) for setup, rotation, and verification.
