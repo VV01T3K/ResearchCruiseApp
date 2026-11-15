@@ -47,7 +47,7 @@
   "devDependencies": {
     "@faker-js/faker": "^10.6.0",
     "@msw/playwright": "^0.7.0",
-    "@playwright/test": "1.64.1",
+    "@playwright/test": "1.65.0",
     "@rolldown/plugin-babel": "^0.3.0",
     "@sentry/vite-plugin": "^11.8.0",
     "@shadcn/lint": "0.2.5",
