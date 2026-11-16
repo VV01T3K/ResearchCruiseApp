@@ -1,75 +1,159 @@
+<div align="center">
+
+<img src="frontend/public/icon.svg" alt="" width="88" height="88">
+
 # ResearchCruiseApp
 
-The ResearchCruiseApp project is designed to manage research cruises aboard the research vessel Oceanograf, owned by the Institute of Oceanography at the University of Gdańsk.
-The application aims to streamline processes related to the booking, management, and organization of research cruises, and enable efficient communication between various stakeholders.
+Booking, planning and reporting research cruises aboard r/v _Oceanograf_,
+the research vessel of the University of Gdańsk.
 
-## Backend testing and tooling
+[![Release](https://img.shields.io/github/v/release/VV01T3K/ResearchCruiseApp?sort=semver)](https://github.com/VV01T3K/ResearchCruiseApp/releases)
+[![Staging](https://github.com/VV01T3K/ResearchCruiseApp/actions/workflows/deploy-staging.yaml/badge.svg?branch=staging)](https://github.com/VV01T3K/ResearchCruiseApp/actions/workflows/deploy-staging.yaml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-See [backend development and checks](docs/backend-development.md) for setup, workspace commands and the test suites.
+</div>
 
-## Configuration
+Scientists apply for ship time, their supervisors approve the request, the shipowner's office
+scores the applications and builds the yearly schedule, and each cruise is described before
+departure and reported after return. The app replaces the paper forms and email threads that used
+to carry this process. Its interface is in Polish.
 
-See [dependency maintenance](docs/dependency-maintenance.md) for installs, audits
-and Renovate.
+## How it works
 
-Production defaults sample every trace (`SENTRY_TRACES_SAMPLE_RATE=1`, shared by frontend and
-backend) and every replay session (`SENTRY_REPLAYS_SESSION_SAMPLE_RATE=1`); lower them through the
-environment once traffic grows. Staging samples everything.
+```mermaid
+flowchart LR
+    A[Form A<br/>application] --> S{Supervisor}
+    S -- accepts --> O{Shipowner's office}
+    S -- rejects --> X[Denied]
+    O -- rejects --> X
+    O -- accepts --> P[Cruise planned<br/>and confirmed]
+    P --> B[Form B<br/>before the cruise]
+    B --> C[Form C<br/>report after the cruise]
+    C -.-> A
+```
 
-### Frontend
+- **Form A** is the application: research goals, team, equipment, permits and preferred dates. It
+  can be saved as a draft.
+- The **supervisor** accepts or rejects it from a link sent by email, without an account.
+- The **shipowner's office** ranks applications by points and plans cruises from the accepted ones.
+- **Form B** collects the final crew, equipment and tasks once the cruise is confirmed.
+- **Form C** reports what was done. The reported effects and the team's publications earn points
+  for future applications.
 
-| Environment Variable                 | Description                            | Example               | Required |
-| ------------------------------------ | -------------------------------------- | --------------------- | -------- |
-| `API_URL`                            | The address of the backend service     | `http://backend:8080` | Yes      |
-| `SENTRY_DSN`                         | Frontend Sentry DSN; empty disables it |                       | No       |
-| `SENTRY_TRACES_SAMPLE_RATE`          | Frontend trace sampling rate           | `0.4`                 | No       |
-| `SENTRY_REPLAYS_SESSION_SAMPLE_RATE` | Frontend replay session sampling rate  | `0.4`                 | No       |
+Access depends on the role: administrator, shipowner, cruise manager, ship crew or guest.
 
-### Backend
+## Stack
 
-| Environment Variable                    | Description                                    | Example                                                                         | Required |
-| --------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------- | -------- |
-| `Database__ApplyMigrations`             | Apply pending database migrations on startup   | `false`                                                                         | No       |
-| `Database__SeedAccountsAutomatically`   | Create or repair configured seed accounts      | `false`                                                                         | No       |
-| `Database__LogUserPasswordsWhenSeeding` | Log user passwords when seeding                | `true`                                                                          | No       |
-| `ConnectionStrings__Database`           | Database connection string                     | `db,1433;Database=ResearchCruiseApp;User Id=sa;Password=p@ssw0rd;Encrypt=False` | Yes      |
-| `FrontendUrl`                           | Frontend URL - for CORS and email verification | `http://localhost:3000`                                                         | Yes      |
-| `Sentry__Dsn`                           | Backend Sentry DSN; empty disables it          |                                                                                 | No       |
-| `Sentry__TracesSampleRate`              | Backend trace sampling rate                    | `0.4`                                                                           | No       |
-| `SmtpSettings__SmtpServer`              | SMTP server address                            | `smtp.gmail.com`                                                                | Yes      |
-| `SmtpSettings__SmtpPort`                | SMTP server port                               | `465`                                                                           | No       |
-| `SmtpSettings__SmtpUsername`            | SMTP mailbox address                           | `example@gmail.com`                                                             | Yes      |
-| `SmtpSettings__SmtpPassword`            | Gmail app password                             |                                                                                 | Yes      |
-| `SmtpSettings__SenderName`              | Email sender name                              | `Biuro Armatora z jednostką r/v Oceanograf, Uniwersytet Gdański`                | No       |
-| `JWT__ValidAudience`                    | JWT valid audience                             | `https://rejsy.ug.edu.pl/`                                                      | No       |
-| `JWT__ValidIssuer`                      | JWT valid issuer                               | `https://rejsy.ug.edu.pl/`                                                      | No       |
-| `JWT__AccessTokenLifetimeSeconds`       | JWT access token lifetime in seconds           | `3600`                                                                          | No       |
-| `JWT__RefreshTokenLifetimeSeconds`      | JWT refresh token lifetime in seconds          | `7200`                                                                          | No       |
-| `JWT__Secret`                           | JWT signing secret                             | `JWTp@ssw0rdTwoHundredFiftySixBitsAtLeast`                                      | Yes      |
+|          |                                                                                               |
+| -------- | --------------------------------------------------------------------------------------------- |
+| Frontend | React 19, TypeScript, TanStack Router, Query, Form and Table, Base UI, Tailwind CSS           |
+| Backend  | .NET 10 minimal APIs, Entity Framework Core, ASP.NET Core Identity, SQL Server 2022           |
+| Contract | The backend generates an OpenAPI document; Orval turns it into the typed client and schemas   |
+| Tests    | Vitest, Storybook, Playwright, xUnit v3 with SQL Server in Testcontainers                     |
+| Tooling  | [Vite+](https://viteplus.dev/) (`vp`), Bun, [mise](https://mise.jdx.dev/), Lefthook, Renovate |
+| Hosting  | Docker Compose, nginx, GitHub Actions, Sentry                                                 |
 
-Database migrations run on startup only when `Database__ApplyMigrations` is `true`. It defaults to off in the backend and production Compose (`DATABASE_APPLY_MIGRATIONS`), and is on in development and staging. With it off, the backend refuses to start while migrations are pending and logs their names.
+## Quick start
 
-To upgrade production, back up the database, then start the new version once with `DATABASE_APPLY_MIGRATIONS=true`. Unset it again after the upgrade.
+You need [mise](https://mise.jdx.dev/) and Docker (or rootless Podman). mise installs Bun, Vite+
+and the .NET SDK at the versions the repository pins. A [dev container](.devcontainer) with
+everything preinstalled is also provided.
 
-See [Releasing](docs/releasing.md) for cutting a release.
+```sh
+git clone https://github.com/VV01T3K/ResearchCruiseApp.git
+cd ResearchCruiseApp
+mise trust && mise install   # tools, dependencies and the Playwright browser
+mise run seed                # fresh SQL Server container with seed accounts
+vp run dev                   # backend on :3000, frontend on :5173
+```
 
-Reference data seeding runs on every startup once the schema is current. Missing roles, UG units, research areas and ship equipment are added; existing reference rows, including inactive entries, are preserved. Seeding shares Entity Framework's migration lock so application replicas do not seed simultaneously.
+Open <http://localhost:5173> and sign in with an account from `credentials.log`, which
+`mise run seed` writes to the repository root. Emails are not sent in development; they are
+written as HTML files to `fake-emails/`.
 
-`Database__SeedAccountsAutomatically` controls only the accounts configured in `users.json`. It replaces `Database__SeedAutomatically`; `Database__MigrateAutomatically` has been removed. Account seeding defaults to off in the backend, staging and production Compose, and is enabled in development Compose. For staging, rename `DATABASE_SEED_AUTOMATICALLY` to `DATABASE_SEED_ACCOUNTS_AUTOMATICALLY` in the deployment environment.
+To run everything in containers instead:
+
+```sh
+docker compose -f docker/docker-compose.dev.yml up --build
+```
+
+The app is then on <http://localhost:8080> and the seed passwords are in the backend log.
+
+## Development
+
+Run commands from the repository root.
+
+| Command                           | What it does                                                      |
+| --------------------------------- | ----------------------------------------------------------------- |
+| `vp run dev`                      | Backend with `dotnet watch` and the Vite dev server               |
+| `vp run check`                    | Formatting, lint and type checks; rebuilds the OpenAPI document   |
+| `vp run fix`                      | Applies formatting and lint fixes                                 |
+| `vp run gen`                      | Regenerates the frontend API client from the OpenAPI document     |
+| `vp run -F backend test`          | Backend unit and integration tests (run `vp run check` first)     |
+| `vp run -F frontend test:unit`    | Frontend unit tests                                               |
+| `vp run -F frontend test:browser` | Playwright journeys against a production build with a mocked API  |
+| `vp run -F frontend storybook`    | Component workshop; `test:storybook` runs the stories as tests    |
+| `vp run ef:migration:add <Name>`  | Adds an Entity Framework migration                                |
+| `mise run db:up`, `db:down`       | Starts or stops the database container; `db:del` deletes its data |
+
+```text
+backend/
+  ResearchCruiseApp/                   API: endpoints in Api/, entities in Domain/,
+                                       EF Core, email and identity in Infrastructure/
+  ResearchCruiseApp.UnitTests/
+  ResearchCruiseApp.IntegrationTests/  real HTTP against SQL Server in a container
+frontend/
+  src/routes/                          pages (TanStack Router file routes)
+  src/features/                        code shared by several routes
+  src/api/generated/                   Orval output, committed, never edited by hand
+  stories/                             Storybook stories
+  tests/                               unit tests and Playwright journeys
+docker/                                Compose files and environment templates
+.github/                               CI, release and deploy workflows
+```
+
+### Contributing
+
+- Branch from `staging` and open the pull request against it. `main` only moves on a release.
+- Write [Conventional Commits](https://www.conventionalcommits.org/), for example
+  `fix(forms): keep focused fields visible`.
+- When the API changes, run `vp run check` and `vp run gen` and commit the OpenAPI document and
+  the generated client with the change.
+- Lefthook formats staged files on commit. CI runs the checks, both test suites and the
+  Playwright journeys on every pull request.
+
+[AGENTS.md](AGENTS.md) holds the rules for coding agents working in this repository.
 
 ## Deployment
 
-### Docker
+Every merge to `staging` builds images and deploys them to the staging server. A release tags a
+`staging` commit as `vX.Y.Z`, fast-forwards `main` to it and builds the production images; see
+[Releasing](docs/releasing.md).
 
-The application can be run using Docker compose. Multiple configuration files are provided in the [`docker` directory](./docker/).
+Production runs [`docker/compose.production.yaml`](docker/compose.production.yaml) with the
+settings from [`docker/.env.production.template`](docker/.env.production.template). The template
+lists every setting with a comment and the Compose file refuses to start without the required
+ones. Staging uses `compose.staging.yaml` and `.env.staging.template` the same way.
 
-- `docker-compose.dev.yml` - Development configuration
-- `docker-compose.infra.yml` - MS SQL Database configuration
-- `compose.production.yaml` - Production configuration (settings in `.env.production.template`)
-- `compose.staging.yaml` - Staging application and database
+Production uses the client's own SQL Server, outside these files: SQL Server 2022 RTM
+(16.0.1000.6) as of November 2026. Staging, development and the integration tests run the latest
+SQL Server 2022 CU.
 
-Production uses the client's own SQL Server, outside these files: SQL Server 2022 RTM (16.0.1000.6) as of November 2026. Staging, development and the integration tests run the latest SQL Server 2022 CU.
+- **Database migrations** run on startup only when `DATABASE_APPLY_MIGRATIONS=true`. Otherwise the
+  backend refuses to start while migrations are pending and logs their names. To upgrade, back up
+  the database, start the new version once with the flag on, then turn it off again.
+- **Email** needs `SMTP_USERNAME` and `SMTP_PASSWORD` (a Gmail app password) in the deployment
+  environment, never in a tracked file. Messages are queued in the database and retried by a
+  background worker, so a mail outage delays them but does not fail the user's request.
+- **Sentry** is off until `SENTRY_DSN_FRONTEND` and `SENTRY_DSN_BACKEND` are set.
 
-See [the Sentry on-prem migration notes](docs/sentry/sentry-on-prem-migration.md) for the planned move to a self-hosted Sentry instance.
+The university's IT follows [the production upgrade guide](docs/wdrozenie-produkcyjne.md) (in
+Polish).
 
-SMTP credentials must not be added to `appsettings*.json` or another tracked file. Local development uses the fake SMTP sender by default, including Docker development. Staging and production Compose require `SMTP_USERNAME` and `SMTP_PASSWORD` in the deployment environment and map them to the backend's `SmtpSettings` configuration. For staging, configure these in the staging deployment environment. Copy `docker/.env.staging.template` only for local deployment setup and keep the populated file untracked. See [SMTP configuration and rollout](docs/smtp-configuration.md) for setup, rotation, and verification.
+## Team
+
+ResearchCruiseApp is built by students of the University of Gdańsk as a group project and
+engineering thesis for the university's shipowner's office. The contributors are listed in
+[LICENSE](LICENSE); the coursework documents of both teams are in [`docs/`](docs).
+
+Released under the [MIT License](LICENSE).
