@@ -153,3 +153,11 @@ Claude Code can query both instances side by side:
 - Monitor disk usage of ClickHouse/Kafka volumes; tune retention if needed.
 - The cloud org keeps only staging data; on-prem holds all production data (data-sovereignty
   requirement satisfied).
+
+## Feedback that seems missing
+
+Sentry's spam detection files short or test-like feedback under the **Spam** tab of
+User Feedback, not the main list. When someone says feedback from the app isn't
+arriving, check that tab first. On staging (2026-10-21) the whole path, from the DSN in
+`runtime-config.js` through the `/monitoring` proxy, was working, and the feedback was
+there.

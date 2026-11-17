@@ -67,6 +67,11 @@ Triage also records `DB impact: none / possible / confirmed` and `Migration: no 
 
 - Make the smallest change that works. Add no wrappers, adapters, helper layers or
   hand-maintained maps, and don't reshuffle unrelated code.
+- Prefer deleting what isn't needed and using framework built-ins (for example ASP.NET
+  Identity cookie auth) over custom code or new services. Keep only business rules the
+  client has confirmed; when unsure whether something is still needed, ask before
+  removing it (#909).
+- Follow the decisions in `docs/product-decisions.md`.
 - Bound junk input with a simple, generous cap (for example points ≤ 1,000), not
   exact technical limits. Bugs that need junk or unrealistic input, or that can only
   be reached by calling the API outside the app, are out of scope for the PR.

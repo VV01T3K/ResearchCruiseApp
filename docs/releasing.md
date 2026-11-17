@@ -25,6 +25,8 @@ Release notes are generated from the merged pull requests between two tags and p
 [GitHub Releases](https://github.com/VV01T3K/ResearchCruiseApp/releases). `CHANGELOG.md` is kept only
 as history up to 3.0.0.
 
+There are no release candidates.
+
 ## Release
 
 A release takes two steps:
