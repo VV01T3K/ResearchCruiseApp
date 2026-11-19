@@ -8,9 +8,9 @@
 
 Zgłaszanie, planowanie i rozliczanie rejsów badawczych r/v _Oceanograf_, Uniwersytet Gdański
 
-[![Production](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Frejsy.ug.edu.pl%2Fapi%2Fversion&query=%24&label=production&color=brightgreen)](https://github.com/VV01T3K/ResearchCruiseApp/releases)
-[![Release](https://img.shields.io/github/v/release/VV01T3K/ResearchCruiseApp?sort=semver)](https://github.com/VV01T3K/ResearchCruiseApp/releases)
 [![Staging](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcruise.wsiwiec.com%2Fapi%2Fversion&query=%24&label=staging&color=orange)](https://github.com/VV01T3K/ResearchCruiseApp/actions/workflows/deploy-staging.yaml)
+[![Release](https://img.shields.io/github/v/release/VV01T3K/ResearchCruiseApp?sort=semver)](https://github.com/VV01T3K/ResearchCruiseApp/releases)
+[![Production](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Frejsy.ug.edu.pl%2Fapi%2Fversion&query=%24&label=production&color=brightgreen)](https://github.com/VV01T3K/ResearchCruiseApp/releases)
 <br>
 [![Dependency audit](https://img.shields.io/github/actions/workflow/status/VV01T3K/ResearchCruiseApp/dependency-audit.yaml?label=dependency%20audit)](https://github.com/VV01T3K/ResearchCruiseApp/actions/workflows/dependency-audit.yaml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
