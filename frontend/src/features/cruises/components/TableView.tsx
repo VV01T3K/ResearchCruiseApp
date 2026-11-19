@@ -11,7 +11,7 @@ import { isInRole, useCurrentUser } from '@/integrations/tanstack/query/auth';
 import { formatDate } from '@/lib/dateUtils';
 import { getPersonName, isUnassignedPerson } from '@/lib/applications/person';
 import { ManagerCell } from './ManagerCell';
-import { StatusBadge } from './StatusBadge';
+import { getCruiseStatusLabel, StatusBadge } from './StatusBadge';
 import { TitleBadge } from './TitleBadge';
 import type {
   ApplicationSummaryResponse as CruiseApplicationSummaryResponse,
@@ -78,6 +78,7 @@ export function TableView({ cruises, deleteCruise, buttons }: Props) {
       header: 'Status',
       accessorFn: (row) => row.status,
       cell: ({ row }) => <StatusBadge status={row.original.status} />,
+      meta: { getFilterOptionLabel: (value) => getCruiseStatusLabel(value as CruiseResponse['status']) },
       size: 104,
     },
     {

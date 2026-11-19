@@ -1,4 +1,3 @@
-import { getErrorMessage } from '@/api/errors';
 import { ColumnDef } from '@/integrations/tanstack/table/features';
 import { useMemo, useRef } from 'react';
 
@@ -11,7 +10,11 @@ import { useTypedAppFormContext } from '@/integrations/tanstack/form/hook';
 import type { FormBFormApi, FormBViewModel } from '@/features/applications/models/formB-view-model';
 import { formBDefaultValues } from '@/features/applications/schemas/formB.schema';
 import { CruiseDayValues } from '@/features/applications/schemas/types/CruiseDayValues';
-import { exportCruiseDayDetailsToXlsx, parseCruiseDayDetailsFromFile } from '@/lib/applications/csvParser';
+import {
+  CruiseDayImportError,
+  exportCruiseDayDetailsToXlsx,
+  parseCruiseDayDetailsFromFile,
+} from '@/lib/applications/csvParser';
 import { plural } from '@/lib/plural';
 
 const cruiseDayKey = (row: CruiseDayValues) =>
@@ -160,7 +163,11 @@ export function CruiseDayDetailsSection({ context }: { context: FormBViewModel }
       );
     } catch (error) {
       console.error(error);
-      toast.error(getErrorMessage(error, `Nie udało się wczytać pliku ${file.name}`));
+      toast.error(
+        error instanceof CruiseDayImportError
+          ? `Nie udało się wczytać pliku ${file.name}: ${error.message}`
+          : `Nie udało się wczytać pliku ${file.name}.`
+      );
     } finally {
       toast.dismiss(toastId);
       if (fileInputRef.current) fileInputRef.current.value = '';

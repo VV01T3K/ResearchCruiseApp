@@ -4,6 +4,8 @@ import type { SheetData } from 'read-excel-file/browser';
 import { toast } from '@/components/shared/layout/toast';
 import { CruiseDayValues } from '@/features/applications/schemas/types/CruiseDayValues';
 
+export class CruiseDayImportError extends Error {}
+
 const MAX_IMPORT_FILE_BYTES = 1024 * 1024;
 const MAX_IMPORT_ROWS = 1000;
 const MAX_DAY = 366;
@@ -32,10 +34,10 @@ function joinPosition(cells: SheetData[number], columns: Record<string, number>)
 
 function checkRow(row: CruiseDayValues, fileRow: number) {
   if (!Number.isInteger(row.number) || row.number < 0 || row.number > MAX_DAY) {
-    throw new Error(`Wiersz ${fileRow}: dzień musi być liczbą całkowitą od 0 do ${MAX_DAY}.`);
+    throw new CruiseDayImportError(`Wiersz ${fileRow}: dzień musi być liczbą całkowitą od 0 do ${MAX_DAY}.`);
   }
   if (row.hours < 0 || row.hours > MAX_DAY_HOURS) {
-    throw new Error(`Wiersz ${fileRow}: liczba godzin musi być liczbą od 0 do ${MAX_DAY_HOURS}.`);
+    throw new CruiseDayImportError(`Wiersz ${fileRow}: liczba godzin musi być liczbą od 0 do ${MAX_DAY_HOURS}.`);
   }
 }
 
@@ -57,13 +59,13 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
   const { data: lines, errors } = Papa.parse<string[]>(text, { delimiter });
 
   if (errors.length > 0) {
-    throw new Error(
+    throw new CruiseDayImportError(
       'Nie udało się odczytać pliku. Sprawdź, czy to plik CSV lub XLSX zapisany z arkusza kalkulacyjnego.'
     );
   }
 
   if (lines.length < 2) {
-    throw new Error('Plik CSV musi zawierać wiersz nagłówka i przynajmniej jeden wiersz danych');
+    throw new CruiseDayImportError('Plik CSV musi zawierać wiersz nagłówka i przynajmniej jeden wiersz danych');
   }
 
   let headers: string[];
@@ -125,7 +127,7 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
     (latHeaderIndex !== -1 || lonHeaderIndex !== -1 || columnIndices.pointName !== -1) &&
     !(latHeaderIndex !== -1 && lonHeaderIndex !== -1 && columnIndices.pointName !== -1)
   ) {
-    throw new Error(
+    throw new CruiseDayImportError(
       'Jeśli jedna z kolumn latitude(LAT), longitude(LONG) lub "Nazwa Punktu" jest obecna, wszystkie trzy muszą być obecne'
     );
   }
@@ -150,7 +152,7 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
   }
 
   if (rows.length === 0) {
-    throw new Error('Plik CSV nie zawiera wierszy danych');
+    throw new CruiseDayImportError('Plik CSV nie zawiera wierszy danych');
   }
 
   return rows;
@@ -164,18 +166,18 @@ export function parseCruiseDayDetailsFromCsv(csvContent: string): CruiseDayValue
 export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseDayValues[]> {
   const { readSheet } = await import('read-excel-file/browser').catch((error: unknown) => {
     console.error(error);
-    throw new Error('Sprawdź połączenie z internetem i spróbuj ponownie.');
+    throw new CruiseDayImportError('Sprawdź połączenie z internetem i spróbuj ponownie.');
   });
   let data: SheetData;
   try {
     data = await readSheet(file);
   } catch (error) {
     console.error(error);
-    throw new Error('Nie udało się odczytać pliku XLSX. Sprawdź, czy plik nie jest uszkodzony.');
+    throw new CruiseDayImportError('Nie udało się odczytać pliku XLSX. Sprawdź, czy plik nie jest uszkodzony.');
   }
 
   if (data.length < 2) {
-    throw new Error('Plik XLSX musi zawierać wiersz nagłówka i przynajmniej jeden wiersz danych');
+    throw new CruiseDayImportError('Plik XLSX musi zawierać wiersz nagłówka i przynajmniej jeden wiersz danych');
   }
 
   let headers = data[0].map((h) => String(h).toLowerCase().trim());
@@ -236,7 +238,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
     (latHeaderIndex !== -1 || lonHeaderIndex !== -1 || columnIndices.pointName !== -1) &&
     !(latHeaderIndex !== -1 && lonHeaderIndex !== -1 && columnIndices.pointName !== -1)
   ) {
-    throw new Error(
+    throw new CruiseDayImportError(
       'Jeśli jedna z kolumn Latitude(LAT), longitude(LONG) lub "Nazwa Punktu" jest obecna, wszystkie trzy muszą być obecne'
     );
   }
@@ -264,7 +266,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
   }
 
   if (rows.length === 0) {
-    throw new Error('Plik XLSX nie zawiera wierszy danych');
+    throw new CruiseDayImportError('Plik XLSX nie zawiera wierszy danych');
   }
 
   return rows;
@@ -276,7 +278,7 @@ export async function parseCruiseDayDetailsFromXlsx(file: File): Promise<CruiseD
  */
 export async function parseCruiseDayDetailsFromFile(file: File): Promise<CruiseDayValues[]> {
   if (file.size > MAX_IMPORT_FILE_BYTES) {
-    throw new Error('Plik jest zbyt duży. Maksymalny rozmiar to 1 MB.');
+    throw new CruiseDayImportError('Plik jest zbyt duży. Maksymalny rozmiar to 1 MB.');
   }
 
   const fileName = file.name.toLowerCase();
@@ -287,11 +289,11 @@ export async function parseCruiseDayDetailsFromFile(file: File): Promise<CruiseD
   } else if (fileName.endsWith('.csv') || fileName.endsWith('.txt')) {
     rows = parseCruiseDayDetailsFromCsv(await file.text());
   } else {
-    throw new Error('Nieobsługiwany format pliku. Użyj plików CSV lub XLSX.');
+    throw new CruiseDayImportError('Nieobsługiwany format pliku. Użyj plików CSV lub XLSX.');
   }
 
   if (rows.length > MAX_IMPORT_ROWS) {
-    throw new Error(`Plik zawiera zbyt wiele wierszy. Maksymalna liczba to ${MAX_IMPORT_ROWS}.`);
+    throw new CruiseDayImportError(`Plik zawiera zbyt wiele wierszy. Maksymalna liczba to ${MAX_IMPORT_ROWS}.`);
   }
 
   return rows;

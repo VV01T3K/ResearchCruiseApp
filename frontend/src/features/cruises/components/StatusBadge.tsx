@@ -1,17 +1,21 @@
 import { Badge } from '@/components/shared/Badge';
 import type { CruiseResponse } from '@/api/generated/schemas';
 
+export function getCruiseStatusLabel(status: CruiseResponse['status']): string {
+  switch (status) {
+    case 'new':
+      return 'Nowy';
+    case 'confirmed':
+      return 'Potwierdzony';
+    case 'ended':
+      return 'Zakończony';
+  }
+}
+
 type Props = {
   status: CruiseResponse['status'];
 };
 export function StatusBadge({ status }: Props) {
-  if (status === 'new') {
-    return <Badge variant="primary">Nowy</Badge>;
-  } else if (status === 'confirmed') {
-    return <Badge variant="success">Potwierdzony</Badge>;
-  } else if (status === 'ended') {
-    return <Badge variant="info">Zakończony</Badge>;
-  } else {
-    throw new Error(`Unknown cruise status: ${String(status)}`);
-  }
+  const variant = status === 'new' ? 'primary' : status === 'confirmed' ? 'success' : 'info';
+  return <Badge variant={variant}>{getCruiseStatusLabel(status)}</Badge>;
 }

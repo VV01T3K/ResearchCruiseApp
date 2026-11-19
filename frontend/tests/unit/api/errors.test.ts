@@ -35,5 +35,9 @@ describe('API failure reasons', () => {
     const error = new Error('Session refresh failed', { cause: new ApiError('Serwer jest niedostępny', 503) });
     expect(getErrorMessage(error, 'Nie zapisano')).toBe('Nie zapisano: Serwer jest niedostępny');
     expect(getErrorMessage(new TypeError('Failed to fetch'), 'Nie zapisano')).toContain('połączyć z serwerem');
+    expect(getErrorMessage(new TypeError('Cannot read properties of undefined'), 'Nie zapisano')).toBe(
+      getErrorMessage(new Error('Unknown task type: x'), 'Nie zapisano')
+    );
+    expect(getErrorMessage(new Error('Unknown task type: x'), 'Nie zapisano')).not.toContain('Unknown');
   });
 });
