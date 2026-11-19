@@ -12,6 +12,7 @@ Research cruise booking and reporting for r/v _Oceanograf_, University of Gdańs
 [![Release](https://img.shields.io/github/v/release/VV01T3K/ResearchCruiseApp?sort=semver)](https://github.com/VV01T3K/ResearchCruiseApp/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Polski](https://img.shields.io/badge/README-po%20polsku-dc143c)](README.pl.md)
+
 </div>
 
 Scientists apply for ship time, their supervisors approve the request, the shipowner's office
