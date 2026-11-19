@@ -20,16 +20,17 @@ async function parseResponse(response: Response) {
 }
 
 async function send(url: string, init: RequestInit) {
-  let response: Response;
+  const outageAtStart = connectionStatus.get().outage;
   try {
-    response = await fetch(url, init);
+    const response = await fetch(url, init);
+    if ([502, 503, 504].includes(response.status)) connectionStatus.suspect();
+    const body = await parseResponse(response);
+    if (response.ok) connectionStatus.recover(outageAtStart);
+    return { response, body };
   } catch (error) {
     if (classifyError(error) === 'network') connectionStatus.suspect();
     throw error;
   }
-  if ([502, 503, 504].includes(response.status)) connectionStatus.suspect();
-  else if (response.ok) connectionStatus.recover();
-  return response;
 }
 
 export async function customFetch<T>(url: string, options: RequestInit): Promise<T> {
@@ -38,16 +39,15 @@ export async function customFetch<T>(url: string, options: RequestInit): Promise
   const headers = new Headers(options.headers);
   if (token) headers.set('Authorization', `Bearer ${token}`);
 
-  let response = await send(config.apiUrl + url, { ...options, credentials: 'include', headers });
+  let { response, body } = await send(config.apiUrl + url, { ...options, credentials: 'include', headers });
   if (response.status === 401 && token) {
     const refreshed = await refreshSession();
     if (refreshed) {
       headers.set('Authorization', `Bearer ${refreshed.accessToken}`);
-      response = await send(config.apiUrl + url, { ...options, credentials: 'include', headers });
+      ({ response, body } = await send(config.apiUrl + url, { ...options, credentials: 'include', headers }));
     }
   }
 
-  const body = await parseResponse(response);
   if (!response.ok) {
     const problem = typeof body === 'object' && body !== null ? (body as HttpValidationProblemDetails) : undefined;
     throw new ApiError(responseErrorMessage(response.status, problem), response.status, problem);

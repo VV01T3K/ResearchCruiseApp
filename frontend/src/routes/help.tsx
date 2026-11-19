@@ -15,6 +15,7 @@ import { Button } from '@/components/shared/Button';
 import { Layout } from '@/components/shared/Layout';
 import { Anchor } from '@/components/shared/Link';
 import { CompanyInfoCard } from '@/components/shared/CompanyInfoCard';
+import { customFetch } from '@/api/fetch';
 import config from '@/config';
 
 export const Route = createFileRoute('/help')({
@@ -45,11 +46,7 @@ function HelpPage() {
   });
   const backendVersion = useSuspenseQuery({
     queryKey: ['backendVersion'],
-    queryFn: async () => {
-      const response = await fetch(`${config.apiUrl}/version`);
-      if (!response.ok) throw new Error(`Backend version request failed with status ${response.status}`);
-      return response.json() as Promise<string>;
-    },
+    queryFn: ({ signal }) => customFetch<string>('/version', { method: 'GET', signal }),
     retry: false,
   });
 

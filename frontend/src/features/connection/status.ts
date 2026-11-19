@@ -23,7 +23,7 @@ export const connectionStatus = {
     if (outage !== state.outage || state.problem === null) return;
     update({ problem: result === 'healthy' ? null : result, outage });
   },
-  recover() {
-    if (state.problem !== null) update({ ...state, problem: null });
+  recover(outageAtStart: number) {
+    if (state.problem !== null && state.outage === outageAtStart) update({ ...state, problem: null });
   },
 };

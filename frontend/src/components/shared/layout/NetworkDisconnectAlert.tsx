@@ -6,12 +6,16 @@ import { Alert } from '@/components/shared/Alert';
 import config from '@/config';
 import { connectionStatus, type HealthResult } from '@/features/connection/status';
 
-async function checkHealth(outage: number) {
+async function checkHealth(outage: number, signal: AbortSignal) {
   let result: HealthResult;
   try {
-    const response = await fetch(`${config.apiUrl}/health`, { cache: 'no-store' });
+    const response = await fetch(`${config.apiUrl}/health`, {
+      cache: 'no-store',
+      signal: AbortSignal.any([signal, AbortSignal.timeout(10_000)]),
+    });
     result = response.ok ? 'healthy' : 'unhealthy';
-  } catch {
+  } catch (error) {
+    if (signal.aborted) throw error;
     result = 'offline';
   }
   connectionStatus.report(outage, result);
@@ -25,7 +29,7 @@ export function NetworkDisconnectAlert() {
 
   useQuery({
     queryKey: ['health', outage],
-    queryFn: () => checkHealth(outage),
+    queryFn: ({ signal }) => checkHealth(outage, signal),
     enabled: problem !== null,
     networkMode: 'always',
     retry: false,
