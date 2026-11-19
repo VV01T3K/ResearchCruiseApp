@@ -4,12 +4,15 @@
 
 # ResearchCruiseApp
 
-Booking, planning and reporting research cruises aboard r/v _Oceanograf_,
-the research vessel of the University of Gdańsk.
+Research cruise booking and reporting for r/v _Oceanograf_, University of Gdańsk
 
+[![Staging](https://img.shields.io/github/actions/workflow/status/VV01T3K/ResearchCruiseApp/deploy-staging.yaml?branch=staging&event=push&label=staging)](https://github.com/VV01T3K/ResearchCruiseApp/actions/workflows/deploy-staging.yaml)
+[![Production](https://img.shields.io/github/actions/workflow/status/VV01T3K/ResearchCruiseApp/build-production.yaml?event=push&label=production)](https://github.com/VV01T3K/ResearchCruiseApp/actions/workflows/build-production.yaml)
+[![Dependency audit](https://img.shields.io/github/actions/workflow/status/VV01T3K/ResearchCruiseApp/dependency-audit.yaml?label=dependency%20audit)](https://github.com/VV01T3K/ResearchCruiseApp/actions/workflows/dependency-audit.yaml)
 [![Release](https://img.shields.io/github/v/release/VV01T3K/ResearchCruiseApp?sort=semver)](https://github.com/VV01T3K/ResearchCruiseApp/releases)
-[![Staging](https://github.com/VV01T3K/ResearchCruiseApp/actions/workflows/deploy-staging.yaml/badge.svg?branch=staging)](https://github.com/VV01T3K/ResearchCruiseApp/actions/workflows/deploy-staging.yaml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+**English** · [Polski](README.pl.md)
 
 </div>
 
@@ -44,7 +47,7 @@ Access depends on the role: administrator, shipowner, cruise manager, ship crew 
 
 ## Stack
 
-|          |                                                                                               |
+| Layer    | Technology                                                                                    |
 | -------- | --------------------------------------------------------------------------------------------- |
 | Frontend | React 19, TypeScript, TanStack Router, Query, Form and Table, Base UI, Tailwind CSS           |
 | Backend  | .NET 10 minimal APIs, Entity Framework Core, ASP.NET Core Identity, SQL Server 2022           |
@@ -55,9 +58,9 @@ Access depends on the role: administrator, shipowner, cruise manager, ship crew 
 
 ## Quick start
 
-You need [mise](https://mise.jdx.dev/) and Docker (or rootless Podman). mise installs Bun, Vite+
-and the .NET SDK at the versions the repository pins. A [dev container](.devcontainer) with
-everything preinstalled is also provided.
+You need [mise](https://mise.jdx.dev/) and Docker. mise installs Bun, Vite+ and the .NET SDK at the
+versions the repository pins. A [dev container](.devcontainer) with everything preinstalled is also
+provided.
 
 ```sh
 git clone https://github.com/VV01T3K/ResearchCruiseApp.git
@@ -96,33 +99,16 @@ Run commands from the repository root.
 | `vp run ef:migration:add <Name>`  | Adds an Entity Framework migration                                |
 | `mise run db:up`, `db:down`       | Starts or stops the database container; `db:del` deletes its data |
 
-```text
-backend/
-  ResearchCruiseApp/                   API: endpoints in Api/, entities in Domain/,
-                                       EF Core, email and identity in Infrastructure/
-  ResearchCruiseApp.UnitTests/
-  ResearchCruiseApp.IntegrationTests/  real HTTP against SQL Server in a container
-frontend/
-  src/routes/                          pages (TanStack Router file routes)
-  src/features/                        code shared by several routes
-  src/api/generated/                   Orval output, committed, never edited by hand
-  stories/                             Storybook stories
-  tests/                               unit tests and Playwright journeys
-docker/                                Compose files and environment templates
-.github/                               CI, release and deploy workflows
-```
-
-### Contributing
-
-- Branch from `staging` and open the pull request against it. `main` only moves on a release.
-- Write [Conventional Commits](https://www.conventionalcommits.org/), for example
-  `fix(forms): keep focused fields visible`.
-- When the API changes, run `vp run check` and `vp run gen` and commit the OpenAPI document and
-  the generated client with the change.
-- Lefthook formats staged files on commit. CI runs the checks, both test suites and the
-  Playwright journeys on every pull request.
-
-[AGENTS.md](AGENTS.md) holds the rules for coding agents working in this repository.
+| Path                                          | Contents                                                       |
+| --------------------------------------------- | -------------------------------------------------------------- |
+| `backend/ResearchCruiseApp/`                  | API: endpoints, domain, EF Core, email and identity            |
+| `backend/ResearchCruiseApp.UnitTests/`        | Backend unit tests                                             |
+| `backend/ResearchCruiseApp.IntegrationTests/` | Real HTTP against SQL Server in a container                    |
+| `frontend/src/routes/`                        | Pages (TanStack Router file routes)                            |
+| `frontend/src/features/`                      | Code shared by several routes                                  |
+| `frontend/src/api/generated/`                 | Generated API client, committed and never edited by hand       |
+| `frontend/stories/`, `frontend/tests/`        | Storybook stories, unit tests and Playwright journeys          |
+| `docker/`, `.github/`                         | Compose files, environment templates, CI and release workflows |
 
 ## Deployment
 
@@ -154,6 +140,6 @@ Polish).
 
 ResearchCruiseApp is built by students of the University of Gdańsk as a group project and
 engineering thesis for the university's shipowner's office. The contributors are listed in
-[LICENSE](LICENSE); the coursework documents of both teams are in [`docs/`](docs).
+[LICENSE](LICENSE).
 
 Released under the [MIT License](LICENSE).
