@@ -44,7 +44,8 @@ flowchart LR
 - **Formularz C** opisuje, co zrobiono. Zgłoszone efekty i publikacje zespołu dają punkty przy
   kolejnych zgłoszeniach.
 
-Dostęp zależy od roli: administrator, armator, kierownik rejsu, załoga lub gość.
+Dostęp zależy od roli: administrator, armator, kierownik rejsu, załoga lub gość. Szczegóły są w
+[macierzy uprawnień](docs/permissions.md) (po angielsku).
 
 ## Technologie
 
