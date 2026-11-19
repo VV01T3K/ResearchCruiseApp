@@ -13,12 +13,21 @@ function hasSensitiveUrl(url: string): boolean {
   return scrubSensitiveUrls(url) !== url;
 }
 
+let replayOffReason: string | undefined;
+
+function replayTags(): Record<string, string | undefined> {
+  const replay = Sentry.getReplay();
+  if (replay?.getReplayId()) return { 'replay.mode': replay.getRecordingMode() };
+  return { 'replay.mode': 'off', 'replay.off_reason': replayOffReason };
+}
+
 export function initializeSentry(router: RegisteredRouter): void {
   if (!config.sentryDsn) return;
   // Replay snapshots record the page URL without an SDK hook to filter it, so token pages are never recorded.
   const replaysSessionSampleRate = parseSampleRate(config.sentryReplaysSessionSampleRate, 0);
-  const recordReplay =
-    replaysSessionSampleRate > 0 && replaysSessionSampleRate <= 1 && !hasSensitiveUrl(window.location.href);
+  const validReplayRate = replaysSessionSampleRate > 0 && replaysSessionSampleRate <= 1;
+  const recordReplay = validReplayRate && !hasSensitiveUrl(window.location.href);
+  if (!recordReplay) replayOffReason = validReplayRate ? 'sensitive_page_load' : 'sample_rate';
 
   Sentry.init({
     dsn: config.sentryDsn,
@@ -29,6 +38,16 @@ export function initializeSentry(router: RegisteredRouter): void {
     // User id and roles are set explicitly in setSentryUser.
     dataCollection: { userInfo: false, cookies: false },
     integrations: [
+      // Registered before replay so feedback is tagged before replay flushes its buffer and changes mode.
+      {
+        name: 'ReplayState',
+        setup: (client) => {
+          client.on('replayEnd', ({ reason }) => (replayOffReason = reason));
+          client.on('beforeSendFeedback', (event) => {
+            event.tags = { ...event.tags, ...replayTags() };
+          });
+        },
+      },
       Sentry.tanstackRouterBrowserTracingIntegration(router, {
         shouldCreateSpanForRequest: (url) => url !== `${config.apiUrl}/health`,
       }),
@@ -72,6 +91,7 @@ function pauseReplayOnSensitiveUrls(router: RegisteredRouter): void {
       if (pausedMode) return;
       pausedMode = replay.getRecordingMode();
       stopping = replay.stop().catch(() => undefined);
+      replayOffReason = 'sensitive_page';
     } else if (pausedMode) {
       setTimeout(() => void resume());
     }
