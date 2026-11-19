@@ -99,7 +99,7 @@ jobs:
       url: ${{ github.server_url }}/${{ github.repository }}/releases/tag/v${{ needs.plan.outputs.version }}
     permissions:
       contents: write
-      actions: read
+      actions: write
 
     steps:
       - uses: actions/checkout@v7
@@ -133,3 +133,8 @@ jobs:
           PREVIOUS: ${{ needs.plan.outputs.previous }}
           VERSION: ${{ needs.plan.outputs.version }}
         run: gh release create "v$VERSION" --verify-tag --title "v$VERSION" --generate-notes --notes-start-tag "$PREVIOUS"
+
+      - name: Redeploy staging with the new version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy-staging.yaml --ref staging
