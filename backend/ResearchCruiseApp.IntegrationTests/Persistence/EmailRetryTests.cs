@@ -99,9 +99,8 @@ public sealed class EmailRetryTests(SqlFixture fixture) : IAsyncLifetime
 
         await app.Dispatch(ct);
 
-        Assert.Single(
-            app.Transport.Messages,
-            attempt => attempt.Payload.Recipient == "healthy@example.invalid"
+        Assert.Single(app.Transport.Messages, attempt =>
+            attempt.Payload.Recipient == "healthy@example.invalid"
         );
         Assert.Equal(reason == "last-attempt-fails" ? 2 : 1, app.Transport.Messages.Count);
         await app.InDatabase(async db =>

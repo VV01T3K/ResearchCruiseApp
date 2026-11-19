@@ -18,8 +18,7 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
             newPermission.ScanName = permissionFields.Scan.Name;
             newPermission.ScanContent = await compressor.Compress(permissionFields.Scan.Content);
         }
-        var oldPermission =
-            Find(newPermission, permissionsInMemory)
+        var oldPermission = Find(newPermission, permissionsInMemory)
             ?? await dbContext.Permissions.FirstOrDefaultAsync(
                 Permission.EqualsByExpression(newPermission),
                 cancellationToken
@@ -57,8 +56,10 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
         var newResearchAreaDescription = ApplicationMappings.ToResearchAreaDescription(
             researchAreaSelection
         );
-        var oldResearchAreaDescription =
-            Find(newResearchAreaDescription, researchAreaDescriptionsInMemory)
+        var oldResearchAreaDescription = Find(
+            newResearchAreaDescription,
+            researchAreaDescriptionsInMemory
+        )
             ?? await dbContext.ResearchAreaDescriptions.FirstOrDefaultAsync(
                 ResearchAreaDescription.EqualsByExpression(newResearchAreaDescription),
                 cancellationToken
@@ -74,8 +75,7 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     )
     {
         var newResearchTask = ApplicationMappings.ToResearchTask(researchTaskFields);
-        var oldResearchTask =
-            Find(newResearchTask, researchTasksInMemory)
+        var oldResearchTask = Find(newResearchTask, researchTasksInMemory)
             ?? await dbContext.ResearchTasks.FirstOrDefaultAsync(
                 ResearchTask.EqualsByExpression(newResearchTask),
                 cancellationToken
@@ -104,8 +104,7 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
                 );
             }
         }
-        var oldContract =
-            Find(newContract, contractsInMemory)
+        var oldContract = Find(newContract, contractsInMemory)
             ?? await dbContext
                 .Contracts.Include(contract => contract.Files)
                 .FirstOrDefaultAsync(Contract.EqualsByExpression(newContract), cancellationToken);
@@ -151,8 +150,7 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     )
     {
         var newPublication = ApplicationMappings.ToPublication(publicationFields);
-        var oldPublication =
-            Find(newPublication, publicationInMemory)
+        var oldPublication = Find(newPublication, publicationInMemory)
             ?? await dbContext.Publications.FirstOrDefaultAsync(
                 Publication.EqualsByExpression(newPublication),
                 cancellationToken
@@ -168,8 +166,7 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     )
     {
         var newSpubTask = ApplicationMappings.ToSpubTask(spubTaskFields);
-        var oldSpubTask =
-            Find(newSpubTask, spubTasksInMemory)
+        var oldSpubTask = Find(newSpubTask, spubTasksInMemory)
             ?? await dbContext.SpubTasks.FirstOrDefaultAsync(
                 SpubTask.EqualsByExpression(newSpubTask),
                 cancellationToken
@@ -185,8 +182,7 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     )
     {
         var newGuestUnit = ApplicationMappings.ToGuestUnit(guestTeamFields);
-        var oldGuestUnit =
-            Find(newGuestUnit, guestUnitsInMemory)
+        var oldGuestUnit = Find(newGuestUnit, guestUnitsInMemory)
             ?? await dbContext.GuestUnits.FirstOrDefaultAsync(
                 GuestUnit.EqualsByExpression(newGuestUnit),
                 cancellationToken
@@ -202,8 +198,7 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     )
     {
         var newCrewMember = ApplicationMappings.ToCrewMember(crewMemberFields);
-        var oldCrewMember =
-            Find(newCrewMember, crewMembersInMemory)
+        var oldCrewMember = Find(newCrewMember, crewMembersInMemory)
             ?? await dbContext.CrewMembers.FirstOrDefaultAsync(
                 CrewMember.EqualsByExpression(newCrewMember),
                 cancellationToken
@@ -219,8 +214,7 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     )
     {
         var newResearchEquipment = ApplicationMappings.ToResearchEquipment(researchEquipmentFields);
-        var oldResearchEquipment =
-            Find(newResearchEquipment, researchEquipmentsInMemory)
+        var oldResearchEquipment = Find(newResearchEquipment, researchEquipmentsInMemory)
             ?? await dbContext.ResearchEquipments.FirstOrDefaultAsync(
                 ResearchEquipment.EqualsByExpression(newResearchEquipment),
                 cancellationToken
@@ -236,8 +230,7 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     )
     {
         var newPort = ApplicationMappings.ToPort(portCallFields);
-        var oldPort =
-            Find(newPort, portsInMemory)
+        var oldPort = Find(newPort, portsInMemory)
             ?? await dbContext.Ports.FirstOrDefaultAsync(
                 Port.EqualsByExpression(newPort),
                 cancellationToken
@@ -253,8 +246,7 @@ internal class UniqueFormFieldResolver(ApplicationDbContext dbContext, Compresso
     )
     {
         var newCruiseDayDetails = ApplicationMappings.ToCruiseDayDetails(cruiseDayFields);
-        var oldCruiseDayDetails =
-            Find(newCruiseDayDetails, cruiseDaysDetailsInMemory)
+        var oldCruiseDayDetails = Find(newCruiseDayDetails, cruiseDaysDetailsInMemory)
             ?? await dbContext.CruiseDaysDetails.FirstOrDefaultAsync(
                 CruiseDayDetails.EqualsByExpression(newCruiseDayDetails),
                 cancellationToken

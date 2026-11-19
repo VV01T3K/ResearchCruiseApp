@@ -345,9 +345,8 @@ public sealed class PublicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             ct
         );
         Assert.Equal(2, evaluation!.FormAPublications.Count);
-        Assert.All(
-            evaluation.FormAPublications,
-            publication => Assert.Equal("0", publication.Points)
+        Assert.All(evaluation.FormAPublications, publication =>
+            Assert.Equal("0", publication.Points)
         );
         var summary = await client.GetFromJsonAsync<JsonElement>($"/applications/{id}", ct);
         Assert.Equal(0, summary.GetProperty("points").GetInt32());

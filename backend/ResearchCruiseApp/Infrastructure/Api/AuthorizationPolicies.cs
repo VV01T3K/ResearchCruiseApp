@@ -17,91 +17,77 @@ public static class AuthorizationPolicies
 
     public static void AddApiAuthorizationPolicies(AuthorizationOptions options)
     {
-        options.AddPolicy(
-            AnyKnownUser,
-            policy =>
-                policy
-                    .RequireAuthenticatedUser()
-                    .RequireRole(
-                        RoleName.Administrator,
-                        RoleName.Shipowner,
-                        RoleName.CruiseManager,
-                        RoleName.Guest,
-                        RoleName.ShipCrew
-                    )
+        options.AddPolicy(AnyKnownUser, policy =>
+            policy
+                .RequireAuthenticatedUser()
+                .RequireRole(
+                    RoleName.Administrator,
+                    RoleName.Shipowner,
+                    RoleName.CruiseManager,
+                    RoleName.Guest,
+                    RoleName.ShipCrew
+                )
         );
 
-        options.AddPolicy(
-            ApplicationReaders,
-            policy =>
-                policy
-                    .RequireAuthenticatedUser()
-                    .RequireRole(
-                        RoleName.Administrator,
-                        RoleName.Shipowner,
-                        RoleName.CruiseManager,
-                        RoleName.ShipCrew
+        options.AddPolicy(ApplicationReaders, policy =>
+            policy
+                .RequireAuthenticatedUser()
+                .RequireRole(
+                    RoleName.Administrator,
+                    RoleName.Shipowner,
+                    RoleName.CruiseManager,
+                    RoleName.ShipCrew
+                )
+                .RequireAssertion(async context =>
+                    context.Resource is HttpContext httpContext
+                    && Guid.TryParse(
+                        context.User.FindFirstValue(ClaimTypes.NameIdentifier),
+                        out var userId
                     )
-                    .RequireAssertion(async context =>
-                        context.Resource is HttpContext httpContext
-                        && Guid.TryParse(
-                            context.User.FindFirstValue(ClaimTypes.NameIdentifier),
-                            out var userId
+                    && await httpContext
+                        .RequestServices.GetRequiredService<IdentityService>()
+                        .IsActiveWithAnyRole(
+                            userId,
+                            [
+                                RoleName.Administrator,
+                                RoleName.Shipowner,
+                                RoleName.CruiseManager,
+                                RoleName.ShipCrew,
+                            ]
                         )
-                        && await httpContext
-                            .RequestServices.GetRequiredService<IdentityService>()
-                            .IsActiveWithAnyRole(
-                                userId,
-                                [
-                                    RoleName.Administrator,
-                                    RoleName.Shipowner,
-                                    RoleName.CruiseManager,
-                                    RoleName.ShipCrew,
-                                ]
-                            )
+                )
+        );
+
+        options.AddPolicy(AdministratorsOnly, policy =>
+            policy.RequireAuthenticatedUser().RequireRole(RoleName.Administrator)
+        );
+
+        options.AddPolicy(AdministratorsOrShipowners, policy =>
+            policy
+                .RequireAuthenticatedUser()
+                .RequireRole(RoleName.Administrator, RoleName.Shipowner)
+                .RequireAssertion(async context =>
+                    context.Resource is HttpContext httpContext
+                    && Guid.TryParse(
+                        context.User.FindFirstValue(ClaimTypes.NameIdentifier),
+                        out var userId
                     )
+                    && await httpContext
+                        .RequestServices.GetRequiredService<IdentityService>()
+                        .IsActiveWithAnyRole(userId, [RoleName.Administrator, RoleName.Shipowner])
+                )
         );
 
-        options.AddPolicy(
-            AdministratorsOnly,
-            policy => policy.RequireAuthenticatedUser().RequireRole(RoleName.Administrator)
+        options.AddPolicy(ApplicationFormEditors, policy =>
+            policy
+                .RequireAuthenticatedUser()
+                .RequireRole(RoleName.Administrator, RoleName.Shipowner, RoleName.CruiseManager)
         );
 
-        options.AddPolicy(
-            AdministratorsOrShipowners,
-            policy =>
-                policy
-                    .RequireAuthenticatedUser()
-                    .RequireRole(RoleName.Administrator, RoleName.Shipowner)
-                    .RequireAssertion(async context =>
-                        context.Resource is HttpContext httpContext
-                        && Guid.TryParse(
-                            context.User.FindFirstValue(ClaimTypes.NameIdentifier),
-                            out var userId
-                        )
-                        && await httpContext
-                            .RequestServices.GetRequiredService<IdentityService>()
-                            .IsActiveWithAnyRole(
-                                userId,
-                                [RoleName.Administrator, RoleName.Shipowner]
-                            )
-                    )
-        );
-
-        options.AddPolicy(
-            ApplicationFormEditors,
-            policy =>
-                policy
-                    .RequireAuthenticatedUser()
-                    .RequireRole(RoleName.Administrator, RoleName.Shipowner, RoleName.CruiseManager)
-        );
-
-        options.AddPolicy(
-            CurrentUserPublications,
-            policy =>
-                policy
-                    .RequireAuthenticatedUser()
-                    .RequireRole(RoleName.Administrator, RoleName.Shipowner, RoleName.CruiseManager)
+        options.AddPolicy(CurrentUserPublications, policy =>
+            policy
+                .RequireAuthenticatedUser()
+                .RequireRole(RoleName.Administrator, RoleName.Shipowner, RoleName.CruiseManager)
         );
     }
 }

@@ -134,17 +134,14 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
             Assert.False(env.TryGetProperty("REMOTE_ADDR", out _));
             Assert.False(env.TryGetProperty("SERVER_NAME", out _));
             var headers = request.GetProperty("headers");
-            Assert.Contains(
-                headers.EnumerateObject(),
-                header =>
-                    header.Name.Equals("Accept", StringComparison.OrdinalIgnoreCase)
-                    && header.Value.GetString() == "application/json"
+            Assert.Contains(headers.EnumerateObject(), header =>
+                header.Name.Equals("Accept", StringComparison.OrdinalIgnoreCase)
+                && header.Value.GetString() == "application/json"
             );
             Assert.Contains("capture-failure", request.GetProperty("data").GetString());
             foreach (var name in new[] { "Cookie", "Set-Cookie", "X-Api-Key" })
-                Assert.DoesNotContain(
-                    headers.EnumerateObject(),
-                    header => header.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
+                Assert.DoesNotContain(headers.EnumerateObject(), header =>
+                    header.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
                 );
             var raw = captured.GetRawText();
             foreach (
@@ -205,9 +202,8 @@ public sealed class SentryTelemetryTests(SqlFixture fixture) : IAsyncLifetime
         hub.StartTransaction(name, "http.server").Finish();
         hub.StartTransaction("GET /cruises", "http.server").Finish();
         await hub.FlushAsync(TimeSpan.FromSeconds(10));
-        var transaction = Assert.Single(
-            transport.Payloads(),
-            payload => payload.TryGetProperty("transaction", out _)
+        var transaction = Assert.Single(transport.Payloads(), payload =>
+            payload.TryGetProperty("transaction", out _)
         );
         Assert.Equal("GET /cruises", transaction.GetProperty("transaction").GetString());
         Assert.False(transaction.GetProperty("user").TryGetProperty("ip_address", out _));

@@ -97,27 +97,23 @@ public static class SentryConfiguration
             return null;
         try
         {
-            return QueryString.Replace(
-                value,
-                query =>
-                    "?"
-                    + string.Join(
-                        '&',
-                        query
-                            .Value[1..]
-                            .Split('&')
-                            .Select(parameter =>
-                            {
-                                var name = parameter.Split('=')[0];
-                                return SecretParameters.Contains(
-                                    Uri.UnescapeDataString(name.Replace('+', ' ')),
-                                    StringComparer.OrdinalIgnoreCase
-                                )
-                                    ? $"{name}={Filtered}"
-                                    : parameter;
-                            })
-                    )
-            );
+            return QueryString.Replace(value, query => "?"
+                + string.Join(
+                    '&',
+                    query
+                        .Value[1..]
+                        .Split('&')
+                        .Select(parameter =>
+                        {
+                            var name = parameter.Split('=')[0];
+                            return SecretParameters.Contains(
+                                Uri.UnescapeDataString(name.Replace('+', ' ')),
+                                StringComparer.OrdinalIgnoreCase
+                            )
+                                ? $"{name}={Filtered}"
+                                : parameter;
+                        })
+                ));
         }
         catch
         {

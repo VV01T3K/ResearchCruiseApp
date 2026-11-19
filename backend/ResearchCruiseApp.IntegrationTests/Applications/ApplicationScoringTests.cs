@@ -59,9 +59,8 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Equal(
                 item.Points.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 Assert
-                    .Single(
-                        evaluation.FormAResearchTasks,
-                        task => task.ResearchTask.Title == item.Title
+                    .Single(evaluation.FormAResearchTasks, task =>
+                        task.ResearchTask.Title == item.Title
                     )
                     .Points
             );
@@ -134,18 +133,16 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
         Assert.Equal(
             "150",
             Assert
-                .Single(
-                    evaluation.FormAContracts,
-                    contract => contract.Contract.Category == "domestic"
+                .Single(evaluation.FormAContracts, contract =>
+                    contract.Contract.Category == "domestic"
                 )
                 .Points
         );
         Assert.Equal(
             "300",
             Assert
-                .Single(
-                    evaluation.FormAContracts,
-                    contract => contract.Contract.Category == "international"
+                .Single(evaluation.FormAContracts, contract =>
+                    contract.Contract.Category == "international"
                 )
                 .Points
         );
@@ -162,9 +159,8 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Equal(
                 score.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 Assert
-                    .Single(
-                        evaluation.FormAPublications,
-                        publication => publication.Publication.Title == score.Key
+                    .Single(evaluation.FormAPublications, publication =>
+                        publication.Publication.Title == score.Key
                     )
                     .Points
             );
@@ -196,9 +192,8 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
                 Assert.Equal(
                     score.Value,
                     Assert
-                        .Single(
-                            publications,
-                            publication => publication.Publication.Title == score.Key
+                        .Single(publications, publication =>
+                            publication.Publication.Title == score.Key
                         )
                         .Points
                 );
@@ -342,9 +337,8 @@ public sealed class ApplicationScoringTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Equal(3, teams.Count);
             foreach (var expected in form.UgTeams)
             {
-                var actual = Assert.Single(
-                    read.UgTeams,
-                    team => team.UgUnitId == expected.UgUnitId
+                var actual = Assert.Single(read.UgTeams, team =>
+                    team.UgUnitId == expected.UgUnitId
                 );
                 Assert.Equal(expected.NoOfEmployees, actual.NoOfEmployees);
                 Assert.Equal(expected.NoOfStudents, actual.NoOfStudents);

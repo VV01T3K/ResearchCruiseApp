@@ -615,10 +615,11 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_AspNetUserLogins",
-                        x => new { x.LoginProvider, x.ProviderKey }
-                    );
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new
+                    {
+                        x.LoginProvider,
+                        x.ProviderKey,
+                    });
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -667,15 +668,12 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_AspNetUserTokens",
-                        x => new
-                        {
-                            x.UserId,
-                            x.LoginProvider,
-                            x.Name,
-                        }
-                    );
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new
+                    {
+                        x.UserId,
+                        x.LoginProvider,
+                        x.Name,
+                    });
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -695,10 +693,11 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_CrewMemberFormB",
-                        x => new { x.CrewMembersId, x.FormsBId }
-                    );
+                    table.PrimaryKey("PK_CrewMemberFormB", x => new
+                    {
+                        x.CrewMembersId,
+                        x.FormsBId,
+                    });
                     table.ForeignKey(
                         name: "FK_CrewMemberFormB_CrewMembers_CrewMembersId",
                         column: x => x.CrewMembersId,
@@ -728,10 +727,11 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_CruiseDayDetailsFormB",
-                        x => new { x.CruiseDaysDetailsId, x.FormsBId }
-                    );
+                    table.PrimaryKey("PK_CruiseDayDetailsFormB", x => new
+                    {
+                        x.CruiseDaysDetailsId,
+                        x.FormsBId,
+                    });
                     table.ForeignKey(
                         name: "FK_CruiseDayDetailsFormB_CruiseDaysDetails_CruiseDaysDetailsId",
                         column: x => x.CruiseDaysDetailsId,
@@ -791,10 +791,11 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_FormBPermission",
-                        x => new { x.FormsBId, x.PermissionsId }
-                    );
+                    table.PrimaryKey("PK_FormBPermission", x => new
+                    {
+                        x.FormsBId,
+                        x.PermissionsId,
+                    });
                     table.ForeignKey(
                         name: "FK_FormBPermission_FormsB_FormsBId",
                         column: x => x.FormsBId,
@@ -1134,10 +1135,11 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_FormBShipEquipment",
-                        x => new { x.FormsBId, x.ShipEquipmentsId }
-                    );
+                    table.PrimaryKey("PK_FormBShipEquipment", x => new
+                    {
+                        x.FormsBId,
+                        x.ShipEquipmentsId,
+                    });
                     table.ForeignKey(
                         name: "FK_FormBShipEquipment_FormsB_FormsBId",
                         column: x => x.FormsBId,
@@ -1264,10 +1266,11 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_FormAPermission",
-                        x => new { x.FormsAId, x.PermissionsId }
-                    );
+                    table.PrimaryKey("PK_FormAPermission", x => new
+                    {
+                        x.FormsAId,
+                        x.PermissionsId,
+                    });
                     table.ForeignKey(
                         name: "FK_FormAPermission_FormsA_FormsAId",
                         column: x => x.FormsAId,
@@ -1535,10 +1538,11 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_CruiseDayDetailsFormC",
-                        x => new { x.CruiseDaysDetailsId, x.FormsCId }
-                    );
+                    table.PrimaryKey("PK_CruiseDayDetailsFormC", x => new
+                    {
+                        x.CruiseDaysDetailsId,
+                        x.FormsCId,
+                    });
                     table.ForeignKey(
                         name: "FK_CruiseDayDetailsFormC_CruiseDaysDetails_CruiseDaysDetailsId",
                         column: x => x.CruiseDaysDetailsId,
@@ -1602,10 +1606,11 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_FormCPermission",
-                        x => new { x.FormsCId, x.PermissionsId }
-                    );
+                    table.PrimaryKey("PK_FormCPermission", x => new
+                    {
+                        x.FormsCId,
+                        x.PermissionsId,
+                    });
                     table.ForeignKey(
                         name: "FK_FormCPermission_FormsC_FormsCId",
                         column: x => x.FormsCId,
@@ -1719,10 +1724,11 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_FormCShipEquipment",
-                        x => new { x.FormsCId, x.ShipEquipmentsId }
-                    );
+                    table.PrimaryKey("PK_FormCShipEquipment", x => new
+                    {
+                        x.FormsCId,
+                        x.ShipEquipmentsId,
+                    });
                     table.ForeignKey(
                         name: "FK_FormCShipEquipment_FormsC_FormsCId",
                         column: x => x.FormsCId,

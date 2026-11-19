@@ -509,9 +509,8 @@ public sealed class CruiseEffectScoringTests(SqlFixture fixture) : IAsyncLifetim
             Assert.Equal(expected.Count, stored.Count);
             foreach (var score in expected)
             {
-                var effect = Assert.Single(
-                    stored,
-                    effect => effect.Effect.ResearchTask.Title == score.Key
+                var effect = Assert.Single(stored, effect =>
+                    effect.Effect.ResearchTask.Title == score.Key
                 );
                 Assert.Equal(score.Value, effect.Points);
                 Assert.Equal(applicationId, effect.Effect.FormC.CruiseApplication.Id);

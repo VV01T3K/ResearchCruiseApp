@@ -135,14 +135,11 @@ public sealed class SupervisorReviewTests(SqlFixture fixture) : IAsyncLifetime
             {
                 var rows = await db.CruiseApplications.ToListAsync(ct);
                 Assert.Equal(2, rows.Count);
-                Assert.All(
-                    rows,
-                    row =>
-                    {
-                        Assert.Equal(CruiseApplicationStatus.WaitingForSupervisor, row.Status);
-                        Assert.Equal("Original", row.Note);
-                    }
-                );
+                Assert.All(rows, row =>
+                {
+                    Assert.Equal(CruiseApplicationStatus.WaitingForSupervisor, row.Status);
+                    Assert.Equal("Original", row.Note);
+                });
                 Assert.Equal(2, await db.FormsA.CountAsync(ct));
                 Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
             });

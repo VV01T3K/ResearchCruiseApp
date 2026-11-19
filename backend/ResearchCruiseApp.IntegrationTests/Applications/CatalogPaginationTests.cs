@@ -357,9 +357,8 @@ public sealed class CatalogPaginationTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Equal(canViewOthers, ids.Contains(otherAccepted.Id));
             Assert.Equal(editing, ids.Contains(attached.Id));
             Assert.DoesNotContain(hidden.Id, ids);
-            var own = Assert.Single(
-                candidates,
-                candidate => candidate.GetProperty("id").GetGuid() == accepted.Id
+            var own = Assert.Single(candidates, candidate =>
+                candidate.GetProperty("id").GetGuid() == accepted.Id
             );
             Assert.Equal(2030, own.GetProperty("year").GetInt32());
             Assert.Equal(Guid.Parse(actor.Id), own.GetProperty("cruiseManagerId").GetGuid());
