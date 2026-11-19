@@ -41,8 +41,8 @@ builder.Services.AddOpenApi(options =>
     options.AddSchemaTransformer(
         (schema, context, _) =>
         {
-            var type =
-                Nullable.GetUnderlyingType(context.JsonTypeInfo.Type) ?? context.JsonTypeInfo.Type;
+            var type = Nullable.GetUnderlyingType(context.JsonTypeInfo.Type)
+                ?? context.JsonTypeInfo.Type;
             if (type == typeof(Guid))
             {
                 schema.Format = null;
@@ -71,17 +71,14 @@ builder.Services.AddAuthorization(AuthorizationPolicies.AddApiAuthorizationPolic
 builder.Services.AddHealthChecks();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(
-        "CustomPolicy",
-        policyBuilder =>
-        {
-            policyBuilder
-                .WithOrigins(builder.Configuration["FrontendUrl"] ?? "")
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials();
-        }
-    );
+    options.AddPolicy("CustomPolicy", policyBuilder =>
+    {
+        policyBuilder
+            .WithOrigins(builder.Configuration["FrontendUrl"] ?? "")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
 });
 
 builder
@@ -145,9 +142,8 @@ app.MapApi();
 var version = typeof(Program)
     .Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
     ?.InformationalVersion;
-app.MapGet(
-        "/version",
-        IResult () => version is not null ? TypedResults.Ok(version) : TypedResults.NotFound()
+app.MapGet("/version", IResult () =>
+        version is not null ? TypedResults.Ok(version) : TypedResults.NotFound()
     )
     .ExcludeFromDescription();
 

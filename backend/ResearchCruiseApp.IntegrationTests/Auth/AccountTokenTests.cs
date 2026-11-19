@@ -299,11 +299,9 @@ public sealed class AccountTokenTests(SqlFixture fixture) : IAsyncLifetime
         }
         await app.Dispatch(ct);
         var route = confirmation ? "confirm-email" : "reset-password";
-        var mail = Assert.Single(
-            app.Transport.Messages,
-            mail =>
-                mail.Payload.Recipient == email
-                && mail.Payload.Body.Contains("/" + route + "?", StringComparison.Ordinal)
+        var mail = Assert.Single(app.Transport.Messages, mail =>
+            mail.Payload.Recipient == email
+            && mail.Payload.Body.Contains("/" + route + "?", StringComparison.Ordinal)
         );
         var query = QueryHelpers.ParseQuery(
             PasswordRecoveryTests.Link(mail.Payload.Body, route).Query

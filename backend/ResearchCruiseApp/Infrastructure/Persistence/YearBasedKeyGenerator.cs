@@ -30,13 +30,10 @@ internal class YearBasedKeyGenerator(
             .Year.ToString(CultureInfo.InvariantCulture);
         var ordinalNumberStartIdx = currentYear.Length + 1;
         var existingEntities = await entities.ToListAsync(cancellationToken);
-        var maxCurrentYearOrdinalNumber =
-            existingEntities
-                .Where(e => e.Number.StartsWith(currentYear, StringComparison.Ordinal))
-                .MaxBy(e =>
-                    int.Parse(e.Number[ordinalNumberStartIdx..], CultureInfo.InvariantCulture)
-                )
-                ?.Number[ordinalNumberStartIdx..]
+        var maxCurrentYearOrdinalNumber = existingEntities
+            .Where(e => e.Number.StartsWith(currentYear, StringComparison.Ordinal))
+            .MaxBy(e => int.Parse(e.Number[ordinalNumberStartIdx..], CultureInfo.InvariantCulture))
+            ?.Number[ordinalNumberStartIdx..]
             ?? "0";
 
         return Enumerable

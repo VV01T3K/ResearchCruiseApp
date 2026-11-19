@@ -72,9 +72,8 @@ public sealed partial class CruiseStatusTransitionTests(SqlFixture fixture) : IA
             otherId,
             formB: true
         );
-        Assert.All(
-            await PlanningCandidates(office),
-            candidate => Assert.Equal(otherId, candidate.CruiseId)
+        Assert.All(await PlanningCandidates(office), candidate =>
+            Assert.Equal(otherId, candidate.CruiseId)
         );
         Assert.Equal(HttpStatusCode.NoContent, await Confirm(office, otherId));
         await AssertApplication(app, required.Id, CruiseApplicationStatus.FormBRequired, otherId);

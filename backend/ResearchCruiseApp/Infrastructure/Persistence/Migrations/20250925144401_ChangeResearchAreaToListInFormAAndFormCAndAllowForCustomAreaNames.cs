@@ -47,10 +47,11 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_FormAResearchAreaDescription",
-                        x => new { x.FormsAId, x.ResearchAreaDescriptionsId }
-                    );
+                    table.PrimaryKey("PK_FormAResearchAreaDescription", x => new
+                    {
+                        x.FormsAId,
+                        x.ResearchAreaDescriptionsId,
+                    });
                     table.ForeignKey(
                         name: "FK_FormAResearchAreaDescription_FormsA_FormsAId",
                         column: x => x.FormsAId,
@@ -80,10 +81,11 @@ namespace ResearchCruiseApp.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_FormCResearchAreaDescription",
-                        x => new { x.FormsCId, x.ResearchAreaDescriptionsId }
-                    );
+                    table.PrimaryKey("PK_FormCResearchAreaDescription", x => new
+                    {
+                        x.FormsCId,
+                        x.ResearchAreaDescriptionsId,
+                    });
                     table.ForeignKey(
                         name: "FK_FormCResearchAreaDescription_FormsC_FormsCId",
                         column: x => x.FormsCId,

@@ -128,8 +128,7 @@ public static class PublicationsEndpoints
             var candidate = request.ToEntity();
             if (!alreadyAddedPublications.TryGetValue(candidate, out var publication))
             {
-                publication =
-                    existingPublications.GetValueOrDefault(DatabaseEqualityKey(candidate))
+                publication = existingPublications.GetValueOrDefault(DatabaseEqualityKey(candidate))
                     ?? candidate;
             }
 

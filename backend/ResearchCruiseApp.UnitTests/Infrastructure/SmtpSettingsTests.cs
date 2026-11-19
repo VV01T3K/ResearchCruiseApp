@@ -23,9 +23,8 @@ public sealed class SmtpSettingsTests
 
         Assert.Equal(expectedSuccess, result.Succeeded);
         if (!expectedSuccess)
-            Assert.Contains(
-                result.Failures!,
-                failure => failure.Contains("SmtpSettings:SmtpPort", StringComparison.Ordinal)
+            Assert.Contains(result.Failures!, failure =>
+                failure.Contains("SmtpSettings:SmtpPort", StringComparison.Ordinal)
             );
     }
 }

@@ -43,9 +43,8 @@ public sealed class ResearchEquipmentActionInputTests(SqlFixture fixture) : IAsy
         Assert.Equal(inputs.Length, equipment.Length);
         for (var index = 0; index < expected.Length; index++)
         {
-            var item = Assert.Single(
-                equipment,
-                item => item.GetProperty("name").GetString() == $"Equipment {index}"
+            var item = Assert.Single(equipment, item =>
+                item.GetProperty("name").GetString() == $"Equipment {index}"
             );
             Assert.Equal(expected[index], item.GetProperty("action").GetString());
             Assert.Equal("12", item.GetProperty("duration").GetString());

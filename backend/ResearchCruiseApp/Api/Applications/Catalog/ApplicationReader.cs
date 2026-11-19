@@ -148,19 +148,25 @@ internal class ApplicationReader(
         var form = application.FormA;
         return new CruiseApplicationEvaluation
         {
-            FormAResearchTasks =
-                form?.FormAResearchTasks.Select(ApplicationMappings.ToScoredResearchTask).ToList()
+            FormAResearchTasks = form?.FormAResearchTasks.Select(
+                    ApplicationMappings.ToScoredResearchTask
+                )
+                .ToList()
                 ?? [],
             FormAContracts = await CreateContracts(form),
             UgTeams = form?.FormAUgUnits.Select(ApplicationMappings.ToNamedUgTeam).ToList() ?? [],
-            GuestTeams =
-                form?.FormAGuestUnits.Select(ApplicationMappings.ToGuestTeamFields).ToList() ?? [],
-            UgUnitsPoints = form?.UgUnitsPoints ?? "0",
-            FormAPublications =
-                form?.FormAPublications.Select(ApplicationMappings.ToScoredPublication).ToList()
+            GuestTeams = form?.FormAGuestUnits.Select(ApplicationMappings.ToGuestTeamFields)
+                .ToList()
                 ?? [],
-            FormASpubTasks =
-                form?.FormASpubTasks.Select(ApplicationMappings.ToScoredSpubTask).ToList() ?? [],
+            UgUnitsPoints = form?.UgUnitsPoints ?? "0",
+            FormAPublications = form?.FormAPublications.Select(
+                    ApplicationMappings.ToScoredPublication
+                )
+                .ToList()
+                ?? [],
+            FormASpubTasks = form?.FormASpubTasks.Select(ApplicationMappings.ToScoredSpubTask)
+                .ToList()
+                ?? [],
             EffectsPoints = application.EffectsPoints.ToString(CultureInfo.InvariantCulture),
         };
     }

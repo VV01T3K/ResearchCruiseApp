@@ -497,31 +497,31 @@
       },
       "Scalar.AspNetCore": {
         "type": "Transitive",
-        "resolved": "2.19.0",
-        "contentHash": "nTXL9wsg6UhQ27KPUhuMr3/BE02H3zjuii2I5x7vbx7myPHkJzvzGDj7hfd1lKZBmJgUcKI+W7wcIzDdV/N/Dg=="
+        "resolved": "2.20.0",
+        "contentHash": "BQ7Pzt3BkM+U9qh63APQSgELutm7acoOfCBIjQlO5tHioi7+J9LZ0z2BK5fUBVazO4aWblghz1C4XwzqFhexxw=="
       },
       "Sentry": {
         "type": "Transitive",
-        "resolved": "6.12.1",
-        "contentHash": "yCHz3cLGZ3TVik3rLV6rp6SaqJ0Ai7PyIi2KdoHNGpZYWEkcX7kx13IV46mufAzPW7pqZZoKNoru0w0RpmkmrA=="
+        "resolved": "6.13.0",
+        "contentHash": "TwgXw4BwBa6gYKJxTEBJWZ0y+MyBDTMzCq8ywYWUEzG9srNmKui4AMcz6vZ9BEsaZYVJxni0EIDHGho+PQXDVA=="
       },
       "Sentry.AspNetCore": {
         "type": "Transitive",
-        "resolved": "6.12.1",
-        "contentHash": "BdAHa8zGH2jnY3u/ZGzbbDVJBvP5qC/TmoJHZ/HuxNnfA9LQGx9vZrG2eLV2Gfd+9/sN/ZcqA2z6kfnq3TTHUw==",
+        "resolved": "6.13.0",
+        "contentHash": "hoDoMY0PQ79KWyku3oqfMoMZwbOvftU/oqmpKZ3ClmW19tDvHOxRJ89FconrzQfylvCfQuR44rGTuYtaMiT/HA==",
         "dependencies": {
-          "Sentry.Extensions.Logging": "6.12.1"
+          "Sentry.Extensions.Logging": "6.13.0"
         }
       },
       "Sentry.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "6.12.1",
-        "contentHash": "ir1hkeSKTZK2BskijEA+HXVFlMnV4vWPChFWOaN3iUuoQLeUkUSTwCxO1tVKNJyk8k33FLI/lQ+ngduDM9LIDw==",
+        "resolved": "6.13.0",
+        "contentHash": "gPZH1SrQPg2x8er0YU0b3fOoFy3Nng8krbiKBjUqVmDSWRkq0N3LdGJyBBvhmlE2cGcoAwDvYlAe19wjfX+KkQ==",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "10.0.0",
           "Microsoft.Extensions.Http": "10.0.0",
           "Microsoft.Extensions.Logging.Configuration": "10.0.0",
-          "Sentry": "6.12.1"
+          "Sentry": "6.13.0"
         }
       },
       "System.Configuration.ConfigurationManager": {
@@ -651,8 +651,8 @@
           "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.15, )",
           "Microsoft.OpenApi": "[2.13.0, )",
           "MimeKit": "[4.18.2, )",
-          "Scalar.AspNetCore": "[2.19.0, )",
-          "Sentry.AspNetCore": "[6.12.1, )",
+          "Scalar.AspNetCore": "[2.20.0, )",
+          "Sentry.AspNetCore": "[6.13.0, )",
           "System.Security.Cryptography.Pkcs": "[10.0.15, )",
           "UrlBase64": "[2.0.0, )"
         }

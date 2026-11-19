@@ -190,9 +190,8 @@ public sealed class ContractScanHttpTests(SqlFixture fixture) : IAsyncLifetime
             Assert.Empty(await db.Set<FormAContract>().ToListAsync(ct));
             Assert.Empty(await db.Set<ContractFile>().ToListAsync(ct));
             Assert.Equal(2, await db.FormsA.CountAsync(ct));
-            Assert.All(
-                await db.CruiseApplications.ToListAsync(ct),
-                row => Assert.Equal(CruiseApplicationStatus.Draft, row.Status)
+            Assert.All(await db.CruiseApplications.ToListAsync(ct), row =>
+                Assert.Equal(CruiseApplicationStatus.Draft, row.Status)
             );
             Assert.Empty(await db.EmailOutboxMessages.ToListAsync(ct));
         });
