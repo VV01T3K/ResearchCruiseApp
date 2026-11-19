@@ -98,7 +98,7 @@ test('a login whose profile cannot load is revoked and can be retried', async ({
   );
   await page.goto('/login');
   await logIn(page);
-  await expect(page.getByRole('alert')).toContainText('Profil chwilowo niedostępny');
+  await expect(page.getByText('Profil chwilowo niedostępny', { exact: true })).toBeVisible();
   await expect.poll(() => requests.bodies('POST /auth/logout')).toHaveLength(1);
 
   await logIn(page);
@@ -298,6 +298,6 @@ test('a reset link without parameters shows the error page instead of redirectin
 test('email confirmation sends the link parameters', async ({ page, network, requests }) => {
   network.use(getConfirmEmailMockHandler());
   await page.goto(`/confirm-email?userId=${admin.id}&code=confirmation-token`);
-  await expect(page.getByText('E-mail został potwierdzony', { exact: true })).toBeVisible();
+  await expect(page.getByText('Email został potwierdzony', { exact: true })).toBeVisible();
   expect(requests.queries('GET /auth/confirm-email')).toEqual([{ userId: admin.id, code: 'confirmation-token' }]);
 });
