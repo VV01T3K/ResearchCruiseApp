@@ -1,4 +1,5 @@
 import type { HttpValidationProblemDetails } from '@/api/generated/schemas';
+import { classifyError, rootCause } from '@/integrations/sentry/mutations';
 
 export class ApiError extends Error {
   constructor(
@@ -24,10 +25,11 @@ export function responseErrorMessage(status: number, problem?: HttpValidationPro
 }
 
 export function getProblemDetail(error: unknown, fallback: string): string {
-  if (error instanceof ApiError) return error.message;
-  if (error instanceof TypeError) return 'Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.';
-  if (error instanceof Error && error.cause) return getProblemDetail(error.cause, fallback);
-  return error instanceof Error && error.message ? error.message : fallback;
+  const cause = rootCause(error);
+  if (cause instanceof ApiError) return cause.message;
+  if (classifyError(cause) === 'network')
+    return 'Nie udało się połączyć z serwerem. Sprawdź połączenie i spróbuj ponownie.';
+  return fallback;
 }
 
 export function getErrorMessage(error: unknown, context: string) {
