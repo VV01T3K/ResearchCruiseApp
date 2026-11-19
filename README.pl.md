@@ -11,9 +11,7 @@ Zgłaszanie, planowanie i rozliczanie rejsów badawczych r/v _Oceanograf_, Uniwe
 [![Dependency audit](https://img.shields.io/github/actions/workflow/status/VV01T3K/ResearchCruiseApp/dependency-audit.yaml?label=dependency%20audit)](https://github.com/VV01T3K/ResearchCruiseApp/actions/workflows/dependency-audit.yaml)
 [![Release](https://img.shields.io/github/v/release/VV01T3K/ResearchCruiseApp?sort=semver)](https://github.com/VV01T3K/ResearchCruiseApp/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-
-[English](README.md) · **Polski**
-
+[![English](https://img.shields.io/badge/README-in%20English-0a3161)](README.md)
 </div>
 
 Naukowcy zgłaszają zapotrzebowanie na czas statkowy, ich przełożeni zatwierdzają zgłoszenie, Biuro
