@@ -7,7 +7,7 @@ affected callers and safeguards until you can name a triggering input or action,
 the failing code path, and its consequence. Report each shared root cause once;
 tie any regression-test request to that same scenario.
 
-Resolve conflicts with older knowledge-base or permission docs using current code
+Resolve conflicts with older knowledge-base documents using current code
 and PR intent. Treat existing behavior as context to evaluate, not a correctness
 requirement. Apply only the area checks relevant to the changed behavior.
 
@@ -48,8 +48,7 @@ requirement. Apply only the area checks relevant to the changed behavior.
   existing rows, partially seeded accounts and concurrent startup. Reference-data
   seeding runs independently of optional account seeding; preserve existing and
   inactive reference rows when repairing missing data.
-- For email changes, read `docs/email-delivery.md` and verify the affected path in
-  backend `Infrastructure/Email`. Check atomic business/outbox writes where required,
+- For email changes, verify the affected path in backend `Infrastructure/Email`. Check atomic business/outbox writes where required,
   protected payloads, retries, expiry and worker leases. A crash after SMTP accepts
   a message but before database acknowledgement can legitimately cause redelivery.
 - For deployment changes, compare option bindings with Docker settings,
