@@ -1,0 +1,42 @@
+name: Pull request rules
+
+on:
+  pull_request:
+    branches: [staging]
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  rules:
+    name: Pull request rules
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check commit messages and title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+          RANGE: ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
+        run: |
+          pattern='^(feat|fix|refactor|docs|test|build|ci|chore|perf|style|revert)(\([^)]+\))?!?: .+'
+          bad=$( { echo "$TITLE"; git log --no-merges --format=%s "$RANGE"; } | grep -vE "$pattern" || true)
+          if [[ -n $bad ]]; then
+            echo "::error::Use Conventional Commits (type(scope): description) for the PR title and every commit:"
+            echo "$bad"
+            exit 1
+          fi
+
+      - name: Check for new files in legacy directories
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          added=$(git diff --diff-filter=A --name-only "$BASE...$HEAD" -- frontend/src | grep -E '/(shared|common)/' || true)
+          if [[ -n $added ]]; then
+            echo "::error::shared and common directories are legacy. Put code used by one route next to it in a - prefixed folder and code used by several routes in frontend/src/features/<feature>/:"
+            echo "$added"
+            exit 1
+          fi
