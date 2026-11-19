@@ -29,7 +29,9 @@ export function initializeSentry(router: RegisteredRouter): void {
     // User id and roles are set explicitly in setSentryUser.
     dataCollection: { userInfo: false, cookies: false },
     integrations: [
-      Sentry.tanstackRouterBrowserTracingIntegration(router),
+      Sentry.tanstackRouterBrowserTracingIntegration(router, {
+        shouldCreateSpanForRequest: (url) => url !== `${config.apiUrl}/health`,
+      }),
       ...(recordReplay
         ? [
             Sentry.replayIntegration({
