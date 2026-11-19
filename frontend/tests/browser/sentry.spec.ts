@@ -72,14 +72,15 @@ test.describe('signed in', () => {
     await expect(dialog).toBeHidden();
   });
 
-  for (const [replayRate, replayed] of [
-    ['', false],
-    ['garbage', false],
-    ['0', false],
-    ['1.5', false],
-    ['1', true],
+  for (const [replayRate, mode] of [
+    ['', 'off'],
+    ['garbage', 'off'],
+    ['0', 'off'],
+    ['1.5', 'off'],
+    ['1', 'session'],
+    ['0.0000001', 'buffer'],
   ] as const) {
-    test(`replay sample rate '${replayRate}' ${replayed ? 'sends' : 'never sends'} replays`, async ({ page }) => {
+    test(`replay sample rate '${replayRate}' sends feedback with replay ${mode}`, async ({ page }) => {
       const sent = await captureEnvelopes(page, replayRate);
       await page.goto('/help');
       await page.getByRole('button', { name: 'Zgłoś problem' }).click();
@@ -88,8 +89,11 @@ test.describe('signed in', () => {
       await dialog.getByRole('button', { name: 'Wyślij zgłoszenie' }).click();
 
       await expect.poll(sent).toContain('Replay check');
-      if (replayed) await expect.poll(sent).toContain('"type":"replay_event"');
-      else expect(sent()).not.toContain('replay_');
+      expect(sent()).toContain(`"replay.mode":"${mode}"`);
+      if (mode === 'off') {
+        expect(sent()).toContain('"replay.off_reason":"sample_rate"');
+        expect(sent()).not.toContain('replay_');
+      } else await expect.poll(sent).toContain('"type":"replay_event"');
     });
   }
 
