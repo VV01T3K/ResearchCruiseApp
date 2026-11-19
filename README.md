@@ -68,6 +68,8 @@ The application can be run using Docker compose. Multiple configuration files ar
 - `compose.production.yaml` - Production configuration (settings in `.env.production.template`)
 - `compose.staging.yaml` - Staging application and database
 
+Production uses the client's own SQL Server, outside these files: SQL Server 2022 RTM (16.0.1000.6) as of November 2026. Staging, development and the integration tests run the latest SQL Server 2022 CU.
+
 See [the Sentry on-prem migration notes](docs/sentry/sentry-on-prem-migration.md) for the planned move to a self-hosted Sentry instance.
 
 SMTP credentials must not be added to `appsettings*.json` or another tracked file. Local development uses the fake SMTP sender by default, including Docker development. Staging and production Compose require `SMTP_USERNAME` and `SMTP_PASSWORD` in the deployment environment and map them to the backend's `SmtpSettings` configuration. For staging, configure these in the staging deployment environment. Copy `docker/.env.staging.template` only for local deployment setup and keep the populated file untracked. See [SMTP configuration and rollout](docs/smtp-configuration.md) for setup, rotation, and verification.
