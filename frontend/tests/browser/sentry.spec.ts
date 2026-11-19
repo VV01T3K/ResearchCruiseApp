@@ -78,7 +78,7 @@ test.describe('signed in', () => {
     ['0', 'off'],
     ['1.5', 'off'],
     ['1', 'session'],
-    ['0.0000001', 'buffer'],
+    ['0.0000000000000001', 'buffer'],
   ] as const) {
     test(`replay sample rate '${replayRate}' sends feedback with replay ${mode}`, async ({ page }) => {
       const sent = await captureEnvelopes(page, replayRate);
