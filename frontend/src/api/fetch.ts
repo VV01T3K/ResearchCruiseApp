@@ -1,6 +1,8 @@
 import config from '@/config';
 import type { HttpValidationProblemDetails } from '@/api/generated/schemas';
+import { connectionStatus } from '@/features/connection/status';
 import { getValidAccessToken, refreshSession } from '@/integrations/auth/session';
+import { classifyError } from '@/integrations/sentry/mutations';
 import { ApiError, responseErrorMessage } from './errors';
 
 export type ErrorType<_Error> = ApiError;
@@ -17,18 +19,31 @@ async function parseResponse(response: Response) {
   }
 }
 
+async function send(url: string, init: RequestInit) {
+  let response: Response;
+  try {
+    response = await fetch(url, init);
+  } catch (error) {
+    if (classifyError(error) === 'network') connectionStatus.suspect();
+    throw error;
+  }
+  if ([502, 503, 504].includes(response.status)) connectionStatus.suspect();
+  else if (response.ok) connectionStatus.recover();
+  return response;
+}
+
 export async function customFetch<T>(url: string, options: RequestInit): Promise<T> {
   const isSessionBootstrapRequest = ['/auth/login', '/auth/refresh', '/auth/session'].includes(url);
   const token = isSessionBootstrapRequest ? undefined : await getValidAccessToken();
   const headers = new Headers(options.headers);
   if (token) headers.set('Authorization', `Bearer ${token}`);
 
-  let response = await fetch(config.apiUrl + url, { ...options, credentials: 'include', headers });
+  let response = await send(config.apiUrl + url, { ...options, credentials: 'include', headers });
   if (response.status === 401 && token) {
     const refreshed = await refreshSession();
     if (refreshed) {
       headers.set('Authorization', `Bearer ${refreshed.accessToken}`);
-      response = await fetch(config.apiUrl + url, { ...options, credentials: 'include', headers });
+      response = await send(config.apiUrl + url, { ...options, credentials: 'include', headers });
     }
   }
 

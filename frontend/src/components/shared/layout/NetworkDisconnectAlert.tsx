@@ -1,73 +1,48 @@
 import { Collapsible } from '@base-ui/react/collapsible';
 import React from 'react';
-import { onlineManager, useQuery, useQueryClient } from '@tanstack/react-query';
+import { onlineManager, useQuery } from '@tanstack/react-query';
 
-import { ApiError } from '@/api/errors';
 import { Alert } from '@/components/shared/Alert';
 import config from '@/config';
-import { classifyError, rootCause } from '@/integrations/sentry/mutations';
+import { connectionStatus, type HealthResult } from '@/features/connection/status';
 
-function isOutage(error: unknown): boolean {
-  const cause = rootCause(error);
-  return classifyError(cause) === 'network' || (cause instanceof ApiError && [502, 503, 504].includes(cause.status));
-}
-
-async function checkHealth() {
+async function checkHealth(outage: number) {
+  let result: HealthResult;
   try {
     const response = await fetch(`${config.apiUrl}/health`, { cache: 'no-store' });
-    return response.ok ? ('healthy' as const) : ('unhealthy' as const);
+    result = response.ok ? 'healthy' : 'unhealthy';
   } catch {
-    return 'offline' as const;
+    result = 'offline';
   }
+  connectionStatus.report(outage, result);
+  return result;
 }
 
 export function NetworkDisconnectAlert() {
-  const queryClient = useQueryClient();
-  const isOnline = React.useSyncExternalStore(onlineManager.subscribe.bind(onlineManager), () =>
-    onlineManager.isOnline()
-  );
-  const [suspectedAt, setSuspectedAt] = React.useState<number | null>(null);
+  const { problem, outage } = React.useSyncExternalStore(connectionStatus.subscribe, connectionStatus.get);
 
-  React.useEffect(() => {
-    const suspect = () => setSuspectedAt((at) => at ?? Date.now());
-    const onEvent = (event: { type: string; action?: { type: string; error?: unknown; data?: unknown } }) => {
-      if (event.type !== 'updated') return;
-      if (event.action?.type === 'failed' && isOutage(event.action.error)) suspect();
-      if (event.action?.type === 'success' && event.action.data !== 'unhealthy' && event.action.data !== 'offline') {
-        setSuspectedAt(null);
-      }
-    };
-    const unsubscribeQueries = queryClient.getQueryCache().subscribe(onEvent);
-    const unsubscribeMutations = queryClient.getMutationCache().subscribe(onEvent);
-    const unsubscribeOnline = onlineManager.subscribe((online) => !online && suspect());
-    return () => {
-      unsubscribeQueries();
-      unsubscribeMutations();
-      unsubscribeOnline();
-    };
-  }, [queryClient]);
+  React.useEffect(() => onlineManager.subscribe((online) => !online && connectionStatus.suspect('offline')), []);
 
-  const health = useQuery({
-    queryKey: ['health'],
-    queryFn: checkHealth,
-    enabled: suspectedAt !== null,
+  useQuery({
+    queryKey: ['health', outage],
+    queryFn: () => checkHealth(outage),
+    enabled: problem !== null,
     networkMode: 'always',
-    staleTime: 0,
     retry: false,
-    refetchInterval: (query) => (query.state.data === 'healthy' ? false : 5000),
+    gcTime: 0,
+    refetchInterval: 5000,
     refetchOnWindowFocus: 'always',
+    refetchOnReconnect: 'always',
   });
 
-  const checked = suspectedAt !== null && health.dataUpdatedAt > suspectedAt ? health.data : undefined;
-  const status = isOnline ? checked : 'offline';
-  const isProblem = status === 'offline' || status === 'unhealthy';
+  const isProblem = problem === 'offline' || problem === 'unhealthy';
 
   return (
     <Collapsible.Root open={isProblem}>
       <Collapsible.Panel className="h-(--collapsible-panel-height) overflow-hidden transition-[height,opacity] duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0">
         {isProblem && (
           <Alert variant="danger">
-            {status === 'offline'
+            {problem === 'offline'
               ? 'Brak połączenia z serwerem. Upewnij się, że masz dostęp do internetu i spróbuj ponownie.'
               : 'Serwis ma chwilowo problemy techniczne. Twoje połączenie działa poprawnie.'}
           </Alert>
