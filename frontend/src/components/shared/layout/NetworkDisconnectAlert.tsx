@@ -1,36 +1,52 @@
 import { Collapsible } from '@base-ui/react/collapsible';
 import React from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { onlineManager, useQuery } from '@tanstack/react-query';
 
 import { Alert } from '@/components/shared/Alert';
 import config from '@/config';
+import { connectionStatus, type HealthResult } from '@/features/connection/status';
+
+async function checkHealth(outage: number, signal: AbortSignal) {
+  let result: HealthResult;
+  try {
+    const response = await fetch(`${config.apiUrl}/health`, {
+      cache: 'no-store',
+      signal: AbortSignal.any([signal, AbortSignal.timeout(10_000)]),
+    });
+    result = response.ok ? 'healthy' : 'unhealthy';
+  } catch (error) {
+    if (signal.aborted) throw error;
+    result = 'offline';
+  }
+  connectionStatus.report(outage, result);
+  return result;
+}
 
 export function NetworkDisconnectAlert() {
-  const [status, setStatus] = React.useState<'healthy' | 'unhealthy' | 'offline'>('healthy');
+  const { problem, outage } = React.useSyncExternalStore(connectionStatus.subscribe, connectionStatus.get);
 
-  const { mutate } = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`${config.apiUrl}/health`);
-      return response.ok ? ('healthy' as const) : ('unhealthy' as const);
-    },
-    onSuccess: setStatus,
-    onError: () => setStatus('offline'),
+  React.useEffect(() => onlineManager.subscribe((online) => !online && connectionStatus.suspect('offline')), []);
+
+  useQuery({
+    queryKey: ['health', outage],
+    queryFn: ({ signal }) => checkHealth(outage, signal),
+    enabled: problem !== null,
+    networkMode: 'always',
     retry: false,
-    meta: { skipsErrorReport: true, invalidates: false },
+    gcTime: 0,
+    refetchInterval: 5000,
+    refetchOnWindowFocus: 'always',
+    refetchOnReconnect: 'always',
   });
 
-  React.useEffect(() => {
-    mutate();
-    const intervalId = setInterval(() => mutate(), 3000);
-    return () => clearInterval(intervalId);
-  }, [mutate]);
+  const isProblem = problem === 'offline' || problem === 'unhealthy';
 
   return (
-    <Collapsible.Root open={status !== 'healthy'}>
+    <Collapsible.Root open={isProblem}>
       <Collapsible.Panel className="h-(--collapsible-panel-height) overflow-hidden transition-[height,opacity] duration-200 ease-out data-[ending-style]:h-0 data-[ending-style]:opacity-0 data-[starting-style]:h-0 data-[starting-style]:opacity-0">
-        {status !== 'healthy' && (
+        {isProblem && (
           <Alert variant="danger">
-            {status === 'offline'
+            {problem === 'offline'
               ? 'Brak połączenia z serwerem. Upewnij się, że masz dostęp do internetu i spróbuj ponownie.'
               : 'Serwis ma chwilowo problemy techniczne. Twoje połączenie działa poprawnie.'}
           </Alert>
