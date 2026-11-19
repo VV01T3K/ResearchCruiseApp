@@ -44,7 +44,8 @@ flowchart LR
 - **Form C** reports what was done. The reported effects and the team's publications earn points
   for future applications.
 
-Access depends on the role: administrator, shipowner, cruise manager, ship crew or guest.
+Access depends on the role: administrator, shipowner, cruise manager, ship crew or guest. The
+[permission matrix](docs/permissions.md) lists what each role may do.
 
 ## Stack
 
