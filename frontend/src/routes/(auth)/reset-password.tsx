@@ -6,14 +6,14 @@ import { z } from 'zod';
 import { allowOnly } from '@/lib/guards';
 import { formValidationLogic } from '@/integrations/tanstack/form/validation';
 import { navigateToFirstError } from '@/integrations/tanstack/form/errors';
-import { CheckIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import React from 'react';
-import { Button, ButtonLink } from '@/components/shared/Button';
-import { Layout } from '@/components/shared/Layout';
-import { Anchor } from '@/components/shared/Link';
+import { Alert } from '@/components/shared/Alert';
+import { Button } from '@/components/shared/Button';
+import { Anchor, Link } from '@/components/shared/Link';
 import { trackFormSubmit } from '@/integrations/sentry/client';
 import { useResetPassword } from '@/api/generated/endpoints/auth.gen';
-import { Result } from '@/integrations/auth/types';
+import { Layout } from '@/components/shared/Layout';
+import { ResultPanel } from '@/features/auth/components/ResultPanel';
 
 export const Route = createFileRoute('/(auth)/reset-password')({
   component: ResetPasswordPage,
@@ -48,8 +48,8 @@ const validationSchema = z
 
 function ResetPasswordPage() {
   const { emailBase64, resetCode } = Route.useSearch();
-  const [result, setResult] = React.useState<Result | undefined>(undefined);
-  const [errorMessage, setErrorMessage] = React.useState('Link do resetowania hasła jest nieprawidłowy lub wygasł.');
+  const [changed, setChanged] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState<string | undefined>(undefined);
   const { mutateAsync } = useResetPassword({ mutation: { meta: { handlesError: true } } });
   const form = useAppForm({
     defaultValues: {
@@ -67,14 +67,14 @@ function ResetPasswordPage() {
         throw new Error('Not all fields are filled despite validation');
       }
 
+      setErrorMessage(undefined);
       try {
         await mutateAsync({
           data: { emailBase64, resetCode, password: value.password, passwordConfirm: value.passwordConfirm },
         });
-        setResult('success');
+        setChanged(true);
       } catch (error) {
         setErrorMessage(getProblemDetail(error, 'Operacja nie powiodła się.'));
-        setResult('error');
       }
     },
     onSubmitInvalid: ({ formApi }) => {
@@ -83,61 +83,64 @@ function ResetPasswordPage() {
     },
   });
 
-  if (result || !emailBase64 || !resetCode) {
-    const title = result === 'success' ? 'Hasło zostało zmienione' : 'Błąd podczas resetowania hasła';
+  if (changed) {
     return (
-      <Layout title={title} variant="narrow">
-        <div className="flex flex-col items-center">
-          <div className="h-60">
-            {result === 'success' ? (
-              <CheckIcon className="text-success" />
-            ) : (
-              <WarningCircleIcon className="text-danger" />
-            )}
-          </div>
-          <div className="text-center text-muted-foreground">
-            {result === 'success' && <>Hasło zostało pomyślnie zmienione. Możesz teraz się zalogować</>}
-            {result !== 'success' && (
-              <>
-                {errorMessage} W razie problemów napisz na{' '}
-                <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>
-              </>
-            )}
-          </div>
-        </div>
-        <ButtonLink to="/login" className="mt-6 w-full">
-          Przejdź do logowania
-        </ButtonLink>
+      <Layout title="Resetowanie hasła" variant="narrow" disableBackButton>
+        <ResultPanel variant="success" title="Hasło zostało zmienione" loginLink>
+          Możesz teraz zalogować się nowym hasłem.
+        </ResultPanel>
+      </Layout>
+    );
+  }
+
+  if (!emailBase64 || !resetCode) {
+    return (
+      <Layout title="Resetowanie hasła" variant="narrow" disableBackButton>
+        <ResultPanel variant="danger" title="Błąd podczas resetowania hasła" loginLink>
+          Link do resetowania hasła jest nieprawidłowy lub wygasł. W razie problemów napisz na{' '}
+          <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>
+        </ResultPanel>
       </Layout>
     );
   }
 
   return (
-    <Layout title="Resetowanie hasła" variant="narrow">
+    <Layout title="Resetowanie hasła" variant="narrow" disableBackButton>
       <form
-        className="px-4"
+        noValidate
+        className="space-y-4 px-4"
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
           void form.handleSubmit();
         }}
       >
-        <form.AppField name="password">
-          {(field) => <field.TextField variant="floating" type="password" label="Hasło" />}
-        </form.AppField>
+        <form.AppField name="password">{(field) => <field.TextField type="password" label="Hasło" />}</form.AppField>
 
         <form.AppField name="passwordConfirm">
-          {(field) => <field.TextField variant="floating" type="password" label="Potwierdź hasło" />}
+          {(field) => <field.TextField type="password" label="Potwierdź hasło" />}
         </form.AppField>
+
+        {errorMessage && (
+          <Alert variant="danger">
+            <p>
+              {errorMessage} W razie problemów napisz na{' '}
+              <Anchor href="mailto:rejsy.help@ug.edu.pl">rejsy.help@ug.edu.pl</Anchor>
+            </p>
+          </Alert>
+        )}
 
         <form.Subscribe selector={(state) => state.isSubmitting}>
           {(isSubmitting) => (
-            <Button type="submit" className="mt-6 w-full" loading={isSubmitting}>
+            <Button type="submit" className="w-full" loading={isSubmitting}>
               Zmień hasło
             </Button>
           )}
         </form.Subscribe>
       </form>
+      <p className="mt-6 text-center text-sm">
+        <Link to="/login">Wróć do logowania</Link>
+      </p>
     </Layout>
   );
 }
