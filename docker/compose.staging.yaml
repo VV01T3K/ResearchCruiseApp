@@ -58,6 +58,16 @@ services:
       caddy: ${FRONTEND_URL:-https://cruise.wsiwiec.com}
       caddy.import: protected
       caddy.reverse_proxy: '{{upstreams 8080}}'
+      # The homelab's proxy moves from Caddy to Traefik (infra-as-script): both sets stay until the switch is done,
+      # then Caddy's three labels above go.
+      traefik.enable: 'true'
+      traefik.docker.network: caddy
+      traefik.http.routers.cruise.rule: Host(`cruise.wsiwiec.com`)
+      traefik.http.routers.cruise.entrypoints: websecure
+      traefik.http.routers.cruise.tls.certresolver: letsencrypt
+      traefik.http.routers.cruise.tls.domains[0].main: '*.wsiwiec.com'
+      traefik.http.routers.cruise.middlewares: protected@file
+      traefik.http.services.cruise.loadbalancer.server.port: '8080'
 
 volumes:
   researchcruiseapp-db:
