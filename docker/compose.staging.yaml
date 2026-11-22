@@ -53,20 +53,19 @@ services:
       SENTRY_DSN: ${SENTRY_DSN_FRONTEND:-${SENTRY_DSN:-}}
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-1}
       SENTRY_REPLAYS_SESSION_SAMPLE_RATE: ${SENTRY_REPLAYS_SESSION_SAMPLE_RATE:-1}
-    networks: [default, caddy]
+    # Routed by the Traefik on the staging guest (network "apps"); the homelab's front proxy does HTTPS and CrowdSec.
+    networks: [default, apps]
     labels:
       traefik.enable: 'true'
-      traefik.docker.network: caddy
+      traefik.docker.network: apps
       traefik.http.routers.cruise.rule: Host(`cruise.wsiwiec.com`)
       traefik.http.routers.cruise.entrypoints: websecure
-      traefik.http.routers.cruise.tls.certresolver: letsencrypt
-      traefik.http.routers.cruise.tls.domains[0].main: '*.wsiwiec.com'
-      traefik.http.routers.cruise.middlewares: protected@file
+      traefik.http.routers.cruise.tls: 'true'
       traefik.http.services.cruise.loadbalancer.server.port: '8080'
 
 volumes:
   researchcruiseapp-db:
     external: true
 networks:
-  caddy:
+  apps:
     external: true
