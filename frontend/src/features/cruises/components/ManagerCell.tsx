@@ -5,6 +5,23 @@ import { Avatar } from '@/components/shared/Avatar';
 import type { Cell } from '@/integrations/tanstack/table/features';
 import { cn } from '@/lib/utils';
 
+// Every manager cell in a column needs the same widest name, so measure it once per row list.
+const widestNames = new WeakMap<object, Map<string, number>>();
+
+function widestName(rows: { getValue: (columnId: string) => unknown }[], columnId: string, font: string) {
+  const byColumn = widestNames.get(rows) ?? new Map<string, number>();
+  widestNames.set(rows, byColumn);
+  const key = `${columnId}|${font}`;
+  let width = byColumn.get(key);
+  if (width === undefined) {
+    const canvas = document.createElement('canvas').getContext('2d')!;
+    canvas.font = font;
+    width = Math.max(...rows.map((row) => canvas.measureText(row.getValue(columnId) as string).width));
+    byColumn.set(key, width);
+  }
+  return width;
+}
+
 type Props<T extends RowData> = {
   context: ReturnType<Cell<T>['getContext']>;
   avatarName: string;
@@ -29,11 +46,8 @@ export function ManagerCell<T extends RowData>({ context, avatarName }: Props<T>
 
   const groupWidth = useMemo(() => {
     if (!font) return Infinity;
-    const canvas = document.createElement('canvas').getContext('2d')!;
-    canvas.font = font;
-    const widestName = Math.max(...rows.map((row) => canvas.measureText(row.getValue(columnId) as string).width));
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    return Math.ceil(widestName + 3 * rem);
+    return Math.ceil(widestName(rows, columnId, font) + 3 * rem);
   }, [rows, columnId, font]);
   const inline = groupWidth <= width;
 

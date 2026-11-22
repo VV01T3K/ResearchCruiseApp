@@ -129,30 +129,32 @@ export function TableFilterList<TData extends object, TValue>({ header }: Props<
             </div>
             <Combobox.Empty className="empty-state font-normal empty:hidden">Brak pasujących opcji</Combobox.Empty>
             <Combobox.List className="max-h-64 overflow-y-auto px-3 pb-2 focus-visible:outline-hidden">
-              {(option: (typeof options)[number]) => (
-                <Combobox.Item
-                  key={option.value}
-                  value={option}
-                  className="group flex h-8 menu-item items-center gap-2.5 rounded-md px-2 font-normal"
-                >
-                  <span className="flex size-4 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-inverse-foreground group-data-selected:border-primary group-data-selected:bg-primary">
-                    <Combobox.ItemIndicator render={<CheckIcon />} />
-                  </span>
-                  <span className="min-w-0 flex-1 truncate" title={option.label}>
-                    {option.label}
-                  </span>
-                  {option.count > 0 && (
-                    <span aria-hidden className="text-xs text-muted-foreground tabular-nums">
-                      {option.count}
-                    </span>
-                  )}
-                </Combobox.Item>
-              )}
+              {(option: FilterOption) => <FilterOptionItem key={option.value} option={option} />}
             </Combobox.List>
             {footer}
           </Combobox.Root>
         );
       }}
     </Subscribe>
+  );
+}
+
+type FilterOption = { value: string; count: number; label: string };
+
+function FilterOptionItem({ option }: { option: FilterOption }) {
+  return (
+    <Combobox.Item value={option} className="group flex h-8 menu-item items-center gap-2.5 rounded-md px-2 font-normal">
+      <span className="flex size-4 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-inverse-foreground group-data-selected:border-primary group-data-selected:bg-primary">
+        <Combobox.ItemIndicator render={<CheckIcon />} />
+      </span>
+      <span className="min-w-0 flex-1 truncate" title={option.label}>
+        {option.label}
+      </span>
+      {option.count > 0 && (
+        <span aria-hidden className="text-xs text-muted-foreground tabular-nums">
+          {option.count}
+        </span>
+      )}
+    </Combobox.Item>
   );
 }
