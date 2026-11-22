@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { Row, Table } from '@/integrations/tanstack/table/features';
+import { Cell, Table } from '@/integrations/tanstack/table/features';
 import { useVirtualTableRows } from '@/integrations/tanstack/virtual/hook';
 
 type Props<T extends object> = {
@@ -9,7 +9,7 @@ type Props<T extends object> = {
   headerRowCount?: number;
   virtualized?: boolean;
   estimateRowHeight: number;
-  renderCells: (row: Row<T>) => ReactNode;
+  renderCells: (cells: Cell<T>[]) => ReactNode;
   children: ReactNode;
 };
 
@@ -36,15 +36,14 @@ export function TableBody<T extends object>({
         </tr>
       )}
       {renderedRows.map(({ row, index }) => (
-        <tr
+        <TableRow
           key={row.id}
-          ref={measureElement}
-          data-index={index}
-          aria-rowindex={virtualized ? headerRowCount + index + 1 : undefined}
-          className={`text-neutral-800 ${index % 2 === 0 ? 'bg-surface-subtle' : ''}`}
-        >
-          {renderCells(row)}
-        </tr>
+          cells={row.getVisibleCells()}
+          index={virtualized ? index : undefined}
+          headerRowCount={headerRowCount}
+          measureElement={measureElement}
+          renderCells={renderCells}
+        />
       ))}
       {virtualized && paddingBottom > 0 && (
         <tr aria-hidden="true">
@@ -53,5 +52,26 @@ export function TableBody<T extends object>({
       )}
       {children}
     </tbody>
+  );
+}
+
+type RowProps<T extends object> = {
+  cells: Cell<T>[];
+  index: number | undefined;
+  headerRowCount: number;
+  measureElement: ((element: HTMLTableRowElement | null) => void) | undefined;
+  renderCells: (cells: Cell<T>[]) => ReactNode;
+};
+
+function TableRow<T extends object>({ cells, index, headerRowCount, measureElement, renderCells }: RowProps<T>) {
+  return (
+    <tr
+      ref={measureElement}
+      data-index={index}
+      aria-rowindex={index === undefined ? undefined : headerRowCount + index + 1}
+      className={`text-neutral-800 ${index === undefined ? 'odd:bg-surface-subtle' : index % 2 === 0 ? 'bg-surface-subtle' : ''}`}
+    >
+      {renderCells(cells)}
+    </tr>
   );
 }

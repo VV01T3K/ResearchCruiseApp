@@ -65,8 +65,8 @@ export function DesktopTable<T extends object>({
             headerRowCount={headerRowCount}
             virtualized={virtualized}
             estimateRowHeight={120}
-            renderCells={(row) =>
-              row.getVisibleCells().map((cell) => {
+            renderCells={(cells) =>
+              cells.map((cell) => {
                 return (
                   <td
                     key={cell.id}
