@@ -58,10 +58,12 @@ activity_id=$(jq -Rsre 'rtrimstr("\n") | split("\n") | map(fromjson) |
 
 echo "Staging deployment $activity_id finished"
 
-# 3. Wait until every service runs healthy
+# 3. Wait until every service runs healthy. The runtime path is the project's: the deploy URL without its last part
+# (".../projects/<id>/deploy?action=up" becomes ".../projects/<id>/runtime").
+runtime_url="${STAGING_DEPLOY_URL%/*}/runtime"
 deadline=$((SECONDS + 120))
 while :; do
-  if request application/json "${STAGING_DEPLOY_URL%/up}/runtime" 10 \
+  if request application/json "$runtime_url" 10 \
     -H "X-Api-Key: $STAGING_DEPLOY_API_KEY" \
     -H "X-Cloudflare-Secret: $CLOUDFLARE_WEBHOOK_SECRET"; then
     result=$(jq -er '
