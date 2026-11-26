@@ -79,5 +79,5 @@
     "vite-plus": "1.4.0",
     "vitest": "5.0.5"
   },
-  "packageManager": "bun@1.4.4"
+  "packageManager": "bun@1.4.5"
 }
