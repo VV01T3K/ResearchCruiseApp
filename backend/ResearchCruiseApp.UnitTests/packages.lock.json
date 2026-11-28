@@ -443,8 +443,8 @@
       },
       "Microsoft.OpenApi": {
         "type": "Transitive",
-        "resolved": "2.13.0",
-        "contentHash": "wavlgBYnn7uU/ZGhFHNl0UlDOlwz+6KRduKkqdCCbfxxANaQ1rmBpETVGdwXanAM6twQOxsvI3CBEGF4OScbeQ=="
+        "resolved": "2.13.1",
+        "contentHash": "qPyM4L+CQvM7ljcJN15e3lTx3439fBZoGs03OlpfxiUUxxhPJX+7h8BCJQO1z6ANQbxBAirMA4JkHq7j/naA/A=="
       },
       "Microsoft.SqlServer.Server": {
         "type": "Transitive",
@@ -649,7 +649,7 @@
           "Microsoft.AspNetCore.OpenApi": "[10.0.15, )",
           "Microsoft.Data.SqlClient": "[7.1.2, )",
           "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.15, )",
-          "Microsoft.OpenApi": "[2.13.0, )",
+          "Microsoft.OpenApi": "[2.13.1, )",
           "MimeKit": "[4.18.2, )",
           "Scalar.AspNetCore": "[2.21.0, )",
           "Sentry.AspNetCore": "[6.13.0, )",

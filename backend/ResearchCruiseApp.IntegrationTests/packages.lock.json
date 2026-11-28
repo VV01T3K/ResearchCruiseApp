@@ -15,13 +15,13 @@
       },
       "Microsoft.Extensions.Diagnostics.Testing": {
         "type": "Direct",
-        "requested": "[10.11.0, )",
-        "resolved": "10.11.0",
-        "contentHash": "Waxh+cfGkAj6n9gxmnIaYT681UxBXrlQdYF5w9yycofFCuNcmknBml2r65OZxuClrUjI4v8IK85+guWGzUja+A==",
+        "requested": "[10.11.1, )",
+        "resolved": "10.11.1",
+        "contentHash": "STf0CNsnGD/2NrHGGL0BSNMUvtU5XrhsZa06Pm1HvFgMJazguw8zyq/QdUg9Q5/eI2uRcpwcpoAAr19/tipdOQ==",
         "dependencies": {
           "Microsoft.Extensions.Logging": "10.0.13",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "10.0.13",
-          "Microsoft.Extensions.Telemetry.Abstractions": "10.11.0"
+          "Microsoft.Extensions.Telemetry.Abstractions": "10.11.1"
         }
       },
       "Respawn": {
@@ -32,11 +32,11 @@
       },
       "Testcontainers.MsSql": {
         "type": "Direct",
-        "requested": "[4.16.0, )",
-        "resolved": "4.16.0",
-        "contentHash": "UVLYLyq9CDSfLZUeu+CyDmwV7wo2LMNlpBLP8ZO9HG42WT3KTMI/p7qYesiCAZmo6GUeWH/Z6SOIw66Y4qnWuw==",
+        "requested": "[4.17.0, )",
+        "resolved": "4.17.0",
+        "contentHash": "OOy8z14wc0g2ay4LE6i7I82RwNVlwx7Sa2n2gPPTXMt/Q3xl2CvAjloXYmmBOHKtFH3JzvK7hRrFxqdy8EA0ow==",
         "dependencies": {
-          "Testcontainers": "4.16.0"
+          "Testcontainers": "4.17.0"
         }
       },
       "xunit.v3.mtp-v2": {
@@ -327,8 +327,8 @@
       },
       "Microsoft.Extensions.Compliance.Abstractions": {
         "type": "Transitive",
-        "resolved": "10.11.0",
-        "contentHash": "2mjAb3Sm5k6uNeI+IyXpggYMpfdDDGgZSwUm9QQsm5QgZboJWbm2eU+6wNMrlfFEao11yq6JS1zXI7SVQQ0NuQ==",
+        "resolved": "10.11.1",
+        "contentHash": "2tjl8N8Nz8SbE78lW7bCDQjIneH8/WNsDtcJm/n/vTBpPbfdKq1sf8n+aliTNYbI93ZIkphUHLZA+td4q5tDBg==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.13",
           "Microsoft.Extensions.ObjectPool": "10.0.13"
@@ -659,10 +659,10 @@
       },
       "Microsoft.Extensions.Telemetry.Abstractions": {
         "type": "Transitive",
-        "resolved": "10.11.0",
-        "contentHash": "FzcHRan/C2g5X5KD0kPlL4tTROFRpM8sqcXfOIi6FGLsw/d2yoOYMbLJ5hyb8N5QgOVW7e1TdwEN4zVUfcwfdw==",
+        "resolved": "10.11.1",
+        "contentHash": "d36MCo5y/IjxqX1C7pvvO98TlaM5LO8DmBIEdzT9TaX0omxywnmMaoUS6Q0dC/LafJCVOrfRJdwSr9YTU0uSNg==",
         "dependencies": {
-          "Microsoft.Extensions.Compliance.Abstractions": "10.11.0",
+          "Microsoft.Extensions.Compliance.Abstractions": "10.11.1",
           "Microsoft.Extensions.Logging.Abstractions": "10.0.13",
           "Microsoft.Extensions.ObjectPool": "10.0.13",
           "Microsoft.Extensions.Options": "10.0.13"
@@ -718,8 +718,8 @@
       },
       "Microsoft.OpenApi": {
         "type": "Transitive",
-        "resolved": "2.13.0",
-        "contentHash": "wavlgBYnn7uU/ZGhFHNl0UlDOlwz+6KRduKkqdCCbfxxANaQ1rmBpETVGdwXanAM6twQOxsvI3CBEGF4OScbeQ=="
+        "resolved": "2.13.1",
+        "contentHash": "qPyM4L+CQvM7ljcJN15e3lTx3439fBZoGs03OlpfxiUUxxhPJX+7h8BCJQO1z6ANQbxBAirMA4JkHq7j/naA/A=="
       },
       "Microsoft.SqlServer.Server": {
         "type": "Transitive",
@@ -866,8 +866,8 @@
       },
       "Testcontainers": {
         "type": "Transitive",
-        "resolved": "4.16.0",
-        "contentHash": "JmMUZk6ZXQovbGQjaMB+YxOR0PbJTdYjOYjRcrm5LrA2dhLVMuCbhVGGunzCGIQfFMUB5Lno2LPOHMMuaGmuIg==",
+        "resolved": "4.17.0",
+        "contentHash": "yXAdoZ3dcrg84Iy05X10qRfz8EO35tpSmI1kK91Qe32MNz0DyPuSbiCi33i5AvSbYMET9HxBw32UuHJHSSK49A==",
         "dependencies": {
           "Docker.DotNet.Enhanced": "4.3.3",
           "Docker.DotNet.Enhanced.X509": "4.3.3",
@@ -950,7 +950,7 @@
           "Microsoft.AspNetCore.OpenApi": "[10.0.15, )",
           "Microsoft.Data.SqlClient": "[7.1.2, )",
           "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.15, )",
-          "Microsoft.OpenApi": "[2.13.0, )",
+          "Microsoft.OpenApi": "[2.13.1, )",
           "MimeKit": "[4.18.2, )",
           "Scalar.AspNetCore": "[2.21.0, )",
           "Sentry.AspNetCore": "[6.13.0, )",
